@@ -1272,6 +1272,16 @@
       ]
     },
     {
+      "id": "pane.vertical-budget",
+      "kind": "pane-budget",
+      "deep": true,
+      "selector": "[data-ui-pane]",
+      "maxScreens": 2.5,
+      "minRun": 4,
+      "maxRowHeight": 96,
+      "owner": "the page filling the side pane (facets in SidePane tabs, a grouped and capped WorkActivityList)"
+    },
+    {
       "id": "list.marker-alignment",
       "kind": "marker-first-line",
       "deep": true,

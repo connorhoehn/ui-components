@@ -480,3 +480,23 @@ Shared geometry tokens: `--ui-control-sm/md/lg`, `--ui-page-gutter`,
 `--ui-content-gutter`, `--ui-section-gap`, `--ui-table-inset`,
 `--ui-table-row`, and `--ui-composer-max-width`. Change their defaults in the
 library rather than repeating page-specific padding and control heights.
+
+## Side panes are a glance, not a document
+
+A `SidePane` (the right inspector) that stacks every facet of a record
+becomes a long scroll. Split facets into the pane's own tabs (`tabs`, `value`,
+`onValueChange`; `PaneHeader` draws them) — for a work item, Definition and
+Activity — and give each tab one heading, not a heading plus a flag that
+repeats it.
+
+`WorkActivityList` is compact by default: consecutive identical events
+collapse into one row with a count (`group`, default on; pass a key function
+or `false`), events flagged `lowSignal` or matched by `isLowSignal` stay hidden
+behind "Show all events" (`defaultShowAll` to start expanded), only `limit`
+rows (5) show before "Show N more" (`limit={null}` for all), and a relative
+time equal to the row above is not repeated (`repeatTimes` to print it).
+
+The DOM audit's `pane.vertical-budget` rule flags a `[data-ui-pane]` whose
+content exceeds 2.5 times its visible height, or that lists four or more
+consecutive identical rows.
+

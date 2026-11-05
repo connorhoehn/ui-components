@@ -18,7 +18,7 @@ const fullContract = JSON.parse(fs.readFileSync(new URL('../references/work-ui.c
 validateContract(fullContract);
 // The deep-audit rules (references/deep-audit.md) have their own fixtures below; the
 // four-column fixture and the runner tests keep judging the established rule set.
-const DEEP_KINDS = new Set(['fingerprint', 'blank-band', 'table-first', 'narrow-block', 'alignment-grid', 'baseline', 'icon-center', 'scroll-owner', 'content-share', 'content-honesty', 'a11y-names', 'contrast', 'heading-order', 'landmarks', 'composer-readonly', 'layer', 'focus-walk', 'tab-stability', 'data-state', 'geometry-snapshot', 'text-fragmented', 'leading-separator', 'selection-column', 'column-hog', 'marker-first-line']);
+const DEEP_KINDS = new Set(['fingerprint', 'blank-band', 'table-first', 'narrow-block', 'alignment-grid', 'baseline', 'icon-center', 'scroll-owner', 'content-share', 'content-honesty', 'a11y-names', 'contrast', 'heading-order', 'landmarks', 'composer-readonly', 'layer', 'focus-walk', 'tab-stability', 'data-state', 'geometry-snapshot', 'text-fragmented', 'leading-separator', 'selection-column', 'column-hog', 'marker-first-line', 'pane-budget']);
 const contract = { ...fullContract, rules: fullContract.rules.filter(r => !DEEP_KINDS.has(r.kind)) };
 assert.ok(fullContract.rules.filter(r => DEEP_KINDS.has(r.kind)).length >= DEEP_KINDS.size, 'every deep rule kind is bound in the shipped contract');
 assert.ok(fullContract.rules.every(r => (r.deep === true) === DEEP_KINDS.has(r.kind)), 'exactly the deep-audit rules carry deep: true');
@@ -1032,6 +1032,11 @@ table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text
         broken: [['a selection checkbox between Name and Tokens', () => { document.querySelectorAll('#list tr').forEach(tr => tr.children[0].insertAdjacentHTML('afterend', tr.closest('thead') ? '<th></th>' : '<td><input type="checkbox" aria-label="Select"></td>')); }, 'selection column']] },
       { ids: ['table.column-hog'], valid: [['a long name truncated in its cell', () => { const l = document.querySelector('#list'); l.style.overflowX = 'auto'; const td = l.querySelector('tbody td'); td.innerHTML = '<div style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + 'inference-canary-nightly extraordinarily long name '.repeat(6) + '</div>'; }]],
         broken: [['a long name widening its column until the other columns scroll away', () => { const l = document.querySelector('#list'); l.style.overflowX = 'auto'; const td = l.querySelector('tbody td'); td.style.whiteSpace = 'nowrap'; td.textContent = 'inference-canary-nightly extraordinarily long name '.repeat(6); }, 'column pushing the table out of view']] },
+      // pane.vertical-budget (storymaker Work inspector): a side pane fits in a few heights and never lists identical rows.
+      { ids: ['pane.vertical-budget'], valid: [['a tabbed pane with a grouped, capped feed', () => { const pane = html => document.querySelector('#shell').insertAdjacentHTML('beforeend', `<aside data-ui-pane="side" aria-label="Details" style="width:320px;flex:none;height:100%;overflow-y:auto;padding:12px">${html}</aside>`); pane('<div role="tablist"><button role="tab">Definition</button><button role="tab">Activity</button></div><ol>' + ['Worker heartbeat ×12', 'Worker progress ×7', 'Worker started', 'Job claimed', 'Definition saved'].map(t => `<li style="height:36px">${t}</li>`).join('') + '</ol><button>Show 3 more</button>'); }],
+          ['a numbered list whose rows differ', () => { const pane = html => document.querySelector('#shell').insertAdjacentHTML('beforeend', `<aside data-ui-pane="side" aria-label="Details" style="width:320px;flex:none;height:100%;overflow-y:auto;padding:12px">${html}</aside>`); pane('<ol>' + Array.from({ length: 8 }, (_, i) => `<li>Step ${i + 1}</li>`).join('') + '</ol>'); }]],
+        broken: [['a heartbeat log of identical rows', () => { const pane = html => document.querySelector('#shell').insertAdjacentHTML('beforeend', `<aside data-ui-pane="side" aria-label="Details" style="width:320px;flex:none;height:100%;overflow-y:auto;padding:12px">${html}</aside>`); pane('<ol>' + '<li style="height:36px">Worker heartbeat · definition recorded <span>1d ago</span></li>'.repeat(8) + '</ol>'); }, 'identical row run'],
+          ['a pane stacking every facet into 3000px of scroll', () => { const pane = html => document.querySelector('#shell').insertAdjacentHTML('beforeend', `<aside data-ui-pane="side" aria-label="Details" style="width:320px;flex:none;height:100%;overflow-y:auto;padding:12px">${html}</aside>`); pane('<section style="height:3000px">Requested change, criteria, constraints, inputs, activity</section>'); }, 'pane content height']] },
     ];
     for (const { ids, valid, broken } of families) {
       for (const [name, mutate] of valid) {
@@ -1063,7 +1068,8 @@ table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text
       assert.ok((await dockCheck()).issues.some(i => i.rule === 'density.blank-band'), 'a gap inside the dock still fails');
       await dpage.setContent(deepHtml);
     }
-    const exercised = await dmeasure(['density.blank-band', 'density.table-first', 'density.narrow-block', 'align.grid', 'align.baseline', 'align.icon-center', 'a11y.contrast']);
+    await dpage.evaluate(() => document.querySelector('#shell').insertAdjacentHTML('beforeend', '<aside data-ui-pane="side" aria-label="Details" style="width:320px;flex:none"><p>Definition</p></aside>'));
+    const exercised = await dmeasure(['pane.vertical-budget', 'density.blank-band', 'density.table-first', 'density.narrow-block', 'align.grid', 'align.baseline', 'align.icon-center', 'a11y.contrast']);
     for (const c of exercised.coverage) assert.ok(c.matched > 0, `${c.rule} is exercised by the valid deep fixture: ${JSON.stringify(c)}`);
     console.log('PASS each deep layout rule is exercised by the valid fixture');
 

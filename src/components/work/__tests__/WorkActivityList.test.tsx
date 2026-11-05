@@ -51,4 +51,76 @@ describe('WorkActivityList', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open run' }));
     expect(onOpen).toHaveBeenCalled();
   });
+
+  const beat = (i: number, at: number) => ({ id: `h${i}`, kind: 'system' as const, at, text: 'Worker heartbeat', lowSignal: true });
+
+  it('collapses a consecutive run of the same event into one row with a count', () => {
+    render(
+      <WorkActivityList
+        now={NOW}
+        events={[
+          ...[1, 2, 3, 4].map((i) => ({ id: `p${i}`, kind: 'system' as const, at: NOW - i * 60_000, text: 'Worker progress' })),
+          { id: 's', kind: 'status', at: NOW - 3_600_000, text: 'Started' },
+          { id: 'p9', kind: 'system', at: NOW - 7_200_000, text: 'Worker progress' },
+        ]}
+      />,
+    );
+    const items = screen.getAllByRole('listitem');
+    expect(items).toHaveLength(3);
+    expect(items[0]!.getAttribute('data-activity-count')).toBe('4');
+    expect(items[0]!.textContent).toContain('×4');
+    // Not consecutive with the first run, so it stays its own row.
+    expect(items[2]!.getAttribute('data-activity-count')).toBeNull();
+  });
+
+  it('lists every event when grouping is off', () => {
+    render(<WorkActivityList now={NOW} group={false} limit={null} events={[1, 2, 3].map((i) => ({ id: `p${i}`, kind: 'system' as const, at: NOW - i, text: 'Same' }))} />);
+    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+  });
+
+  it('hides low-signal events until "Show all events"', () => {
+    render(
+      <WorkActivityList
+        now={NOW}
+        isLowSignal={(e) => e.text === 'Worker progress'}
+        events={[beat(1, NOW - 1000), beat(2, NOW - 2000), { id: 'pr', kind: 'system', at: NOW - 3000, text: 'Worker progress' }, { id: 'c', kind: 'comment', at: NOW - 4000, text: 'Commented' }]}
+      />,
+    );
+    expect(screen.getAllByRole('listitem').map((li) => li.getAttribute('data-testid'))).toEqual(['work-activity-c']);
+    const toggle = screen.getByRole('button', { name: 'Show all events (3 routine hidden)' });
+    fireEvent.click(toggle);
+    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getByRole('button', { name: 'Hide routine events' }).getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('says so when every event is routine', () => {
+    render(<WorkActivityList now={NOW} events={[beat(1, NOW)]} />);
+    expect(screen.getByText('Only routine events so far')).toBeTruthy();
+  });
+
+  it('caps the rows at five with "Show N more", and limit={null} opts out', () => {
+    const many = Array.from({ length: 8 }, (_, i) => ({ id: `e${i}`, kind: 'comment' as const, at: NOW - i * 1000, text: `Comment ${i}` }));
+    const { unmount } = render(<WorkActivityList now={NOW} events={many} />);
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
+    fireEvent.click(screen.getByRole('button', { name: 'Show 3 more' }));
+    expect(screen.getAllByRole('listitem')).toHaveLength(8);
+    expect(screen.queryByRole('button', { name: /more/ })).toBeNull();
+    unmount();
+    render(<WorkActivityList now={NOW} limit={null} events={many} />);
+    expect(screen.getAllByRole('listitem')).toHaveLength(8);
+  });
+
+  it('does not repeat a relative time equal to the row above', () => {
+    const DAY = 86_400_000;
+    const events = [
+      { id: 'a', kind: 'comment' as const, at: NOW - DAY - 1000, text: 'One' },
+      { id: 'b', kind: 'comment' as const, at: NOW - DAY - 2000, text: 'Two' },
+      { id: 'c', kind: 'comment' as const, at: NOW - 3 * DAY, text: 'Three' },
+    ];
+    const { unmount } = render(<WorkActivityList now={NOW} events={events} />);
+    expect(screen.getAllByRole('listitem').map((li) => li.querySelector('time')?.textContent ?? null)).toEqual(['1d ago', null, '3d ago']);
+    unmount();
+    render(<WorkActivityList now={NOW} repeatTimes events={events} />);
+    expect(screen.getAllByRole('listitem').map((li) => li.querySelector('time')?.textContent ?? null)).toEqual(['1d ago', '1d ago', '3d ago']);
+  });
 });

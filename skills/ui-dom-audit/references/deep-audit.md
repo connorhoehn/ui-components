@@ -68,6 +68,9 @@ valid fixture and failing mutations in `scripts/self-test.mjs` and a section in
    title and the table (one compact selector/filter row; no stacked status
    cards). `density.narrow-block`: a table/section narrower than 60% of its
    column with nothing beside it. Sparse tile rows stay `people.sparse-row`.
+   `pane.vertical-budget`: a side pane (`[data-ui-pane]`) holds at most 2.5
+   pane heights of content and no run of 4+ identical rows (put facets in
+   `SidePane` tabs; let `WorkActivityList` group and cap its feed).
 3. **Alignment grid.** `align.grid`: every reading line in the content column
    starts on the inset grid (0, the table inset, the content gutter and their
    pairwise sums, borders subtracted); a line 1.5–12px off it is stray. The

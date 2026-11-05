@@ -1546,6 +1546,50 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         samples.push({ rule: rule.id, selector: 'document', property: 'geometry snapshot', actual: geometry.length, expected: 'recorded for the theme-parity pass' });
         coverage.at(-1).matched = Math.min(nodes.length, rule.max ?? 600);
       }
+      else if (rule.kind === 'pane-budget') {
+        // Density (family 2), from the storymaker Work inspector: a side pane
+        // is a glance, not a document. Its content fits in a few pane heights
+        // (facets go in tabs, feeds are capped), and it never lists a run of
+        // identical rows — a heartbeat log that a grouped feed would collapse
+        // into one row with a count.
+        const maxScreens = rule.maxScreens ?? 2.5, minRun = rule.minRun ?? 4, maxRow = rule.maxRowHeight ?? 96, tol = rule.tolerance ?? tolerance;
+        const scrolls = n => /^(auto|scroll)$/.test(cs(n).overflowY);
+        let measured = 0;
+        for (const pane of nodes) {
+          const p = pane.getBoundingClientRect();
+          if (!visible(pane) || p.height < 120) continue;
+          measured++;
+          // The scroll owner is the pane or its tallest scrolling descendant; without
+          // one, the pane's own scroll height is what a reader has to get through.
+          const owners = [pane, ...pane.querySelectorAll('*')].filter(n => scrolls(n) && visible(n) && n.clientHeight > 40);
+          const owner = owners.sort((a, b) => b.scrollHeight - a.scrollHeight)[0] ?? pane;
+          const view = Math.min(owner.clientHeight || p.height, p.height), content = Math.max(owner.scrollHeight, owner === pane ? 0 : pane.scrollHeight);
+          const ratio = view > 0 ? content / view : 0;
+          samples.push({ rule: rule.id, selector: selectorOf(pane), property: 'pane content / visible height', actual: Math.round(ratio * 10) / 10, expected: { max: maxScreens } });
+          if (ratio > maxScreens + tol / Math.max(view, 1)) add(rule, owner, 'pane content height', `<= ${maxScreens}x the pane's ${Math.round(view)}px visible height (put facets in tabs, cap feeds)`, `${Math.round(content)}px of content, ${Math.round(ratio * 10) / 10}x the visible height`);
+          // A run of consecutive sibling rows that read the same.
+          const flagged = [];
+          for (const list of [pane, ...pane.querySelectorAll('*')]) {
+            if (list.children.length < minRun || flagged.some(f => f.contains(list))) continue;
+            let run = [], worst = [];
+            const flush = () => { if (run.length > worst.length) worst = run; run = []; };
+            for (const child of list.children) {
+              const b = child.getBoundingClientRect();
+              const text = visible(child) && b.height > 0 && b.height <= maxRow ? (child.innerText ?? '').replace(/\s+/g, ' ').trim().toLowerCase() : '';
+              if (text.length < 3) { flush(); continue; }
+              const last = run[run.length - 1];
+              if (last && (last.text !== text || Math.abs(last.h - b.height) > 2)) flush();
+              run.push({ el: child, text, h: b.height });
+            }
+            flush();
+            if (worst.length >= minRun) {
+              flagged.push(list);
+              add(rule, worst[0].el, 'identical row run', `< ${minRun} consecutive identical rows (group them into one row with a count, or hide routine events)`, `${worst.length} rows reading "${snippet(worst[0].el.innerText.replace(/\s+/g, ' ').trim())}"`);
+            }
+          }
+        }
+        coverage.at(-1).matched = measured;
+      }
       else if (rule.kind === 'text-fragmented') {
         // From the visual review (/iq/canary): a sentence whose words and
         // inline marks are direct items of a flex row breaks into columns —
