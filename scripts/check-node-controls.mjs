@@ -23,6 +23,19 @@
 
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { parseGuardArgs, readAllowlist } from './guard-cli.mjs';
+
+const USAGE = `Usage: ui-check-node-controls [--root <dir>]... [--allowlist <file>]
+
+Fails when a .tsx/.jsx file under the roots renders a raw <input>, <select> or
+<textarea> instead of the @connorhoehnslalom/ui-components forms/ composites.
+Allowlist lines are "<path> [maxCount]  # why"; with a count the entry is a
+ratchet (above fails, below asks you to lower it), without one any count passes.
+
+With no --root, scans this repo's src/components against the BASELINE in
+scripts/check-node-controls.mjs.`;
+
+const args = parseGuardArgs({ name: 'check-node-controls', scriptUrl: import.meta.url, usage: USAGE });
 
 const ROOT = 'src/components';
 const CONTROL_RE = /<(select|textarea|input)\b/g;
@@ -146,42 +159,52 @@ function stripComments(source) {
 
 const counts = new Map();
 
+// Consumer mode (--root): no library BASELINE; the --allowlist (if any) is the
+// whole exception list, keyed by the scanned path (root joined with relative).
+// `null` from readAllowlist means "any count" and becomes Infinity here.
+const allowlist = args.allowlistPath
+  ? Object.fromEntries([...readAllowlist(args.allowlistPath)].map(([f, n]) => [f, n ?? Infinity]))
+  : null;
+const LIMITS = allowlist ?? (args.custom ? {} : BASELINE);
+const LIMITS_FILE = args.allowlistPath ?? 'scripts/check-node-controls.mjs';
+const FIX_HINT = args.custom
+  ? 'Use Input, Select, Textarea, NumberInput, RadioGroup, Checkbox, Slider or ColorInput from @connorhoehnslalom/ui-components instead.'
+  : 'Use ConfigField + the forms/ composites (Input, Select, Textarea, NumberInput, RadioGroup) instead.';
+
 function walk(dir, prefix = '') {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
     if (entry.isDirectory()) {
-      if (entry.name !== '__tests__') walk(join(dir, entry.name), rel);
+      if (entry.name !== '__tests__' && entry.name !== 'node_modules') walk(join(dir, entry.name), rel);
       continue;
     }
-    if (!entry.name.endsWith('.tsx') || entry.name.endsWith('.stories.tsx')) continue;
+    if (!/\.[jt]sx$/.test(entry.name) || /\.stories\.[jt]sx$/.test(entry.name)) continue;
     const code = stripComments(readFileSync(join(dir, entry.name), 'utf8'));
     const n = [...code.matchAll(CONTROL_RE)].length;
     if (n > 0) counts.set(rel, n);
   }
 }
 
-walk(ROOT);
+if (args.custom) for (const root of args.roots) walk(root, join(root).replace(/\/$/, ''));
+else walk(ROOT);
 
 const errors = [];
 
 for (const [file, n] of [...counts].sort()) {
-  const allowed = BASELINE[file];
+  const allowed = LIMITS[file];
   if (allowed === undefined) {
-    errors.push(
-      `${file}: ${n} hand-rolled control(s). Use ConfigField + the forms/ composites ` +
-        `(Input, Select, Textarea, NumberInput, RadioGroup) instead.`,
-    );
+    errors.push(`${file}: ${n} hand-rolled control(s). ${FIX_HINT}`);
   } else if (n > allowed) {
     errors.push(`${file}: ${n} hand-rolled control(s), baseline allows ${allowed}. Do not add more.`);
   }
 }
 
-for (const [file, allowed] of Object.entries(BASELINE)) {
+for (const [file, allowed] of Object.entries(LIMITS)) {
   const n = counts.get(file) ?? 0;
-  if (n < allowed) {
+  if (n < allowed && allowed !== Infinity) {
     errors.push(
       `${file}: down to ${n} (baseline says ${allowed}) — nice. ` +
-        `Lower it to ${n} in scripts/check-node-controls.mjs${n === 0 ? ', or delete the entry.' : '.'}`,
+        `Lower it to ${n} in ${LIMITS_FILE}${n === 0 ? ', or delete the entry.' : '.'}`,
     );
   }
 }
@@ -196,8 +219,8 @@ if (errors.length > 0) {
 }
 
 console.log(
-  Object.keys(BASELINE).length === 0
-    ? 'ok check-node-controls: pass (no hand-rolled controls under pipelines/).'
+  Object.keys(LIMITS).length === 0
+    ? 'ok check-node-controls: pass (no hand-rolled controls).'
     : `ok check-node-controls: pass (${counts.size} file(s) with justified raw ` +
-      `control(s), ${total} total — see BASELINE for why each is exempt).`,
+      `control(s), ${total} total — see ${args.custom ? LIMITS_FILE : 'BASELINE'} for why each is exempt).`,
 );

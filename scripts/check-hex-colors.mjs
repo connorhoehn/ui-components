@@ -19,8 +19,23 @@
 
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { parseGuardArgs, readAllowlist } from './guard-cli.mjs';
 
-const ROOTS = ['src/components', 'src/theme', 'src/renderers', 'demo/src'];
+const USAGE = `Usage: ui-check-hex-colors [--root <dir>]... [--allowlist <file>]
+
+Fails when a .ts/.tsx/.js/.jsx file under the roots uses an arbitrary-value hex
+colour utility (bg-[#2563eb], border-l-[#fff], ...) that the theme cannot
+re-tone. Allowlist lines are "<path> [maxCount]  # why"; with a count the entry
+is a ratchet, without one any count passes.
+
+With no --root, scans this repo's src/components, src/theme, src/renderers and
+demo/src with zero tolerance.`;
+
+const args = parseGuardArgs({ name: 'check-hex-colors', scriptUrl: import.meta.url, usage: USAGE });
+
+const ROOTS = args.custom ? args.roots : ['src/components', 'src/theme', 'src/renderers', 'demo/src'];
+// Consumers also write plain JS/JSX; the repo's own roots are TypeScript only.
+const EXT_RE = args.custom ? /\.[jt]sx?$/ : /\.tsx?$/;
 // The optional middle segment matters: `border-l-[#22c55e]` and
 // `ring-offset-[#fff]` are colour utilities too, and an earlier version of
 // this regex required the hex to follow the prefix DIRECTLY. That let 19
@@ -33,7 +48,10 @@ const HEX_RE =
 // either mapped to an existing token/tone role, or the missing family was
 // added first (--color-code-* for the terminal/debugger surfaces,
 // --color-video-* for the video stage). Zero tolerance from here.
-const BASELINE = {};
+const BASELINE = args.allowlistPath
+  ? Object.fromEntries([...readAllowlist(args.allowlistPath)].map(([f, n]) => [f, n ?? Infinity]))
+  : {};
+const BASELINE_FILE = args.allowlistPath ?? 'scripts/check-hex-colors.mjs';
 
 const counts = new Map();
 
@@ -44,7 +62,7 @@ function walk(dir) {
       if (entry.name !== '__tests__' && entry.name !== 'node_modules') walk(path);
       continue;
     }
-    if (!entry.name.endsWith('.tsx') && !entry.name.endsWith('.ts')) continue;
+    if (!EXT_RE.test(entry.name)) continue;
     const n = [...readFileSync(path, 'utf8').matchAll(HEX_RE)].length;
     if (n > 0) counts.set(path, n);
   }
@@ -63,10 +81,10 @@ for (const [file, n] of [...counts].sort()) {
 }
 for (const [file, allowed] of Object.entries(BASELINE)) {
   const n = counts.get(file) ?? 0;
-  if (n < allowed) {
+  if (n < allowed && allowed !== Infinity) {
     errors.push(
       `${file}: down to ${n} (baseline says ${allowed}) — nice. ` +
-        `Lower it in scripts/check-hex-colors.mjs${n === 0 ? ', or delete the entry.' : '.'}`,
+        `Lower it in ${BASELINE_FILE}${n === 0 ? ', or delete the entry.' : '.'}`,
     );
   }
 }
