@@ -33,3 +33,15 @@ describe('StatusPill', () => {
     expect(screen.getByTestId('p').querySelector('.rounded-full.relative')).toBeNull();
   });
 });
+
+describe('StatusPill stays on one line', () => {
+  it('never wraps its label and ellipsizes it with the full text in a title', () => {
+    render(<div className="w-12"><StatusPill state="success" variant="label" label="Completed" data-testid="pill" /></div>);
+    const pill = screen.getByTestId('pill');
+    expect(pill).toHaveClass('whitespace-nowrap', 'min-w-0', 'max-w-full');
+    const label = pill.querySelector('[data-status-pill-label]')!;
+    expect(label).toHaveClass('truncate');
+    expect(label).toHaveAttribute('title', 'Completed');
+    expect(pill).toHaveTextContent('Completed');
+  });
+});
