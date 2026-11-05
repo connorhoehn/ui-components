@@ -3,15 +3,15 @@ import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
 import { i as a } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as o } from "./cn-D4QmbyEy.js";
 import { n as s } from "./Button-C-I3BxWI.js";
-import { l as c } from "./Text-Bges3p6o.js";
+import { l as c } from "./Text-BEZVdfww.js";
 import { t as l } from "./Modal-PO0F6rAp.js";
-import { t as u } from "./Input-B0LB5k_L.js";
-import { t as d } from "./Select-BFyECVVL.js";
-import { t as f } from "./EmptyState-D5ucMp2y.js";
-import { t as p } from "./Textarea-BwvE1HPn.js";
-import { t as m } from "./PageHeader-Cdrkk_kV.js";
-import { t as h } from "./Checkbox-Dvt09s3H.js";
-import { G as g, H as _, U as v, W as y } from "./renderers-DarOLZU_.js";
+import { t as u } from "./Input-Brvp1kPv.js";
+import { t as d } from "./Select-CpZyUWay.js";
+import { t as f } from "./EmptyState-pOG782nO.js";
+import { t as p } from "./Textarea-CvdLeuO_.js";
+import { t as m } from "./PageHeader-ChvZc2o0.js";
+import { t as h } from "./Checkbox-BW-hyqCM.js";
+import { G as g, H as _, U as v, W as y } from "./renderers-C5HikurY.js";
 import { useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 import { DndContext as O, KeyboardSensor as k, PointerSensor as A, closestCorners as j, useSensor as M, useSensors as N } from "@dnd-kit/core";
@@ -52,12 +52,14 @@ function H({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, o
 			className: "flex gap-2",
 			children: [
 				/* @__PURE__ */ E("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: i,
 					className: "px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-neutral",
 					children: "Cancel"
 				}),
 				c && /* @__PURE__ */ E("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: c,
 					title: "Download JSON Schema",
@@ -74,11 +76,13 @@ function H({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, o
 		}), /* @__PURE__ */ D("div", {
 			className: "flex gap-2",
 			children: [e > 1 && /* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: a,
 				className: "px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field",
 				children: "← Back"
 			}), /* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": "wizard-next",
 				onClick: s,
@@ -99,6 +103,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 			/* @__PURE__ */ D("div", {
 				className: "flex flex-col gap-px shrink-0",
 				children: [/* @__PURE__ */ E("button", {
+					"data-ui-part": "",
 					type: "button",
 					disabled: r === 0,
 					onClick: l,
@@ -107,6 +112,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 					className: o("px-1 py-px text-[10px] leading-none font-semibold rounded-[7px] font-inherit border-none bg-transparent", r === 0 ? "text-neutral opacity-50 cursor-not-allowed" : "text-neutral cursor-pointer"),
 					children: "▲"
 				}), /* @__PURE__ */ E("button", {
+					"data-ui-part": "",
 					type: "button",
 					disabled: r === i - 1,
 					onClick: f,
@@ -141,6 +147,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				}))
 			}),
 			/* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: p,
 				"data-testid": `field-required-${n.id}`,
@@ -149,6 +156,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				children: "Required"
 			}),
 			/* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: m,
 				"data-testid": `field-collapsed-${n.id}`,
@@ -157,6 +165,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				children: "Collapsed"
 			}),
 			/* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: c,
 				"data-testid": `field-remove-${n.id}`,
@@ -221,6 +230,7 @@ function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 				className: "flex items-center gap-2 mb-2.5",
 				children: [
 					/* @__PURE__ */ E("button", {
+						"data-ui-part": "",
 						type: "button",
 						"data-testid": `page-drag-handle-${e.id}`,
 						...m,
@@ -230,6 +240,7 @@ function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						children: "⋮⋮"
 					}),
 					/* @__PURE__ */ E("button", {
+						"data-ui-part": "",
 						type: "button",
 						"data-testid": `page-up-${e.id}`,
 						disabled: t === 0,
@@ -238,6 +249,7 @@ function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						children: "▲"
 					}),
 					/* @__PURE__ */ E("button", {
+						"data-ui-part": "",
 						type: "button",
 						"data-testid": `page-down-${e.id}`,
 						disabled: t === n - 1,
@@ -260,6 +272,7 @@ function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						onFocus: () => i(e.id)
 					}),
 					/* @__PURE__ */ E("button", {
+						"data-ui-part": "",
 						type: "button",
 						"data-testid": `page-remove-${e.id}`,
 						disabled: n <= 1,
@@ -303,6 +316,7 @@ function K({ sectionId: e, page: t, idx: n, pages: r, renderRow: i, moveSectionT
 		className: "flex items-center gap-1.5",
 		children: [
 			/* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": `section-drag-handle-${e}`,
 				...o,
@@ -494,6 +508,7 @@ function q({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 					})
 				}),
 				/* @__PURE__ */ E("button", {
+					"data-ui-part": "",
 					type: "button",
 					"data-testid": "add-page",
 					onClick: _,
@@ -523,6 +538,7 @@ function q({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 			}), /* @__PURE__ */ E("div", {
 				className: "flex flex-col gap-1.5",
 				children: e().map((e) => /* @__PURE__ */ D("button", {
+					"data-ui-part": "",
 					"data-testid": `add-field-${e.type}`,
 					type: "button",
 					onClick: () => u(e.type),
@@ -613,6 +629,7 @@ function Y({ fields: e, setFields: n }) {
 			className: "text-[13px] text-neutral mb-4",
 			children: "Configure which view modes each field appears in and which renderer to use."
 		}), /* @__PURE__ */ D("table", {
+			"data-ui-part": "",
 			className: "w-full border-collapse text-[13px]",
 			children: [/* @__PURE__ */ E("thead", { children: /* @__PURE__ */ D("tr", {
 				className: "bg-surface-panel",
@@ -777,6 +794,7 @@ function ee({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, la
 				}, e))
 			}),
 			s ? /* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": `${i}-installed-${e.id}`,
 				onClick: c ? () => c(e) : void 0,
@@ -785,6 +803,7 @@ function ee({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, la
 				className: o("mt-auto py-1.5 px-2.5 text-xs font-semibold rounded-md border border-border bg-surface-inset text-text-secondary", r || !c ? "cursor-default" : "cursor-pointer hover:text-text-primary"),
 				children: c ? "Added · Open" : "Added"
 			}) : /* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": `${i}-use-${e.id}`,
 				onClick: () => t(e),
@@ -809,6 +828,7 @@ function Q({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearc
 			"aria-label": "Filter by category",
 			className: "flex flex-wrap gap-1.5 mb-2.5",
 			children: [/* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": `${a}-cat-all`,
 				"aria-pressed": h === "All",
@@ -816,6 +836,7 @@ function Q({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearc
 				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer", h === "All" ? "bg-primary text-on-primary" : "bg-surface-hover text-text-secondary"),
 				children: "All"
 			}), _.map((e) => /* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": `${a}-cat-${Z(e)}`,
 				"aria-pressed": h === e,
@@ -918,11 +939,13 @@ function te({ typeName: e, onConfirm: t, onCancel: n }) {
 		maxWidth: 380,
 		backdropTestId: "delete-modal",
 		footer: /* @__PURE__ */ D(T, { children: [/* @__PURE__ */ E("button", {
+			"data-ui-part": "",
 			"data-testid": "cancel-delete",
 			onClick: n,
 			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer",
 			children: "Cancel"
 		}), /* @__PURE__ */ E("button", {
+			"data-ui-part": "",
 			"data-testid": "confirm-delete",
 			onClick: t,
 			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer",
@@ -966,6 +989,7 @@ function ne({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocum
 				})]
 			}),
 			i && /* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				"data-testid": `new-doc-from-type-${e.id}`,
 				onClick: (e) => {
 					e.stopPropagation(), i();
@@ -975,6 +999,7 @@ function ne({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocum
 				children: "New"
 			}),
 			/* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				"data-testid": `edit-type-${e.id}`,
 				onClick: n,
 				title: "Edit type",
@@ -982,6 +1007,7 @@ function ne({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocum
 				children: "Edit"
 			}),
 			/* @__PURE__ */ E("button", {
+				"data-ui-part": "",
 				"data-testid": `delete-type-${e.id}`,
 				onClick: (e) => {
 					e.stopPropagation(), r();
@@ -1115,6 +1141,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 								className: "text-text-tertiary text-[13px]",
 								children: U ? "No saved templates yet. Add one from the starters below." : "No types yet."
 							}), !U && /* @__PURE__ */ E("button", {
+								"data-ui-part": "",
 								"data-testid": "empty-browse-types-btn",
 								onClick: () => T(!0),
 								className: "bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2",
@@ -1161,6 +1188,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 						title: l.length > 0 ? "Select a type to edit" : "No document types yet",
 						description: l.length > 0 ? "Choose a type from the list to edit its fields — or add another known type below." : "Start from a known type below. It installs as your own type, and you can change any of it afterwards.",
 						action: /* @__PURE__ */ E("button", {
+							"data-ui-part": "",
 							"data-testid": "idle-create-btn",
 							onClick: N,
 							className: "px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer",

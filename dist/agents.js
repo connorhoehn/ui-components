@@ -1,8 +1,8 @@
 import { t as e } from "./cn-D4QmbyEy.js";
-import { t } from "./Banner-CfPGjbpw.js";
-import { t as n } from "./Input-B0LB5k_L.js";
+import { t } from "./Banner-400g6E1q.js";
+import { t as n } from "./Input-Brvp1kPv.js";
 /* empty css               */
-import { t as r } from "./TraceTimeline-BEuSquSk.js";
+import { t as r } from "./TraceTimeline-rNEBM3ZD.js";
 import { createContext as i, useCallback as a, useContext as o, useEffect as s, useMemo as c, useRef as l, useState as u } from "react";
 import { Fragment as d, jsx as f, jsxs as p } from "react/jsx-runtime";
 import { Background as m, Controls as h, MarkerType as g, ReactFlow as _ } from "@xyflow/react";
@@ -547,6 +547,7 @@ function N({ agentId: t, trace: n, onBack: i, className: a }) {
 				className: "flex items-start justify-between",
 				children: [/* @__PURE__ */ p("div", { children: [
 					i && /* @__PURE__ */ f("button", {
+						"data-ui-part": "",
 						className: "text-xs text-info-fg hover:underline mb-2 block",
 						onClick: i,
 						children: "← Back"
@@ -651,6 +652,7 @@ function N({ agentId: t, trace: n, onBack: i, className: a }) {
 			className: "text-text-tertiary text-sm",
 			children: ["Agent not found: ", t]
 		}), i && /* @__PURE__ */ f("button", {
+			"data-ui-part": "",
 			className: "mt-2 text-xs text-info-fg hover:underline",
 			onClick: i,
 			children: "Back to dashboard"
@@ -1201,6 +1203,7 @@ function q({ toolCall: t, className: n }) {
 	return /* @__PURE__ */ p("div", {
 		className: e("border rounded text-xs font-mono overflow-hidden", t.status === "streaming" && "border-info-border bg-info-bg/50", t.status === "completed" && "border-border bg-surface-panel", t.status === "error" && "border-danger-border bg-danger-bg/50", n),
 		children: [/* @__PURE__ */ p("button", {
+			"data-ui-part": "",
 			className: "flex items-center gap-2 w-full px-2 py-1.5 text-left hover:bg-surface-hover/50 transition-colors",
 			onClick: () => i(!r),
 			children: [
@@ -1263,6 +1266,7 @@ function Y({ reasoning: t, isStreaming: n = !1, defaultOpen: r = !1, className: 
 	return /* @__PURE__ */ p("div", {
 		className: e("border border-dashed border-border-emphasis py-2 px-2.5 rounded max-w-full mb-1.5", i),
 		children: [/* @__PURE__ */ p("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => o((e) => !e),
 			className: "flex items-center w-full bg-transparent border-none p-0 cursor-pointer gap-1.5 text-left",
@@ -1415,10 +1419,12 @@ function Z({ messages: t, isStreaming: r, streamingText: i = "", activeToolCalls
 					placeholder: r ? "Waiting for response..." : h,
 					className: e("flex-1 rounded-lg", r && "bg-surface-panel text-text-tertiary")
 				}), r && m ? /* @__PURE__ */ f("button", {
+					"data-ui-part": "",
 					onClick: m,
 					className: "text-sm px-4 py-2.5 bg-danger text-white rounded-lg hover:bg-danger transition-colors font-medium",
 					children: "Stop"
 				}) : /* @__PURE__ */ f("button", {
+					"data-ui-part": "",
 					onClick: S,
 					disabled: !_.trim() || r,
 					className: e("text-sm px-4 py-2.5 rounded-lg transition-colors font-medium", !_.trim() || r ? "bg-surface-hover text-text-tertiary cursor-default" : "bg-info text-white hover:bg-info cursor-pointer"),
@@ -1447,6 +1453,7 @@ function oe({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 				/* @__PURE__ */ f("div", {
 					className: "flex-1 py-2 overflow-y-auto",
 					children: i.map((t) => /* @__PURE__ */ p("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => {
 							o(t.id), y(), c([]);
@@ -1497,6 +1504,7 @@ function oe({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 				/* @__PURE__ */ f("div", {
 					className: "py-2 px-4 border-t border-border",
 					children: /* @__PURE__ */ f("button", {
+						"data-ui-part": "",
 						onClick: () => {
 							y(), c([]);
 						},
@@ -1713,11 +1721,13 @@ function de({ agents: t, metricsById: r, filters: i = ue, selectedId: a = null, 
 				role: "group",
 				"aria-label": "Filter by status",
 				children: [/* @__PURE__ */ f("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => g(null),
 					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors", h === null ? "border-surface-inverse bg-surface-inverse text-text-inverse" : "border-border-emphasis bg-surface text-text-secondary hover:bg-surface-panel"),
 					children: "All"
 				}), i.map((t) => /* @__PURE__ */ f("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => g(h === t ? null : t),
 					"aria-pressed": h === t,
@@ -1767,6 +1777,7 @@ function $({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, em
 			return /* @__PURE__ */ p("li", {
 				className: e("group flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors", a ? "border-info bg-info-bg/60" : "border-border bg-surface hover:border-border-emphasis hover:bg-surface-panel"),
 				children: [/* @__PURE__ */ p("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: r ? () => r(t) : void 0,
 					disabled: !r,
@@ -1790,6 +1801,7 @@ function $({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, em
 						})
 					]
 				}), i && /* @__PURE__ */ f("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => i(t),
 					"aria-label": `Delete conversation ${o}`,
@@ -1916,6 +1928,7 @@ function ge({ entries: t, className: r, onDelete: i }) {
 						"session",
 						"long-term"
 					].map((t) => /* @__PURE__ */ f("button", {
+						"data-ui-part": "",
 						className: e("px-2 py-0.5 transition-colors", a === t ? "bg-info text-white" : "text-neutral hover:bg-surface-hover"),
 						onClick: () => o(t),
 						children: t
@@ -1949,6 +1962,7 @@ function ge({ entries: t, className: r, onDelete: i }) {
 									})
 								]
 							}), i && /* @__PURE__ */ f("button", {
+								"data-ui-part": "",
 								className: "text-[10px] text-danger-fg hover:text-danger-fg opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity",
 								onClick: () => i(t.id),
 								children: "delete"

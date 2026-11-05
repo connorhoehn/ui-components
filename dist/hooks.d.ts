@@ -575,6 +575,8 @@ declare interface EphemeralReaction {
     timestamp: string;
 }
 
+export declare function fullscreenSupported(): boolean;
+
 /** Runtime configuration read from env vars */
 declare interface GatewayConfig {
     wsUrl: string;
@@ -1730,6 +1732,20 @@ declare interface UseActivityBusReturn {
       * empty because we do not know, not because they are empty.
       */
      loadError: string | null;
+ }
+
+ export declare function useFullscreen(target: RefObject<HTMLElement | null>): UseFullscreenReturn;
+
+ export declare interface UseFullscreenReturn {
+     /** The element is the document's full-screen element right now. */
+     active: boolean;
+     /** The Fullscreen API exists here and the document allows it (false when SSR). */
+     supported: boolean;
+     /** The last request was refused or threw; cleared by the next request. */
+     error: boolean;
+     enter: () => Promise<void>;
+     exit: () => Promise<void>;
+     toggle: () => Promise<void>;
  }
 
  export declare function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn;

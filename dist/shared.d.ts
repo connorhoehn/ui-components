@@ -1171,6 +1171,14 @@ export declare interface CollectionAction {
     'data-testid'?: string;
 }
 
+/** What an empty collection says. A plain node renders as given. */
+export declare interface CollectionEmpty {
+    title: string;
+    description?: ReactNode;
+    /** A button ("New connector"). */
+    action?: ReactNode;
+}
+
 export declare interface CollectionFilter {
     id: string;
     label: string;
@@ -1181,17 +1189,65 @@ export declare interface CollectionFilter {
     emptyValue?: string;
 }
 
-/** Collection layout policy belongs here. A page supplies content and state;
- * it does not reproduce Stack/PageHeader/Toolbar spacing at each route. */
-export declare function CollectionPage({ title, description, headerActions, toolbar, back, children, className, ...rest }: CollectionPageProps): JSX.Element;
+/**
+ * Use this when a page IS a list of records: header, `CollectionToolbar`, a striped `DataTable` (or any body), built-in loading/empty/error states, and the selected row in a `SidePane`.
+ *
+ * Fills its parent (`h-full min-h-0`); the body scrolls, the header and toolbar do not.
+ * Collection layout policy belongs here: a page supplies content and state, it does not
+ * reproduce Stack/PageHeader/Toolbar spacing at each route.
+ *
+ * @example
+ * <CollectionPage gutter="page" title="Connectors" breadcrumbs={trail}
+ *   toolbar={{ label: 'Connector filters', search: { value: q, onChange: setQ } }}
+ *   table={{ data: rows, columns, keyField: (r) => r.id, onRowClick: (r) => setSelected(r.id) }}
+ *   loading={isLoading} error={error?.message} onRetry={refetch}
+ *   empty={{ title: 'No connectors yet', action: <Button>New connector</Button> }}
+ *   detail={selected ? { title: selected.name, onClose: () => setSelected(null), content: <ConnectorSummary c={selected} /> } : null} />
+ */
+export declare function CollectionPage<T>({ title, description, headerActions, toolbar, back, children, breadcrumbs, badge, density, table, loading, error, onRetry, empty, isEmpty, detail, gutter, className, ...rest }: CollectionPageProps<T>): JSX.Element;
 
-export declare interface CollectionPageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
+/** The selected row's pane: a `SidePane` registration plus its body. */
+export declare type CollectionPageDetail = Omit<SidePaneProps, 'children'> & {
+    content: ReactNode;
+};
+
+export declare interface CollectionPageProps<T = unknown> extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
     title: string;
     description?: string;
     headerActions?: ReactNode;
     toolbar?: CollectionToolbarProps;
-    children: ReactNode;
+    /** Any body. Optional since the template gained `table`; one of the two is expected. */
+    children?: ReactNode;
     back?: PageHeaderProps['back'];
+    /** The trail as the header's first row. */
+    breadcrumbs?: BreadcrumbItem[];
+    badge?: ReactNode;
+    /** Header density; default `compact`. */
+    density?: Density;
+    /**
+     * The body as a striped `DataTable` (striping on unless the props say otherwise).
+     * Wins over `children`. Its `data.length === 0` is the empty state.
+     */
+    table?: DataTableProps<T>;
+    /** Loading: the table's skeleton rows, or a `LoadingState` for a children body. */
+    loading?: boolean;
+    /** A failed load. A string renders as an `ErrorState` (with Retry when `onRetry`); a node renders as given. */
+    error?: ReactNode;
+    onRetry?: () => void;
+    /** The empty state. Shown when `table.data` is empty, or when `isEmpty` for a children body. */
+    empty?: CollectionEmpty | ReactNode;
+    /** A children body has no rows (a table body works this out from `table.data`). */
+    isEmpty?: boolean;
+    /**
+     * The selected row, in a `SidePane` beside the collection. `null`: no row selected
+     * (pass `null` rather than omitting it, so a page without a shell host keeps its split).
+     */
+    detail?: CollectionPageDetail | null;
+    /**
+     * `none` (default, the original contract): the host owns the gutter. `page`:
+     * header, toolbar and body sit at `--ui-page-gutter`. New pages want `page`.
+     */
+    gutter?: PageGutter;
 }
 
 /**
@@ -1531,6 +1587,53 @@ export declare interface ContainerDensityState<T extends HTMLElement> {
 /** Two stacked pages: "make a copy". Since 2.390.3. */
 export declare function CopyIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare type DashboardColumns = 2 | 3 | 4;
+
+/**
+ * Use this when a page is an at-a-glance overview: a `StatStrip`/`KPIGrid` row on top, then a responsive grid of `TitledFrame` panels that fits 1280×800 without page scroll.
+ *
+ * Fills its parent (`h-full min-h-0`); each panel body scrolls inside its frame.
+ *
+ * @example
+ * <DashboardPage title="Observability" breadcrumbs={trail}
+ *   stats={[{ label: 'Invocations', value: '12.4k' }, { label: 'Error rate', value: '0.8%', tone: 'danger' }]}
+ *   panels={[
+ *     { id: 'latency', title: 'Latency p95', span: 2, content: <Chart … /> },
+ *     { id: 'errors', title: 'Recent errors', content: <EventList … /> },
+ *   ]} />
+ */
+export declare function DashboardPage({ title, description, breadcrumbs, actions, badge, back, density, stats, kpis, panels, columns, children, gutter, className, 'data-testid': testId, }: DashboardPageProps): JSX.Element;
+
+export declare interface DashboardPageProps extends PageTemplateHeaderProps {
+    /** The stat row as data — drawn as a `StatStrip`. */
+    stats?: StatStripItem[];
+    /** The stat row as a node (a `KPIGrid` of `StatCard`s). Wins over `stats`. */
+    kpis?: ReactNode;
+    /** The panel grid. */
+    panels?: DashboardPanel[];
+    /** Columns at `lg` (≥1024px). Default 3; `md` is always 2, below it 1. */
+    columns?: DashboardColumns;
+    /** Instead of `panels`: any grid children (`TitledFrame`s). */
+    children?: ReactNode;
+    /** Default `page` — `--ui-page-gutter` around header, stats and grid. */
+    gutter?: PageGutter;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One panel of the grid. */
+export declare interface DashboardPanel {
+    id: string;
+    /** The frame's title, in its top border. */
+    title: string;
+    /** A control in the title row (a range menu, "View all"). */
+    action?: ReactNode;
+    /** Columns this panel spans at `lg`. Default 1. */
+    span?: 1 | 2 | 3;
+    /** The panel body. It scrolls inside the frame. */
+    content: ReactNode;
+}
+
 export declare const DATA_ACCENT_SLOTS: readonly DataAccentSlot[];
 
 /** A slot number, or any CSS colour value (`var(--color-x)`, `#2563eb`, `teal`). */
@@ -1608,6 +1711,10 @@ export declare interface DataTableProps<T> {
      * reads as the darker row — a stripe that fights the hover state is worse
      * than no stripe, because it makes the row under the pointer ambiguous.
      * Both are tokens, so the relationship holds in dark mode too.
+     *
+     * Default `true` since 2.501.0 (was `false`): an unstriped wide table is
+     * the default nobody should get by accident. Pass `striped={false}` to opt
+     * out, e.g. for a two-row summary table.
      */
     striped?: boolean;
     /**
@@ -1689,6 +1796,62 @@ export declare interface DetailHeaderProps {
     'data-testid'?: string;
 }
 
+/**
+ * Use this when a page shows one record: `DetailHeader` (title, badge, meta, actions, trail), `Tabs` for its sections instead of a stack of Cards, and an optional `ContextColumn` on the right.
+ *
+ * Fills its parent (`h-full min-h-0`); each tab body scrolls internally.
+ *
+ * @example
+ * <DetailPage title={run.name} badge={<StatusPill status={run.status} />} breadcrumbs={trail}
+ *   meta={<MetaLine items={[run.agent, run.startedAt]} />} actions={<Button>Re-run</Button>}
+ *   tabs={[
+ *     { id: 'summary', label: 'Summary', content: <RunSummary run={run} /> },
+ *     { id: 'trace', label: 'Trace', badge: run.spans.length, content: <TraceView spans={run.spans} /> },
+ *   ]}
+ *   aside={<ContextColumn … />} />
+ */
+export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, tabs, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, }: DetailPageProps): JSX.Element;
+
+export declare interface DetailPageProps {
+    /** What the record is. */
+    title: ReactNode;
+    /** Beside the title — a status pill. */
+    badge?: ReactNode;
+    /** One line of prose under the title. */
+    description?: ReactNode;
+    /** The metadata line (a `MetaLine`). */
+    meta?: ReactNode;
+    /** Right of the header: buttons, a menu. */
+    actions?: ReactNode;
+    /** The trail above the header. */
+    breadcrumbs?: BreadcrumbItem[];
+    /** The record's sections. With none, `children` is the one body. */
+    tabs?: DetailPageTab[];
+    /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
+    activeTab?: string;
+    onTabChange?: (id: string) => void;
+    /** The body when there are no tabs. */
+    children?: ReactNode;
+    /** Right context column (a `ContextColumn`), full height beside header and body. */
+    aside?: ReactNode;
+    /** Default `page` — header, tabs and bodies at `--ui-page-gutter`. */
+    gutter?: PageGutter;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One section of the record, drawn as a tab. */
+export declare interface DetailPageTab {
+    id: string;
+    label: ReactNode;
+    /** A count or chip after the label. */
+    badge?: ReactNode;
+    icon?: ReactNode;
+    disabled?: boolean;
+    /** The section body. Only the active tab's body is mounted. */
+    content: ReactNode;
+}
+
 export declare function DetailSection({ title, as: Heading, hint, actions, first, variant, size: sizeProp, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
 
 export declare interface DetailSectionProps {
@@ -1704,9 +1867,11 @@ export declare interface DetailSectionProps {
     /**
      * `label` (default): a small uppercase caption under a hairline, for a
      * drawer or side panel. `heading` (since 2.386.15): a 16px sentence-case
-     * heading with no rule, for a document-like body (a work item's Brief); its
-     * `actions` stay quiet until the section is hovered or focused (always shown
-     * where there is no hover).
+     * heading for a document-like body (a work item's Brief); its `actions`
+     * stay quiet until the section is hovered or focused (always shown where
+     * there is no hover). Since 2.501.0 the `heading` variant draws the same
+     * leading hairline as `label` (suppressed by `first`): stacked heading
+     * sections with no rule read as one long section.
      */
     variant?: 'label' | 'heading';
     /**
@@ -2149,7 +2314,7 @@ export declare interface DropdownMenuSection {
     'data-testid'?: string;
 }
 
-export declare function EditableHeading({ value, onCommit, placeholder, size, readOnly, editLabel, className, 'data-testid': testId, }: EditableHeadingProps): JSX.Element;
+export declare function EditableHeading({ value, onCommit, placeholder, size, readOnly, editLabel, as: Tag, revealOnHover, className, 'data-testid': testId, }: EditableHeadingProps): JSX.Element;
 
 export declare interface EditableHeadingProps {
     value: string;
@@ -2163,6 +2328,19 @@ export declare interface EditableHeadingProps {
     readOnly?: boolean;
     /** Accessible name of the pencil button. Default `Rename`. */
     editLabel?: string;
+    /**
+     * The element the text renders as. Default `span`; a page title passes
+     * `h1` so the page keeps its one heading while the title stays renameable.
+     * Since 2.500.3.
+     */
+    as?: 'span' | 'h1' | 'h2' | 'h3';
+    /**
+     * Keep the pencil out of the way until the pointer is over the heading or
+     * focus is inside it. A page title that is read far more often than it is
+     * renamed wants the quiet form; a drawer title keeps the pencil standing.
+     * Since 2.500.3.
+     */
+    revealOnHover?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -2408,6 +2586,106 @@ export declare interface ExpertSkillMatch {
      * exactly the reading this card exists to avoid.
      */
     strength?: number;
+}
+
+declare interface ExplorerLayoutProps {
+    /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
+    rail: ReactNode;
+    /** The main pane. */
+    children: ReactNode;
+    /** Optional right-hand context bar. Stacks below the pane under `2xl`, sits beside it at `2xl` and up. */
+    aside?: ReactNode;
+    /**
+     * Rail width. `md` is the 300px agentcore measured against; `xs` is 220px,
+     * the Org rail's own width (SubNavLayout's default), for a documents rail
+     * that should sit at it (since 2.407.33); `sm` is 240px for
+     * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
+     * (the Documents Work column, measured against the redesign's 370px); `ms`
+     * is 264px for a one-line title list (the Initiatives v2 rail, since 2.392.0).
+     */
+    railWidth?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+    /** Opt-in adjustable rail. Width is remembered in pixels when a storage key is supplied. */
+    railResize?: {
+        minPx?: number;
+        maxPx?: number;
+        storageKey?: string;
+    };
+    /**
+     * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
+     * tabs) that names what the rail, the pane and the aside are all looking at.
+     * It does not scroll; the columns below it keep their independent scrolling.
+     * Since 2.385.0.
+     */
+    header?: ReactNode;
+    /**
+     * A band over the PANE only — a crumb trail with the scope's controls
+     * ("Build › Distillation › Knowledge" · All repositories · Open Library).
+     * Unlike `header` it spans neither the rail (so the rail's own title keeps
+     * the top-left corner) nor the aside (so the aside's top row — a
+     * `ContextColumn`'s tabs — keeps the top of its own column). It does not
+     * scroll; the pane below it does. No border of its own: it reads as the top
+     * of the pane. Since 2.389.0; spans only the pane since 2.389.4 (it spanned
+     * pane + aside, and `ScopeHeader variant="crumbs"` controls, which hang
+     * into the record head below the band, landed on the aside's top row).
+     */
+    paneHeader?: ReactNode;
+    /**
+     * A band UNDER the pane only — a docked composer that must stay put while
+     * the pane scrolls. It does not scroll; the pane above it does. It spans
+     * the pane's column, never the rail or the aside (the same rule as
+     * `paneHeader`), and has no border of its own. Since 2.390.0.
+     */
+    paneFooter?: ReactNode;
+    /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
+    railCount?: number;
+    /** How `railCount` reads — see `WorkspaceRail.countStyle`. Default `chip`. Since 2.390.0. */
+    railCountStyle?: 'chip' | 'plain';
+    /**
+     * A back link over the rail's title — "‹ Initiatives" above "Work 11". See
+     * `WorkspaceRail.back`. Since 2.390.0.
+     */
+    railBack?: WorkspaceRailBack | null;
+    /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
+    railHeading?: 'compact' | 'prominent' | 'label' | 'caption';
+    /**
+     * The rail folded to a strip with one control that brings it back. For a
+     * surface that wants the width — a diagram, a wide table — the list of
+     * documents is worth giving up for a while. Controlled: the host owns the
+     * state (and typically remembers it).
+     */
+    railCollapsed?: boolean;
+    /** Present, the rail gets a fold control and the strip an unfold control. */
+    onToggleRail?: () => void;
+    /** What the rail holds, for the controls' accessible names. Default "the list". */
+    railLabel?: string;
+    /**
+     * The rail's name, in its header row — the same row the fold control sits
+     * in, so the rail is titled the way a `ContextColumn` on the other side is
+     * (its tabs live in the same h-9 row). Without it the row holds only the
+     * fold control, which reads as a stray button over the first section.
+     */
+    railTitle?: string;
+    /**
+     * Controls that belong to the rail as a whole — "new item", a filter —
+     * placed in the header row between the title and the fold control. The
+     * rail's own actions are not page chrome; putting them in a band above the
+     * frame left them at the window's inset while the rail sat flush below.
+     */
+    railActions?: ReactNode;
+    railHeader?: ReactNode;
+    railFooter?: ReactNode;
+    /**
+     * `stack` (default): the aside stacks below the pane under `2xl` and sits
+     * beside it from `2xl`. `beside`: always beside, at every width — for a pane
+     * whose bottom row must be the window's (an editor with a pinned composer);
+     * the host keeps the aside narrow (a `ContextColumn` strip) when space is
+     * short. Since 2.365.0.
+     */
+    asidePlacement?: 'stack' | 'beside';
+    /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
+    panePadding?: 'none' | 'md';
+    className?: string;
+    'data-testid'?: string;
 }
 
 /**
@@ -2831,6 +3109,21 @@ export declare interface FormWizardSection {
 
 /** A hooked arrow: forwarded — this came from somewhere else. */
 export declare function ForwardIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare function FullscreenToggle({ target, label, exitLabel, onChange, size, variant, 'data-testid': testId, ...rest }: FullscreenToggleProps & {
+    'data-testid'?: string;
+}): JSX.Element | null;
+
+export declare interface FullscreenToggleProps extends Omit<IconButtonProps, 'aria-label' | 'icon' | 'onClick' | 'onChange' | 'children'> {
+    /** The element to present full screen. */
+    target: RefObject<HTMLElement | null>;
+    /** Accessible name while not in full screen. Default `Full screen`. */
+    label?: string;
+    /** Accessible name while in full screen. Default `Exit full screen`. */
+    exitLabel?: string;
+    /** After the browser accepted or refused the request. */
+    onChange?: (active: boolean) => void;
+}
 
 export declare interface GalleryAsset {
     id: string;
@@ -3587,6 +3880,59 @@ export declare interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorE
 /** Three dots and three lines: a bulleted list. Since 2.386.0. */
 export declare function ListIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A list rail, as data: what `ListRailLayout` (and an `ExplorerLayout`) draws in its rail. */
+declare interface ListRail {
+    /**
+     * Caption title in the rail's head row ("All initiatives", "Pending"). Optional
+     * since 2.442.4: a rail whose group headings already name and count its rows
+     * omits it, so one rail carries one heading size.
+     */
+    title?: string;
+    /**
+     * The count after the title — the rows the host holds. Omit when unknown
+     * or capped (a full page has no honest total; say "100+" in the footer).
+     */
+    count?: number;
+    /** Head-row controls (a ⋯ sort/filter menu). */
+    actions?: ReactNode;
+    /** Under the head row: search, a filter popover, view links. */
+    header?: ReactNode;
+    /** The scrolling rows (a `GroupedList`, or the loading/empty/error state). */
+    body: ReactNode;
+    /** The fixed footer: "7 pending", "14 initiatives". */
+    footer?: ReactNode;
+    /** What the rail holds, for its accessible names ("initiatives"). */
+    label: string;
+    /** A parent link over the title ("‹ Initiatives"). */
+    back?: WorkspaceRailBack | null;
+}
+
+declare interface ListRailLayoutProps {
+    list: ListRail;
+    /** The band over the pane: the trail and the title (the content column's first rows). */
+    header?: ReactNode;
+    /** The record. It scrolls; the header and footer do not. */
+    children: ReactNode;
+    /** Right of the record (a `ContextColumn`), always beside it. */
+    aside?: ReactNode;
+    /** Docked under the record — a composer. */
+    footer?: ReactNode;
+    /**
+     * The reader's fold of the list (`useRailFold`). Given, the rail gets a «
+     * control and folds to a strip with one » control.
+     */
+    fold?: {
+        folded: boolean;
+        onToggle: () => void;
+    };
+    /** Rail width; default `ms` (264px, one-line rows). `md` for a two-line work list. */
+    railWidth?: ExplorerLayoutProps['railWidth'];
+    /** How the count reads; default `chip`. */
+    countStyle?: ExplorerLayoutProps['railCountStyle'];
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Nested lines: "list style" / multilevel list. Since 2.386.5. */
 export declare function ListStyleIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -3714,6 +4060,41 @@ export declare interface MarkdownViewProps {
 export declare type MarkdownViewScale = 'sm' | 'md' | 'lg';
 
 export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, paneFooter, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
+
+/**
+ * Use this when a page is a list you pick from and the picked record beside it: list rail on the left, header and record on the right, an empty-selection state.
+ *
+ * Fills its parent (`h-full min-h-0`); the rail rows and the record scroll independently.
+ *
+ * @example
+ * <MasterDetailPage title={selected?.name ?? 'Requests'} breadcrumbs={trail}
+ *   list={{ label: 'requests', title: 'Pending', count: rows.length, header: <SearchInput … />, body: <GroupedList … /> }}
+ *   emptyDetail={<EmptyState title="Pick a request" />}>
+ *   {selected && <RequestRecord request={selected} />}
+ * </MasterDetailPage>
+ */
+export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, list, children, emptyDetail, aside, footer, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
+
+export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
+    /** The rail, as data (`ListRail`): title, count, search header, rows body, footer, label. */
+    list: ListRail;
+    /** The selected record. `null`/`undefined`/`false`: nothing selected, `emptyDetail` shows. */
+    children?: ReactNode;
+    /** Shown when nothing is selected. Default: an EmptyState "Select an item from the list". */
+    emptyDetail?: ReactNode;
+    /** Right of the record (a `ContextColumn`). */
+    aside?: ReactNode;
+    /** Docked under the record (a composer). */
+    footer?: ReactNode;
+    /** The reader's fold of the rail (`useRailFold`). */
+    fold?: ListRailLayoutProps['fold'];
+    /** Rail width; default `ms` (264px). */
+    railWidth?: ListRailLayoutProps['railWidth'];
+    /** Default `page` — the record and header at `--ui-page-gutter`. */
+    gutter?: PageGutter;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface MasterDetailProps<T> {
     items: T[];
@@ -3845,6 +4226,9 @@ export declare interface MeterRowProps {
     'aria-label'?: string;
     'data-testid'?: string;
 }
+
+/** Four corners pulled inward: "leave full screen". Since 2.500.3. */
+export declare function MinimizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, dialogKind, }: ModalProps): ReactPortal | null;
 
@@ -4182,6 +4566,35 @@ export declare interface NumberInputProps {
     'data-testid'?: string;
 }
 
+/**
+ * Use this when a page is a form, an overview or any page no other template fits: trail, title/actions, and a body at the page gutter.
+ *
+ * Fills its parent (`h-full min-h-0`); only the body scrolls.
+ *
+ * @example
+ * <PageFrame title="New connector" breadcrumbs={[{ label: 'Connectors', href: '/connectors' }, { label: 'New' }]}
+ *   actions={<Button>Save</Button>}>
+ *   <FormField label="Name">{({ id }) => <Input id={id} value={name} onChange={(e) => setName(e.target.value)} />}</FormField>
+ * </PageFrame>
+ */
+export declare function PageFrame({ title, description, breadcrumbs, actions, badge, back, density, children, body, footer, gutter, bodyClassName, className, ...rest }: PageFrameProps): JSX.Element;
+
+export declare interface PageFrameProps extends PageTemplateHeaderProps, Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
+    /** The page content, at the page gutter. */
+    children: ReactNode;
+    /** `scroll` (default): the body scrolls. `fill`: the body is a fixed-height flex column whose children scroll themselves. */
+    body?: 'scroll' | 'fill';
+    /** Docked under the body, full width, never scrolls (a save bar, a composer). */
+    footer?: ReactNode;
+    /** Default `page` — the `--ui-page-gutter` inset on header and body. */
+    gutter?: PageGutter;
+    /** Extra classes for the body region. */
+    bodyClassName?: string;
+}
+
+/** `page`: the template draws the `--ui-page-gutter` inset. `none`: the host already did. */
+export declare type PageGutter = 'page' | 'none';
+
 export declare function PageHeader({ title, as: Heading, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
@@ -4270,7 +4683,7 @@ export declare interface PageHeaderTab {
     disabled?: boolean;
 }
 
-export declare function PageSection({ title, description, actions, children, count, countTone, empty, size: sizeProp, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
+export declare function PageSection({ title, description, actions, children, count, countTone, empty, size: sizeProp, divided, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
     title: string;
@@ -4312,8 +4725,32 @@ export declare interface PageSectionProps {
      * gap (2.441.5). An explicit size always wins, `lg` included.
      */
     size?: 'lg' | 'md' | 'sm';
+    /**
+     * Draw a token-coloured hairline (`border`) between the section's direct
+     * child groups, with `--ui-section-gap` above and below each rule, so a
+     * stack of groups reads as separate blocks rather than one long scroll.
+     * Emits `data-section-divided`. Default false. Since 2.501.0.
+     */
+    divided?: boolean;
     className?: string;
     'data-testid'?: string;
+}
+
+/** The header every page template draws: the trail, the title row, the actions. */
+export declare interface PageTemplateHeaderProps {
+    title: string;
+    /** One line under the title (compact density folds it into the info card). */
+    description?: string;
+    /** The trail as the header's first row. */
+    breadcrumbs?: BreadcrumbItem[];
+    /** Right-aligned buttons and menus. */
+    actions?: ReactNode;
+    /** A status pill beside the title. */
+    badge?: ReactNode;
+    /** A back link above the title. */
+    back?: PageHeaderBack;
+    /** Header density; default `compact` (one 28px title row). */
+    density?: Density;
 }
 
 /** One record a host's search returned (a person, an initiative, a request…). */
@@ -5520,6 +5957,74 @@ declare type SelectVariant = 'default' | 'pill' | 'ghost';
 /** A paper plane: "send" — the light prompt box's Send ("✈ Send"). Since 2.390.0. */
 export declare function SendIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+declare interface SettingsLayoutProps {
+    /** Page title shown above the rail. */
+    title: ReactNode;
+    /** Optional secondary line under the title. */
+    subtitle?: ReactNode;
+    /** Section list. The first section is selected by default. */
+    sections: SettingsSection[];
+    /** Currently active section id (controlled). When omitted, uncontrolled. */
+    activeSectionId?: string;
+    /** Notified when the user picks a section. */
+    onSectionChange?: (id: string) => void;
+    /**
+     * When true (or non-null), shows the sticky save bar.
+     * The bar exposes Save + Cancel buttons.
+     */
+    dirty?: boolean;
+    /** Save button label. Default "Save changes". */
+    saveLabel?: ReactNode;
+    /** Cancel button label. Default "Cancel". */
+    cancelLabel?: ReactNode;
+    /** Save click handler. */
+    onSave?: () => void;
+    /** Cancel click handler. */
+    onCancel?: () => void;
+    /** When true, the save button shows a saving state. */
+    saving?: boolean;
+    /** Optional extra content for the save bar (e.g. dirty-field count). */
+    saveBarSlot?: ReactNode;
+    /** Width of the rail in px. Default 220. */
+    railWidth?: number;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+/**
+ * Use this when a page edits settings in sections: a section rail, one scrolling section body and a sticky save bar while dirty (`SettingsLayout`), under the page trail.
+ *
+ * Fills its parent (`h-full min-h-0`); only the section body scrolls.
+ *
+ * @example
+ * <SettingsPage title="Workspace" breadcrumbs={trail} dirty={dirty} onSave={save} onCancel={reset}
+ *   sections={[
+ *     { id: 'general', label: 'General', content: <GeneralForm /> },
+ *     { id: 'members', label: 'Members', content: <MembersForm /> },
+ *   ]} />
+ */
+export declare function SettingsPage({ breadcrumbs, gutter, className, 'data-testid': testId, ...layout }: SettingsPageProps): JSX.Element;
+
+export declare interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
+    /** The trail above the settings rail. */
+    breadcrumbs?: BreadcrumbItem[];
+    /** Default `page` — the trail at `--ui-page-gutter`. The rail stays flush. */
+    gutter?: PageGutter;
+}
+
+declare interface SettingsSection {
+    id: string;
+    /** Sidebar label. */
+    label: ReactNode;
+    /** Optional small description shown under the label in the rail. */
+    description?: ReactNode;
+    /** Optional icon glyph rendered next to the label. */
+    icon?: ReactNode;
+    /** Section content. */
+    content: ReactNode;
+}
+
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -5564,6 +6069,48 @@ export declare interface ShortcutsHelpSection {
     rows?: ShortcutsHelpRow[];
     /** Alias for `rows`. */
     shortcuts?: ShortcutsHelpRow[];
+}
+
+declare interface SidePaneProps extends SidePaneRegistration {
+    /** The pane's sections (`usePaneState().tabs`); none, no tab row. */
+    tabs?: readonly TabItem[];
+    value?: string;
+    onValueChange?: (id: string) => void;
+    /** Right end of the tab row. */
+    trailing?: ReactNode;
+    /** Docked under the body: the pane's one composer. */
+    footer?: ReactNode;
+    /** The pane's density; default `compact`. */
+    density?: Density;
+    children: ReactNode;
+    /** The pane content's root; its tab row is `<id>-header-row`, its tabs `<id>-tab-<tab>`, its footer `<id>-footer`. */
+    'data-testid'?: string;
+}
+
+declare interface SidePaneRegistration {
+    /** Documents get a readable pane; below 1240px of split space they temporarily take the column. */
+    presentation?: 'standard' | 'document';
+    /** The frame's title ("Discussion", "Details"). */
+    title: string;
+    /** The second line: what the pane is about. */
+    subtitle?: string;
+    /** Names the frame's × ("Collapse discussion"); default `Collapse <title>`. */
+    closeLabel?: string;
+    /** The page owns the open state: the pane shows while registered and × calls this. */
+    onClose?: () => void;
+    /**
+     * The pane's width (px) until the reader sizes it: Search opens at 320–380px
+     * so its graph keeps the width. A drag (or the divider's arrow keys) is
+     * remembered per `paneId` and then wins, within 320px–60% of the split.
+     */
+    widthPx?: {
+        min: number;
+        max: number;
+    };
+    /** Names the pane's remembered width (`<storageKey>.ratio.<paneId>`; `page` → `<storageKey>.ratio`). Default `page`. */
+    paneId?: string;
+    /** The pane shows a selection of the page (a record, a detail) — a rail-depth level of its own. */
+    explores?: boolean;
 }
 
 export declare interface SignoffEntry {
@@ -6373,10 +6920,20 @@ export declare interface TabItem {
 
 export declare function Table({ children, className, size: sizeProp, ...rest }: TableProps): JSX.Element;
 
-export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
+export declare function TableBody({ children, className, striped, ...rest }: TableBodyProps): JSX.Element;
 
 export declare interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
     children: ReactNode;
+    /**
+     * Tint every second row (the even DOM children, so the first row stays on
+     * the plain surface) with the same `surface-inset` band `DataTable` uses.
+     * Default `true` since 2.501.0: zebra rows are the reading aid a wide table
+     * needs, and a hand-composed table should not have to opt in to it. A row
+     * that sets its own `bg-*` class keeps it. Pass `false` when the body
+     * stripes itself or holds non-data rows (group headers) that would shift
+     * the band.
+     */
+    striped?: boolean;
 }
 
 export declare function TableHead({ children, className, ...rest }: TableHeadProps): JSX.Element;
@@ -7507,6 +8064,12 @@ export declare interface WorkflowStepperProps {
     'aria-label'?: string;
     className?: string;
     'data-testid'?: string;
+}
+
+declare interface WorkspaceRailBack {
+    label: string;
+    href?: string;
+    onClick?: () => void;
 }
 
 export { }

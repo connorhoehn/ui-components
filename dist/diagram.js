@@ -1,20 +1,20 @@
-import { n as e, t } from "./useWebSocket-Cmv4zMFO.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r } from "./Button-C-I3BxWI.js";
 import { n as i } from "./overlayStack-DxIDMUs-.js";
-import { t as a } from "./Input-B0LB5k_L.js";
-import { t as o } from "./Select-BFyECVVL.js";
-import { t as s } from "./Textarea-BwvE1HPn.js";
-import { t as c } from "./Checkbox-Dvt09s3H.js";
+import { t as a } from "./Input-Brvp1kPv.js";
+import { t as o } from "./Select-CpZyUWay.js";
+import { t as s } from "./Textarea-CvdLeuO_.js";
+import { t as c } from "./Checkbox-BW-hyqCM.js";
 import { t as l } from "./formatBytes-05ivRSJY.js";
-import { n as u, t as d } from "./useResolvedTheme-kqID0NAz.js";
+import { n as u, t as d } from "./useResolvedTheme-Bv8p_fl8.js";
 import { Suspense as f, createElement as p, lazy as m, useCallback as h, useEffect as g, useMemo as ee, useRef as _, useState as v } from "react";
 import { Fragment as y, jsx as b, jsxs as x } from "react/jsx-runtime";
 import { Extension as S } from "@tiptap/core";
 import { NodeSelection as te, Plugin as ne, PluginKey as re, TextSelection as ie } from "@tiptap/pm/state";
 import { createRoot as ae } from "react-dom/client";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var oe = m(() => import("./ExcalidrawCanvas-CFUkcN9s.js"));
+var oe = m(() => import("./ExcalidrawCanvas-DOogpG-s.js"));
 function se({ label: e }) {
 	return /* @__PURE__ */ b("div", {
 		"data-testid": "diagram-loading",
@@ -648,6 +648,7 @@ function I(e) {
 //#region src/components/doc-macros/ActionItemsBlock.tsx
 function at({ item: e, editable: t, onToggle: r, testId: i }) {
 	return /* @__PURE__ */ b("button", {
+		"data-ui-part": "",
 		type: "button",
 		role: "checkbox",
 		"aria-checked": e.done,
@@ -1772,6 +1773,7 @@ function ln({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 				}),
 				/* @__PURE__ */ b("span", { className: "flex-1" }),
 				t && s && /* @__PURE__ */ b("button", {
+					"data-ui-part": "",
 					type: "button",
 					"aria-label": "Remove this decision",
 					onClick: s,
@@ -2258,6 +2260,7 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				children: zn[e.type]
 			}),
 			e.value !== void 0 && /* @__PURE__ */ b("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": `${u}-clear`,
 				onClick: () => n?.(void 0),
@@ -2278,6 +2281,7 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 			}),
 			/* @__PURE__ */ b("span", { className: "flex-1" }),
 			l && /* @__PURE__ */ b("button", {
+				"data-ui-part": "",
 				type: "button",
 				"aria-label": "Remove this field",
 				"data-testid": `${u}-remove`,
@@ -2686,6 +2690,7 @@ function vr({ attachment: e, editable: t = !1, href: i = null, onOpen: a, previe
 				/* @__PURE__ */ x("div", {
 					className: "flex min-w-0 flex-1 flex-col",
 					children: [a ? /* @__PURE__ */ b("button", {
+						"data-ui-part": "",
 						type: "button",
 						"data-testid": `${c}-open`,
 						onClick: a,

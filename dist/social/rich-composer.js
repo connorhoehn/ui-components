@@ -1,17 +1,17 @@
 import { t as e } from "../cn-D4QmbyEy.js";
-import { r as t } from "../ToastProvider-CJAceUvq.js";
+import { r as t } from "../ToastProvider-D6jAeNNE.js";
 import { c as n, n as r } from "../Button-C-I3BxWI.js";
-import { c as i, l as a, n as o } from "../Text-Bges3p6o.js";
-import { t as s } from "../Select-BFyECVVL.js";
+import { c as i, l as a, n as o } from "../Text-BEZVdfww.js";
+import { t as s } from "../Select-CpZyUWay.js";
 import { t as c } from "../FormField-CQ27qxWt.js";
-import { t as l } from "../Textarea-BwvE1HPn.js";
-import { t as u } from "../DecisionPath-D77rWoxt.js";
-import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-DbyF0DW9.js";
+import { t as l } from "../Textarea-CvdLeuO_.js";
+import { t as u } from "../DecisionPath-ZneSRRKp.js";
+import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-BTSwRiUg.js";
 import { a as v, i as y, n as ee, r as b, t as x } from "../composerContext-BLn1-Nao.js";
-import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-C0svPSt1.js";
-import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as M, t as N, u as P } from "../RichChatComposer-CPBE6W4k.js";
-import { t as ae } from "../ContextComposer-ChsWvP5B.js";
-import { t as F } from "../AgentComposerDock-BNtiYJuD.js";
+import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-InPayN0Y.js";
+import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as M, t as N, u as P } from "../RichChatComposer-B2Xmnqkg.js";
+import { t as ae } from "../ContextComposer-aVIphlok.js";
+import { t as F } from "../AgentComposerDock-DrE1fGWN.js";
 import { useCallback as I, useEffect as L, useId as oe, useMemo as se, useRef as R, useState as z } from "react";
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx
@@ -691,6 +691,7 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 		"data-testid": f,
 		ref: g,
 		children: [/* @__PURE__ */ V("section", {
+			"data-ui-part": "",
 			role: "group",
 			"aria-labelledby": P,
 			"aria-describedby": ae,

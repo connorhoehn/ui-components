@@ -1,44 +1,44 @@
-import { n as e, t } from "./useWebSocket-Cmv4zMFO.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r, o as i } from "./Button-C-I3BxWI.js";
-import { t as a } from "./Card-CbTNNNkk.js";
+import { t as a } from "./Card-sJqvEOtP.js";
 import { n as o } from "./overlayStack-DxIDMUs-.js";
-import { t as s } from "./IconButton-J9jGN6eo.js";
-import { gt as c, m as l, ut as u } from "./Icons-C__ztBBw.js";
+import { t as s } from "./IconButton-Bf5Wy0tS.js";
+import { _t as c, dt as l, m as u } from "./Icons-CqVFbuiZ.js";
 import { i as d } from "./MediaIcons-_ai5Til2.js";
-import { c as f, i as p, l as m, n as h } from "./Text-Bges3p6o.js";
-import { t as g } from "./Badge-DzOQFL9h.js";
-import { t as _ } from "./Banner-CfPGjbpw.js";
+import { c as f, i as p, l as m, n as h } from "./Text-BEZVdfww.js";
+import { t as g } from "./Badge-D58pEJIm.js";
+import { t as _ } from "./Banner-400g6E1q.js";
 import { t as v } from "./Modal-PO0F6rAp.js";
-import { t as y } from "./Input-B0LB5k_L.js";
-import { t as b } from "./Select-BFyECVVL.js";
+import { t as y } from "./Input-Brvp1kPv.js";
+import { t as b } from "./Select-CpZyUWay.js";
 import { t as x } from "./InlinePopover-Dx8-r-XU.js";
-import { t as S } from "./EmptyState-D5ucMp2y.js";
-import { n as C } from "./ThinkingDots-52RnodUR.js";
+import { t as S } from "./EmptyState-pOG782nO.js";
+import { n as C } from "./ThinkingDots-BHtlGy_Q.js";
 import { n as w } from "./StatusPill-CLkB5jFS.js";
-import { t as T } from "./DropdownMenu-2S3snVPG.js";
-import { t as E } from "./Textarea-BwvE1HPn.js";
+import { t as T } from "./DropdownMenu-DP3rRjEd.js";
+import { t as E } from "./Textarea-CvdLeuO_.js";
 import { t as ee } from "./Avatar-DkkMISPQ.js";
-import { t as te } from "./SegmentedControl-CMpxVHLC.js";
-import { t as D } from "./InlineAlert-BqOYETP1.js";
+import { t as te } from "./SegmentedControl-DAjnOtF4.js";
+import { t as D } from "./InlineAlert-CnWUBrte.js";
 import { t as O } from "./CardHeader-DzQxX5J-.js";
-import { t as ne } from "./Breadcrumbs-DVQuOJ2R.js";
-import { t as k } from "./PresenceAvatars--JG3ZaTz.js";
+import { t as ne } from "./Breadcrumbs-CirFL-yi.js";
+import { t as k } from "./PresenceAvatars-DqCOZ057.js";
 import { t as re } from "./ChangeDiff-CGfT-mcu.js";
 import { t as A } from "./MetaLine-DFn2XXGU.js";
-import { t as j } from "./Checkbox-Dvt09s3H.js";
-import { n as ie } from "./FileKindMark-D7I7FHuP.js";
+import { t as j } from "./Checkbox-BW-hyqCM.js";
+import { n as ie } from "./FileKindMark-BZmXUxaT.js";
 import { t as M } from "./activationKey-CjbL3LUv.js";
-import { A as ae, k as oe } from "./renderers-DarOLZU_.js";
-import { A as N, B as se, C as P, D as ce, E as le, F as ue, G as F, H as I, I as L, J as R, K as de, L as fe, M as pe, N as me, O as he, P as ge, R as _e, S as ve, T as ye, U as be, V as xe, W as Se, X as Ce, _ as we, a as Te, b as Ee, c as De, d as Oe, f as ke, g as Ae, h as je, i as Me, j as Ne, k as Pe, l as Fe, m as Ie, n as Le, o as Re, p as ze, q as Be, r as Ve, s as He, t as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./ProposedEditStrip-B5PV_3N7.js";
-import { t as Xe } from "./InlineEditableText-CzB64Ufv.js";
-import { o as Ze, t as Qe } from "./VerdictChip-DDweSKeO.js";
-import { a as $e, c as et, d as tt, f as nt, h as rt, i as it, l as at, m as ot, n as st, o as ct, p as lt, r as ut, s as dt, t as ft, u as pt } from "./TiptapEditor-BjjwDyPa.js";
+import { A as ae, k as oe } from "./renderers-C5HikurY.js";
+import { A as N, B as se, C as P, D as ce, E as le, F as ue, G as F, H as I, I as L, J as R, K as de, L as fe, M as pe, N as me, O as he, P as ge, R as _e, S as ve, T as ye, U as be, V as xe, W as Se, X as Ce, _ as we, a as Te, b as Ee, c as De, d as Oe, f as ke, g as Ae, h as je, i as Me, j as Ne, k as Pe, l as Fe, m as Ie, n as Le, o as Re, p as ze, q as Be, r as Ve, s as He, t as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./ProposedEditStrip-CLlg6ffE.js";
+import { t as Xe } from "./InlineEditableText-c94ETQ89.js";
+import { o as Ze, t as Qe } from "./VerdictChip-Dd5al9jm.js";
+import { a as $e, c as et, d as tt, f as nt, h as rt, i as it, l as at, m as ot, n as st, o as ct, p as lt, r as ut, s as dt, t as ft, u as pt } from "./TiptapEditor-BU4pt2sS.js";
 import { i as mt, n as ht, r as gt, t as _t } from "./FloatingComposerDock-D10uQ4k3.js";
-import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-DUy7RCOS.js";
-import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-DkzQO_hc.js";
-import { i as Ln } from "./ConversationInputs-C0svPSt1.js";
-import { r as Rn } from "./RichChatComposer-CPBE6W4k.js";
+import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-Bn1a8zO7.js";
+import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-XILE9ZZg.js";
+import { i as Ln } from "./ConversationInputs-InPayN0Y.js";
+import { r as Rn } from "./RichChatComposer-B2Xmnqkg.js";
 import { forwardRef as zn, useCallback as z, useEffect as B, useId as Bn, useImperativeHandle as Vn, useMemo as V, useRef as H, useState as U } from "react";
 import { Fragment as W, jsx as G, jsxs as K } from "react/jsx-runtime";
 import * as Hn from "yjs";
@@ -112,6 +112,7 @@ function fr({ users: e, onClickUser: t }) {
 		children: [r.map((e, r) => {
 			let i = dr[e.mode ?? "editor"] ?? dr.editor, a = e.idle === !0, o = a ? "var(--color-warning)" : "var(--color-success)";
 			return /* @__PURE__ */ K("button", {
+				"data-ui-part": "",
 				type: "button",
 				title: `${e.displayName} — ${a ? "Away" : i.label}`,
 				"aria-label": `${e.displayName} — ${a ? "Away" : i.label}`,
@@ -161,6 +162,7 @@ function pr({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 					className: n("m-0 text-[22px] font-bold text-text-primary"),
 					children: "Documents"
 				}), /* @__PURE__ */ K("button", {
+					"data-ui-part": "",
 					"data-testid": "new-document-btn",
 					onClick: () => l(!0),
 					className: n("flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-info text-white cursor-pointer font-[inherit]"),
@@ -179,6 +181,7 @@ function pr({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 				children: v.map((e) => {
 					let i = t[e.id] ?? [], a = u === e.id, s = a || f === e.id;
 					return /* @__PURE__ */ K("div", {
+						"data-ui-part": "",
 						"data-testid": `document-card-${e.id}`,
 						role: "button",
 						tabIndex: 0,
@@ -236,6 +239,7 @@ function pr({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 								})
 							}),
 							s && /* @__PURE__ */ G("button", {
+								"data-ui-part": "",
 								type: "button",
 								onClick: (t) => y(t, e.id, e.title),
 								onKeyDown: (e) => e.stopPropagation(),
@@ -253,6 +257,7 @@ function pr({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 				className: n("flex items-center justify-center gap-3 mt-4 pt-3 border-t border-border"),
 				children: [
 					/* @__PURE__ */ G("button", {
+						"data-ui-part": "",
 						"data-testid": "pagination-prev",
 						disabled: _ <= 1,
 						onClick: () => h((e) => Math.max(1, e - 1)),
@@ -270,6 +275,7 @@ function pr({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 						]
 					}),
 					/* @__PURE__ */ G("button", {
+						"data-ui-part": "",
 						"data-testid": "pagination-next",
 						disabled: _ >= g,
 						onClick: () => h((e) => Math.min(g, e + 1)),
@@ -526,6 +532,7 @@ function Tr({ item: e, onAck: t, onReject: r }) {
 				className: n("flex gap-2 mt-1.5"),
 				children: [
 					/* @__PURE__ */ G("button", {
+						"data-ui-part": "",
 						type: "button",
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-success text-white", p && "opacity-60 cursor-not-allowed"),
 						onClick: g,
@@ -533,6 +540,7 @@ function Tr({ item: e, onAck: t, onReject: r }) {
 						children: "Acknowledge"
 					}),
 					/* @__PURE__ */ G("button", {
+						"data-ui-part": "",
 						type: "button",
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white", p && "opacity-60 cursor-not-allowed"),
 						onClick: _,
@@ -540,6 +548,7 @@ function Tr({ item: e, onAck: t, onReject: r }) {
 						children: "Reject"
 					}),
 					!i && /* @__PURE__ */ G("button", {
+						"data-ui-part": "",
 						type: "button",
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
 						onClick: () => a(!0),
@@ -561,6 +570,7 @@ function Tr({ item: e, onAck: t, onReject: r }) {
 					className: n("flex gap-1.5 mt-1.5"),
 					children: [
 						/* @__PURE__ */ G("button", {
+							"data-ui-part": "",
 							type: "button",
 							className: n("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-success text-white"),
 							onClick: g,
@@ -569,6 +579,7 @@ function Tr({ item: e, onAck: t, onReject: r }) {
 							children: "Submit & Acknowledge"
 						}),
 						/* @__PURE__ */ G("button", {
+							"data-ui-part": "",
 							type: "button",
 							className: n("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-danger text-white"),
 							onClick: _,
@@ -577,6 +588,7 @@ function Tr({ item: e, onAck: t, onReject: r }) {
 							children: "Submit & Reject"
 						}),
 						/* @__PURE__ */ G("button", {
+							"data-ui-part": "",
 							type: "button",
 							className: n("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
 							onClick: () => {
@@ -734,6 +746,7 @@ function kr({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 			className: n("flex justify-between items-center mt-4 py-3"),
 			children: [
 				/* @__PURE__ */ G("button", {
+					"data-ui-part": "",
 					type: "button",
 					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === 0 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-surface text-text-primary cursor-pointer"),
 					onClick: b,
@@ -753,6 +766,7 @@ function kr({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 					]
 				}),
 				/* @__PURE__ */ G("button", {
+					"data-ui-part": "",
 					type: "button",
 					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === _ - 1 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-surface text-text-primary cursor-pointer"),
 					onClick: x,
@@ -815,6 +829,7 @@ function Fr({ events: e, participants: t }) {
 	return /* @__PURE__ */ K("div", {
 		className: n("bg-surface-panel border border-border rounded-lg overflow-hidden"),
 		children: [/* @__PURE__ */ K("button", {
+			"data-ui-part": "",
 			type: "button",
 			"aria-expanded": !r,
 			className: n("w-full text-left font-[inherit] flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-text-primary cursor-pointer select-none"),
@@ -1639,6 +1654,7 @@ function ui({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 				l && /* @__PURE__ */ K("div", {
 					className: "flex gap-2",
 					children: [/* @__PURE__ */ G("input", {
+						"data-ui-part": "",
 						value: p,
 						onChange: (e) => m(e.target.value),
 						onKeyDown: (e) => {
@@ -1888,6 +1904,7 @@ function bi({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 				]
 			}),
 			w && /* @__PURE__ */ K("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: d,
 				disabled: !d,
@@ -2963,7 +2980,7 @@ function Ia({ filled: e }) {
 		children: /* @__PURE__ */ G("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: E, onTabChange: ee, toolbar: te, children: D, footer: O, proposal: re, surface: A = "workspace", explorer: j, workbench: M, label: ae = "Editor", variant: oe = "document", itemType: N, itemKey: se, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: ue, headerInset: F = "editor", className: I, "data-testid": L = "editor-shell" }) {
+function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: E, onTabChange: ee, toolbar: te, children: D, footer: O, proposal: re, surface: A = "workspace", explorer: j, workbench: M, label: ae = "Editor", variant: oe = "document", itemType: N, itemKey: se, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: ue, headerInset: F = "editor", className: I, "data-testid": L = "editor-shell" }) {
 	let R = oe === "work-item", de = R && (N || se) ? /* @__PURE__ */ K(W, { children: [N && /* @__PURE__ */ G(o, {
 		size: "sm",
 		tone: "info",
@@ -2999,6 +3016,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		idPrefix: he,
 		className: e
 	}), be = /* @__PURE__ */ K("section", {
+		"data-ui-part": "",
 		"aria-label": ae,
 		"data-testid": L,
 		"data-surface": A,
@@ -3014,7 +3032,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${L}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ G(l, {
+							/* @__PURE__ */ G(u, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -3101,12 +3119,12 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													"data-testid": `${L}-title`,
 													"data-title-size": P,
 													children: t
-												}), u && /* @__PURE__ */ G(s, {
+												}), l && /* @__PURE__ */ G(s, {
 													size: "sm",
 													"aria-label": c ? "Remove star" : "Star this file",
 													"aria-pressed": c,
 													title: c ? "Starred" : "Star",
-													onClick: () => u(!c),
+													onClick: () => l(!c),
 													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${L}-star`,
 													children: /* @__PURE__ */ G(Ia, { filled: c })
@@ -3539,6 +3557,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 			children: x ? /* @__PURE__ */ G("ol", {
 				className: "deck-reader-outline m-0 flex list-none flex-col gap-1 p-0",
 				children: F.map((e, t) => /* @__PURE__ */ G("li", { children: /* @__PURE__ */ K("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => R(e.id),
 					"aria-current": L?.id === e.id ? "true" : void 0,
@@ -3621,6 +3640,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 			}), D && /* @__PURE__ */ G("div", {
 				className: "deck-reader-notes max-h-[120px] shrink-0 overflow-y-auto px-4 pt-1.5 max-[1199px]:px-2 max-[1199px]:pt-0.5",
 				children: L?.slide ? /* @__PURE__ */ K("section", {
+					"data-ui-part": "",
 					className: "deck-reader-note-panel flex flex-col gap-1 rounded-lg border border-solid border-border bg-surface px-3 py-2 max-[1199px]:gap-0.5 max-[1199px]:px-2 max-[1199px]:py-1",
 					"aria-labelledby": M,
 					children: [/* @__PURE__ */ G("label", {
@@ -3706,6 +3726,7 @@ function Ga({ state: e, micActive: t, unavailableReason: r, onStart: i, onStop: 
 		e !== null && (c.current = null, !(Date.now() - e < 250) && a());
 	};
 	return /* @__PURE__ */ G("button", {
+		"data-ui-part": "",
 		type: "button",
 		"aria-label": l,
 		title: l,
@@ -3863,15 +3884,15 @@ var Ja = zn(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 });
 //#endregion
 //#region src/components/doc-editor/CommentHandoffBar.tsx
-function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": l = "comment-handoff-bar" }) {
+function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": u = "comment-handoff-bar" }) {
 	let d = r === "reply", f = d ? "Stop replying" : "Stop answering this comment";
 	return /* @__PURE__ */ K("div", {
 		role: "status",
-		"data-testid": l,
+		"data-testid": u,
 		"data-variant": r,
 		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
 		children: [
-			d ? /* @__PURE__ */ G(u, {
+			d ? /* @__PURE__ */ G(l, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
@@ -3907,15 +3928,16 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				children: [/* @__PURE__ */ G(j, {
 					checked: i,
 					onChange: (e) => a?.(e),
-					"data-testid": `${l}-resolve`
+					"data-testid": `${u}-resolve`
 				}), "Resolve when applied"]
 			}),
 			/* @__PURE__ */ G("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: o,
 				"aria-label": f,
 				title: f,
-				"data-testid": `${l}-dismiss`,
+				"data-testid": `${u}-dismiss`,
 				className: "grid h-6 w-6 shrink-0 place-items-center rounded border-0 bg-transparent p-0 text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
 				children: /* @__PURE__ */ G("span", {
 					"aria-hidden": "true",

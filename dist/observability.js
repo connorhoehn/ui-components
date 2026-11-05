@@ -1,17 +1,17 @@
 import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
 import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { t as n } from "./cn-D4QmbyEy.js";
-import { t as r } from "./Card-CbTNNNkk.js";
+import { t as r } from "./Card-sJqvEOtP.js";
 import { n as i } from "./overlayStack-DxIDMUs-.js";
 import { n as a, r as o, t as s } from "./Chart-CHhWLl8U.js";
 import { t as c } from "./Modal-PO0F6rAp.js";
-import { t as l } from "./Input-B0LB5k_L.js";
-import { t as u } from "./Select-BFyECVVL.js";
-import { t as d } from "./EmptyState-D5ucMp2y.js";
-import { n as f, t as p } from "./Sparkline-BIYPNDRu.js";
+import { t as l } from "./Input-Brvp1kPv.js";
+import { t as u } from "./Select-CpZyUWay.js";
+import { t as d } from "./EmptyState-pOG782nO.js";
+import { n as f, t as p } from "./Sparkline-B-z1C40M.js";
 import { t as m } from "./StatusDot-GwVn-q5q.js";
 import { t as h } from "./CardHeader-DzQxX5J-.js";
-import { t as g } from "./Checkbox-Dvt09s3H.js";
+import { t as g } from "./Checkbox-BW-hyqCM.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
 import { n as v } from "./EventStreamContext-CLzG8O5_.js";
 import { n as y, r as b } from "./ObservabilityContext-DpoDrm3T.js";
@@ -302,6 +302,7 @@ function le({ node: e, selected: t, onClick: r, onKill: i }) {
 				})
 			}),
 			i && /* @__PURE__ */ O("button", {
+				"data-ui-part": "",
 				"data-testid": "node-kill-btn",
 				type: "button",
 				onClick: (e) => {
@@ -377,6 +378,7 @@ function ue({ run: e, onClick: t, onCancel: r }) {
 			r && /* @__PURE__ */ O("td", {
 				className: "px-3 py-2 text-[13px] text-text-primary font-[inherit] border-b border-border text-right w-px whitespace-nowrap",
 				children: u && /* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					"data-testid": "active-run-cancel",
 					type: "button",
 					"aria-label": `Cancel run ${e.runId}`,
@@ -398,6 +400,7 @@ function de({ runs: e, onRowClick: t, onCancelRun: n }) {
 		"data-testid": "active-runs-table",
 		className: "border border-border rounded-lg overflow-hidden bg-surface",
 		children: /* @__PURE__ */ k("table", {
+			"data-ui-part": "",
 			className: "w-full border-collapse font-[inherit]",
 			children: [/* @__PURE__ */ O("thead", { children: /* @__PURE__ */ k("tr", { children: [
 				/* @__PURE__ */ O("th", {
@@ -483,6 +486,7 @@ function ge({ alert: e, onDismiss: t }) {
 				})]
 			}),
 			t && /* @__PURE__ */ O("button", {
+				"data-ui-part": "",
 				"data-testid": "alert-dismiss",
 				"aria-label": "dismiss alert",
 				onClick: () => t(e.id),
@@ -543,6 +547,7 @@ function be({ source: e }) {
 }
 function xe({ live: e, onChange: t }) {
 	return /* @__PURE__ */ k("button", {
+		"data-ui-part": "",
 		"data-testid": "live-toggle",
 		onClick: () => t(!e),
 		className: n("inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold", "rounded-md cursor-pointer font-[inherit]", e ? "bg-surface border border-primary text-primary" : "bg-surface-inset border border-border text-text-secondary"),
@@ -596,6 +601,7 @@ function Ce({ events: e, onViewAll: t }) {
 				className: "text-sm font-semibold text-text-primary font-[inherit]",
 				children: "Recent events (last 20)"
 			}), /* @__PURE__ */ O("button", {
+				"data-ui-part": "",
 				"data-testid": "recent-events-view-all",
 				onClick: t,
 				className: "bg-transparent border-none text-primary text-xs font-semibold cursor-pointer font-[inherit]",
@@ -686,6 +692,7 @@ function we({ activeRuns: e } = {}) {
 						"No active-run source is wired to this dashboard.",
 						" ",
 						/* @__PURE__ */ O("button", {
+							"data-ui-part": "",
 							"data-testid": "active-runs-go-to-pipelines",
 							onClick: D,
 							className: "bg-transparent border-none text-primary text-[13px] font-semibold cursor-pointer font-[inherit] p-0",
@@ -783,6 +790,7 @@ function H({ title: e, timeRange: t, children: r, onMaximize: i, sample: a }) {
 						children: t
 					}),
 					i && /* @__PURE__ */ O("button", {
+						"data-ui-part": "",
 						"data-testid": "metric-card-maximize",
 						onClick: i,
 						"aria-label": `Maximize ${e}`,
@@ -862,12 +870,14 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: i, failedColor: c, on
 				}))
 			}),
 			l && /* @__PURE__ */ O("button", {
+				"data-ui-part": "",
 				"data-testid": "metrics-reset-zoom",
 				onClick: l,
 				className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
 				children: "Reset zoom"
 			}),
 			d && /* @__PURE__ */ O("button", {
+				"data-ui-part": "",
 				"data-testid": "metrics-export-csv",
 				onClick: d,
 				className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
@@ -1272,6 +1282,7 @@ function Fe({ events: e, selectedId: t, onSelect: r, live: i = !1 }) {
 				onClick: r ? () => r(e.id) : void 0
 			}, e.id))
 		}), i && o && /* @__PURE__ */ O("button", {
+			"data-ui-part": "",
 			"data-testid": "jump-to-live",
 			onClick: () => {
 				let e = a.current;
@@ -1315,6 +1326,7 @@ function Le({ event: e }) {
 			/* @__PURE__ */ k("div", {
 				className: "px-3.5 py-2.5 flex gap-2 border-b border-border",
 				children: [/* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					"data-testid": "event-detail-copy",
 					onClick: () => {
 						typeof navigator < "u" && navigator.clipboard && navigator.clipboard.writeText(t).catch(() => {
@@ -1324,6 +1336,7 @@ function Le({ event: e }) {
 					className: n("px-2.5 py-[5px] text-xs font-semibold", "bg-surface-hover text-text-secondary", "border border-border rounded-md", "cursor-pointer font-[inherit]"),
 					children: "Copy"
 				}), /* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					"data-testid": "event-detail-download",
 					onClick: () => {
 						if (typeof window > "u") return;
@@ -1479,6 +1492,7 @@ function qe() {
 			className: "flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel",
 			children: [
 				/* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					onClick: () => o((e) => !e),
 					"data-testid": "events-live-toggle",
 					className: n("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer font-[inherit]", a ? "bg-surface-hover text-text-secondary border border-border" : "bg-state-completed text-white border border-state-completed"),
@@ -1521,6 +1535,7 @@ function qe() {
 							className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary",
 							children: "FILTERS"
 						}), /* @__PURE__ */ O("button", {
+							"data-ui-part": "",
 							onClick: () => f((e) => !e),
 							"aria-label": d ? "Expand filters" : "Collapse filters",
 							className: "border-none bg-transparent text-text-tertiary cursor-pointer text-xs p-0.5 font-[inherit]",
@@ -1614,6 +1629,7 @@ function qe() {
 						/* @__PURE__ */ O("div", {
 							className: "px-3.5 py-3",
 							children: /* @__PURE__ */ O("button", {
+								"data-ui-part": "",
 								"data-testid": "events-clear-filters",
 								onClick: () => c(Ke),
 								className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
@@ -1623,6 +1639,7 @@ function qe() {
 					] })]
 				}),
 				/* @__PURE__ */ O("section", {
+					"data-ui-part": "",
 					className: "flex-1 min-w-0 flex flex-col",
 					children: /* @__PURE__ */ O(Fe, {
 						events: y,
@@ -1754,6 +1771,7 @@ function et(e) {
 						]
 					}),
 					/* @__PURE__ */ O("button", {
+						"data-ui-part": "",
 						"data-testid": "chaos-pause-toggle",
 						onClick: P,
 						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
@@ -1784,6 +1802,7 @@ function et(e) {
 						})]
 					}),
 					/* @__PURE__ */ O("button", {
+						"data-ui-part": "",
 						"data-testid": "chaos-latency-apply",
 						onClick: A,
 						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
@@ -1812,6 +1831,7 @@ function et(e) {
 						}, e.id))
 					}),
 					/* @__PURE__ */ O("button", {
+						"data-ui-part": "",
 						"data-testid": "chaos-partition-inject",
 						onClick: M,
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md font-[inherit] shrink-0", m.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"),
@@ -1844,6 +1864,7 @@ function et(e) {
 						})]
 					}),
 					/* @__PURE__ */ O("button", {
+						"data-ui-part": "",
 						"data-testid": "chaos-drop-apply",
 						onClick: j,
 						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
@@ -1854,11 +1875,13 @@ function et(e) {
 			/* @__PURE__ */ k("div", {
 				className: "flex flex-col gap-2",
 				children: [/* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					"data-testid": "chaos-kill-all",
 					onClick: () => v(!0),
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]",
 					children: "Kill all"
 				}), /* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					"data-testid": "chaos-reset",
 					onClick: o,
 					className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
@@ -1870,11 +1893,13 @@ function et(e) {
 				onClose: () => v(!1),
 				title: "Kill all nodes?",
 				footer: /* @__PURE__ */ k(D, { children: [/* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					"data-testid": "chaos-kill-cancel",
 					onClick: () => v(!1),
 					className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
 					children: "Cancel"
 				}), /* @__PURE__ */ O("button", {
+					"data-ui-part": "",
 					"data-testid": "chaos-kill-confirm",
 					onClick: N,
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]",
@@ -1965,6 +1990,7 @@ function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 				})) })
 			}),
 			/* @__PURE__ */ k("section", {
+				"data-ui-part": "",
 				className: "flex-1 min-w-0 overflow-auto p-6",
 				children: [!e && /* @__PURE__ */ O("div", {
 					"data-testid": "nodes-sample-banner",
@@ -1993,6 +2019,7 @@ function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 								children: [c.role, c.region].filter(Boolean).join(" · ") || "worker"
 							})]
 						}), /* @__PURE__ */ O("button", {
+							"data-ui-part": "",
 							"data-testid": "nodes-detail-close",
 							onClick: () => s(null),
 							"aria-label": "Close drawer",
@@ -2006,6 +2033,7 @@ function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 							className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 							children: "Metrics"
 						}), /* @__PURE__ */ O("table", {
+							"data-ui-part": "",
 							className: "w-full text-xs border-collapse",
 							children: /* @__PURE__ */ O("tbody", { children: [
 								["Status", c.status],
@@ -2042,11 +2070,13 @@ function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 								children: "Chaos (this node)"
 							}),
 							t && /* @__PURE__ */ O("button", {
+								"data-ui-part": "",
 								onClick: () => t(c.id),
 								className: "self-start px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 								children: "Add latency"
 							}),
 							n && /* @__PURE__ */ O("button", {
+								"data-ui-part": "",
 								onClick: () => n(c.id),
 								className: "self-start px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]",
 								children: "Kill node"
@@ -2059,6 +2089,7 @@ function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 							className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 							children: "Actions"
 						}), /* @__PURE__ */ O("button", {
+							"data-ui-part": "",
 							onClick: () => r(c.id),
 							className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
 							children: "Transfer resource"

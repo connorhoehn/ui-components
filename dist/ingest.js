@@ -5,13 +5,13 @@ import { i as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-D4QmbyEy.js";
 import { n as m } from "./Button-C-I3BxWI.js";
 import { n as h, t as g } from "./overlayStack-DxIDMUs-.js";
-import { t as _ } from "./Input-B0LB5k_L.js";
-import { t as v } from "./Select-BFyECVVL.js";
-import { t as y } from "./EmptyState-D5ucMp2y.js";
+import { t as _ } from "./Input-Brvp1kPv.js";
+import { t as v } from "./Select-CpZyUWay.js";
+import { t as y } from "./EmptyState-pOG782nO.js";
 import { n as b, r as x, t as S } from "./focusTrap-D9J7npjl.js";
 import { t as C } from "./SkeletonCard-D3FL0TB7.js";
 import { t as w } from "./activationKey-CjbL3LUv.js";
-import { n as T, t as E } from "./ChangeReviewCard-oypfmO8k.js";
+import { n as T, t as E } from "./ChangeReviewCard-B909t4Yn.js";
 import { useCallback as D, useEffect as O, useId as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useNavigate as I, useParams as L } from "react-router";
@@ -108,6 +108,7 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 				}), /* @__PURE__ */ F("div", {
 					className: "flex gap-2.5 items-center",
 					children: [null, /* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]",
 						onClick: () => a("/ingest/sources"),
 						"data-testid": "add-source-btn",
@@ -122,6 +123,7 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 					className: "text-[13px] font-medium",
 					children: "Failed to load ingest data."
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					onClick: () => {
 						f(), v();
 					},
@@ -328,6 +330,7 @@ function J() {
 						t.length === 1 ? "" : "s"
 					]
 				})] }), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]",
 					onClick: () => e("/ingest/sources"),
 					"data-testid": "add-source-btn",
@@ -341,6 +344,7 @@ function J() {
 					className: "text-[13px] font-medium",
 					children: "Failed to load sources."
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					onClick: () => void a(),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
@@ -354,6 +358,7 @@ function J() {
 					className: "text-[13px] font-medium",
 					children: ["That action did not go through: ", c]
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					onClick: l,
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
 					children: "Dismiss"
@@ -368,6 +373,7 @@ function J() {
 			}) : /* @__PURE__ */ P("div", {
 				className: "overflow-x-auto",
 				children: /* @__PURE__ */ F("table", {
+					"data-ui-part": "",
 					className: "w-full border-collapse text-[13px]",
 					children: [/* @__PURE__ */ P("thead", { children: /* @__PURE__ */ F("tr", {
 						className: "border-b border-border",
@@ -403,6 +409,7 @@ function J() {
 							/* @__PURE__ */ P("td", {
 								className: "p-2 font-medium text-text-primary",
 								children: /* @__PURE__ */ P("button", {
+									"data-ui-part": "",
 									type: "button",
 									"data-testid": `source-name-link-${t.sourceId}`,
 									onClick: () => e(`/ingest/sources/${t.sourceId}`),
@@ -447,12 +454,14 @@ function J() {
 								children: /* @__PURE__ */ F("div", {
 									className: "flex gap-1.5 justify-end",
 									children: [/* @__PURE__ */ P("button", {
+										"data-ui-part": "",
 										className: p("px-2.5 py-1 text-[11px] font-medium rounded-[5px] cursor-pointer font-[inherit]", u.has(t.sourceId) || t.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-border bg-surface text-text-secondary"),
 										disabled: u.has(t.sourceId) || t.status === "paused",
 										onClick: () => void f(t.sourceId),
 										"data-testid": `sync-${t.sourceId}`,
 										children: u.has(t.sourceId) ? "Syncing..." : "Sync Now"
 									}), /* @__PURE__ */ P("button", {
+										"data-ui-part": "",
 										className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
 										onClick: () => void m(t),
 										"data-testid": `delete-${t.sourceId}`,
@@ -597,6 +606,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 			}) : /* @__PURE__ */ P("div", {
 				className: "overflow-x-auto",
 				children: /* @__PURE__ */ F("table", {
+					"data-ui-part": "",
 					className: "w-full border-collapse text-xs",
 					children: [/* @__PURE__ */ P("thead", { children: /* @__PURE__ */ F("tr", { children: [
 						/* @__PURE__ */ P("th", {
@@ -720,10 +730,12 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 										children: /* @__PURE__ */ F("div", {
 											className: "flex gap-1 justify-end",
 											children: [/* @__PURE__ */ P("button", {
+												"data-ui-part": "",
 												className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary",
 												onClick: T,
 												children: "Save"
 											}), /* @__PURE__ */ P("button", {
+												"data-ui-part": "",
 												className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary",
 												onClick: w,
 												children: "Cancel"
@@ -771,6 +783,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 										className: "flex gap-1 justify-end",
 										children: [
 											/* @__PURE__ */ P("button", {
+												"data-ui-part": "",
 												className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary",
 												onClick: () => A(t),
 												disabled: t === 0,
@@ -778,6 +791,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 												children: "↑"
 											}),
 											/* @__PURE__ */ P("button", {
+												"data-ui-part": "",
 												className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary",
 												onClick: () => j(t),
 												disabled: t === n.length - 1,
@@ -785,11 +799,13 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 												children: "↓"
 											}),
 											/* @__PURE__ */ P("button", {
+												"data-ui-part": "",
 												className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary",
 												onClick: () => C(t),
 												children: "Edit"
 											}),
 											/* @__PURE__ */ P("button", {
+												"data-ui-part": "",
 												className: "px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
 												onClick: () => O(t),
 												children: "Delete"
@@ -805,6 +821,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 			!i && /* @__PURE__ */ P("div", {
 				className: "flex gap-2.5 items-center",
 				children: /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					className: "px-3.5 py-1.5 text-xs font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary self-start",
 					onClick: E,
 					"data-testid": "add-rule-btn",
@@ -820,6 +837,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 					onChange: (e) => m(e.target.value),
 					placeholder: "Enter a file path to preview mapping..."
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					className: p("px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-info-bg cursor-pointer font-[inherit] text-primary self-start", (y || !f.trim()) && "opacity-50 cursor-not-allowed"),
 					onClick: () => void N(),
 					disabled: y || !f.trim(),
@@ -1222,6 +1240,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 		children: [/* @__PURE__ */ P("div", {
 			className: "flex items-center justify-between mb-4 flex-wrap gap-3",
 			children: /* @__PURE__ */ P("button", {
+				"data-ui-part": "",
 				className: "text-[13px] text-primary cursor-pointer bg-transparent border-none font-[inherit] p-0 underline",
 				onClick: () => a("/ingest/sources"),
 				children: "Back to Sources"
@@ -1233,6 +1252,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 				className: "text-[13px] font-medium",
 				children: ["Failed to load source: ", x]
 			}), /* @__PURE__ */ P("button", {
+				"data-ui-part": "",
 				onClick: () => void Y(),
 				className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 				children: "Retry"
@@ -1247,6 +1267,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 				children: /* @__PURE__ */ P("div", {
 					className: "flex items-center gap-2.5",
 					children: /* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: "text-[13px] text-primary cursor-pointer bg-transparent border-none font-[inherit] p-0 underline",
 						onClick: () => a("/ingest/sources"),
 						children: "Back to Sources"
@@ -1276,15 +1297,18 @@ function he({ idToken: n, baseUrl: r } = {}) {
 				}), /* @__PURE__ */ P("div", {
 					className: "flex gap-2.5 items-center",
 					children: w ? /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: "px-3.5 py-1.5 text-[13px] font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary",
 						onClick: oe,
 						children: "Cancel"
 					}), /* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]", R && "opacity-50 cursor-not-allowed"),
 						onClick: () => void X(),
 						disabled: R,
 						children: R ? "Saving..." : "Save Changes"
 					})] }) : /* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: "px-3.5 py-1.5 text-[13px] font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary",
 						onClick: ie,
 						children: "Edit"
@@ -1298,6 +1322,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 					className: "text-[13px] font-medium",
 					children: x
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					onClick: () => S(null),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Dismiss"
@@ -1368,6 +1393,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 						className: "text-sm font-semibold text-text-primary",
 						children: "Sync History"
 					}), /* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: p("px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]", A || m.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-primary bg-info-bg text-primary"),
 						disabled: A || m.status === "paused",
 						onClick: () => void he(),
@@ -1520,6 +1546,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 						}), /* @__PURE__ */ F("div", {
 							className: "flex-1 flex flex-col gap-2",
 							children: [/* @__PURE__ */ F("button", {
+								"data-ui-part": "",
 								type: "button",
 								"data-testid": "overrides-toggle",
 								onClick: () => re(!q),
@@ -1558,6 +1585,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 											}))
 										}),
 										/* @__PURE__ */ P("button", {
+											"data-ui-part": "",
 											type: "button",
 											"data-testid": `overrides-remove-${e}`,
 											onClick: () => {
@@ -1624,6 +1652,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 								size: "sm",
 								children: m.status
 							}), /* @__PURE__ */ P("button", {
+								"data-ui-part": "",
 								className: p("px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer font-[inherit] border-none text-white", m.status === "paused" ? "bg-state-completed" : "bg-state-awaiting"),
 								onClick: () => void Q(),
 								children: m.status === "paused" ? "Resume" : "Pause"
@@ -1760,6 +1789,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 						className: "text-base font-bold text-text-primary m-0",
 						children: "Ingest Item"
 					}), /* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: "bg-transparent border-none text-[22px] leading-none cursor-pointer text-text-tertiary p-1 font-[inherit]",
 						onClick: i,
 						"aria-label": "Close",
@@ -1977,6 +2007,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 					className: "px-4 py-4 border-t border-border flex gap-2 justify-end flex-wrap bg-surface sticky bottom-0",
 					children: [
 						/* @__PURE__ */ P("button", {
+							"data-ui-part": "",
 							className: p("px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-surface border border-border text-text-secondary", (m || n.status === "done") && "opacity-50 cursor-not-allowed"),
 							onClick: () => void B(),
 							disabled: !!m || n.status === "done",
@@ -1985,6 +2016,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 							children: m === "remap" ? "Re-mapping…" : "Re-map"
 						}),
 						/* @__PURE__ */ P("button", {
+							"data-ui-part": "",
 							className: p("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] rounded-md cursor-pointer", m || !k ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-primary border-none text-on-primary"),
 							onClick: () => void R(),
 							disabled: !!m || !k,
@@ -1993,6 +2025,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 							children: m === "retry" ? "Retrying…" : "Retry"
 						}),
 						/* @__PURE__ */ P("button", {
+							"data-ui-part": "",
 							className: p("px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer", m || n.status === "done" ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]"),
 							onClick: () => void z(),
 							disabled: !!m || n.status === "done",
@@ -2112,6 +2145,7 @@ function Te() {
 						}))]
 					}),
 					/* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]",
 						onClick: () => void f(),
 						"data-testid": "refresh-btn",
@@ -2126,6 +2160,7 @@ function Te() {
 					className: "text-[13px] font-medium",
 					children: "Failed to load ingest items."
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					onClick: () => void f(),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
@@ -2139,6 +2174,7 @@ function Te() {
 					className: "text-[13px] font-medium",
 					children: ["Could not update that item: ", g]
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					onClick: _,
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
 					children: "Dismiss"
@@ -2151,6 +2187,7 @@ function Te() {
 			}) : !d && /* @__PURE__ */ P("div", {
 				className: "overflow-x-auto",
 				children: /* @__PURE__ */ F("table", {
+					"data-ui-part": "",
 					className: "w-full border-collapse text-[13px]",
 					children: [/* @__PURE__ */ P("thead", { children: /* @__PURE__ */ F("tr", {
 						className: "border-b border-border",
@@ -2185,6 +2222,7 @@ function Te() {
 							})
 						]
 					}) }), /* @__PURE__ */ P("tbody", { children: c.map((e) => /* @__PURE__ */ F("tr", {
+						"data-ui-part": "",
 						className: "border-b border-border cursor-pointer hover:bg-surface-hover",
 						onClick: () => o(e),
 						onKeyDown: w(() => o(e)),
@@ -2239,11 +2277,13 @@ function Te() {
 								children: /* @__PURE__ */ F("div", {
 									className: "flex gap-1.5 justify-end",
 									children: [e.status === "failed" && /* @__PURE__ */ P("button", {
+										"data-ui-part": "",
 										className: "px-2.5 py-1 text-[11px] font-medium border border-border rounded-[5px] bg-surface cursor-pointer font-[inherit] text-text-secondary",
 										onClick: () => void S(e.itemId),
 										"data-testid": `retry-${e.itemId}`,
 										children: "Retry"
 									}), e.status !== "done" && /* @__PURE__ */ P("button", {
+										"data-ui-part": "",
 										className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
 										onClick: () => void T(e.itemId),
 										"data-testid": `skip-${e.itemId}`,
@@ -2429,6 +2469,7 @@ function Oe() {
 				body: "Mapping decisions, source changes, and write-back attempts will appear here once instrumentation is wired (hub#2215).",
 				testId: "audit-empty"
 			}) : /* @__PURE__ */ F("table", {
+				"data-ui-part": "",
 				"data-testid": "audit-table",
 				className: "w-full border-collapse bg-surface border border-border rounded-[10px] overflow-hidden",
 				children: [/* @__PURE__ */ P("thead", { children: /* @__PURE__ */ F("tr", { children: [
@@ -2494,6 +2535,7 @@ function ke({ entry: e, expanded: t, onToggle: n }) {
 			/* @__PURE__ */ P("td", {
 				className: "text-[13px] p-2 align-top border-b border-border",
 				children: /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					"data-testid": `audit-detail-toggle-${e.auditId}`,
 					className: "text-[11px] text-primary bg-transparent border-none p-0 cursor-pointer underline",
 					onClick: n,
@@ -2744,6 +2786,7 @@ function Fe({ field: e, side: t, onPick: n }) {
 		role: "group",
 		"aria-label": `Resolution for ${e.field}`,
 		children: [i.map((r) => /* @__PURE__ */ P("button", {
+			"data-ui-part": "",
 			type: "button",
 			"aria-pressed": t === r.value,
 			disabled: !r.enabled,
@@ -2797,6 +2840,7 @@ function Le() {
 					className: "text-[13px] font-medium",
 					children: ["That entry was not updated: ", o]
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => s(null),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
@@ -2854,11 +2898,13 @@ function Re({ entry: e, onReplay: t, onDrop: n }) {
 			/* @__PURE__ */ F("div", {
 				className: "flex gap-2",
 				children: [/* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					"data-testid": `dlq-replay-${e.id}`,
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 					onClick: t,
 					children: "Replay"
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					"data-testid": `dlq-drop-${e.id}`,
 					className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
 					onClick: n,
@@ -2904,6 +2950,7 @@ function ze() {
 					className: "text-[13px] font-medium",
 					children: ["That proposal was not updated: ", a]
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => o(null),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
@@ -2972,11 +3019,13 @@ function Be({ proposal: e, onPromote: t, onReject: n }) {
 			/* @__PURE__ */ F("div", {
 				className: "flex gap-2",
 				children: [/* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					"data-testid": `proposal-promote-${e.proposalId}`,
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 					onClick: t,
 					children: "Promote"
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					"data-testid": `proposal-reject-${e.proposalId}`,
 					className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
 					onClick: n,
@@ -3032,6 +3081,7 @@ function Ve({ idToken: e, baseUrl: n } = {}) {
 					className: "text-[13px] font-medium",
 					children: ["That item was not updated: ", g]
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					onClick: () => _(null),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
 					children: "Dismiss"
@@ -3102,6 +3152,7 @@ function He({ item: e, docTypes: t, remapTypeId: n, onPickRemapType: r, onAccept
 				className: "flex gap-2 items-center flex-wrap",
 				children: [
 					/* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						"data-testid": `review-accept-${e.itemId}`,
 						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]", !e.documentTypeId && "opacity-50 cursor-not-allowed"),
 						onClick: i,
@@ -3124,6 +3175,7 @@ function He({ item: e, docTypes: t, remapTypeId: n, onPickRemapType: r, onAccept
 						}))]
 					}),
 					/* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						"data-testid": `review-remap-${e.itemId}`,
 						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]", !n && "opacity-50 cursor-not-allowed"),
 						onClick: a,
@@ -3131,6 +3183,7 @@ function He({ item: e, docTypes: t, remapTypeId: n, onPickRemapType: r, onAccept
 						children: "Re-map"
 					}),
 					/* @__PURE__ */ P("button", {
+						"data-ui-part": "",
 						"data-testid": `review-discard-${e.itemId}`,
 						className: "px-3 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary",
 						onClick: o,
@@ -3247,6 +3300,7 @@ function Je() {
 						children: [/* @__PURE__ */ P("span", { className: "w-[7px] h-[7px] rounded-full bg-success animate-[sync-pulse_1.5s_ease-in-out_infinite]" }), "Live"]
 					})]
 				}), /* @__PURE__ */ P("button", {
+					"data-ui-part": "",
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary",
 					onClick: () => e("/ingest/sources"),
 					children: "Sources"
@@ -3388,6 +3442,7 @@ function Je() {
 								}))
 							}),
 							/* @__PURE__ */ P("button", {
+								"data-ui-part": "",
 								"data-testid": "event-pause-toggle",
 								className: "px-2.5 py-0.5 text-[11px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary",
 								onClick: () => o((e) => !e),
@@ -3395,6 +3450,7 @@ function Je() {
 								children: a ? "Resume" : "Pause"
 							}),
 							t.length > 0 && /* @__PURE__ */ P("button", {
+								"data-ui-part": "",
 								className: "px-2.5 py-0.5 text-[11px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary",
 								onClick: r,
 								children: "Clear"

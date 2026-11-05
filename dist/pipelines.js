@@ -2,41 +2,41 @@ import { r as e } from "./IdentityContext-CQM1qwH6.js";
 import "./WebSocketContext-DUvjGLFq.js";
 import { t } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { t as n } from "./cn-D4QmbyEy.js";
-import { n as r } from "./ToastProvider-CJAceUvq.js";
+import { n as r } from "./ToastProvider-D6jAeNNE.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { a, c as o, d as s, i as c, n as l, o as u, s as d, t as f, u as p } from "./GroupedList-A7lRWaWG.js";
+import { a, c as o, d as s, i as c, n as l, o as u, s as d, t as f, u as p } from "./GroupedList-eV4fTH7o.js";
 import { n as m, o as h } from "./Button-C-I3BxWI.js";
 import { n as g, o as _, r as v } from "./overlayStack-DxIDMUs-.js";
-import { t as y } from "./IconButton-J9jGN6eo.js";
-import { t as b } from "./Banner-CfPGjbpw.js";
+import { t as y } from "./IconButton-Bf5Wy0tS.js";
+import { t as b } from "./Banner-400g6E1q.js";
 import { n as x, t as S } from "./Chart-CHhWLl8U.js";
 import { t as C } from "./Modal-PO0F6rAp.js";
-import { t as w } from "./ConfirmDialog-BxFrBQ52.js";
-import { t as T } from "./Input-B0LB5k_L.js";
-import { t as E } from "./Select-BFyECVVL.js";
-import { a as D, t as ee } from "./Toolbar-DTMhrPmz.js";
-import { t as O } from "./SearchInput-DDKsA6gZ.js";
-import { t as k } from "./EmptyState-D5ucMp2y.js";
+import { t as w } from "./ConfirmDialog-DrXzW1zj.js";
+import { t as T } from "./Input-Brvp1kPv.js";
+import { t as E } from "./Select-CpZyUWay.js";
+import { a as D, t as ee } from "./Toolbar-BE-yVLwR.js";
+import { t as O } from "./SearchInput-BICb2TNO.js";
+import { t as k } from "./EmptyState-pOG782nO.js";
 import { n as te, t as ne } from "./StatusPill-CLkB5jFS.js";
 import { i as A, t as re } from "./focusTrap-D9J7npjl.js";
-import { n as ie, t as j } from "./FilterChip-CRblMyt0.js";
+import { n as ie, t as j } from "./FilterChip-BHmUM2tY.js";
 import { t as M } from "./SkeletonCard-D3FL0TB7.js";
-import { n as ae, t as oe } from "./Slider-DEbQCKD1.js";
-import { t as se } from "./DropdownMenu-2S3snVPG.js";
-import { t as N } from "./Textarea-BwvE1HPn.js";
-import { t as ce } from "./PageHeader-Cdrkk_kV.js";
-import { t as le } from "./FileUploadDrop-CkSUj1Te.js";
-import { t as P } from "./NumberInput-C1JOoCoC.js";
-import { t as ue } from "./Checkbox-Dvt09s3H.js";
-import { n as de } from "./FileKindMark-D7I7FHuP.js";
+import { n as ae, t as oe } from "./Slider-DCKY5jPg.js";
+import { t as se } from "./DropdownMenu-DP3rRjEd.js";
+import { t as N } from "./Textarea-CvdLeuO_.js";
+import { t as ce } from "./PageHeader-ChvZc2o0.js";
+import { t as le } from "./FileUploadDrop-CF2-g14E.js";
+import { t as P } from "./NumberInput-Cyc37Ssv.js";
+import { t as ue } from "./Checkbox-BW-hyqCM.js";
+import { n as de } from "./FileKindMark-BZmXUxaT.js";
 import { t as fe } from "./activationKey-CjbL3LUv.js";
 import { n as pe, r as me, t as he } from "./EventStreamContext-CLzG8O5_.js";
-import { $ as ge, A as _e, B as ve, C as ye, D as be, E as xe, F as Se, G as Ce, H as we, I as Te, J as Ee, K as De, L as Oe, M as ke, N as Ae, O as je, P as Me, Q as Ne, S as Pe, T as Fe, U as Ie, V as F, W as Le, X as Re, Z as ze, _ as Be, _t as Ve, a as He, at as Ue, b as We, bt as Ge, c as Ke, ct as qe, d as Je, dt as Ye, et as Xe, f as Ze, ft as Qe, g as $e, h as et, ht as tt, i as nt, it as rt, j as it, k as at, l as ot, lt as st, mt as ct, n as lt, nt as ut, o as dt, ot as ft, p as pt, pt as mt, r as ht, rt as gt, s as _t, st as vt, t as yt, tt as bt, u as xt, ut as St, v as Ct, vt as wt, w as Tt, x as Et, xt as Dt, y as Ot, yt as kt, z as At } from "./services-BpKnpCTT.js";
+import { $ as ge, A as _e, B as ve, C as ye, D as be, E as xe, F as Se, G as Ce, H as we, I as Te, J as Ee, K as De, L as Oe, M as ke, N as Ae, O as je, P as Me, Q as Ne, S as Pe, T as Fe, U as Ie, V as F, W as Le, X as Re, Z as ze, _ as Be, _t as Ve, a as He, at as Ue, b as We, bt as Ge, c as Ke, ct as qe, d as Je, dt as Ye, et as Xe, f as Ze, ft as Qe, g as $e, h as et, ht as tt, i as nt, it as rt, j as it, k as at, l as ot, lt as st, mt as ct, n as lt, nt as ut, o as dt, ot as ft, p as pt, pt as mt, r as ht, rt as gt, s as _t, st as vt, t as yt, tt as bt, u as xt, ut as St, v as Ct, vt as wt, w as Tt, x as Et, xt as Dt, y as Ot, yt as kt, z as At } from "./services-BvmuzW1f.js";
 import { t as jt } from "./rovingFocus-Bj5Y6kwY.js";
 /* empty css               */
 import { t as Mt } from "./AnimatedEdge-DnsfF8-D.js";
 import { t as Nt } from "./FloatingComposerDock-D10uQ4k3.js";
-import { t as Pt } from "./TraceTimeline-BEuSquSk.js";
+import { t as Pt } from "./TraceTimeline-rNEBM3ZD.js";
 import Ft, { createContext as It, memo as Lt, useCallback as I, useContext as Rt, useEffect as L, useId as zt, useMemo as R, useRef as z, useState as B } from "react";
 import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";
 import { Navigate as Bt, useNavigate as Vt, useParams as Ht, useSearchParams as Ut } from "react-router";
@@ -199,6 +199,7 @@ function K(e) {
 		e.preventDefault(), e.stopPropagation(), d?.();
 	}, w = !y && s === "pending" ? "animate-[basenode-pulse_2000ms_cubic-bezier(0.25,0.1,0.25,1)_infinite]" : !y && s === "running" ? "animate-[basenode-pulse_1500ms_linear_infinite]" : "", T = !!(c || l || S), E = !!(c || l), D = o ? `${o}, state: ${s}` : `Node, state: ${s}`;
 	return /* @__PURE__ */ U("div", {
+		"data-ui-part": "",
 		className: n("w-[200px] rounded-lg relative font-inherit text-text-primary box-border outline-none transition-[border-color,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2", p ? "border-2 border-warning bg-warning-bg shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]" : _.card, !p && u && "shadow-[0_0_0_4px_rgba(100,108,255,0.18),0_1px_2px_rgba(15,23,42,0.06)]", !p && !u && "shadow-[0_1px_2px_rgba(15,23,42,0.06)]", y && "transition-none"),
 		role: "button",
 		tabIndex: 0,
@@ -254,6 +255,7 @@ function K(e) {
 			S && /* @__PURE__ */ H("div", {
 				className: n("flex px-2.5 py-1.5", E && "border-b border-border"),
 				children: /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					className: n("cursor-pointer appearance-none font-inherit text-[11px] font-medium leading-tight px-2 py-0.5 rounded-full border border-danger text-danger-fg transition-colors duration-[120ms] ease-[cubic-bezier(0.4,0,0.2,1)]", b ? "bg-danger-bg" : "bg-transparent", y && "transition-none"),
 					onClick: C,
@@ -382,6 +384,7 @@ function hn(e) {
 function gn({ info: e }) {
 	let [t, n] = B(!1), r = t ? e.response : e.response.length > 60 ? `${e.response.slice(0, 60)}…` : e.response, i = e.tokensIn != null || e.tokensOut != null;
 	return /* @__PURE__ */ U("div", { children: [/* @__PURE__ */ U("button", {
+		"data-ui-part": "",
 		type: "button",
 		onClick: () => n((e) => !e),
 		className: "bg-transparent border-none p-0 cursor-pointer font-inherit text-xs text-text-secondary font-medium text-left",
@@ -1079,6 +1082,7 @@ function Rn({ id: e, data: t, selected: n }) {
 var zn = (e) => e.stopPropagation();
 function Bn(e) {
 	let { id: t, data: r, selected: i } = e, [a, s] = B(!1), c = F(t), l = c?.status === "cancelled" ? "failed" : c?.status, u = (r._state && r._state !== "idle" ? r._state : void 0) ?? l ?? r._state ?? "idle", d = lt(), f = c?.images?.[0]?.imageId ?? c?.output?.imageId ?? r.imageId, p = f ? /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+		"data-ui-part": "",
 		type: "button",
 		"aria-label": "View source image",
 		className: n("block w-full rounded border-none bg-transparent p-0 cursor-zoom-in", "focus:outline-none focus-visible:ring-2 focus-visible:ring-info"),
@@ -1144,6 +1148,7 @@ function Un({ images: e, max: t = 4, "data-testid": r = "node-thumb-strip" }) {
 		"data-testid": r,
 		className: "flex flex-row items-center gap-1",
 		children: [l.map((t, n) => /* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			"data-testid": `${r}-thumb-${n}`,
 			"aria-label": t.alt ?? `Result image ${n + 1} of ${e.length}`,
@@ -1157,6 +1162,7 @@ function Un({ images: e, max: t = 4, "data-testid": r = "node-thumb-strip" }) {
 				className: "h-full w-full object-cover"
 			})
 		}, `${t.imageId}-${n}`)), c && /* @__PURE__ */ U("button", {
+			"data-ui-part": "",
 			type: "button",
 			"data-testid": `${r}-overflow`,
 			"aria-label": `Show all ${e.length} images`,
@@ -1856,6 +1862,7 @@ var lr = (e) => e.stopPropagation(), ur = Lt(function({ info: e }) {
 					className: "bg-transparent border-none p-0 text-[12px] text-danger-fg font-medium text-left",
 					children: t ? "✕ Content policy refusal" : `✕ ${e.failure.reason}`
 				}), e.onRetry && /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: e.onRetry,
 					className: "ml-2 bg-transparent border border-border-emphasis rounded px-1.5 py-0.5 text-[11px] cursor-pointer text-text-secondary",
@@ -1877,6 +1884,7 @@ var lr = (e) => e.stopPropagation(), ur = Lt(function({ info: e }) {
 			children: u
 		}),
 		/* @__PURE__ */ U("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => r((e) => !e),
 			className: "bg-transparent border-none p-0 cursor-pointer font-inherit text-[12px] text-text-secondary font-medium text-left",
@@ -1912,12 +1920,14 @@ var lr = (e) => e.stopPropagation(), ur = Lt(function({ info: e }) {
 			]
 		}),
 		c && e.imageId && /* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => window.dispatchEvent(new CustomEvent("pipeline:open-run-modal")),
 			className: "mt-1 block bg-transparent border-none p-0 cursor-pointer text-[11px] text-primary underline font-inherit",
 			children: "Run with new image →"
 		}),
 		e.imageId && /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			"aria-label": "View vision input image",
 			className: n("mt-1.5 block h-14 w-14 overflow-hidden rounded border border-border bg-surface-inset", "p-0 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-info"),
@@ -2200,6 +2210,7 @@ function vr(e) {
 	else if (m || f.length === 1) {
 		let e = f[0] ? a(f[0].imageId) : void 0;
 		g = /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			"data-testid": "generate-output-preview",
 			"aria-label": e ? "View generated image" : "Image synthesizing",
@@ -2285,6 +2296,7 @@ function br(e) {
 	else if (m || f.length === 1) {
 		let e = f[0] ? a(f[0].imageId) : void 0;
 		v = /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			"data-testid": "variation-output-preview",
 			"aria-label": e ? "View variation image" : "Image synthesizing",
@@ -2365,6 +2377,7 @@ function Cr(e) {
 	else if (m || f.length === 1) {
 		let e = f[0] ? a(f[0].imageId) : void 0;
 		g = /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			"data-testid": "edit-prompt-output-preview",
 			"aria-label": e ? "View edited image" : "Image synthesizing",
@@ -2615,6 +2628,7 @@ function Ar({ anchor: e, flowPosition: t, disabledTypes: r = [], onClose: i, onI
 		children: [/* @__PURE__ */ H("div", {
 			className: "p-2 border-b border-border",
 			children: /* @__PURE__ */ H("input", {
+				"data-ui-part": "",
 				ref: d,
 				type: "text",
 				value: o,
@@ -2842,6 +2856,7 @@ function Pr({ nodeMenu: e, breakpoints: t, showBreakpointOption: r, onFilterLog:
 		},
 		children: [
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				role: "menuitem",
 				onClick: i,
@@ -2850,6 +2865,7 @@ function Pr({ nodeMenu: e, breakpoints: t, showBreakpointOption: r, onFilterLog:
 				children: "🎯 Filter log to this node"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				role: "menuitem",
 				onClick: a,
@@ -2858,6 +2874,7 @@ function Pr({ nodeMenu: e, breakpoints: t, showBreakpointOption: r, onFilterLog:
 				children: "📋 Copy node id"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				role: "menuitem",
 				onClick: o,
@@ -2866,6 +2883,7 @@ function Pr({ nodeMenu: e, breakpoints: t, showBreakpointOption: r, onFilterLog:
 				children: "📑 Duplicate node"
 			}),
 			r ? /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				role: "menuitem",
 				onClick: s,
@@ -3513,6 +3531,7 @@ function ti({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 						"data-testid": "palette-search",
 						className: "flex-1 min-w-0"
 					}), /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => p((e) => !e),
 						title: f ? "Switch to card view" : "Switch to compact view",
@@ -3611,6 +3630,7 @@ function ti({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 				children: [N && /* @__PURE__ */ U("div", {
 					"data-testid": "palette-recents",
 					children: [/* @__PURE__ */ U("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => E("__recents__", !!m.__recents__),
 						className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
@@ -3627,6 +3647,7 @@ function ti({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 						className: "text-xs text-text-tertiary",
 						children: "No nodes match"
 					}), /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: w,
 						"data-testid": "palette-clear-filters",
@@ -3638,6 +3659,7 @@ function ti({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 					return /* @__PURE__ */ U("div", {
 						"data-testid": `palette-category-${e.name}`,
 						children: [/* @__PURE__ */ U("button", {
+							"data-ui-part": "",
 							type: "button",
 							onClick: () => E(e.name, t),
 							className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
@@ -3784,6 +3806,7 @@ function li({ definition: e, setPositions: t, fitView: n }) {
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [i]), /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+		"data-ui-part": "",
 		type: "button",
 		onClick: i,
 		className: "absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-surface border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
@@ -3804,6 +3827,7 @@ function li({ definition: e, setPositions: t, fitView: n }) {
 			})
 		})
 	}), /* @__PURE__ */ H("button", {
+		"data-ui-part": "",
 		type: "button",
 		onClick: r,
 		className: "absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-surface border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
@@ -4313,6 +4337,7 @@ function Si({ error: e, anchor: t, onDismiss: n, onRetry: r }) {
 					}),
 					/* @__PURE__ */ H("span", { className: "flex-1" }),
 					/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: n,
 						"aria-label": "Dismiss error overlay",
@@ -4340,6 +4365,7 @@ function Si({ error: e, anchor: t, onDismiss: n, onRetry: r }) {
 						]
 					}),
 					e.stack && /* @__PURE__ */ U("div", { children: [/* @__PURE__ */ U("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => o((e) => !e),
 						className: "bg-transparent border-none p-0 cursor-pointer text-xs font-medium text-text-secondary font-inherit",
@@ -4355,12 +4381,14 @@ function Si({ error: e, anchor: t, onDismiss: n, onRetry: r }) {
 			/* @__PURE__ */ U("div", {
 				className: "flex gap-2 px-3.5 pt-2.5 pb-3 border-t border-border",
 				children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: f,
 					className: "px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-surface-hover text-text-secondary",
 					"data-testid": "error-copy-btn",
 					children: s ? "Copied!" : "Copy error details"
 				}), r && /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: p,
 					className: "px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-primary text-white",
@@ -5041,6 +5069,7 @@ function pa(e) {
 function ma(e, t, r) {
 	let i = e.node, a = fa[i.type] ?? "■", o = t !== "removed" && !!r;
 	return /* @__PURE__ */ U("button", {
+		"data-ui-part": "",
 		type: "button",
 		disabled: !o,
 		onClick: o ? () => r(e.node.id) : void 0,
@@ -5076,6 +5105,7 @@ function ha({ open: e, onClose: t, currentDef: n, publishedDef: r, onJumpToNode:
 		title: "Changes since publish",
 		maxWidth: 820,
 		footer: /* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			onClick: t,
 			className: "px-4 py-[7px] text-[13px] font-semibold bg-primary text-white border-none rounded-[7px] cursor-pointer font-[inherit]",
 			children: "Close"
@@ -5226,10 +5256,12 @@ function ya(e) {
 			title: "Publish pipeline?",
 			maxWidth: 420,
 			footer: /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				onClick: r,
 				className: _a,
 				children: "Cancel"
 			}), /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				onClick: i,
 				disabled: a,
 				className: n("px-4 py-[7px] text-[13px] font-semibold text-white border-none rounded-[7px] font-[inherit]", a ? "bg-border-emphasis cursor-not-allowed" : "bg-primary cursor-pointer"),
@@ -5270,10 +5302,12 @@ function ya(e) {
 			title: "Delete pipeline?",
 			maxWidth: 400,
 			footer: /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				onClick: u,
 				className: _a,
 				children: "Cancel"
 			}), /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				onClick: d,
 				className: va,
 				children: "Delete"
@@ -5293,10 +5327,12 @@ function ya(e) {
 			title: "Clear run history?",
 			maxWidth: 400,
 			footer: /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				onClick: p,
 				className: _a,
 				children: "Cancel"
 			}), /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				onClick: m,
 				className: va,
 				children: "Clear history"
@@ -5447,6 +5483,7 @@ function ba({ runId: e, visible: t }) {
 				className: "flex items-center justify-center h-full text-code-muted text-[13px] italic",
 				children: e ? "Waiting for LLM output..." : "No active run"
 			}) : p.map((e) => /* @__PURE__ */ U("div", { children: [/* @__PURE__ */ U("div", {
+				"data-ui-part": "",
 				className: n("flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-code-border mb-1.5", e.active ? _.info : _.neutral),
 				onClick: () => d(e.stepId),
 				role: "button",
@@ -5750,12 +5787,14 @@ function wa({ isPublished: e, showTags: t, hasPublishedVersion: r, onDuplicate: 
 		}),
 		children: [
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: p,
 				role: "menuitem",
 				onClick: i,
 				children: "Duplicate"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: p,
 				role: "menuitem",
 				onClick: a,
@@ -5763,6 +5802,7 @@ function wa({ isPublished: e, showTags: t, hasPublishedVersion: r, onDuplicate: 
 				children: "Copy Mermaid"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: p,
 				role: "menuitem",
 				onClick: o,
@@ -5770,6 +5810,7 @@ function wa({ isPublished: e, showTags: t, hasPublishedVersion: r, onDuplicate: 
 				children: "View changes since publish"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: p,
 				role: "menuitem",
 				onClick: s,
@@ -5778,6 +5819,7 @@ function wa({ isPublished: e, showTags: t, hasPublishedVersion: r, onDuplicate: 
 			}),
 			/* @__PURE__ */ H("div", { className: "border-t border-border-subtle my-1" }),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: p,
 				role: "menuitem",
 				onClick: c,
@@ -5785,12 +5827,14 @@ function wa({ isPublished: e, showTags: t, hasPublishedVersion: r, onDuplicate: 
 				children: t ? "Hide tags" : "Show tags"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: p,
 				role: "menuitem",
 				onClick: l,
 				children: "View run history"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: m,
 				role: "menuitem",
 				onClick: u,
@@ -5799,6 +5843,7 @@ function wa({ isPublished: e, showTags: t, hasPublishedVersion: r, onDuplicate: 
 			!1,
 			/* @__PURE__ */ H("div", { className: "border-t border-border-subtle my-1" }),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				className: m,
 				role: "menuitem",
 				onClick: f,
@@ -5902,6 +5947,7 @@ function Ea({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				className: "w-[260px] text-sm font-bold",
 				"data-testid": "pipeline-name-input"
 			}) : /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: () => re(!0),
 				className: n("px-2 py-1 text-sm font-bold text-text-primary", "bg-transparent border border-transparent rounded-md", "cursor-text font-inherit max-w-[280px]", "overflow-hidden text-ellipsis whitespace-nowrap text-left"),
@@ -5923,6 +5969,7 @@ function Ea({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				className: "relative",
 				ref: de,
 				children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => ue((e) => !e),
 					className: n("inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-snug whitespace-nowrap", "cursor-pointer border-none", Ta[le.variant]),
@@ -5931,6 +5978,7 @@ function Ea({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				}), P && fe.length > 0 && /* @__PURE__ */ H("div", {
 					className: n("absolute top-full mt-1.5 bg-surface border border-border rounded-lg", "shadow-lg p-0 min-w-[260px] max-w-[360px] max-h-[320px] overflow-y-auto z-20"),
 					children: fe.map((e, t) => /* @__PURE__ */ U("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => pe(e.nodeId),
 						className: n("block w-full text-left px-3.5 py-2 text-[13px]", "border-none bg-transparent font-inherit text-text-primary", "flex gap-2 items-start leading-snug", e.nodeId ? "cursor-pointer" : "cursor-default", t < fe.length - 1 && "border-b border-border"),
@@ -5983,6 +6031,7 @@ function Ea({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				children: "Export"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: g,
 				title: se ? "Already published at this version" : "Publish pipeline to enable runs",
@@ -5992,6 +6041,7 @@ function Ea({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				children: se ? "Published" : "Publish"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: d,
 				disabled: s || o,
@@ -6004,6 +6054,7 @@ function Ea({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				}) : be
 			}),
 			u.size > 0 && /* @__PURE__ */ U("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: f,
 				disabled: s || a,
@@ -6112,6 +6163,7 @@ function ja({ data: e, depth: t = 0, highlightKeys: r, keyName: i, isHighlighted
 		children: "[]"
 	}) : /* @__PURE__ */ U("span", { children: [
 		/* @__PURE__ */ H("span", {
+			"data-ui-part": "",
 			className: "cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center",
 			onClick: () => s((e) => !e),
 			role: "button",
@@ -6159,6 +6211,7 @@ function ja({ data: e, depth: t = 0, highlightKeys: r, keyName: i, isHighlighted
 			children: "{}"
 		}) : /* @__PURE__ */ U("span", { children: [
 			/* @__PURE__ */ H("span", {
+				"data-ui-part": "",
 				className: "cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center",
 				onClick: () => s((e) => !e),
 				role: "button",
@@ -6265,6 +6318,7 @@ function Fa({ k: e, initial: t, onCommit: n, onError: r, onFocus: i }) {
 		}
 	});
 	return /* @__PURE__ */ H("textarea", {
+		"data-ui-part": "",
 		"data-testid": `context-edit-input-${e}`,
 		value: a,
 		onChange: (e) => o(e.target.value),
@@ -6312,6 +6366,7 @@ function Ia({ inputContext: e, buffer: t, parseErrors: r, newKeyDraft: i, setNew
 							options: Na,
 							className: "h-auto py-1 bg-code-bg text-code-text border-code-border rounded-sm font-mono"
 						}) : d === "number" ? /* @__PURE__ */ H("input", {
+							"data-ui-part": "",
 							"data-testid": `context-edit-input-${i}`,
 							type: "number",
 							value: String(o),
@@ -6322,6 +6377,7 @@ function Ia({ inputContext: e, buffer: t, parseErrors: r, newKeyDraft: i, setNew
 							onFocus: () => s(i, o),
 							className: f
 						}) : d === "string" ? /* @__PURE__ */ H("input", {
+							"data-ui-part": "",
 							"data-testid": `context-edit-input-${i}`,
 							type: "text",
 							value: o ?? "",
@@ -6343,6 +6399,7 @@ function Ia({ inputContext: e, buffer: t, parseErrors: r, newKeyDraft: i, setNew
 					/* @__PURE__ */ H("div", {
 						className: "flex gap-1",
 						children: p && /* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							"data-testid": `context-edit-revert-${i}`,
 							onClick: () => l(i),
@@ -6358,6 +6415,7 @@ function Ia({ inputContext: e, buffer: t, parseErrors: r, newKeyDraft: i, setNew
 			"data-testid": "context-edit-add-row",
 			children: [
 				/* @__PURE__ */ H("input", {
+					"data-ui-part": "",
 					"data-testid": "context-edit-new-key",
 					type: "text",
 					placeholder: "key",
@@ -6369,6 +6427,7 @@ function Ia({ inputContext: e, buffer: t, parseErrors: r, newKeyDraft: i, setNew
 					className: f
 				}),
 				/* @__PURE__ */ H("input", {
+					"data-ui-part": "",
 					"data-testid": "context-edit-new-value",
 					type: "text",
 					placeholder: "value (string or JSON)",
@@ -6383,6 +6442,7 @@ function Ia({ inputContext: e, buffer: t, parseErrors: r, newKeyDraft: i, setNew
 					className: f
 				}),
 				/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					"data-testid": "context-edit-add-btn",
 					onClick: o,
@@ -6652,6 +6712,7 @@ function Ha({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 						show: D
 					}
 				].filter((e) => e.show).map((e) => /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					"data-testid": e.id === "attempts" ? "attempts-tab" : void 0,
 					className: n("px-3.5 py-1.5 text-[11px] font-semibold bg-transparent border-none cursor-pointer font-inherit uppercase tracking-wide border-b-2", s === e.id ? "text-primary border-b-primary" : "text-text-tertiary border-b-transparent"),
@@ -6676,12 +6737,14 @@ function Ha({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 						}), O && /* @__PURE__ */ U("div", {
 							className: "flex gap-1.5 items-center",
 							children: [d && Object.keys(p).length > 0 && /* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								onClick: re,
 								"data-testid": "context-inspector-discard",
 								className: "px-2 py-0.5 text-[10px] font-semibold bg-transparent text-code-red border border-code-border rounded-sm cursor-pointer font-mono",
 								children: "Discard changes"
 							}), /* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								onClick: () => {
 									let e = !d;
@@ -6851,6 +6914,7 @@ function Ha({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 						className: "flex items-center gap-2 mb-3",
 						children: [
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								"data-testid": "attempts-prev",
 								disabled: l === 0,
@@ -6871,6 +6935,7 @@ function Ha({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 								]
 							}),
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								"data-testid": "attempts-next",
 								disabled: l >= E.length - 2,
@@ -6912,6 +6977,7 @@ function Ua({ definition: e, pausedBreakpoint: t, applyingPatch: r, revertingPat
 					children: ["Paused at: ", Sa(e, t.stepId)]
 				}),
 				g && /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: d,
 					disabled: r,
@@ -6920,6 +6986,7 @@ function Ua({ definition: e, pausedBreakpoint: t, applyingPatch: r, revertingPat
 					children: r ? "Applying…" : "Apply & Continue"
 				}),
 				/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: c,
 					disabled: r,
@@ -6928,6 +6995,7 @@ function Ua({ definition: e, pausedBreakpoint: t, applyingPatch: r, revertingPat
 					children: "Continue"
 				}),
 				/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: l,
 					disabled: r,
@@ -6936,6 +7004,7 @@ function Ua({ definition: e, pausedBreakpoint: t, applyingPatch: r, revertingPat
 					children: "Step Over"
 				}),
 				/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: u,
 					disabled: r,
@@ -7007,6 +7076,7 @@ function Ua({ definition: e, pausedBreakpoint: t, applyingPatch: r, revertingPat
 									})] })]
 								}),
 								!t && /* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									type: "button",
 									"data-testid": `breakpoint-patch-revert-${e.patchId}`,
 									onClick: () => f(e.patchId),
@@ -7088,6 +7158,7 @@ function qa({ title: e, defaultCollapsed: t = !1, children: r, className: i }) {
 	return /* @__PURE__ */ U("div", {
 		className: n("flex flex-col", i),
 		children: [/* @__PURE__ */ U("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => o((e) => !e),
 			className: "flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer font-inherit text-xs font-semibold text-text-secondary",
@@ -7119,6 +7190,7 @@ function Ja({ samples: e, onSelect: t, "aria-label": r = "Suggestions", classNam
 		"aria-label": r,
 		"data-testid": "sample-pills",
 		children: e.map((e) => /* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => t(e),
 			className: "text-[10px] font-mono bg-surface-inset border border-border text-text-secondary rounded px-1.5 py-0.5 cursor-pointer hover:bg-surface-hover",
@@ -7565,6 +7637,7 @@ function go({ data: e, onChange: t }) {
 							children: "Full URL:"
 						}), v]
 					}), /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: y,
 						className: "text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans",
@@ -7588,12 +7661,14 @@ function go({ data: e, onChange: t }) {
 								children: o ? a : "•".repeat(32)
 							}),
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								onClick: () => s((e) => !e),
 								className: "text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans",
 								children: o ? "Hide" : "Reveal"
 							}),
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								onClick: x,
 								className: "text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans",
@@ -7737,6 +7812,7 @@ function Co({ paths: e, unresolved: t = [], onInsert: r, onRevealNode: i, classN
 			}) : /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("div", {
 				className: "flex flex-wrap gap-1",
 				children: e.map((e) => /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => r(`{{${e.path}}}`),
 					title: `${e.description}\nfrom ${e.source}`,
@@ -7779,6 +7855,7 @@ function Co({ paths: e, unresolved: t = [], onInsert: r, onRevealNode: i, classN
 					children: e.map((e) => /* @__PURE__ */ U("li", {
 						className: "flex items-baseline gap-1.5 py-0.5",
 						children: [/* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							onClick: () => i(e.sourceNodeId),
 							className: "bg-transparent border-none p-0 cursor-pointer text-primary underline font-inherit text-[11px]",
@@ -7970,6 +8047,7 @@ function Oo({ data: e, onChange: t, nodeId: n }) {
 			]
 		}),
 		/* @__PURE__ */ U("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => a((e) => !e),
 			className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit shrink-0",
@@ -8632,6 +8710,7 @@ function Xo({ data: e, onChange: t }) {
 							" ",
 							e.value,
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								onClick: () => p(t),
 								"aria-label": `Remove ${e.value}`,
@@ -8825,6 +8904,7 @@ function os({ kind: e }) {
 }
 function ss({ entry: e, isSelected: t, onPick: r }) {
 	return /* @__PURE__ */ U("button", {
+		"data-ui-part": "",
 		type: "button",
 		onClick: () => r(e.path),
 		"aria-pressed": t,
@@ -9792,6 +9872,7 @@ function Ns({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 	let te = /* @__PURE__ */ new Set();
 	l.kind === "move" && te.add(l.id), l.kind === "resize" && te.add(l.id);
 	let ne = (e, t) => /* @__PURE__ */ H("button", {
+		"data-ui-part": "",
 		type: "button",
 		"aria-label": `Resize ${t}`,
 		className: n("absolute h-3 w-3 rounded-sm border border-primary bg-white shadow", {
@@ -9834,6 +9915,7 @@ function Ns({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 				className: "absolute -top-5 left-0 h-5 w-24 border-primary px-1 text-[10px] font-semibold text-primary shadow focus:border-primary focus:ring-primary/40",
 				onClick: (e) => e.stopPropagation()
 			}) : /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				tabIndex: 0,
 				"aria-label": `Label: ${e.label || "Unlabeled"}. Double-click to edit.`,
@@ -10347,6 +10429,7 @@ function $s({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				"data-testid": `layer-number-${t}`
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: i,
 				className: n("shrink-0 w-6 h-6 flex items-center justify-center rounded", "text-[12px] text-text-tertiary bg-transparent border-none", "cursor-pointer hover:text-danger-fg hover:bg-danger-bg"),
@@ -10443,6 +10526,7 @@ function rc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 						"aria-label": "New layer kind",
 						"data-testid": "new-layer-kind-select"
 					}), /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => {
 							t([...e, Ys(d)]);
@@ -10472,6 +10556,7 @@ function rc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 							nc(v),
 							")"
 						] }), /* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							onClick: S,
 							"aria-label": "Clear pinned source image",
@@ -10782,6 +10867,7 @@ function gc({ data: e, onChange: t, nodeId: n }) {
 			})
 		}),
 		/* @__PURE__ */ U("div", { children: [/* @__PURE__ */ U("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => s((e) => !e),
 			"aria-expanded": o,
@@ -13014,6 +13100,7 @@ function Kc({ data: e, onChange: t, nodeId: n }) {
 function qc({ result: e, className: t }) {
 	let { caption: r, setting: i, location: a, timeOfDay: o, mood: s, colors: c } = e;
 	return !r && !i && !a && !o && !s && (!c || c.length === 0) ? null : /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-2", t),
 		children: [r ? /* @__PURE__ */ H("p", {
 			className: "text-base leading-relaxed text-text-primary",
@@ -13092,6 +13179,7 @@ function Yc({ imageUrl: e, imageDataUrl: t, imageWidth: r, imageHeight: i, peopl
 		if (!Number.isFinite(o) || !Number.isFinite(s) || !Number.isFinite(c) || !Number.isFinite(l) || c <= o || l <= s) return null;
 		let u = o / _.w * 100, d = s / _.h * 100, f = (c - o) / _.w * 100, p = (l - s) / _.h * 100, m = Jc[r];
 		return /* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: i,
 			title: t,
@@ -13147,6 +13235,7 @@ function Xc(e) {
 //#region src/components/pipelines/vision/PeoplePanel.tsx
 function Zc({ people: e, highlightedIndex: t, onSelect: r, className: i }) {
 	return !e || e.length === 0 ? null : /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-1.5", i),
 		children: [/* @__PURE__ */ U("h4", {
 			className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
@@ -13214,6 +13303,7 @@ function Zc({ people: e, highlightedIndex: t, onSelect: r, className: i }) {
 					}) : null
 				] });
 				return r ? /* @__PURE__ */ H("li", { children: /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => r(e),
 					className: n(o, "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
@@ -13231,6 +13321,7 @@ function Zc({ people: e, highlightedIndex: t, onSelect: r, className: i }) {
 //#region src/components/pipelines/vision/ObjectsPanel.tsx
 function Qc({ objects: e, onSelect: t, className: r }) {
 	return !e || e.length === 0 ? null : /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-1.5", r),
 		children: [/* @__PURE__ */ U("h4", {
 			className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
@@ -13260,6 +13351,7 @@ function Qc({ objects: e, onSelect: t, className: r }) {
 					]
 				})] });
 				return t ? /* @__PURE__ */ H("li", { children: /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => t(e),
 					className: n(i, "cursor-pointer hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
@@ -13276,6 +13368,7 @@ function Qc({ objects: e, onSelect: t, className: r }) {
 //#region src/components/pipelines/vision/TagsPanel.tsx
 function $c({ tags: e, onTagClick: t, className: r }) {
 	return !e || e.length === 0 ? null : /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-1.5", r),
 		children: [/* @__PURE__ */ H("h4", {
 			className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
@@ -13283,6 +13376,7 @@ function $c({ tags: e, onTagClick: t, className: r }) {
 		}), /* @__PURE__ */ H("div", {
 			className: "flex flex-wrap gap-1.5",
 			children: e.map((e) => t ? /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: () => t(e),
 				title: `Filter by ${e}`,
@@ -13313,6 +13407,7 @@ function tl(e) {
 function nl({ exposure: e, whiteBalance: t, contrast: r, composition: i, edits: a, onApplyEdit: o, className: s }) {
 	let c = e || t || r || i, l = (a ?? []).length > 0;
 	return !c && !l ? null : /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-2", s),
 		children: [
 			/* @__PURE__ */ H("h4", {
@@ -13412,6 +13507,7 @@ function nl({ exposure: e, whiteBalance: t, contrast: r, composition: i, edits: 
 						className: "flex-1 text-text-primary",
 						children: e
 					}), o ? /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => o(e),
 						className: "shrink-0 rounded-md border border-border bg-surface-hover px-2 py-0.5 text-[11px] font-medium text-text-primary hover:bg-surface-panel focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
@@ -13476,6 +13572,7 @@ function rl({ result: e, showImage: t = !0, showCaption: r = !0, showPeople: i =
 				onApplyEdit: u
 			}) : null,
 			e.text && e.text.length > 0 ? /* @__PURE__ */ U("section", {
+				"data-ui-part": "",
 				className: "flex flex-col gap-1.5",
 				children: [/* @__PURE__ */ H("h4", {
 					className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
@@ -13489,8 +13586,10 @@ function rl({ result: e, showImage: t = !0, showCaption: r = !0, showPeople: i =
 				})]
 			}) : null,
 			c && e.rawText ? /* @__PURE__ */ U("section", {
+				"data-ui-part": "",
 				className: "flex flex-col gap-1.5",
 				children: [/* @__PURE__ */ U("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => h((e) => !e),
 					"aria-expanded": m,
@@ -13889,6 +13988,7 @@ function cl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 					"aria-label": "Vision model",
 					"data-testid": "bench-model-select"
 				}), /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => void te(),
 					disabled: b,
@@ -13942,6 +14042,7 @@ function cl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 						})]
 					}),
 					/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: ne,
 						className: n("mt-1 w-full py-1.5 text-[12px] font-semibold rounded-md cursor-pointer", "bg-surface-hover border border-border text-text-primary", "hover:bg-surface-inset"),
@@ -14270,6 +14371,7 @@ function gl({ selectedIds: e }) {
 					children: [p.length, " nodes selected"]
 				}),
 				/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: v,
 					className: "w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit",
@@ -14285,11 +14387,13 @@ function gl({ selectedIds: e }) {
 			}), /* @__PURE__ */ U("div", {
 				className: "flex gap-2",
 				children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: b,
 					className: "px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-danger-border rounded-md cursor-pointer font-inherit",
 					children: "Delete all"
 				}), /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: x,
 					className: "px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit",
@@ -14310,6 +14414,7 @@ function gl({ selectedIds: e }) {
 						children: y.name
 					}),
 					/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: v,
 						className: "w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit",
@@ -14348,6 +14453,7 @@ function gl({ selectedIds: e }) {
 				]).map((e) => {
 					let t = l === e, r = e === "config" ? "Config" : e === "runs" ? "Runs" : e === "docs" ? "Docs" : "Bench";
 					return /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						role: "tab",
 						"aria-selected": t,
@@ -14430,11 +14536,13 @@ function gl({ selectedIds: e }) {
 			/* @__PURE__ */ U("div", {
 				className: "h-10 px-3 flex items-center justify-between gap-2 border-t border-border shrink-0",
 				children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: b,
 					className: "px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-transparent rounded-md cursor-pointer font-inherit",
 					children: "🗑 Delete node"
 				}), /* @__PURE__ */ U("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: x,
 					className: "px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit",
@@ -14500,6 +14608,7 @@ function Cl({ pipelineId: e, run: t, onBack: r }) {
 		children: [/* @__PURE__ */ U("div", {
 			className: "flex shrink-0 items-center gap-2 border-b border-border px-4 py-2.5",
 			children: [/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: r,
 				className: "cursor-pointer border-none bg-transparent p-0 font-inherit text-[13px] text-primary",
@@ -14586,6 +14695,7 @@ function Cl({ pipelineId: e, run: t, onBack: r }) {
 						})]
 					}),
 					/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => i(`/pipelines/${e}/runs/${t.id}`),
 						"data-testid": "runs-panel-replay-btn",
@@ -14785,6 +14895,7 @@ function Al({ pipelineId: e, onClose: t }) {
 				}), /* @__PURE__ */ U("div", {
 					className: "ml-auto flex items-center gap-1.5",
 					children: [/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => {
 							p(!f), f && h([]);
@@ -14793,6 +14904,7 @@ function Al({ pipelineId: e, onClose: t }) {
 						className: n("cursor-pointer rounded px-2 py-0.5 font-inherit text-[11px] font-medium", f ? "border border-primary bg-primary text-white" : "border border-border bg-surface text-text-secondary"),
 						children: "Compare"
 					}), /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: t,
 						"aria-label": "Close runs panel",
@@ -14808,6 +14920,7 @@ function Al({ pipelineId: e, onClose: t }) {
 					className: "text-[11px] text-text-secondary",
 					children: [m.length, "/2 selected"]
 				}), /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					disabled: m.length !== 2,
 					onClick: S,
@@ -14833,6 +14946,7 @@ function Al({ pipelineId: e, onClose: t }) {
 						role: "alert",
 						className: "p-4 text-center text-xs text-state-failed",
 						children: [c, /* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							onClick: () => void v(),
 							className: "mx-auto mt-2 block cursor-pointer border-none bg-transparent font-inherit text-xs text-primary underline",
@@ -14848,6 +14962,7 @@ function Al({ pipelineId: e, onClose: t }) {
 						children: i.map((e) => {
 							let t = Dl(e.status), r = Ol(e.status), i = m.includes(e.id);
 							return /* @__PURE__ */ U("li", {
+								"data-ui-part": "",
 								"data-testid": `runs-panel-row-${e.id}`,
 								role: "button",
 								tabIndex: 0,
@@ -14924,12 +15039,14 @@ function jl({ pipelineId: e, selectedNodeId: t, sidebarTab: r, onTabChange: i })
 		children: [(t === null || r !== "config") && /* @__PURE__ */ U("div", {
 			className: "h-[38px] flex border-b border-border shrink-0",
 			children: [/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				className: n("flex-1 border-none bg-transparent text-xs font-semibold", "cursor-pointer font-inherit px-2", r === "config" ? "text-text-primary border-b-2 border-b-primary" : "text-text-secondary border-b-2 border-b-transparent"),
 				onClick: () => i("config"),
 				"data-testid": "sidebar-tab-config",
 				children: "Config"
 			}), /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				className: n("flex-1 border-none bg-transparent text-xs font-semibold", "cursor-pointer font-inherit px-2", r === "runs" ? "text-text-primary border-b-2 border-b-primary" : "text-text-secondary border-b-2 border-b-transparent"),
 				onClick: () => i("runs"),
@@ -15368,6 +15485,7 @@ function Rl({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 				className: "flex items-center gap-1.5",
 				children: [
 					/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						"data-testid": `run-pipeline-${e.id}`,
 						onClick: w(r),
 						disabled: C,
@@ -15376,6 +15494,7 @@ function Rl({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 						children: "Run"
 					}),
 					/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						"data-testid": `edit-pipeline-${e.id}`,
 						onClick: w(t),
 						className: "px-3 py-[5px] text-xs font-semibold bg-surface text-text-secondary border border-border-field rounded-md cursor-pointer font-[inherit]",
@@ -15385,6 +15504,7 @@ function Rl({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 						className: "relative ml-auto",
 						ref: h,
 						children: [/* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							"data-testid": `overflow-pipeline-${e.id}`,
 							onClick: w(() => f((e) => !e)),
 							"aria-label": "More actions",
@@ -15400,6 +15520,7 @@ function Rl({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 							className: "absolute right-0 top-full mt-1 bg-surface border border-border rounded-lg shadow-[0_8px_24px_rgba(15,23,42,0.12)] min-w-[160px] z-10 overflow-hidden",
 							children: [
 								/* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									className: "block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]",
 									role: "menuitem",
 									onClick: w(() => {
@@ -15408,6 +15529,7 @@ function Rl({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 									children: "Duplicate"
 								}),
 								/* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									className: "block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]",
 									role: "menuitem",
 									onClick: w(() => {
@@ -15416,6 +15538,7 @@ function Rl({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 									children: "Export JSON"
 								}),
 								/* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									className: "block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-danger-fg",
 									role: "menuitem",
 									onClick: w(() => {
@@ -15478,6 +15601,7 @@ function Vl({ search: e, onSearchChange: t, statusFilter: r, statusExplicit: i, 
 				children: vu.map((e) => {
 					let t = i ? r.has(e) : Bl.includes(e);
 					return /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						role: "checkbox",
 						"aria-checked": t,
@@ -15598,36 +15722,42 @@ function Ul({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 				children: "·"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				"data-testid": "bulk-clear",
 				className: Hl,
 				onClick: t,
 				children: "Clear"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				"data-testid": "bulk-publish",
 				className: Hl,
 				onClick: o,
 				children: "Publish selected"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				"data-testid": "bulk-archive",
 				className: Hl,
 				onClick: s,
 				children: "Archive selected"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				"data-testid": "bulk-export-json",
 				className: Hl,
 				onClick: a,
 				children: "Export selected as JSON"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				"data-testid": "bulk-export",
 				className: Hl,
 				onClick: r,
 				children: "Export all"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				"data-testid": "bulk-delete-confirm-prompt",
 				className: Hl,
 				onClick: d,
@@ -15636,6 +15766,7 @@ function Ul({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 			/* @__PURE__ */ U("div", {
 				className: "relative",
 				children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": "bulk-add-tag-btn",
 					className: Hl,
 					onClick: c,
@@ -15658,6 +15789,7 @@ function Ul({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 						className: n("border border-border-field rounded-md px-2.5 py-1.5 text-[13px]", "bg-surface-inset text-text-primary outline-none w-full"),
 						"aria-label": "Tag name"
 					}), /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						"data-testid": "bulk-add-tag-submit",
 						disabled: y.trim().length === 0,
 						onClick: D,
@@ -15669,6 +15801,7 @@ function Ul({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 			/* @__PURE__ */ U("div", {
 				className: "relative",
 				children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": "bulk-remove-tag-btn",
 					className: n(Hl, v.length === 0 && "opacity-50 cursor-not-allowed"),
 					onClick: l,
@@ -15689,6 +15822,7 @@ function Ul({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 							className: "text-xs text-text-tertiary",
 							children: "No tags to remove."
 						}) : v.map((e) => /* @__PURE__ */ U("button", {
+							"data-ui-part": "",
 							"data-testid": `bulk-remove-tag-chip-${e}`,
 							onClick: () => h(e),
 							className: n("px-2 py-0.5 text-xs font-medium", "bg-danger-bg text-danger-fg", "border border-danger-border rounded-full", "cursor-pointer font-inherit"),
@@ -15698,6 +15832,7 @@ function Ul({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 				})]
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				"data-testid": "bulk-delete",
 				className: n("px-3 py-[5px] text-xs font-semibold", "bg-danger text-white border-none rounded-md", "cursor-pointer font-inherit ml-auto"),
 				onClick: u,
@@ -17638,6 +17773,7 @@ function gu({ template: e, meta: t, onPick: n }) {
 				}, e))
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": `template-use-${e.id}`,
 				onClick: () => n(e),
@@ -17776,11 +17912,13 @@ function Tu({ open: e, onClose: t, onCreate: r }) {
 		title: "Create new pipeline",
 		maxWidth: 440,
 		footer: /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			"data-testid": "new-pipeline-cancel",
 			className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer",
 			onClick: t,
 			children: "Cancel"
 		}), /* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			"data-testid": "new-pipeline-confirm",
 			className: n("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer", !s && "opacity-50 cursor-not-allowed"),
 			disabled: !s,
@@ -18039,18 +18177,21 @@ function Eu({ userId: t, idToken: i, baseUrl: a } = {}) {
 					className: "flex items-center gap-2",
 					children: [
 						/* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							"data-testid": "metrics-btn",
 							onClick: () => o("/pipelines/metrics"),
 							className: n("px-4 py-[7px] text-[13px] font-semibold", "bg-surface text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
 							children: "Metrics"
 						}),
 						/* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							"data-testid": "templates-btn",
 							onClick: () => ne(!0),
 							className: n("px-4 py-[7px] text-[13px] font-semibold", "bg-surface text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
 							children: "Templates"
 						}),
 						/* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							"data-testid": "new-pipeline-btn",
 							onClick: () => O(!0),
 							className: n("px-4 py-[7px] text-[13px] font-semibold", "bg-primary text-white border-none rounded-md", "cursor-pointer font-inherit"),
@@ -18134,6 +18275,7 @@ function Eu({ userId: t, idToken: i, baseUrl: a } = {}) {
 						className: "flex justify-center items-center gap-2.5 text-[13px] text-text-tertiary px-6 pb-8",
 						children: [
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								"data-testid": "empty-state-demo",
 								onClick: Se,
 								className: "bg-transparent border-none p-1 px-2 text-[13px] text-primary cursor-pointer underline font-inherit",
@@ -18144,6 +18286,7 @@ function Eu({ userId: t, idToken: i, baseUrl: a } = {}) {
 								children: "·"
 							}),
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								"data-testid": "empty-state-templates",
 								onClick: () => ne(!0),
 								className: "bg-transparent border-none p-1 px-2 text-[13px] text-primary cursor-pointer underline font-inherit",
@@ -18170,11 +18313,13 @@ function Eu({ userId: t, idToken: i, baseUrl: a } = {}) {
 				title: "Delete pipeline?",
 				maxWidth: 400,
 				footer: /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": "delete-pipeline-cancel",
 					className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer",
 					onClick: () => re(null),
 					children: "Cancel"
 				}), /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": "delete-pipeline-confirm",
 					onClick: Oe,
 					className: n("px-[18px] py-[7px] text-[13px] font-semibold", "bg-danger text-white border-none rounded-[7px]", "cursor-pointer font-inherit"),
@@ -18196,11 +18341,13 @@ function Eu({ userId: t, idToken: i, baseUrl: a } = {}) {
 				maxWidth: 420,
 				backdropTestId: "bulk-delete-modal",
 				footer: /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": "bulk-delete-cancel",
 					className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer",
 					onClick: () => j(!1),
 					children: "Cancel"
 				}), /* @__PURE__ */ U("button", {
+					"data-ui-part": "",
 					"data-testid": "bulk-delete-confirm",
 					onClick: Ne,
 					className: n("px-[18px] py-[7px] text-[13px] font-semibold", "bg-danger text-white border-none rounded-[7px]", "cursor-pointer font-inherit"),
@@ -18476,6 +18623,7 @@ function Yu({ label: e, options: t, selected: r, onToggle: i, labels: a, testIdP
 		ref: l,
 		className: "relative",
 		children: [/* @__PURE__ */ U("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => c(!s),
 			"data-testid": `${o}-dropdown`,
@@ -18534,6 +18682,7 @@ function Xu({ query: e, statuses: t, triggerKinds: r, range: i, onQueryChange: a
 				onKeyDown: (e) => jt(e, { itemSelector: "[role=\"radio\"]" }),
 				className: "flex gap-0.5",
 				children: zu.map((e) => /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					type: "button",
 					role: "radio",
 					"aria-checked": i === e,
@@ -18562,6 +18711,7 @@ function Xu({ query: e, statuses: t, triggerKinds: r, range: i, onQueryChange: a
 				testIdPrefix: "runs-trigger-chip"
 			}),
 			u && /* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				onClick: l,
 				className: "px-2 py-[3px] text-[11px] bg-none border-none text-text-tertiary cursor-pointer font-[inherit] underline",
@@ -18582,6 +18732,7 @@ function Zu({ selectionCount: e, onExport: t, onDelete: n, onClear: r }) {
 				children: [e, " selected"]
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": "runs-bulk-export",
 				onClick: t,
@@ -18589,6 +18740,7 @@ function Zu({ selectionCount: e, onExport: t, onDelete: n, onClear: r }) {
 				children: "Export JSON"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": "runs-bulk-delete",
 				onClick: n,
@@ -18596,6 +18748,7 @@ function Zu({ selectionCount: e, onExport: t, onDelete: n, onClear: r }) {
 				children: "Delete"
 			}),
 			/* @__PURE__ */ H("button", {
+				"data-ui-part": "",
 				type: "button",
 				"data-testid": "runs-bulk-clear",
 				onClick: r,
@@ -18698,6 +18851,7 @@ function nd({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 		d.current = i, r(o);
 	};
 	return /* @__PURE__ */ U("table", {
+		"data-ui-part": "",
 		className: "w-full border-collapse text-[13px] bg-surface border border-border rounded-lg overflow-hidden",
 		children: [/* @__PURE__ */ H("thead", { children: /* @__PURE__ */ U("tr", {
 			className: "bg-surface-inset text-left",
@@ -18752,6 +18906,7 @@ function nd({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 								"aria-label": `Select run ${e.id.slice(0, 8)}`
 							})
 						}), /* @__PURE__ */ H("input", {
+							"data-ui-part": "",
 							type: "checkbox",
 							"data-testid": `run-compare-pick-${e.id}`,
 							checked: i.includes(e.id),
@@ -18819,6 +18974,7 @@ function nd({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 						onClick: (e) => e.stopPropagation(),
 						children: [
 							p && /* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								"data-testid": `force-fail-${e.id}`,
 								onClick: async (t) => {
@@ -18833,6 +18989,7 @@ function nd({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 								children: "⚡ Force-fail"
 							}),
 							e.status === "failed" && e.error?.nodeId && e.error.nodeId !== "unknown" && /* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								"data-testid": `retry-from-failed-step-${e.id}`,
 								onClick: (t) => {
@@ -18843,6 +19000,7 @@ function nd({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 								children: "↻ Retry from failed"
 							}),
 							/* @__PURE__ */ H("button", {
+								"data-ui-part": "",
 								type: "button",
 								"data-testid": `run-view-${e.id}`,
 								"aria-label": `View run ${e.id.slice(0, 8)}`,
@@ -19021,6 +19179,7 @@ function rd() {
 				className: "flex items-center gap-3",
 				children: [
 					/* @__PURE__ */ U("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => t(`/pipelines/${e}`),
 						className: "bg-none border-none text-primary cursor-pointer text-[13px] p-0",
@@ -19044,6 +19203,7 @@ function rd() {
 						]
 					}),
 					/* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => t(`/pipelines/${e}/stats`),
 						"data-testid": "runs-stats-link",
@@ -19051,6 +19211,7 @@ function rd() {
 						children: "📊 Stats"
 					}),
 					/* @__PURE__ */ U("button", {
+						"data-ui-part": "",
 						type: "button",
 						disabled: l.length !== 2,
 						onClick: () => {
@@ -19550,6 +19711,7 @@ function jd({ status: e, result: t, runId: r, endpointLabel: i, error: a, latenc
 	if (s) {
 		let t = d ? d.slice(0, 60) : "no caption";
 		return /* @__PURE__ */ H("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: s,
 			"aria-label": `Open vision result: ${l}, ${e}, ${t}`,
@@ -19658,6 +19820,7 @@ function Id({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 				style: { background: T }
 			}),
 			/* @__PURE__ */ U("div", {
+				"data-ui-part": "",
 				onClick: () => h(!m),
 				"aria-expanded": m,
 				role: "button",
@@ -19729,6 +19892,7 @@ function Id({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 					/* @__PURE__ */ H(pd, {
 						title: "Execution Timeline",
 						children: /* @__PURE__ */ U("table", {
+							"data-ui-part": "",
 							className: "w-full text-[11px] border-collapse font-mono",
 							children: [/* @__PURE__ */ H("thead", { children: /* @__PURE__ */ U("tr", {
 								className: "border-b border-border",
@@ -19912,6 +20076,7 @@ function Id({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 									className: "m-0 w-32",
 									title: `${e.imageId} — ${t}`,
 									children: c ? /* @__PURE__ */ H("button", {
+										"data-ui-part": "",
 										type: "button",
 										onClick: () => c(e.imageId),
 										"data-testid": `step-artifact-${e.imageId}`,
@@ -19948,6 +20113,7 @@ function Id({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 					}) : x && xd(x) === "vision" ? /* @__PURE__ */ U(pd, {
 						title: "Vision result",
 						children: [/* @__PURE__ */ U("button", {
+							"data-ui-part": "",
 							type: "button",
 							onClick: b,
 							className: "mb-1.5 px-2 py-[3px] text-[11px] font-medium border border-border-field rounded bg-transparent cursor-pointer font-[inherit] text-text-secondary",
@@ -19989,6 +20155,7 @@ function Id({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 					(D || ee) && /* @__PURE__ */ U("div", {
 						className: "px-4 py-2.5 border-t border-border flex justify-end gap-2",
 						children: [ee && s && /* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							"data-testid": `resume-from-step-${e}`,
 							onClick: (t) => {
@@ -19998,6 +20165,7 @@ function Id({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 							className: "px-3 py-[5px] text-xs font-medium border border-primary bg-primary text-white rounded cursor-pointer font-[inherit]",
 							children: "↻ Resume from here"
 						}), D && o && /* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							"data-testid": `retry-from-step-${e}`,
 							onClick: (t) => {
@@ -20416,6 +20584,7 @@ function rf({ pipelineId: e, runId: t, onStepClick: r }) {
 					$d.map((e) => {
 						let t = l.has(e.label);
 						return /* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							className: n("font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer", t ? "bg-info-bg text-info-fg border-info-border" : "bg-surface text-text-secondary border-border"),
 							onClick: () => v(e.label),
@@ -20448,6 +20617,7 @@ function rf({ pipelineId: e, runId: t, onStepClick: r }) {
 					].map((e) => {
 						let t = p === e;
 						return /* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							className: n("font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer", t ? "bg-info-bg text-info-fg border-info-border" : "bg-surface text-text-secondary border-border"),
 							onClick: () => h(e),
@@ -20489,6 +20659,7 @@ function rf({ pipelineId: e, runId: t, onStepClick: r }) {
 					b.map((e) => {
 						let t = g.has(e.auditId), r = e.action.startsWith("pipeline.step.") ? tf(e) : void 0;
 						return /* @__PURE__ */ U("div", {
+							"data-ui-part": "",
 							role: "button",
 							tabIndex: 0,
 							"aria-expanded": e.trace ? t : void 0,
@@ -20586,7 +20757,7 @@ function of({ pipelineId: e, runId: t }) {
 	let r = Vt(), i = ge(), a = we(), { definition: o } = i, [s, c] = B(null), [l, u] = B(null), [d, f] = B(0), p = I(() => f((e) => e + 1), []);
 	L(() => {
 		let n = !1;
-		return u(null), import("./services-BpKnpCTT.js").then((e) => e.gt).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+		return u(null), import("./services-BvmuzW1f.js").then((e) => e.gt).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
 			!n && e && c(e);
 		})).catch((e) => {
 			n || u(e instanceof Error ? e.message : String(e));
@@ -20828,18 +20999,21 @@ function of({ pipelineId: e, runId: t }) {
 							"aria-label": "More actions",
 							children: [
 								/* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									className: "block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary",
 									role: "menuitem",
 									onClick: ve,
 									children: "Copy runId"
 								}),
 								/* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									className: "block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary",
 									role: "menuitem",
 									onClick: ye,
 									children: "Export run JSON"
 								}),
 								/* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									className: "block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary",
 									role: "menuitem",
 									onClick: be,
@@ -21043,6 +21217,7 @@ function of({ pipelineId: e, runId: t }) {
 							}].map((e) => {
 								let t = T === e.id;
 								return /* @__PURE__ */ H("button", {
+									"data-ui-part": "",
 									role: "tab",
 									"aria-selected": t,
 									tabIndex: t ? 0 : -1,
@@ -21180,6 +21355,7 @@ function sf() {
 			}) : /* @__PURE__ */ H("div", {
 				className: "overflow-x-auto",
 				children: /* @__PURE__ */ U("table", {
+					"data-ui-part": "",
 					className: "w-full border-collapse text-[13px]",
 					children: [/* @__PURE__ */ H("thead", { children: /* @__PURE__ */ U("tr", {
 						className: "border-b border-border",
@@ -21214,6 +21390,7 @@ function sf() {
 							})
 						]
 					}) }), /* @__PURE__ */ H("tbody", { children: _.map((t) => /* @__PURE__ */ U("tr", {
+						"data-ui-part": "",
 						role: "button",
 						tabIndex: 0,
 						"aria-label": `Open run ${t.id.slice(0, 11)} of ${t.pipelineName}`,
@@ -21456,6 +21633,7 @@ function xf() {
 			className: "flex items-center gap-3",
 			children: [
 				/* @__PURE__ */ U("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => t(`/pipelines/${e}`),
 					className: "bg-transparent border-none text-primary cursor-pointer text-[13px] p-0",
@@ -21477,6 +21655,7 @@ function xf() {
 						"50",
 						"all"
 					].map((e) => /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: () => c(e),
 						className: n("px-2.5 py-1 text-xs font-medium rounded cursor-pointer font-[inherit]", s === e ? "border border-primary bg-primary text-white" : "border border-border bg-surface text-text-secondary"),
@@ -21659,6 +21838,7 @@ function xf() {
 							className: "text-xs text-text-tertiary py-2",
 							children: "No failures in this range."
 						}) : /* @__PURE__ */ U("table", {
+							"data-ui-part": "",
 							className: "w-full border-collapse text-xs",
 							children: [/* @__PURE__ */ H("thead", { children: /* @__PURE__ */ H("tr", {
 								className: "text-left",
@@ -21690,6 +21870,7 @@ function xf() {
 									/* @__PURE__ */ H("td", {
 										className: "px-2 py-1.5",
 										children: /* @__PURE__ */ U("button", {
+											"data-ui-part": "",
 											type: "button",
 											onClick: () => t(`/pipelines/${e}/runs/${n.exampleRunId}`),
 											className: "bg-transparent border-none text-primary cursor-pointer text-xs font-mono p-0",
@@ -21783,6 +21964,7 @@ function Ef({ row: e, onSubmit: t, onOpenPipeline: n }) {
 					}), /* @__PURE__ */ U("div", {
 						className: "min-w-0",
 						children: [/* @__PURE__ */ H("button", {
+							"data-ui-part": "",
 							type: "button",
 							onClick: n,
 							"data-testid": `open-pipeline-${e.pipelineId}`,
@@ -21906,11 +22088,13 @@ function Ef({ row: e, onSubmit: t, onOpenPipeline: n }) {
 			/* @__PURE__ */ U("div", {
 				className: "flex gap-2 justify-end",
 				children: [/* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": `reject-${e.runId}`,
 					onClick: () => a("reject"),
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-danger text-white border-none rounded-md font-[inherit] cursor-pointer",
 					children: "Reject"
 				}), /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": `approve-${e.runId}`,
 					onClick: () => a("approve"),
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-success text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0",
@@ -22017,6 +22201,7 @@ function Df() {
 					className: "text-[13px] font-medium",
 					children: "Couldn't load pending approvals. Try again."
 				}), /* @__PURE__ */ H("button", {
+					"data-ui-part": "",
 					"data-testid": "approvals-retry",
 					onClick: i,
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]",
@@ -22055,6 +22240,7 @@ function Of(e) {
 function kf({ result: e, className: t }) {
 	let r = Of(e.overallVerdict), i = r === "success" ? "PASS" : r === "danger" ? "FAIL" : "INCONCLUSIVE", a = e.rubricSnapshot.passThreshold ?? .5;
 	return /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-2 rounded-lg border border-border bg-surface p-3", t),
 		children: [/* @__PURE__ */ U("div", {
 			className: "flex flex-wrap items-center gap-2",
@@ -22123,6 +22309,7 @@ function Af({ result: e, className: t }) {
 	let r = /* @__PURE__ */ new Map();
 	for (let t of e.rubricSnapshot.criteria) r.set(t.id, t);
 	return /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-1.5", t),
 		children: [/* @__PURE__ */ U("h4", {
 			className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
@@ -22238,6 +22425,7 @@ function Ff({ result: e, showVerdict: t = !0, showCriteria: r = !0, showMetadata
 			t ? /* @__PURE__ */ H(kf, { result: e }) : null,
 			r ? /* @__PURE__ */ H(Af, { result: e }) : null,
 			i ? /* @__PURE__ */ U("section", {
+				"data-ui-part": "",
 				className: "flex flex-wrap items-center gap-2 text-[11px] text-text-tertiary",
 				children: [
 					/* @__PURE__ */ U("span", { children: [
@@ -22283,8 +22471,10 @@ function Ff({ result: e, showVerdict: t = !0, showCriteria: r = !0, showMetadata
 				]
 			}) : null,
 			a && y ? /* @__PURE__ */ U("section", {
+				"data-ui-part": "",
 				className: "flex flex-col gap-1.5",
 				children: [/* @__PURE__ */ U("button", {
+					"data-ui-part": "",
 					type: "button",
 					onClick: () => l((e) => !e),
 					className: "self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded",
@@ -22320,6 +22510,7 @@ function If({ text: e, loading: t, error: n, fallbackHint: r }) {
 function Lf({ aggregate: e, className: t }) {
 	let r = e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0, i = e.numJudgments > 0 ? e.sumOverallScore / e.numJudgments : 0, a = r >= .9 ? "success" : r >= .6 ? "warning" : "danger", o = a === "success" ? "HEALTHY" : a === "warning" ? "MIXED" : "FAILING";
 	return /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex flex-col gap-2 rounded-lg border border-border bg-surface p-3", t),
 		children: [
 			/* @__PURE__ */ U("div", {
@@ -22414,6 +22605,7 @@ function Rf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 		return n.sort((e, t) => e.dayBucket.localeCompare(t.dayBucket)), t === "desc" && n.reverse(), n;
 	}, [e, t]), s = R(() => e.slice().sort((e, t) => e.dayBucket.localeCompare(t.dayBucket)).map((e) => e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0), [e]);
 	if (e.length === 0) return /* @__PURE__ */ H("section", {
+		"data-ui-part": "",
 		className: n("flex min-h-[120px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border bg-surface-panel p-4 text-text-tertiary", a),
 		children: /* @__PURE__ */ H("span", {
 			className: "text-[12px]",
@@ -22422,6 +22614,7 @@ function Rf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 	});
 	let c = e.reduce((e, t) => e + t.numJudgments, 0), l = e.reduce((e, t) => e + t.numPassed, 0), u = e.reduce((e, t) => e + t.sumCostUsd, 0), f = c > 0 ? l / c : 0;
 	return /* @__PURE__ */ U("section", {
+		"data-ui-part": "",
 		className: n("flex w-full flex-col gap-2", a),
 		children: [
 			/* @__PURE__ */ U("header", {
@@ -22462,6 +22655,7 @@ function Rf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 				})]
 			}),
 			/* @__PURE__ */ U("table", {
+				"data-ui-part": "",
 				className: "w-full border-collapse text-[12px]",
 				children: [/* @__PURE__ */ H("thead", { children: /* @__PURE__ */ U("tr", {
 					className: "text-left text-[11px] uppercase tracking-wide text-text-tertiary",
@@ -22764,6 +22958,7 @@ function Xf({ data: e }) {
 			className: "w-2 h-2 bg-border-emphasis"
 		}),
 		/* @__PURE__ */ U("button", {
+			"data-ui-part": "",
 			type: "button",
 			onClick: () => a(t.imageId),
 			className: n("w-full h-full flex flex-col overflow-hidden rounded-lg border bg-surface text-left", "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary", i ? "border-primary ring-2 ring-primary/30" : r ? "border-primary/60 bg-primary/5" : "border-border"),
@@ -23006,6 +23201,7 @@ function np({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 							" artifacts"
 						]
 					}), /* @__PURE__ */ H("button", {
+						"data-ui-part": "",
 						type: "button",
 						onClick: k,
 						"data-testid": "lineage-graph-show-all",
