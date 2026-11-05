@@ -79,6 +79,7 @@ export const navigationTree: NavigationTree = [
         { id: 'layout-section', label: 'Section (two rails)', path: '/workflows/layouts/section' },
         { id: 'layout-deep', label: 'Deep (three rails)', path: '/workflows/layouts/deep' },
         { id: 'layout-terminal', label: 'Code tone', path: '/workflows/layouts/terminal' },
+        { id: 'layout-page-templates', label: 'Page templates', path: '/workflows/layouts/page-templates' },
       ]},
       { id: 'wf-documents', label: 'Documents', items: [
         { id: 'document-workspace', label: 'Document Workspace', path: '/workflows/document-workspace' },

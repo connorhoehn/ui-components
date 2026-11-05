@@ -183,6 +183,14 @@ export const entries: CatalogEntry[] = [
     type: 'demo',
     path: '/workflows/layouts/terminal',
   },
+  {
+    id: 'layout-page-templates',
+    title: 'Page Templates',
+    description: 'One recipe per page shape: CollectionPage, MasterDetailPage, DetailPage, DashboardPage, SettingsPage and PageFrame, each filling the frame with one scrolling region.',
+    category: 'Application Layout',
+    type: 'demo',
+    path: '/workflows/layouts/page-templates',
+  },
 
   // Agents demos
   {
