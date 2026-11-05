@@ -1,9 +1,11 @@
 # Consumer adoption guide
 
 > Cheatsheet for picking the right `@connorhoehnslalom/ui-components` primitive for
-> the page you're building. Pairs with the surfaces table in
-> [`README.md`](../README.md) and the entry-points table in
-> [`CLAUDE.md`](../CLAUDE.md).
+> the page you're building. Every exported component, with its import path,
+> is in [`COMPONENT_INDEX.md`](COMPONENT_INDEX.md) (generated, never stale);
+> the surfaces table is in [`README.md`](../README.md#surfaces). Both ship in
+> the package, so an agent working in a consumer repo can read them from
+> `node_modules/@connorhoehnslalom/ui-components/`.
 
 The global rule (from `~/.claude/CLAUDE.md`):
 
@@ -17,53 +19,67 @@ ui-components first**, then use it. Do not inline a one-off; the whole point
 of the library is to absorb that complexity. See
 [Missing primitive workflow](#missing-primitive-workflow) at the bottom.
 
+**Import paths.** Everything below imports from the package root unless a
+subpath is named. Layout components (`AppShell`, `AppLayout`,
+`CollapsibleSidebar`, `DocsShell`, `SettingsLayout`) are **root-only**: there
+is no `/layout` subpath, and importing one fails to resolve.
+
 ---
 
-## Composite index — the 12 you'll reach for first
+## Step 1 — pick the page archetype
 
-These are the highest-leverage composites in the library. Reach for them
-before reaching for `<div>`. All importable from the root unless noted.
+Almost every routed page is one of these. Start from the template, not from
+a `<div>`: the template owns the header, gutters, width, section spacing and
+the empty/loading states, so the page supplies only data and handlers. The
+[canonical choices](COMPONENT_INDEX.md#canonical-choices) table at the top of
+the index has the "don't use for" notes for each.
 
-| Composite | Use for | Subpath if needed |
+| The page is… | Use | Notes |
 |---|---|---|
-| `AppShell` | The outer chrome of any logged-in app: sidebar + topbar + content area. | `/layout` |
-| `AppLayout` | The room-shaped variant (rooms sidebar + presence + nested content). | `/layout` |
-| `CollapsibleSidebar` | Standalone sidebar with persisted collapsed state. | `/layout` |
-| `PageHeader` | Title + subtitle + actions + breadcrumbs strip at the top of any page. | `/shared` or root |
-| `ChannelHeader` | Channel/room title bar with presence + actions for chat/hangout surfaces. | `/shared` or root |
-| `ChatPanel` | Full chat surface: message list, composer, attachments, typing indicator. | `/social` or root |
-| `PresenceAvatars` | Stacked overlapping avatars with overflow count + online ring. | `/shared` or root |
-| `NotificationCenter` | Bell + flyout with unread count, list, mark-all-read. | `/shared` or root |
-| `FileUploadDrop` | Drag-drop zone with file-type/size constraints and a progress list. | `/shared` or root |
-| `HangoutLayout` | Auto/spotlight participant grid for a live call. | `/video` or root |
-| `CallWidget` | Self-contained call surface (controls + tiles + chat). | `/video` or root |
-| `CommandPalette` | Cmd-K command palette with registry hook + per-command hotkeys. | `/shared` or root |
+| any page at all | `PageFrame` | The outer frame; every template below is built on it. Use it directly only when no archetype fits. |
+| a list / collection of things | `CollectionPage` | Title + `CollectionToolbar` (search, filters, summary, refresh) + your `DataTable` or card grid. |
+| a list with a detail panel beside it | `MasterDetailPage` | Selection on the left, the selected record on the right, narrow-screen fallback included. If each row opens its own route instead, use `CollectionPage` + `DetailPage`. |
+| one record's detail | `DetailPage` | Title/status/actions header, then **tabs** for the record's facets. Use `DetailSection` inside a tab; don't stack a column of `Card`s. |
+| a dashboard | `DashboardPage` (root) | KPI row (`KPIGrid` / `StatCard`) + panel grid. The `/observability` `DashboardPage` is the cluster dashboard, a different component. |
+| settings | `SettingsPage` | Section rail + settings rows; `SettingsLayout` is the lower-level shell. |
+| documentation | `DocsShell` | Sidebar + top nav + content. |
 
-For the full surface map (every export, stability rating, intended consumer)
-see the **Surfaces** table in [README](../README.md#surfaces) and the entry-
-points table in [CLAUDE.md](../CLAUDE.md).
+The whole app sits in one `<AppShell>` (pass `layout="fill"` when the content
+must fill the viewport, as canvases, chat and editors do). Pages render inside
+it; a page never renders its own shell.
 
----
-
-## Decision tree — "I need…"
+## Step 2 — pick the pieces inside the page
 
 ```
-I need…
+Inside the page I need…
 │
-├── a chrome for the whole app
-│   └── <AppShell> — pass `sidebar`, `topbar`, `commandPalette`, children.
+├── a title row
+│   ├── page title → <PageHeader> (templates render it for you)
+│   ├── above a channel/room → <ChannelHeader> (presence avatars + actions)
+│   └── breadcrumbs alone → <Breadcrumbs>
 │
-├── a chrome for a hangout/room app (rooms sidebar visible)
-│   └── <AppLayout> — adds the rooms section + presence rail.
+├── sections and separators
+│   ├── a titled section of a page → <PageSection> (size lg/md/sm)
+│   ├── a titled block in a drawer / detail tab → <DetailSection> (`first` on the first one)
+│   └── a hairline between blocks → <Divider> (optional `label`)
 │
-├── a title row at the top of a page
-│   └── <PageHeader> — title, subtitle, actions, breadcrumbs.
+├── tabular data
+│   ├── almost always → <DataTable columns={...} data={...} keyField="id" />
+│   ├── custom cell layout DataTable can't express → Table / TableHead / TableBody / TableRow / TableTh / TableTd
+│   └── identity admin (users, groups, roles) → <EntityTable>
 │
-├── a title row above a channel/room
-│   └── <ChannelHeader> — adds presence avatars + channel-specific actions.
+├── a tabs strip → <Tabs value={...} onChange={...} items={...} />
 │
-├── breadcrumbs alone (no title bar)
-│   └── <Breadcrumbs>
+├── buttons → <Button variant="primary|secondary|ghost|danger|…">, always with an explicit variant;
+│             icon-only → <IconButton aria-label=…>
+│
+├── form controls → Input, Select, Textarea, NumberInput, RadioGroup, Checkbox,
+│                   Slider, ColorInput, Switch, inside <FormField> for label/help/error
+│
+├── an error/loading/empty state
+│   ├── error  → <ErrorState>
+│   ├── loading → <LoadingState>
+│   └── empty  → <EmptyState>
 │
 ├── a chat surface (messages + composer)
 │   ├── with hook wiring (useChat + usePresence from realtime-modules)
@@ -118,30 +134,41 @@ I need…
 │   └── pure
 │       └── <ConnectionPill state="online" />
 │
-├── a data table (sortable rows)
-│   └── <DataTable columns={...} rows={...} />
-│
-├── a tabs strip
-│   └── <Tabs value={...} onChange={...} items={...} />
-│
 ├── a typing indicator (3 bouncing dots)
 │   └── <TypingIndicator users={['Alice', 'Bob']} />
-│
-├── an error/loading/empty state
-│   ├── error  → <ErrorState>
-│   ├── loading → <LoadingState>
-│   └── empty  → <EmptyState>
 │
 ├── a code block (syntax-highlit)
 │   └── <CodeBlock language="ts" code={...} />
 │
-├── a documentation shell (sidebar + topnav + content)
-│   └── <DocsShell> from /layout
-│
-└── a settings page (left rail of section links + right pane)
-    └── <SettingsLayout> from /layout
+└── anything else
+    └── search COMPONENT_INDEX.md by job before writing markup
 ```
 
+Hook-wired components come from
+`@connorhoehnslalom/ui-components/integrations/realtime-modules`; everything
+else in the tree imports from the package root.
+
+## Composite index — the 12 you'll reach for first
+
+The highest-leverage composites below the page templates. All importable from
+the root (the subpath column is for code-splitting only).
+
+| Composite | Use for | Also on subpath |
+|---|---|---|
+| `AppShell` | The outer chrome of any logged-in app: sidebar + topbar + content area. | none (root-only) |
+| `AppLayout` | The room-shaped variant (rooms sidebar + presence + nested content). | none (root-only) |
+| `CollapsibleSidebar` | Standalone sidebar with persisted collapsed state. | none (root-only) |
+| `PageHeader` | Title + subtitle + actions + breadcrumbs strip at the top of any page. | `/shared` |
+| `ChannelHeader` | Channel/room title bar with presence + actions for chat/hangout surfaces. | `/shared` |
+| `ChatPanel` | Full chat surface: message list, composer, attachments, typing indicator. | `/social` |
+| `PresenceAvatars` | Stacked overlapping avatars with overflow count + online ring. | `/shared` |
+| `NotificationCenter` | Bell + flyout with unread count, list, mark-all-read. | `/shared` |
+| `FileUploadDrop` | Drag-drop zone with file-type/size constraints and a progress list. | `/shared` |
+| `HangoutLayout` | Auto/spotlight participant grid for a live call. | `/video` |
+| `CallWidget` | Self-contained call surface (controls + tiles + chat). | `/video` |
+| `CommandPalette` | Cmd-K command palette with registry hook + per-command hotkeys. | `/shared` |
+
+For every other export see [`COMPONENT_INDEX.md`](COMPONENT_INDEX.md).
 ---
 
 ## Before / after — three real refactors
@@ -340,11 +367,12 @@ If you find yourself thinking *"there's no `<X>` for this; I'll just inline
 it here"* — **stop**. The hand-rolled version solves the problem once;
 adding `<X>` to ui-components solves it forever, for every consumer.
 
-1. Confirm the gap. Search the surfaces table in [README](../README.md), the
-   entry-points table in [CLAUDE.md](../CLAUDE.md), and the
-   `src/components/**` tree. Maybe it's there under a different name.
+1. Confirm the gap. Search [`COMPONENT_INDEX.md`](COMPONENT_INDEX.md) by
+   job (it lists every exported component, grouped), then the surfaces table
+   in [README](../README.md#surfaces). Maybe it's there under a different name.
 
-2. File a hub task in the `ui-components` queue describing:
+2. Raise it with the ui-components maintainers (an issue or a handoff note)
+   describing:
    - the composite you need,
    - the props you'd want it to accept,
    - which consumer page it unblocks.
@@ -364,26 +392,33 @@ adding `<X>` to ui-components solves it forever, for every consumer.
 - Every release-worthy change bumps the package version (`patch` for
   bugfix/internal/tests, `minor` for additive public API, `major` for
   breaking). Consumers should pin against a specific version.
-- Breaking changes to stable subpaths (`/`, `/shared`, `/layout`, `/social`,
-  `/video`, `/identity`, `/hooks`, `/styles.css`,
+- Breaking changes to stable subpaths (`/`, `/shared`, `/social`, `/video`,
+  `/identity`, `/hooks`, `/styles.css`, `/integrations/realtime`,
   `/integrations/realtime-modules`) require a handoff to every consumer
-  before landing.
-- In-flux subpaths (`/doc-editor`, `/pipelines`, `/agents`, `/observability`,
-  `/ingest`) may change shape between minors — pin to a minor and read the
-  changelog before bumping.
+  before landing. (Layout components are part of the root; there is no
+  `/layout` subpath.)
+- `/doc-editor` and `/pipelines` are frozen public API (since 2026-06-10):
+  breaking changes need a major bump and a consumer handoff.
+- In-flux subpaths (`/compute`, `/observability`, `/ingest`) may change shape
+  between minors — pin to a minor and read the changelog before bumping.
 
 ---
 
 ## See also
 
+- [`COMPONENT_INDEX.md`](COMPONENT_INDEX.md) — every exported component,
+  grouped by job, with its import path and Storybook id.
 - [`README.md`](../README.md) — surfaces table, install, dev loop.
-- [`CLAUDE.md`](../CLAUDE.md) — full exports map, no-touch list, hard rules.
-- [`docs/AUTONOMY_CHARTER.md`](AUTONOMY_CHARTER.md) — release-cadence and
-  per-task LOC cap for autonomous contributors.
+- [`patterns/`](../patterns/README.md) — integration patterns (WebSocket
+  provider, auth, theming, custom renderers).
 - [`docs/integrations-realtime-modules.md`](integrations-realtime-modules.md)
   — adapter prop-shape contract for the `/integrations/realtime-modules`
   subpath.
-- [`ROADMAP.md`](../ROADMAP.md) — the 5-wave plan for current work.
+- `skills/ui-page-build/SKILL.md` and `skills/ui-dom-audit/SKILL.md` in the
+  package — building a page from the templates, and auditing the result.
+- Maintainer docs (repo only, not in the package):
+  [`CLAUDE.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/CLAUDE.md) (exports map, no-touch list, hard
+  rules) and [`CONTRIBUTING.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/CONTRIBUTING.md).
 
 ## Collection and composer inheritance (2.440.2)
 

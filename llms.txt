@@ -1,0 +1,32 @@
+# @connorhoehnslalom/ui-components
+
+> React component library for real-time collaborative applications: page templates, app shells, tables, forms, chat, presence, video, collaborative documents, diagrams, pipelines and identity flows. Styled with Tailwind v4 design tokens; never hand-roll markup or inline styles for something the library already has.
+
+Paths below are relative to the package root (`node_modules/@connorhoehnslalom/ui-components/` in a consumer repo). Import from the package root unless the index names a subpath. Layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are root-only: there is no `/layout` subpath. Import `@connorhoehnslalom/ui-components/styles.css` once at the app entry.
+
+## Start here
+
+- [Component index](docs/COMPONENT_INDEX.md): every exported component grouped by job, with import path, one-line description, Storybook id and deprecated flag. The "Canonical choices" table at the top names one component per common job and what not to use it for. Generated from the source by `npm run docs:index`.
+- [Consumer adoption guide](docs/consumer-adoption.md): pick the page archetype first, then the pieces inside the page; before/after refactors of common hand-rolled patterns.
+
+## Starters (page templates)
+
+Start every routed page from a template inside one `AppShell`; see the canonical-choices table for which.
+
+- `PageFrame`: the frame for any page.
+- `CollectionPage`: a list or collection page.
+- `MasterDetailPage`: a list with a detail panel.
+- `DetailPage`: one record's detail, with tabs for its facets.
+- `DashboardPage` (root): KPI row plus panel grid. The `/observability` `DashboardPage` is a different component.
+- `SettingsPage`: a settings page.
+
+## Skills
+
+- `skills/ui-page-build/SKILL.md`: building a page from the templates and components.
+- [skills/ui-dom-audit/SKILL.md](skills/ui-dom-audit/SKILL.md): auditing rendered UI for layout, typography, table and composer consistency.
+
+## Optional
+
+- [README](README.md): install, the per-subpath surfaces table, realtime integrations under another install scope.
+- [Patterns](patterns/README.md): WebSocket provider, auth integration, theming, custom renderers, simulations, embedding modules.
+- [Realtime-modules adapters](docs/integrations-realtime-modules.md): prop-shape contract for `/integrations/realtime-modules`.

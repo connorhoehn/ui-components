@@ -125,7 +125,13 @@
   },
   "files": [
     "dist",
-    "skills/ui-dom-audit"
+    "skills/ui-dom-audit",
+    "skills/ui-page-build",
+    "docs/COMPONENT_INDEX.md",
+    "docs/consumer-adoption.md",
+    "docs/integrations-realtime-modules.md",
+    "patterns",
+    "llms.txt"
   ],
   "scripts": {
     "build": "node scripts/vite-build.mjs && npm run build:fix-subpath-dts && npm run build:normalize-dts",
@@ -146,6 +152,7 @@
     "lint:node-controls": "node scripts/check-node-controls.mjs",
     "lint:hex-colors": "node scripts/check-hex-colors.mjs",
     "lint:readme": "node scripts/check-readme-imports.mjs",
+    "docs:index": "node scripts/generate-component-index.mjs",
     "snapshot:exports": "node scripts/update-export-snapshot.mjs"
   },
   "publishConfig": {

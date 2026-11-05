@@ -11,6 +11,26 @@ React component library for real-time collaborative applications.
 Consumed by `event-catalog`, `realtime-examples` (formerly
 `websocket-gateway`), and `vnl-ads`.
 
+## Start here (for humans and agents)
+
+These files ship in the package, so they are readable from
+`node_modules/@connorhoehnslalom/ui-components/` in any consumer repo:
+
+- [`docs/COMPONENT_INDEX.md`](docs/COMPONENT_INDEX.md): every exported
+  component grouped by job, with its import path and Storybook id, under a
+  "canonical choices" table (one component per common job, and what not to
+  use it for). Generated from the source, so it is never stale.
+- [`docs/consumer-adoption.md`](docs/consumer-adoption.md): start from the
+  page archetype (`CollectionPage`, `MasterDetailPage`, `DetailPage`,
+  `DashboardPage`, `SettingsPage`, all inside `PageFrame` and one
+  `AppShell`), then a decision tree for the pieces inside the page.
+- `skills/ui-page-build/SKILL.md`: the agent skill for building a page from
+  the templates; `skills/ui-dom-audit/SKILL.md` audits the rendered result.
+- [`llms.txt`](llms.txt): the same map in the llms.txt format.
+
+Layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are
+root-only imports; there is no `/layout` subpath.
+
 ## Install
 
 ```bash
@@ -43,19 +63,20 @@ import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/
 import '@connorhoehnslalom/ui-components/styles.css';
 ```
 
-See `CLAUDE.md` for the full exports/stability map.
+Every exported component and the subpath it is on is listed in
+[`docs/COMPONENT_INDEX.md`](docs/COMPONENT_INDEX.md); the table below is the
+per-subpath overview.
 
 New to the library? Start with [`docs/consumer-adoption.md`](docs/consumer-adoption.md) —
-the composite index, decision tree, and three before/after refactors that map
+the page archetypes, decision tree, and three before/after refactors that map
 common hand-rolled patterns onto the canonical ui-components composites.
 
 ## Surfaces
 
 | Sub-path | What's there | Stability |
 |---|---|---|
-| `/` (root) | Shared primitives, hooks, contexts, types, layout, social, video, identity, theme, renderers | **Stable** |
+| `/` (root) | Shared primitives, hooks, contexts, types, layout (root-only: AppShell, AppLayout, CollapsibleSidebar, DocsShell + DocsSidebar + DocsTopNav, SettingsLayout; there is no `/layout` subpath), social, video, identity, theme, renderers | **Stable** |
 | `/shared` | Core primitives — Button, Card, Modal, Toast, Table, TagEditor, CodeEditor, CodeBlock, EmptyState, PageHeader, ChannelHeader, NotificationCenter, FileUploadDrop, Breadcrumbs, NavRail/NavRailStack, Toolbar, WorkArea, PresenceAvatars, ConnectionPill, LogStream, ThumbnailCard, StackDiagram, StatCard, KPIGrid, DataTable, Tabs, TypingIndicator, ErrorState/LoadingState, etc. | **Stable** |
-| `/layout` | AppShell, AppLayout, CollapsibleSidebar, DocsShell + DocsSidebar + DocsTopNav, SettingsLayout | **Stable** |
 | `/social` | ChatPanel, ChatRoom, RoomList, PostFeed, ReactionsBar, ReactionPickerPopover, MessageRow, MessageGroup, GroupPanel, PresencePanel, ActivityPanel | **Stable** |
 | `/video` | VideoPlayer, VideoGrid, CallWidget, CallControls, CallParticipantStrip, CallStatsOverlay, CallSidePanel, HangoutLayout, HangoutGrid, HangoutSpotlight, RosterPanel, StreamVideo, AutoplayGate, RecordingPlayer, RecordingList, RecordingRow, TranscriptOverlay, MediaEffectsTray, MediaEffectsPreviewPanel | **Stable** |
 | `/identity` | Auth flows (Login, Logout, MFA, Consent), admin identity panels, `IdentityContext` | **Stable** |
@@ -156,13 +177,13 @@ needed for local development.
 ## Operating model
 
 This repo runs under an autonomous operating model. The
-[`docs/AUTONOMY_CHARTER.md`](docs/AUTONOMY_CHARTER.md) governs what an
+[`docs/AUTONOMY_CHARTER.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/docs/AUTONOMY_CHARTER.md) governs what an
 agent may change without operator approval, the version-bump rules, and
 the no-touch list of cross-repo contracts. The constitution at
-[`.agent/CONSTITUTION.md`](.agent/CONSTITUTION.md) sets the
+[`.agent/CONSTITUTION.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/.agent/CONSTITUTION.md) sets the
 self-driven backlog and per-task LOC cap.
 
-See [`ROADMAP.md`](ROADMAP.md) for the current 5-wave plan.
+See [`ROADMAP.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/ROADMAP.md) for the current 5-wave plan.
 
 ## Tech stack
 
