@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-953 components across 20 entry points; 806 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+958 components across 20 entry points; 811 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), `skills/ui-page-build/SKILL.md` (building a page) and `skills/ui-dom-audit/SKILL.md` (auditing one).
 
@@ -15,12 +15,12 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 | Job | Use | Import | Notes | Don't use for |
 |---|---|---|---|---|
-| Frame for any page | `PageFrame` | _not in this build yet_ | The outer frame of every routed page: title row, width and gutters. Use it (or a template built on it) instead of a hand-rolled `<div className="p-6 max-w-…">`. | Not for panels or drawers inside a page. |
+| Frame for any page | `PageFrame` | `@connorhoehnslalom/ui-components` | The outer frame of every routed page: title row, width and gutters. Use it (or a template built on it) instead of a hand-rolled `<div className="p-6 max-w-…">`. | Not for panels or drawers inside a page. |
 | A list / collection page | `CollectionPage` | `@connorhoehnslalom/ui-components` | Title, description, header actions and a `CollectionToolbar` (search, filters, view switch) over your table or cards. | Not for a list with a persistent detail pane (use `MasterDetailPage`) or a single record. |
-| A list with a detail panel | `MasterDetailPage` | _not in this build yet_ | Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.) | Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`). |
-| One record's detail page | `DetailPage` | _not in this build yet_ | Header with the record's title/status/actions, then **tabs** for the record's facets. | Don't stack a column of `Card`s for each facet; put facets in tabs and use `DetailSection` inside a tab. |
-| A dashboard | `DashboardPage` | _not in this build yet_ | KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it. | Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath. |
-| A settings page | `SettingsPage` | _not in this build yet_ | Section rail + settings content with consistent row spacing. (`SettingsLayout` is the lower-level shell.) | Not for a one-off form inside a modal (use the `forms/` controls in a `Modal`). |
+| A list with a detail panel | `MasterDetailPage` | `@connorhoehnslalom/ui-components` | Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.) | Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`). |
+| One record's detail page | `DetailPage` | `@connorhoehnslalom/ui-components` | Header with the record's title/status/actions, then **tabs** for the record's facets. | Don't stack a column of `Card`s for each facet; put facets in tabs and use `DetailSection` inside a tab. |
+| A dashboard | `DashboardPage` | `@connorhoehnslalom/ui-components` | KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it. | Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath. |
+| A settings page | `SettingsPage` | `@connorhoehnslalom/ui-components` | Section rail + settings content with consistent row spacing. (`SettingsLayout` is the lower-level shell.) | Not for a one-off form inside a modal (use the `forms/` controls in a `Modal`). |
 | App chrome | `AppShell` | `@connorhoehnslalom/ui-components` | Sidebar + top bar + content region. Pass `layout="fill"` when the content area must fill the viewport (canvases, chat, editors) rather than scroll as a document. | Not inside a page; there is exactly one per app. Root-only import: there is no `/layout` subpath. |
 | A data table | `DataTable` | `@connorhoehnslalom/ui-components` | Columns + rows with sorting, selection, empty/loading states and row striping by default. Start here for any tabular data. | Don't drop to `Table` primitives unless you need cell layouts `DataTable` cannot express. |
 | Table building blocks | `Table` | `@connorhoehnslalom/ui-components` | `Table`, `TableHead`, `TableBody`, `TableRow`, `TableTh`, `TableTd`: the styled primitives `DataTable` is made of. | Not a first choice: no sorting, selection or states built in. |
@@ -28,7 +28,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | Separate sections | `Divider` | `@connorhoehnslalom/ui-components` | A hairline (optionally captioned) between blocks of one column. For titled page sections use `PageSection` (with `divided` for a rule between them); inside a detail surface use `DetailSection`. | Don't separate sections with nested `Card`s, `<hr>`, or border utility classes. |
 | A section of a page | `PageSection` | `@connorhoehnslalom/ui-components` | Titled section with description, count and actions; sizes `lg`/`md`/`sm`. | Not for sections inside a drawer or detail tab (use `DetailSection`). |
 | A section inside a detail surface | `DetailSection` | `@connorhoehnslalom/ui-components` | Titled block with a hairline above it (`first` suppresses the first rule); `variant="heading"` for document-like bodies. | Not for top-level page sections (use `PageSection`). |
-| A panel's header | `PanelHeader` | _not in this build yet_ | Title, actions and close button for a `Panel` / `InlinePanel`. Until it is exported, `CardHeader` heads a card section and `PaneHeader` a tabbed pane. | Not a page header (use `PageHeader`) or a channel/room header (use `ChannelHeader`). |
+| A section or panel header inside a page | `CardHeader` | `@connorhoehnslalom/ui-components` | Title + actions row with the separator under it, for a card or panel section. Use `PaneHeader` when the pane has tabs. Never hand-draw `border-b` header bands. | Not a page header (use `PageHeader` or a page template) or a channel/room header (use `ChannelHeader`). |
 | A page's title row | `PageHeader` | `@connorhoehnslalom/ui-components` | Title, description, back link and actions at the top of a page. Templates render it for you. | Don't hand-roll an `<h1>` + flex row of buttons. |
 | Buttons | `Button` | `@connorhoehnslalom/ui-components` | Always pass an explicit `variant` (`primary`, `secondary`, `ghost`, `danger`, `danger-solid`, `success`, `info`, `link`) and `size` where it matters. `IconButton` for icon-only actions. | Don't style a raw `<button>`, and don't rely on the default variant: one primary action per region. |
 | Empty / error / loading | `EmptyState` | `@connorhoehnslalom/ui-components` | `EmptyState`, `ErrorState` and `LoadingState` for whole-region states. | Don't write "No items" paragraphs or spinners by hand. |
@@ -38,7 +38,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 ## Contents
 
-- [Page templates](#page-templates) (1)
+- [Page templates](#page-templates) (6)
 - [Shells & layouts](#shells--layouts) (41)
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (56)
 - [Tables & lists](#tables--lists) (31)
@@ -60,7 +60,12 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
-| `CollectionPage` | `@connorhoehnslalom/ui-components` | A list/collection page: PageHeader, an optional CollectionToolbar, then the collection content. |  |  |
+| `CollectionPage` | `@connorhoehnslalom/ui-components` | A list/collection page: PageHeader, an optional CollectionToolbar, then the collection content. | `templates-collectionpage` |  |
+| `DashboardPage` | `@connorhoehnslalom/ui-components` | Use this when a page is an at-a-glance overview: a `StatStrip`/`KPIGrid` row on top, then a responsive grid of `TitledFrame` panels that fits 1280×800 without page scroll. | `templates-dashboardpage` |  |
+| `DetailPage` | `@connorhoehnslalom/ui-components` | Use this when a page shows one record: `DetailHeader` (title, badge, meta, actions, trail), `Tabs` for its sections instead of a stack of Cards, and an optional `ContextColumn` on the right. | `templates-detailpage` |  |
+| `MasterDetailPage` | `@connorhoehnslalom/ui-components` | Use this when a page is a list you pick from and the picked record beside it: list rail on the left, header and record on the right, an empty-selection state. | `templates-masterdetailpage` |  |
+| `PageFrame` | `@connorhoehnslalom/ui-components` | Use this when a page is a form, an overview or any page no other template fits: trail, title/actions, and a body at the page gutter. | `templates-pageframe` |  |
+| `SettingsPage` | `@connorhoehnslalom/ui-components` | Use this when a page edits settings in sections: a section rail, one scrolling section body and a sticky save bar while dirty (`SettingsLayout`), under the page trail. | `templates-settingspage` |  |
 
 ## Shells & layouts
 
@@ -68,7 +73,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 |---|---|---|---|---|
 | `AgentTaskCard` | `@connorhoehnslalom/ui-components` | The "Current task" card at the top of a Workbench: what the agent was asked to do, where it is, and when it started. |  |  |
 | `ApiDegradedBanner` | `@connorhoehnslalom/ui-components` | Top-of-content banner shown when the social-api /health rollup reports a degraded state. |  |  |
-| `AppLayout` | `@connorhoehnslalom/ui-components` | The room-shaped app layout: rooms sidebar, presence and nested content, wired to the pipelines run providers. |  |  |
+| `AppLayout` | `@connorhoehnslalom/ui-components` | The room-shaped app layout: rooms sidebar, presence and nested content, wired to the pipelines run providers. |  | deprecated |
 | `AppShell` | `@connorhoehnslalom/ui-components` | The app chrome: sidebar, header, optional subheader and the content region, with a toast region by default. | `layout-appshell` |  |
 | `CanvasPaneInsetContext` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `CanvasPaneLayout` | `@connorhoehnslalom/ui-components` | A canvas (a graph, a map, a board) with a details pane on its right, that keeps the canvas usable at every width. |  |  |
@@ -195,7 +200,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `RovingToolbar` | `@connorhoehnslalom/ui-components` | A group of related controls that costs ONE tab stop. |  |  |
 | `SourceList` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `SuggestionRow` | `@connorhoehnslalom/ui-components` | One option in an inline autocomplete list: a primary line and a muted second line, as a full-width row. | `shared-suggestionrow` |  |
-| `Table` | `@connorhoehnslalom/ui-components` | Base table primitives for consistent data tables across the app. |  |  |
+| `Table` | `@connorhoehnslalom/ui-components` | Base table primitives for consistent data tables across the app. | `ui-table` |  |
 | `TableBody` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `TableHead` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `TableRow` | `@connorhoehnslalom/ui-components` | — |  |  |

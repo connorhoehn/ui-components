@@ -433,7 +433,7 @@ const noHandRolledSeparators = {
     ],
     messages: {
       separator:
-        '`{{found}}` on <{{element}}> hand-draws a separator. Use <Divider>, <PanelHeader>, or <PageSection divided> from @connorhoehnslalom/ui-components (see {{index}}).',
+        '`{{found}}` on <{{element}}> hand-draws a separator. Use <Divider>, <CardHeader>/<PaneHeader>, <PageSection divided>, or a page template from @connorhoehnslalom/ui-components (see {{index}}).',
     },
   },
   create(context) {
