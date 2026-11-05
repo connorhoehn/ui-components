@@ -2177,6 +2177,15 @@ export declare function BellIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** A bell with a slash through it: "notify me quietly". */
 export declare function BellMutedIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function BigBrotherPanel({ rooms, presenceUsers, activityEvents, activityIsLive: isLive, }: BigBrotherPanelProps): JSX.Element;
+
+declare interface BigBrotherPanelProps {
+    rooms: RoomItem[];
+    presenceUsers: PresenceUser_2[];
+    activityEvents: ActivityEvent[];
+    activityIsLive: boolean;
+}
+
 export declare function BoardColumn({ label, count, children, emptyLabel, action, className, 'data-testid': testId, }: BoardColumnProps): JSX.Element;
 
 export declare interface BoardColumnProps {
@@ -8477,6 +8486,8 @@ export declare interface DisclosureProps {
     'data-testid'?: string;
 }
 
+export declare function DisconnectReconnect({ connectionState, onDisconnect, onReconnect }: Props_5): JSX.Element;
+
 export declare function Divider({ label, spacing, className, 'data-testid': testId }: DividerProps): JSX.Element;
 
 export declare interface DividerProps {
@@ -9571,6 +9582,8 @@ declare interface EphemeralReaction {
     timestamp: string;
 }
 
+export declare const ERROR_CODE_DESCRIPTIONS: Record<string, string>;
+
 export declare class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     constructor(props: ErrorBoundaryProps);
     static getDerivedStateFromError(error: Error): ErrorBoundaryState;
@@ -9596,6 +9609,8 @@ export declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'Validatio
 /** The model could not sign in (missing or expired credentials): terminal until an operator refreshes them. */
 | 'ModelAuth' | 'UnknownError';
 
+export declare function ErrorDisplay({ error }: Props): JSX.Element | null;
+
 export declare function ErrorPage({ title, message, error, onRetry, onBack, }: ErrorPageProps): JSX.Element;
 
 export declare interface ErrorPageProps {
@@ -9605,6 +9620,8 @@ export declare interface ErrorPageProps {
     onRetry?: () => void;
     onBack?: () => void;
 }
+
+export declare function ErrorPanel({ errors }: Props_2): JSX.Element;
 
 /** Whether the platform would retry this failure on its own; a `Refused` run is `terminal`. */
 export declare type ErrorRetryability = 'retryable' | 'terminal' | 'unknown';
@@ -9643,6 +9660,8 @@ export declare interface EventGlyph {
 }
 
 export declare const eventGlyphs: Record<string, EventGlyph>;
+
+export declare function EventLog({ entries }: Props_3): JSX.Element;
 
 export declare function EventRow({ timestamp, type, summary, severity, onClick, selected }: EventRowProps): JSX.Element;
 
@@ -12263,6 +12282,31 @@ export declare interface ImageTransformNodeData {
     type: 'image:transform';
     sourceImagePath?: string;
     operations: GeometricOp[];
+}
+
+export declare function ImageUploader(props: ImageUploaderProps): JSX.Element;
+
+export declare interface ImageUploaderProps {
+    /** Current uploaded image (null until something has been uploaded). */
+    value: ImageUploaderValue | null;
+    onChange: (next: PipelineUploadedImage | null) => void;
+    /** Max upload size in bytes. Default: 8 * 1024 * 1024 (8 MB). */
+    maxSize?: number;
+    /** Accepted mime types. Default: 'image/*'. */
+    accept?: string;
+    /** When true, hide the URL input and accept only drag-drop + file picker. */
+    fileOnly?: boolean;
+    /** When true, hide the file picker and accept only URL. */
+    urlOnly?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ImageUploaderValue {
+    imageId: string;
+    width?: number;
+    height?: number;
+    mimeType?: string;
 }
 
 export declare interface ImageUpscaleNodeData {
@@ -15778,6 +15822,32 @@ export declare interface PaneHeaderProps {
     'data-testid'?: string;
 }
 
+export declare function PanelsView({ connectionState, onReact, chatMessages, onChatSend, cursors, localCursor, activeMode, onModeChange, onFreeformMove, onTableClick, onTextChange, onCanvasMove, crdtContent, applyLocalEdit, hasConflict, onDismissConflict, onTyping, typingUsers, idToken, sendMessage, onMessage, }: PanelsViewProps): JSX.Element;
+
+declare interface PanelsViewProps {
+    connectionState: string;
+    onReact: (emoji: string) => void;
+    chatMessages: ChatMessage[];
+    onChatSend: (content: string) => void;
+    cursors: Map<string, RemoteCursor>;
+    localCursor: RemoteCursor | null;
+    activeMode: CursorMode;
+    onModeChange: (mode: CursorMode) => void;
+    onFreeformMove: (x: number, y: number) => void;
+    onTableClick: (row: number, col: number) => void;
+    onTextChange: (position: number, selectionData: TextSelectionData | null, hasSelection: boolean) => void;
+    onCanvasMove: (x: number, y: number, tool: CanvasTool, color: string, size: number) => void;
+    crdtContent: string;
+    applyLocalEdit: (newText: string) => void;
+    hasConflict?: boolean;
+    onDismissConflict?: () => void;
+    onTyping: (isTyping: boolean) => void;
+    typingUsers: string[];
+    idToken: string | null;
+    sendMessage: (msg: Record<string, unknown>) => void;
+    onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+}
+
 export declare interface PaneRecord {
     kind: string;
     id: string;
@@ -17767,6 +17837,28 @@ declare interface ProposedField {
     name: string;
     sectionType: string;
     required: boolean;
+}
+
+declare interface Props {
+    error: GatewayError | null;
+}
+
+declare interface Props_2 {
+    errors: GatewayError[];
+}
+
+declare interface Props_3 {
+    entries: LogEntry[];
+}
+
+declare interface Props_4 {
+    entries: LogEntry[];
+}
+
+declare interface Props_5 {
+    connectionState: ConnectionState;
+    onDisconnect: () => void;
+    onReconnect: () => void;
 }
 
 export declare function Prose({ children, size, tone, className, 'data-testid': testId, }: ProseProps): JSX.Element;
@@ -23007,6 +23099,8 @@ export declare interface SyncStats {
 
 /** Short alias — `<T>` reads better inline in dense JSX than `<Text>`. */
 export declare const T: typeof Text_2;
+
+export declare function TabbedEventLog({ entries }: Props_4): JSX.Element;
 
 export declare interface TabItem {
     id: string;

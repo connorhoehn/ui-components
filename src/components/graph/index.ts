@@ -42,3 +42,7 @@ export type {
 // (PeopleGraph's) shadows the star export, by design.
 export * from './org';
 export type { GraphPerson as OrgGraphPerson } from './org';
+
+// The record graph as a collapsible card (root since 2.405.2; /graph since 2.506.0).
+export { RecordGraphCard, recordGraphSummary } from '../search/RecordGraphCard';
+export type { RecordGraphCardProps } from '../search/RecordGraphCard';

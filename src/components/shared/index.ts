@@ -566,3 +566,72 @@ export { AppShell } from '../layout/AppShell';
 export type { AppShellProps } from '../layout/AppShell';
 export { ThemeProvider, useThemeContext, useTheme } from '../../theme';
 export type { ThemeTokens, ThemeProviderProps, ToneOverride } from '../../theme';
+
+// Root-only components on /shared (since 2.506.0): with no subpath, one such import
+// kept the whole root barrel (every optional peer) in a consumer's entry chunk.
+// AppLayout stays root-only: it wires the pipelines providers.
+export { CollapsibleSidebar } from '../layout/CollapsibleSidebar';
+export { default as CollapsedIconStrip } from '../layout/CollapsedIconStrip';
+export type { CollapsedIconStripProps, CollapsedIconStripSection } from '../layout/CollapsedIconStrip';
+export { ConnectionStatus } from '../layout/ConnectionStatus';
+export { ApiDegradedBanner } from '../layout/ApiDegradedBanner';
+export { TopNav, NavTabs } from '../layout/TopNav';
+export type { TopNavProps, TopNavItem, NavTabsProps, NavTabsVariant } from '../layout/TopNav';
+export { SettingsLayout } from '../layout/SettingsLayout';
+export type { SettingsLayoutProps, SettingsSection } from '../layout/SettingsLayout';
+export { DocsShell } from '../layout/DocsShell';
+export type { DocsShellProps } from '../layout/DocsShell';
+export { DocsSidebar } from '../layout/DocsSidebar';
+export type {
+  DocsSidebarProps,
+  DocsSidebarSection,
+  DocsSidebarGroup,
+  DocsSidebarItem,
+} from '../layout/DocsSidebar';
+export { DocsTopNav } from '../layout/DocsTopNav';
+export type { DocsTopNavProps } from '../layout/DocsTopNav';
+export { ViewportFillRegion, fillHeight } from '../layout/ViewportFillRegion';
+export type { ViewportFillRegionProps } from '../layout/ViewportFillRegion';
+export { ExplorerLayout } from '../layout/ExplorerLayout';
+export type { ExplorerLayoutProps } from '../layout/ExplorerLayout';
+export { SplitPane } from '../layout/SplitPane';
+export type { SplitPaneProps } from '../layout/SplitPane';
+export {
+  SidePane, SidePaneProvider, SidePaneSplit, PaneHeader, useSidePane, useSidePaneHost,
+  SIDE_PANE_BOUNDS, readSidePaneOpen, readSidePaneRatio, sidePaneFits, boundedSidePaneRatio,
+} from '../layout/SidePane';
+export type {
+  SidePaneProps, SidePaneProviderProps, SidePaneSplitProps, SidePaneRegistration, SidePaneHostState, SidePaneBounds, PaneHeaderProps,
+} from '../layout/SidePane';
+export { usePaneState, readPaneState, writePaneState, visiblePaneTabs, parsePaneRecord, paneRecordKey } from '../layout/paneState';
+export type { PaneTabSpec, PaneRecord, PaneState, PaneUrlOptions, UsePaneStateOptions, PaneStateControl } from '../layout/paneState';
+export { ListRailLayout } from '../layout/ListRailLayout';
+export type { ListRail, ListRailLayoutProps } from '../layout/ListRailLayout';
+export { CanvasPaneLayout, canvasPaneGeometry, CANVAS_PANE_RAIL_PX } from '../layout/CanvasPaneLayout';
+export { useCanvasPaneInset, CanvasPaneInsetContext } from '../layout/canvasPaneInset';
+export type { CanvasPaneInset } from '../layout/canvasPaneInset';
+export type { CanvasPaneLayoutProps, CanvasPaneGeometry, CanvasPaneGeometryOptions, CanvasPanePlacement } from '../layout/CanvasPaneLayout';
+export { ContextColumn, CONTEXT_COLUMN_INSET_VAR } from '../layout/ContextColumn';
+export type { ContextColumnProps, ContextColumnPanel, ContextColumnEntry, ContextColumnState } from '../layout/ContextColumn';
+export { DockedAside, FloatingCard, PinnedSlot } from '../layout/DockedAside';
+export type { DockedAsideProps, FloatingCardProps, PinnedSlotProps } from '../layout/DockedAside';
+export { Workbench } from '../layout/Workbench';
+export type { WorkbenchProps, WorkbenchTab } from '../layout/Workbench';
+export { AgentTaskCard } from '../layout/AgentTaskCard';
+export type { AgentTaskCardProps } from '../layout/AgentTaskCard';
+export { MoreContextDisclosure } from '../layout/MoreContextDisclosure';
+export type { MoreContextDisclosureProps, MoreContextItem } from '../layout/MoreContextDisclosure';
+export { WorkspaceRail } from '../layout/WorkspaceRail';
+export type { WorkspaceRailProps, WorkspaceRailBack } from '../layout/WorkspaceRail';
+export { DockedColumn, ColumnDock, useInDockedColumn } from '../layout/DockedColumn';
+export type { DockedColumnProps, ColumnDockProps } from '../layout/DockedColumn';
+export * from '../work';
+export * from '../sidebar';
+export * from '../hangout';
+export * from '../inbox';
+export * from '../change-review';
+// The search workspace pieces stay root-only for now: the bundler merges their
+// record marks into the graph chunk, which would add @xyflow/react and d3-force
+// to /shared's static peers. RecordGraphCard is on /graph.
+export * from '../image';
+export * from '../misc';

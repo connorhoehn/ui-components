@@ -1,16 +1,19 @@
 import { AnchorHTMLAttributes } from 'react';
 import { ButtonHTMLAttributes } from 'react';
+import { Component } from 'react';
 import { Context } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { DragEvent as DragEvent_2 } from 'react';
 import { DragEventHandler } from 'react';
 import { ElementType } from 'react';
+import { ErrorInfo } from 'react';
 import { FocusEvent as FocusEvent_2 } from 'react';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react';
+import { JSXElementConstructor } from 'react';
 import { KeyboardEvent as KeyboardEvent_2 } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { MouseEventHandler } from 'react';
@@ -35,6 +38,178 @@ export declare interface AccentStripeProps {
     /** Stripe thickness in px class terms; default the 5px card edge. */
     className?: string;
     'data-testid'?: string;
+}
+
+export declare function AccessNotice({ tone, title, body, action, className, 'data-testid': testId, }: AccessNoticeProps): JSX.Element;
+
+export declare interface AccessNoticeAction {
+    label: string;
+    onClick?: () => void;
+    /** Renders a real link instead of a button. */
+    href?: string;
+}
+
+export declare interface AccessNoticeProps {
+    tone?: AccessNoticeTone;
+    title: string;
+    body?: ReactNode;
+    action?: AccessNoticeAction | null;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type AccessNoticeTone = 'warning' | 'info' | 'danger';
+
+/**
+ * A fact column at the row's right. Widths come from a fixed scale so cells
+ * line up across rows: xs 64, sm 88, md 120, lg 152, xl 184 (px).
+ */
+export declare interface ActionRowColumn {
+    id: string;
+    width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    /** Where the cell's content sits inside its width. Default `start`. */
+    align?: 'start' | 'end';
+    /** A 1px rule before this column. Default: every column after the first. */
+    divider?: boolean;
+    /** Screen-reader name for the column's cells, e.g. "Assignee". */
+    label?: string;
+}
+
+export declare interface ActionRowItem {
+    id: string;
+    title: string;
+    /** One line under the title. Truncates; absent, no second line. */
+    description?: ReactNode;
+    /** Right-aligned facts, already worded — "Layla Hassan · 5 points". */
+    meta?: ReactNode;
+    /** A link target. Without it the row is a button calling `onOpen`. */
+    href?: string;
+    disabled?: boolean;
+    /** Tooltip on a disabled row: why it cannot be opened. */
+    disabledReason?: string;
+    /** Content per `ActionRowListProps.columns` id. Since 2.392.0. */
+    cells?: Record<string, ReactNode>;
+    /** Before the title — a toned `Chip` ("Blocked"). Since 2.392.0. */
+    leading?: ReactNode;
+    /** This row's tint; overrides the list's `tone`. Since 2.392.0. */
+    tone?: ActionRowTone;
+    /** This row's edge accent; overrides the list's `accent`. Since 2.392.0. */
+    accent?: 'none' | 'bar';
+    /**
+     * A worded target in place of the chevron — "Open" draws "Open →" in the
+     * primary colour. Not a separate control: the whole row is still the
+     * target. Overrides the list's `action`. Since 2.392.0.
+     */
+    action?: string;
+}
+
+export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, striped, action, size: sizeProp, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
+
+export declare interface ActionRowListProps {
+    items: ActionRowItem[];
+    /** A row was activated (click, Enter, Space). Also called for `href` rows. */
+    onOpen?: (item: ActionRowItem) => void;
+    /** Under the list — normally a link, "See all 11 work items →". */
+    footer?: ReactNode;
+    /** Shown instead of the rows when `items` is empty. Absent, nothing renders. */
+    emptyLabel?: ReactNode;
+    /**
+     * Fact columns at every row's right, declared once so their edges line up
+     * down the list; each item fills `cells`. Since 2.392.0.
+     */
+    columns?: ActionRowColumn[];
+    /**
+     * Tints every row — `warning` for "Needs attention". A toned list drops the
+     * grey rules (the tint separates the rows) and rounds the rows' right
+     * corners. Default `neutral`: no tint, ruled. Since 2.392.0.
+     */
+    tone?: ActionRowTone;
+    /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
+    accent?: 'none' | 'bar';
+    /**
+     * Zebra rows: every second neutral row (the 2nd, 4th, …) sits on
+     * `surface-inset`, the tint `DataTable striped` uses, so a striped list and a
+     * striped table beside it read as one system. The first row stays on the
+     * page's own surface, so the list opens flush rather than on a band.
+     *
+     * Hover (`surface-hover`) is darker than the stripe, so the row under the
+     * pointer stays unambiguous on a striped row too; a disabled row keeps the
+     * stripe and its muted text, with no hover fill. A toned row keeps its tone
+     * (semantic tones always win over the stripe). The keyboard focus ring is
+     * unchanged. Works with and without `columns`. Emits `data-striped` on the
+     * list and `data-stripe` on each striped row. Since 2.502.0 the stripe is
+     * `surface-inset` (it was `surface-panel` on odd rows and an opaque
+     * `surface` on even ones, which painted white over a tinted host).
+     *
+     * Default `true` since 2.504.0 (was `false`); pass `striped={false}` for a
+     * ruled-only list.
+     */
+    striped?: boolean;
+    /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
+    action?: string;
+    /**
+     * Type step. `md` (default): the Initiatives v2 mockup's 15px rows. `sm`
+     * (since 2.429.0): the app's body step — 14px medium titles and cells,
+     * 12px descriptions and meta, a 14px semibold action (`T size="sm"` /
+     * `T size="xs"`) — so a list in a tabbed pane reads like the rails and
+     * lists beside it.
+     */
+    size?: 'md' | 'sm';
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * The person cell of an `ActionRowList` column — a 28px avatar then the name,
+ * truncating inside the column's width. Since 2.392.0.
+ */
+export declare function ActionRowPerson({ name, avatarUrl, size }: ActionRowPersonProps): JSX.Element;
+
+export declare interface ActionRowPersonProps {
+    name: string;
+    /** A photo; initials when absent (or when it fails to load). */
+    avatarUrl?: string;
+    /** Avatar diameter in px. Default 28. */
+    size?: number;
+}
+
+/** Row tint. `neutral` (and absent) draws none. */
+export declare type ActionRowTone = Exclude<Tone, 'neutral'> | 'neutral';
+
+export declare function ActiveCallBanner({ open, onJoin, onDismiss, lobbyLabel, elapsedMs, participants, participantCount, loading, }: ActiveCallBannerProps): JSX.Element | null;
+
+/** Thin participant shape — same contract as ResumeCallParticipant:
+ *  caller MUST pass safeDisplayName output, never a raw UUID. */
+export declare interface ActiveCallBannerParticipant {
+    userId: string;
+    name: string;
+    avatarUrl?: string;
+}
+
+export declare interface ActiveCallBannerProps {
+    /** Visibility — when false nothing renders. */
+    open: boolean;
+    /** Join button → consumer starts its join flow (may be async; flip
+     *  `loading` while pending). */
+    onJoin: () => void | Promise<void>;
+    /** Dismiss (X / "Not now") → consumer hides and typically remembers
+     *  the dismissal for this callId so the banner doesn't re-appear. */
+    onDismiss: () => void;
+    /** Human-readable lobby label shown in the banner title. */
+    lobbyLabel: string;
+    /** Elapsed ms at mount — live display advances on a local 1s tick,
+     *  so the parent never re-renders to move the clock. 0/absent hides
+     *  the duration chip (status replies without startedAt). */
+    elapsedMs?: number;
+    /** Participants currently in the call. Names pre-resolved. */
+    participants: ActiveCallBannerParticipant[];
+    /** Overrides the "N in call" count when the caller knows a truer
+     *  number than participants.length (e.g. server participantCount
+     *  when some names couldn't be resolved). */
+    participantCount?: number;
+    /** True while the join attempt is in flight. */
+    loading?: boolean;
 }
 
 export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-primary bg-primary/8 text-text-primary no-underline cursor-pointer";
@@ -66,6 +241,17 @@ export declare const ACTIVITY_RIPPLE_GRID_DARK: RippleGridBackgroundProps;
 
 /** "just now", "5m ago", "3h ago", "2d ago", else the date. */
 export declare function activityAge(at: string | number | Date, now?: number): string;
+
+declare interface ActivityEvent {
+    id: string;
+    eventType: string;
+    detail: Record<string, unknown>;
+    timestamp: string;
+    userId?: string;
+    displayName?: string;
+    color?: string;
+    source: 'local' | 'remote';
+}
 
 export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, }: ActivityFeedProps): JSX.Element;
 
@@ -180,8 +366,54 @@ export declare const AGENT_TASK_STATUS_DOT: Record<AgentTaskStatus, string>;
 /** The words for each status, as the strip and the card print them. */
 export declare const AGENT_TASK_STATUS_LABELS: Record<AgentTaskStatus, string>;
 
+export declare function AgentTaskCard({ title, status, statusLabel, description, phase, percent, startedLabel, actions, className, 'data-testid': testId, }: AgentTaskCardProps): JSX.Element;
+
+export declare interface AgentTaskCardProps {
+    /** "Build risk outlook slide". */
+    title: string;
+    status: AgentTaskStatus;
+    /** Overrides the status pill's word ("Editing slide 4" stays in `phase`). */
+    statusLabel?: string;
+    /** The request, or what the agent is working from. */
+    description?: ReactNode;
+    /** What it is doing now — "Editing slide 4". */
+    phase?: string;
+    /** A REAL percentage, 0–100. Omit when the run reports none: no bar is drawn. */
+    percent?: number;
+    /** "Started 2m ago" — the host formats it, since it owns the clock. */
+    startedLabel?: string;
+    /** Buttons under the card body — Open run, Pause, Stop. */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
 export declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
+
+export declare function ApiDegradedBanner({ health }: ApiDegradedBannerProps): JSX.Element | null;
+
+declare interface ApiDegradedBannerProps {
+    health: ApiHealthSnapshot;
+}
+
+declare interface ApiHealthCheck {
+    /** 'degraded': the check passed but reports reduced service (the pod stays up). */
+    status: 'ok' | 'error' | 'degraded' | string;
+    latencyMs?: number;
+    error?: string;
+    /** The check's own words, when it gave a string (`details` on the wire). */
+    detail?: string;
+}
+
+declare interface ApiHealthSnapshot {
+    status: ApiHealthStatus;
+    checks: Record<string, ApiHealthCheck>;
+    /** Names of failing dependencies (status !== 'ok'). Empty when healthy or unknown. */
+    failing: string[];
+}
+
+declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
 /**
  * AppShell wraps its children in a ToastProvider by default.
@@ -578,6 +810,15 @@ export declare function BellIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** A bell with a slash through it: "notify me quietly". */
 export declare function BellMutedIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function BigBrotherPanel({ rooms, presenceUsers, activityEvents, activityIsLive: isLive, }: BigBrotherPanelProps): JSX.Element;
+
+declare interface BigBrotherPanelProps {
+    rooms: RoomItem[];
+    presenceUsers: PresenceUser_2[];
+    activityEvents: ActivityEvent[];
+    activityIsLive: boolean;
+}
+
 export declare function BoardColumn({ label, count, children, emptyLabel, action, className, 'data-testid': testId, }: BoardColumnProps): JSX.Element;
 
 export declare interface BoardColumnProps {
@@ -601,6 +842,12 @@ export declare interface BoardColumnProps {
 
 /** A robot head: an agent at work on a computer. Since 2.411.0. */
 export declare function BotIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** The ratio that keeps a width-bounded pane inside its bounds at this split width; the ratio otherwise. */
+export declare function boundedSidePaneRatio(ratio: number, splitWidthPx: number | null, widthPx?: {
+    min: number;
+    max: number;
+} | null): number;
 
 /** A trunk with a branch leaving it: a flow that splits — a pipeline, a branch. */
 export declare function BranchIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -724,6 +971,81 @@ export declare type ButtonTone = SurfaceTone;
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid' | 'success' | 'info' | 'link';
 
+export declare function CallPresenceIndicator({ participants, count, onClick, label, maxVisible, }: CallPresenceIndicatorProps): JSX.Element | null;
+
+export declare interface CallPresenceIndicatorProps {
+    /** People currently on the call. Names must be pre-resolved. */
+    participants: Array<{
+        userId: string;
+        name: string;
+        avatarUrl?: string;
+    }>;
+    /** Overrides the rendered count when the caller knows a truer number
+     *  than it has names for (e.g. the server's participantCount while
+     *  some display names are still resolving). */
+    count?: number;
+    /** Click target — typically "open/expand the call". */
+    onClick?: () => void;
+    /** Live-region label prefix, e.g. the lobby name. */
+    label?: string;
+    maxVisible?: number;
+}
+
+/** Width of the folded rail. */
+export declare const CANVAS_PANE_RAIL_PX = 36;
+
+export declare interface CanvasPaneGeometry {
+    placement: Exclude<CanvasPanePlacement, 'none' | 'collapsed'>;
+    paneWidth: number;
+    /** Canvas width left visible beside (column) or beside-and-under (overlay) the pane. */
+    canvasWidth: number;
+}
+
+/** Pure: where the pane goes, and how wide, in a layout this wide. */
+export declare function canvasPaneGeometry(width: number, options?: CanvasPaneGeometryOptions): CanvasPaneGeometry;
+
+export declare interface CanvasPaneGeometryOptions {
+    /** Narrowest the pane gets. Default 280. */
+    paneMinPx?: number;
+    /** Widest the pane gets. Default 380. */
+    paneMaxPx?: number;
+    /** The pane's share of the layout between those bounds. Default 0.3. */
+    paneFraction?: number;
+    /** The canvas keeps at least this beside a column pane; below it the pane overlays. Default 480. */
+    canvasMinPx?: number;
+}
+
+export declare interface CanvasPaneInset {
+    /** Pixels of the canvas's right edge that the pane lies over. */
+    right: number;
+}
+
+export declare const CanvasPaneInsetContext: Context<CanvasPaneInset>;
+
+export declare function CanvasPaneLayout({ children, pane, collapsed: collapsedProp, onCollapsedChange, expandKey, paneLabel, width: fixedWidth, className, 'data-testid': testId, ...geometryOptions }: CanvasPaneLayoutProps): JSX.Element;
+
+export declare interface CanvasPaneLayoutProps extends CanvasPaneGeometryOptions {
+    /** The canvas. It gets the remaining width and never less than zero. */
+    children: ReactNode;
+    /** The details pane, or null/undefined when nothing is open. It fills its box (`h-full w-full`) and draws its own left edge and background. */
+    pane?: ReactNode | null;
+    /** Controlled fold state. Omit to let the layout keep its own. */
+    collapsed?: boolean;
+    onCollapsedChange?: (collapsed: boolean) => void;
+    /** When this changes (a different item opened), a folded pane unfolds. */
+    expandKey?: unknown;
+    /** What the pane holds, for the fold/unfold buttons: "Hide details" / "Show details". Default "details". */
+    paneLabel?: string;
+    /** Fixed width for tests/stories (jsdom never measures). */
+    width?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type CanvasPanePlacement = 'none' | 'column' | 'overlay' | 'collapsed';
+
+declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
+
 export declare function CapabilityDeniedFallback({ capabilityName, title, description, actionLabel, onAction, actions, icon, testId, }: CapabilityDeniedFallbackProps): JSX.Element;
 
 export declare interface CapabilityDeniedFallbackProps {
@@ -812,6 +1134,30 @@ export declare interface CatalogGridProps {
     'data-testid'?: string;
 }
 
+/** What the host reports back after trying to apply. */
+export declare interface ChangeApplyOutcome {
+    ok: boolean;
+    /** Shown verbatim when `ok` is false. Say what happened, not "error". */
+    message?: string;
+    /** Set when the refusal was specifically a compare-and-set mismatch. */
+    stale?: {
+        expected: unknown;
+        actual: unknown;
+    };
+}
+
+/** Who is asking for the change. */
+export declare interface ChangeAuthor {
+    name: string;
+    /**
+     * `agent` renders the machine label. This is not decoration: an unreviewed
+     * machine edit and a colleague's edit carry very different weight, and the
+     * only thing separating them on screen is this.
+     */
+    kind?: 'human' | 'agent';
+    avatarUrl?: string;
+}
+
 export declare function ChangeDiff({ pairs, beforeLabel, afterLabel, className, 'data-testid': testId, }: ChangeDiffProps): JSX.Element | null;
 
 export declare interface ChangeDiffPair {
@@ -828,6 +1174,144 @@ export declare interface ChangeDiffProps {
     className?: string;
     'data-testid'?: string;
 }
+
+export declare function ChangeLocation({ path, hint, rootLabel, className, 'data-testid': testId, }: ChangeLocationProps): JSX.Element;
+
+export declare interface ChangeLocationProps {
+    /**
+     * Breadcrumb from the document root, outermost first —
+     * e.g. `['Section 4', 'Payment terms']`. An empty array renders the
+     * document-level case rather than an empty strip.
+     */
+    path: readonly string[];
+    /** Position within the target, e.g. `paragraph 3`. Optional. */
+    hint?: string | undefined;
+    /** Shown when `path` is empty. */
+    rootLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function ChangeReviewCard({ category, author, path, locationHint, pairs, beforeLabel, afterLabel, utterance, rationale, verdict, verdictStatus, verdictError, revision, status, draftError, badges, onAccept, onReject, onRereview, actions, className, 'data-testid': testId, }: ChangeReviewCardProps): JSX.Element;
+
+export declare interface ChangeReviewCardProps {
+    /**
+     * What KIND of change this is, in the reviewer's words — "Title", "Payment
+     * terms", "Body text". Rendered first and most prominent.
+     */
+    category: string;
+    /**
+     * Who made / is asking for the change.
+     *
+     * Optional, and its absence is RENDERED — as "Unattributed", not as a blank.
+     * Plenty of real sources cannot name an editor (an S3 object has no author),
+     * and the wrong fix is to fill the gap with the system that delivered the
+     * change. "Contracts (Google Drive)" is a provenance, not a person; showing
+     * it where a person belongs is what made the queue it replaces unreadable.
+     */
+    author?: ChangeAuthor;
+    /** Breadcrumb to the change site. See `ChangeLocation`. */
+    path?: readonly string[];
+    /** Position within the target, e.g. `paragraph 3`. */
+    locationHint?: string;
+    /** The before/after pairs. One for a field, several for prose edits. */
+    pairs: readonly ChangeDiffPair[];
+    /** Label for the current value. Defaults to "Now". */
+    beforeLabel?: string;
+    /** Label for the proposed value. Defaults to "Proposed". */
+    afterLabel?: string;
+    /** Verbatim request that raised this, if there was one. Never paraphrase it. */
+    utterance?: string;
+    /** The author's one-line justification for the change itself. */
+    rationale?: string;
+    verdict?: ChangeReviewVerdict | undefined;
+    verdictStatus?: ChangeReviewStatus | undefined;
+    verdictError?: string | undefined;
+    /**
+     * The change's CURRENT revision. Pass it, or a verdict computed against an
+     * older revision renders as though it still applies.
+     */
+    revision?: string | undefined;
+    status?: ChangeReviewCardStatus;
+    /** When set, rendered instead of the diff — the change could not be drafted. */
+    draftError?: string;
+    /** Extra chips for the header line (attachment state, confidence, …). */
+    badges?: ReactNode;
+    /**
+     * Apply the change. MUST perform the mutation and report what happened —
+     * returning `{ ok: true }` without changing the document is the exact bug
+     * this component is shaped to prevent.
+     */
+    onAccept?: () => Promise<ChangeApplyOutcome> | ChangeApplyOutcome;
+    onReject?: (reason: string) => void;
+    /** Ask for a fresh review of the current revision. Offered on stale/failed. */
+    onRereview?: () => void;
+    /** Extra actions, rendered after the built-in ones. */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ChangeReviewCardStatus = 'pending' | 'applied' | 'rejected';
+
+export declare function ChangeReviewList({ documentTitle, changeCount, documentMeta, headerActions, pageSize, emptyState, notices, footer, children, className, 'data-testid': testId, }: ChangeReviewListProps): JSX.Element;
+
+export declare interface ChangeReviewListProps {
+    /** The document being changed. This is the heading — not the queue's name. */
+    documentTitle: string;
+    /**
+     * Total number of changes awaiting review. Defaults to the number of
+     * children. Pass it explicitly when some children are not cards, or when the
+     * host is paging server-side and the children are only part of the total.
+     */
+    changeCount?: number;
+    /** Document type, owner, last-edited — whatever orients the reviewer. */
+    documentMeta?: ReactNode;
+    /** Rendered on the right of the heading, e.g. a Refresh button. */
+    headerActions?: ReactNode;
+    /** How many cards to show before the "show more" control. Default 3. */
+    pageSize?: number;
+    /** Rendered in place of the queue when there is nothing to review. */
+    emptyState?: ReactNode;
+    /** Banners — load errors, stale-data notices — above the queue. */
+    notices?: ReactNode;
+    /**
+     * Rendered after the queue and OUTSIDE the `pageSize` window.
+     *
+     * Commit controls belong here, not in `children`: a "Apply to document"
+     * button passed as a child is one of the paged items, so on a queue longer
+     * than `pageSize` it disappears behind "show more" and the surface becomes
+     * unsubmittable.
+     */
+    footer?: ReactNode;
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * How the review itself is going, independent of what it concluded.
+ *
+ * Separate from `ChangeReviewVerdict` because "we have not asked yet", "we are
+ * asking" and "asking failed" are three different things to a reviewer, and
+ * none of them is a verdict. Folding them into an optional verdict field would
+ * make the absent case ambiguous.
+ */
+export declare type ChangeReviewStatus = 'idle' | 'pending' | 'failed';
+
+export declare interface ChangeReviewVerdict {
+    verdict: ChangeVerdict;
+    /** One line, always shown beside the chip. */
+    headline: string;
+    /** Expandable detail. Absent when the model gave none — render nothing, not "no reasoning". */
+    reasoning?: string;
+    producedAt: string;
+    /** The change revision this verdict was computed against. */
+    forRevision: string;
+}
+
+/** An agent's judgement on a single proposed change. */
+export declare type ChangeVerdict = 'pass' | 'concern' | 'fail';
 
 export declare function ChannelHeader({ name, onRename, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, headingLevel, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
@@ -885,6 +1369,31 @@ export declare interface ChannelHeaderProps {
 /** Bars on a baseline: measurements, "how much of this over time". */
 export declare function ChartIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+declare interface ChatAttachment {
+    /** Correlation id shared with the sender's in-flight transfer. */
+    id: string;
+    /** Original filename. User content — never used as a path, never trusted. */
+    name: string;
+    /** Byte length of the stored object. */
+    size: number;
+    /** Declared MIME type. Advisory: used to pick a layout, never to trust. */
+    contentType: string;
+    /**
+     * Authenticated download URL. Because the download route requires a bearer
+     * token, an `<img src>` pointed straight at this will 401 — a resolved
+     * object URL should be handed in as `src` by the integration layer.
+     */
+    url: string;
+    /** Intrinsic dimensions when known, so the row reserves space before load. */
+    width?: number;
+    height?: number;
+    /**
+     * Tiny inline data-URI placeholder captured by the sender before upload.
+     * Lets a recipient see what the image IS while the bytes are still moving.
+     */
+    preview?: string;
+}
+
 /**
  * Chat input with send button. Stateless — value/onChange controlled by parent.
  *
@@ -930,6 +1439,55 @@ export declare interface ChatComposerProps {
 
 /** A speech bubble: a conversation, a comment. */
 export declare function ChatIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+declare interface ChatMessage {
+    id?: string;
+    clientId: string;
+    /**
+     * Authenticated sender, stamped server-side. Distinct from `clientId`,
+     * which identifies a CONNECTION and changes on every reconnect — which is
+     * why "is this mine" keys on this and never on clientId: otherwise your own
+     * messages stop being yours partway up the thread.
+     */
+    userId?: string;
+    content: string;
+    timestamp: string;
+    displayName?: string;
+    avatarUrl?: string;
+    /**
+     * Files shared alongside (or instead of) the text.
+     *
+     * An attachment rides ON a message rather than being its own message kind
+     * so that ordering is free: the file lands exactly where the sender put it
+     * in the conversation, interleaved correctly with the text around it. A
+     * separate "file event" stream would have to be merged back against the
+     * message stream at render time, and the merge would be wrong at exactly
+     * the moment it matters — when someone is typing while a file uploads.
+     *
+     * `content` may be empty when a message is nothing but attachments.
+     */
+    attachments?: ChatAttachment[];
+    /**
+     * Server-stamped facts about what this message IS, beyond its text.
+     *
+     * The thread renders some messages as objects rather than sentences — a
+     * document that was created, a call that is happening — and this is where
+     * the facts for those live: `{ kind: 'document', documentId, title }`,
+     * `{ kind: 'call', callId, participants, endedAt }`. The sentence stays in
+     * `content` for everywhere that renders plain text (notification previews,
+     * the conversation list preview), so a host that does nothing with metadata
+     * still shows something true.
+     *
+     * Deliberately open: the gateway adds event kinds without the library
+     * needing a release, and `documentRefFromMetadata` / `callRefFromMetadata`
+     * are the readers that turn this back into something typed.
+     */
+    metadata?: Record<string, unknown>;
+    /** ISO: the author changed the text after sending. Rendered as "(edited)". */
+    editedAt?: string;
+    /** ISO: the author (or a moderator) removed it. The row keeps its place and says so. */
+    deletedAt?: string;
+}
 
 export declare const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<HTMLInputElement>>;
 
@@ -1028,6 +1586,40 @@ export declare function CheckIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** A ticked box: "checklist". Since 2.386.5. */
 export declare function ChecklistIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface ChecklistItem {
+    id: string;
+    text: string;
+    done: boolean;
+    pending?: boolean;
+}
+
+export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, as, variant, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
+
+export declare interface ChecklistSectionProps {
+    title?: string;
+    /** Semantic heading level; use h2 for a section directly under the page title. */
+    as?: 'h2' | 'h3' | 'h4';
+    items: ChecklistItem[];
+    onToggle?: (id: string, done: boolean) => void;
+    onAdd?: (text: string) => void;
+    onEdit?: (id: string, text: string) => void;
+    onRemove?: (id: string) => void;
+    onMove?: (id: string, toIndex: number) => void;
+    readOnlyReason?: string;
+    emptyLabel?: string;
+    addPlaceholder?: string;
+    first?: boolean;
+    /**
+     * `heading` (default since 2.386.15): a 16px sentence-case heading, 14px
+     * rows, no tally, and "Add a criterion" as a quiet control that opens the
+     * field only when asked — a work item's Brief. `label`: the small uppercase
+     * caption with the tally and an always-open add field, for a side panel.
+     */
+    variant?: 'label' | 'heading';
+    className?: string;
+    'data-testid'?: string;
+}
 
 /** A chevron. `dir` is where it points. */
 export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
@@ -1245,6 +1837,34 @@ export declare interface CodeEditorProps {
 /** Angle brackets around a slash: source, "the developer-facing thing". */
 export declare function CodeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function CollapsedIconStrip({ connectionState, onExpand, onDocuments, onPipelines, onObservability, active, headerHeight, className, 'data-testid': testId, }: CollapsedIconStripProps): JSX.Element;
+
+export declare interface CollapsedIconStripProps {
+    connectionState: ConnectionState_3;
+    /**
+     * Opens the full sidebar. Omit when the surface has no expanded sidebar to
+     * show: the strip keeps its header row but drops the expand button, so it
+     * never offers a column that would open empty.
+     */
+    onExpand?: () => void;
+    onDocuments?: () => void;
+    onPipelines?: () => void;
+    onObservability?: () => void;
+    /** The section the window is in. */
+    active?: CollapsedIconStripSection | null;
+    /**
+     * The app header's height, when the strip starts at the top of the window
+     * beside it (AppShell `sidebarFullHeight`): the expand button is centred in
+     * that row, and the sections start below it. Omit when the strip hangs
+     * below the header.
+     */
+    headerHeight?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type CollapsedIconStripSection = 'documents' | 'pipelines' | 'observability';
+
 export declare function CollapsibleSection({ title, defaultOpen, badge, actions, children, className, storageKey, density, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
 
 export declare interface CollapsibleSectionProps {
@@ -1279,6 +1899,26 @@ export declare interface CollapsibleSectionProps {
     density?: 'default' | 'compact';
     /** Lands on the header button — the thing tests and contrast probes read. */
     'data-testid'?: string;
+}
+
+export declare function CollapsibleSidebar({ connectionState, onDisconnect, onReconnect, onCollapse, presenceUsers, currentClientId, currentChannel, activityEvents, userId, documents, onOpenDocument, pipelines, onOpenPipeline, onSeeAllPipelines, videoSlot, }: CollapsibleSidebarProps): JSX.Element;
+
+declare interface CollapsibleSidebarProps {
+    connectionState: ConnectionState_2;
+    onDisconnect: () => void;
+    onReconnect: () => void;
+    onCollapse?: () => void;
+    presenceUsers: PresenceUser_3[];
+    currentClientId: string;
+    currentChannel: string;
+    activityEvents: ActivityEvent[];
+    userId: string;
+    documents: DocumentInfo[];
+    onOpenDocument: (id: string) => void;
+    pipelines?: PipelineSidebarEntry[];
+    onOpenPipeline?: (id: string) => void;
+    onSeeAllPipelines?: () => void;
+    videoSlot?: React.ReactNode;
 }
 
 export declare interface CollectionAction {
@@ -1458,6 +2098,13 @@ export declare interface CollectionToolbarProps {
     children?: ReactNode;
 }
 
+/** Render `children` in the nearest DockedColumn's dock (in place when there is none). */
+export declare function ColumnDock({ children }: ColumnDockProps): JSX.Element | null;
+
+export declare interface ColumnDockProps {
+    children: ReactNode;
+}
+
 export declare function Combobox(props: ComboboxProps): JSX.Element;
 
 export declare interface ComboboxOption {
@@ -1582,6 +2229,42 @@ export declare interface CommandPaletteProviderProps {
  */
 export declare function CommentIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function CommentList({ title, comments, total, onViewAll, now, emptyLabel, max, first, variant, className, 'data-testid': testId, }: CommentListProps): JSX.Element;
+
+export declare interface CommentListItem {
+    id: string;
+    author: {
+        id: string;
+        name: string;
+        avatarUrl?: string;
+    };
+    role?: string | null;
+    createdAt: string | number | Date;
+    text: string;
+}
+
+export declare interface CommentListProps {
+    title?: string;
+    comments: CommentListItem[];
+    /** Total in the full discussion, when larger than what is passed. */
+    total?: number;
+    onViewAll?: () => void;
+    /** Clock for relative times (ms since epoch). Default Date.now(). */
+    now?: number;
+    emptyLabel?: string;
+    /** Show at most this many comments. */
+    max?: number;
+    first?: boolean;
+    /**
+     * `heading` (default since 2.386.15): a 16px heading, 32px avatars, 14px
+     * text, "View all" quiet until hover — a work item's Brief. `label`: the
+     * small caption and 28px avatars, for a side panel.
+     */
+    variant?: 'label' | 'heading';
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface ComposerSuggestion {
     id: string;
     /** Why this is being offered — shown above the title on the card. */
@@ -1602,6 +2285,12 @@ export declare interface ComposerSuggestion {
 export declare function ComposerSurface({ children, className, compact, ...rest }: HTMLAttributes<HTMLDivElement> & {
     compact?: boolean;
 }): JSX.Element;
+
+/** "No prior runs" for n = 0, else "Low confidence · Based on 2 runs". */
+export declare function confidenceNote(sampleSize: number): string;
+
+/** Sample size → confidence: 0 none, 1–2 low, 3–5 medium, more than 5 high. */
+export declare function confidenceOf(sampleSize: number): RunEstimateConfidenceLevel;
 
 export declare function ConfirmDialog({ open, onConfirm, onCancel, title, body, confirmLabel, cancelLabel, confirmDisabled, tone, children, }: ConfirmDialogProps): JSX.Element;
 
@@ -1668,6 +2357,16 @@ export declare type ConnectionPillTone = SurfaceTone;
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_2 = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_3 = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+export declare function ConnectionStatus(props: ConnectionStatusProps): JSX.Element;
+
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+declare type ConnectionStatusProps = Pick<ConnectionPillProps, 'state'>;
 
 export declare const ConsoleSurfaceContext: Context<ConsoleSurfaceState | null>;
 
@@ -1755,8 +2454,93 @@ export declare interface ContainerDensityState<T extends HTMLElement> {
     density: Density;
 }
 
+/** The CSS variable fixed overlays read to stay clear of an open ContextColumn. */
+export declare const CONTEXT_COLUMN_INSET_VAR = "--uic-context-column-inset";
+
+export declare function ContextColumn({ state, onStateChange, panels, activeId, onActivate, label, roomy, reserveOverlayInset, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element | null;
+
+/** One of a tabbed panel's parts, as the collapsed strip shows it. Since 2.384.1. */
+export declare interface ContextColumnEntry {
+    id: string;
+    /** The strip icon's accessible name. */
+    label: string;
+    icon: ReactNode;
+    /** Pending count for this entry alone — unresolved comments, a running task. */
+    badge?: number;
+}
+
+export declare interface ContextColumnPanel {
+    id: string;
+    /** The tab's text and the strip icon's accessible name. */
+    label: string;
+    icon: ReactNode;
+    /** Unread or pending count, shown on the tab and the strip icon. */
+    badge?: number;
+    /**
+     * The panel's own parts, for the collapsed strip: one icon per entry in
+     * place of the panel's icon. Pressing one opens the column to this panel
+     * and reports the entry (`onActivate(panel.id, entry.id)`). The open tab
+     * row is unchanged — the panel's content owns its own tabs. An EMPTY array
+     * (2.386.0) puts nothing on the strip for this panel — its parts all live
+     * elsewhere right now (a page's comments on its own tab) and the host opens
+     * it another way; omit `entries` for the panel's one icon.
+     */
+    entries?: readonly ContextColumnEntry[];
+    /** What the panel shows while it is the active one. */
+    content: ReactNode;
+    /**
+     * `tabs` (default): the column's header row — tabs, width and collapse
+     * controls — sits above the panel. `bare`: while this panel is the active
+     * one the header row is not drawn and the panel fills the column, bringing
+     * its own header and close (a call drawer: "Start a call ×"). Since 2.391.0.
+     */
+    chrome?: 'tabs' | 'bare';
+    /**
+     * The open column's width while this panel is active. `default` is the
+     * column's own (320px, or `roomy`). The call drawers are wider, and narrow
+     * one step below a 1440px viewport so the page keeps its width:
+     *   `drawer`       340px → 380px at ≥1440 (call settings, the call panel)
+     *   `drawer-wide`  360px → 400px at ≥1440 (start a call)
+     * Applies in `open` and `wide` alike. Since 2.391.0.
+     */
+    width?: 'default' | 'drawer' | 'drawer-wide';
+}
+
+export declare interface ContextColumnProps {
+    state: ContextColumnState;
+    onStateChange: (next: ContextColumnState) => void;
+    /** In tab order. Empty renders nothing at all. */
+    panels: ContextColumnPanel[];
+    /** Which panel is showing. Unknown or absent falls back to the first. */
+    activeId?: string | null;
+    /** A tab or a strip icon was pressed; `entryId` when the icon was one of the panel's `entries`. */
+    onActivate: (id: string, entryId?: string) => void;
+    /** Accessible name of the column. Default "Side column". */
+    label?: string;
+    /**
+     * Open at 384px instead of 320px on a 2xl viewport (≥1536px) — a pane with
+     * rows of label + value (a run draft) that the Work mockup draws wider.
+     * Narrower viewports keep 320px so the page beside it keeps its width.
+     * Since 2.386.13.
+     */
+    roomy?: boolean;
+    /**
+     * While open, publish the column's width as `--uic-context-column-inset` on
+     * <html>, so the fixed bottom/top-right overlays (ToastProvider,
+     * ChatBubbleStack) move left of it instead of covering a drawer's footer.
+     * Default true. Since 2.395.0.
+     */
+    reserveOverlayInset?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ContextColumnState = 'collapsed' | 'open' | 'wide';
+
 /** Two stacked pages: "make a copy". Since 2.390.3. */
 export declare function CopyIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+declare type CursorMode = 'freeform' | 'table' | 'text' | 'canvas';
 
 export declare type DashboardColumns = 2 | 3 | 4;
 
@@ -1920,6 +2704,8 @@ export declare interface DecisionPathState {
     /** 0-based; steps before it are complete. Past the end: every step is complete. */
     current: number;
 }
+
+export declare const DEFAULT_LINK_RELATIONS: LinkRelationOption[];
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
 
@@ -2171,6 +2957,8 @@ export declare interface DisclosureProps {
     'data-testid'?: string;
 }
 
+export declare function DisconnectReconnect({ connectionState, onDisconnect, onReconnect }: Props_5): JSX.Element;
+
 export declare function Divider({ label, spacing, className, 'data-testid': testId }: DividerProps): JSX.Element;
 
 export declare interface DividerProps {
@@ -2183,6 +2971,40 @@ export declare interface DividerProps {
 }
 
 export declare type DividerSpacing = 'none' | 'sm' | 'md' | 'lg';
+
+export declare function DockedAside({ children, width, offsetTop, maxHeight, title, onClose, closeLabel, bodyPadding, className, 'data-testid': testId, }: DockedAsideProps): JSX.Element;
+
+export declare interface DockedAsideProps {
+    children: ReactNode;
+    /** Width in px. Default 420. */
+    width?: number;
+    /** Start this many px below the row's top — level with the section it belongs to. */
+    offsetTop?: number;
+    /** Height cap. Default `calc(100vh - 180px)`: below the app chrome and the document header. */
+    maxHeight?: string;
+    /** With a title, the aside draws its own header row (and a close, when `onClose` is given). */
+    title?: ReactNode;
+    onClose?: () => void;
+    closeLabel?: string;
+    /** Padding around the body. Default `md`; `none` when the content brings its own. */
+    bodyPadding?: 'none' | 'md';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function DockedColumn({ children, className, bodyClassName, body, bodyProps, ...rest }: DockedColumnProps): JSX.Element;
+
+export declare interface DockedColumnProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+    children: ReactNode;
+    /** Classes for the scrolling body (its gutter and padding live here, never on the dock). */
+    bodyClassName?: string;
+    /** `scroll` (default): the body scrolls above the dock. `fill`: the body is a fixed frame whose panes scroll on their own. */
+    body?: 'scroll' | 'fill';
+    /** Attributes for the scrolling body (a test id, a semantic marker such as `data-section-body`). */
+    bodyProps?: HTMLAttributes<HTMLDivElement> & {
+        [marker: `data-${string}`]: string | undefined;
+    };
+}
 
 export declare interface DockedPanelContextValue {
     /** The dock's own header already names the region — bodies should not
@@ -2200,6 +3022,97 @@ export declare interface DockedPanelProviderProps extends Partial<DockedPanelCon
     children: ReactNode;
 }
 
+export declare function DocsShell({ topNav, sidebar, rightRail, children, fullBleed, preContent, className, style, scrollResetKey, }: DocsShellProps): JSX.Element;
+
+export declare interface DocsShellProps {
+    /** Sticky top navigation. Typically <DocsTopNav>. */
+    topNav: ReactNode;
+    /** Left sidebar. Typically <DocsSidebar>. */
+    sidebar: ReactNode;
+    /**
+     * Changing this scrolls the content pane back to the top — pass the current
+     * pathname. <main> is the scroll container, not the window, so the browser's
+     * scroll restoration does not apply.
+     */
+    scrollResetKey?: string;
+    /** Optional right rail. Typically <TableOfContents>. */
+    rightRail?: ReactNode;
+    /** Main content. */
+    children: ReactNode;
+    /**
+     * Full-bleed mode skips the centered content padding so a hosted
+     * application demo (e.g. a chat panel filling the viewport) can
+     * occupy the entire content rectangle.
+     */
+    fullBleed?: boolean;
+    /** Pre-content slot (breadcrumbs, page header). Skipped when fullBleed. */
+    preContent?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare function DocsSidebar({ sections, activeHref, defaultCollapsedSections, renderLink, className, style, 'aria-label': ariaLabel, }: DocsSidebarProps): JSX.Element;
+
+export declare interface DocsSidebarGroup {
+    id: string;
+    label?: ReactNode;
+    /** When set, the group label itself is rendered as a direct link instead of a section. */
+    to?: string;
+    items: DocsSidebarItem[];
+}
+
+export declare interface DocsSidebarItem {
+    id: string;
+    label: ReactNode;
+    to: string;
+    badge?: ReactNode;
+}
+
+export declare interface DocsSidebarProps {
+    sections: DocsSidebarSection[];
+    /** Current pathname — drives the active-item highlight. */
+    activeHref?: string;
+    /** Section ids that should start collapsed. */
+    defaultCollapsedSections?: string[];
+    /** Plug a routing library's Link. Defaults to <a href>. */
+    renderLink?: LinkRenderer;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
+export declare interface DocsSidebarSection {
+    id: string;
+    label: ReactNode;
+    /** Used to detect "section active" highlighting in section header. */
+    basePath?: string;
+    groups: DocsSidebarGroup[];
+}
+
+export declare function DocsTopNav({ items, activeHref, brand, brandTo, search, showSearchPlaceholder, rightSlot, renderLink, className, style, }: DocsTopNavProps): JSX.Element;
+
+export declare interface DocsTopNavProps {
+    items: TopNavItem[];
+    activeHref?: string;
+    /** Brand/logo. A string renders as a bold title; ReactNode is rendered as-is. */
+    brand?: ReactNode;
+    /** Optional href for the brand to link to. Default "/". Pass null to render brand as a static span. */
+    brandTo?: string | null;
+    /**
+     * Search affordance. Convention: a button that opens a CommandPalette.
+     * Falls back to a styled "Search… ⌘K" placeholder when omitted but
+     * `showSearchPlaceholder` is true.
+     */
+    search?: ReactNode;
+    /** Renders a static "Search… ⌘K" pill when `search` is omitted. Default true. */
+    showSearchPlaceholder?: boolean;
+    /** Right-side slot for auxiliary links (GitHub, version, theme switcher). */
+    rightSlot?: ReactNode;
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    className?: string;
+    style?: CSSProperties;
+}
+
 /** A page with a spark in its corner: "make something new from this". Since 2.390.3. */
 export declare function DocumentAddIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -2208,6 +3121,19 @@ export declare function documentAgeLabel(value: string | number | Date | null | 
 
 /** A page with a folded corner: a document, a file. */
 export declare function DocumentIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+declare interface DocumentInfo {
+    id: string;
+    title: string;
+    type: string;
+    status: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+    icon: string;
+    description?: string;
+    activeCallSessionId?: string;
+}
 
 export declare interface DocumentResultItem {
     id: string;
@@ -2679,6 +3605,31 @@ export declare interface EntityCellProps {
     labelClassName?: string;
 }
 
+export declare const ERROR_CODE_DESCRIPTIONS: Record<string, string>;
+
+export declare class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+    constructor(props: ErrorBoundaryProps);
+    static getDerivedStateFromError(error: Error): ErrorBoundaryState;
+    componentDidCatch(error: Error, info: ErrorInfo): void;
+    handleRetry: () => void;
+    render(): string | number | bigint | boolean | JSX.Element | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined;
+}
+
+declare interface ErrorBoundaryProps {
+    /** Identifier for which boundary caught the error (logged to console). */
+    name: string;
+    children: ReactNode;
+}
+
+declare interface ErrorBoundaryState {
+    hasError: boolean;
+    error: Error | null;
+}
+
+export declare function ErrorDisplay({ error }: Props): JSX.Element | null;
+
+export declare function ErrorPanel({ errors }: Props_2): JSX.Element;
+
 export declare function ErrorState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: ErrorStateProps): JSX.Element;
 
 export declare interface ErrorStateProps {
@@ -2697,6 +3648,15 @@ export declare interface ErrorStateProps {
     actionTestId?: string;
 }
 
+export declare function EstimateRow({ label, estimate, className, 'data-testid': testId }: EstimateRowProps): JSX.Element;
+
+export declare interface EstimateRowProps {
+    label: string;
+    estimate: RunEstimate;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface EventGlyph {
     icon: string;
     color: string;
@@ -2704,6 +3664,8 @@ export declare interface EventGlyph {
 }
 
 export declare const eventGlyphs: Record<string, EventGlyph>;
+
+export declare function EventLog({ entries }: Props_3): JSX.Element;
 
 export declare function EventRow({ timestamp, type, summary, severity, onClick, selected }: EventRowProps): JSX.Element;
 
@@ -2765,7 +3727,9 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-declare interface ExplorerLayoutProps {
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railResize, header, paneHeader, paneFooter, railCount, railCountStyle, railBack, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+
+export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
     rail: ReactNode;
     /** The main pane. */
@@ -2965,6 +3929,13 @@ export declare interface FileUploadDropProps {
     inputProps?: Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'accept' | 'multiple' | 'disabled' | 'onChange' | 'ref' | 'className'>;
 }
 
+/**
+ * Height the region should take: everything from its own top edge down to
+ * the bottom of the window, minus `bottomGap`, never below `minHeight`.
+ * Exported for testing — the arithmetic is the whole component.
+ */
+export declare function fillHeight(offsetTop: number, viewportHeight: number, bottomGap: number, minHeight: number): number;
+
 export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, 'data-testid': dataTestId, 'aria-label': ariaLabel, title, }: FilterChipProps): JSX.Element;
 
 export declare interface FilterChipProps {
@@ -3038,6 +4009,21 @@ export declare interface FilterPopoverProps {
 }
 
 export declare const FLOATING_PANEL_ANCHORS: readonly FloatingPanelAnchor[];
+
+/** A small card pinned to a corner of the viewport — a table of contents, a mini-map. */
+export declare function FloatingCard({ children, corner, width, maxHeight, className, 'data-testid': testId, }: FloatingCardProps): JSX.Element;
+
+export declare interface FloatingCardProps {
+    children: ReactNode;
+    /** Which corner of the viewport it sits in. Default bottom-right. */
+    corner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+    /** Width in px. Default 160. */
+    width?: number;
+    /** Height cap in px; the card scrolls past it. Default 280. */
+    maxHeight?: number;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, snapEnabled, snapThreshold, snapAnchors, onSnap, baseZIndex, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): ReactPortal | null;
 
@@ -3144,6 +4130,22 @@ export declare interface FollowUpChipsProps {
     label?: string;
     className?: string;
 }
+
+export declare function formatCompactAge(value: string | number | Date | null | undefined, now?: number): string | undefined;
+
+/**
+ * The display text for an estimate. Ranges read "$0.03 – $0.30" or
+ * "1 – 6 min"; equal ends collapse to one value. A range whose numbers are
+ * not finite or are negative is not an estimate — it reads "Unavailable"
+ * rather than printing NaN.
+ */
+export declare function formatEstimate(estimate: RunEstimate): string;
+
+/** "9h ago", "just now", "Sep 3" — `formatCompactAge` read as a sentence. */
+export declare function formatSourceAge(value: string | number | Date | null | undefined, now?: number): string | undefined;
+
+/** "$1.46", "<$0.01", "$1,204". Exported for tests and hosts that echo it. */
+export declare function formatSpend(usd: number): string;
 
 /** Formats a list of typing user names. Trims to a max of 2 explicit names + "+N others". */
 export declare function formatTypingBanner(names: string[]): string;
@@ -3318,6 +4320,39 @@ declare interface GalleryAssetStatus {
 
 /** One icon action on a tile — the chat hover toolbar's action shape. Since 2.503.0. */
 declare type GalleryTileAction = MessageAction;
+
+/** Error received from the gateway (matches server error-codes.js format) */
+declare interface GatewayError {
+    /** Standardized error code (e.g. AUTH_TOKEN_EXPIRED, AUTHZ_CHANNEL_DENIED) */
+    code: string;
+    /** Human-readable description for display */
+    message: string;
+    timestamp: string;
+}
+
+/** A raw message received over the WebSocket */
+declare interface GatewayMessage {
+    type: string;
+    action?: string;
+    channel?: string;
+    error?: GatewayError;
+    [key: string]: unknown;
+}
+
+export declare function GenerativeImagePreview({ status, src, alt, startedAt, className, }: GenerativeImagePreviewProps): JSX.Element;
+
+export declare interface GenerativeImagePreviewProps {
+    status: GenerativeImagePreviewStatus;
+    /** Produced-image URL; rendered when status is 'done'. */
+    src?: string;
+    alt?: string;
+    /** Epoch ms when synthesis started — enables the elapsed-time chip. */
+    startedAt?: number;
+    /** Caller controls size (width/height/aspect), like ImageThumbnail. */
+    className?: string;
+}
+
+export declare type GenerativeImagePreviewStatus = 'synthesizing' | 'done';
 
 /**
  * Maps an event type prefix to a category for filter UIs.
@@ -3740,6 +4775,50 @@ export declare interface ImageLightboxProps {
     onNavigate?: (index: number) => void;
 }
 
+export declare function ImageThumbnail({ src, alt, size, aspectRatio, rounded, fallback, loading, className, 'data-testid': testId, }: ImageThumbnailProps): JSX.Element;
+
+export declare type ImageThumbnailAspect = 'square' | 'video' | 'auto';
+
+export declare interface ImageThumbnailProps {
+    src: string;
+    alt: string;
+    size?: ImageThumbnailSize;
+    aspectRatio?: ImageThumbnailAspect;
+    rounded?: boolean;
+    /** Rendered when the image fails to load. Defaults to a broken-image icon. */
+    fallback?: ReactNode;
+    loading?: 'lazy' | 'eager';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ImageThumbnailSize = 'sm' | 'md' | 'lg';
+
+export declare function ImageUploader(props: ImageUploaderProps): JSX.Element;
+
+export declare interface ImageUploaderProps {
+    /** Current uploaded image (null until something has been uploaded). */
+    value: ImageUploaderValue | null;
+    onChange: (next: UploadedImage | null) => void;
+    /** Max upload size in bytes. Default: 8 * 1024 * 1024 (8 MB). */
+    maxSize?: number;
+    /** Accepted mime types. Default: 'image/*'. */
+    accept?: string;
+    /** When true, hide the URL input and accept only drag-drop + file picker. */
+    fileOnly?: boolean;
+    /** When true, hide the file picker and accept only URL. */
+    urlOnly?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ImageUploaderValue {
+    imageId: string;
+    width?: number;
+    height?: number;
+    mimeType?: string;
+}
+
 /**
  * className-based equivalents of `baseStyle` (the item's default look, passed
  * as `renderNavItem`'s third argument) and `activeNavItemStyle` above — for a
@@ -3761,6 +4840,49 @@ export declare interface ImageLightboxProps {
  * ```
  */
 export declare const inactiveNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-transparent text-text-primary no-underline cursor-pointer hover:bg-surface-hover";
+
+export declare function InboxSection({ title, count, countTone, hint, action, empty, footer, headingLevel, children, className, 'data-testid': testId, }: InboxSectionProps): JSX.Element;
+
+export declare interface InboxSectionEmpty {
+    /** A small glyph above the title. An emoji string is fine. */
+    icon?: ReactNode;
+    /** One line: "No decisions waiting". */
+    title: string;
+    /** The hint under it: what would appear here, and when. */
+    body?: string;
+    /** Lands on the empty-state container. Default `<section testid>-empty`. */
+    testId?: string;
+}
+
+export declare interface InboxSectionProps {
+    title: string;
+    /** How many rows the lane holds. Drawn in the header beside the title. */
+    count: number;
+    /** Tone of the count chip. `warning` for a lane whose rows block something. */
+    countTone?: ChipTone;
+    /** Quiet qualifier after the count — "newest blockage first". */
+    hint?: ReactNode;
+    /** Right-aligned control in the header. */
+    action?: ReactNode;
+    /** What the lane says instead of rows when `count` is 0. */
+    empty?: InboxSectionEmpty;
+    /** A note under the rows — a horizon, a caveat. Not drawn when empty. */
+    footer?: ReactNode;
+    /** Heading level of the title. Default `2`: one lane, one landmark heading. */
+    headingLevel?: 2 | 3;
+    /** The rows, as `InboxSectionRow`s. */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One row of an `InboxSection`. The group draws the frame and the rule. */
+export declare function InboxSectionRow({ children, className, ...rest }: InboxSectionRowProps): JSX.Element;
+
+export declare interface InboxSectionRowProps extends HTMLAttributes<HTMLLIElement> {
+    children: ReactNode;
+    'data-testid'?: string;
+}
 
 /** A circled "i": "more about this" — an estimate's confidence, a footnote. Since 2.385.0. */
 export declare function InfoIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -3931,6 +5053,131 @@ declare const INTENSITY_SCALE: {
     readonly high: 1.75;
 };
 
+/** A person who can be invited. Thin on purpose so callers can map a
+ *  presence roster straight in without dragging in PresenceUser. */
+export declare interface InviteCandidate {
+    userId: string;
+    /** Pre-resolved display name — callers MUST pass a human name, never
+     *  a raw id/UUID (mirrors ResumeCallParticipant's contract). */
+    name: string;
+    avatarUrl?: string;
+    /** True when this person is already on the call. Rendered as a
+     *  non-selectable "In call" row so the list still reads as the full
+     *  roster rather than mysteriously omitting people. */
+    alreadyInCall?: boolean;
+    /** True when they have been rung but have not answered yet. */
+    pending?: boolean;
+    /** Non-selectable for a reason that is NOT "already on this call" —
+     *  e.g. an offline person a ring would never reach. Renders the same
+     *  dimmed, non-clickable row without claiming "In call". Pair it with
+     *  `statusLabel` so the row says WHY. */
+    disabled?: boolean;
+    /** Free-text right-hand annotation, e.g. "On a call" / "Offline".
+     *  Purely informational — it does NOT affect selectability, so a
+     *  caller can mark someone busy while still allowing a knock/join.
+     *  `alreadyInCall` and `pending` keep their own fixed labels and win
+     *  over this one. */
+    statusLabel?: string;
+    /** Presence: true → online dot, false → offline dot, undefined → no
+     *  dot. Also drives which section a row lands in under `grouped`. */
+    online?: boolean;
+    /** Shown on offline rows when present, e.g. "Last seen 2h ago".
+     *  Pre-formatted by the caller — this component never touches
+     *  Date.now(). */
+    lastSeenLabel?: string;
+    /** Avatar brand color override (falls back to the name hash). */
+    color?: string;
+}
+
+export declare function InviteCandidateList({ candidates, onInvite, loading, resetKey, children, tone, searchable, grouped, selectMode, onPick, confirmLabel, confirmLoadingLabel, confirmCountLabel, className, 'data-testid': testId, }: InviteCandidateListProps): JSX.Element;
+
+/** The two extracted blocks handed to the `children` render prop. */
+export declare interface InviteCandidateListParts {
+    /** Empty states + the selectable candidate rows. */
+    list: ReactNode;
+    /** The "Invite N people" confirm button (testid `invite-to-call-confirm`).
+     *  null when `selectMode='single'` — there is nothing to confirm. */
+    confirm: ReactNode;
+}
+
+export declare interface InviteCandidateListProps {
+    /** Everyone invitable, including people already on the call (they
+     *  render disabled). */
+    candidates: InviteCandidate[];
+    /** Confirm handler — receives every selected userId. May be async;
+     *  the caller flips `loading` while the invites are in flight. */
+    onInvite: (userIds: string[]) => void | Promise<void>;
+    loading?: boolean;
+    /** Selection clears whenever this value changes — dialogs pass their
+     *  `open` flag so a previous invite's choices never leak into the
+     *  next one. */
+    resetKey?: unknown;
+    /** Custom layout: receives the list and confirm blocks and places
+     *  them (InviteToCallDialog puts the confirm in its modal footer).
+     *  Omit for the default stacked layout. */
+    children?: (parts: InviteCandidateListParts) => ReactNode;
+    /** Surface the list renders on. 'light' (default) uses the theme
+     *  tokens the invite modal always used; 'dark' swaps to white/alpha
+     *  classes for dark call chrome (CallSettingsDialog's People tab) —
+     *  without it the names render dark-on-dark and disappear. */
+    tone?: 'light' | 'dark';
+    /** Renders a filter input (testid `people-search`) that narrows the
+     *  rows by name or userId, case-insensitive. */
+    searchable?: boolean;
+    /** Renders "Online" then "Offline" section headers. Rows with
+     *  `online: true` land under Online; everything else (including rows
+     *  without presence data) lands under Offline. Offline rows show
+     *  `lastSeenLabel` when present and are STILL selectable. */
+    grouped?: boolean;
+    /** 'multi' (default) keeps the checkbox + confirm flow. 'single'
+     *  drops checkboxes and confirm — clicking a row fires `onPick`
+     *  immediately. */
+    selectMode?: 'multi' | 'single';
+    /** Row click handler for `selectMode='single'`. */
+    onPick?: (userId: string) => void;
+    /** Verb on the confirm button. Defaults to "Invite" (so every existing
+     *  host keeps "Invite 2 people"); a call picker passes "Call". The
+     *  zero-selection state renders the bare verb. */
+    confirmLabel?: string;
+    /** Text while `loading`. Defaults to "Inviting…". */
+    confirmLoadingLabel?: string;
+    /**
+     * The counted form of the confirm label, when `<verb> N people` is not
+     * English for this verb.
+     *
+     * The default reads "Invite 2 people" and "Call 2 people", which is why it
+     * was written that way — but it also produced "Start chat 2 people" the
+     * moment a host used a verb that wants a preposition. The grammar belongs
+     * to the caller's verb, and the caller is the only one that knows it.
+     */
+    confirmCountLabel?: (count: number) => string;
+    /** Applied to the default stacked layout's root only. */
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function InviteToCallDialog({ open, onClose, onInvite, candidates, lobbyLabel, loading, shareLink, }: InviteToCallDialogProps): JSX.Element;
+
+export declare interface InviteToCallDialogProps {
+    open: boolean;
+    onClose: () => void;
+    /** Confirm handler — receives every selected userId. May be async;
+     *  the caller flips `loading` while the invites are in flight. */
+    onInvite: (userIds: string[]) => void | Promise<void>;
+    /** Everyone invitable, including people already on the call (they
+     *  render disabled). */
+    candidates: InviteCandidate[];
+    /** Human label for the call being invited to, shown in the subtitle. */
+    lobbyLabel?: string;
+    loading?: boolean;
+    /** Optional join URL. Rooms are link-shareable, so the picker is the
+     *  natural home for that link — it is the one place the user goes
+     *  when they want more people here. Previously this lived in a
+     *  full-bleed overlay across the call tiles, which covered the video
+     *  and read as a rendering bug. */
+    shareLink?: string;
+}
+
 export declare function isRichHeaderContent(kind: HeaderContentKind | undefined): boolean;
 
 /** Italic formatting, drawn as a glyph rather than changing the control font. */
@@ -4045,6 +5292,50 @@ export declare interface LineSeries {
 
 export declare function Link({ href, children, external, unstyled, target, rel, className, ...rest }: LinkProps): JSX.Element;
 
+export declare interface LinkableDocument {
+    id: string;
+    title: string;
+    kind?: FileKind;
+}
+
+export declare interface LinkedItem {
+    id: string;
+    title: string;
+    kind?: FileKind;
+    /** e.g. 'Depends on' | 'Decided by'. */
+    relation?: string;
+    status?: {
+        label: string;
+        tone: StatusPillTone;
+    } | null;
+    onOpen?: () => void;
+    href?: string;
+    onRemove?: () => void;
+}
+
+export declare function LinkedItemsSection({ title, items, onSearchDocuments, onAdd, relations, emptyLabel, first, as, variant, className, 'data-testid': testId, }: LinkedItemsSectionProps): JSX.Element;
+
+export declare interface LinkedItemsSectionProps {
+    title?: string;
+    /** Semantic heading level; use h2 for a section directly under the page title. */
+    as?: 'h2' | 'h3' | 'h4';
+    items: LinkedItem[];
+    onSearchDocuments?: (q: string) => Promise<LinkableDocument[]> | LinkableDocument[];
+    onAdd?: (doc: LinkableDocument, relation: string) => void;
+    relations?: LinkRelationOption[];
+    emptyLabel?: string;
+    first?: boolean;
+    /**
+     * `heading` (default since 2.386.15): a 16px heading, 14px rows, the status
+     * as a soft tag, the relation read out (and on hover) rather than printed,
+     * and "Add link" quiet until the section is hovered — a work item's Brief.
+     * `label`: the small caption, printed relation and dotted pill.
+     */
+    variant?: 'label' | 'heading';
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Two chain links: a hyperlink — "point this at a URL", or "copy the URL". */
 export declare function LinkIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -4064,11 +5355,21 @@ export declare interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorE
     unstyled?: boolean;
 }
 
+export declare interface LinkRelationOption {
+    value: string;
+    label: string;
+}
+
+declare type LinkRenderer = (item: {
+    to: string;
+    id: string;
+}, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+
 /** Three dots and three lines: a bulleted list. Since 2.386.0. */
 export declare function ListIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** A list rail, as data: what `ListRailLayout` (and an `ExplorerLayout`) draws in its rail. */
-declare interface ListRail {
+export declare interface ListRail {
     /**
      * Caption title in the rail's head row ("All initiatives", "Pending"). Optional
      * since 2.442.4: a rail whose group headings already name and count its rows
@@ -4094,7 +5395,9 @@ declare interface ListRail {
     back?: WorkspaceRailBack | null;
 }
 
-declare interface ListRailLayoutProps {
+export declare function ListRailLayout({ list, header, children, aside, footer, fold, railWidth, countStyle, className, 'data-testid': testId, }: ListRailLayoutProps): JSX.Element;
+
+export declare interface ListRailLayoutProps {
     list: ListRail;
     /** The band over the pane: the trail and the title (the content column's first rows). */
     header?: ReactNode;
@@ -4173,6 +5476,13 @@ export declare interface LoadingStateProps {
 
 /** A padlock: "private", "restricted to specific people". */
 export declare function LockIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+declare interface LogEntry {
+    id: string;
+    direction: 'sent' | 'received';
+    message: GatewayMessage | Record<string, unknown>;
+    timestamp: string;
+}
 
 export declare type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -4504,6 +5814,30 @@ export declare function MonitorIcon({ size, ...rest }: IconProps): JSX.Element;
 /** A crescent: the dark theme — "switch to (or currently in) dark mode". */
 export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function MoreContextDisclosure({ items, label, defaultOpen, open, onToggle, children, className, 'data-testid': testId, }: MoreContextDisclosureProps): JSX.Element;
+
+export declare interface MoreContextDisclosureProps {
+    items: readonly MoreContextItem[];
+    /** Summary text. Default "More context". */
+    label?: string;
+    defaultOpen?: boolean;
+    open?: boolean;
+    onToggle?: (open: boolean) => void;
+    /** Extra content under the rows. */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface MoreContextItem {
+    id: string;
+    label: string;
+    icon?: ReactNode;
+    /** Shown after the label — "Sources · 2". */
+    count?: number;
+    onSelect?: () => void;
+}
+
 /** Three dots in a row: "more". Since 2.386.5. */
 export declare function MoreIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -4621,6 +5955,45 @@ export declare interface NavRailStackProps {
 
 /** @see SurfaceTone — which colour family the rail paints in. */
 export declare type NavRailTone = SurfaceTone;
+
+/** Sub-section navigation: link-based underline tab strip (no state — consumer routes via activeHref). */
+export declare function NavTabs({ items, activeHref, renderLink, className, style, 'aria-label': ariaLabel, variant, }: NavTabsProps): JSX.Element;
+
+export declare interface NavTabsProps {
+    items: TopNavItem[];
+    activeHref?: string;
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+    /** See NavTabsVariant. `pill` also drops the strip's bottom border, since
+     *  there is no underline left for it to complete. */
+    variant?: NavTabsVariant;
+}
+
+/**
+ * How the active item is marked.
+ *
+ * The two variants are a HIERARCHY, not two interchangeable looks. Apps stack
+ * them: a primary row in the header (`pill`) and a section row under it
+ * (`underline`). Which one you pick says which row the reader is meant to read
+ * first.
+ *
+ * `pill` is the PRIMARY form, for a nav sitting in a bar rather than on a
+ * strip. Active is a filled tint (`--color-primary-bg` / `--color-primary-fg`)
+ * plus semibold — a block of brand colour roughly 90x36, which is what makes
+ * it the loudest thing in the row. It also carries no bottom border: a header
+ * owns its own rule, lower down, so an underline indicator there hangs in
+ * mid-air (measured at 12px above the header rule, attached to nothing), which
+ * is exactly what "the nav is not aligned" looks like.
+ *
+ * `underline` is the SECONDARY form: a 2px rule under the active item, sitting
+ * ON the strip's own bottom border. Indicator and rule are one continuous
+ * line — the `-mb-px` below is what overlaps them — so it is only correct
+ * where that border exists. Against a filled pill it reads as a hairline:
+ * same brand colour, ~1/18th of the area.
+ */
+export declare type NavTabsVariant = 'underline' | 'pill';
 
 /** "You don't have access to <resource> — ask <owner> to share it." */
 export declare function noAccessMessage(resource: string, ownerName?: string | null): string;
@@ -4773,6 +6146,34 @@ export declare interface NumberInputProps {
     'aria-invalid'?: boolean;
     'aria-required'?: boolean;
     required?: boolean;
+    'data-testid'?: string;
+}
+
+export declare function OutcomeSection({ title, value, onChange, placeholder, readOnlyReason, pending, first, as, variant, size, className, 'data-testid': testId, }: OutcomeSectionProps): JSX.Element;
+
+export declare interface OutcomeSectionProps {
+    title?: string;
+    /** Semantic heading level; use h2 for a section directly under the page title. */
+    as?: 'h2' | 'h3' | 'h4';
+    value: string | null;
+    onChange?: (v: string) => void;
+    placeholder?: string;
+    readOnlyReason?: string;
+    pending?: boolean;
+    /** Suppress DetailSection's leading rule. */
+    first?: boolean;
+    /**
+     * `heading` (default since 2.386.15): a 16px sentence-case heading, 14px
+     * body, affordances quiet until hover — a work item's Brief. `label`: the
+     * small uppercase caption under a hairline, for a side panel.
+     */
+    variant?: 'label' | 'heading';
+    /**
+     * `heading` only: `lg` (since 2.390.0) is `DetailSection size="lg"` — a
+     * 19px heading ("Why this matters") over a 15px body.
+     */
+    size?: 'md' | 'lg';
+    className?: string;
     'data-testid'?: string;
 }
 
@@ -5023,8 +6424,101 @@ export declare interface PaletteRecordGroup {
     items: PaletteRecord[];
 }
 
+/**
+ * The pane's tab row: underline tabs whose first label starts on the pane's
+ * 16px inset (the frame title's edge), a trailing slot that wraps beneath
+ * the tabs when a narrow pane cannot fit both, and one rule under it.
+ */
+export declare function PaneHeader({ tabs, value, onValueChange, trailing, label, 'data-testid': testId }: PaneHeaderProps): JSX.Element;
+
+export declare interface PaneHeaderProps {
+    /** The pane's sections. One tab row — the only tablist in the pane. */
+    tabs: readonly TabItem[];
+    value: string;
+    onValueChange: (id: string) => void;
+    /** Right end of the row (a view switcher); wraps below the tabs when needed. */
+    trailing?: ReactNode;
+    /** Names the tablist. Default "Pane sections". */
+    label?: string;
+    'data-testid'?: string;
+}
+
+export declare function PanelsView({ connectionState, onReact, chatMessages, onChatSend, cursors, localCursor, activeMode, onModeChange, onFreeformMove, onTableClick, onTextChange, onCanvasMove, crdtContent, applyLocalEdit, hasConflict, onDismissConflict, onTyping, typingUsers, idToken, sendMessage, onMessage, }: PanelsViewProps): JSX.Element;
+
+declare interface PanelsViewProps {
+    connectionState: string;
+    onReact: (emoji: string) => void;
+    chatMessages: ChatMessage[];
+    onChatSend: (content: string) => void;
+    cursors: Map<string, RemoteCursor>;
+    localCursor: RemoteCursor | null;
+    activeMode: CursorMode;
+    onModeChange: (mode: CursorMode) => void;
+    onFreeformMove: (x: number, y: number) => void;
+    onTableClick: (row: number, col: number) => void;
+    onTextChange: (position: number, selectionData: TextSelectionData | null, hasSelection: boolean) => void;
+    onCanvasMove: (x: number, y: number, tool: CanvasTool, color: string, size: number) => void;
+    crdtContent: string;
+    applyLocalEdit: (newText: string) => void;
+    hasConflict?: boolean;
+    onDismissConflict?: () => void;
+    onTyping: (isTyping: boolean) => void;
+    typingUsers: string[];
+    idToken: string | null;
+    sendMessage: (msg: Record<string, unknown>) => void;
+    onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+}
+
+export declare interface PaneRecord {
+    kind: string;
+    id: string;
+}
+
+export declare function paneRecordKey(record: PaneRecord): string;
+
+export declare interface PaneState {
+    tab: string;
+    record: PaneRecord | null;
+}
+
+export declare interface PaneStateControl extends PaneState {
+    /** The tabs to list (`Tabs items`). */
+    tabs: TabItem[];
+    /** The URL names a tab or record (anything but the resting tab). */
+    away: boolean;
+    /**
+     * Open a tab. A record tab shows `record`; a plain tab drops the record
+     * unless `keepRecord` (then `record` replaces it when given, `null` drops it).
+     */
+    open(tab: string, record?: PaneRecord | null): void;
+    /** The tab row's handler: a record tab keeps its record. */
+    select(tab: string): void;
+    /** Back to the resting tab. */
+    clear(): void;
+}
+
+export declare interface PaneTabSpec {
+    id: string;
+    label: string;
+    /** Restored per device on arrival (a resting choice: Details, Docs). */
+    remember?: boolean;
+    /** A record tab: the record kinds it shows. Listed only while one is named. */
+    recordKinds?: readonly string[];
+    badge?: TabItem['badge'];
+}
+
+export declare interface PaneUrlOptions {
+    /** Default `pane`. */
+    urlKey?: string;
+    /** Default `paneRecord`. */
+    recordKey?: string;
+}
+
 /** A paperclip: a file came along with this. */
 export declare function PaperclipIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** `run:job-7` → `{kind:'run', id:'job-7'}`; null for anything malformed. */
+export declare function parsePaneRecord(raw: string | null | undefined): PaneRecord | null;
 
 /** Parse unified git diff output. Exported for tests and for hosts that need
  *  the file list without rendering. */
@@ -5253,6 +6747,37 @@ export declare interface PickerDialogProps {
 /** A pushpin: "keep this at the top". */
 export declare function PinIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/**
+ * A column that scrolls with the page until the page scrolls past it, then
+ * stays put — a video panel beside the text. The host decides WHEN (it
+ * watches the scroll); this owns HOW, so the fixed geometry is not a page's
+ * inline style.
+ */
+export declare function PinnedSlot({ width, pinned, top, left, slotId, spacerRef, children, 'data-testid': testId }: PinnedSlotProps): JSX.Element;
+
+export declare interface PinnedSlotProps {
+    /** The slot's width, reserved in the flow whether or not it is pinned. */
+    width: number;
+    /** Pinned: the inner slot leaves the flow and sits fixed at `top`/`left`; the spacer keeps the width. */
+    pinned: boolean;
+    top?: number;
+    left?: number;
+    /** The inner slot's id — for content that portals itself in. */
+    slotId?: string;
+    /** The spacer, so a host can measure where the slot sits in the flow. */
+    spacerRef?: React.Ref<HTMLDivElement>;
+    children?: ReactNode;
+    'data-testid'?: string;
+}
+
+declare interface PipelineSidebarEntry {
+    id: string;
+    name: string;
+    status: 'draft' | 'published' | 'archived';
+    updatedAt: string;
+    icon?: string;
+}
+
 /** A play button in a ring: "run". Since 2.390.3. */
 export declare function PlayCircleIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -5439,8 +6964,45 @@ declare interface PresenceUser_2 {
     metadata: Record<string, unknown>;
 }
 
+declare interface PresenceUser_3 {
+    clientId: string;
+    metadata: Record<string, unknown>;
+}
+
 /** A printer: "print". Since 2.390.3. */
 export declare function PrinterIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** What each outcome marker says to a screen reader (and a host's legend). */
+export declare const PROCEDURE_STEP_STATUS_LABELS: Record<ProcedureStepStatus, string>;
+
+export declare interface ProcedureStep {
+    id: string;
+    title: ReactNode;
+    /** Longer instruction under the title. */
+    body?: ReactNode;
+    /** The latest outcome for this step. Absent: no run has reached a verdict — the number is shown. */
+    status?: ProcedureStepStatus;
+    /** A quiet line under the step — "Not reached in this run.", the failure reason. */
+    note?: ReactNode;
+}
+
+export declare function ProcedureSteps({ steps, numbered, size, onSelectStep, emptyLabel, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ProcedureStepsProps): JSX.Element;
+
+export declare interface ProcedureStepsProps {
+    steps: ProcedureStep[];
+    /** Show step numbers. Default `true`. */
+    numbered?: boolean;
+    /** `sm` 13px text, 20px markers (an inspector); `md` (default) 14px, 24px markers (a record body). */
+    size?: 'sm' | 'md';
+    onSelectStep?: (id: string) => void;
+    /** Shown when `steps` is empty. Default "No steps recorded". */
+    emptyLabel?: string;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+export declare type ProcedureStepStatus = 'done' | 'failed' | 'pending' | 'skipped';
 
 export declare interface ProfileSummary {
     userId: string;
@@ -5522,6 +7084,28 @@ export declare interface ProjectCardProps {
     style?: CSSProperties;
     /** Minimum card height (default: 190). */
     minHeight?: number;
+}
+
+declare interface Props {
+    error: GatewayError | null;
+}
+
+declare interface Props_2 {
+    errors: GatewayError[];
+}
+
+declare interface Props_3 {
+    entries: LogEntry[];
+}
+
+declare interface Props_4 {
+    entries: LogEntry[];
+}
+
+declare interface Props_5 {
+    connectionState: ConnectionState;
+    onDisconnect: () => void;
+    onReconnect: () => void;
 }
 
 export declare function Prose({ children, size, tone, className, 'data-testid': testId, }: ProseProps): JSX.Element;
@@ -5775,11 +7359,26 @@ export declare const railType: {
  */
 export declare function readableAvatarForeground(background: string): string | null;
 
+/** The tab and record the URL names, against the registry; the default tab for anything unknown. */
+export declare function readPaneState(params: URLSearchParams, tabs: readonly PaneTabSpec[], defaultTab: string, opts?: PaneUrlOptions): PaneState;
+
 /** A stored fold: `collapsed` / `open`, anything else nothing. */
 export declare function readRailFold(raw: string | null | undefined): boolean | null;
 
+/** The stored open choice ('1' / '0'), else the default. */
+export declare function readSidePaneOpen(stored: string | null | undefined, defaultOpen?: boolean): boolean;
+
+/** A stored ratio inside the bounds, else the default. */
+export declare function readSidePaneRatio(stored: string | null | undefined, bounds?: SidePaneBounds): number;
+
 /** A curved arrow forward: "redo". Since 2.386.5. */
 export declare function RedoIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+declare interface RemoteCursor {
+    clientId: string;
+    position: Record<string, unknown>;
+    metadata: Record<string, unknown>;
+}
 
 /** Two arrows chasing each other: something that runs again — a loop, a re-run. */
 export declare function RepeatIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -5802,6 +7401,82 @@ export declare function resolveBackdropTone(tone: BackdropTone, el: Element | nu
 
 /** A tone after `auto` has been decided. */
 export declare type ResolvedBackdropTone = Exclude<BackdropTone, 'auto'>;
+
+export declare interface ResolveVerdictInput {
+    verdict?: ChangeReviewVerdict | undefined;
+    status?: ChangeReviewStatus | undefined;
+    /**
+     * The revision of the change as it stands NOW. When this and the verdict's
+     * `forRevision` disagree, the verdict describes a change that no longer
+     * exists in that form.
+     */
+    revision?: string | undefined;
+}
+
+/**
+ * Decide which of the five states to paint.
+ *
+ * The staleness rule is the reason this function exists. A cached "Pass"
+ * computed against an earlier draft of a change is not a weaker Pass — it is a
+ * statement about a different change, and showing it as a live Pass is how a
+ * reviewer approves something no agent ever looked at. So the comparison is
+ * exact-match on `forRevision`, and any disagreement demotes to `stale`.
+ *
+ * `pending` outranks `stale`: if a fresh review is already in flight, "checking
+ * this now" is more useful than "the old answer is out of date", and the
+ * pending state does not show the old verdict's colour either way.
+ *
+ * A missing `revision` means the host cannot tell us what the change's current
+ * revision is. We do NOT silently treat that as fresh — but we also cannot call
+ * it stale without evidence, so it renders `ready`. Hosts that care about
+ * staleness must pass `revision`; that is documented on every consumer prop.
+ */
+export declare function resolveVerdictState({ verdict, status, revision, }: ResolveVerdictInput): VerdictState;
+
+export declare function ResumeCallDialog({ open, onClose, onReconnect, callerName, lobbyName, elapsedMs, participants, loading, }: ResumeCallDialogProps): JSX.Element;
+
+export declare interface ResumeCallDialogProps {
+    /** Visibility — when false the modal is unmounted entirely. */
+    open: boolean;
+    /** Backdrop click / Esc / Dismiss button → caller decides whether to
+     *  hide (typically yes) and whether to remember the dismissal. */
+    onClose: () => void;
+    /** Reconnect button. May be async; the dialog spins while pending
+     *  IF `loading` is also true (the caller controls that state). */
+    onReconnect: () => void | Promise<void>;
+    /** Display name of the user who originally started the call. Pass
+     *  safeDisplayName output — must never be a raw UUID. */
+    callerName: string;
+    /** Human-readable lobby name shown in the dialog subtitle. */
+    lobbyName: string;
+    /** Elapsed ms at MOUNT time. The dialog re-derives the displayed
+     *  duration from a per-second tick so the parent never has to re-
+     *  render to advance the clock. Pass `Date.now() - call.startedAtMs`
+     *  (or just `call.durationMs` from the API). */
+    elapsedMs: number;
+    /** Other participants currently in the call (excludes self). When
+     *  empty the dialog still renders — the prompt becomes
+     *  "you were in a call" with no chip row — but the parent should
+     *  generally not show the dialog with zero participants (see
+     *  useActiveCallResume's filter). */
+    participants: ResumeCallParticipant[];
+    /** True while a reconnect attempt is in flight. Disables the buttons
+     *  and replaces the Reconnect label with "Reconnecting…". */
+    loading?: boolean;
+}
+
+/** Resume-dialog participant shape. Independent of any hangout-internal
+ *  type so callers can pass thin {id,name} objects without dragging in
+ *  PresenceUser / SfuParticipant. */
+export declare interface ResumeCallParticipant {
+    /** Stable identifier — used as React key + safeDisplayName fallback. */
+    userId: string;
+    /** Pre-resolved display name. Caller MUST pass safeDisplayName output
+     *  so a raw UUID never reaches the dialog. */
+    name: string;
+    /** Optional avatar URL — Avatar falls back to initials when absent. */
+    avatarUrl?: string;
+}
 
 export declare const REVIEW_KIND_LABELS: Record<string, string>;
 
@@ -5920,6 +7595,20 @@ export declare interface RisingParticlesProps {
     'data-testid'?: string;
 }
 
+declare interface RoomItem {
+    roomId: string;
+    /** `room:<slug>` — a room's chat channel is its call lobby. */
+    channelId: string;
+    /** As sent by the API; `channelId` is derived from it when absent. */
+    slug?: string;
+    name: string;
+    type: 'standalone' | 'group' | 'dm';
+    ownerId: string;
+    groupId?: string;
+    dmPeerUserId?: string;
+    createdAt: string;
+}
+
 export declare function RovingToolbar({ label, children, orientation, className, 'data-testid': testId, }: RovingToolbarProps): default_2.JSX.Element;
 
 export declare interface RovingToolbarProps {
@@ -5931,6 +7620,372 @@ export declare interface RovingToolbarProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * Header state labels. PLAN §1.6 names the draft states; the mockup's
+ * "Not started" is not used because it is ambiguous between "no draft yet"
+ * and "saved but not dispatched" — those are `no-draft` and `saved` here.
+ */
+export declare const RUN_DRAFT_STATUS_LABELS: Record<RunDraftStatus, string>;
+
+export declare type RunDraftBudget = RunDraftTokenBudget | RunDraftUsdBudget;
+
+export declare function RunDraftPanel({ status, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, target, sources, sourcesLabel, fields, cost, duration, confidence, budget, advanced, advancedLabel, access, onSave, saveDisabledReason, saving, onDispatch, dispatchDisabledReason, error, live, footnote, className, 'data-testid': testId, }: RunDraftPanelProps): JSX.Element;
+
+export declare interface RunDraftPanelProps {
+    status: RunDraftStatus;
+    /** Controlled collapse. Omit to let the panel own it. */
+    collapsed?: boolean;
+    defaultCollapsed?: boolean;
+    onCollapsedChange?: (collapsed: boolean) => void;
+    /** The chosen workflow. `null` shows "No workflow chosen"; `undefined` shows nothing. */
+    target?: RunDraftTarget | null;
+    /** The documents the run will read. Empty, `null` or omitted → no section. Stays visible when `live` is shown. */
+    sources?: readonly RunDraftSourceItem[] | null;
+    /** Header for the sources list; default "Sources". */
+    sourcesLabel?: string;
+    fields?: RunDraftSelectField[];
+    cost?: RunEstimate;
+    duration?: RunEstimate;
+    confidence?: RunEstimateConfidence | null;
+    budget?: RunDraftBudget | null;
+    advanced?: ReactNode;
+    advancedLabel?: string;
+    access?: AccessNoticeProps | null;
+    onSave?: () => void;
+    saveDisabledReason?: string;
+    saving?: boolean;
+    onDispatch?: () => void;
+    dispatchDisabledReason?: string;
+    /** Shown verbatim, e.g. the dispatch route's 403 message. */
+    error?: string | null;
+    /** After dispatch: the live run (an `AgentTaskCard`). Replaces the form body. */
+    live?: ReactNode;
+    /** Defaults to "Nothing runs until you authorize it."; pass `null` to hide. */
+    footnote?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface RunDraftSelectField {
+    id: string;
+    label: string;
+    value: string;
+    options: SelectOption[];
+    onChange: (value: string) => void;
+    /** Disables the select and says why (e.g. "This pipeline sets its own model"). */
+    disabledReason?: string;
+    placeholder?: string;
+}
+
+/** A document the run will read, shown as a chip under the target. */
+export declare interface RunDraftSourceItem {
+    id: string;
+    /** What the viewer may see: the document title, or the host's "Restricted item" for one they cannot read. */
+    title: string;
+    /** A file-kind mark (e.g. <FileKindMark kind="page" size="sm" />); omit for a restricted item. */
+    mark?: ReactNode;
+    /** The viewer cannot read it: neutral styling, no link, no mark. */
+    restricted?: boolean;
+    /** Opens the source; absent (or restricted) → not interactive. */
+    onOpen?: () => void;
+}
+
+export declare type RunDraftStatus = 'no-draft' | 'unsaved' | 'saved' | 'dispatching' | 'running' | 'completed' | 'failed' | 'stopped';
+
+export declare interface RunDraftTarget {
+    mark?: ReactNode;
+    title: string;
+    subtitle?: string;
+}
+
+export declare interface RunDraftTokenBudget {
+    /** Omitted or `'tokens'`: a token budget. */
+    unit?: 'tokens';
+    /** The enforced token budget; `null` = none set. */
+    tokens: number | null;
+    onChange: (tokens: number | null) => void;
+    /** Price used for the derived "≈ $x" line. Omit or `null` when unknown — the line is then not shown. */
+    usdPerMillionTokens?: number | null;
+    /** Names the price basis: "Haiku" → "at Haiku prices". */
+    priceLabel?: string;
+    disabledReason?: string;
+}
+
+/** A dollar cap the host enforces (e.g. "don't start the run if it is forecast over $x"). */
+export declare interface RunDraftUsdBudget {
+    unit: 'usd';
+    /** The cap in dollars; `null` = none set. */
+    usd: number | null;
+    onChange: (usd: number | null) => void;
+    /** What the cap does, in the host's words — "Not started if forecast above this". */
+    hint?: string;
+    disabledReason?: string;
+}
+
+export declare type RunEstimate = {
+    kind: 'range';
+    low: number;
+    high: number;
+    unit: RunEstimateUnit;
+} | {
+    kind: 'none';
+    reason: string;
+} | {
+    kind: 'loading';
+};
+
+export declare interface RunEstimateConfidence {
+    /** How many completed runs the estimate is based on. */
+    sampleSize: number;
+    /**
+     * Where the range came from. `runs` (default) — measured history, so zero
+     * runs means no estimate and the range is replaced by "No prior runs".
+     * `prior` — a stated bracket the host stands behind without history (a
+     * per-tier prior); the range is shown and marked low confidence.
+     */
+    basis?: 'runs' | 'prior';
+}
+
+export declare type RunEstimateConfidenceLevel = 'none' | 'low' | 'medium' | 'high';
+
+export declare type RunEstimateUnit = 'usd' | 'ms';
+
+export declare function ScopeHeader(props: ScopeHeaderProps): JSX.Element;
+
+export declare interface ScopeHeaderPeopleGroup {
+    /** "Owner". Rendered small and uppercase before the avatars. */
+    label: string;
+    people: PresenceAvatarUser[];
+}
+
+export declare interface ScopeHeaderProgress {
+    done: number;
+    total: number;
+    /** The noun after the numbers. Default "points". */
+    unit?: string;
+    /** The verb. Default "delivered". */
+    verb?: string;
+}
+
+export declare interface ScopeHeaderProps {
+    breadcrumbs?: BreadcrumbItem[];
+    /**
+     * The scope's name, drawn as the h1. Required in practice for the default
+     * variant; optional (and not drawn) for `variant="crumbs"` since 2.389.0.
+     */
+    title?: string;
+    /**
+     * The title's hover text (`inline` variant, since 2.407.15): the h1's
+     * `title` attribute, default `title`. A host that shows a cut-down title (a
+     * prompt's first sentence) passes the whole text here so hovering the title
+     * reads all of it.
+     */
+    titleHint?: string;
+    /**
+     * `default`: the full band — crumbs, an h1 title with status and stats, the
+     * right-hand group, tabs.
+     *
+     * `crumbs` (since 2.389.0): a crumb line ONLY, for the top of a pane whose
+     * record draws its own headline (an `EditorShell titleSize="lg"` below it,
+     * in `ExplorerLayout.paneHeader`). Crumbs on the left; `controls`, `link`
+     * and `menu` on the right, hung a little below the crumb line so they sit
+     * between the crumb and the headline that follows. No h1 — title, status,
+     * stats, people and tabs are not drawn.
+     *
+     * The controls overhang the band by 10px (since 2.389.4; 14px before), so
+     * the band must sit over a pane whose own head starts with at least that
+     * much top padding (an `EditorShell` header has 12px). `ExplorerLayout.paneHeader` spans only the pane since 2.389.4, so
+     * the hang can never reach the aside.
+     *
+     * `inline` (since 2.405.2): ONE row, at most 48px tall — the crumbs, then
+     * the title as the trail's emphasised last segment ("Org › Search ›
+     * **People & connections**", 20px semibold, or 20px bold at
+     * `titleSize="lg"`), then, right-aligned on the same row, the `tabs`
+     * (honouring `activeTab`, `onTabChange`, `tabSize`, counts and dots) and
+     * after them `controls`, `link` and `menu`. For a workspace whose body (a
+     * graph, a result list) wants every pixel of height. `description`,
+     * `status`, `progress`, `spentUsd`, `stats` and `people` are NOT drawn in
+     * this variant — put a compact summary in `controls` if the row needs one.
+     * The selected tab's bar sits on the row's bottom edge; give the header
+     * the host rule (`className="border-b border-border"`) as with `default`.
+     *
+     * Squeeze order (2.407.2) — when the row is over-full it gives up space in
+     * this order: (a) the `controls` cluster first: it is `min-w-0
+     * overflow-hidden` and shrinks ahead of the trail (`shrink-[100]` against
+     * the trail's 1); its items never shrink or wrap (2.407.4 — a chip keeps
+     * one line); once its content overflows — or the right cluster does, the
+     * row's content at its wanted width (`inlineRowWanted`) exceeds the row,
+     * or the trail would drop under its minimum — by more than 2px (2.407.6:
+     * the same margin the way back needs), or the row is under
+     * `controlsCollapseAt`, the controls leave the row: into the ⋯ menu as a
+     * "Filters" section when `controlsMenu` is given, else into a popover behind one "Filters ▾"
+     * button. (b) Then the crumbs: each truncates inside its cap and the
+     * middle collapses to "…". (c) The title is at most half the row
+     * (2.407.15: gives up width first, `min-w-[12rem]`) and truncates, with the full text (`titleHint`) in its
+     * `title`; it never paints over the crumbs. The first crumb never goes
+     * below its own width
+     * (`shrink-0`). The tabs never shrink — they are the navigation.
+     */
+    variant?: 'default' | 'crumbs' | 'inline';
+    /** The scope's own status — "In progress". */
+    status?: {
+        label: string;
+        tone?: StatusPillTone;
+    } | null;
+    /** "18 / 52 points delivered". Not drawn when `total` is not above zero. */
+    progress?: ScopeHeaderProgress | null;
+    /** "$1.46 spent". Not drawn when absent or not a finite number. */
+    spentUsd?: number | null;
+    /** Further stats, already worded by the host. Falsy entries are skipped. */
+    stats?: Array<ReactNode | null | undefined | false>;
+    /** Labelled avatar groups — `[{ label: 'Owner', people }]`. Empty groups are dropped. */
+    people?: ScopeHeaderPeopleGroup[];
+    /** One link after the people ("the repository"). */
+    link?: {
+        label: string;
+        href: string;
+        icon?: ReactNode;
+    } | null;
+    /**
+     * Since 2.388.0: controls the host owns (a repository selector), drawn in
+     * the right-hand group just before the link.
+     */
+    controls?: ReactNode;
+    /**
+     * `variant="inline"` only (since 2.407.2): the same controls as menu rows
+     * — the same `onSelect` callbacks the controls call. When the row is too
+     * narrow for `controls`, these join the ⋯ menu as a "Filters" section (the
+     * first section's `label` defaults to `controlsLabel`) and the controls
+     * leave the row. Without it the controls move into a popover behind one
+     * "Filters ▾" button instead. See `variant`'s squeeze order.
+     */
+    controlsMenu?: DropdownMenuSection[] | null;
+    /**
+     * `variant="inline"` only (since 2.407.2): the row width, px, below which
+     * the controls leave the row (into the ⋯ menu or the Filters popover).
+     * Absent: measured — they leave when their content no longer fits their
+     * shrunken box, or when the trail would drop under its minimum (the first
+     * crumb whole, "…", a readable last crumb, and the title at 12rem).
+     */
+    controlsCollapseAt?: number;
+    /** The collapsed controls' name — the popover button and the menu section. Default "Filters". Since 2.407.2. */
+    controlsLabel?: string;
+    /** The ⋯ menu. Omitted or empty — no button. */
+    menu?: DropdownMenuSection[] | null;
+    menuLabel?: string;
+    tabs?: ScopeHeaderTab[];
+    activeTab?: string;
+    onTabChange?: (id: string) => void;
+    /**
+     * The h1's size. `md` (default) is the 20px band title; `lg` is the 28px
+     * bold page title of a header that IS the page's heading (the Initiatives
+     * overview). Since 2.390.0.
+     */
+    titleSize?: 'md' | 'lg';
+    /**
+     * A sentence under the title row — the scope's summary ("Collect
+     * telemetry, reduce alert noise, and control retention costs."). Absent,
+     * nothing is drawn. Since 2.390.0.
+     */
+    description?: ReactNode;
+    /**
+     * How `people` reads. `avatars` (default): labelled avatar groups in the
+     * right-hand group. `names`: one line under the description, names then
+     * the label — "Nora DaSilva · Owner   Layla Hassan, Eli Garcia · SMEs".
+     * Since 2.390.0.
+     *
+     * `inline` (since 2.392.0): its own row under the description — the muted
+     * label, then a 32px avatar and the name for each person, groups ruled
+     * apart — "Owner (ND) Nora DaSilva │ SMEs (LH) Layla Hassan (EG) Eli
+     * Garcia". A person's `avatarUrl` is used when present, else initials.
+     */
+    peopleStyle?: 'avatars' | 'names' | 'inline';
+    /**
+     * The tab row's size. Every step draws 14px labels since 2.441.3 (a tab
+     * is a control; `md` and `titleSize="lg"` were 15px). `md` (since 2.392.0): the wider tab spacing at any title size, the count
+     * 10px after its label, 8px side padding with 28px gaps between tabs
+     * and the first label aligned under the title — the Initiatives v2 header.
+     * `sm`: 14px tabs at any title size.
+     *
+     * Since 2.396.0 `md` marks the selected tab with a 3px bar drawn inside
+     * the header's own box (`Tabs indicator="bar"`) instead of a 2px border
+     * hung 1px below it — the bottom half of that border was painted over by
+     * whatever followed (the scrolling pane body under an
+     * `ExplorerLayout.paneHeader`), so it read as 1px. The bar starts at the
+     * content's left edge with the label 4px in (`pl-1 pr-3`, was `px-2` with
+     * the row pulled 4px left), and the tabs are 10px taller below the label, 4px further under the people row.
+     */
+    tabSize?: 'sm' | 'md';
+    /**
+     * Who draws the rule under the tabs. `host` (default): the host's own
+     * bottom border (`className="border-b border-border"`) — the tab row sits
+     * on it, full width of the header. `inset` (since 2.396.0): the tab row
+     * draws its own rule, spanning the header's content width inside its
+     * 24px gutter — the Initiatives v2 header, where the rule starts under the
+     * title rather than at the pane's edge. Drop the host border with `inset`.
+     */
+    tabsRule?: 'host' | 'inset';
+    /**
+     * The description's type. `md` (default): 16px on 24px lines. `sm` (since
+     * 2.392.0): 15px on 22px lines — the Initiatives v2 two-line summary.
+     */
+    descriptionSize?: 'sm' | 'md';
+    /**
+     * How `link` reads. `inline` (default): a primary text link with a leading
+     * glyph, ruled off from the people. `button`: an outlined button — label
+     * then ↗ (`ExternalLinkIcon`, or `link.icon`) — "Repository ↗". Since 2.390.0.
+     */
+    linkStyle?: 'inline' | 'button';
+    /**
+     * Where the stats line goes. `inline` (default): beside the title.
+     * `below`: its own line under the title row, at 15px — the condensed
+     * header over a work item ("18 / 52 points delivered · $1.73 spent").
+     * Since 2.390.0.
+     */
+    statsPlacement?: 'inline' | 'below';
+    /**
+     * Since 2.437.0 — the header density contract shared with `PageHeader`
+     * (`headerDensity.tsx`; usually `useHeaderDensity().headerProps`). The
+     * library `Density`; default: the nearest `DensityProvider`, else
+     * comfortable.
+     *
+     * `default` variant: `compact` is one title row — the title at 14/600,
+     * the status, the description in an info `HoverCard`, `people` as avatars
+     * on the right whatever `peopleStyle` says, stats inline — then the tabs.
+     * `inline` variant: `compact` draws the title at 14/600 on a 40px row.
+     * `crumbs` variant: density changes nothing (it has no title row).
+     */
+    density?: Density;
+    /**
+     * Since 2.437.0 — a STATE, not a density. `default`: the trail row only,
+     * the title folded into its last crumb with the status and the expand
+     * chevron, the right-hand group kept; the tabs stay under it. `crumbs`:
+     * `title` folds into the trail with the expand chevron. `inline`: the
+     * controls move into the menu/Filters popover.
+     */
+    collapsed?: boolean;
+    /** Draws the chevron: "Collapse header" on the title row, "Expand header" when collapsed. Since 2.437.0. */
+    onToggleCollapsed?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ScopeHeaderTab {
+    id: string;
+    label: string;
+    /** Shown muted after the label. Absent or `undefined` shows none; `0` shows "0". */
+    count?: number;
+    disabled?: boolean;
+    /** Since 2.388.0: a small dot after the label (and count). Absent or `false`-y draws none. */
+    dot?: ScopeHeaderTabDot;
+}
+
+/**
+ * A tab's attention dot. `true` is the brand dot ("something new"); a tone
+ * says what kind of attention — "Activity •" when a tier is behind.
+ */
+export declare type ScopeHeaderTabDot = 'warning' | 'danger' | 'info' | true;
 
 /**
  * Horizontal progress-bar gauge for 0..1 scores. Used by the judge
@@ -6334,7 +8389,9 @@ declare type SelectVariant = 'default' | 'pill' | 'ghost';
 /** A paper plane: "send" — the light prompt box's Send ("✈ Send"). Since 2.390.0. */
 export declare function SendIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-declare interface SettingsLayoutProps {
+export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
+
+export declare interface SettingsLayoutProps {
     /** Page title shown above the rail. */
     title: ReactNode;
     /** Optional secondary line under the title. */
@@ -6390,7 +8447,7 @@ export declare interface SettingsPageProps extends Omit<SettingsLayoutProps, 'st
     gutter?: PageGutter;
 }
 
-declare interface SettingsSection {
+export declare interface SettingsSection {
     id: string;
     /** Sidebar label. */
     label: ReactNode;
@@ -6448,7 +8505,110 @@ export declare interface ShortcutsHelpSection {
     shortcuts?: ShortcutsHelpRow[];
 }
 
-declare interface SidePaneProps extends SidePaneRegistration {
+export declare const SIDE_PANE_BOUNDS: SidePaneBounds;
+
+export declare function SidebarRow({ icon, label, trailing, active, onClick, onContextMenu, href, kebab, disabled, 'aria-label': ariaLabel, className, 'data-testid': testId, dataAttrs, }: SidebarRowProps): JSX.Element;
+
+export declare interface SidebarRowProps {
+    /** Leading icon. */
+    icon?: ReactNode;
+    /** Primary label (string or ReactNode). */
+    label: ReactNode;
+    /** Right-side slot for badges, avatar stacks, etc. */
+    trailing?: ReactNode;
+    /** Highlighted state. */
+    active?: boolean;
+    onClick?: () => void;
+    onContextMenu?: (e: MouseEvent_2<HTMLElement>) => void;
+    /** When set, the row renders as an <a href>. Click handling still fires. */
+    href?: string;
+    /** Optional kebab-menu trigger node (typically an IconButton). */
+    kebab?: ReactNode;
+    /** Disabled state — non-interactive, muted styling. */
+    disabled?: boolean;
+    /** Accessibility label override (when `label` isn't a string). */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+    /** Arbitrary `data-*` attributes spread onto the root element.
+     *  Used by e2e tooling to expose row-level metadata (e.g.
+     *  `data-room-slug`) without bespoke wrapper divs that interfere
+     *  with the row layout. */
+    dataAttrs?: Record<string, string | number | undefined>;
+}
+
+export declare function SidebarSection({ title, actions, collapsible, defaultCollapsed, storageKey, children, className, 'data-testid': testId, }: SidebarSectionProps): JSX.Element;
+
+export declare interface SidebarSectionProps {
+    /** Visible section label. Used to derive the localStorage key. */
+    title: string;
+    /** Right-aligned slot in the header (e.g. an IconButton). */
+    actions?: ReactNode;
+    /** When true (default), header click toggles collapse. */
+    collapsible?: boolean;
+    /** Initial collapsed state. Defaults to false (open). */
+    defaultCollapsed?: boolean;
+    /** Optional explicit localStorage key. Defaults to `sidebar-section:${title}`. */
+    storageKey?: string;
+    /** Section body. */
+    children?: ReactNode;
+    /** Extra classes for the outer wrapper. */
+    className?: string;
+    /** Test id (defaults to "sidebar-section"). */
+    'data-testid'?: string;
+}
+
+/**
+ * A page's pane, registered with the shell's `SidePaneProvider` and portaled
+ * into its right column. Outside a host it renders nothing (the page's own
+ * column is unchanged).
+ */
+export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
+
+export declare interface SidePaneBounds {
+    /** The split's ratio (page share) when nothing is remembered. Default 0.72. */
+    defaultRatio: number;
+    /** The remembered ratio is kept inside [ratioMin, ratioMax]. Defaults 0.4 / 0.85. */
+    ratioMin: number;
+    ratioMax: number;
+    /** The page's floor while dragging (px). Default 520. */
+    minPrimaryPx: number;
+    /** The pane's floor (px). Default 320. Its ceiling is `1 - ratioMin` of the split (60%). */
+    minSecondaryPx: number;
+    /**
+     * The page needs this much beside an open pane (px) — a section rail and a
+     * readable content column — or the pane waits for `reveal()`. Default 840 (with the 320px pane: a 1160px split).
+     */
+    fitPrimaryPx: number;
+}
+
+/** The split is wide enough for the page beside the pane. Unmeasured (first paint): it fits. */
+export declare function sidePaneFits(splitWidthPx: number | null, bounds?: SidePaneBounds): boolean;
+
+export declare interface SidePaneHostState {
+    /** The measured split has room for the page and pane at the host's bounds. */
+    fits: boolean;
+    /** A page has registered a pane. */
+    registered: boolean;
+    /** The pane is asked for (registered and open, or page-owned) — on screen or waiting for room. */
+    asked: boolean;
+    /** On screen now. */
+    shown: boolean;
+    /** Asked for, and showing a selection of the page: two rail-depth levels (`railDepth` `explored`). */
+    explored: boolean;
+    /** Open (and remember open) and show it even in a narrow window. */
+    reveal(): void;
+    /** Close it (remembered); a page-owned pane's × is the page's. */
+    collapse(): void;
+    /** Folded to the 44px strip at the split's edge (remembered). */
+    folded: boolean;
+    /** Fold to the strip / restore from it. */
+    toggleFolded(): void;
+    /** The pane's drawn width in px (0 while folded or off screen, null unmeasured) — a canvas beside it re-fits when it changes. */
+    paneWidthPx: number | null;
+}
+
+export declare interface SidePaneProps extends SidePaneRegistration {
     /** The pane's sections (`usePaneState().tabs`); none, no tab row. */
     tabs?: readonly TabItem[];
     value?: string;
@@ -6464,7 +8624,22 @@ declare interface SidePaneProps extends SidePaneRegistration {
     'data-testid'?: string;
 }
 
-declare interface SidePaneRegistration {
+export declare function SidePaneProvider({ storageKey, defaultOpen, bounds: boundsOverride, children }: SidePaneProviderProps): JSX.Element;
+
+export declare interface SidePaneProviderProps {
+    /**
+     * Per-device memory: `<storageKey>.open` (`1|0`), `<storageKey>.folded`
+     * (`1|0`, the 44px strip) and the width per pane, `<storageKey>.ratio`
+     * (`paneId` `page`) or `<storageKey>.ratio.<paneId>`. Default `uic.side-pane`.
+     */
+    storageKey?: string;
+    /** Open when nothing is remembered. Default true. */
+    defaultOpen?: boolean;
+    bounds?: Partial<SidePaneBounds>;
+    children: ReactNode;
+}
+
+export declare interface SidePaneRegistration {
     /** Documents get a readable pane; below 1240px of split space they temporarily take the column. */
     presentation?: 'standard' | 'document';
     /** The frame's title ("Discussion", "Details"). */
@@ -6488,6 +8663,27 @@ declare interface SidePaneRegistration {
     paneId?: string;
     /** The pane shows a selection of the page (a record, a detail) — a rail-depth level of its own. */
     explores?: boolean;
+}
+
+/**
+ * Where the page renders, with its pane on the right. Under a
+ * `SidePaneProvider` it uses that host (the shell reads it); alone it hosts
+ * itself.
+ */
+export declare function SidePaneSplit(props: SidePaneSplitProps): JSX.Element;
+
+export declare interface SidePaneSplitProps {
+    /** The page. */
+    children: ReactNode;
+    /** Stacked above the page's pane in the same column (a call's media grid). */
+    before?: ReactNode;
+    /** Stacked below it (a huddle's chat). Alone, it takes the column. */
+    after?: ReactNode;
+    /** The registered pane's frame test id (its title `-title`, subtitle `-subtitle`, × `-close`). */
+    paneTestId?: string;
+    dividerLabel?: string;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface SignoffEntry {
@@ -6575,6 +8771,58 @@ export declare function SlidersIcon({ size, ...rest }: GlyphProps): JSX.Element;
  *  person actually left stays the character they chose. */
 export declare function SmileyIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function SourceCard({ id, title, kind, timestamp, excerpt, onOpen, href, current, meta, layout, now, className, 'data-testid': testId, }: SourceCardProps): JSX.Element;
+
+export declare interface SourceCardProps {
+    id: string;
+    title: string;
+    /** The mark's kind. Default `page`. */
+    kind?: FileKind;
+    /** When the source was written. ISO string, epoch ms or Date. */
+    timestamp?: string | number | Date | null;
+    /** A line or two of what the source says. Clamped to two lines. */
+    excerpt?: ReactNode;
+    onOpen?: (id: string) => void;
+    href?: string;
+    /** This is the source being viewed. */
+    current?: boolean;
+    /**
+     * A quiet line under the title that REPLACES the age — "Source pattern ·
+     * auth-service". Since 2.389.0.
+     */
+    meta?: string;
+    /**
+     * `card` (default): the mark, a title that is the control, the age, the
+     * excerpt. `row` (since 2.389.0): a "based on" row — the WHOLE row is one
+     * control (a button with `onOpen`, a link with `href`), the mark in a 32px
+     * bordered tile, a 13px medium title, a 12px tertiary meta line, and a
+     * trailing chevron. No excerpt. The accessible name is the title.
+     */
+    layout?: 'card' | 'row';
+    /** Clock for the age (tests, server-rendered snapshots). Default `Date.now()`. */
+    now?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function SourceList({ items, emptyLabel, onOpen, now, layout, className, 'aria-label': ariaLabel, 'data-testid': testId, }: SourceListProps): JSX.Element;
+
+export declare type SourceListItem = Omit<SourceCardProps, 'now' | 'className' | 'data-testid' | 'layout'>;
+
+export declare interface SourceListProps {
+    items: SourceListItem[];
+    /** Shown when `items` is empty. Default "No sources recorded". */
+    emptyLabel?: string;
+    /** Applied to every card that has no handler of its own. */
+    onOpen?: (id: string) => void;
+    now?: number;
+    /** Forwarded to every card — `row` for a "Based on" list. Since 2.389.0. */
+    layout?: 'card' | 'row';
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
 /** A four-point sparkle with a small companion: the agent. Since 2.386.0. */
 export declare function SparkleIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -6621,6 +8869,32 @@ export declare interface SpinnerProps {
 }
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
+
+export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
+
+export declare interface SplitPaneProps {
+    primary: ReactNode;
+    /** The second pane. `null` renders only the primary, no divider. */
+    secondary: ReactNode | null;
+    /** Primary pane width as a fraction of the whole, 0–1. Default 0.55. */
+    defaultRatio?: number;
+    /** Controlled ratio; when given, `onRatioChange` must move it. */
+    ratio?: number;
+    onRatioChange?: (ratio: number) => void;
+    /** Smallest each pane may get, in px. Defaults 280 / 360. */
+    minPrimaryPx?: number;
+    minSecondaryPx?: number;
+    /** Names the divider for assistive tech, e.g. "Resize conversation and document". */
+    dividerLabel?: string;
+    /** Enter / Space on the focused divider (2.438.1): a host's fold of the secondary pane. */
+    onDividerActivate?: () => void;
+    /** Keep a controlled split without offering a resize handle (e.g. a folded rail). */
+    resizable?: boolean;
+    /** Keep the primary mounted but hide it while the secondary owns a narrow viewport. */
+    primaryHidden?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /** A frame split into a main pane and two stacked ones: "split layout". Since 2.411.0. */
 export declare function SplitViewIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -7285,6 +9559,8 @@ export declare type SwitchSize = 'sm' | 'md';
 /** Short alias — `<T>` reads better inline in dense JSX than `<Text>`. */
 export declare const T: typeof Text_2;
 
+export declare function TabbedEventLog({ entries }: Props_4): JSX.Element;
+
 export declare interface TabItem {
     id: string;
     label: ReactNode;
@@ -7641,6 +9917,12 @@ export declare interface TextProps {
     'data-testid'?: string;
     id?: string;
     children?: ReactNode;
+}
+
+declare interface TextSelectionData {
+    start: number;
+    end: number;
+    text: string;
 }
 
 declare type TextSize = 'xs' | 'sm' | 'base' | 'lg';
@@ -8053,6 +10335,48 @@ export declare interface TooltipProps {
     'data-testid'?: string;
 }
 
+export declare function TopNav({ items, activeHref, brand, rightSlot, renderLink, maxVisible, className, style, 'aria-label': ariaLabel, }: TopNavProps): JSX.Element;
+
+export declare interface TopNavItem {
+    label: ReactNode;
+    to: string;
+    icon?: ReactNode;
+    badge?: ReactNode;
+    disabled?: boolean;
+}
+
+export declare interface TopNavProps {
+    items: TopNavItem[];
+    /** Active href — typically the current pathname. An item is active when activeHref === item.to OR activeHref.startsWith(item.to + '/'). */
+    activeHref?: string;
+    /** Brand/logo slot rendered at the left. */
+    brand?: ReactNode;
+    /** Optional right-aligned slot (search, user menu, profile, etc.). */
+    rightSlot?: ReactNode;
+    /** Render function for link elements. Defaults to <a>. Use this to plug in react-router <Link>, next/link, etc. */
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    /** Maximum number of items to render inline before collapsing the rest into a "More" menu. Default: render all. */
+    maxVisible?: number;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
+/** Items → `GroupedListRow`s: leading checkbox or signal dot, and the meta line. Exported for tests. */
+export declare function toWorkListRows(items: WorkListItem[], { onToggleDone, testId, metaStyle, pointsLabel, signalDisplay, layout }?: ToWorkListRowsOptions): GroupedListRow[];
+
+export declare interface ToWorkListRowsOptions {
+    layout?: 'default' | 'rail';
+    onToggleDone?: (item: WorkListItem, done: boolean) => void;
+    testId?: string;
+    /** Since 2.390.0. See `WorkListViewProps.metaStyle`. */
+    metaStyle?: WorkListMetaStyle;
+    /** Since 2.390.0. See `WorkListViewProps.pointsLabel`. */
+    pointsLabel?: 'pts' | 'points';
+    /** Since 2.390.0. See `WorkListViewProps.signalDisplay`. */
+    signalDisplay?: 'dot' | 'meta';
+}
+
 /** A microphone on a stand: turn what is being said into text. Distinct from
  *  video/MediaIcons' MicIcon, which is a call's mute CONTROL. */
 export declare function TranscribeIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -8191,8 +10515,19 @@ export declare interface TypingIndicatorProps {
 /** A curved arrow back: "undo". Since 2.386.5. */
 export declare function UndoIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+declare interface UploadedImage {
+    imageId: string;
+    width: number;
+    height: number;
+    mimeType: string;
+    sizeBytes: number;
+}
+
 /** A tray with an arrow leaving it: "upload". Since 2.389.6. */
 export declare function UploadIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** The part of this canvas a surrounding pane covers; zero outside a CanvasPaneLayout. */
+export declare function useCanvasPaneInset(): CanvasPaneInset;
 
 export declare function useCommandPalette(): CommandPaletteController;
 
@@ -8261,11 +10596,45 @@ export declare interface UseHeaderDensityOptions {
     scrollCollapse?: boolean;
 }
 
+/** Whether a DockedColumn is above this component (its ColumnDock will dock rather than render in place). */
+export declare function useInDockedColumn(): boolean;
+
 /**
  * Measures an element's content-box width. `forward` is another ref (a
  * roving-toolbar hook's, say) that needs the same element.
  */
 export declare function useMeasuredWidth<T extends HTMLElement>(forward?: Ref<T>): MeasuredWidth<T>;
+
+export declare function usePaneState({ tabs, defaultTab, params, setParams, rememberKey, restore, onOpen, keepRecord, ...url }: UsePaneStateOptions): PaneStateControl;
+
+export declare interface UsePaneStateOptions extends PaneUrlOptions {
+    tabs: readonly PaneTabSpec[];
+    /** The resting tab — no params. */
+    defaultTab: string;
+    params: URLSearchParams;
+    setParams: (next: URLSearchParams, options?: {
+        replace?: boolean;
+    }) => void;
+    /** Per-device memory of the last `remember` tab. */
+    rememberKey?: string;
+    /**
+     * When to restore the remembered tab (the pane is on screen), and for
+     * what (the page's subject): restored once per subject, in place.
+     */
+    restore?: {
+        when: boolean;
+        subject: string | null;
+    };
+    /** Called whenever a tab is opened (bring the pane on screen). */
+    onOpen?: () => void;
+    /**
+     * A named record stays while the reader moves to a plain tab (Search: the
+     * person rides along as a tab beside the conversation). Default false: a
+     * plain tab drops the record (an initiative's Log closes when the reader
+     * goes back to Details).
+     */
+    keepRecord?: boolean;
+}
 
 /** The band set by the nearest `RailBandProvider`; `shallow` outside one. */
 export declare function useRailBand(): RailBand;
@@ -8413,6 +10782,16 @@ export declare interface UserPickerProps {
     baseUrl?: string;
 }
 
+/** The page's view of its pane: on screen (focus waits for it), how to bring it back, and whether it is attached. */
+export declare function useSidePane(): {
+    visible: boolean;
+    reveal(): void;
+    attached(): boolean;
+};
+
+/** What the shell reads: whether a pane is asked for, shown, exploring a selection. */
+export declare function useSidePaneHost(): SidePaneHostState;
+
 /**
  * Returns the current resolved theme tokens from the nearest ThemeProvider.
  * Falls back to the default light theme if no provider is present.
@@ -8438,11 +10817,70 @@ export declare function useToastOptional(): ToastContextValue | null;
 /** The window's inner width, live. 1680 on the server. */
 export declare function useViewportWidth(): number;
 
+/**
+ * Glyph per verdict, as a second non-colour channel.
+ *
+ * Check / bang / cross are distinguishable in monochrome and at small sizes,
+ * which is the whole point: the accessibility requirement is not "add an icon",
+ * it is "a reader who sees no colour still gets the verdict".
+ */
+export declare const VERDICT_GLYPH: Record<ChangeVerdict, string>;
+
+/** Human label per verdict. Always rendered — the chip must never be colour-only. */
+export declare const VERDICT_LABEL: Record<ChangeVerdict, string>;
+
+/** Tone per verdict, resolved through the library-wide semantic scale. */
+export declare const VERDICT_TONE: {
+    readonly pass: "success";
+    readonly concern: "caution";
+    readonly fail: "danger";
+};
+
+export declare function VerdictChip({ verdict, status, error, revision, defaultExpanded, className, 'data-testid': testId, }: VerdictChipProps): JSX.Element;
+
+export declare interface VerdictChipProps {
+    verdict?: ChangeReviewVerdict | undefined;
+    /** How the review itself is going. Defaults to `idle`. */
+    status?: ChangeReviewStatus | undefined;
+    /** Why the review failed. Shown verbatim when `status` is `failed`. */
+    error?: string | undefined;
+    /**
+     * The change's CURRENT revision. Pass it, or staleness cannot be detected
+     * and an out-of-date verdict will render as if it still applies.
+     */
+    revision?: string | undefined;
+    /** Start with the reasoning open. Default false — see the note above. */
+    defaultExpanded?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * What the UI actually renders. Derived — never passed in directly, so a host
+ * cannot claim `ready` for a verdict that is out of date.
+ */
+export declare type VerdictState = 'absent' | 'pending' | 'failed' | 'stale' | 'ready';
+
 /** A camera body: start a video call. Distinct from video/MediaIcons' VideoIcon, which is a call CONTROL. */
 export declare function VideoCallIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function ViewportFillRegion({ bottomGap, minHeight, className, children, 'data-testid': testId, }: ViewportFillRegionProps): JSX.Element;
+
+export declare interface ViewportFillRegionProps {
+    /** Space to leave between the region's bottom edge and the window bottom. */
+    bottomGap?: number;
+    /** Floor for the computed height, so the region never collapses. */
+    minHeight?: number;
+    className?: string;
+    children: React.ReactNode;
+    'data-testid'?: string;
+}
+
 /** Groups worth drawing: people in them, or an action to add some. */
 export declare function visibleHeaderPeople(groups: readonly HeaderPeopleGroup[] | undefined): HeaderPeopleGroup[];
+
+/** The tabs to list: every plain tab, and a record tab while its record is named. */
+export declare function visiblePaneTabs(tabs: readonly PaneTabSpec[], state: PaneState): TabItem[];
 
 /**
  * The canonical visually-hidden clip. Not `display: none` and not
@@ -8499,6 +10937,57 @@ export declare interface WizardStep {
     canAdvance?: boolean;
 }
 
+export declare interface WorkActivityEvent {
+    id: string;
+    kind: WorkActivityKind;
+    /** ISO time, epoch ms, or Date. */
+    at: string | number | Date;
+    /** "Status changed from Open to In progress". Already worded by the host. */
+    text: string;
+    /** Who did it; absent for machine events. */
+    actor?: string | null;
+    /** A short trailing fact — "$0.18", "failed", "PR #42". */
+    detail?: ReactNode;
+    /** Opens the thing the event is about (a run, a PR). */
+    onOpen?: () => void;
+    href?: string;
+    openLabel?: string;
+    /** Low-signal (a heartbeat, a progress ping): hidden until "Show all events". */
+    lowSignal?: boolean;
+}
+
+export declare type WorkActivityKind = 'status' | 'run' | 'estimate' | 'comment' | 'system';
+
+export declare function WorkActivityList({ title, events, now, emptyLabel, loading, error, first, className, 'data-testid': testId, group, isLowSignal, defaultShowAll, limit, repeatTimes, }: WorkActivityListProps): JSX.Element;
+
+export declare interface WorkActivityListProps {
+    title?: string;
+    events: WorkActivityEvent[];
+    /** Clock for relative times (ms since epoch). Default Date.now(). */
+    now?: number;
+    emptyLabel?: string;
+    loading?: boolean;
+    /** Shown instead of the list when the history could not be read. */
+    error?: string | null;
+    first?: boolean;
+    className?: string;
+    'data-testid'?: string;
+    /**
+     * Collapse consecutive events that share a key into one row with a count.
+     * Default true; the key is kind + text + actor. Pass a function to choose
+     * the key, or `false` to list every event.
+     */
+    group?: boolean | ((event: WorkActivityEvent) => string);
+    /** Marks low-signal events in addition to each event's own `lowSignal` flag. */
+    isLowSignal?: (event: WorkActivityEvent) => boolean;
+    /** Start with low-signal events shown. Default false. */
+    defaultShowAll?: boolean;
+    /** Rows shown before "Show N more" (after grouping). Default 5; `null` shows every row. */
+    limit?: number | null;
+    /** Print a relative time even when it equals the row above. Default false. */
+    repeatTimes?: boolean;
+}
+
 export declare function WorkArea({ breadcrumbs, toolbar, children, status, footer, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
 
 export declare interface WorkAreaProps {
@@ -8523,6 +11012,45 @@ export declare interface WorkAreaProps {
 
 /** @see SurfaceTone — which colour family the work area paints in. */
 export declare type WorkAreaTone = SurfaceTone;
+
+export declare function Workbench({ title, subtitle, kind, onClose, task, taskLabel, tabs, activeTab, defaultTab, onTabChange, moreContext, footer, label, className, 'data-testid': testId, }: WorkbenchProps): JSX.Element;
+
+export declare interface WorkbenchProps {
+    /** The selected file or slide — "Sprint review". */
+    title: ReactNode;
+    /** A second line — "Presentation · Slide 4 of 5". */
+    subtitle?: ReactNode;
+    /** Draws a `FileKindMark` before the title. */
+    kind?: FileKind;
+    /** Renders a close button. Omit for a workbench that cannot be closed. */
+    onClose?: () => void;
+    /** The current agent task — normally an `AgentTaskCard`. Omit when there is none. */
+    task?: ReactNode;
+    /** Heading over `task`. Default "Current task". */
+    taskLabel?: string;
+    tabs: readonly WorkbenchTab[];
+    /** Controlled active tab. */
+    activeTab?: string;
+    /** Uncontrolled initial tab. Defaults to the first. */
+    defaultTab?: string;
+    onTabChange?: (id: string) => void;
+    /** Below the active panel — normally a `MoreContextDisclosure`. */
+    moreContext?: ReactNode;
+    /** Pinned to the bottom — "Open run", "More". */
+    footer?: ReactNode;
+    /** Accessible name of the column. Default "Workbench". */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface WorkbenchTab {
+    id: string;
+    label: string;
+    /** A count on the tab — open comments. Zero or absent shows none. */
+    count?: number;
+    content: ReactNode;
+}
 
 export declare interface WorkflowStep {
     step: number;
@@ -8556,11 +11084,371 @@ export declare interface WorkflowStepperProps {
     'data-testid'?: string;
 }
 
-declare interface WorkspaceRailBack {
+export declare function WorkItemMetaBar({ status, points, owner, priority, appearance, flags, layout, priorityStyle, className, 'data-testid': testId, }: WorkItemMetaBarProps): JSX.Element | null;
+
+export declare interface WorkItemMetaBarProps {
+    status?: {
+        value: string | null;
+        options: WorkMetaOption[];
+        onChange?: (v: string) => void;
+        readOnlyReason?: string;
+        pending?: boolean;
+    };
+    points?: {
+        value: number | null;
+        onChange?: (v: number | null) => void;
+        readOnlyReason?: string;
+        pending?: boolean;
+        max?: number;
+    };
+    owner?: {
+        value: WorkPerson | null;
+        onSearchPeople?: (q: string) => Promise<WorkPerson[]> | WorkPerson[];
+        onChange?: (p: WorkPerson | null) => void;
+        readOnlyReason?: string;
+        pending?: boolean;
+    };
+    priority?: {
+        value: string | null;
+        options: WorkMetaOption[];
+        onChange?: (v: string) => void;
+        readOnlyReason?: string;
+        pending?: boolean;
+    };
+    /**
+     * `inline` (default): borderless fields at 14px with a rule between each.
+     * `boxed` (since 2.386.15): the Work mockup's row — status and priority are
+     * 36px bordered select boxes ("● Open ⌄", "Priority: High ⌄"), points and
+     * owner plain 14px text with one rule between them.
+     */
+    appearance?: 'inline' | 'boxed';
+    /**
+     * Toned facts drawn as tags right after the status — `{ label: 'Blocked',
+     * tone: 'danger' }`. Read-only; the host decides what they mean. Empty or
+     * absent draws none. Since 2.390.0.
+     */
+    flags?: WorkMetaFlag[];
+    /**
+     * `default`: the fields in their usual order (status, points, owner,
+     * priority). `divided` (since 2.390.0): the read-first row under a work
+     * item's large title — status · flags · owner · points · priority, a rule
+     * between each, at 14px (the body step; 15px before 2.441.0) ("● Open | Blocked | (EG) Eli Garcia | 2 points |
+     * High priority"). Ignored when `appearance="boxed"`.
+     */
+    layout?: 'default' | 'divided';
+    /**
+     * `label` (default): "Priority:" then the value. `tag` (since 2.390.0): one
+     * toned tag that says it all — "High priority". An editable priority keeps
+     * its select, without the "Priority:" word.
+     */
+    priorityStyle?: 'label' | 'tag';
+    'data-testid'?: string;
+    className?: string;
+}
+
+export declare interface WorkListChip {
+    label: string;
+    tone?: ChipTone;
+}
+
+/**
+ * One filter dimension ("Kind", "Owner", "Status"), drawn as a labelled row of
+ * toggle chips in the filter panel. `selected` empty = no narrowing on this
+ * facet. The host does the filtering; this only draws and reports.
+ */
+export declare interface WorkListFilterFacet {
+    id: string;
+    label: string;
+    options: Array<{
+        value: string;
+        label: string;
+        count?: number;
+    }>;
+    selected: readonly string[];
+    onChange: (selected: string[]) => void;
+}
+
+/** The filter panel body for `facets`. Exported for hosts that compose their own toolbar. */
+export declare function WorkListFilters({ facets, 'data-testid': testId }: {
+    facets: WorkListFilterFacet[];
+    'data-testid'?: string;
+}): JSX.Element;
+
+export declare interface WorkListGroup {
+    id: string;
+    title: string;
+    /** What this group says when open and empty. Default "Nothing here". */
+    emptyLabel?: string;
+    defaultOpen?: boolean;
+}
+
+export declare interface WorkListItem {
+    id: string;
+    groupId: string;
+    title: string;
+    /** Human-readable item key, shown below the title rather than as a badge. */
+    reference?: string;
+    done?: boolean;
+    /** A done toggle is in flight: the checkbox is disabled and busy. */
+    donePending?: boolean;
+    /** Story points. `null` / absent → no points part. */
+    points?: number | null;
+    /** `null` / absent → "Unassigned". */
+    owner?: WorkListPerson | null;
+    /** Type chips, e.g. `{ label: 'Bug', tone: 'danger' }`. */
+    chips?: WorkListChip[];
+    signal?: WorkListSignal | null;
+    disabled?: boolean;
+    /**
+     * The item's kind as a word — "Bug", "Story". With `metaStyle="text"` it
+     * leads the meta line ("Bug · Eli Garcia · 2 points") instead of a chip.
+     * Since 2.390.0.
+     */
+    kindLabel?: string;
+    /**
+     * A toned tag at the row's end — "Blocked" (danger). Always visible; not
+     * inside the row's button. Since 2.390.0.
+     */
+    tag?: WorkListChip | null;
+}
+
+/** How a work row's second line reads. See `WorkListViewProps.metaStyle`. */
+export declare type WorkListMetaStyle = 'default' | 'text';
+
+export declare interface WorkListPerson {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+}
+
+/**
+ * Replaces the checkbox with a dot, and adds its label to the meta line:
+ * `running` a filled primary dot ("Agent running"), `review` a hollow ring
+ * ("Awaiting review"), `blocked` a danger dot. With `onClick` the dot is a
+ * button (e.g. open the live run).
+ */
+export declare interface WorkListSignal {
+    state: 'running' | 'review' | 'blocked';
+    label: string;
+    onClick?: () => void;
+}
+
+/** Search on its own row; sort and the filter button on the next. */
+export declare function WorkListToolbar({ query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters: filtersProp, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, toolbarLayout, sortStyle, className, 'data-testid': testId, }: WorkListToolbarProps): JSX.Element;
+
+export declare interface WorkListToolbarProps {
+    query: string;
+    onQueryChange: (query: string) => void;
+    /** Default "Search work…". */
+    searchPlaceholder?: string;
+    sort?: string;
+    sortOptions?: SelectOption[];
+    onSortChange?: (value: string) => void;
+    /** Accessible name of the sort select. Default "Sort work". */
+    sortLabel?: string;
+    /** Filter controls; omit for no filter button. */
+    filters?: ReactNode;
+    /**
+     * Filter facets, drawn by `WorkListFilters` in the panel (and counted for
+     * the button's dot) when `filters` is not given.
+     */
+    filterFacets?: WorkListFilterFacet[];
+    /** Default: the number of facets with a selection, else 0. */
+    activeFilterCount?: number;
+    onClearFilters?: () => void;
+    /**
+     * `stacked` (default): search on its own row, sort and the filter button
+     * on the next. `inline`: search and the filter button share the first
+     * row; sort sits alone below. Since 2.390.0.
+     */
+    toolbarLayout?: 'stacked' | 'inline';
+    /**
+     * `select` (default): a full-width select. `menu`: a quiet text menu —
+     * the current option's label and a chevron ("By priority ⌄"). Since 2.390.0.
+     */
+    sortStyle?: 'select' | 'menu';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function WorkListView({ layout, title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, toolbarLayout, sortStyle, metaStyle, pointsLabel, signalDisplay, currentStyle, groupCountStyle, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
+
+export declare interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className' | 'data-testid'> {
+    /** A narrow navigation rail: small status marks, full-width titles and keys on the metadata line. */
+    layout?: 'default' | 'rail';
+    /** Default "Work". */
+    title?: string;
+    /** The header count. Defaults to `items.length`. */
+    count?: number;
+    /** Shows a + button in the title row. */
+    onCreate?: () => void;
+    /** Default "New work item". */
+    createLabel?: string;
+    /** Shows a ‹ button in the title row. */
+    onCollapse?: () => void;
+    /** Default "Collapse work list". */
+    collapseLabel?: string;
+    /** `embedded` omits the title row (the host shows it in a rail header). Default `full`. */
+    chrome?: 'full' | 'embedded';
+    groups: WorkListGroup[];
+    items: WorkListItem[];
+    currentId?: string | null;
+    onOpenItem?: (item: WorkListItem) => void;
+    /** Omit for read-only rows (no checkbox). */
+    onToggleDone?: (item: WorkListItem, done: boolean) => void;
+    /** `index` is the item's final position within `toGroupId`. Omit for no reorder. */
+    onReorder?: (itemId: string, toGroupId: string, index: number) => void;
+    loading?: boolean;
+    error?: string | null;
+    onRetry?: () => void;
+    /** No items at all. Default "No work yet". */
+    emptyLabel?: string;
+    /** Persists collapsed groups (GroupedList `storageKey`). */
+    storageKey?: string;
+    /**
+     * `default`: owner avatar, type chips, then "signal · 5 pts · Owner".
+     * `text` (since 2.390.0): one line of words, no avatar and no chips —
+     * "Bug · Eli Garcia · 2 points" (`kindLabel`, owner, points).
+     */
+    metaStyle?: WorkListMetaStyle;
+    /** The points unit: `pts` (default, "5 pts") or `points` ("5 points", "1 point"). Since 2.390.0. */
+    pointsLabel?: 'pts' | 'points';
+    /**
+     * Where a `signal` shows. `dot` (default): a leading dot that replaces the
+     * checkbox, and its label in the meta line. `meta`: the label in the meta
+     * line only — no dot, so the row keeps its checkbox (or nothing). Since 2.390.0.
+     */
+    signalDisplay?: 'dot' | 'meta';
+    /** Passed to `GroupedList.currentStyle`. Since 2.390.0. */
+    currentStyle?: 'tint' | 'bar';
+    /** Passed to `GroupedList.groupCountStyle`. Since 2.390.0. */
+    groupCountStyle?: 'chip' | 'plain';
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** A read-only toned tag on the meta row — "Blocked", in mono like the item key. Since 2.390.0. */
+export declare interface WorkMetaFlag {
+    label: string;
+    tone?: ChipTone;
+}
+
+export declare interface WorkMetaOption {
+    value: string;
+    label: string;
+    tone?: ChipTone;
+}
+
+/** A person as the meta bar and its picker see one. */
+export declare interface WorkPerson {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+}
+
+export declare function WorkSearchPicker<T>({ trigger, open, onClose, label, placeholder, search, itemKey, renderItem, onPick, header, footer, 'data-testid': testId, }: WorkSearchPickerProps<T>): JSX.Element;
+
+export declare interface WorkSearchPickerProps<T> {
+    trigger: RefObject<HTMLElement | null>;
+    open: boolean;
+    onClose: () => void;
+    /** Accessible name for the dialog and the search box. */
+    label: string;
+    placeholder?: string;
+    /** Called on open (with '') and on every query change. */
+    search?: (q: string) => Promise<T[]> | T[];
+    itemKey: (item: T) => string;
+    renderItem: (item: T) => ReactNode;
+    onPick: (item: T) => void;
+    /** Above the search box (e.g. a relation select). */
+    header?: ReactNode;
+    /** Below the results (e.g. "Unassign"). */
+    footer?: ReactNode;
+    'data-testid'?: string;
+}
+
+/** Shared document/chat rail: fixed header and footer, one scrollable body. */
+export declare function WorkspaceRail({ title, label, actions, header, footer, children, width, count, heading, countStyle, back, collapsed, collapsedContent, onToggle, toggleLabel, toggleTestId, className, 'data-testid': testId, }: WorkspaceRailProps): JSX.Element;
+
+export declare interface WorkspaceRailBack {
     label: string;
     href?: string;
     onClick?: () => void;
 }
+
+export declare interface WorkspaceRailProps {
+    title?: string;
+    label?: string;
+    actions?: ReactNode;
+    header?: ReactNode;
+    footer?: ReactNode;
+    children: ReactNode;
+    /**
+     * xs 220 (the Org rail's width — SubNavLayout's default — for a documents
+     * rail beside it, since 2.407.33), sm 240, ms 264 (a one-line title list — the Initiatives v2 rail, since
+     * 2.392.0), md 300, ml 320 (the Folders explorer, 2.386.0), lg 368 (a
+     * two-line work list with a toolbar).
+     */
+    width?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+    /**
+     * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
+     * an empty list is a fact, not a missing number.
+     */
+    count?: number;
+    /**
+     * `compact` (default) is the 36px, 12px-title strip a tree rail wears;
+     * `prominent` is the column heading a work list wears — an 18px title and
+     * count on a 56px row, no rule under it. `label` is the same 56px row with
+     * the title as the rail group label — "DOCUMENTS 137", the All documents
+     * mockup (since 2.389.2). Since 2.407.13 it draws the shared rail scale
+     * (`RAIL_GROUP_LABEL`, 11px semibold caps, with its plain 11px
+     * `RAIL_GROUP_COUNT`), so the rail matches the Workspace `NavRail` beside it
+     * ("WORKSPACE"); it was a 15px label with a count chip. `caption` (since
+     * 2.392.0) is the same row with a 12px letter-spaced uppercase label —
+     * "INITIATIVES 11", the Initiatives v2 rail.
+     */
+    heading?: 'compact' | 'prominent' | 'label' | 'caption';
+    /**
+     * How `count` reads. `chip` (default): a neutral count chip. `plain`: muted
+     * text after the title — "Initiatives 11". Since 2.390.0. A `label` heading
+     * always draws its count plain (`RAIL_GROUP_COUNT`) — a rail group heading's
+     * count is never a pill (railType).
+     */
+    countStyle?: 'chip' | 'plain';
+    /**
+     * A back link on its own row ABOVE the title — "‹ Initiatives" over "Work
+     * 11", when the rail has drilled into one thing. `href` renders a link,
+     * otherwise a button calling `onClick`. Since 2.390.0.
+     */
+    back?: WorkspaceRailBack | null;
+    collapsed?: boolean;
+    collapsedContent?: ReactNode;
+    onToggle?: () => void;
+    toggleLabel?: string;
+    toggleTestId?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type WorkTableGrouping = 'status' | 'owner' | 'type';
+
+/** Full-width sibling of WorkListView. Hosts own reads, search/filter/sort,
+ * navigation and writes; this owns table presentation and collapsible groups.
+ * No router, API, initiative IDs or app-specific CSS is required. */
+export declare function WorkTableView({ items, groups, count, title, currentId, onOpenItem, onToggleDone, loading, error, onRetry, emptyLabel, groupBy: controlledGrouping, onGroupByChange, groupColors, defaultKindLabel, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, filters, filterFacets, activeFilterCount, onClearFilters, className, 'data-testid': testId, }: WorkTableViewProps): JSX.Element;
+
+export declare interface WorkTableViewProps extends WorkListToolbarProps, Pick<WorkListViewProps, 'items' | 'groups' | 'count' | 'title' | 'currentId' | 'onOpenItem' | 'onToggleDone' | 'loading' | 'error' | 'onRetry' | 'emptyLabel'> {
+    /** Optional controlled grouping; otherwise starts with status. */
+    groupBy?: WorkTableGrouping;
+    onGroupByChange?: (group: WorkTableGrouping) => void;
+    /** Optional group dots, keyed by the host's status IDs. Use theme tokens. */
+    groupColors?: Record<string, string>;
+    /** Label for items with no kindLabel. Default "Work". */
+    defaultKindLabel?: string;
+}
+
+/** The params for a pane state: the default tab with no record drops both. */
+export declare function writePaneState(params: URLSearchParams, state: PaneState, defaultTab: string, opts?: PaneUrlOptions): URLSearchParams;
 
 export { }
 

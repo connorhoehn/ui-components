@@ -1,3 +1,8 @@
+## 2.506.0
+
+- `/shared` now exports the root-only layout components (`TopNav`, `NavTabs`, `ApiDegradedBanner`, `SidePane`, `SidePaneSplit`, `SettingsLayout`, `ViewportFillRegion`, `CollapsibleSidebar`, `DocsShell`…; not `AppLayout`, which wires the pipelines providers) and the `work`, `sidebar`, `hangout`, `inbox`, `change-review`, `image` and `misc` barrels (`WorkListFilters`, `CallPresenceIndicator`, `ErrorBoundary`…). One root-only name in an app shell kept the whole root barrel, and every optional peer, in consumer entry chunks. `/shared`'s static and dynamic peer sets are unchanged.
+- `RecordGraphCard` / `recordGraphSummary` are also on `/graph`. The other search-workspace pieces stay root-only for now (their chunk merges with the graph layout's peers).
+
 ## 2.505.0
 
 - `AppShell`, `ThemeProvider`, `useTheme` and `useThemeContext` are exported from `/shared`, so an app importing only subpaths never reaches the root barrel (which pulls every optional peer; `sideEffects` stays undeclared, see `docs/bundle-side-effects.md`). The component index now names a subpath wherever one exists; `llms.txt` and `ui-page-build` say to avoid root imports.

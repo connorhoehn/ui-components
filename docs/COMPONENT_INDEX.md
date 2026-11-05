@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-961 components across 20 entry points; 814 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+969 components across 20 entry points; 821 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -41,7 +41,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 - [Page templates](#page-templates) (7)
 - [Shells & layouts](#shells--layouts) (41)
-- [Page structure, sections & dividers](#page-structure-sections--dividers) (57)
+- [Page structure, sections & dividers](#page-structure-sections--dividers) (59)
 - [Tables & lists](#tables--lists) (31)
 - [Forms](#forms) (30)
 - [Buttons & actions](#buttons--actions) (15)
@@ -54,7 +54,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (9)
-- [Other](#other) (72)
+- [Other](#other) (78)
 - [Icons](#icons) (112)
 
 ## Page templates
@@ -73,57 +73,58 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
-| `AgentTaskCard` | `@connorhoehnslalom/ui-components` | The "Current task" card at the top of a Workbench: what the agent was asked to do, where it is, and when it started. |  |  |
-| `ApiDegradedBanner` | `@connorhoehnslalom/ui-components` | Top-of-content banner shown when the social-api /health rollup reports a degraded state. |  |  |
+| `AgentTaskCard` | `@connorhoehnslalom/ui-components/shared` | The "Current task" card at the top of a Workbench: what the agent was asked to do, where it is, and when it started. |  |  |
+| `ApiDegradedBanner` | `@connorhoehnslalom/ui-components/shared` | Top-of-content banner shown when the social-api /health rollup reports a degraded state. |  |  |
 | `AppLayout` | `@connorhoehnslalom/ui-components` | The room-shaped app layout: rooms sidebar, presence and nested content, wired to the pipelines run providers. |  | deprecated |
 | `AppShell` | `@connorhoehnslalom/ui-components/shared` | The app chrome: sidebar, header, optional subheader and the content region, with a toast region by default. | `layout-appshell` |  |
-| `CanvasPaneInsetContext` | `@connorhoehnslalom/ui-components` | — |  |  |
-| `CanvasPaneLayout` | `@connorhoehnslalom/ui-components` | A canvas (a graph, a map, a board) with a details pane on its right, that keeps the canvas usable at every width. |  |  |
-| `CollapsedIconStrip` | `@connorhoehnslalom/ui-components` | The narrow icon-only sidebar shown while the main sidebar is collapsed: - the expand button (a menu glyph), in the header row when the strip runs the full window height (`headerHeight`, AppShell `sidebarFullHeight`) -… |  |  |
-| `CollapsibleSidebar` | `@connorhoehnslalom/ui-components` | Collapsible sidebar with connection controls, channel/presence, activity feed, and recent documents. |  |  |
-| `ColumnDock` | `@connorhoehnslalom/ui-components` | Render `children` in the nearest DockedColumn's dock (in place when there is none). |  |  |
-| `ConnectionStatus` | `@connorhoehnslalom/ui-components` | @deprecated since 2.14 — use `ConnectionPill` from `@connorhoehnslalom/ui-components/shared`. |  | deprecated |
-| `ContextColumn` | `@connorhoehnslalom/ui-components` | The column beside a page that holds what is ABOUT the page — a conversation, an activity feed — one panel at a time, and knows how to get out of the way. | `layout-contextcolumn` |  |
-| `DockedAside` | `@connorhoehnslalom/ui-components` | A column docked beside a page's text: a comment thread, a work-items list. |  |  |
-| `DockedColumn` | `@connorhoehnslalom/ui-components` | DockedColumn + ColumnDock — one composer per column, docked at its bottom. | `layout-dockedcolumn` |  |
-| `DocsShell` | `@connorhoehnslalom/ui-components` | — | `layout-docsshell` |  |
-| `DocsSidebar` | `@connorhoehnslalom/ui-components` | Documentation-shell sidebar. |  |  |
-| `DocsTopNav` | `@connorhoehnslalom/ui-components` | Documentation shell's sticky top nav. |  |  |
-| `ExplorerLayout` | `@connorhoehnslalom/ui-components` | The three-pane document explorer frame: a left rail, a main pane, an optional right-hand aside. | `layout-explorerlayout` |  |
-| `FloatingCard` | `@connorhoehnslalom/ui-components` | A small card pinned to a corner of the viewport — a table of contents, a mini-map. |  |  |
-| `ListRailLayout` | `@connorhoehnslalom/ui-components` | ListRailLayout (2.438.0) — a page whose list is a flush rail beside the section rail, then the content column: the pane header (the trail, the title), the record, an optional aside and a docked footer. |  |  |
+| `CanvasPaneInsetContext` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
+| `CanvasPaneLayout` | `@connorhoehnslalom/ui-components/shared` | A canvas (a graph, a map, a board) with a details pane on its right, that keeps the canvas usable at every width. |  |  |
+| `CollapsedIconStrip` | `@connorhoehnslalom/ui-components/shared` | The narrow icon-only sidebar shown while the main sidebar is collapsed: - the expand button (a menu glyph), in the header row when the strip runs the full window height (`headerHeight`, AppShell `sidebarFullHeight`) -… |  |  |
+| `CollapsibleSidebar` | `@connorhoehnslalom/ui-components/shared` | Collapsible sidebar with connection controls, channel/presence, activity feed, and recent documents. |  |  |
+| `ColumnDock` | `@connorhoehnslalom/ui-components/shared` | Render `children` in the nearest DockedColumn's dock (in place when there is none). |  |  |
+| `ConnectionStatus` | `@connorhoehnslalom/ui-components/shared` | @deprecated since 2.14 — use `ConnectionPill` from `@connorhoehnslalom/ui-components/shared`. |  | deprecated |
+| `ContextColumn` | `@connorhoehnslalom/ui-components/shared` | The column beside a page that holds what is ABOUT the page — a conversation, an activity feed — one panel at a time, and knows how to get out of the way. | `layout-contextcolumn` |  |
+| `DockedAside` | `@connorhoehnslalom/ui-components/shared` | A column docked beside a page's text: a comment thread, a work-items list. |  |  |
+| `DockedColumn` | `@connorhoehnslalom/ui-components/shared` | DockedColumn + ColumnDock — one composer per column, docked at its bottom. | `layout-dockedcolumn` |  |
+| `DocsShell` | `@connorhoehnslalom/ui-components/shared` | — | `layout-docsshell` |  |
+| `DocsSidebar` | `@connorhoehnslalom/ui-components/shared` | Documentation-shell sidebar. |  |  |
+| `DocsTopNav` | `@connorhoehnslalom/ui-components/shared` | Documentation shell's sticky top nav. |  |  |
+| `ExplorerLayout` | `@connorhoehnslalom/ui-components/shared` | The three-pane document explorer frame: a left rail, a main pane, an optional right-hand aside. | `layout-explorerlayout` |  |
+| `FloatingCard` | `@connorhoehnslalom/ui-components/shared` | A small card pinned to a corner of the viewport — a table of contents, a mini-map. |  |  |
+| `ListRailLayout` | `@connorhoehnslalom/ui-components/shared` | ListRailLayout (2.438.0) — a page whose list is a flush rail beside the section rail, then the content column: the pane header (the trail, the title), the record, an optional aside and a docked footer. |  |  |
 | `MasterDetail` | `@connorhoehnslalom/ui-components/shared` | A persistent rail of items paired with a detail pane for whichever one is selected. | `shared-masterdetail` |  |
-| `MoreContextDisclosure` | `@connorhoehnslalom/ui-components` | The collapsed "More context" block at the bottom of a Workbench: sources, versions, collaborators, each a row with a count that can open where that thing lives. |  |  |
+| `MoreContextDisclosure` | `@connorhoehnslalom/ui-components/shared` | The collapsed "More context" block at the bottom of a Workbench: sources, versions, collaborators, each a row with a count that can open where that thing lives. |  |  |
 | `NavRail` | `@connorhoehnslalom/ui-components/shared` | NavRail / NavRailStack — vertical navigation that composes to any depth. | `shared-navrail` |  |
 | `NavRailStack` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
-| `NavTabs` | `@connorhoehnslalom/ui-components` | Sub-section navigation: link-based underline tab strip (no state — consumer routes via activeHref). |  |  |
-| `PaneHeader` | `@connorhoehnslalom/ui-components` | The pane's tab row: underline tabs whose first label starts on the pane's 16px inset (the frame title's edge), a trailing slot that wraps beneath the tabs when a narrow pane cannot fit both, and one rule under it. |  |  |
-| `PinnedSlot` | `@connorhoehnslalom/ui-components` | A column that scrolls with the page until the page scrolls past it, then stays put — a video panel beside the text. |  |  |
+| `NavTabs` | `@connorhoehnslalom/ui-components/shared` | Sub-section navigation: link-based underline tab strip (no state — consumer routes via activeHref). |  |  |
+| `PaneHeader` | `@connorhoehnslalom/ui-components/shared` | The pane's tab row: underline tabs whose first label starts on the pane's 16px inset (the frame title's edge), a trailing slot that wraps beneath the tabs when a narrow pane cannot fit both, and one rule under it. |  |  |
+| `PinnedSlot` | `@connorhoehnslalom/ui-components/shared` | A column that scrolls with the page until the page scrolls past it, then stays put — a video panel beside the text. |  |  |
 | `RailLayout` | `@connorhoehnslalom/ui-components/shared` | A detail page split into a main column and a right context rail. |  |  |
-| `SettingsLayout` | `@connorhoehnslalom/ui-components` | Sectioned settings page shell with sticky save bar. |  |  |
-| `SidebarRow` | `@connorhoehnslalom/ui-components` | A single clickable row inside a SidebarSection. |  |  |
-| `SidebarSection` | `@connorhoehnslalom/ui-components` | Collapsible group inside a left-rail sidebar. |  |  |
-| `SidePane` | `@connorhoehnslalom/ui-components` | A page's pane, registered with the shell's `SidePaneProvider` and portaled into its right column. |  |  |
-| `SidePaneProvider` | `@connorhoehnslalom/ui-components` | — |  |  |
-| `SidePaneSplit` | `@connorhoehnslalom/ui-components` | Where the page renders, with its pane on the right. |  |  |
-| `SplitPane` | `@connorhoehnslalom/ui-components` | Two regions side by side with a divider the person can drag. |  |  |
+| `SettingsLayout` | `@connorhoehnslalom/ui-components/shared` | Sectioned settings page shell with sticky save bar. |  |  |
+| `SidebarRow` | `@connorhoehnslalom/ui-components/shared` | A single clickable row inside a SidebarSection. |  |  |
+| `SidebarSection` | `@connorhoehnslalom/ui-components/shared` | Collapsible group inside a left-rail sidebar. |  |  |
+| `SidePane` | `@connorhoehnslalom/ui-components/shared` | A page's pane, registered with the shell's `SidePaneProvider` and portaled into its right column. |  |  |
+| `SidePaneProvider` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
+| `SidePaneSplit` | `@connorhoehnslalom/ui-components/shared` | Where the page renders, with its pane on the right. |  |  |
+| `SplitPane` | `@connorhoehnslalom/ui-components/shared` | Two regions side by side with a divider the person can drag. |  |  |
 | `StackedRail` | `@connorhoehnslalom/ui-components/shared` | The concise stacking left menu, grown up enough to hold a documents tree. | `shared-stackedrail` |  |
 | `SubNavLayout` | `@connorhoehnslalom/ui-components/shared` | — | `shared-subnavlayout` |  |
-| `TopNav` | `@connorhoehnslalom/ui-components` | — | `layout-topnav` |  |
-| `ViewportFillRegion` | `@connorhoehnslalom/ui-components` | A region that ends where the window ends. |  |  |
+| `TopNav` | `@connorhoehnslalom/ui-components/shared` | — | `layout-topnav` |  |
+| `ViewportFillRegion` | `@connorhoehnslalom/ui-components/shared` | A region that ends where the window ends. |  |  |
 | `WorkArea` | `@connorhoehnslalom/ui-components/shared` | The content column beside the rails. | `shared-workarea` |  |
-| `Workbench` | `@connorhoehnslalom/ui-components` | The static right-hand column of the Documents editor: which file (or slide) is selected, the agent task working on it, and tabs for its comments, activity and details, with the run's actions pinned at the foot. | `layout-workbench` |  |
-| `WorkspaceRail` | `@connorhoehnslalom/ui-components` | Shared document/chat rail: fixed header and footer, one scrollable body. |  |  |
+| `Workbench` | `@connorhoehnslalom/ui-components/shared` | The static right-hand column of the Documents editor: which file (or slide) is selected, the agent task working on it, and tabs for its comments, activity and details, with the run's actions pinned at the foot. | `layout-workbench` |  |
+| `WorkspaceRail` | `@connorhoehnslalom/ui-components/shared` | Shared document/chat rail: fixed header and footer, one scrollable body. |  |  |
 
 ## Page structure, sections & dividers
 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
+| `BigBrotherPanel` | `@connorhoehnslalom/ui-components/shared` | "Big Brother" monitoring dashboard panel — shows room stats, online users, and a real-time scrolling event feed for monitoring simulation runs. |  |  |
 | `Breadcrumbs` | `@connorhoehnslalom/ui-components/shared` | Accessible breadcrumb navigation. | `shared-breadcrumbs` |  |
 | `Card` | `@connorhoehnslalom/ui-components/shared` | Container component with border, radius, and background. |  |  |
 | `CardHeader` | `@connorhoehnslalom/ui-components/shared` | Reusable header bar for Card-style sections. | `shared-cardheader` |  |
 | `ChannelHeader` | `@connorhoehnslalom/ui-components/shared` | Header bar for a channel / DM / thread view. | `shared-channelheader` |  |
-| `ChecklistSection` | `@connorhoehnslalom/ui-components` | A work item's acceptance criteria: square checkbox rows with in-place edit, remove and reorder, and an "Add criterion" field at the foot. | `work-checklistsection` |  |
+| `ChecklistSection` | `@connorhoehnslalom/ui-components/shared` | A work item's acceptance criteria: square checkbox rows with in-place edit, remove and reorder, and an "Add criterion" field at the foot. | `work-checklistsection` |  |
 | `CollapsibleSection` | `@connorhoehnslalom/ui-components/shared` | Bordered accordion section with a header button and optional badge slot. | `shared-collapsiblesection` |  |
 | `ConfirmDialog` | `@connorhoehnslalom/ui-components/shared` | — | `shared-confirmdialog` |  |
 | `ConsultCard` | `@connorhoehnslalom/ui-components/shared` | An agent's question, waiting on a person. | `shared-consultcard` |  |
@@ -133,6 +134,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `Divider` | `@connorhoehnslalom/ui-components/shared` | A subtle horizontal rule that segments a column of content. |  |  |
 | `Drawer` | `@connorhoehnslalom/ui-components/shared` | Right-side slide-in panel, floating or docked. | `shared-drawer` |  |
 | `EditableHeading` | `@connorhoehnslalom/ui-components/shared` | A heading you can rename in place: the text with a pencil beside it; the pencil (or a click on the text) swaps in an input. | `shared-editableheading` |  |
+| `ErrorPanel` | `@connorhoehnslalom/ui-components/shared` | Always-visible dev tool component that accumulates and displays all gateway errors since page load. |  |  |
 | `ExpertCard` | `@connorhoehnslalom/ui-components/shared` | A person offered as help, with the evidence for why. | `shared-expertcard` |  |
 | `FilterPopover` | `@connorhoehnslalom/ui-components/shared` | A "Filter" button that opens a panel of the caller's filter controls, and says how many are active. | `shared-filterpopover` |  |
 | `FloatingPanel` | `@connorhoehnslalom/ui-components/shared` | A draggable floating surface for call-adjacent tools (chat first, but any tool that should hover next to the call widget). | `shared-floatingpanel` |  |
@@ -143,10 +145,10 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `InlinePopover` | `@connorhoehnslalom/ui-components/shared` | Lightweight anchored popover. | `shared-inlinepopover` |  |
 | `KeyValue` | `@connorhoehnslalom/ui-components/shared` | A short list of labelled facts: "Input 13 run notes / Output 4 patterns / Duration 2 min / Cost $0.0039" in a run inspector, "Model nova-pro" on an agent page. | `shared-keyvalue` |  |
 | `LayerStack` | `@connorhoehnslalom/ui-components/shared` | Alias kept for diagrams better described as a stack of horizontal layers. |  |  |
-| `LinkedItemsSection` | `@connorhoehnslalom/ui-components` | A work item's "Dependencies & decisions": the other documents it depends on or was decided by, each with that document's own current status. | `work-linkeditemssection` |  |
+| `LinkedItemsSection` | `@connorhoehnslalom/ui-components/shared` | A work item's "Dependencies & decisions": the other documents it depends on or was decided by, each with that document's own current status. | `work-linkeditemssection` |  |
 | `MetaLine` | `@connorhoehnslalom/ui-components/shared` | The dot-separated secondary line that sits under almost every title in this design language: "Observability Platform · 18 Aug → 1 Sept · 3 days left". |  |  |
 | `Modal` | `@connorhoehnslalom/ui-components/shared` | Reusable modal shell. | `shared-modal` |  |
-| `OutcomeSection` | `@connorhoehnslalom/ui-components` | The "what does done look like" paragraph of a work item, editable in place. | `work-outcomesection` |  |
+| `OutcomeSection` | `@connorhoehnslalom/ui-components/shared` | The "what does done look like" paragraph of a work item, editable in place. | `work-outcomesection` |  |
 | `PageHeader` | `@connorhoehnslalom/ui-components/shared` | Page-level title + description + actions header. | `shared-pageheader` |  |
 | `PageSection` | `@connorhoehnslalom/ui-components/shared` | Page-level section with title, optional description, and header actions. | `ui-pagesection` |  |
 | `PermissionDeniedCard` | `@connorhoehnslalom/ui-components/shared` | — | `shared-permissiondeniedcard` |  |
@@ -154,15 +156,15 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `PickerDialog` | `@connorhoehnslalom/ui-components/shared` | "choose one of these" in a dialog: a folder to move into, a workflow to run, a template to start from. |  |  |
 | `ProjectCard` | `@connorhoehnslalom/ui-components/shared` | Card surface for a project summary. | `shared-projectcard` |  |
 | `RailSection` | `@connorhoehnslalom/ui-components/shared` | One titled block in the rail. | `shared-railsection` |  |
-| `RecordGraphCard` | `@connorhoehnslalom/ui-components` | A record graph as a card inside a chat / answer view: a one-row summary ("Connections · 25 records · 31 connections" with the selection's marks) that expands inline to the full `RecordGraph`, and an "Open graph ↗" act… | `search-recordgraphcard` |  |
-| `RunDraftPanel` | `@connorhoehnslalom/ui-components` | The right-hand "Run draft" pane of the Documents four-pane view: pick a workflow, agent and model, see what similar runs cost and how long they took, set an enforced token budget, then Save and Dispatch. | `work-rundraftpanel` |  |
-| `ScopeHeader` | `@connorhoehnslalom/ui-components` | The band over a work surface's columns that says what they are all looking at: where it sits (a crumb trail), what it is (title + status), how it is going (a line of stats), who owns it (labelled avatar groups), and w… | `work-scopeheader` |  |
+| `RecordGraphCard` | `@connorhoehnslalom/ui-components/graph` | A record graph as a card inside a chat / answer view: a one-row summary ("Connections · 25 records · 31 connections" with the selection's marks) that expands inline to the full `RecordGraph`, and an "Open graph ↗" act… | `search-recordgraphcard` |  |
+| `RunDraftPanel` | `@connorhoehnslalom/ui-components/shared` | The right-hand "Run draft" pane of the Documents four-pane view: pick a workflow, agent and model, see what similar runs cost and how long they took, set an enforced token budget, then Save and Dispatch. | `work-rundraftpanel` |  |
+| `ScopeHeader` | `@connorhoehnslalom/ui-components/shared` | The band over a work surface's columns that says what they are all looking at: where it sits (a crumb trail), what it is (title + status), how it is going (a line of stats), who owns it (labelled avatar groups), and w… | `work-scopeheader` |  |
 | `SectionLabel` | `@connorhoehnslalom/ui-components/shared` | The tiny uppercase caption that titles a block INSIDE a panel. |  |  |
 | `SectionStack` | `@connorhoehnslalom/ui-components/shared` | The page's sections, one under the other, with a hairline between each. | `ui-sectionstack` |  |
 | `SelectableCard` | `@connorhoehnslalom/ui-components/shared` | A card that is also a radio: click it and it becomes the one selected tile in its grid, driving a detail panel elsewhere on the page. |  |  |
 | `SignoffPanel` | `@connorhoehnslalom/ui-components/shared` | Who has ratified a decision, and what it still needs. |  |  |
 | `SkeletonCard` | `@connorhoehnslalom/ui-components/shared` | Shimmer placeholder used while content loads. | `shared-skeletoncard` |  |
-| `SourceCard` | `@connorhoehnslalom/ui-components` | SourceCard / SourceList — the evidence behind a record: a Sources panel's run notes and clusters, a claim's supporting documents. | `work-sourcecard` |  |
+| `SourceCard` | `@connorhoehnslalom/ui-components/shared` | SourceCard / SourceList — the evidence behind a record: a Sources panel's run notes and clusters, a claim's supporting documents. | `work-sourcecard` |  |
 | `SourceSloPanel` | `@connorhoehnslalom/ui-components/ingest` | Per-source SLO panel — three sparklines (p95 latency, error rate %, queue depth) over a configurable window. | `ingest-sourceslopanel` |  |
 | `Stack` | `@connorhoehnslalom/ui-components/shared` | Vertical flex column with a scale gap. |  |  |
 | `StatCard` | `@connorhoehnslalom/ui-components/shared` | Metric display card. | `shared-statcard` |  |
@@ -181,7 +183,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
-| `ActionRowList` | `@connorhoehnslalom/ui-components` | A short ruled list of things to open next: "Plan next" on an initiative's overview — a title, a one-line description, "Layla Hassan · 5 points" at the right and a chevron, three rows, then "See all 11 work items →". | `work-actionrowlist` |  |
+| `ActionRowList` | `@connorhoehnslalom/ui-components/shared` | A short ruled list of things to open next: "Plan next" on an initiative's overview — a title, a one-line description, "Layla Hassan · 5 points" at the right and a chevron, three rows, then "See all 11 work items →". | `work-actionrowlist` |  |
 | `BoardColumn` | `@connorhoehnslalom/ui-components/shared` | One lane of a kanban/status board: a caption, the count in that lane, and the cards stacked under it. |  |  |
 | `CatalogGrid` | `@connorhoehnslalom/ui-components/shared` | Thin grid wrapper for <ThumbnailCard>-based catalog pages. | `shared-cataloggrid` |  |
 | `ChoiceList` | `@connorhoehnslalom/ui-components/shared` | The list. |  |  |
@@ -191,7 +193,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DataTable` | `@connorhoehnslalom/ui-components/shared` | Generic admin-grade data table: sort, filter, pagination, row actions, loading + empty states. | `shared-datatable` |  |
 | `DocumentResultList` | `@connorhoehnslalom/ui-components/shared` | A Documents page's search results: one row per document with its kind mark, bold title, a one-line summary and a folder · age meta line; an Add / Added toggle and a ⋯ menu at the right. | `shared-documentresultlist` |  |
 | `EntityTable` | `@connorhoehnslalom/ui-components/identity` | Identity's table facade. | `identity-shared-entitytable` |  |
-| `EstimateRow` | `@connorhoehnslalom/ui-components` | One "label · value" row of a run draft's estimate (cost or duration), plus the pure formatters behind it. | `work-estimaterow` |  |
+| `EstimateRow` | `@connorhoehnslalom/ui-components/shared` | One "label · value" row of a run draft's estimate (cost or duration), plus the pure formatters behind it. | `work-estimaterow` |  |
 | `EventRow` | `@connorhoehnslalom/ui-components/shared` | Stub. | `shared-eventrow` |  |
 | `FormRow` | `@connorhoehnslalom/ui-components/shared` | Two or three fields side by side, stacking on a narrow container. |  |  |
 | `GroupedList` | `@connorhoehnslalom/ui-components/shared` | A flat directory of two-line rows under collapsible group headers. | `shared-groupedlist` |  |
@@ -201,7 +203,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `RailNavList` | `@connorhoehnslalom/ui-components/shared` | A short list of scopes at the top of a rail: "All initiatives / My initiatives / Sprints". |  |  |
 | `RecordResultList` | `@connorhoehnslalom/ui-components` | A search workspace's Results tab: typed org records (people, initiatives, work, decisions, knowledge, agent-library assets) grouped by type, each group headed "People 3" with a trailing "See all N →" when the host hol… | `search-recordresultlist` |  |
 | `RovingToolbar` | `@connorhoehnslalom/ui-components/shared` | A group of related controls that costs ONE tab stop. |  |  |
-| `SourceList` | `@connorhoehnslalom/ui-components` | — |  |  |
+| `SourceList` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
 | `SuggestionRow` | `@connorhoehnslalom/ui-components/shared` | One option in an inline autocomplete list: a primary line and a muted second line, as a full-width row. | `shared-suggestionrow` |  |
 | `Table` | `@connorhoehnslalom/ui-components/shared` | Base table primitives for consistent data tables across the app. | `ui-table` |  |
 | `TableBody` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
@@ -211,7 +213,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `TableTh` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
 | `Toolbar` | `@connorhoehnslalom/ui-components/shared` | The chrome-level action row that sits above content. | `shared-toolbar` |  |
 | `TreeView` | `@connorhoehnslalom/ui-components/shared` | Nested rows built from a flat `{id, title, parentId}` list, the shape a knowledge/document explorer's sidebar actually has on the wire (parent_id pointers, not a pre-nested tree). | `shared-treeview` |  |
-| `WorkListToolbar` | `@connorhoehnslalom/ui-components` | Search on its own row; sort and the filter button on the next. |  |  |
+| `WorkListToolbar` | `@connorhoehnslalom/ui-components/shared` | Search on its own row; sort and the filter button on the next. |  |  |
 
 ## Forms
 
@@ -245,7 +247,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `Textarea` | `@connorhoehnslalom/ui-components/shared` | Generic textarea primitive. | `forms-textarea` |  |
 | `UserPicker` | `@connorhoehnslalom/ui-components/shared` | Multi-select user picker. | `shared-userpicker` |  |
 | `Wizard` | `@connorhoehnslalom/ui-components/shared` | A numbered step rail beside a content pane, with a Back/Next/ Finish footer. | `shared-wizard` |  |
-| `WorkSearchPicker` | `@connorhoehnslalom/ui-components` | — |  |  |
+| `WorkSearchPicker` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
 | `WrappedFileUploadDrop` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | FileUploadDrop wired directly to a useFileUpload() hook return from realtime-modules. | `integrations-wrappedfileuploaddrop` |  |
 
 ## Buttons & actions
@@ -272,7 +274,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
-| `AccessNotice` | `@connorhoehnslalom/ui-components` | A quiet row explaining why the viewer cannot do something here, with an optional way to fix it ("Edit access required · Request access →"). | `work-accessnotice` |  |
+| `AccessNotice` | `@connorhoehnslalom/ui-components/shared` | A quiet row explaining why the viewer cannot do something here, with an optional way to fix it ("Edit access required · Request access →"). | `work-accessnotice` |  |
 | `Badge` | `@connorhoehnslalom/ui-components/shared` | Small visual indicator. | `shared-badge` |  |
 | `Banner` | `@connorhoehnslalom/ui-components/shared` | — | `shared-banner` |  |
 | `CapabilityBoundary` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | Conditional render boundary based on a useCapability() hook return from realtime-modules. | `integrations-capabilityboundary` |  |
@@ -281,7 +283,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ConnectionPill` | `@connorhoehnslalom/ui-components/shared` | Canonical connection-status pill. | `shared-connectionpill` |  |
 | `DotMeter` | `@connorhoehnslalom/ui-components/shared` | A discrete progress meter drawn as filled and hollow dots. | `shared-dotmeter` |  |
 | `EmptyState` | `@connorhoehnslalom/ui-components/shared` | Centered empty-state card. | `shared-emptystate` |  |
-| `ErrorBoundary` | `@connorhoehnslalom/ui-components` | Reusable React error boundary that catches render errors in children, logs them, and displays a user-friendly fallback UI with a retry button. |  |  |
+| `ErrorBoundary` | `@connorhoehnslalom/ui-components/shared` | Reusable React error boundary that catches render errors in children, logs them, and displays a user-friendly fallback UI with a retry button. |  |  |
 | `ErrorState` | `@connorhoehnslalom/ui-components/shared` | Centered error-state card — companion to EmptyState. | `shared-errorstate` |  |
 | `FollowBanner` | `@connorhoehnslalom/ui-components/shared` | "Following <name>", and the way out. | `shared-followbanner` |  |
 | `InlineAlert` | `@connorhoehnslalom/ui-components/shared` | Compact contextual message (error/success/info/warning). | `shared-inlinealert` |  |
@@ -335,7 +337,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ChatSidePanelFrame` | `@connorhoehnslalom/ui-components/social` | The chrome around anything open beside a conversation: one header row with the title on the left and the way out on the right, and a body that fills the rest and scrolls on its own. |  |  |
 | `ChatSidePanelProvider` | `@connorhoehnslalom/ui-components/social` | — |  |  |
 | `CommandSuggestions` | `@connorhoehnslalom/ui-components/social/rich-composer` | The `/` menu, and the argument menu that follows it. |  |  |
-| `CommentList` | `@connorhoehnslalom/ui-components` | A compact, read-only preview of discussion on a work item ("Planning notes"): avatar, "Name · role · 2d ago", then the text. | `work-commentlist` |  |
+| `CommentList` | `@connorhoehnslalom/ui-components/shared` | A compact, read-only preview of discussion on a work item ("Planning notes"): avatar, "Name · role · 2d ago", then the text. | `work-commentlist` |  |
 | `CommentThread` | `@connorhoehnslalom/ui-components/social` | Inline comment thread for a single post. (also exported as `CommentThreadPanel` from `@connorhoehnslalom/ui-components`) |  |  |
 | `ComposerAttachments` | `@connorhoehnslalom/ui-components/social/rich-composer` | Files staged in the composer, before they are sent. |  |  |
 | `ComposerConfirmFlow` | `@connorhoehnslalom/ui-components/social/rich-composer` | ComposerConfirmFlow (2.482.0) — draft → review → done, all inside the one response box. | `social-composerconfirmflow` |  |
@@ -360,8 +362,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `EmojiSuggestions` | `@connorhoehnslalom/ui-components/social/rich-composer` | The `:` autocomplete menu. |  |  |
 | `FeedRow` | `@connorhoehnslalom/ui-components/social` | One entry in a list of things that happened. |  |  |
 | `GroupPanel` | `@connorhoehnslalom/ui-components/social` | Group management panel. |  |  |
-| `InboxSection` | `@connorhoehnslalom/ui-components` | One lane of a queue page: a titled list group that carries its own count, and says so properly when it is empty. |  |  |
-| `InboxSectionRow` | `@connorhoehnslalom/ui-components` | One row of an `InboxSection`. |  |  |
+| `InboxSection` | `@connorhoehnslalom/ui-components/shared` | One lane of a queue page: a titled list group that carries its own count, and says so properly when it is empty. |  |  |
+| `InboxSectionRow` | `@connorhoehnslalom/ui-components/shared` | One row of an `InboxSection`. |  |  |
 | `InlineMessageEditor` | `@connorhoehnslalom/ui-components/social` | A message's text, editable where it sits. |  |  |
 | `LinkDialog` | `@connorhoehnslalom/ui-components/social` | Paste a URL, name the text, get a link. |  |  |
 | `MeetingChatContext` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | — |  |  |
@@ -402,7 +404,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ThreadInputHandoff` | `@connorhoehnslalom/ui-components/social/rich-composer` | Where a thread's own input would be when a composer elsewhere on the page owns it: one button naming that composer, which puts the caret there. |  |  |
 | `TransferBubble` | `@connorhoehnslalom/ui-components/social` | — |  |  |
 | `TypingIndicator` | `@connorhoehnslalom/ui-components/shared` | Animated "X is typing…" banner. | `shared-typingindicator` |  |
-| `WorkActivityList` | `@connorhoehnslalom/ui-components` | A work item's history, newest first: status changes, agent runs, estimates and comments, each one line with who, what and when. | `work-workactivitylist` |  |
+| `WorkActivityList` | `@connorhoehnslalom/ui-components/shared` | A work item's history, newest first: status changes, agent runs, estimates and comments, each one line with who, what and when. | `work-workactivitylist` |  |
 | `WrappedActivityPanel` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | ActivityFeed wired directly to a useActivity() hook return from realtime-modules. | `integrations-wrappedactivitypanel` |  |
 | `WrappedChatPanel` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | ChatPanel wired directly to a useChat() hook return from realtime-modules. | `integrations-wrappedchatpanel` |  |
 | `WrappedNotificationBell` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | NotificationBell wired directly to a useNotifications() hook return from realtime-modules. |  |  |
@@ -414,7 +416,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
-| `ActiveCallBanner` | `@connorhoehnslalom/ui-components` | "there's a live call in this lobby, want to join?" |  |  |
+| `ActiveCallBanner` | `@connorhoehnslalom/ui-components/shared` | "there's a live call in this lobby, want to join?" |  |  |
 | `AudioLevelMeter` | `@connorhoehnslalom/ui-components/video` | A microphone's live input level as a row of bar segments — the "Input level ▮▮▮▮▮▮▯▯▯▯" in call settings. |  |  |
 | `AudioPlayer` | `@connorhoehnslalom/ui-components/video` | A voice message with the library's controls, not the browser's. |  |  |
 | `AudioVideoSettingsForm` | `@connorhoehnslalom/ui-components/video` | The "Audio & video" tab of call settings: microphone (with a live input level, Test mic and noise reduction), speakers (with volume and Test sound), camera (with a mirrored preview), quality, an Advanced disclosure an… |  |  |
@@ -430,7 +432,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `CallNoticePill` | `@connorhoehnslalom/ui-components/video` | Something the person on a call must know, said in one line. |  |  |
 | `CallParticipantStrip` | `@connorhoehnslalom/ui-components/video` | Compact avatar strip rendering the people currently in a call. | `video-callparticipantstrip` |  |
 | `CallPeopleList` | `@connorhoehnslalom/ui-components/video` | Everyone on (or rung for) a call, one 64px row each: avatar with presence, name, one sub-status, their mic state and a ⋯ menu. |  |  |
-| `CallPresenceIndicator` | `@connorhoehnslalom/ui-components` | "who's on the call right now", for the app shell. |  |  |
+| `CallPresenceIndicator` | `@connorhoehnslalom/ui-components/shared` | "who's on the call right now", for the app shell. |  |  |
 | `CallSettingsDialog` | `@connorhoehnslalom/ui-components/video` | Centered in-call settings modal with a split layout: live self-preview on the left, a tabbed panel ("Effects" / "People") on the right. | `video-callsettingsdialog` |  |
 | `CallSettingsDrawer` | `@connorhoehnslalom/ui-components/video` | "Call settings": a docked, non-modal drawer in the page's right column with three tabs — Audio & video, Effects, Captions. | `video-document-calls-callsettingsdrawer` |  |
 | `CallSidePanel` | `@connorhoehnslalom/ui-components/video` | The in-call side-panel DOCK. | `video-callsidepanel` |  |
@@ -458,8 +460,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `HuddleBar` | `@connorhoehnslalom/ui-components/video` | The whole call in one horizontal row, for a shell's footer. | `video-huddlebar` |  |
 | `IncomingCallPopover` | `@connorhoehnslalom/ui-components/video` | A document-review call ringing you, anchored under the toolbar's Call button (not a toast, not a modal): who is calling, the call's title, the documents it is about, who is already in it, the mic/camera you will join… | `video-document-calls-incomingcallpopover` |  |
 | `IncomingCallToast` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | "<caller> is calling" with Decline / Accept, pinned to a viewport corner on every page of an app shell — the ring from realtime-modules' `useIncomingConversationCalls()`: |  |  |
-| `InviteCandidateList` | `@connorhoehnslalom/ui-components` | The candidate picker + confirm button extracted from InviteToCallDialog so "add people to this call" can render inside other surfaces (CallSettingsDialog's People tab, side panels) without dragging the modal shell along. | `hangout-invitecandidatelist` |  |
-| `InviteToCallDialog` | `@connorhoehnslalom/ui-components` | "add people" for a call that is ALREADY running. |  |  |
+| `InviteCandidateList` | `@connorhoehnslalom/ui-components/shared` | The candidate picker + confirm button extracted from InviteToCallDialog so "add people to this call" can render inside other surfaces (CallSettingsDialog's People tab, side panels) without dragging the modal shell along. | `hangout-invitecandidatelist` |  |
+| `InviteToCallDialog` | `@connorhoehnslalom/ui-components/shared` | "add people" for a call that is ALREADY running. |  |  |
 | `LogStream` | `@connorhoehnslalom/ui-components/shared` | Monospace terminal-style log panel. | `shared-logstream` |  |
 | `MediaCollectionCard` | `@connorhoehnslalom/ui-components/shared` | One episode/collection, with its real preview versions inside a bounded carousel. | `shared-mediacollectioncard` |  |
 | `MediaControlsBar` | `@connorhoehnslalom/ui-components/video` | Bottom control bar for an active hangout call. | `video-mediacontrolsbar` |  |
@@ -487,7 +489,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `RecordingPlayer` | `@connorhoehnslalom/ui-components/video` | Playback shell for recordings, HLS or progressive. |  |  |
 | `RecordingRow` | `@connorhoehnslalom/ui-components/video` | Single recording card. | `video-recordingrow` |  |
 | `RemoteTileSlot` | `@connorhoehnslalom/ui-components/video` | Per-remote tile that adaptively renders a live <video> or an Avatar placeholder based on the stream's video-track state. |  |  |
-| `ResumeCallDialog` | `@connorhoehnslalom/ui-components` | "you were in a call, want to rejoin?" prompt. | `hangout-resumecalldialog` |  |
+| `ResumeCallDialog` | `@connorhoehnslalom/ui-components/shared` | "you were in a call, want to rejoin?" prompt. | `hangout-resumecalldialog` |  |
 | `ReviewDocumentList` | `@connorhoehnslalom/ui-components/video` | The documents a call is about. |  |  |
 | `RosterPanel` | `@connorhoehnslalom/ui-components/video` | Collapsible roster shown alongside HangoutLayout when N≥5. | `video-rosterpanel` |  |
 | `StartCallDrawer` | `@connorhoehnslalom/ui-components/video` | "Start a call" from a document: a docked, non-modal drawer in the page's right column (the editor beside it keeps taking input). | `video-document-calls-startcalldrawer` |  |
@@ -537,9 +539,9 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `CanvasLineSpacing` | `@connorhoehnslalom/ui-components/doc-editor` | — |  |  |
 | `CanvasListStyle` | `@connorhoehnslalom/ui-components/doc-editor` | — |  |  |
 | `ChangeDiff` | `@connorhoehnslalom/ui-components/shared` | WHAT happened to the text at that location: the before and the after. |  |  |
-| `ChangeLocation` | `@connorhoehnslalom/ui-components` | WHERE in the document a change lands. |  |  |
-| `ChangeReviewCard` | `@connorhoehnslalom/ui-components` | One proposed change to a document, in the shape a reviewer actually reads it. |  |  |
-| `ChangeReviewList` | `@connorhoehnslalom/ui-components` | The document-level frame around a queue of changes. | `change-review-changereviewlist` |  |
+| `ChangeLocation` | `@connorhoehnslalom/ui-components/shared` | WHERE in the document a change lands. |  |  |
+| `ChangeReviewCard` | `@connorhoehnslalom/ui-components/shared` | One proposed change to a document, in the shape a reviewer actually reads it. |  |  |
+| `ChangeReviewList` | `@connorhoehnslalom/ui-components/shared` | The document-level frame around a queue of changes. | `change-review-changereviewlist` |  |
 | `ChecklistEditorRenderer` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `ChecklistReaderRenderer` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `ChunkViewer` | `@connorhoehnslalom/ui-components/doc-editor` | Renders a single section chunk for ack-mode review. |  |  |
@@ -652,7 +654,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `TextEditorRenderer` | `@connorhoehnslalom/ui-components` | Editor-mode renderer for sectionType='text'. |  |  |
 | `TextReaderRenderer` | `@connorhoehnslalom/ui-components` | Reader-mode renderer for sectionType='text'. |  |  |
 | `TiptapEditor` | `@connorhoehnslalom/ui-components/doc-editor` | Reusable Tiptap editor with Y.js collaboration and custom cursor overlay. |  |  |
-| `VerdictChip` | `@connorhoehnslalom/ui-components` | The agent's verdict on one change: a chip, a one-line headline, and the reasoning behind it folded away until asked for. |  |  |
+| `VerdictChip` | `@connorhoehnslalom/ui-components/shared` | The agent's verdict on one change: a chip, a one-line headline, and the reasoning behind it folded away until asked for. |  |  |
 | `VersionHistoryPanel` | `@connorhoehnslalom/ui-components/doc-editor` | Slide-out sidebar for browsing and comparing document versions (view-only). |  |  |
 | `VideoCallPanel` | `@connorhoehnslalom/ui-components/doc-editor` | Side panel for video calling within the document editor. |  |  |
 | `VideoDockSlot` | `@connorhoehnslalom/ui-components/doc-editor` | The place a call's video LANDS when you pull it into a document — the gutter's video slot, as opposed to a widget floating over the page. | `doc-editor-videodockslot` |  |
@@ -914,7 +916,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
 | `AccentStripe` | `@connorhoehnslalom/ui-components/shared` | The full-height coloured edge of a card (`<Card className="flex overflow-hidden">`). |  |  |
-| `ActionRowPerson` | `@connorhoehnslalom/ui-components` | The person cell of an `ActionRowList` column — a 28px avatar then the name, truncating inside the column's width. |  |  |
+| `ActionRowPerson` | `@connorhoehnslalom/ui-components/shared` | The person cell of an `ActionRowList` column — a 28px avatar then the name, truncating inside the column's width. |  |  |
 | `ArtifactTile` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
 | `AssetGallery` | `@connorhoehnslalom/ui-components/shared` | Borderless collection: fixed thumbnail ratio, concise captions, shared Avatar identity. | `shared-assetgallery` |  |
 | `CanvasDocumentPane` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | The shared canvas-document assembly bound to the canonical `@connorhoehn/realtime-modules` hooks. |  |  |
@@ -931,18 +933,22 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DecisionPath` | `@connorhoehnslalom/ui-components/shared` | DecisionPath (2.482.0) — the hairline path a multi-stage answer walks inside one response box: `Choose → Draft request → Confirm → Done`, completed steps ticked, the current step emphasised, an alternate branch (`Choo… | `shared-decisionpath` |  |
 | `DensityProvider` | `@connorhoehnslalom/ui-components/shared` | Sets the density for everything under it. |  |  |
 | `DiffViewer` | `@connorhoehnslalom/ui-components/shared` | A unified git diff, rendered for review. | `shared-diffviewer` |  |
+| `DisconnectReconnect` | `@connorhoehnslalom/ui-components/shared` | Developer control: drop and restore the WebSocket connection with a single click so the reconnection flow can be observed without touching the terminal. |  |  |
 | `DockedPanelProvider` | `@connorhoehnslalom/ui-components/shared` | Wraps a dock's body slot. |  |  |
 | `DocTypeProposalsPage` | `@connorhoehnslalom/ui-components/ingest` | Operator promotion queue for auto-discovered DocType proposals. | `ingest-doctypeproposalspage` |  |
 | `EntityCell` | `@connorhoehnslalom/ui-components/shared` | — | `shared-entitycell` |  |
+| `ErrorDisplay` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
+| `EventLog` | `@connorhoehnslalom/ui-components/shared` | Dev tool component that renders a timestamped, scrollable list of WebSocket messages sent and received. |  |  |
 | `FileKindMark` | `@connorhoehnslalom/ui-components/shared` | The small square glyph that says what KIND of file a row is: a page, a presentation, a recording, a transcript, a diagram, a folder. | `shared-filekindmark` |  |
-| `GenerativeImagePreview` | `@connorhoehnslalom/ui-components` | "Image synthesizing" visual for generative pipeline nodes (NODE-VISUALS-AUDIT §3.2). | `image-generativeimagepreview` |  |
+| `GenerativeImagePreview` | `@connorhoehnslalom/ui-components/shared` | "Image synthesizing" visual for generative pipeline nodes (NODE-VISUALS-AUDIT §3.2). | `image-generativeimagepreview` |  |
 | `HeaderDescriptionInfo` | `@connorhoehnslalom/ui-components/shared` | Compact density's home for the description: an info glyph after the title opening the library `HoverCard` — hover or keyboard focus shows it, Enter pins it, Escape closes it, focus never leaves the glyph. |  |  |
 | `HeaderPeople` | `@connorhoehnslalom/ui-components/shared` | The people in a header. |  |  |
 | `HeaderTrailFold` | `@connorhoehnslalom/ui-components/shared` | The collapsed header: one trail row, the title as its last crumb, then the badge and the expand chevron; actions on the right. |  |  |
 | `Highlight` | `@connorhoehnslalom/ui-components/shared` | Marks the matched search terms inside a run of text. | `shared-highlight` |  |
 | `IdentityProvider` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `ImageLightbox` | `@connorhoehnslalom/ui-components/shared` | Full-screen image overlay primitive. | `shared-imagelightbox` |  |
-| `ImageThumbnail` | `@connorhoehnslalom/ui-components` | Square / aspect-ratio image preview with skeleton loading state and a graceful error fallback. | `image-imagethumbnail` |  |
+| `ImageThumbnail` | `@connorhoehnslalom/ui-components/shared` | Square / aspect-ratio image preview with skeleton loading state and a graceful error fallback. | `image-imagethumbnail` |  |
+| `ImageUploader` | `@connorhoehnslalom/ui-components/shared` | Composes FileUploadDrop + ImageThumbnail + the host's uploadImage service into a single self-contained image picker. | `image-imageuploader` |  |
 | `IngestAuditPage` | `@connorhoehnslalom/ui-components/ingest` | Operator audit-log viewer. | `ingest-ingestauditpage` |  |
 | `IngestDashboard` | `@connorhoehnslalom/ui-components/ingest` | Overview dashboard for the ingest subsystem. | `ingest-ingestdashboard` |  |
 | `IngestItemsPage` | `@connorhoehnslalom/ui-components/ingest` | Table of ingest items flowing through the pipeline, with source and status filters, action buttons (retry/skip), and color-coded status badges. | `ingest-ingestitemspage` |  |
@@ -950,8 +956,9 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `LiveRegion` | `@connorhoehnslalom/ui-components/shared` | A screen-reader-only ARIA live region with a rate limiter. |  |  |
 | `MappingReviewPage` | `@connorhoehnslalom/ui-components/ingest` | Operator queue for ingest items the LLM mapper produced low-confidence type matches for. | `ingest-mappingreviewpage` |  |
 | `MarkdownView` | `@connorhoehnslalom/ui-components/shared` | Read-only markdown rendered on the library's own tokens. | `shared-markdownview` |  |
+| `PanelsView` | `@connorhoehnslalom/ui-components/shared` | Lazy-loadable view for the "Previews" tab — Chat, Cursors, Reactions, Shared Document, and Activity panels. |  |  |
 | `ParticlesBackground` | `@connorhoehnslalom/ui-components/shared` | Renders `children` over a drifting point cloud while `active`. |  |  |
-| `ProcedureSteps` | `@connorhoehnslalom/ui-components` | A procedure's ordered steps, drawn once: in a guide's body ("What to do: 1 Rerun the failing test…") and, with outcomes, in its Runs tab ("✓ 1 Keep the SAML shim / ✓ 2 Confirm sessions / ! | `work-proceduresteps` |  |
+| `ProcedureSteps` | `@connorhoehnslalom/ui-components/shared` | A procedure's ordered steps, drawn once: in a guide's body ("What to do: 1 Rerun the failing test…") and, with outcomes, in its Runs tab ("✓ 1 Keep the SAML shim / ✓ 2 Confirm sessions / ! | `work-proceduresteps` |  |
 | `Prose` | `@connorhoehnslalom/ui-components/shared` | Styles bare semantic markup — h1-h4, p, ul/ol/li, code, pre, a, blockquote — with the design tokens, for content that arrives as plain HTML-shaped JSX rather than pre-styled components: inline docs/help copy, a markdo… | `shared-prose` |  |
 | `RailBandProvider` | `@connorhoehnslalom/ui-components/shared` | The band every `useRailFold` under it remembers its fold in (the host computes it once from `railDepth`). |  |  |
 | `RealtimeCapabilityProvider` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | — |  |  |
@@ -964,6 +971,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `SourceDetailPage` | `@connorhoehnslalom/ui-components/ingest` | Detail page for a single ingest source. | `ingest-sourcedetailpage` |  |
 | `SourcesPage` | `@connorhoehnslalom/ui-components/ingest` | Table of all ingest sources with columns for name, type, status, last sync, files synced, and row actions (Sync Now, Pause/Resume, Delete). | `ingest-sourcespage` |  |
 | `SyncMonitorPage` | `@connorhoehnslalom/ui-components/ingest` | Real-time sync monitor page for the ingest subsystem. | `ingest-syncmonitorpage` |  |
+| `TabbedEventLog` | `@connorhoehnslalom/ui-components/shared` | Dev tool component that separates real-time WebSocket events by service type (Chat, Presence, Cursors, Reactions, System), allowing developers to inspect each service's traffic independently without noise from other s… |  |  |
 | `TaskComposer` | `@connorhoehnslalom/ui-components/shared` | A title, a prompt, and somewhere to start. | `shared-taskcomposer` |  |
 | `TaskStrip` | `@connorhoehnslalom/ui-components/shared` | One 30px line above a composer that says what the agent is doing right now: "Creating release-readiness deck · Editing slide 4". | `shared-taskstrip` |  |
 | `TechnicalDetails` | `@connorhoehnslalom/ui-components/shared` | A disclosure for the raw internal text behind a human-readable failure message. |  |  |
@@ -978,10 +986,10 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `VisuallyHidden` | `@connorhoehnslalom/ui-components/shared` | Renders `children` for screen readers only. |  |  |
 | `WebSocketProvider` | `@connorhoehnslalom/ui-components` | — |  |  |
 | `WorkflowStepper` | `@connorhoehnslalom/ui-components/shared` | A horizontal strip of named steps: done (check), active (filled dot), todo (outline), joined by connector lines that fill in as the workflow advances. | `shared-workflowstepper` |  |
-| `WorkItemMetaBar` | `@connorhoehnslalom/ui-components` | The one-line row under a work item's title: "● Open ▾ \| 5 points \| (LH) Layla Hassan \| Priority: High ▾". | `work-workitemmetabar` |  |
-| `WorkListFilters` | `@connorhoehnslalom/ui-components` | The filter panel body for `facets`. |  |  |
-| `WorkListView` | `@connorhoehnslalom/ui-components` | The Work column of a planning scope ("Work 11", search, sort and filter, then "Next up 4 / In progress 2 / In review 1 / Done 4"). | `work-worklistview` |  |
-| `WorkTableView` | `@connorhoehnslalom/ui-components` | Full-width sibling of WorkListView. | `work-worktableview` |  |
+| `WorkItemMetaBar` | `@connorhoehnslalom/ui-components/shared` | The one-line row under a work item's title: "● Open ▾ \| 5 points \| (LH) Layla Hassan \| Priority: High ▾". | `work-workitemmetabar` |  |
+| `WorkListFilters` | `@connorhoehnslalom/ui-components/shared` | The filter panel body for `facets`. |  |  |
+| `WorkListView` | `@connorhoehnslalom/ui-components/shared` | The Work column of a planning scope ("Work 11", search, sort and filter, then "Next up 4 / In progress 2 / In review 1 / Done 4"). | `work-worklistview` |  |
+| `WorkTableView` | `@connorhoehnslalom/ui-components/shared` | Full-width sibling of WorkListView. | `work-worktableview` |  |
 | `WrappedCanvasDocument` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | CanvasDocumentView wired to a useCanvasDocument() return from realtime-modules. |  |  |
 | `WrappedConversationSurface` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | ConversationSurface bound to realtime-modules: drop it in, hand it the hook returns, and you have a conversation. |  |  |
 | `WrappedCursorOverlay` | `@connorhoehnslalom/ui-components/integrations/realtime-modules` | CursorOverlay wired to a useCursor(channel) hook return from realtime-modules (the hook is singular there; `RMUseCursorReturn` mirrors it). |  |  |
