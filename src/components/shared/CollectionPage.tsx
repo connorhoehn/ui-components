@@ -1,7 +1,7 @@
 import { isValidElement, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { type PageHeaderProps } from './PageHeader';
-import { CollectionToolbar, type CollectionToolbarProps } from './CollectionToolbar';
+import { CollectionToolbar, collectionToolbarFitsHeader, type CollectionToolbarProps } from './CollectionToolbar';
 import { DataTable, type DataTableProps } from './DataTable';
 import EmptyState from './EmptyState';
 import ErrorState from './ErrorState';
@@ -27,6 +27,15 @@ export interface CollectionPageProps<T = unknown> extends Omit<HTMLAttributes<HT
   description?: string;
   headerActions?: ReactNode;
   toolbar?: CollectionToolbarProps;
+  /**
+   * Where the toolbar draws (since 2.503.0). `auto` (default) puts its
+   * search, filters and count in the header's actions row — before
+   * `headerActions` — whenever nothing in it needs a full row (no active
+   * `selection` prop, no `children`), so a collection page has no separate
+   * search band. `band` keeps the toolbar's own row under the header;
+   * `header` forces the header row.
+   */
+  toolbarPlacement?: 'auto' | 'header' | 'band';
   /** Any body. Optional since the template gained `table`; one of the two is expected. */
   children?: ReactNode;
   back?: PageHeaderProps['back'];
@@ -83,10 +92,14 @@ function isEmptySpec(value: unknown): value is CollectionEmpty {
  *   detail={selected ? { title: selected.name, onClose: () => setSelected(null), content: <ConnectorSummary c={selected} /> } : null} />
  */
 export function CollectionPage<T>({
-  title, description, headerActions, toolbar, back, children, breadcrumbs, badge, density, titleAs,
+  title, description, headerActions, toolbar, toolbarPlacement = 'auto', back, children, breadcrumbs, badge, density, titleAs,
   table, loading = false, error, onRetry, empty, isEmpty, detail, gutter = 'none', className, ...rest
 }: CollectionPageProps<T>) {
   const hosted = useHasSidePaneHost();
+  const inHeader = !!toolbar && (toolbarPlacement === 'header' || (toolbarPlacement === 'auto' && collectionToolbarFitsHeader(toolbar)));
+  const actions = inHeader
+    ? <><CollectionToolbar {...toolbar} placement="header" />{headerActions}</>
+    : headerActions;
   const rows = table ? table.data.length : null;
   const showEmpty = !loading && error == null && (table ? rows === 0 : !!isEmpty) && empty != null;
 
@@ -115,9 +128,9 @@ export function CollectionPage<T>({
       data-page-column=""
       {...rest}
     >
-      <TemplateHeader title={title} gutter={gutter} actions={headerActions} density={density ?? 'compact'} {...(titleAs ? { titleAs } : {})}
+      <TemplateHeader title={title} gutter={gutter} actions={actions} density={density ?? 'compact'} {...(titleAs ? { titleAs } : {})}
         {...(description ? { description } : {})} {...(back ? { back } : {})} {...(breadcrumbs ? { breadcrumbs } : {})} {...(badge != null ? { badge } : {})} />
-      {toolbar && (gutter === 'page'
+      {toolbar && !inHeader && (gutter === 'page'
         ? <div className="shrink-0 min-w-0 px-[var(--ui-page-gutter,1.5rem)]"><CollectionToolbar {...toolbar} /></div>
         : <CollectionToolbar {...toolbar} />)}
       <div className={scrollBodyClass(gutter)} data-collection-body="" data-state={error != null && error !== false ? 'error' : showEmpty ? 'empty' : loading ? 'loading' : 'ready'}>

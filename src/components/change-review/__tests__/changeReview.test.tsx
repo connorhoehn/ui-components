@@ -380,6 +380,13 @@ describe('ChangeReviewList', () => {
     expect(screen.queryByTestId('change-review-list-more')).toBeNull();
   });
 
+  it('offers no batch control and no count with zero changes — the empty state replaces them', () => {
+    render(<ChangeReviewList documentTitle="Acme MSA" emptyState={<p>All clear</p>}>{[]}</ChangeReviewList>);
+    expect(screen.queryByTestId('change-review-list-more')).toBeNull();
+    expect(screen.queryByTestId('change-review-list-count')).toBeNull();
+    expect(screen.getByText('All clear')).toBeInTheDocument();
+  });
+
   it('offers no batch control when everything already fits', () => {
     list({}, 2);
     expect(screen.queryByTestId('change-review-list-more')).toBeNull();
@@ -403,7 +410,8 @@ describe('ChangeReviewList', () => {
       </ChangeReviewList>,
     );
     expect(screen.getByText('All clear')).toBeInTheDocument();
-    expect(screen.getByTestId('change-review-list-count')).toHaveTextContent('No changes to review');
+    // No count line above an empty state (2.503.0): the empty state says it.
+    expect(screen.queryByTestId('change-review-list-count')).not.toBeInTheDocument();
   });
 
   it('puts notices above the queue', () => {

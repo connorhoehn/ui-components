@@ -24,7 +24,8 @@ export interface PageSectionProps {
   empty?: ReactNode;
   /**
    * A count beside the title in a neutral chip — "Needs attention 1". Absent
-   * draws none; zero shows "0" (an empty section is a fact). Since 2.392.0.
+   * draws none, and so does zero (2.503.0): the empty state says it, a "0"
+   * chip over it is chrome describing nothing. Since 2.392.0.
    */
   count?: number;
   /**
@@ -96,7 +97,7 @@ export function PageSection({
           {/* An empty section's quiet line gives way first: the title keeps its width (shrink-0). */}
           <Heading className={cn('m-0 text-text-primary', isEmpty && 'shrink-0', md ? cn('flex min-w-0 items-center gap-2.5 font-semibold', sm ? 'text-sm leading-5' : 'text-[16px] leading-6') : 'text-xl font-semibold')}>
             {md ? <span className="min-w-0 truncate">{title}</span> : title}
-            {typeof count === 'number' && (
+            {typeof count === 'number' && count > 0 && (
               <Chip
                 size={countTone === 'primary' ? 'md' : 'sm'}
                 tone="neutral"

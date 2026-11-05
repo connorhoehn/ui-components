@@ -133,8 +133,8 @@ export type { ComposerFocusTarget, ComposerFocusRequest, ThreadInputOwner } from
 // Human-in-the-loop prompts in the docked composer (2.444.0): a queue of
 // questions with a prepopulated header card each, answered from the keyboard
 // (`ConversationComposer prompts`, or the deck in any composer's `above`).
-export { ComposerPromptDeck, useComposerPromptDeck } from './ComposerPromptDeck';
-export type { ComposerPromptDeckProps, ComposerPromptDeckState, ComposerPromptInput } from './ComposerPromptDeck';
+export { ComposerPromptDeck, useComposerPromptDeck, promptsInScope } from './ComposerPromptDeck';
+export type { ComposerPromptDeckProps, ComposerPromptDeckState, ComposerPromptInput, ComposerPromptDeckOptions } from './ComposerPromptDeck';
 export {
   CONFIRM_OPTIONS,
   answerForOption,

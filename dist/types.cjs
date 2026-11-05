@@ -1,1 +1,0 @@
-Object.defineProperty(exports,Symbol.toStringTag,{value:`Module`});const e=require("./documentType-Yet9GCcP.cjs"),t=require("./fieldType-DPT6_oGN.cjs");exports.CUSTOM_FIELD_TYPE_STORAGE_KEY=t.t,exports.DOCUMENT_TYPE_ICONS=e.t,exports.getPageConfig=e.n,exports.getPagesView=e.r,exports.isValidCustomFieldType=t.n,exports.makeEmptyField=e.i;

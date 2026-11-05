@@ -45,3 +45,12 @@ export const CodeTone: Story = {
     );
   },
 };
+
+/** `collapsible` (2.503.0): a search icon until clicked or `/` is pressed; folds away on Escape/blur while empty. */
+export const Collapsible: Story = {
+  args: { value: '', onChange: () => {}, collapsible: true, placeholder: 'Search artworks' },
+  render: () => {
+    const [value, setValue] = useState('');
+    return <SearchInput collapsible value={value} onChange={setValue} placeholder="Search artworks" />;
+  },
+};

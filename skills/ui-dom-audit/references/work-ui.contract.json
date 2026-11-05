@@ -744,6 +744,13 @@
       "owner": "PageSection empty (one row: the title and one quiet line) \u2014 never a heading over a 'nothing here' block"
     },
     {
+      "id": "collection.empty-chrome",
+      "kind": "empty-chrome",
+      "selector": "$collectionPages|[data-collection-page]",
+      "empty": "$emptyStates|[data-ui-empty]",
+      "owner": "CollectionToolbar resultCount / DataTable / ChangeReviewList / DocumentListPage pagers (ui-components 2.503.0): a collection showing zero items draws its empty state, never a count, a pager or a search band"
+    },
+    {
       "id": "board.lane-surface",
       "kind": "surface-distinct",
       "selector": "$boardLanes",

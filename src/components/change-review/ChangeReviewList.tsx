@@ -92,19 +92,15 @@ export function ChangeReviewList({
           >
             {documentTitle}
           </h2>
-          <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-            <span className="text-[13px] text-text-secondary" data-testid={`${testId}-count`}>
-              {total === 0
-                ? 'No changes to review'
-                : `${total} change${total === 1 ? '' : 's'} to review`}
-            </span>
-            {documentMeta && (
-              <>
-                <span aria-hidden className="text-text-tertiary">·</span>
-                <span className="text-[12px] text-text-tertiary">{documentMeta}</span>
-              </>
-            )}
-          </div>
+          {/* No count while empty (2.503.0): the empty state says it, and a
+              "No changes to review" line above it was chrome describing nothing. */}
+          {(total > 0 || documentMeta) && <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+            {total > 0 && <span className="text-[13px] text-text-secondary" data-testid={`${testId}-count`} data-collection-summary>
+              {`${total} change${total === 1 ? '' : 's'} to review`}
+            </span>}
+            {total > 0 && documentMeta && <span aria-hidden className="text-text-tertiary">·</span>}
+            {documentMeta && <span className="text-[12px] text-text-tertiary">{documentMeta}</span>}
+          </div>}
         </div>
         {headerActions}
       </div>
@@ -120,7 +116,7 @@ export function ChangeReviewList({
             </div>
 
             {remaining > 0 && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" data-collection-pager>
                 <Button
                   size="sm"
                   variant="secondary"

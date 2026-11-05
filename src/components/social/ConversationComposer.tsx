@@ -202,6 +202,11 @@ export interface ConversationComposerOwnProps {
    * field. Hide or finish restores the conversation draft and its tools.
    */
   prompts?: readonly ComposerPrompt[];
+  /**
+   * The context the composer is in (a page/section/record key). Prompts
+   * scoped elsewhere are dropped and a change resets the deck. Since 2.503.0.
+   */
+  promptScope?: string | null;
 }
 
 export type ConversationComposerProps = ConversationComposerOwnProps & Omit<ContextComposerProps, Owned>;
@@ -334,6 +339,7 @@ function ConversationComposerImpl({
   disabled: hostDisabled,
   offModes,
   prompts,
+  promptScope,
   composerRef,
   onDraftChange,
   defaultDraft,
@@ -464,7 +470,7 @@ function ConversationComposerImpl({
   }, [onReveal]);
 
   // ── prompts ── the deck reads the input's emptiness and hands the caret back.
-  const deck = useComposerPromptDeck(prompts);
+  const deck = useComposerPromptDeck(prompts, { scope: promptScope });
   const dialogueOpen = !!deck.active && !deck.collapsed;
   const wasDialogueOpen = useRef(false);
   useEffect(() => {

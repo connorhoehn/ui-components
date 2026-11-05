@@ -551,6 +551,7 @@ export type { SettingsPageProps } from './SettingsPage';
 export { SectionLayout } from './SectionLayout';
 export type { SectionLayoutProps, SectionLayoutHeader, SectionLayoutFold } from './SectionLayout';
 export type { PageGutter, PageTemplateHeaderProps, PageTemplateTrailProps } from './pageTemplate';
+export * from './ActivityResumeChip';
 export * from './ComposerSurface';
 export { AssetGallery } from './AssetGallery';
 export type { AssetGalleryProps, GalleryAsset } from './AssetGallery';

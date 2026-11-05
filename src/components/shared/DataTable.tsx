@@ -409,7 +409,7 @@ export function DataTable<T>({
         </TableBody>
         </Table>
       {pageSize && pageSize > 0 && sorted.length > pageSize && (
-        <div className="flex items-center justify-between text-xs text-text-secondary">
+        <div className="flex items-center justify-between text-xs text-text-secondary" data-collection-pager>
           <span data-testid="datatable-page-summary">
             Page {safePage + 1} of {totalPages} · {sorted.length} total
           </span>

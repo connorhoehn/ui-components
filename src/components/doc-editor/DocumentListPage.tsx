@@ -322,6 +322,7 @@ export default function DocumentListPage({
       {documents.length > DOCS_PER_PAGE && (
         <div
           data-testid="pagination-controls"
+          data-collection-pager
           className={cn('flex items-center justify-center gap-3 mt-4 pt-3 border-t border-border')}
         >
           <button

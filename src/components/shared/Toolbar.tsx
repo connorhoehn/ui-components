@@ -72,6 +72,8 @@ export interface ToolbarProps {
   /** Set by `CollectionToolbar`: `active` while the row shows a selection in place of its controls. Since 2.442.0. */
   'data-collection-selection'?: 'idle' | 'active';
   'data-collection-layout'?: 'table' | 'cards';
+  /** Set by `CollectionToolbar`: `header` when its controls sit in a page header's actions row. Since 2.503.0. */
+  'data-collection-placement'?: 'band' | 'header';
 }
 
 const SIZE = {
@@ -107,6 +109,7 @@ export function Toolbar({
   'data-testid': testId,
   'data-collection-selection': selectionState,
   'data-collection-layout': collectionLayout,
+  'data-collection-placement': collectionPlacement,
 }: ToolbarProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -159,6 +162,7 @@ export function Toolbar({
       data-toolbar-variant={variant}
       data-collection-selection={selectionState}
       data-collection-layout={collectionLayout}
+      data-collection-placement={collectionPlacement}
       onKeyDown={onKeyDown}
       className={cn(
         'flex flex-none',

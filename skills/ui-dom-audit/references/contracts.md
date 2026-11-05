@@ -58,6 +58,7 @@ leave that count unchanged (a duplicate React child key caused this regression).
 | `separator` | selector (scope), groups, minGap, maxPerPage? | Two sibling content groups stacked one above the other with no facing border/shadow, no divider (`hr`, `role=separator`) between or at their edge, the same surface, and less than `minGap` between their ink (`section.separator`) |
 | `vertical-budget` | selector (content columns), groups, maxScrollRatio, maxStackedSections, scrollingContent? | At rest, more than `maxStackedSections` rows of top-level groups (side-by-side tiles count as one row), or a column (or its main inner scroller) longer than `maxScrollRatio` viewports unless it holds one long flow named by `scrollingContent` (`page.vertical-budget`) |
 | `unmarked` | selector (scope), elements[{name, selector, marker, topLevel?}], part, owners, maxPerPage | An element matching an entry's `selector` that carries none of its library `marker`s, is not itself a library `part` (`[data-ui-part]`, which ui-components puts on every raw element it renders internally) and sits inside no `owners` composite root within the scope: DOM the component library did not render, which every marker-keyed rule cannot see (`element.unmarked`). Framing containers that hold consumer children (PageSection, Card, the page templates) are not owners, so a raw button placed in them still fails. A section rendered by a library layout primitive (`Stack`/`Inline` with `as="section"`, marked `data-ui-layout`) is library DOM. Beyond `maxPerPage`, one finding carries the per-kind counts |
+| `empty-chrome` | selector (collection hosts), empty (empty-state marker), items, counts, pagers, toolbars, header, countText | A collection showing zero items (a visible empty state, no visible item) that still draws a count, a pager or an empty full-width search band |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -968,3 +969,26 @@ container and `data-ui-section-rule` on each `<hr>` between its sections
 `ActionRowList striped` emits `data-striped` on the list and `data-stripe` on
 each `surface-inset` row, matching `DataTable striped`. A future rule that
 flags hand-rolled section borders should bind these rather than page names.
+
+## Empty collections draw no result chrome (2.503.0)
+
+Storymaker's Artwork page drew a full-width search band and a "0 of 0
+artworks" line above its empty state; a pager over nothing is the same
+defect. **`collection.empty-chrome`** (`empty-chrome`) binds
+`$collectionPages` (default `[data-collection-page]`) and `$emptyStates`. A
+collection qualifies when it holds a visible empty state and no visible item
+(`[data-collection-item]`, body rows, list items). It then fails for any
+visible `[data-collection-summary]`, `[data-collection-pager]` /
+`[aria-label="Pagination"]`, an empty text input in a collection toolbar that
+is not in the page header (a search band), or hand-rolled leaf text matching
+`countText` ("0 of 0 artworks", "0 results", "Page 1 of 1"). A search that
+holds a query is allowed: it is the way out of a fruitless search. The
+library owners are `CollectionToolbar resultCount` and `CollectionPage`'s
+header-hosted toolbar, and the `DataTable`, `ChangeReviewList` and
+`DocumentListPage` pagers, which already render only for more than one page.
+
+Fixtures (`self-test.mjs`): valid — header-hosted collapsed search over an
+empty state, a full collection with count and pager, a search holding a
+query over "no matches", an empty side panel beside real items; defects — a
+marked count, a hand-rolled "0 of 0 artworks" line, a pager, and an empty
+full-width search band over the empty state.

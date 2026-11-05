@@ -752,6 +752,41 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         }
         coverage.at(-1).matched = measured;
       }
+      else if (rule.kind === 'empty-chrome') {
+        // A collection showing zero items draws its empty state and nothing
+        // that describes or navigates results: no count ("0 of 0 artworks"),
+        // no pager, no full-width search band. A search that holds a query is
+        // the exception — it is how the user gets back out of a fruitless
+        // search. A collection qualifies when it holds a visible empty state
+        // and no visible item.
+        const items = css(rule.items ?? '[data-collection-item], tbody > tr:not(:has([colspan])), [role="listitem"]');
+        const empty = css(rule.empty ?? '[data-ui-empty]');
+        const header = css(rule.header ?? '[data-collection-placement="header"], [data-testid="page-header"]');
+        const countText = new RegExp(rule.countText ?? '^\\s*(?:0 of 0|0)\\s+[a-z]|\\bpage 1 of 1\\b', 'i');
+        let measured = 0;
+        for (const host of nodes) {
+          if (![...host.querySelectorAll(empty)].some(visible)) continue;
+          if ([...host.querySelectorAll(items)].some(el => visible(el) && !el.closest(empty))) continue;
+          measured++;
+          const chrome = [];
+          for (const el of host.querySelectorAll(css(rule.counts ?? '[data-collection-summary]'))) if (visible(el)) chrome.push([el, 'count']);
+          for (const el of host.querySelectorAll(css(rule.pagers ?? '[data-collection-pager], [aria-label="Pagination"]'))) if (visible(el)) chrome.push([el, 'pager']);
+          for (const bar of host.querySelectorAll(css(rule.toolbars ?? '[data-toolbar-variant="collection"]'))) {
+            if (!visible(bar) || bar.closest(header)) continue;
+            const field = [...bar.querySelectorAll('input[type="text"], input[type="search"], input:not([type])')].find(i => visible(i) && i.value === '');
+            if (field) chrome.push([field, 'search band']);
+          }
+          // Hand-rolled counts carry no marker: judge leaf text outside the empty state.
+          for (const el of host.querySelectorAll('p, span, div, small')) {
+            if (el.children.length || !visible(el) || el.closest(empty) || chrome.some(([c]) => c.contains(el))) continue;
+            const text = (el.textContent ?? '').trim();
+            if (text && countText.test(text)) chrome.push([el, 'count']);
+          }
+          samples.push({ rule: rule.id, selector: selectorOf(host), property: 'result chrome while empty', actual: chrome.length, expected: 0 });
+          for (const [el, what] of chrome) add(rule, el, `${what} while the collection is empty`, 'nothing (the empty state replaces count, pager and search band)', snippet((el.textContent || el.getAttribute('aria-label') || el.tagName.toLowerCase()).trim()));
+        }
+        coverage.at(-1).matched = measured;
+      }
       else if (rule.kind === 'surface-distinct') for (const el of nodes) {
         // A surface that is meant to read as its own region (a board lane)
         // paints a background the reader can tell apart from what it sits on.

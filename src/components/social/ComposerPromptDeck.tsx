@@ -119,8 +119,25 @@ function isNext(result: ComposerPromptResult): result is { next: ComposerPrompt 
 }
 
 /** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
-export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null | undefined): ComposerPromptDeckState {
-  const queue = prompts ?? NO_PROMPTS;
+export interface ComposerPromptDeckOptions {
+  /**
+   * The current context key (2.503.0). Prompts whose own `scope` differs are
+   * dropped, and changing the scope resets the deck — the open card, a
+   * collapsed state, the last receipt and errors — so navigating to another
+   * context never leaves the previous one's card on screen.
+   */
+  scope?: string | null;
+}
+
+/** The prompts that belong to `scope`: unscoped prompts, and prompts scoped to it. Without a scope, all. */
+export function promptsInScope(prompts: readonly ComposerPrompt[], scope: string | null | undefined): readonly ComposerPrompt[] {
+  if (scope == null) return prompts;
+  return prompts.every((p) => p.scope == null || p.scope === scope) ? prompts : prompts.filter((p) => p.scope == null || p.scope === scope);
+}
+
+export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null | undefined, options: ComposerPromptDeckOptions = {}): ComposerPromptDeckState {
+  const scope = options.scope;
+  const queue = useMemo(() => promptsInScope(prompts ?? NO_PROMPTS, scope), [prompts, scope]);
   const [answered, setAnswered] = useState<ReadonlySet<string>>(() => new Set());
   const [activeId, setActiveId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
@@ -130,6 +147,16 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
   const [followUps, setFollowUps] = useState<ComposerPromptFollowUps>(NO_FOLLOW_UPS);
   const followUpsRef = useRef(followUps);
   followUpsRef.current = followUps;
+  // A new context is a fresh deck: nothing from the last one stays on screen.
+  const lastScope = useRef(scope);
+  useEffect(() => {
+    if (lastScope.current === scope) return;
+    lastScope.current = scope;
+    setActiveId(null);
+    setCollapsed(false);
+    setReceipt(null);
+    setErrors({});
+  }, [scope]);
   const pending = useMemo(() => pendingPrompts(queue, answered, followUps), [queue, answered, followUps]);
   const index = activeIndex(pending, activeId);
   const active = index >= 0 ? pending[index]! : null;
@@ -278,6 +305,8 @@ export interface ComposerPromptDeckProps {
   /** From `useComposerPromptDeck`; or pass `prompts` and the deck keeps its own state. */
   deck?: ComposerPromptDeckState;
   prompts?: readonly ComposerPrompt[];
+  /** With `prompts`: the current context key; see `ComposerPromptDeckOptions.scope`. Since 2.503.0. */
+  scope?: string | null;
   /** External answer input, when embedded above an existing editor. Without one, text/number prompts own a plain answer field; choices own focus. */
   input?: ComposerPromptInput | null;
   /**
@@ -316,9 +345,9 @@ function modKey(): string {
 // inside itself, and the content column above keeps the rest.
 const DECK_MAX = 'max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain';
 
-export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, variant = 'card', className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
+export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = null, variant = 'card', className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
   const inset = variant === 'inset';
-  const own = useComposerPromptDeck(deckProp ? null : prompts);
+  const own = useComposerPromptDeck(deckProp ? null : prompts, { scope });
   const deck = deckProp ?? own;
   const root = useRef<HTMLElement | null>(null);
   const baseId = useId();
