@@ -22,41 +22,62 @@
 // to scripts/check-static-styles.allowlist.txt. Never use the allowlist
 // to silence a regression where the styles could have been Tailwind classes.
 
-import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseGuardArgs } from './guard-cli.mjs';
+
+const USAGE = `Usage: ui-check-static-styles [--root <dir>]... [--allowlist <file>]
+
+Fails when a .ts/.tsx file under the roots hand-rolls inline styles
+(style={{...}}, or style={x} pointing at a module-level object literal) and is
+not on the allowlist (one path per line, # comments).
+
+With no --root, scans this repo's src/components and demo/src against
+scripts/check-static-styles.allowlist.txt.`;
+
+const args = parseGuardArgs({ name: 'check-static-styles', scriptUrl: import.meta.url, usage: USAGE });
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const allowlistPath = resolve(scriptDir, 'check-static-styles.allowlist.txt');
+const DEFAULT_ALLOWLIST = 'scripts/check-static-styles.allowlist.txt';
+const allowlistPath = args.allowlistPath ?? (args.custom ? null : resolve(scriptDir, 'check-static-styles.allowlist.txt'));
+const allowlistLabel = args.allowlistPath ?? (args.custom ? 'an --allowlist file' : DEFAULT_ALLOWLIST);
+const ROOTS = args.custom ? args.roots : ['src/components', 'demo/src'];
 
 const allowed = new Set(
-  readFileSync(allowlistPath, 'utf8')
+  (allowlistPath ? readFileSync(allowlistPath, 'utf8') : '')
     .split('\n')
     // Strip trailing `# why this is dynamic` notes so each entry can carry
     // its own justification inline. Whole-line comments are dropped too.
-    .map((line) => line.replace(/#.*$/, '').trim())
+    .map((line) => line.replace(/#.*$/, '').trim().replace(/^\.\//, ''))
     .filter(Boolean)
 );
 
-let rawGrep = '';
-try {
-  // --include: only real source files. A bare `grep -rl` also matches docs
-  // (e.g. a JSX sample inside pipelines/judge/README.md), which is a false
-  // positive the allowlist should never have to carry.
-  //
-  // Two forms are collected. `style={{` is the literal inline object. `style={`
-  // alone also catches the HOISTED form — `const rowStyle = {...}` at module
-  // scope, referenced as `style={rowStyle}` — which is the same hand-rolled
-  // styling wearing a disguise. The grep is deliberately loose; `hasViolation`
-  // below decides which of those references actually count.
-  rawGrep = execSync(
-    'grep -rl --include="*.tsx" --include="*.ts" "style={" src/components demo/src 2>/dev/null',
-    { encoding: 'utf8' },
-  );
-} catch (err) {
-  if (err.status !== 1) throw err;
+// Only real source files. Scanning everything also matches docs (e.g. a JSX
+// sample inside pipelines/judge/README.md), which is a false positive the
+// allowlist should never have to carry.
+//
+// Two forms are collected. `style={{` is the literal inline object. `style={`
+// alone also catches the HOISTED form — `const rowStyle = {...}` at module
+// scope, referenced as `style={rowStyle}` — which is the same hand-rolled
+// styling wearing a disguise. The match is deliberately loose; `hasViolation`
+// below decides which of those references actually count.
+//
+// This was `grep -rl` until it became a consumer-runnable bin; a node walk
+// keeps it portable and lets it skip node_modules under a consumer root.
+const candidates = [];
+function walk(dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name !== 'node_modules') walk(path);
+      continue;
+    }
+    if (!entry.isFile() || !/\.tsx?$/.test(entry.name)) continue;
+    if (readFileSync(path, 'utf8').includes('style={')) candidates.push(path);
+  }
 }
+for (const root of ROOTS) walk(root);
 
 /** Blank out string/template-literal/comment content, preserving line count. */
 /** Does the quote opened at `start` close before the line ends? */
@@ -168,10 +189,7 @@ function hasViolation(src) {
 }
 
 const current = new Set(
-  rawGrep
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
+  candidates
     // Test files are not rendered UI. `video/__tests__/classNameSeam.test.tsx`
     // exists precisely to assert that components forward a `style` prop, so it
     // passes a module-level literal into a dozen components on purpose.
@@ -191,7 +209,7 @@ if (additions.length > 0) {
   for (const f of additions) process.stderr.write('  ' + f + '\n');
   process.stderr.write(
     '\nIf the style values are dynamic (computed from props / state / runtime data) and cannot be expressed as Tailwind classes,\n' +
-      'add the path(s) to scripts/check-static-styles.allowlist.txt.\n\n' +
+      'add the path(s) to ' + allowlistLabel + '.\n\n' +
       'If the values are static literals, convert them to Tailwind classes via cn() instead.\n' +
       'See TAILWIND_MIGRATION.md ("convert vs keep" heuristic).\n'
   );
