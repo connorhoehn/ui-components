@@ -335,6 +335,9 @@ export declare const ACTIVITY_RIPPLE_GRID: RippleGridBackgroundProps;
  */
 export declare const ACTIVITY_RIPPLE_GRID_DARK: RippleGridBackgroundProps;
 
+/** "just now", "5m ago", "3h ago", "2d ago", else the date. */
+export declare function activityAge(at: string | number | Date, now?: number): string;
+
 declare interface ActivityEvent {
     id: string;
     eventType: string;
@@ -421,6 +424,27 @@ export declare interface ActivityPanelProps {
 export declare interface ActivityResponse {
     items: ActivityItem[];
     nextKey: string | null;
+}
+
+export declare function ActivityResumeChip({ label, status, tone, at, now, onResume, 'aria-label': ariaLabel, className, 'data-testid': testId }: ActivityResumeChipProps): JSX.Element;
+
+export declare interface ActivityResumeChipProps {
+    /** What ran ("Create artwork"). */
+    label: string;
+    /** Where it stands ("Completed", "Waiting for review"). */
+    status: string;
+    /** Colour of the status dot. Default `neutral`. */
+    tone?: ToneOrAlias;
+    /** When it last changed (ISO string, epoch ms or Date): drawn as "2m ago". */
+    at?: string | number | Date;
+    /** Clock for the relative time; tests pin it. Default `Date.now()`. */
+    now?: number;
+    /** Re-populate the page's deck with this activity's next step. */
+    onResume: () => void;
+    /** Accessible name. Default "Resume <label> · <status>". */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
 }
 
 /** Data and authority belong to the host; this component only presents supplied items. */
@@ -1525,7 +1549,7 @@ declare type AssertTrue<T extends true> = T;
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, onDragStart, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, tileActions, menuOnSelect, onDragStart, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -1533,6 +1557,19 @@ export declare interface AssetGalleryProps {
     label: string;
     onOpen: (item: GalleryAsset) => void;
     actions?: (item: GalleryAsset) => ReactNode;
+    /**
+     * Icon actions for a tile (since 2.503.0): a compact toolbar over the
+     * thumbnail's corner, revealed on hover or keyboard focus (always shown on
+     * touch), with the chat message bar's roving keys. The same actions are
+     * the tile's context menu (right-click, the Menu key or Shift+F10).
+     */
+    tileActions?: (item: GalleryAsset) => readonly GalleryTileAction[];
+    /**
+     * With `tileActions`: selecting a tile opens its action menu — "Open"
+     * (`onOpen`) first, then the tile's actions — instead of opening it
+     * directly. Since 2.503.0.
+     */
+    menuOnSelect?: boolean;
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
@@ -5486,16 +5523,37 @@ export declare interface CollectionFilter {
 
 /** Collection layout policy belongs here. A page supplies content and state;
  * it does not reproduce Stack/PageHeader/Toolbar spacing at each route. */
-export declare function CollectionPage({ title, description, headerActions, toolbar, back, children, className, ...rest }: CollectionPageProps): JSX.Element;
+export declare function CollectionPage({ title, description, headerActions, badge, toolbar, toolbarPlacement, back, children, className, ...rest }: CollectionPageProps): JSX.Element;
 
 export declare interface CollectionPageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
     title: string;
     description?: string;
     headerActions?: ReactNode;
+    /** Beside the title (a scope chip such as the episode the page is filtered to). Since 2.503.0. */
+    badge?: ReactNode;
     toolbar?: CollectionToolbarProps;
+    /**
+     * Where the toolbar draws (since 2.503.0). `auto` (default) puts its
+     * search, filters and count in the header's actions row — before
+     * `headerActions` — whenever nothing in it needs a full row (no active
+     * `selection` prop, no `children`), so a collection page has no separate
+     * search band. `band` keeps the toolbar's own row under the header;
+     * `header` forces the header row.
+     */
+    toolbarPlacement?: 'auto' | 'header' | 'band';
     children: ReactNode;
     back?: PageHeaderProps['back'];
 }
+
+/**
+ * The toolbar's search. Collapsed to a search icon by default (since
+ * 2.503.0): it expands on click or `/` and folds away again while empty, so a
+ * collection never carries a full-width search band. `collapsible: false`
+ * keeps the open field.
+ */
+export declare type CollectionSearch = Pick<SearchInputProps, 'value' | 'onChange' | 'placeholder' | 'aria-label' | 'data-testid' | 'shortcut'> & {
+    collapsible?: boolean;
+};
 
 /**
  * A row selection, drawn IN PLACE of the resting controls (search, filters,
@@ -5515,15 +5573,46 @@ export declare interface CollectionSelection {
 
 /** One collection control row: filters, count, notices and named icon actions.
  * Hosts supply state and commands, never control geometry or presentation. */
-export declare function CollectionToolbar({ label, layout, search, filters, summary, notices, actions, onRefresh, refreshing, selection, children }: CollectionToolbarProps): JSX.Element;
+export declare function CollectionToolbar({ label, layout, search, filters, filterPanel, summary, resultCount, placement, notices, actions, onRefresh, refreshing, selection, children }: CollectionToolbarProps): JSX.Element;
+
+/**
+ * Whether a toolbar can live in a page header's actions row instead of its
+ * own band: nothing in it needs the full row. A selection replaces the row's
+ * controls, and `children` are host content of unknown width. Since 2.503.0.
+ */
+export declare function collectionToolbarFitsHeader(toolbar: CollectionToolbarProps): boolean;
 
 export declare interface CollectionToolbarProps {
     label: string;
     /** Tables add a cell inset; cards and standalone collections align to their content edge. */
     layout?: 'table' | 'cards';
-    search?: Pick<SearchInputProps, 'value' | 'onChange' | 'placeholder' | 'aria-label' | 'data-testid'>;
+    search?: CollectionSearch;
     filters?: CollectionFilter[];
+    /**
+     * Host-built content for the same Filters popover, for filters that are not
+     * single selects (multi-select facets such as `WorkListFilters`). Drawn
+     * after any `filters`; `activeCount` joins the trigger's count and
+     * `onClear` runs with the panel's Clear. Since 2.503.0.
+     */
+    filterPanel?: {
+        content: ReactNode;
+        activeCount?: number;
+        onClear?: () => void;
+    };
+    /** A count line ("12 of 40 runs"). Hidden while `resultCount` is 0 — the empty state says it instead. */
     summary?: ReactNode;
+    /**
+     * How many items the collection is showing right now (since 2.503.0). At
+     * `0` the toolbar draws no count: "0 of 0 artworks" above an empty state is
+     * chrome describing nothing. Leave it undefined to always draw `summary`.
+     */
+    resultCount?: number;
+    /**
+     * `band` (default) is the toolbar's own row above the collection. `header`
+     * (since 2.503.0) is the same controls with no row of their own, for a
+     * page header's actions row — `CollectionPage` uses it automatically.
+     */
+    placement?: 'band' | 'header';
     /** Explanations belong behind an info control, never in the filter row. */
     notices?: ReactNode[];
     actions?: CollectionAction[];
@@ -10434,7 +10523,17 @@ export declare interface GalleryAsset {
     title: string;
     src?: string;
     subtitle?: string;
+    status?: GalleryAssetStatus;
 }
+
+/** A tile's live state ("Running · Generate", "Waiting for review"), drawn over its thumbnail. Since 2.503.0. */
+declare interface GalleryAssetStatus {
+    label: string;
+    tone?: ToneOrAlias;
+}
+
+/** One icon action on a tile — the chat hover toolbar's action shape. Since 2.503.0. */
+declare type GalleryTileAction = MessageAction;
 
 /** Runtime configuration read from env vars */
 export declare interface GatewayConfig {
@@ -15276,7 +15375,8 @@ export declare interface PageSectionProps {
     empty?: ReactNode;
     /**
      * A count beside the title in a neutral chip — "Needs attention 1". Absent
-     * draws none; zero shows "0" (an empty section is a fact). Since 2.392.0.
+     * draws none, and so does zero (2.503.0): the empty state says it, a "0"
+     * chip over it is chrome describing nothing. Since 2.392.0.
      */
     count?: number;
     /**
@@ -20191,7 +20291,7 @@ export declare function searchGraph(people: OrgGraphPerson[], query: string): Gr
  */
 export declare function SearchIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, size, onKeyDown, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, size, onKeyDown, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, collapsible, defaultExpanded, shortcut, onExpandedChange, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -20208,7 +20308,7 @@ export declare interface SearchInputProps {
      * and a SearchInput dropped into a dark panel stayed a white box.
      */
     tone?: SearchInputTone;
-    /** Class for the wrapper. Sizing and positioning; not the field's colours. */
+    /** Class for the wrapper. Sizing and positioning; not the field's colours. A collapsed `collapsible` field (the icon) ignores it. */
     className?: string;
     /**
      * `sm` (default) is the 13px field. `md` (2.386.3) is the Documents
@@ -20235,6 +20335,20 @@ export declare interface SearchInputProps {
      * shape this library exists to remove.
      */
     'data-testid'?: string;
+    /**
+     * Since 2.503.0 — a toolbar search. While collapsed the field is a search
+     * `IconButton` (named by `aria-label`/`placeholder`); a click, or the
+     * `shortcut` key anywhere outside a text field, expands it and focuses the
+     * input. It collapses again on Escape or blur while empty, and never while
+     * it holds a value — a filtered list must always show what filters it.
+     */
+    collapsible?: boolean;
+    /** Start expanded (collapsible only). The field still collapses on Escape/blur when empty. */
+    defaultExpanded?: boolean;
+    /** The key that expands a collapsed field. Default `/`; `false` disables it. */
+    shortcut?: string | false;
+    /** Told when a collapsible field expands or collapses. */
+    onExpandedChange?: (expanded: boolean) => void;
 }
 
 /** @see SurfaceTone — which colour family the field paints in. */
@@ -23272,7 +23386,7 @@ export declare const TONES: readonly ["neutral", "success", "warning", "danger",
  */
 export declare function toneVar(tone: ToneOrAlias): string;
 
-export declare function Toolbar({ children, end, tone, variant, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, 'data-collection-selection': selectionState, 'data-collection-layout': collectionLayout, }: ToolbarProps): JSX.Element;
+export declare function Toolbar({ children, end, tone, variant, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, 'data-collection-selection': selectionState, 'data-collection-layout': collectionLayout, 'data-collection-placement': collectionPlacement, }: ToolbarProps): JSX.Element;
 
 export declare function ToolbarGroup({ children, divided, tone, className, 'aria-label': ariaLabel, }: ToolbarGroupProps): JSX.Element;
 
@@ -23338,6 +23452,8 @@ export declare interface ToolbarProps {
     /** Set by `CollectionToolbar`: `active` while the row shows a selection in place of its controls. Since 2.442.0. */
     'data-collection-selection'?: 'idle' | 'active';
     'data-collection-layout'?: 'table' | 'cards';
+    /** Set by `CollectionToolbar`: `header` when its controls sit in a page header's actions row. Since 2.503.0. */
+    'data-collection-placement'?: 'band' | 'header';
 }
 
 export declare function ToolbarSeparator({ tone, className }: ToolbarSeparatorProps): JSX.Element;

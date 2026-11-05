@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-C9oAM0NL.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r, o as i } from "./Button-C-I3BxWI.js";
 import { t as a } from "./Card-CbTNNNkk.js";
@@ -30,15 +30,15 @@ import { t as j } from "./Checkbox-Dvt09s3H.js";
 import { n as ie } from "./FileKindMark-BZmXUxaT.js";
 import { t as M } from "./activationKey-CjbL3LUv.js";
 import { A as ae, k as oe } from "./renderers-DarOLZU_.js";
-import { A as N, B as se, C as P, D as ce, E as le, F as ue, G as F, H as I, I as L, J as R, K as de, L as fe, M as pe, N as me, O as he, P as ge, R as _e, S as ve, T as ye, U as be, V as xe, W as Se, X as Ce, _ as we, a as Te, b as Ee, c as De, d as Oe, f as ke, g as Ae, h as je, i as Me, j as Ne, k as Pe, l as Fe, m as Ie, n as Le, o as Re, p as ze, q as Be, r as Ve, s as He, t as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./ProposedEditStrip-C-Eby3IC.js";
+import { A as N, B as se, C as P, D as ce, E as le, F as ue, G as F, H as I, I as L, J as R, K as de, L as fe, M as pe, N as me, O as he, P as ge, R as _e, S as ve, T as ye, U as be, V as xe, W as Se, X as Ce, _ as we, a as Te, b as Ee, c as De, d as Oe, f as ke, g as Ae, h as je, i as Me, j as Ne, k as Pe, l as Fe, m as Ie, n as Le, o as Re, p as ze, q as Be, r as Ve, s as He, t as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./ProposedEditStrip-CGGr_AGS.js";
 import { t as Xe } from "./InlineEditableText-CzB64Ufv.js";
 import { o as Ze, t as Qe } from "./VerdictChip-DDweSKeO.js";
 import { a as $e, c as et, d as tt, f as nt, h as rt, i as it, l as at, m as ot, n as st, o as ct, p as lt, r as ut, s as dt, t as ft, u as pt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as mt, n as ht, r as gt, t as _t } from "./FloatingComposerDock-D10uQ4k3.js";
-import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-PaxnpI9b.js";
+import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-DEF_DjTZ.js";
 import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-nQ26kXw3.js";
 import { i as Ln } from "./ConversationInputs-tjSIC0L-.js";
-import { r as Rn } from "./RichChatComposer-DBr8FO96.js";
+import { r as Rn } from "./RichChatComposer-YZSqfcJ9.js";
 import { forwardRef as zn, useCallback as z, useEffect as B, useId as Bn, useImperativeHandle as Vn, useMemo as V, useRef as H, useState as U } from "react";
 import { Fragment as W, jsx as G, jsxs as K } from "react/jsx-runtime";
 import * as Hn from "yjs";
@@ -250,6 +250,7 @@ function pr({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 			}),
 			e.length > 10 && /* @__PURE__ */ K("div", {
 				"data-testid": "pagination-controls",
+				"data-collection-pager": !0,
 				className: n("flex items-center justify-center gap-3 mt-4 pt-3 border-t border-border"),
 				children: [
 					/* @__PURE__ */ G("button", {

@@ -526,6 +526,13 @@ export declare interface ComposerPrompt {
     title: string;
     /** A line above the title ("Prepare job", "Approval", "Agent question"). */
     eyebrow?: string;
+    /**
+     * The context that asked this question (a page, section or record key such
+     * as `assets/artwork`). A deck given a `scope` drops prompts scoped to any
+     * other context, so a question raised on one page never follows the user to
+     * the next. Unscoped prompts show everywhere. Since 2.503.0.
+     */
+    scope?: string;
     /** The prepopulated header card. */
     fields?: readonly ComposerPromptField[];
     question: string;
@@ -629,12 +636,25 @@ export declare interface ComposerPromptCompose {
     onCancel?: () => void;
 }
 
-export declare function ComposerPromptDeck({ deck: deckProp, prompts, input, variant, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
+export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, input, variant, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
+
+/** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
+export declare interface ComposerPromptDeckOptions {
+    /**
+     * The current context key (2.503.0). Prompts whose own `scope` differs are
+     * dropped, and changing the scope resets the deck — the open card, a
+     * collapsed state, the last receipt and errors — so navigating to another
+     * context never leaves the previous one's card on screen.
+     */
+    scope?: string | null;
+}
 
 export declare interface ComposerPromptDeckProps {
     /** From `useComposerPromptDeck`; or pass `prompts` and the deck keeps its own state. */
     deck?: ComposerPromptDeckState;
     prompts?: readonly ComposerPrompt[];
+    /** With `prompts`: the current context key; see `ComposerPromptDeckOptions.scope`. Since 2.503.0. */
+    scope?: string | null;
     /** External answer input, when embedded above an existing editor. Without one, text/number prompts own a plain answer field; choices own focus. */
     input?: ComposerPromptInput | null;
     /**
@@ -1222,6 +1242,11 @@ export declare interface ConversationComposerOwnProps {
      * field. Hide or finish restores the conversation draft and its tools.
      */
     prompts?: readonly ComposerPrompt[];
+    /**
+     * The context the composer is in (a page/section/record key). Prompts
+     * scoped elsewhere are dropped and a change resets the deck. Since 2.503.0.
+     */
+    promptScope?: string | null;
 }
 
 export declare type ConversationComposerProps = ConversationComposerOwnProps & Omit<ContextComposerProps, Owned>;
@@ -1551,6 +1576,9 @@ export declare function parseTypedAnswer(prompt: ComposerPrompt, raw: string): {
 
 /** The options a prompt offers, with confirm's defaults filled in. */
 export declare function promptOptions(prompt: ComposerPrompt): readonly ComposerPromptOption[];
+
+/** The prompts that belong to `scope`: unscoped prompts, and prompts scoped to it. Without a scope, all. */
+export declare function promptsInScope(prompts: readonly ComposerPrompt[], scope: string | null | undefined): readonly ComposerPrompt[];
 
 export declare const RichChatComposer: ForwardRefExoticComponent<RichChatComposerProps & RefAttributes<RichChatComposerHandle>>;
 
@@ -2092,8 +2120,7 @@ export declare function useComposerFocus(): {
 /** Bring a surface on screen before any composer answers (a collapsed side pane). */
 export declare function useComposerFocusReveal(revealer: (request: ComposerFocusRequest) => void, enabled?: boolean): void;
 
-/** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
-export declare function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null | undefined): ComposerPromptDeckState;
+export declare function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null | undefined, options?: ComposerPromptDeckOptions): ComposerPromptDeckState;
 
 /** Uploads files to `channel` through the gateway and resolves each once the gateway says it landed. */
 export declare function useConversationUploads(rm: ConversationComposerModules, channel: string | null, displayName: string, timeoutMs?: number): (files: readonly File[]) => Promise<ChatAttachmentDescriptor[]>;

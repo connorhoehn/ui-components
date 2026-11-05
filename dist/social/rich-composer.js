@@ -6,13 +6,13 @@ import { t as s } from "../Select-BFyECVVL.js";
 import { t as c } from "../FormField-CQ27qxWt.js";
 import { t as l } from "../Textarea-BwvE1HPn.js";
 import { t as u } from "../DecisionPath-DsZclIl1.js";
-import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-BUIwnQlH.js";
-import { a as v, i as y, n as ee, r as b, t as x } from "../composerContext-BLn1-Nao.js";
+import { a as d, c as f, i as p, l as m, n as ee, r as h, t as g } from "../composerSendError-BUIwnQlH.js";
+import { a as _, i as v, n as y, r as b, t as x } from "../composerContext-BLn1-Nao.js";
 import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-tjSIC0L-.js";
-import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as M, t as N, u as P } from "../RichChatComposer-DBr8FO96.js";
-import { t as ae } from "../ContextComposer-D15KqD7W.js";
-import { t as F } from "../AgentComposerDock-CutzMbR8.js";
-import { useCallback as I, useEffect as L, useId as oe, useMemo as se, useRef as R, useState as z } from "react";
+import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as ae, t as M, u as N } from "../RichChatComposer-YZSqfcJ9.js";
+import { t as oe } from "../ContextComposer-DndhYsvX.js";
+import { t as P } from "../AgentComposerDock-DgVFb_bR.js";
+import { useCallback as F, useEffect as I, useId as se, useMemo as L, useRef as R, useState as z } from "react";
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx
 function ce(e) {
@@ -26,31 +26,31 @@ var ue = {
 	review: 1,
 	done: 2
 };
-function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMessageChange: f, messageLabel: p = "Message", placeholder: m, reviewTitle: h, note: g, doneTitle: _ = "Done", doneMessage: v = "Confirmed.", continueLabel: y = "Continue", confirmLabel: ee = "Confirm", backLabel: b = "Back", doneActionLabel: x = "Back", onConfirm: te, onCancel: S, onDone: C, onStageChange: w, path: T, autoFocus: E = !0, className: D, "data-testid": O = "composer-confirm-flow" }) {
-	let [ne, re] = z(s), k = d !== void 0, A = k ? d : ne, ie = I((e) => {
+function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMessageChange: f, messageLabel: p = "Message", placeholder: m, reviewTitle: ee, note: h, doneTitle: g = "Done", doneMessage: _ = "Confirmed.", continueLabel: v = "Continue", confirmLabel: y = "Confirm", backLabel: b = "Back", doneActionLabel: x = "Back", onConfirm: te, onCancel: S, onDone: C, onStageChange: w, path: T, autoFocus: E = !0, className: D, "data-testid": O = "composer-confirm-flow" }) {
+	let [ne, re] = z(s), k = d !== void 0, A = k ? d : ne, ie = F((e) => {
 		k || re(e), f?.(e);
-	}, [k, f]), [j, M] = z("draft"), [N, P] = z(!1), [ae, F] = z(null), [se, de] = z(null), fe = R(!1), H = R(null), U = R(null), W = R(null), pe = oe(), me = A.trim().length > 0, G = I((e) => {
-		M(e), w?.(e);
+	}, [k, f]), [j, ae] = z("draft"), [M, N] = z(!1), [oe, P] = z(null), [L, de] = z(null), fe = R(!1), H = R(null), pe = R(null), U = R(null), W = se(), me = A.trim().length > 0, G = F((e) => {
+		ae(e), w?.(e);
 	}, [w]), he = R(!1);
-	L(() => {
+	I(() => {
 		let e = !he.current;
-		he.current = !0, !(e && !E) && (j === "draft" ? H.current : j === "review" ? U.current : W.current)?.focus({ preventScroll: !0 });
+		he.current = !0, !(e && !E) && (j === "draft" ? H.current : j === "review" ? pe.current : U.current)?.focus({ preventScroll: !0 });
 	}, [j, E]);
-	let K = I(() => {
-		me && (F(null), G("review"));
-	}, [me, G]), ge = I(async () => {
+	let ge = F(() => {
+		me && (P(null), G("review"));
+	}, [me, G]), K = F(async () => {
 		if (fe.current) return;
-		fe.current = !0, P(!0), F(null);
+		fe.current = !0, N(!0), P(null);
 		let e;
 		try {
 			e = await te(A);
 		} catch (t) {
 			e = { error: t instanceof Error && t.message ? t.message : "That could not be confirmed. Try again." };
 		} finally {
-			fe.current = !1, P(!1);
+			fe.current = !1, N(!1);
 		}
 		if (ce(e)) {
-			F(e.error);
+			P(e.error);
 			return;
 		}
 		de(e && "receipt" in e ? e.receipt : null), G("done");
@@ -58,7 +58,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 		A,
 		te,
 		G
-	]), _e = j === "review" ? h ?? t : j === "done" ? _ : t, q = `${pe}-heading`, ve = `${pe}-keys`, J = _e || n ? /* @__PURE__ */ V(i, {
+	]), _e = j === "review" ? ee ?? t : j === "done" ? g : t, ve = `${W}-heading`, q = `${W}-keys`, ye = _e || n ? /* @__PURE__ */ V(i, {
 		gap: "sm",
 		align: "baseline",
 		wrap: !0,
@@ -68,7 +68,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 			size: "sm",
 			weight: "semibold",
 			tone: "primary",
-			id: q,
+			id: ve,
 			className: "min-w-0",
 			children: _e
 		}), n && /* @__PURE__ */ B(o, {
@@ -80,7 +80,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 			"data-testid": `${O}-recipient`,
 			children: n
 		})]
-	}) : null, ye = T ? /* @__PURE__ */ B(u, {
+	}) : null, J = T ? /* @__PURE__ */ B(u, {
 		steps: T.steps,
 		current: T.current + ue[j],
 		"data-testid": `${O}-path`
@@ -90,17 +90,17 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 		className: e("min-w-0", D),
 		"data-composer-confirm-flow": "done",
 		"data-testid": O,
-		children: [ye, /* @__PURE__ */ V(a, {
+		children: [J, /* @__PURE__ */ V(a, {
 			as: "section",
 			gap: "xs",
-			ref: W,
+			ref: U,
 			tabIndex: -1,
 			role: "status",
-			"aria-labelledby": _e ? q : void 0,
+			"aria-labelledby": _e ? ve : void 0,
 			className: "min-w-0 outline-none",
 			"data-testid": `${O}-done`,
 			children: [
-				J,
+				ye,
 				/* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
@@ -108,7 +108,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 					wrap: !0,
 					className: "min-w-0",
 					"data-testid": `${O}-done-message`,
-					children: se ?? v
+					children: L ?? _
 				}),
 				C && /* @__PURE__ */ B(i, {
 					gap: "sm",
@@ -131,25 +131,25 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 		className: e("min-w-0", D),
 		"data-composer-confirm-flow": "review",
 		"data-testid": O,
-		children: [ye, /* @__PURE__ */ V(a, {
+		children: [J, /* @__PURE__ */ V(a, {
 			as: "section",
 			gap: "xs",
-			ref: U,
+			ref: pe,
 			tabIndex: -1,
 			role: "group",
-			"aria-labelledby": _e ? q : void 0,
-			"aria-describedby": ve,
-			"aria-busy": N || void 0,
+			"aria-labelledby": _e ? ve : void 0,
+			"aria-describedby": q,
+			"aria-busy": M || void 0,
 			className: "min-w-0 rounded-md outline-none focus-visible:ring-1 focus-visible:ring-info/40",
 			"data-testid": `${O}-review`,
 			onKeyDownCapture: (e) => {
 				e.key === "Enter" && (e.repeat || e.nativeEvent.isComposing) && (e.preventDefault(), e.stopPropagation());
 			},
 			onKeyDown: (e) => {
-				e.defaultPrevented || N || (e.key === "Escape" ? (e.preventDefault(), e.stopPropagation(), G("draft")) : le(e) && e.target === e.currentTarget && (e.preventDefault(), e.stopPropagation(), ge()));
+				e.defaultPrevented || M || (e.key === "Escape" ? (e.preventDefault(), e.stopPropagation(), G("draft")) : le(e) && e.target === e.currentTarget && (e.preventDefault(), e.stopPropagation(), K()));
 			},
 			children: [
-				J,
+				ye,
 				/* @__PURE__ */ B(o, {
 					as: "p",
 					size: "sm",
@@ -168,18 +168,18 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 						/* @__PURE__ */ B(r, {
 							size: "sm",
 							variant: "primary",
-							disabled: N,
+							disabled: M,
 							onClick: () => {
-								ge();
+								K();
 							},
 							"aria-keyshortcuts": "Enter",
 							"data-testid": `${O}-confirm`,
-							children: ee
+							children: y
 						}),
 						/* @__PURE__ */ B(r, {
 							size: "sm",
 							variant: "ghost",
-							disabled: N,
+							disabled: M,
 							onClick: () => G("draft"),
 							"aria-keyshortcuts": "Escape",
 							"data-composer-readonly-allow": "Returns to the retained draft without changing a record or submitting an answer",
@@ -190,23 +190,23 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 							size: "xs",
 							tone: "tertiary",
 							wrap: !0,
-							id: ve,
+							id: q,
 							className: "min-w-0",
 							"data-testid": `${O}-keys`,
 							children: "Enter to confirm · Esc to edit"
 						})
 					]
 				}),
-				ae && /* @__PURE__ */ B(o, {
+				oe && /* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
 					wrap: !0,
 					role: "alert",
 					className: "min-w-0 text-danger-fg",
 					"data-testid": `${O}-error`,
-					children: ae
+					children: oe
 				}),
-				N && /* @__PURE__ */ B(o, {
+				M && /* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
@@ -214,14 +214,14 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 					"data-testid": `${O}-busy`,
 					children: "Working…"
 				}),
-				g && /* @__PURE__ */ B(o, {
+				h && /* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
 					wrap: !0,
 					className: "min-w-0",
 					"data-testid": `${O}-note`,
-					children: g
+					children: h
 				})
 			]
 		})]
@@ -230,23 +230,23 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 		className: e("min-w-0", D),
 		"data-composer-confirm-flow": "draft",
 		"data-testid": O,
-		children: [ye, /* @__PURE__ */ V(a, {
+		children: [J, /* @__PURE__ */ V(a, {
 			as: "form",
 			gap: "xs",
 			className: "min-w-0",
 			onSubmit: (e) => {
-				e.preventDefault(), K();
+				e.preventDefault(), ge();
 			},
-			"aria-labelledby": _e ? q : void 0,
+			"aria-labelledby": _e ? ve : void 0,
 			"data-testid": `${O}-draft`,
 			children: [
-				J,
+				ye,
 				/* @__PURE__ */ B(c, {
 					label: p,
 					children: (e) => /* @__PURE__ */ B(l, {
 						...e,
 						ref: H,
-						"aria-describedby": [e["aria-describedby"], ve].filter(Boolean).join(" "),
+						"aria-describedby": [e["aria-describedby"], q].filter(Boolean).join(" "),
 						autoResize: !0,
 						minRows: 2,
 						maxRows: 8,
@@ -254,7 +254,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 						placeholder: m,
 						onChange: (e) => ie(e.target.value),
 						onKeyDown: (e) => {
-							le(e) && (e.nativeEvent.isComposing || (e.preventDefault(), e.stopPropagation(), e.repeat || K()));
+							le(e) && (e.nativeEvent.isComposing || (e.preventDefault(), e.stopPropagation(), e.repeat || ge()));
 						},
 						"data-testid": `${O}-editor`
 					})
@@ -273,7 +273,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 							"aria-keyshortcuts": "Enter",
 							"data-composer-readonly-allow": "Moves the draft to its review without changing a record or submitting an answer",
 							"data-testid": `${O}-continue`,
-							children: y
+							children: v
 						}),
 						S && /* @__PURE__ */ B(r, {
 							size: "sm",
@@ -288,7 +288,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 							size: "xs",
 							tone: "tertiary",
 							wrap: !0,
-							id: ve,
+							id: q,
 							className: "min-w-0",
 							"data-testid": `${O}-keys`,
 							children: "Enter to continue · Shift+Enter for a new line"
@@ -312,13 +312,13 @@ var fe = [{
 function H(e) {
 	return e.options && e.options.length ? e.options : e.kind === "confirm" ? fe : [];
 }
-function U(e, t) {
+function pe(e, t) {
 	return e.shortcut ? e.shortcut.toLowerCase() : t < 9 ? String(t + 1) : null;
 }
-function W(e) {
+function U(e) {
 	return !!e && !e.readOnlyReason && (e.kind === "text" || e.kind === "number");
 }
-function pe(e) {
+function W(e) {
 	let t = H(e), n = e.defaultOptionId ?? (e.kind === "confirm" ? t[0]?.id : void 0), r = n ? t.find((e) => e.id === n) ?? null : null;
 	return r && !r.disabledReason ? r : null;
 }
@@ -361,7 +361,7 @@ function he(e, t) {
 	let n = H(e).find((e) => e.id === t.optionId);
 	return `${e.title}: ${n?.label ?? t.optionId}`;
 }
-function K(e, t, n = {}) {
+function ge(e, t, n = {}) {
 	let r = [];
 	for (let i of e) {
 		let e = i, a = /* @__PURE__ */ new Set();
@@ -370,7 +370,7 @@ function K(e, t, n = {}) {
 	}
 	return r;
 }
-function ge(e, t = {}) {
+function K(e, t = {}) {
 	let n = /* @__PURE__ */ new Set();
 	for (let r of e) {
 		let e = r;
@@ -382,12 +382,12 @@ function _e(e, t) {
 	for (let [n, r] of Object.entries(t)) if (r.id === e) return n;
 	return null;
 }
-function q(e, t) {
+function ve(e, t) {
 	if (!e.length) return -1;
 	let n = t ? e.findIndex((e) => e.id === t) : -1;
 	return n >= 0 ? n : 0;
 }
-function ve(e, t) {
+function q(e, t) {
 	let { prompt: n, collapsed: r, inputEmpty: i, inDeck: a, busy: o } = t;
 	if (!n) return null;
 	let s = !!(e.metaKey || e.ctrlKey), c = i || a;
@@ -399,7 +399,7 @@ function ve(e, t) {
 	if (n.kind === "compose") return null;
 	if (e.key === "Escape" && c) return { type: "collapse" };
 	if (s || e.shiftKey) return null;
-	let l = W(n), u = c && !e.altKey && (!l || a);
+	let l = U(n), u = c && !e.altKey && (!l || a);
 	if (u && (e.key === "j" || e.key === "J")) return {
 		type: "page",
 		delta: 1
@@ -411,60 +411,67 @@ function ve(e, t) {
 	if (o || n.readOnlyReason) return null;
 	let d = H(n);
 	if (e.key === "Enter" && c && !a) {
-		let e = pe(n);
+		let e = W(n);
 		return e ? {
 			type: "default",
 			optionId: e.id
 		} : null;
 	}
 	if (l ? !e.altKey : !c || e.altKey) return null;
-	let f = J(e) ?? e.key.toLowerCase(), p = d.findIndex((e, t) => U(e, t) === f), m = p >= 0 ? d[p] : null;
+	let f = ye(e) ?? e.key.toLowerCase(), p = d.findIndex((e, t) => pe(e, t) === f), m = p >= 0 ? d[p] : null;
 	return m && !m.disabledReason ? {
 		type: "pick",
 		optionId: m.id
 	} : null;
 }
-function J(e) {
+function ye(e) {
 	if (!e.altKey) return null;
 	let t = e.code ? /^Digit([1-9])$/.exec(e.code) : null;
 	return t ? t[1] : null;
 }
 //#endregion
 //#region src/components/social/ComposerPromptDeck.tsx
-var ye = [], be = {};
-function Y(e) {
+var J = [], be = {};
+function xe(e) {
 	return !!e && typeof e == "object" && "error" in e && typeof e.error == "string";
 }
-function xe(e) {
+function Y(e) {
 	return !!e && typeof e == "object" && "next" in e && !!e.next && typeof e.next == "object";
 }
-function Se(e) {
-	let t = e ?? ye, [n, r] = z(() => /* @__PURE__ */ new Set()), [i, a] = z(null), [o, s] = z(!1), [c, l] = z(null), [u, d] = z({}), [f, p] = z(null), [m, h] = z(be), g = R(m);
-	g.current = m;
-	let _ = se(() => K(t, n, m), [
-		t,
-		n,
-		m
-	]), v = q(_, i), y = v >= 0 ? _[v] : null, ee = c != null, b = R(!1), x = t.map((e) => e.id).join("\0");
-	L(() => {
-		let e = ge(t, g.current);
-		r((t) => {
+function Se(e, t) {
+	return t == null || e.every((e) => e.scope == null || e.scope === t) ? e : e.filter((e) => e.scope == null || e.scope === t);
+}
+function Ce(e, t = {}) {
+	let n = t.scope, r = L(() => Se(e ?? J, n), [e, n]), [i, a] = z(() => /* @__PURE__ */ new Set()), [o, s] = z(null), [c, l] = z(!1), [u, d] = z(null), [f, p] = z({}), [m, ee] = z(null), [h, g] = z(be), _ = R(h);
+	_.current = h;
+	let v = R(n);
+	I(() => {
+		v.current !== n && (v.current = n, s(null), l(!1), ee(null), p({}));
+	}, [n]);
+	let y = L(() => ge(r, i, h), [
+		r,
+		i,
+		h
+	]), b = ve(y, o), x = b >= 0 ? y[b] : null, te = u != null, S = R(!1), C = r.map((e) => e.id).join("\0");
+	I(() => {
+		let e = K(r, _.current);
+		a((t) => {
 			let n = new Set([...t].filter((t) => e.has(t)));
 			return n.size === t.size ? t : n;
-		}), h((t) => {
+		}), g((t) => {
 			let n = Object.entries(t).filter(([t]) => e.has(t));
 			return n.length === Object.keys(t).length ? t : Object.fromEntries(n);
 		});
-	}, [x]);
-	let te = _[0]?.id ?? null, S = R(/* @__PURE__ */ new Set());
-	L(() => {
-		let e = _.some((e) => !S.current.has(e.id));
-		for (let e of _) S.current.add(e.id);
-		e && s(!1);
-	}, [te, _]);
-	let C = I(async (e, t) => {
-		if (b.current || e.readOnlyReason) return !1;
-		b.current = !0, l(e.id), d((t) => {
+	}, [C]);
+	let w = y[0]?.id ?? null, T = R(/* @__PURE__ */ new Set());
+	I(() => {
+		let e = y.some((e) => !T.current.has(e.id));
+		for (let e of y) T.current.add(e.id);
+		e && l(!1);
+	}, [w, y]);
+	let E = F(async (e, t) => {
+		if (S.current || e.readOnlyReason) return !1;
+		S.current = !0, d(e.id), p((t) => {
 			if (!(e.id in t)) return t;
 			let { [e.id]: n, ...r } = t;
 			return r;
@@ -475,20 +482,20 @@ function Se(e) {
 		} catch (e) {
 			n = { error: e instanceof Error && e.message ? e.message : "That answer could not be taken. Try again." };
 		} finally {
-			b.current = !1, l(null);
+			S.current = !1, d(null);
 		}
-		return Y(n) ? (d((t) => ({
+		return xe(n) ? (p((t) => ({
 			...t,
 			[e.id]: n.error
-		})), !1) : xe(n) ? (h((t) => ({
+		})), !1) : Y(n) ? (g((t) => ({
 			...t,
 			[e.id]: n.next
-		})), r((t) => new Set(t).add(e.id)), a(null), !0) : (r((t) => new Set(t).add(e.id)), a(null), p(n && "receipt" in n ? n.receipt : he(e, t)), !0);
-	}, []), w = I(async (e) => {
-		let t = y;
+		})), a((t) => new Set(t).add(e.id)), s(null), !0) : (a((t) => new Set(t).add(e.id)), s(null), ee(n && "receipt" in n ? n.receipt : he(e, t)), !0);
+	}, []), D = F(async (e) => {
+		let t = x;
 		if (!t || t.kind !== "compose" || t.readOnlyReason) return { error: "This question takes no message." };
-		if (b.current) return { error: "Still working on the last answer." };
-		b.current = !0, l(t.id);
+		if (S.current) return { error: "Still working on the last answer." };
+		S.current = !0, d(t.id);
 		let n;
 		try {
 			n = await t.onAnswer({
@@ -498,66 +505,66 @@ function Se(e) {
 		} catch (e) {
 			n = { error: e instanceof Error && e.message ? e.message : "That could not be confirmed. Try again." };
 		} finally {
-			b.current = !1, l(null);
+			S.current = !1, d(null);
 		}
-		return Y(n) ? n : n && "receipt" in n ? { receipt: n.receipt } : void 0;
-	}, [y]), T = y ? _e(y.id, m) : null, E = I(() => {
-		if (!y || T == null) return !1;
-		let e = y.id;
-		return h((e) => {
-			let { [T]: t, ...n } = e;
+		return xe(n) ? n : n && "receipt" in n ? { receipt: n.receipt } : void 0;
+	}, [x]), O = x ? _e(x.id, h) : null, ne = F(() => {
+		if (!x || O == null) return !1;
+		let e = x.id;
+		return g((e) => {
+			let { [O]: t, ...n } = e;
 			return n;
-		}), r((t) => {
+		}), a((t) => {
 			let n = new Set(t);
-			return n.delete(T), n.delete(e), n;
-		}), a(T), !0;
-	}, [y, T]), D = I(() => {
-		y && (r((e) => new Set(e).add(y.id)), a(null));
-	}, [y]), O = I(async (e) => {
-		if (!y) return !1;
-		let t = H(y).find((t) => t.id === e);
-		return !t || t.disabledReason ? !1 : C(y, me(y, t));
-	}, [y, C]), ne = I(async (e) => {
-		if (!y || !W(y)) return !1;
-		let t = G(y, e);
-		return "error" in t ? (d((e) => ({
+			return n.delete(O), n.delete(e), n;
+		}), s(O), !0;
+	}, [x, O]), re = F(() => {
+		x && (a((e) => new Set(e).add(x.id)), s(null));
+	}, [x]), k = F(async (e) => {
+		if (!x) return !1;
+		let t = H(x).find((t) => t.id === e);
+		return !t || t.disabledReason ? !1 : E(x, me(x, t));
+	}, [x, E]), A = F(async (e) => {
+		if (!x || !U(x)) return !1;
+		let t = G(x, e);
+		return "error" in t ? (p((e) => ({
 			...e,
-			[y.id]: t.error
-		})), !1) : C(y, t.answer);
-	}, [y, C]), re = I((e) => {
-		if (!_.length) return;
-		let t = (v + e + _.length) % _.length;
-		a(_[t].id);
-	}, [_, v]);
+			[x.id]: t.error
+		})), !1) : E(x, t.answer);
+	}, [x, E]), ie = F((e) => {
+		if (!y.length) return;
+		let t = (b + e + y.length) % y.length;
+		s(y[t].id);
+	}, [y, b]);
 	return {
-		pending: _,
-		active: y,
-		index: v,
-		collapsed: o,
-		busy: ee,
-		error: y ? u[y.id] ?? null : null,
-		receipt: f,
-		visible: _.length > 0 || f != null,
-		typed: !o && W(y),
-		setCollapsed: s,
-		page: re,
-		pick: O,
-		answerTyped: ne,
-		answerCompose: w,
-		isFollowUp: T != null,
-		back: E,
-		finish: D,
-		dismissReceipt: () => p(null)
+		pending: y,
+		active: x,
+		index: b,
+		collapsed: c,
+		busy: te,
+		error: x ? f[x.id] ?? null : null,
+		receipt: m,
+		visible: y.length > 0 || m != null,
+		typed: !c && U(x),
+		setCollapsed: l,
+		page: ie,
+		pick: k,
+		answerTyped: A,
+		answerCompose: D,
+		isFollowUp: O != null,
+		back: ne,
+		finish: re,
+		dismissReceipt: () => ee(null)
 	};
 }
-var Ce = {
+var we = {
 	neutral: "text-text-primary",
 	success: "text-success-fg",
 	warning: "text-warning-fg",
 	danger: "text-danger-fg",
 	info: "text-info-fg"
 };
-function we({ children: e }) {
+function Te({ children: e }) {
 	return /* @__PURE__ */ B("kbd", {
 		className: "inline-flex h-4 min-w-4 items-center justify-center rounded-sm border border-border bg-surface px-1 font-mono text-[11px] font-normal leading-none text-text-secondary",
 		children: e
@@ -566,42 +573,42 @@ function we({ children: e }) {
 function X() {
 	return typeof navigator > "u" ? "Ctrl" : /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "⌘" : "Ctrl+";
 }
-var Te = "max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain";
-function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", className: d, "data-testid": f = "composer-prompt-deck" }) {
-	let p = c === "inset", m = Se(t ? null : n), h = t ?? m, g = R(null), _ = oe(), v = R(null), [y, ee] = z({
+var Ee = "max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain";
+function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card", className: f, "data-testid": p = "composer-prompt-deck" }) {
+	let m = d === "inset", ee = Ce(t ? null : n, { scope: s }), h = t ?? ee, g = R(null), _ = se(), v = R(null), [y, b] = z({
 		id: "",
 		text: ""
-	}), { active: b, pending: x, index: te, collapsed: S, busy: C, error: w, receipt: T } = h, E = b?.inputDraft?.value ?? (y.id === b?.id ? y.text : ""), D = !s && h.typed && !b?.readOnlyReason, O = async () => {
-		let e = b?.id;
-		await h.answerTyped(E) && ee((t) => t.id === e ? {
+	}), { active: x, pending: te, index: S, collapsed: C, busy: w, error: T, receipt: E } = h, D = x?.inputDraft?.value ?? (y.id === x?.id ? y.text : ""), O = !c && h.typed && !x?.readOnlyReason, ne = async () => {
+		let e = x?.id;
+		await h.answerTyped(D) && b((t) => t.id === e ? {
 			id: "",
 			text: ""
 		} : t);
-	}, ne = R({
+	}, re = R({
 		deck: h,
-		input: s
+		input: c
 	});
-	if (ne.current = {
+	if (re.current = {
 		deck: h,
-		input: s
-	}, L(() => {
-		if (!b || S || b.readOnlyReason || b.kind === "compose") return;
+		input: c
+	}, I(() => {
+		if (!x || C || x.readOnlyReason || x.kind === "compose") return;
 		let e = requestAnimationFrame(() => {
-			let e = document.activeElement, t = e?.closest("input,textarea,select,[contenteditable=\"true\"]"), n = ne.current.input;
+			let e = document.activeElement, t = e?.closest("input,textarea,select,[contenteditable=\"true\"]"), n = re.current.input;
 			t && !g.current?.contains(e) && !n?.contains(e) || (n ? n.focus() : v.current ? v.current.focus() : (g.current?.querySelector("[data-default=\"true\"]:not(:disabled)") ?? g.current?.querySelector("[data-composer-prompt-option]:not(:disabled)"))?.focus());
 		});
 		return () => cancelAnimationFrame(e);
 	}, [
-		b?.id,
-		S,
-		b?.kind,
-		b?.readOnlyReason
-	]), L(() => {
+		x?.id,
+		C,
+		x?.kind,
+		x?.readOnlyReason
+	]), I(() => {
 		let e = (e) => {
 			if (e.defaultPrevented || e.isComposing || e.repeat) return;
-			let { deck: t, input: n } = ne.current, r = e.target, i = !!g.current && !!r && g.current.contains(r), a = !!n && n.contains(r), o = !!r && v.current?.contains(r);
+			let { deck: t, input: n } = re.current, r = e.target, i = !!g.current && !!r && g.current.contains(r), a = !!n && n.contains(r), o = !!r && v.current?.contains(r);
 			if (!i && !a) return;
-			let s = ve({
+			let s = q({
 				key: e.key,
 				altKey: e.altKey,
 				ctrlKey: e.ctrlKey,
@@ -621,12 +628,12 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 		};
 		return document.addEventListener("keydown", e, !0), () => document.removeEventListener("keydown", e, !0);
 	}, []), !h.visible) return null;
-	let re = X(), k = x.length, A = T ? /* @__PURE__ */ V(i, {
+	let k = X(), A = te.length, ie = E ? /* @__PURE__ */ V(i, {
 		gap: "xs",
 		align: "center",
 		wrap: !0,
-		className: e("min-w-0", p && !S && b && "px-3 pb-2"),
-		"data-testid": `${f}-receipt`,
+		className: e("min-w-0", m && !C && x && "px-3 pb-2"),
+		"data-testid": `${p}-receipt`,
 		children: [/* @__PURE__ */ B(o, {
 			as: "p",
 			size: "xs",
@@ -634,7 +641,7 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 			wrap: !0,
 			role: "status",
 			className: "min-w-0",
-			children: `Answered · ${T}`
+			children: `Answered · ${E}`
 		}), /* @__PURE__ */ B(r, {
 			variant: "link",
 			size: "sm",
@@ -643,25 +650,25 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 			children: "Dismiss"
 		})]
 	}) : null;
-	if (!b || S) return /* @__PURE__ */ V(a, {
+	if (!x || C) return /* @__PURE__ */ V(a, {
 		gap: "xs",
-		className: e("min-w-0", p && "border-b border-border px-3 py-1.5", d),
-		"data-composer-prompt-deck": b ? "collapsed" : "answered",
-		"data-deck-variant": c,
-		"data-testid": f,
+		className: e("min-w-0", m && "border-b border-border px-3 py-1.5", f),
+		"data-composer-prompt-deck": x ? "collapsed" : "answered",
+		"data-deck-variant": d,
+		"data-testid": p,
 		ref: g,
-		children: [b && /* @__PURE__ */ V(i, {
+		children: [x && /* @__PURE__ */ V(i, {
 			gap: "sm",
 			align: "center",
 			wrap: !0,
-			className: e("min-w-0", !p && "rounded-md border border-border bg-surface-secondary px-3 py-1.5"),
+			className: e("min-w-0", !m && "rounded-md border border-border bg-surface-secondary px-3 py-1.5"),
 			children: [
 				/* @__PURE__ */ B(o, {
 					size: "xs",
 					tone: "secondary",
 					wrap: !0,
 					className: "min-w-0 flex-1",
-					children: k === 1 ? `1 question waiting · ${b.title}` : `${k} questions waiting · ${b.title}`
+					children: A === 1 ? `1 question waiting · ${x.title}` : `${A} questions waiting · ${x.title}`
 				}),
 				/* @__PURE__ */ B(r, {
 					variant: "link",
@@ -669,41 +676,41 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 					onClick: () => h.setCollapsed(!1),
 					"aria-keyshortcuts": "Control+ArrowDown Meta+ArrowDown",
 					"data-composer-readonly-allow": "Shows the prompt's existing facts without changing a record or submitting an answer",
-					"data-testid": `${f}-show`,
+					"data-testid": `${p}-show`,
 					children: "Show"
 				}),
-				/* @__PURE__ */ B(we, { children: `${re}↓` })
+				/* @__PURE__ */ B(Te, { children: `${k}↓` })
 			]
-		}), A]
+		}), ie]
 	});
-	let ie = H(b), j = W(b), M = b.kind === "compose" && !b.readOnlyReason, N = pe(b), P = `${_}-title`, ae = `${_}-question`, F = ie.map((e, t) => U(e, t)), I = [
-		ie.length ? `${j ? "Alt+" : ""}${F.filter(Boolean).length > 1 ? `${F[0]}–${F[F.length - 1]}` : F[0] ?? ""} choose` : null,
-		j ? "type an answer · Enter answer" : N ? `Enter ${N.label}` : null,
-		k > 1 ? `${re}↓ next` : null,
+	let j = H(x), ae = U(x), M = x.kind === "compose" && !x.readOnlyReason, N = W(x), oe = `${_}-title`, P = `${_}-question`, F = j.map((e, t) => pe(e, t)), L = [
+		j.length ? `${ae ? "Alt+" : ""}${F.filter(Boolean).length > 1 ? `${F[0]}–${F[F.length - 1]}` : F[0] ?? ""} choose` : null,
+		ae ? "type an answer · Enter answer" : N ? `Enter ${N.label}` : null,
+		A > 1 ? `${k}↓ next` : null,
 		"Esc hide"
 	].filter(Boolean).join(" · ");
 	return /* @__PURE__ */ V(a, {
 		gap: "xs",
-		className: e("min-w-0", p && "border-b border-border", d),
+		className: e("min-w-0", m && "border-b border-border", f),
 		"data-composer-prompt-deck": "expanded",
-		"data-composer-dialogue": s ? void 0 : b.kind,
-		"data-deck-variant": c,
-		"data-testid": f,
+		"data-composer-dialogue": c ? void 0 : x.kind,
+		"data-deck-variant": d,
+		"data-testid": p,
 		ref: g,
 		children: [/* @__PURE__ */ V("section", {
 			role: "group",
-			"aria-labelledby": P,
-			"aria-describedby": ae,
-			"aria-busy": C || void 0,
-			className: e("flex min-w-0 flex-col gap-2 px-3 py-2.5", Te, !p && "rounded-lg border border-border bg-surface"),
-			"data-composer-prompt": b.id,
-			"data-composer-prompt-kind": b.kind,
-			"data-testid": `${f}-card`,
+			"aria-labelledby": oe,
+			"aria-describedby": P,
+			"aria-busy": w || void 0,
+			className: e("flex min-w-0 flex-col gap-2 px-3 py-2.5", Ee, !m && "rounded-lg border border-border bg-surface"),
+			"data-composer-prompt": x.id,
+			"data-composer-prompt-kind": x.kind,
+			"data-testid": `${p}-card`,
 			children: [
-				b.path && !M && /* @__PURE__ */ B(u, {
-					steps: b.path.steps,
-					current: b.path.current,
-					"data-testid": `${f}-path`
+				x.path && !M && /* @__PURE__ */ B(u, {
+					steps: x.path.steps,
+					current: x.path.current,
+					"data-testid": `${p}-path`
 				}),
 				/* @__PURE__ */ V(i, {
 					gap: "sm",
@@ -714,23 +721,23 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 						/* @__PURE__ */ V(a, {
 							gap: "none",
 							className: "min-w-0 flex-1",
-							children: [b.eyebrow && /* @__PURE__ */ B(o, {
+							children: [x.eyebrow && /* @__PURE__ */ B(o, {
 								size: "xs",
 								tone: "tertiary",
 								className: "truncate",
-								children: b.eyebrow
+								children: x.eyebrow
 							}), /* @__PURE__ */ B(o, {
 								as: "p",
 								size: "sm",
 								weight: "semibold",
 								tone: "primary",
 								className: "min-w-0 truncate",
-								id: P,
-								title: b.title,
-								children: b.title
+								id: oe,
+								title: x.title,
+								children: x.title
 							})]
 						}),
-						k > 1 && /* @__PURE__ */ V(i, {
+						A > 1 && /* @__PURE__ */ V(i, {
 							gap: "xs",
 							align: "center",
 							wrap: !1,
@@ -740,8 +747,8 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 									size: "xs",
 									tone: "secondary",
 									tabular: !0,
-									"data-testid": `${f}-position`,
-									children: `${te + 1} of ${k}`
+									"data-testid": `${p}-position`,
+									children: `${S + 1} of ${A}`
 								}),
 								/* @__PURE__ */ B(r, {
 									variant: "ghost",
@@ -750,7 +757,7 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 									"aria-keyshortcuts": "Control+ArrowUp Meta+ArrowUp",
 									onClick: () => h.page(-1),
 									"data-composer-readonly-allow": "Reads the previous prompt without changing a record or submitting an answer",
-									"data-testid": `${f}-previous`,
+									"data-testid": `${p}-previous`,
 									children: "‹"
 								}),
 								/* @__PURE__ */ B(r, {
@@ -760,7 +767,7 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 									"aria-keyshortcuts": "Control+ArrowDown Meta+ArrowDown",
 									onClick: () => h.page(1),
 									"data-composer-readonly-allow": "Reads the next prompt without changing a record or submitting an answer",
-									"data-testid": `${f}-next`,
+									"data-testid": `${p}-next`,
 									children: "›"
 								})
 							]
@@ -771,35 +778,35 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 							className: "shrink-0",
 							"aria-keyshortcuts": "Escape",
 							onClick: () => {
-								h.setCollapsed(!0), s?.focus();
+								h.setCollapsed(!0), c?.focus();
 							},
 							"data-composer-readonly-allow": "Hides the prompt's existing facts without changing a record or submitting an answer",
-							"data-testid": `${f}-hide`,
+							"data-testid": `${p}-hide`,
 							children: "Hide"
 						})
 					]
 				}),
-				k > 1 && /* @__PURE__ */ B(i, {
+				A > 1 && /* @__PURE__ */ B(i, {
 					gap: "xs",
 					wrap: !1,
 					"aria-hidden": !0,
 					className: "min-w-0",
-					"data-testid": `${f}-progress`,
-					children: x.map((t, n) => /* @__PURE__ */ B(a, {
+					"data-testid": `${p}-progress`,
+					children: te.map((t, n) => /* @__PURE__ */ B(a, {
 						gap: "none",
-						className: e("h-1 min-w-0 flex-1 rounded-full", n === te ? "bg-primary" : "bg-border")
+						className: e("h-1 min-w-0 flex-1 rounded-full", n === S ? "bg-primary" : "bg-border")
 					}, t.id))
 				}),
-				b.fields && b.fields.length > 0 && /* @__PURE__ */ B("dl", {
+				x.fields && x.fields.length > 0 && /* @__PURE__ */ B("dl", {
 					className: "m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5",
-					"data-testid": `${f}-fields`,
-					children: b.fields.map((t, n) => /* @__PURE__ */ V("div", {
+					"data-testid": `${p}-fields`,
+					children: x.fields.map((t, n) => /* @__PURE__ */ V("div", {
 						className: "flex min-w-0 max-w-full flex-col",
 						children: [/* @__PURE__ */ B("dt", {
 							className: "m-0 text-xs font-normal text-text-tertiary",
 							children: t.label
 						}), /* @__PURE__ */ B("dd", {
-							className: e("m-0 min-w-0 break-words text-xs font-normal", Ce[t.tone ?? "neutral"], t.mono && "tabular-nums"),
+							className: e("m-0 min-w-0 break-words text-xs font-normal", we[t.tone ?? "neutral"], t.mono && "tabular-nums"),
 							...typeof t.value == "string" ? { title: t.value } : {},
 							children: t.value
 						})]
@@ -810,49 +817,49 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 					size: "sm",
 					tone: "primary",
 					wrap: !0,
-					id: ae,
+					id: P,
 					className: "min-w-0",
-					children: b.question
+					children: x.question
 				}),
-				b.readOnlyReason ? /* @__PURE__ */ B(o, {
+				x.readOnlyReason ? /* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
 					wrap: !0,
-					"data-testid": `${f}-read-only`,
-					children: b.readOnlyReason
+					"data-testid": `${p}-read-only`,
+					children: x.readOnlyReason
 				}) : M ? /* @__PURE__ */ B(de, {
-					recipient: b.compose?.recipient,
-					defaultMessage: b.compose?.initialMessage,
-					messageLabel: b.compose?.messageLabel,
-					placeholder: b.compose?.placeholder,
-					reviewTitle: b.compose?.reviewTitle,
-					note: b.compose?.note,
-					doneTitle: b.compose?.doneTitle,
-					doneMessage: b.compose?.doneMessage,
-					continueLabel: b.compose?.continueLabel,
-					confirmLabel: b.compose?.confirmLabel,
-					backLabel: b.compose?.backLabel,
-					doneActionLabel: b.compose?.doneActionLabel,
-					path: b.path,
+					recipient: x.compose?.recipient,
+					defaultMessage: x.compose?.initialMessage,
+					messageLabel: x.compose?.messageLabel,
+					placeholder: x.compose?.placeholder,
+					reviewTitle: x.compose?.reviewTitle,
+					note: x.compose?.note,
+					doneTitle: x.compose?.doneTitle,
+					doneMessage: x.compose?.doneMessage,
+					continueLabel: x.compose?.continueLabel,
+					confirmLabel: x.compose?.confirmLabel,
+					backLabel: x.compose?.backLabel,
+					doneActionLabel: x.compose?.doneActionLabel,
+					path: x.path,
 					onConfirm: (e) => h.answerCompose(e),
 					onCancel: h.isFollowUp ? () => {
 						h.back();
-					} : b.compose?.onCancel ? () => {
-						b.compose?.onCancel?.(), h.finish();
+					} : x.compose?.onCancel ? () => {
+						x.compose?.onCancel?.(), h.finish();
 					} : void 0,
 					onDone: () => {
-						h.finish(), s?.focus();
+						h.finish(), c?.focus();
 					},
-					"data-testid": `${f}-compose`
-				}, b.id) : ie.length > 0 && /* @__PURE__ */ B(i, {
+					"data-testid": `${p}-compose`
+				}, x.id) : j.length > 0 && /* @__PURE__ */ B(i, {
 					gap: "xs",
 					wrap: !0,
 					className: "min-w-0",
 					role: "list",
 					"aria-label": "Answers",
-					children: ie.map((e, t) => {
-						let n = F[t], i = n ? `${j ? "Alt+" : ""}${n}` : void 0;
+					children: j.map((e, t) => {
+						let n = F[t], i = n ? `${ae ? "Alt+" : ""}${n}` : void 0;
 						return /* @__PURE__ */ V(a, {
 							gap: "none",
 							role: "listitem",
@@ -860,19 +867,19 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 							children: [/* @__PURE__ */ V(r, {
 								size: "sm",
 								variant: e.emphasis === "primary" ? "primary" : e.emphasis === "danger" ? "danger" : "secondary",
-								disabled: C || !!e.disabledReason,
+								disabled: w || !!e.disabledReason,
 								title: e.disabledReason ?? e.hint,
 								"aria-keyshortcuts": i,
 								"aria-describedby": e.hint ? `${_}-hint-${t}` : void 0,
 								onClick: () => {
 									h.pick(e.id).then((e) => {
-										e && s?.focus();
+										e && c?.focus();
 									});
 								},
 								"data-composer-prompt-option": e.id,
 								"data-default": N?.id === e.id || void 0,
-								"data-testid": `${f}-option-${e.id}`,
-								children: [i && /* @__PURE__ */ B(we, { children: i }), e.label]
+								"data-testid": `${p}-option-${e.id}`,
+								children: [i && /* @__PURE__ */ B(Te, { children: i }), e.label]
 							}), e.hint && /* @__PURE__ */ B(o, {
 								size: "xs",
 								tone: "tertiary",
@@ -883,69 +890,69 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 						}, e.id);
 					})
 				}),
-				D && /* @__PURE__ */ V(a, {
+				O && /* @__PURE__ */ V(a, {
 					gap: "sm",
 					className: "min-w-0",
 					children: [/* @__PURE__ */ B(l, {
 						ref: v,
-						"aria-label": b.title,
-						placeholder: b.placeholder ?? "Your answer",
-						value: E,
-						disabled: C,
+						"aria-label": x.title,
+						placeholder: x.placeholder ?? "Your answer",
+						value: D,
+						disabled: w,
 						autoResize: !0,
-						minRows: b.kind === "number" ? 1 : 2,
-						inputMode: b.kind === "number" ? "decimal" : void 0,
-						onChange: (e) => b.inputDraft ? b.inputDraft.onChange(e.target.value) : ee({
-							id: b.id,
+						minRows: x.kind === "number" ? 1 : 2,
+						inputMode: x.kind === "number" ? "decimal" : void 0,
+						onChange: (e) => x.inputDraft ? x.inputDraft.onChange(e.target.value) : b({
+							id: x.id,
 							text: e.target.value
 						}),
 						onKeyDown: (e) => {
-							e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && !e.repeat && (e.preventDefault(), C || O());
+							e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && !e.repeat && (e.preventDefault(), w || ne());
 						},
-						"data-testid": `${f}-answer`
+						"data-testid": `${p}-answer`
 					}), /* @__PURE__ */ B(r, {
 						variant: "primary",
 						size: "sm",
 						className: "self-end",
-						disabled: C || !E.trim(),
+						disabled: w || !D.trim(),
 						onClick: () => {
-							O();
+							ne();
 						},
-						"data-testid": `${f}-submit`,
+						"data-testid": `${p}-submit`,
 						children: "Answer"
 					})]
 				}),
-				w && !M && /* @__PURE__ */ B(o, {
+				T && !M && /* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
 					wrap: !0,
 					role: "alert",
 					className: "text-danger-fg",
-					"data-testid": `${f}-error`,
-					children: w
+					"data-testid": `${p}-error`,
+					children: T
 				}),
-				C && !M && /* @__PURE__ */ B(o, {
+				w && !M && /* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
 					role: "status",
-					"data-testid": `${f}-busy`,
+					"data-testid": `${p}-busy`,
 					children: "Working…"
 				}),
-				!b.readOnlyReason && !M && /* @__PURE__ */ B(o, {
+				!x.readOnlyReason && !M && /* @__PURE__ */ B(o, {
 					as: "p",
 					size: "xs",
 					tone: "tertiary",
 					wrap: !0,
 					className: "min-w-0",
-					"data-testid": `${f}-keys`,
-					children: I
+					"data-testid": `${p}-keys`,
+					children: L
 				})
 			]
-		}), A]
+		}), ie]
 	});
 }
-function De(e) {
+function Oe(e) {
 	let { capabilities: t, offline: n } = e, r = [], i = {};
 	if (e.hasChat) {
 		r.push("chat");
@@ -963,7 +970,7 @@ function De(e) {
 		reasons: i
 	};
 }
-function Oe(e, t, n) {
+function ke(e, t, n) {
 	if (t) {
 		let n = e.find((e) => e.id === t);
 		if (n) return n;
@@ -974,16 +981,16 @@ function Oe(e, t, n) {
 	}
 	return e.find((e) => !e.disabled) ?? null;
 }
-function ke(e, t) {
+function Ae(e, t) {
 	return [...new Set([e, ...t.map((e) => e.channel)].filter((e) => !!e))];
 }
-function Ae(e) {
+function je(e) {
 	return e.replace(/<[^>]*>/g, "").trim();
 }
-function je(e) {
-	return e.mode === "chat" && !!e.channel && e.recipientChannel === e.channel && Ae(e.html).length > 0;
-}
 function Me(e) {
+	return e.mode === "chat" && !!e.channel && e.recipientChannel === e.channel && je(e.html).length > 0;
+}
+function Ne(e) {
 	return {
 		displayName: e.displayName,
 		...e.reply ? { replyTo: e.reply } : {},
@@ -994,11 +1001,11 @@ function Me(e) {
 		...e.attachments?.length ? { attachments: [...e.attachments] } : {}
 	};
 }
-function Ne(e) {
+function Pe(e) {
 	let t = e.trim();
 	return /^\/agent\s+/i.test(t) ? t.replace(/^\/agent\s+/i, "") : t;
 }
-function Pe(e, t) {
+function Fe(e, t) {
 	let n = e.trim(), r = n.toLowerCase();
 	for (let e of t) {
 		let t = e.trigger.toLowerCase();
@@ -1009,38 +1016,38 @@ function Pe(e, t) {
 	}
 	return null;
 }
-var Fe = "ui.conversation-draft:";
-function Ie(e) {
-	return `${Fe}${e}`;
+var Ie = "ui.conversation-draft:";
+function Le(e) {
+	return `${Ie}${e}`;
 }
-function Le(e, t) {
+function Re(e, t) {
 	try {
-		let n = e?.getItem(Ie(t));
+		let n = e?.getItem(Le(t));
 		if (!n) return null;
 		let r = JSON.parse(n);
-		return r && typeof r.html == "string" && Ae(r.html) ? r.html : null;
+		return r && typeof r.html == "string" && je(r.html) ? r.html : null;
 	} catch {
 		return null;
 	}
 }
-function Re(e, t, n) {
+function ze(e, t, n) {
 	try {
-		Ae(n) ? e?.setItem(Ie(t), JSON.stringify({ html: n })) : e?.removeItem(Ie(t));
+		je(n) ? e?.setItem(Le(t), JSON.stringify({ html: n })) : e?.removeItem(Le(t));
 	} catch {}
 }
 var Z = "Conversation changed; draft retained.";
-function ze(e) {
+function Be(e) {
 	return `Upload failed: ${(e ?? "").replace(/^upload failed:?\s*/i, "").trim() || "unknown error"}`;
 }
-function Be(e) {
+function Ve(e) {
 	return e.map((e) => e.name).join(", ");
 }
-var Ve = class {
+var He = class {
 	pending = /* @__PURE__ */ new Map();
 	wait(e, t, n) {
 		return new Promise((r, i) => {
 			let a = setTimeout(() => {
-				this.pending.delete(e) && i(Error(ze(`timed out (${n})`)));
+				this.pending.delete(e) && i(Error(Be(`timed out (${n})`)));
 			}, t);
 			this.pending.set(e, {
 				resolve: r,
@@ -1060,11 +1067,11 @@ var Ve = class {
 	get size() {
 		return this.pending.size;
 	}
-}, He = "Message sent. Your current draft has been kept.", Ue = "This destination is no longer available. Choose a current destination.", We = "This view has no page to attach.";
-function Ge(e, t) {
+}, Ue = "Message sent. Your current draft has been kept.", We = "This destination is no longer available. Choose a current destination.", Ge = "This view has no page to attach.";
+function Ke(e, t) {
 	typeof e == "function" ? e(t) : e && (e.current = t);
 }
-function Ke(e, t) {
+function qe(e, t) {
 	if (!t) return e;
 	let n = Object.keys(t).filter((n) => !e.modes.includes(n) && t[n]);
 	return n.length ? {
@@ -1076,16 +1083,16 @@ function Ke(e, t) {
 		}
 	} : e;
 }
-function qe() {
+function Je() {
 	try {
 		return typeof window > "u" ? null : window.localStorage;
 	} catch {
 		return null;
 	}
 }
-function Je(e, t, n, r = 6e4) {
-	let i = R(new Ve()), a = R(t);
-	a.current = t, L(() => () => i.current.rejectAll(Z), [t]);
+function Ye(e, t, n, r = 6e4) {
+	let i = R(new He()), a = R(t);
+	a.current = t, I(() => () => i.current.rejectAll(Z), [t]);
 	let { upload: o } = e.useFileUpload(t ?? "chat:no-conversation", {
 		displayName: n,
 		onComplete: (e) => {
@@ -1099,27 +1106,27 @@ function Je(e, t, n, r = 6e4) {
 				...e.height ? { height: e.height } : {}
 			});
 		}
-	}), s = I(async (e) => {
+	}), s = F(async (e) => {
 		let t = a.current;
-		if (!t) throw new _("This conversation cannot take files yet.");
+		if (!t) throw new g("This conversation cannot take files yet.");
 		let n;
 		try {
 			n = await o(e);
 		} catch (e) {
-			throw new _(ze(e instanceof Error ? e.message : String(e)));
+			throw new g(Be(e instanceof Error ? e.message : String(e)));
 		}
 		if (a.current !== t) throw Error(Z);
-		if (n.status === "failed") throw new _(ze(n.error));
-		if (!n.transferId) throw new _(ze(`no transfer id for ${e.name}`));
+		if (n.status === "failed") throw new g(Be(n.error));
+		if (!n.transferId) throw new g(Be(`no transfer id for ${e.name}`));
 		try {
 			return await i.current.wait(n.transferId, r, e.name);
 		} catch (e) {
-			throw e instanceof Error && e.message === "Conversation changed; draft retained." ? e : new _(e instanceof Error ? e.message : ze(void 0));
+			throw e instanceof Error && e.message === "Conversation changed; draft retained." ? e : new g(e instanceof Error ? e.message : Be(void 0));
 		}
 	}, [o, r]);
-	return I((e) => Promise.all(e.map(s)), [s]);
+	return F((e) => Promise.all(e.map(s)), [s]);
 }
-function Ye({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: a, disabled: c, "data-testid": l }) {
+function Xe({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: a, disabled: c, "data-testid": l }) {
 	let u = n.filter((e) => !e.group).map((e) => ({
 		value: e.id,
 		label: e.label,
@@ -1160,17 +1167,17 @@ function Ye({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: a, di
 		})]
 	});
 }
-function Xe(e) {
+function Ze(e) {
 	function t(t) {
-		return /* @__PURE__ */ B(Ze, {
+		return /* @__PURE__ */ B(Qe, {
 			rm: e,
 			...t
 		});
 	}
 	return t.displayName = "ConversationComposer", t;
 }
-function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity: f, offline: p, recipients: m, defaultRecipient: h, recipient: g, onRecipientChange: v, commands: y = [], onAgent: ee, callBlock: b, reply: x, mode: S, onModeChange: C, defaultMode: w, draftKey: E, persistDraft: D = !0, claim: O = !1, answersFocus: ne = !1, onReveal: re, disabled: k, offModes: A, prompts: ie, composerRef: j, onDraftChange: M, defaultDraft: N, draft: P, above: F, modeRowEnd: oe, references: ce, onRemoveReference: le, modePlaceholders: ue, contextChip: de, sendWithReferencesOnly: fe, console: H, "data-testid": U = "conversation-composer", ...W }) {
-	let pe = n() === "compact", me = f?.displayName || "You", G = E ?? s ?? `${l.kind}:${l.id}`, he = u.readOnlyReason || "You can read this conversation but not post to it.", K = se(() => {
+function Qe({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity: f, offline: p, recipients: m, defaultRecipient: ee, recipient: h, onRecipientChange: _, commands: v = [], onAgent: y, callBlock: b, reply: x, mode: S, onModeChange: C, defaultMode: w, draftKey: E, persistDraft: D = !0, claim: O = !1, answersFocus: ne = !1, onReveal: re, disabled: k, offModes: A, prompts: ie, promptScope: j, composerRef: ae, onDraftChange: M, defaultDraft: N, draft: P, above: se, modeRowEnd: ce, references: le, onRemoveReference: ue, modePlaceholders: de, contextChip: fe, sendWithReferencesOnly: H, console: pe, "data-testid": U = "conversation-composer", ...W }) {
+	let me = n() === "compact", G = f?.displayName || "You", he = E ?? s ?? `${l.kind}:${l.id}`, ge = u.readOnlyReason || "You can read this conversation but not post to it.", K = L(() => {
 		let e = m ?? (s ? [{
 			id: "discussion",
 			label: l.title || "This conversation",
@@ -1179,7 +1186,7 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 		}] : []);
 		return e.map((t) => t.channel && t.channel === s && !u.maySend ? {
 			...t,
-			unavailableReason: t.unavailableReason ?? he,
+			unavailableReason: t.unavailableReason ?? ge,
 			disabled: e.length > 1 || t.disabled
 		} : t);
 	}, [
@@ -1187,65 +1194,65 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 		s,
 		l.title,
 		u.maySend,
-		he
-	]), [ge, _e] = z(null), q = g === void 0 ? ge : g, ve = !!q && !K.some((e) => e.id === q), J = ve ? {
+		ge
+	]), [_e, ve] = z(null), q = h === void 0 ? _e : h, ye = !!q && !K.some((e) => e.id === q), J = ye ? {
 		id: q,
 		label: "Previous destination",
 		disabled: !0,
-		unavailableReason: Ue
-	} : Oe(K, q, h), ye = K.filter((e) => !e.disabled && !e.unavailableReason).length, be = K.length > 0, Y = Ke(De({
+		unavailableReason: We
+	} : ke(K, q, ee), be = K.filter((e) => !e.disabled && !e.unavailableReason).length, xe = K.length > 0, Y = qe(Oe({
 		capabilities: u,
-		hasChat: be,
-		choosable: ye,
+		hasChat: xe,
+		choosable: be,
 		offline: p ?? null,
 		chatOffReason: J?.unavailableReason ?? null
-	}), A), xe = w && Y.modes.includes(w) ? w : Y.modes.find((e) => !Y.disabledModes.includes(e)) ?? Y.modes[0] ?? "chat", [Ce, we] = z(xe), X = S ?? Ce, Te = I((e) => {
-		S === void 0 && we(e), C?.(e);
-	}, [S, C]), Ae = `${Y.modes.join(",")}|${Y.disabledModes.join(",")}`;
-	L(() => {
+	}), A), Se = w && Y.modes.includes(w) ? w : Y.modes.find((e) => !Y.disabledModes.includes(e)) ?? Y.modes[0] ?? "chat", [we, Te] = z(Se), X = S ?? we, Ee = F((e) => {
+		S === void 0 && Te(e), C?.(e);
+	}, [S, C]), je = `${Y.modes.join(",")}|${Y.disabledModes.join(",")}`;
+	I(() => {
 		if (Y.modes.includes(X) && !Y.disabledModes.includes(X)) return;
 		let e = Y.modes.find((e) => !Y.disabledModes.includes(e));
-		e && e !== X && Te(e);
+		e && e !== X && Ee(e);
 	}, [
-		Ae,
+		je,
 		X,
-		Te
+		Ee
 	]);
-	let [Fe, Ie] = z(!0), Z = l.reference ?? null;
-	L(() => {
-		Ie(!0);
+	let [Ie, Le] = z(!0), Z = l.reference ?? null;
+	I(() => {
+		Le(!0);
 	}, [Z?.id]);
-	let ze = !!J && J.carriesReference !== !1, Ve = !!Z && !Z.page, Xe = !!J && J.channel !== s, Ze = !!Z && Fe && !(X === "chat" && (!ze || Ve && Xe)), Qe = X === "chat" && ze && Fe && !(Ve && Xe) ? Z : null, $e = R(0), et = P !== void 0, tt = f?.userId?.trim() || null, Q = tt ? JSON.stringify([
+	let Be = !!J && J.carriesReference !== !1, He = !!Z && !Z.page, Ze = !!J && J.channel !== s, Qe = !!Z && Ie && !(X === "chat" && (!Be || He && Ze)), $e = X === "chat" && Be && Ie && !(He && Ze) ? Z : null, et = R(0), tt = P !== void 0, nt = f?.userId?.trim() || null, Q = nt ? JSON.stringify([
 		"actor",
-		tt,
-		G
-	]) : null, nt = D && !et ? JSON.stringify([
+		nt,
+		he
+	]) : null, rt = D && !tt ? JSON.stringify([
 		"actor",
-		tt,
-		G
-	]) : G, rt = JSON.stringify([
-		G,
+		nt,
+		he
+	]) : he, it = JSON.stringify([
+		he,
 		s ?? null,
 		f?.userId ?? null,
 		J?.id ?? null,
 		J?.channel ?? null
-	]), it = R(rt);
-	it.current !== rt && (it.current = rt, $e.current += 1);
-	let at = R(P);
-	at.current = P;
-	let ot = se(() => {
-		if (et || !D || !Q) return N;
-		let e = Le(qe(), Q);
+	]), at = R(it);
+	at.current !== it && (at.current = it, et.current += 1);
+	let ot = R(P);
+	ot.current = P;
+	let st = L(() => {
+		if (tt || !D || !Q) return N;
+		let e = Re(Je(), Q);
 		return e ? {
 			html: e,
 			files: []
 		} : N;
 	}, [
-		nt,
-		et,
+		rt,
+		tt,
 		D
-	]), st = R(""), ct = I((e, t) => {
-		$e.current += 1, st.current = e.html, D && !et && Q && Re(qe(), Q, e.html), c?.setTyping?.(je({
+	]), ct = R(""), lt = F((e, t) => {
+		et.current += 1, ct.current = e.html, D && !tt && Q && ze(Je(), Q, e.html), c?.setTyping?.(Me({
 			html: e.html,
 			mode: X,
 			recipientChannel: J?.channel,
@@ -1253,7 +1260,7 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 		})), M?.(e, t);
 	}, [
 		D,
-		et,
+		tt,
 		Q,
 		c,
 		X,
@@ -1261,9 +1268,9 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 		s,
 		M
 	]);
-	L(() => {
-		je({
-			html: st.current,
+	I(() => {
+		Me({
+			html: ct.current,
 			mode: X,
 			recipientChannel: J?.channel,
 			channel: s
@@ -1273,63 +1280,63 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 		J?.channel,
 		s
 	]);
-	let lt = X === "chat" && u.mayAttach && J?.attachments && J.channel ? J.channel : null, ut = Je(r, lt, me), [dt, ft] = z(null), pt = t(), mt = R(null), ht = I((e) => {
-		mt.current = e, Ge(j, e);
-	}, [j]), gt = I(() => {
+	let ut = X === "chat" && u.mayAttach && J?.attachments && J.channel ? J.channel : null, dt = Ye(r, ut, G), [ft, pt] = z(null), mt = t(), ht = R(null), gt = F((e) => {
+		ht.current = e, Ke(ae, e);
+	}, [ae]), _t = F(() => {
 		re?.();
 		let e = 20, t = () => {
-			mt.current ? mt.current.focus() : e-- > 0 && requestAnimationFrame(t);
+			ht.current ? ht.current.focus() : e-- > 0 && requestAnimationFrame(t);
 		};
 		requestAnimationFrame(t);
-	}, [re]), $ = Se(ie), _t = !!$.active && !$.collapsed, vt = R(!1);
-	L(() => {
-		_t ? c?.setTyping?.(!1) : vt.current && gt(), vt.current = _t;
+	}, [re]), $ = Ce(ie, { scope: j }), vt = !!$.active && !$.collapsed, yt = R(!1);
+	I(() => {
+		vt ? c?.setTyping?.(!1) : yt.current && _t(), yt.current = vt;
 	}, [
-		_t,
+		vt,
 		c,
-		gt
+		_t
 	]);
-	let yt = se(() => ({
-		isEmpty: () => !mt.current?.editor?.getText().trim(),
+	let bt = L(() => ({
+		isEmpty: () => !ht.current?.editor?.getText().trim(),
 		contains: (e) => {
 			try {
-				return !!e && !!mt.current?.editor?.view.dom.contains(e);
+				return !!e && !!ht.current?.editor?.view.dom.contains(e);
 			} catch {
 				return !1;
 			}
 		},
-		focus: gt
-	}), [gt]), bt = I((e) => {
-		_e(e), v?.(e), $e.current += 1, ft(null), K.find((t) => t.id === e)?.onSelect?.();
-	}, [K, v]), xt = K.filter((e) => e.claim !== !1);
+		focus: _t
+	}), [_t]), xt = F((e) => {
+		ve(e), _?.(e), et.current += 1, pt(null), K.find((t) => t.id === e)?.onSelect?.();
+	}, [K, _]), St = K.filter((e) => e.claim !== !1);
 	T({
-		channels: O ? ke(u.maySend || m === void 0 ? s : null, xt) : [],
+		channels: O ? Ae(u.maySend || m === void 0 ? s : null, St) : [],
 		label: O ? O.label : "",
 		replies: O ? !!O.replies : !1,
 		enabled: !!O && O.enabled !== !1,
 		focus: (e) => {
-			let t = xt.find((t) => t.channel === e.channel);
-			return Te("chat"), t && bt(t.id), gt(), !0;
+			let t = St.find((t) => t.channel === e.channel);
+			return Ee("chat"), t && xt(t.id), _t(), !0;
 		}
 	});
-	let St = I((e) => {
-		if (e.mode === "agent") return !Y.modes.includes("agent") || Y.disabledModes.includes("agent") ? !1 : (Te("agent"), gt(), !0);
+	let Ct = F((e) => {
+		if (e.mode === "agent") return !Y.modes.includes("agent") || Y.disabledModes.includes("agent") ? !1 : (Ee("agent"), _t(), !0);
 		if (!Y.modes.includes("chat") || Y.disabledModes.includes("chat")) return !1;
-		let t = e.target, n = t ? t.kind === "discussion" ? K.find((e) => e.channel && e.channel === s) ?? (m ? K.find((e) => e.id === "discussion") : J) : t.kind === "huddle" ? xt.find((e) => e.id.startsWith("huddle:")) ?? null : t.kind === "person" ? K.find((e) => e.id === `person:${t.userId}`) ?? null : K.find((e) => e.channel === t.channel) ?? null : J;
-		return !n || n.disabled ? !1 : (n.id !== J?.id && bt(n.id), Te("chat"), gt(), !0);
+		let t = e.target, n = t ? t.kind === "discussion" ? K.find((e) => e.channel && e.channel === s) ?? (m ? K.find((e) => e.id === "discussion") : J) : t.kind === "huddle" ? St.find((e) => e.id.startsWith("huddle:")) ?? null : t.kind === "person" ? K.find((e) => e.id === `person:${t.userId}`) ?? null : K.find((e) => e.channel === t.channel) ?? null : J;
+		return !n || n.disabled ? !1 : (n.id !== J?.id && xt(n.id), Ee("chat"), _t(), !0);
 	}, [
 		Y,
-		Te,
-		gt,
+		Ee,
+		_t,
 		J,
 		K,
 		m,
-		xt,
+		St,
 		s,
-		bt
+		xt
 	]);
-	te(St, ne);
-	let Ct = se(() => y.filter((e) => !e.modes || e.modes.includes(X)), [y, X]), wt = se(() => Ct.map((e) => ({
+	te(Ct, ne);
+	let wt = L(() => v.filter((e) => !e.modes || e.modes.includes(X)), [v, X]), Tt = L(() => wt.map((e) => ({
 		trigger: e.trigger,
 		label: e.label,
 		...e.hint ? { hint: e.hint } : {},
@@ -1337,20 +1344,20 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 		...e.icon ? { icon: e.icon } : {},
 		...e.disabled ? { disabled: !0 } : {},
 		...e.argument ? { argument: e.argument } : {}
-	})), [Ct]), Tt = (e) => {
-		if (typeof e == "string") throw new _(e);
+	})), [wt]), Et = (e) => {
+		if (typeof e == "string") throw new g(e);
 		return e !== !1;
-	}, Et = async (e, t) => {
-		if (ft(null), $.typed) {
+	}, Dt = async (e, t) => {
+		if (pt(null), $.typed) {
 			let t = await $.answerTyped(e.text);
-			return t && D && !et && Q && Re(qe(), Q, ""), t;
+			return t && D && !tt && Q && ze(Je(), Q, ""), t;
 		}
 		let n = (n, r, i) => ({
 			trigger: r,
 			text: n,
 			argumentText: i,
 			mode: t,
-			reference: Qe ?? (Fe ? Z : null),
+			reference: $e ?? (Ie ? Z : null),
 			recipientId: J?.id ?? null,
 			message: e,
 			...e.command?.argument ? { argument: {
@@ -1362,152 +1369,152 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 			if (!u.agent?.allowed || p) return !1;
 			let t = e.text.trim();
 			if (!t) return !1;
-			let r = y.filter((e) => !e.modes || e.modes.includes("agent")), i = Ne(t), a = Pe(t, r) ?? (i === t ? null : Pe(i, r));
+			let r = v.filter((e) => !e.modes || e.modes.includes("agent")), i = Pe(t), a = Fe(t, r) ?? (i === t ? null : Fe(i, r));
 			if (a) {
-				let e = Pe(t, [a.command]) ? t : i;
-				return !a.command.disabled && Tt(await a.command.run(n(e, a.command.trigger, a.argumentText)));
+				let e = Fe(t, [a.command]) ? t : i;
+				return !a.command.disabled && Et(await a.command.run(n(e, a.command.trigger, a.argumentText)));
 			}
 			if (!i) return !1;
-			if (ee) return Tt(await ee(i, n(i, "", i)));
+			if (y) return Et(await y(i, n(i, "", i)));
 			let o = r.find((e) => e.trigger === "/agent");
-			return o ? Tt(await o.run(n(`/agent ${i}`, "/agent", i))) : !1;
+			return o ? Et(await o.run(n(`/agent ${i}`, "/agent", i))) : !1;
 		}
 		if (!e.files.length) {
-			let t = Pe(e.text, y.filter((e) => !e.modes || e.modes.includes("chat")));
-			if (t) return !t.command.disabled && (c?.setTyping?.(!1), Tt(await t.command.run(n(e.text.trim(), t.command.trigger, t.argumentText))));
+			let t = Fe(e.text, v.filter((e) => !e.modes || e.modes.includes("chat")));
+			if (t) return !t.command.disabled && (c?.setTyping?.(!1), Et(await t.command.run(n(e.text.trim(), t.command.trigger, t.argumentText))));
 		}
 		if (!J || J.disabled || J.unavailableReason || p) return !1;
-		let r = e.text.trim(), i = !r && !e.files.length && !!fe && (!!Qe || (ce?.length ?? 0) > 0);
-		if (!r && !e.files.length && !i || e.files.length && !lt) return !1;
+		let r = e.text.trim(), i = !r && !e.files.length && !!H && (!!$e || (le?.length ?? 0) > 0);
+		if (!r && !e.files.length && !i || e.files.length && !ut) return !1;
 		c?.setTyping?.(!1);
-		let a = $e.current, o = it.current, l = e.files.length ? await ut(e.files) : [], d = !!J.channel && J.channel === s, f = Me({
-			displayName: me,
+		let a = et.current, o = at.current, l = e.files.length ? await dt(e.files) : [], d = !!J.channel && J.channel === s, f = Ne({
+			displayName: G,
 			reply: d ? x?.reply ?? null : null,
-			reference: Qe,
+			reference: $e,
 			attachments: l
-		}), m = r || Be(l), h = {
+		}), m = r || Ve(l), ee = {
 			text: m,
 			html: e.html,
 			files: e.files,
 			metadata: f,
-			reference: Qe
-		}, g;
-		return J.send ? g = await J.send(h) : c ? (c.sendMessage(m, f), g = !0) : g = !1, g ? $e.current !== a || at.current !== P ? (it.current === o && pt?.toast(He, { type: "success" }), !1) : (d && x?.clear(), D && !et && Q && Re(qe(), Q, ""), !0) : !1;
-	}, Dt = !!u.pending, Ot = X === "chat" && (!J || !!J.unavailableReason || !!J.disabled), kt = Ot && !$.typed && !k && !p && !Dt, At = Ze && Z ? /* @__PURE__ */ B(d, {
+			reference: $e
+		}, h;
+		return J.send ? h = await J.send(ee) : c ? (c.sendMessage(m, f), h = !0) : h = !1, h ? et.current !== a || ot.current !== P ? (at.current === o && mt?.toast(Ue, { type: "success" }), !1) : (d && x?.clear(), D && !tt && Q && ze(Je(), Q, ""), !0) : !1;
+	}, Ot = !!u.pending, kt = X === "chat" && (!J || !!J.unavailableReason || !!J.disabled), At = kt && !$.typed && !k && !p && !Ot, jt = Qe && Z ? /* @__PURE__ */ B(d, {
 		references: [{
 			id: Z.id,
-			label: pe ? Z.label.split(" › ").pop() ?? Z.label : Z.label,
+			label: me ? Z.label.split(" › ").pop() ?? Z.label : Z.label,
 			title: Z.label
 		}],
-		...kt ? {} : { onRemove: () => {
-			Ie(!1), $e.current += 1, le?.(Z.id);
+		...At ? {} : { onRemove: () => {
+			Le(!1), et.current += 1, ue?.(Z.id);
 		} },
 		removeLabel: (e) => `Remove ${e.label} from this draft`,
 		size: "md",
 		className: "min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0",
 		"data-testid": "rich-chat-composer-references"
-	}) : null, jt = ve && J ? [...K, J] : K, Mt = X === "chat" && jt.length > 1, Nt = X === "chat" && Fe && Ve && Xe && ze, Pt = X === "chat" && jt.length > 1 && !Dt ? J?.unavailableReason ?? (J ? null : "Choose a destination.") : null, Ft = X === "chat" ? J?.error ?? null : null, It = Mt || Pt || dt || Nt || Ft || F != null && F !== !1 ? /* @__PURE__ */ V(a, {
+	}) : null, Mt = ye && J ? [...K, J] : K, Nt = X === "chat" && Mt.length > 1, Pt = X === "chat" && Ie && He && Ze && Be, Ft = X === "chat" && Mt.length > 1 && !Ot ? J?.unavailableReason ?? (J ? null : "Choose a destination.") : null, It = X === "chat" ? J?.error ?? null : null, Lt = Nt || Ft || ft || Pt || It || se != null && se !== !1 ? /* @__PURE__ */ V(a, {
 		gap: "xs",
 		children: [
-			F,
-			(Mt || Pt) && /* @__PURE__ */ V(i, {
+			se,
+			(Nt || Ft) && /* @__PURE__ */ V(i, {
 				gap: "sm",
 				align: "center",
 				wrap: !1,
 				className: "min-w-0",
 				"data-composer-recipient-row": "",
-				children: [Mt && /* @__PURE__ */ B(Ye, {
-					id: `${G}-recipient`,
+				children: [Nt && /* @__PURE__ */ B(Xe, {
+					id: `${he}-recipient`,
 					value: J?.id ?? null,
-					recipients: jt,
-					onChange: bt,
+					recipients: Mt,
+					onChange: xt,
 					"data-testid": `${U}-recipient`,
-					...kt ? ye > 0 ? { readOnlyWayOut: "Choose a destination you can post to" } : { disabled: !0 } : {}
-				}), Pt && /* @__PURE__ */ B(o, {
+					...At ? be > 0 ? { readOnlyWayOut: "Choose a destination you can post to" } : { disabled: !0 } : {}
+				}), Ft && /* @__PURE__ */ B(o, {
 					size: "xs",
 					tone: "tertiary",
-					title: Pt,
-					className: e("min-w-0", Mt && "border-0 border-l border-solid border-border pl-2"),
+					title: Ft,
+					className: e("min-w-0", Nt && "border-0 border-l border-solid border-border pl-2"),
 					"data-composer-recipient-notice": "",
 					"data-testid": `${U}-recipient-unavailable`,
 					children: /* @__PURE__ */ B("span", {
 						className: "truncate",
-						children: Pt
+						children: Ft
 					})
 				})]
 			}),
-			Nt && /* @__PURE__ */ B(o, {
+			Pt && /* @__PURE__ */ B(o, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
-				children: We
+				children: Ge
 			}),
-			dt && /* @__PURE__ */ B(o, {
+			ft && /* @__PURE__ */ B(o, {
 				size: "xs",
 				tone: "secondary",
 				wrap: !0,
 				"data-testid": `${U}-note`,
-				children: dt
+				children: ft
 			}),
-			Ft && /* @__PURE__ */ B(o, {
+			It && /* @__PURE__ */ B(o, {
 				size: "xs",
 				className: "text-error",
 				wrap: !0,
 				"data-testid": `${U}-recipient-error`,
-				children: Ft
+				children: It
 			})
 		]
-	}) : void 0, Lt = !pe, Rt = Lt && At || oe ? /* @__PURE__ */ V(i, {
+	}) : void 0, Rt = !me, zt = Rt && jt || ce ? /* @__PURE__ */ V(i, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
 		className: "min-w-0",
-		children: [Lt ? At : null, oe]
-	}) : void 0, zt = !Lt && Ze && Z ? [{
+		children: [Rt ? jt : null, ce]
+	}) : void 0, Bt = !Rt && Qe && Z ? [{
 		id: Z.id,
 		label: Z.label.split(" › ").pop() ?? Z.label,
 		title: Z.label
-	}, ...ce ?? []] : ce, Bt = (e) => {
-		Z && e === Z.id && (Ie(!1), $e.current += 1), le?.(e);
-	}, Vt = {
-		...ue,
+	}, ...le ?? []] : le, Vt = (e) => {
+		Z && e === Z.id && (Le(!1), et.current += 1), ue?.(e);
+	}, Ht = {
+		...de,
 		...X === "chat" && J?.placeholder ? { chat: J.placeholder } : {},
 		...!$.collapsed && $.active && !$.active.readOnlyReason && $.active.kind !== "compose" ? { [X]: $.typed ? $.active.placeholder ?? "Type your answer and press Enter" : "Choose an answer above, or press its number" } : {}
-	}, Ht = kt ? Pt ? ye > 0 ? "Read only. Choose another destination in To: to post." : "Read only" : J?.unavailableReason ?? (J ? he : "Choose a destination.") : null;
-	return /* @__PURE__ */ B(ae, {
+	}, Ut = At ? Ft ? be > 0 ? "Read only. Choose another destination in To: to post." : "Read only" : J?.unavailableReason ?? (J ? ge : "Choose a destination.") : null;
+	return /* @__PURE__ */ B(oe, {
 		collapsible: !0,
 		...W,
 		collapsedLabel: W.collapsedLabel ?? (X === "chat" ? J?.label : l.reference?.label ?? l.title),
 		context: l,
-		composerRef: ht,
+		composerRef: gt,
 		"data-testid": U,
-		...pe ? { responsive: "pane" } : {},
-		console: H ?? !!b,
+		...me ? { responsive: "pane" } : {},
+		console: pe ?? !!b,
 		dock: b,
 		mode: X,
-		onModeChange: Te,
+		onModeChange: Ee,
 		modes: Y.modes,
 		disabledModes: Y.disabledModes,
 		modeUnavailableReasons: Y.reasons,
-		chatAvailable: be && !Y.reasons.chat,
-		contextChip: de ?? (!Z && void 0),
-		above: _t ? F : It,
-		..._t ? { replacement: /* @__PURE__ */ B(Ee, {
+		chatAvailable: xe && !Y.reasons.chat,
+		contextChip: fe ?? (!Z && void 0),
+		above: vt ? se : Lt,
+		...vt ? { replacement: /* @__PURE__ */ B(De, {
 			deck: $,
 			"data-testid": `${U}-prompts`
-		}) } : $.visible ? { header: /* @__PURE__ */ B(Ee, {
+		}) } : $.visible ? { header: /* @__PURE__ */ B(De, {
 			deck: $,
-			input: yt,
+			input: bt,
 			variant: "inset",
 			"data-testid": `${U}-prompts`
 		}) } : {},
-		...Rt ? { modeRowEnd: Rt } : {},
-		...zt ? {
-			references: zt,
-			onRemoveReference: Bt
+		...zt ? { modeRowEnd: zt } : {},
+		...Bt ? {
+			references: Bt,
+			onRemoveReference: Vt
 		} : {},
-		modePlaceholders: Vt,
-		commands: wt,
+		modePlaceholders: Ht,
+		commands: Tt,
 		reply: X === "chat" && x?.reply && J?.channel === s ? {
 			author: x.reply.author,
 			quote: x.reply.text,
@@ -1515,17 +1522,17 @@ function Ze({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 			...x.reply.timestamp ? { timestamp: x.reply.timestamp } : {},
 			onDismiss: x.clear
 		} : null,
-		allowAttachments: !!lt,
-		...fe === void 0 ? {} : { sendWithReferencesOnly: fe },
-		...Ht ? { readOnly: Ht } : {},
-		disabled: !!k || !$.typed && (!!p || Ot || X === "agent" && !u.agent?.allowed),
-		draftKey: nt,
-		...et ? { draft: P } : {},
-		...ot === void 0 ? {} : { defaultDraft: ot },
-		onDraftChange: ct,
-		onSend: (e, t) => Et(e, t.mode),
+		allowAttachments: !!ut,
+		...H === void 0 ? {} : { sendWithReferencesOnly: H },
+		...Ut ? { readOnly: Ut } : {},
+		disabled: !!k || !$.typed && (!!p || kt || X === "agent" && !u.agent?.allowed),
+		draftKey: rt,
+		...tt ? { draft: P } : {},
+		...st === void 0 ? {} : { defaultDraft: st },
+		onDraftChange: lt,
+		onSend: (e, t) => Dt(e, t.mode),
 		className: e(W.className)
 	});
 }
 //#endregion
-export { F as AgentComposerDock, N as COMPOSER_BREAKPOINTS, x as COMPOSER_CONTEXT_KINDS, ee as COMPOSER_CONTEXT_REASONS, A as COMPOSER_MODE_ORDER, fe as CONFIRM_OPTIONS, ie as CommandSuggestions, P as ComposerAttachments, de as ComposerConfirmFlow, Ee as ComposerPromptDeck, d as ComposerReferences, _ as ComposerSendError, ae as ContextComposer, D as ConversationInputProvider, ne as DocumentSuggestions, f as EMOJI_SHORTCODES, M as EmojiSuggestions, k as MentionSuggestions, j as RichChatComposer, C as ThreadInputHandoff, me as answerForOption, Be as attachmentOnlyText, g as composerCommandArgumentText, b as composerContextPreset, v as composerDraftOf, h as composerSendErrorReason, re as composerSizeFor, Xe as createConversationComposer, ve as deckKeyAction, pe as defaultOption, y as identityDisplayName, p as matchComposerCommand, O as matchesModeTrigger, G as parseTypedAnswer, H as promptOptions, m as searchEmoji, W as takesTypedAnswer, S as useComposerFocus, w as useComposerFocusReveal, Se as useComposerPromptDeck, Je as useConversationUploads, E as useThreadInput };
+export { P as AgentComposerDock, M as COMPOSER_BREAKPOINTS, x as COMPOSER_CONTEXT_KINDS, y as COMPOSER_CONTEXT_REASONS, A as COMPOSER_MODE_ORDER, fe as CONFIRM_OPTIONS, ie as CommandSuggestions, N as ComposerAttachments, de as ComposerConfirmFlow, De as ComposerPromptDeck, d as ComposerReferences, g as ComposerSendError, oe as ContextComposer, D as ConversationInputProvider, ne as DocumentSuggestions, f as EMOJI_SHORTCODES, ae as EmojiSuggestions, k as MentionSuggestions, j as RichChatComposer, C as ThreadInputHandoff, me as answerForOption, Ve as attachmentOnlyText, h as composerCommandArgumentText, b as composerContextPreset, _ as composerDraftOf, ee as composerSendErrorReason, re as composerSizeFor, Ze as createConversationComposer, q as deckKeyAction, W as defaultOption, v as identityDisplayName, p as matchComposerCommand, O as matchesModeTrigger, G as parseTypedAnswer, H as promptOptions, Se as promptsInScope, m as searchEmoji, U as takesTypedAnswer, S as useComposerFocus, w as useComposerFocusReveal, Ce as useComposerPromptDeck, Ye as useConversationUploads, E as useThreadInput };
