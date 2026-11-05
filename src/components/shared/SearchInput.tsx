@@ -29,7 +29,7 @@ export interface SearchInputProps {
    * and a SearchInput dropped into a dark panel stayed a white box.
    */
   tone?: SearchInputTone;
-  /** Class for the wrapper. Sizing and positioning; not the field's colours. */
+  /** Class for the wrapper. Sizing and positioning; not the field's colours. A collapsed `collapsible` field (the icon) ignores it. */
   className?: string;
   /**
    * `sm` (default) is the 13px field. `md` (2.386.3) is the Documents
@@ -165,7 +165,8 @@ function SearchInput({
         icon={<SearchIcon />}
         size={size}
         tone={tone}
-        className={className}
+        // `className` sizes the open field (a toolbar passes `w-56`); the
+        // folded icon keeps its own square, or it sat in a 224px-wide gap.
         data-search-collapsed=""
         data-testid={testId ? `${testId}-toggle` : undefined}
         onClick={() => setExpanded(true, true)}

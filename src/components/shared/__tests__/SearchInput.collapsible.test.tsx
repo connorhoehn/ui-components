@@ -72,6 +72,13 @@ describe('SearchInput collapsible (2.503.0)', () => {
     expect(screen.getByRole('button', { name: 'Search' })).not.toHaveAttribute('aria-keyshortcuts');
   });
 
+  it('keeps the folded icon square: the field width class applies only when open', () => {
+    render(<SearchInput collapsible value="" onChange={() => {}} aria-label="Search" className="w-56" />);
+    expect(screen.getByRole('button', { name: 'Search' })).not.toHaveClass('w-56');
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+    expect(screen.getByRole('textbox').parentElement).toHaveClass('w-56');
+  });
+
   it('is an always-open field without `collapsible`', () => {
     render(<SearchInput value="" onChange={() => {}} aria-label="Search" />);
     expect(screen.getByRole('textbox', { name: 'Search' })).toBeInTheDocument();
