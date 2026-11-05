@@ -459,7 +459,7 @@ export function SidePane({
     : null;
   return createPortal(
     <DensityProvider value={density}>
-      <div className="flex h-full min-h-0 min-w-0 flex-col" data-testid={testId}>
+      <div className="flex h-full min-h-0 min-w-0 flex-col" data-ui-pane="side" data-testid={testId}>
         {tabRow}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
         {footer != null && <div className="shrink-0 min-w-0" data-testid={`${testId}-footer`}>{footer}</div>}
