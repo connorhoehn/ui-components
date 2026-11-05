@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-960 components across 20 entry points; 813 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+961 components across 20 entry points; 814 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -46,7 +46,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Forms](#forms) (29)
 - [Buttons & actions](#buttons--actions) (15)
 - [Feedback & states](#feedback--states) (25)
-- [Chat & social](#chat--social) (106)
+- [Chat & social](#chat--social) (107)
 - [Video](#video) (103)
 - [Docs & editor](#docs--editor) (138)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (139)
@@ -304,6 +304,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ActivePeopleGrid` | `@connorhoehnslalom/ui-components` | A rail section's "who's around right now": a compact wrapping grid of bubble avatars, first name underneath, sized so ~4 fit per row at the ~288px width Teams-style left rails use. |  |  |
 | `ActivityFeed` | `@connorhoehnslalom/ui-components` | Rotating ticker of recent activity items. | `shared-activityfeed` |  |
 | `ActivityPanel` | `@connorhoehnslalom/ui-components` | Activity feed section card -- shows the user's recent social events. |  |  |
+| `ActivityResumeChip` | `@connorhoehnslalom/ui-components` | "Create artwork · Completed · 2m ago" as one compact button, for a page the user returns to after a workflow ran there. | `shared-activityresumechip` |  |
 | `ActivityTicker` | `@connorhoehnslalom/ui-components` | Data and authority belong to the host; this component only presents supplied items. | `shared-activityticker` |  |
 | `AddPeoplePicker` | `@connorhoehnslalom/ui-components` | Modal people picker for a membership list: search, toggle people into a selection, see them as removable chips, confirm once. |  |  |
 | `AddToChatDialog` | `@connorhoehnslalom/ui-components` | Teams' "Add people", as a popover at the button that asked for it. |  |  |
