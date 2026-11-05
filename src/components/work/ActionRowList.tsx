@@ -140,7 +140,11 @@ export interface ActionRowListProps {
   tone?: ActionRowTone;
   /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
   accent?: 'none' | 'bar';
-  /** Alternate neutral row surfaces. Semantic row tones always take precedence. */
+  /**
+   * Alternate neutral row surfaces. Semantic row tones always take precedence.
+   * Default `true` since 2.501.0 (was `false`); pass `striped={false}` for a
+   * ruled-only list.
+   */
   striped?: boolean;
   /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
   action?: string;
@@ -243,7 +247,7 @@ export function ActionRowList({
   columns,
   tone = 'neutral',
   accent = 'none',
-  striped = false,
+  striped = true,
   action,
   size: sizeProp,
   'aria-label': ariaLabel,

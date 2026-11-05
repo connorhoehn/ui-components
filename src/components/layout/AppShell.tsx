@@ -68,6 +68,20 @@ export interface AppShellProps {
    * and the sidebar hangs below the chrome.
    */
   sidebarFullHeight?: boolean;
+  /**
+   * How the shell sizes against the window (since 2.501.0).
+   *
+   * - `document` (default, back-compat): the shell is at least the window's
+   *   height and the document scrolls; the chrome is sticky. Stacked pages
+   *   scroll like a web page.
+   * - `fill` (**recommended for portal apps**): the shell is exactly `100dvh`
+   *   and the document never scrolls. The main region is `min-h-0
+   *   overflow-hidden`, so a child layout (`ExplorerLayout`, `SplitPane`,
+   *   `MasterDetail`, `SubNavLayout`, `WorkArea`) gets a definite height and
+   *   overflow lives inside its panes. Give the page's root `flex-1 min-h-0`
+   *   (the layouts above already do).
+   */
+  layout?: 'document' | 'fill';
 }
 
 function LoadingOverlay({ children }: { children?: ReactNode }) {
@@ -111,7 +125,9 @@ export function AppShell({
   sidebarTestId = 'app-sidebar',
   subheaderTestId = 'app-subheader',
   sidebarFullHeight = false,
+  layout = 'document',
 }: AppShellProps) {
+  const fill = layout === 'fill';
   // The one derivation. The sidebar's top and the body's minimum height both
   // read `--app-shell-chrome-h`; nothing below hard-codes a pixel of chrome.
   const chromeHeight = headerHeight + (subheader ? subheaderHeight : 0);
@@ -121,14 +137,15 @@ export function AppShell({
   } as CSSProperties;
   const inner = (
     <div
-      className={cn('relative min-h-screen font-sans bg-[var(--color-surface-panel)] text-[var(--color-text-primary)]', className)}
+      className={cn('relative font-sans', fill ? 'flex h-dvh flex-col overflow-hidden' : 'min-h-screen', 'bg-[var(--color-surface-panel)] text-[var(--color-text-primary)]', className)}
       style={vars}
       data-chrome-height={chromeHeight}
+      data-layout={layout}
     >
       {/* Chrome — sticky, full-width: the header row, the section band, the
           degraded banner. One block, so the two nav rows read as one piece of
           chrome sitting on the page. */}
-      <div className="sticky top-0 z-50" {...(sidebar && sidebarFullHeight ? { style: { marginLeft: sidebarWidth }, 'data-beside-sidebar': 'true' } : {})}>
+      <div className={cn('sticky top-0 z-50', fill && 'shrink-0')} {...(sidebar && sidebarFullHeight ? { style: { marginLeft: sidebarWidth }, 'data-beside-sidebar': 'true' } : {})}>
         <div
           className="flex items-center gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6"
           style={{ height: headerHeight }}
@@ -156,7 +173,9 @@ export function AppShell({
       </div>
 
       {/* Body */}
-      <div className="flex min-h-[calc(100vh-var(--app-shell-chrome-h))]">
+      {/* Fill: the body takes the rest of the 100dvh column and never grows
+          past it; document: at least the window below the chrome. */}
+      <div className={cn('flex', fill ? 'min-h-0 flex-1 overflow-hidden' : 'min-h-[calc(100vh-var(--app-shell-chrome-h))]')} data-testid="app-shell-body">
         {sidebar && (
           <nav
             role="navigation"
@@ -184,11 +203,18 @@ export function AppShell({
             the Documents list). The page is the window's width; what does
             not fit wraps, folds or scrolls inside its own pane. */}
         <main
-          className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col bg-[var(--color-surface-panel)]"
+          className={cn('relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col bg-[var(--color-surface-panel)]', fill && 'overflow-hidden')}
           style={sidebar ? { marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` } : undefined}
         >
           <div
-            className={cn('flex min-h-0 flex-1 flex-col', contentPadding === 'md' ? 'gap-4 px-8 pb-6 pt-4' : 'gap-0 p-0')}
+            // The gutter reads `--ui-page-gutter`, the same token WorkArea,
+            // SubNavLayout and ExplorerLayout use, so one host override moves
+            // every page edge together.
+            className={cn(
+              'flex min-h-0 flex-1 flex-col',
+              fill && 'overflow-hidden',
+              contentPadding === 'md' ? 'gap-4 px-[var(--ui-page-gutter,1.5rem)] pb-[var(--ui-page-gutter,1.5rem)] pt-4' : 'gap-0 p-0',
+            )}
             data-testid="app-shell-content"
             data-padding={contentPadding}
           >

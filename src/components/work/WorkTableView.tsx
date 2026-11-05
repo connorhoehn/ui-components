@@ -86,7 +86,9 @@ export function WorkTableView({
             if (!rows.length) return null;
             const key = `${groupBy}:${group.id}`;
             const closed = collapsed[key] ?? group.defaultOpen === false;
-            return <TableBody key={key}>
+            // The group-header row is this body's first child, so a body-level
+            // nth-child stripe would band the wrong rows; stripe by item index.
+            return <TableBody key={key} striped={false}>
               <Tr><Th colSpan={4} scope="rowgroup" className="border-b border-border p-0 normal-case tracking-normal">
                 <button type="button" aria-expanded={!closed} onClick={() => setCollapsed((prev) => ({ ...prev, [key]: !closed }))}
                   className="flex w-full items-center gap-3 bg-transparent px-2.5 py-3 text-left text-sm font-semibold text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
@@ -101,7 +103,7 @@ export function WorkTableView({
                   // The title, completion toggle and signal each own their action.
                   if (!item.disabled && !(event.target as Element).closest('button, input, label, a')) onOpenItem?.(item);
                 }}
-                className={cn(index % 2 === 1 && 'bg-surface-panel', item.signal?.state === 'blocked' && 'bg-warning-callout', currentId === item.id && 'bg-primary/10', item.disabled && 'opacity-50')}>
+                className={cn(index % 2 === 1 && 'bg-surface-inset', item.signal?.state === 'blocked' && 'bg-warning-callout', currentId === item.id && 'bg-primary/10', item.disabled && 'opacity-50')}>
                 <Td className={cn(cell, 'min-w-0 px-2.5 text-text-primary')} data-testid="work-table-title-cell">
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="min-w-0 flex-1">

@@ -237,6 +237,9 @@ describe('ActionRowList', () => {
     fireEvent.click(screen.getByTestId('action-row-list-open-b'));
     expect(open).toHaveBeenCalledWith(items[1]);
     rerender(<ActionRowList items={items} />);
+    // Striped is the default since 2.501.0; striped={false} opts out.
+    expect(screen.getByTestId('action-row-list-row-b')).toHaveClass('bg-surface-panel');
+    rerender(<ActionRowList striped={false} items={items} />);
     expect(screen.getByTestId('action-row-list-row-b')).not.toHaveClass('bg-surface-panel');
   });
 

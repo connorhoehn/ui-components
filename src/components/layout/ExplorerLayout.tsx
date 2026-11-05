@@ -194,7 +194,8 @@ export function ExplorerLayout({
       data-testid={`${testId}-pane`}
       className={cn(
         'flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-surface',
-        panePadding === 'md' && 'px-8 py-6',
+        // Same page gutter token as AppShell / WorkArea / SubNavLayout.
+        panePadding === 'md' && 'p-[var(--ui-page-gutter,1.5rem)]',
       )}
     >
       {children}

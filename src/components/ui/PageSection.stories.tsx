@@ -12,3 +12,17 @@ export const WithContent: StoryObj<typeof PageSection> = {
 export const Empty: StoryObj<typeof PageSection> = {
   args: { size: 'sm', title: 'Needs your attention', empty: 'Nothing right now — questions and reviews will appear in the composer.' },
 };
+
+/** `divided`: a token hairline between each direct child group (since 2.501.0). */
+export const Divided: StoryObj<typeof PageSection> = {
+  args: {
+    size: 'sm',
+    title: 'Pipeline health',
+    divided: true,
+    children: [
+      <p key="a" className="m-0 text-sm">ingest.events · Running</p>,
+      <p key="b" className="m-0 text-sm">transform.users · Succeeded</p>,
+      <p key="c" className="m-0 text-sm">export.warehouse · Failed</p>,
+    ],
+  },
+};
