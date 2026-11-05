@@ -85,6 +85,7 @@ export function DocumentOwnership({
 
       {onShare && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onShare}
           data-testid={`${testId}-share`}

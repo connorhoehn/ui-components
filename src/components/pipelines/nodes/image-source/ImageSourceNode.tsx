@@ -52,6 +52,7 @@ export default function ImageSourceNode(props: NodeProps<ImageSourceFlowNode>) {
   const body = imageId ? (
     <>
       <button
+        data-ui-part=""
         type="button"
         aria-label="View source image"
         className={cn(

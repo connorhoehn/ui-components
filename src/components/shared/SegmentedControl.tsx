@@ -150,6 +150,7 @@ export function SegmentedControl({
         const hasBadge = option.badge !== undefined && option.badge !== null && option.badge !== false;
         const button = (
           <button
+            data-ui-part=""
             key={option.value}
             type="button"
             role="radio"

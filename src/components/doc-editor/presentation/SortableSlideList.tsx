@@ -90,6 +90,7 @@ function SortableRow({
       dragging={isDragging}
       dragHandle={
         <button
+          data-ui-part=""
           type="button"
           title="Drag to reorder slides"
           aria-label={`Reorder slide ${index + 1}`}

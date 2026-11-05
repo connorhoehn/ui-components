@@ -137,6 +137,7 @@ export function RosterPanel({
           return (
             <li key={p.id} className="flex items-center" data-testid="roster-row" data-user-id={p.id}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={onParticipantClick ? () => onParticipantClick(p.id) : undefined}
                 className={cn(

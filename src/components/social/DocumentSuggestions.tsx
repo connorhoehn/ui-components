@@ -104,6 +104,7 @@ export const DocumentSuggestions = forwardRef<DocumentSuggestionsHandle, Documen
         >
           {items.map((item, i) => (
             <button
+              data-ui-part=""
               key={item.id}
               type="button"
               role="option"
@@ -150,6 +151,7 @@ export const DocumentSuggestions = forwardRef<DocumentSuggestionsHandle, Documen
           <span className="min-w-0 flex-1 truncate text-text-primary" aria-live="polite">#{query}</span>
           {query && onClearQuery && (
             <button
+              data-ui-part=""
               type="button"
               aria-label="Clear search"
               title="Clear search"
@@ -174,6 +176,7 @@ export const DocumentSuggestions = forwardRef<DocumentSuggestionsHandle, Documen
                   <div role="presentation" className="px-2 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-text-tertiary" data-testid="document-suggestions-group">{heading}</div>
                 )}
                 <button
+                  data-ui-part=""
                   type="button"
                   role="option"
                   aria-selected={active}

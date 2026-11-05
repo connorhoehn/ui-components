@@ -61,6 +61,7 @@ export default function DiagramEditorRenderer({
           {editable && (
             <div className="flex gap-2 items-center">
               <input
+                data-ui-part=""
                 type="text"
                 data-testid={`diagram-alt-${section.id}`}
                 value={meta.alt ?? ''}
@@ -69,6 +70,7 @@ export default function DiagramEditorRenderer({
                 className="flex-1 px-2 py-1 text-xs border border-border-emphasis rounded"
               />
               <button
+                data-ui-part=""
                 type="button"
                 data-testid={`diagram-remove-${section.id}`}
                 onClick={clear}
@@ -89,6 +91,7 @@ export default function DiagramEditorRenderer({
         >
           {busy ? 'Reading image…' : (section.placeholder ?? 'Upload an image (PNG / JPG / SVG)')}
           <input
+            data-ui-part=""
             type="file"
             accept="image/*"
             data-testid={`diagram-input-${section.id}`}

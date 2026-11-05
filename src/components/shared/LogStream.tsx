@@ -128,6 +128,7 @@ export function LogStream({
       </span>
       {onClear && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onClear}
           data-testid={`${testId}-clear`}
@@ -244,6 +245,7 @@ export function LogStream({
         </div>
         {follow && detached && (
           <button
+            data-ui-part=""
             type="button"
             data-testid={`${testId}-jump`}
             onClick={jumpToLive}

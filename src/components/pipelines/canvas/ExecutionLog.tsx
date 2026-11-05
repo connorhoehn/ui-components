@@ -233,6 +233,7 @@ export default function ExecutionLog({
               filter is stuck. */}
           {onClearFilter && (
             <button
+              data-ui-part=""
               type="button"
               className="w-4 h-4 border-none bg-transparent text-info-fg cursor-pointer text-sm font-inherit leading-none p-0 inline-flex items-center justify-center"
               onClick={() => onClearFilter()}
@@ -305,6 +306,7 @@ export default function ExecutionLog({
                 {renderRows()}
                 {!pinned ? (
                   <button
+                    data-ui-part=""
                     type="button"
                     className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-text-inverse border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
                     onClick={jumpToLatest}
@@ -346,6 +348,7 @@ export default function ExecutionLog({
             {renderRows()}
             {!pinned ? (
               <button
+                data-ui-part=""
                 type="button"
                 className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-text-inverse border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
                 onClick={jumpToLatest}

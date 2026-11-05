@@ -147,6 +147,7 @@ export function FollowBanner({
         {location ? <span className="font-normal"> · {location}</span> : null}
       </span>
       <button
+        data-ui-part=""
         type="button"
         onClick={onStop}
         className="text-[11.5px] font-semibold px-2 py-0.5 rounded border border-info-border bg-transparent text-info-fg cursor-pointer"

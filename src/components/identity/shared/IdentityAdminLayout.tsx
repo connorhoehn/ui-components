@@ -59,6 +59,7 @@ function NavLink({
   return (
     <li>
       <button
+        data-ui-part=""
         type="button"
         className={cn(
           'flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer',

@@ -38,6 +38,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
         <div className="flex-1 py-2 overflow-y-auto">
           {agents.map((agent) => (
             <button
+              data-ui-part=""
               key={agent.id}
               type="button"
               onClick={() => { setSelectedId(agent.id); reset(); setEvents([]); }}
@@ -101,6 +102,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
         {/* Actions */}
         <div className="py-2 px-4 border-t border-border">
           <button
+            data-ui-part=""
             onClick={() => { reset(); setEvents([]); }}
             className="w-full py-1.5 text-[12px] text-neutral bg-surface-panel border border-border rounded-md cursor-pointer"
           >

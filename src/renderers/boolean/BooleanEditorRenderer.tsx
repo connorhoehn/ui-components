@@ -49,6 +49,7 @@ export default function BooleanEditorRenderer(props: SectionRendererProps) {
         </span>
         {value !== undefined && (
           <button
+            data-ui-part=""
             type="button"
             data-testid={`boolean-field-clear-${section.id}`}
             onClick={() => onUpdateSection?.(setScalarPatch(section, undefined))}

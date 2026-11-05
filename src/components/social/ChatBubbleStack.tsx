@@ -55,6 +55,7 @@ function Bubble({ bubble, onOpen, onDismiss, dismissAfterMs }: { bubble: ChatBub
       data-bubble-id={bubble.id}
     >
       <button
+        data-ui-part=""
         type="button"
         className="flex min-w-0 flex-1 items-start gap-2.5 border-none bg-transparent p-0 text-left cursor-pointer"
         onClick={onOpen}
@@ -70,6 +71,7 @@ function Bubble({ bubble, onOpen, onDismiss, dismissAfterMs }: { bubble: ChatBub
         </span>
       </button>
       <button
+        data-ui-part=""
         type="button"
         className="shrink-0 border-none bg-transparent p-0.5 text-text-tertiary hover:text-text-primary cursor-pointer"
         aria-label="Dismiss"

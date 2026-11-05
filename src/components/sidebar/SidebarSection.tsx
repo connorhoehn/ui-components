@@ -103,6 +103,7 @@ export function SidebarSection({
 
   return (
     <section
+      data-ui-part=""
       aria-labelledby={labelId}
       data-testid={testId}
       data-collapsed={collapsed ? 'true' : 'false'}
@@ -110,6 +111,7 @@ export function SidebarSection({
     >
       <div className="flex items-center justify-between gap-1 py-2 pr-1">
         <button
+          data-ui-part=""
           type="button"
           ref={headerRef}
           id={labelId}

@@ -89,7 +89,7 @@ function deviceOptions(list: DeviceOption[], none: string) {
 
 function Section({ children, divided = true, className }: { children: ReactNode; divided?: boolean; className?: string }) {
   return (
-    <section className={cn('flex flex-col gap-2.5 py-3.5 first:pt-0', divided && 'border-b border-border', className)}>
+    <section data-ui-part="" className={cn('flex flex-col gap-2.5 py-3.5 first:pt-0', divided && 'border-b border-border', className)}>
       {children}
     </section>
   );

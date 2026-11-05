@@ -248,6 +248,7 @@ export function RecordingPlayer({
               accent on a gradient, --progress var for the fill) — a player
               scrubber, not a form control, so it stays a raw range. */}
           <input
+            data-ui-part=""
             type="range"
             min={0}
             max={isFinite(duration) ? duration : 0}
@@ -261,6 +262,7 @@ export function RecordingPlayer({
         </div>
         <div className="flex items-center gap-3 text-white">
           <button
+            data-ui-part=""
             type="button"
             onClick={togglePlay}
             className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"
@@ -275,6 +277,7 @@ export function RecordingPlayer({
           <div className="flex items-center gap-2">
             <span className="text-xs opacity-70">Vol</span>
             <input
+              data-ui-part=""
               type="range" min={0} max={1} step={0.01}
               value={volume} onChange={onVolume}
               className="w-20 h-1 accent-white/90 cursor-pointer"
@@ -306,6 +309,7 @@ export function RecordingPlayer({
             </a>
           )}
           <button
+            data-ui-part=""
             type="button"
             onClick={requestFullscreen}
             className="w-9 h-9 rounded bg-white/10 hover:bg-white/20 flex items-center justify-center"

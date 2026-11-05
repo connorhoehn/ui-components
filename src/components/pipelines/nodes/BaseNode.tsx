@@ -178,6 +178,7 @@ export default function BaseNode(props: BaseNodeProps) {
 
   return (
     <div
+      data-ui-part=""
       className={cn(
         'w-[200px] rounded-lg relative font-inherit text-text-primary box-border outline-none transition-[border-color,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
         pausedAtBreakpoint
@@ -249,6 +250,7 @@ export default function BaseNode(props: BaseNodeProps) {
           hasDividerAfterRetry && 'border-b border-border',
         )}>
           <button
+            data-ui-part=""
             type="button"
             className={cn(
               'cursor-pointer appearance-none font-inherit text-[11px] font-medium leading-tight px-2 py-0.5 rounded-full border border-danger text-danger-fg transition-colors duration-[120ms] ease-[cubic-bezier(0.4,0,0.2,1)]',

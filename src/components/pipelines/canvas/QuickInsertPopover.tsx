@@ -158,6 +158,7 @@ export default function QuickInsertPopover({
             in this input, so without aria-activedescendant a screen reader
             announced nothing at all while the user arrowed the list. */}
         <input
+          data-ui-part=""
           ref={inputRef}
           type="text"
           value={query}

@@ -36,6 +36,7 @@ export function AgUiReasoningBlock({
     >
       {/* Header toggle button */}
       <button
+        data-ui-part=""
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className="flex items-center w-full bg-transparent border-none p-0 cursor-pointer gap-1.5 text-left"

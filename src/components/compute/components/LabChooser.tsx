@@ -183,6 +183,7 @@ export function LabChooser({
         <div className="flex items-center gap-2 px-3 py-2 border-b border-code-border">
           <span aria-hidden="true" className="text-code-green text-[12px]">/</span>
           <input
+            data-ui-part=""
             ref={inputRef}
             value={query}
             onChange={(e) => {

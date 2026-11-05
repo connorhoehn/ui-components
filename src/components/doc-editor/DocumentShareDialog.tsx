@@ -105,6 +105,7 @@ export function DocumentShareDialog({
         {onInvite && (
           <div className="flex gap-2">
             <input
+              data-ui-part=""
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') invite(); }}

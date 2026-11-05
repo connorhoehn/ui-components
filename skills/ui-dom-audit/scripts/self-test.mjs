@@ -1522,6 +1522,8 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await fails(zebra, 'table.zebra', 'six flat rows');
     await page.locator('table').first().evaluate(el => { const w = document.createElement('div'); w.setAttribute('data-ui-table-striped', ''); el.before(w); w.append(el); });
     await passes(zebra, 'the library stripe marker is trusted');
+    await page.setContent(`${base}<main id="col"><table data-ui-table><tbody data-ui-table-striped>${rows(6)}</tbody></table></main>`);
+    await passes(zebra, 'the stripe marker on the body (Table/DataTable) is trusted');
     await page.setContent(`${base}<main id="col"><div role="table"><div role="row"><span role="columnheader">Name</span></div>${Array.from({ length: 5 }, (_, i) => `<div role="row"><span role="cell">Row ${i}</span></div>`).join('')}</div></main>`);
     await fails(zebra, 'table.zebra', 'a hand-rolled role=table without stripes');
     await page.evaluate(() => document.querySelectorAll('[role=row]:nth-child(odd) [role=cell]').forEach(c => { c.style.background = '#eef'; c.style.flex = '1'; }));
@@ -1572,15 +1574,19 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
 
     // element.unmarked
     const marked = ['element.unmarked'];
-    const library = `${base}<main id="col"><section data-ui-section><button data-variant="primary">Save</button><div data-table-scroller><table><tbody><tr><td>Row</td></tr></tbody></table></div><select data-ui-native-select data-ui-native-reason="OS picker"><option>A</option></select><div data-toolbar-variant="collection"><input aria-label="Search"></div><div role="tablist"><button role="tab">Tab</button></div><button data-ui-control="select">Pick</button></section></main><button id="outside">Outside the content column</button>`;
+    const library = `${base}<main id="col"><section data-ui-section><button data-variant="primary">Save</button><div data-table-scroller><table data-ui-table><tbody><tr><td>Row</td></tr></tbody></table></div><input data-ui-control="input" aria-label="Name"><textarea data-ui-control="textarea" aria-label="Notes"></textarea><button data-ui-control="switch" role="switch" aria-checked="false"></button><nav aria-label="Pages"><button data-ui-part>2</button><span role="button" tabindex="0" data-ui-part>Next</span></nav><div data-ui-board><button>Card action</button></div><select data-ui-native-select data-ui-native-reason="OS picker"><option>A</option></select><div data-toolbar-variant="collection"><input aria-label="Search"></div><div role="tablist"><button role="tab">Tab</button></div><button data-ui-control="select">Pick</button></section></main><button id="outside">Outside the content column</button>`;
     await page.setContent(library);
-    await passes(marked, 'library-marked elements and composite internals are valid');
+    await passes(marked, 'library controls, library-internal parts and composite internals are valid');
     for (const [name, mutate] of [
       ['button', () => document.querySelector('[data-variant]').removeAttribute('data-variant')],
       ['button', () => document.querySelector('section').insertAdjacentHTML('beforeend', '<div role="button" tabindex="0">Div button</div>')],
-      ['table', () => document.querySelector('[data-table-scroller]').removeAttribute('data-table-scroller')],
+      ['table', () => document.querySelector('[data-ui-table]').removeAttribute('data-ui-table')],
       ['select', () => document.querySelector('select').removeAttribute('data-ui-native-select')],
       ['input', () => document.querySelector('section').insertAdjacentHTML('beforeend', '<input aria-label="Name">')],
+      ['input', () => document.querySelector('[data-ui-control="input"]').removeAttribute('data-ui-control')],
+      ['button', () => document.querySelector('section').insertAdjacentHTML('beforeend', '<button>Raw in page content</button>')],
+      ['button', () => document.querySelector('section').insertAdjacentHTML('beforeend', '<div data-ui-card><button>Raw in a Card</button></div>')],
+      ['button', () => document.querySelector('nav [data-ui-part]').removeAttribute('data-ui-part')],
       ['section', () => document.querySelector('section').removeAttribute('data-ui-section')],
     ]) {
       await page.setContent(library);

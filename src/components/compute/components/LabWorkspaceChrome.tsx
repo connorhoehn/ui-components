@@ -100,6 +100,7 @@ export function LabHeader({
           if (onlyWhenPresent && count === 0 && !on) return null;
           return (
             <button
+              data-ui-part=""
               key={status}
               type="button"
               aria-pressed={on}
@@ -167,6 +168,7 @@ function ToolbarIconButton({ label, onClick, pressed, disabled, children, testId
 }) {
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onClick}
       aria-label={label}
@@ -273,6 +275,7 @@ export function WorkspacePane({
   const badge = BADGE[status];
   return (
     <section
+      data-ui-part=""
       aria-label={`${kind.title ?? kind.label} · ${computer.label}`}
       data-testid="lab-pane"
       data-active={active || undefined}
@@ -321,6 +324,7 @@ export function WorkspacePane({
           {zoomed && <span className="text-[11px] text-text-tertiary">expanded</span>}
           <span className="flex-1" />
           <button
+            data-ui-part=""
             type="button"
             onClick={onToggleZoom}
             aria-label={zoomed ? `Restore ${computer.label}` : `Expand ${computer.label}`}
@@ -337,6 +341,7 @@ export function WorkspacePane({
             sections={moreSections}
           />
           <button
+            data-ui-part=""
             type="button"
             onClick={onClose}
             aria-label={`Close pane ${computer.label}`}

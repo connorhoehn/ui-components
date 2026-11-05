@@ -108,6 +108,7 @@ function SpanRow({
 
   return (
     <button
+      data-ui-part=""
       type="button"
       className={cn(
         'w-full text-left bg-transparent font-[inherit] flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-border-subtle',
@@ -276,6 +277,7 @@ export function TraceTimeline({
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-text-primary">{selectedSpan.name}</span>
             <button
+              data-ui-part=""
               className="text-[10px] text-text-tertiary hover:text-text-secondary"
               onClick={() => setSelectedSpan(null)}
             >

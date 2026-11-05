@@ -313,6 +313,7 @@ export default function ContextInspector({
           { id: 'attempts' as TabId, label: `Attempts (${stepAttempts?.length})`, show: showAttemptsTab },
         ]).filter((t) => t.show).map((tab) => (
           <button
+            data-ui-part=""
             key={tab.id}
             type="button"
             data-testid={tab.id === 'attempts' ? 'attempts-tab' : undefined}
@@ -355,6 +356,7 @@ export default function ContextInspector({
                   <div className="flex gap-1.5 items-center">
                     {editMode && Object.keys(editBuffer).length > 0 && (
                       <button
+                        data-ui-part=""
                         type="button"
                         onClick={discardChanges}
                         data-testid="context-inspector-discard"
@@ -364,6 +366,7 @@ export default function ContextInspector({
                       </button>
                     )}
                     <button
+                      data-ui-part=""
                       type="button"
                       onClick={() => {
                         const next = !editMode;
@@ -550,6 +553,7 @@ export default function ContextInspector({
               {/* Pair selector */}
               <div className="flex items-center gap-2 mb-3">
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid="attempts-prev"
                   disabled={compareIdx === 0}
@@ -568,6 +572,7 @@ export default function ContextInspector({
                   Attempt {compareIdx + 1} vs {compareIdx + 2} of {stepAttempts.length}
                 </span>
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid="attempts-next"
                   disabled={compareIdx >= stepAttempts.length - 2}

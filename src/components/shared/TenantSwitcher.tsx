@@ -203,6 +203,7 @@ export function TenantSwitcher({
       }}
     >
       <button
+        data-ui-part=""
         ref={trigger}
         type="button"
         className={cn(

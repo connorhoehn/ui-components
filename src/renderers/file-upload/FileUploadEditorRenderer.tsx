@@ -69,6 +69,7 @@ export default function FileUploadEditorRenderer({
           )}
           {editable && (
             <button
+              data-ui-part=""
               type="button"
               data-testid={`file-upload-remove-${section.id}`}
               onClick={clear}
@@ -88,6 +89,7 @@ export default function FileUploadEditorRenderer({
         >
           {busy ? 'Reading file…' : (section.placeholder ?? 'Click to upload a file')}
           <input
+            data-ui-part=""
             type="file"
             data-testid={`file-upload-input-${section.id}`}
             disabled={!editable}

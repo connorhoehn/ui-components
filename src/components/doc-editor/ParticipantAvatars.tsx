@@ -90,6 +90,7 @@ function ParticipantAvatarTrigger({
   if (onJump) {
     return (
       <button
+        data-ui-part=""
         type="button"
         onClick={onJump}
         aria-label={`Jump to ${label}`}
@@ -220,6 +221,7 @@ function AvatarItem({
           )}
           {onFollowUser && (
             <button
+              data-ui-part=""
               type="button"
               onClick={(e) => { e.stopPropagation(); onFollowUser(participant); }}
               className={cn('mt-1 text-[11px] font-semibold cursor-pointer bg-transparent border-none p-0 font-[inherit]', isFollowing ? 'text-warning-fg' : 'text-info-fg')}

@@ -136,6 +136,7 @@ export function PickerDialog({
             const isSelected = option.id === current?.id;
             return (
               <button
+                data-ui-part=""
                 key={option.id}
                 type="button"
                 role="option"

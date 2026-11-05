@@ -167,6 +167,7 @@ export function MessageActionBar({
     >
       {actions.map((a) => (
         <button
+          data-ui-part=""
           key={a.key}
           type="button"
           aria-label={a.label}

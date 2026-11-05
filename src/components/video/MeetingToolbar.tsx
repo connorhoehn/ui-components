@@ -152,6 +152,7 @@ function ToolbarButton({ item, look = 'compact' }: { item: MeetingToolbarItem; l
   const active = hasPanel ? open || !!item.active : item.active;
   const button = (
     <button
+      data-ui-part=""
       ref={buttonRef}
       type="button"
       onClick={hasPanel ? () => setPanelOpen((v) => !v) : item.onClick}

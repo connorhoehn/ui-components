@@ -160,7 +160,7 @@ export function UserFormPage({
 
         {/* Custom Attributes */}
         {customAttributeDefinitions && Object.keys(customAttributeDefinitions).length > 0 && (
-          <section>
+          <section data-ui-part="">
             <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Custom Attributes</h3>
             {Object.entries(customAttributeDefinitions).map(([key, type]) => (
               <FormField

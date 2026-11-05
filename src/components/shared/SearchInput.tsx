@@ -115,6 +115,7 @@ function SearchInput({
         />
       </svg>
       <input
+        data-ui-part=""
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
@@ -128,6 +129,7 @@ function SearchInput({
         // wording that can drift from it.
         aria-label={ariaLabel ?? placeholder ?? 'Search'}
         data-testid={testId}
+        data-ui-control="search"
         className={cn(
           'w-full border focus:outline-none focus:ring-2 transition-colors',
           size === 'lg' ? `${CONTROL_HEIGHT.lg} pl-12 pr-11 text-sm rounded-lg` : size === 'md' ? `${CONTROL_HEIGHT.md} pl-10 pr-7 text-sm rounded-md` : `${CONTROL_HEIGHT.sm} pl-8 pr-7 text-xs rounded-md`,
@@ -137,6 +139,7 @@ function SearchInput({
       />
       {value && (
         <button
+          data-ui-part=""
           type="button"
           onClick={() => {
             onChange('');

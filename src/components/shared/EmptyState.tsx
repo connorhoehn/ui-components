@@ -273,6 +273,7 @@ function EmptyState({
           ? <div className="mt-2.5">{action}</div>
           : actionLabel && onAction && (
               <button
+                data-ui-part=""
                 data-testid={actionTestId}
                 onClick={onAction}
                 className={cn(
@@ -393,6 +394,7 @@ function GuidedAction({
 
   return (
     <button
+      data-ui-part=""
       type="button"
       data-testid="empty-state-actions-button"
       onClick={action.onClick}
@@ -431,6 +433,7 @@ function CopyableCode({ code, palette }: { code: string; palette: Palette }) {
         {code}
       </pre>
       <button
+        data-ui-part=""
         type="button"
         onClick={copy}
         aria-label={copied ? 'Copied to clipboard' : 'Copy code to clipboard'}

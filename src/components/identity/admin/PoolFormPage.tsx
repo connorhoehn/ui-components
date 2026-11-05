@@ -105,7 +105,7 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           placeholder="my-user-pool"
         />
 
-        <section className="mb-6">
+        <section data-ui-part="" className="mb-6">
           <h3 className="text-base font-semibold text-text-primary mb-2">MFA Configuration</h3>
           <FormField
             label="MFA Mode"
@@ -121,7 +121,7 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           />
         </section>
 
-        <section className="mb-6">
+        <section data-ui-part="" className="mb-6">
           <h3 className="text-base font-semibold text-text-primary mb-2">Password Policy</h3>
           <FormField
             label="Minimum Length"
@@ -160,7 +160,7 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           />
         </section>
 
-        <section className="mb-6">
+        <section data-ui-part="" className="mb-6">
           <h3 className="text-base font-semibold text-text-primary mb-2">Custom Attributes</h3>
           {/* Placeholder-only naming: once a row holds values — every row on an
               edit screen — both boxes announce as unnamed "edit text", and the

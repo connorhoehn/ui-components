@@ -117,6 +117,7 @@ function FollowButton({ targetUser, followState, compact = false, onFollowChange
   if (followState === 'not-following') {
     return (
       <button
+        data-ui-part=""
         className={cn('rounded-lg text-sm cursor-pointer min-w-[88px] px-4 border-none font-[system-ui,-apple-system,sans-serif] bg-primary text-on-primary font-semibold', compact ? 'h-7' : 'h-9')}
         onClick={handleFollow}
         aria-label={`Follow ${targetUser.displayName}`}
@@ -129,6 +130,7 @@ function FollowButton({ targetUser, followState, compact = false, onFollowChange
   if (followState === 'pending') {
     return (
       <button
+        data-ui-part=""
         className={cn('rounded-lg text-sm min-w-[88px] px-4 border border-border font-[system-ui,-apple-system,sans-serif] bg-surface-hover text-text-secondary font-normal cursor-default', compact ? 'h-7' : 'h-9')}
         disabled
         aria-label={`Follow ${targetUser.displayName}`}
@@ -142,6 +144,7 @@ function FollowButton({ targetUser, followState, compact = false, onFollowChange
   return (
     <div className="flex flex-col gap-1">
       <button
+        data-ui-part=""
         className={cn('rounded-lg text-sm cursor-pointer min-w-[88px] px-4 border border-border font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary font-normal', compact ? 'h-7' : 'h-9')}
         onClick={handleUnfollowClick}
         aria-label={`Unfollow ${targetUser.displayName}`}
@@ -154,12 +157,14 @@ function FollowButton({ targetUser, followState, compact = false, onFollowChange
             Unfollow {targetUser.displayName}?
           </span>
           <button
+            data-ui-part=""
             onClick={handleKeepFollowing}
             className="h-9 rounded-lg text-sm px-3 bg-surface text-text-primary border border-border cursor-pointer font-[system-ui,-apple-system,sans-serif]"
           >
             Keep Following
           </button>
           <button
+            data-ui-part=""
             onClick={handleConfirmUnfollow}
             className="h-9 rounded-lg text-sm px-3 bg-danger text-white border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]"
           >
@@ -273,6 +278,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
           >
             {(['public', 'private'] as Visibility[]).map(v => (
               <button
+                data-ui-part=""
                 key={v}
                 type="button"
                 role="radio"
@@ -293,6 +299,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
         </div>
         <div className="flex items-center gap-3">
           <button
+            data-ui-part=""
             onClick={() => { void handleSave(); }}
             disabled={saving}
             className={cn('flex-1 h-9 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]', saving ? 'cursor-default' : 'cursor-pointer')}
@@ -300,6 +307,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
             {saving ? 'Saving…' : 'Save Changes'}
           </button>
           <button
+            data-ui-part=""
             onClick={() => setEditing(false)}
             className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]"
           >
@@ -344,6 +352,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
       </div>
       {isOwnProfile && (
         <button
+          data-ui-part=""
           onClick={() => setEditing(true)}
           className="text-sm text-primary bg-transparent border-none cursor-pointer p-0 font-[system-ui,-apple-system,sans-serif]"
         >
@@ -407,6 +416,7 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
       >
         {tabs.map(tab => (
           <button
+            data-ui-part=""
             key={tab.key}
             type="button"
             role="tab"

@@ -97,6 +97,7 @@ export function ChatSidePanelFrame({
   const sm = size === 'sm';
   return (
     <section
+      data-ui-part=""
       aria-label={title}
       data-testid={testId}
       data-size={sm ? 'sm' : undefined}

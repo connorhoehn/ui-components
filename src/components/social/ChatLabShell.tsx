@@ -311,6 +311,7 @@ export function ChatLabShell({
             )}
             {event.detail && (
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => toggle(event.id)}
                 aria-expanded={open}
@@ -632,6 +633,7 @@ export function ChatLabShell({
       >
         <span aria-hidden="true" className="shrink-0 text-code-green">›</span>
         <input
+          data-ui-part=""
           type="text"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -688,6 +690,7 @@ export function ChatLabPill({
   const meta = LAB_STATUS[status] ?? LAB_STATUS.running;
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onOpen}
       data-testid={testId}

@@ -69,6 +69,7 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
       <div className="flex items-center gap-1 shrink-0">
         {actionLabel && onAction && (
           <button
+            data-ui-part=""
             onClick={() => { onAction(); onDismiss(id); }}
             className={cn('bg-transparent border-none text-[13px] font-semibold cursor-pointer px-1.5 py-0.5 font-[inherit]', ACCENT_TEXT_CLASS[type])}
           >
@@ -76,6 +77,7 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
           </button>
         )}
         <button
+          data-ui-part=""
           onClick={() => onDismiss(id)}
           aria-label="Dismiss notification"
           className="text-base text-text-tertiary bg-transparent border-none cursor-pointer px-1 py-0 leading-none"

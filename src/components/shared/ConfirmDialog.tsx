@@ -37,6 +37,7 @@ export default function ConfirmDialog({
       footer={
         <>
           <button
+            data-ui-part=""
             type="button"
             data-testid="confirm-dialog-cancel"
             onClick={onCancel}
@@ -49,6 +50,7 @@ export default function ConfirmDialog({
             {cancelLabel}
           </button>
           <button
+            data-ui-part=""
             type="button"
             data-testid="confirm-dialog-confirm"
             onClick={onConfirm}

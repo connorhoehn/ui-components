@@ -165,6 +165,7 @@ export function MasterDetail<T>({
             </span>
           )}
           <button
+            data-ui-part=""
             type="button"
             onClick={toggleCompact}
             aria-label={compact ? 'Expand list' : 'Collapse list'}
@@ -180,6 +181,7 @@ export function MasterDetail<T>({
             const selected = key === selectedKey;
             return (
               <div
+                data-ui-part=""
                 key={key}
                 role="button"
                 tabIndex={0}

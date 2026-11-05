@@ -99,6 +99,7 @@ export const MentionSuggestions = forwardRef<MentionSuggestionsHandle, MentionSu
               </div>
             )}
             <button
+              data-ui-part=""
               type="button"
               role="option"
               aria-selected={i === selected}

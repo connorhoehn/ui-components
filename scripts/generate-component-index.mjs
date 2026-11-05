@@ -418,7 +418,7 @@ function groupOf(name, decl) {
 
 const CANONICAL = [
   ['Frame for any page', 'PageFrame', 'The outer frame of every routed page: title row, width and gutters. Use it (or a template built on it) instead of a hand-rolled `<div className="p-6 max-w-…">`.', 'Not for panels or drawers inside a page.'],
-  ['A list / collection page', 'CollectionPage', 'Title, description, header actions and a `CollectionToolbar` (search, filters, view switch) over your table or cards.', 'Not for a list with a persistent detail pane (use `MasterDetailPage`) or a single record.'],
+  ['A list / collection page', 'CollectionPage', 'Title, description, header actions and a `CollectionToolbar` (search, filters, view switch) over the body. Pass rows as `table` (a striped `DataTable` with its `loading`/`empty`/`error` states) or a custom body as `children`; pass `gutter="page"` (its default is `none`).', 'Not for a list with a persistent detail pane (use `MasterDetailPage`) or a single record.'],
   ['A list with a detail panel', 'MasterDetailPage', 'Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.)', 'Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`).'],
   ['One record\'s detail page', 'DetailPage', 'Header with the record\'s title/status/actions, then **tabs** for the record\'s facets.', 'Don\'t stack a column of `Card`s for each facet; put facets in tabs and use `DetailSection` inside a tab.'],
   ['A dashboard', 'DashboardPage', 'KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it.', 'Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath.', ['/observability']],
@@ -513,8 +513,8 @@ export function render() {
     + 'Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).');
   L.push('');
   L.push('Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), '
-    + '[`patterns/`](../patterns/README.md), `skills/ui-page-build/SKILL.md` (building a page) and '
-    + '`skills/ui-dom-audit/SKILL.md` (auditing one).');
+    + '[`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and '
+    + '[`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).');
   L.push('');
   L.push('## Canonical choices');
   L.push('');

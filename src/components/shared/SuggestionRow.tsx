@@ -40,6 +40,7 @@ export function SuggestionRow({
 }: SuggestionRowProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       role="option"
       id={id}

@@ -54,7 +54,7 @@ export function CollaboratorCheckList({
 }: CollaboratorCheckListProps) {
   const selectedSet = new Set(selected);
   return (
-    <section className={cn('flex flex-col', className)} data-testid={testId} aria-label={title}>
+    <section data-ui-part="" className={cn('flex flex-col', className)} data-testid={testId} aria-label={title}>
       {title && <h4 className="m-0 mb-1 text-sm font-normal text-text-secondary">{title}</h4>}
       {loading ? (
         <div className="flex flex-col gap-2 py-1" data-testid={`${testId}-loading`}>

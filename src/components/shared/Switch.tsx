@@ -50,6 +50,7 @@ export default function Switch({
 }: SwitchProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       role="switch"
       aria-checked={checked}
@@ -57,6 +58,7 @@ export default function Switch({
       aria-labelledby={ariaLabelledBy}
       disabled={disabled}
       data-testid={testId}
+      data-ui-control="switch"
       onClick={() => { if (!disabled) onChange(!checked); }}
       className={cn(
         'relative inline-flex items-center rounded-full border border-transparent transition-colors',

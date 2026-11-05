@@ -113,6 +113,7 @@ export function InlineEditableText({
 
   return (
     <button
+      data-ui-part=""
       ref={buttonRef}
       type="button"
       disabled={disabled}

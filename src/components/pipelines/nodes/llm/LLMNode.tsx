@@ -56,6 +56,7 @@ function ResponseFooter({ info }: { info: LLMResponseInfo }) {
   return (
     <div>
       <button
+        data-ui-part=""
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="bg-transparent border-none p-0 cursor-pointer font-inherit text-xs text-text-secondary font-medium text-left"

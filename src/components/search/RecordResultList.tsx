@@ -274,7 +274,7 @@ export function RecordResultList({
     body = groups
       .filter((g) => g.count > 0 || g.records.length > 0)
       .map((group) => (
-        <section key={group.id} aria-label={group.label} data-group={group.id} className="border-b border-border last:border-b-0">
+        <section data-ui-part="" key={group.id} aria-label={group.label} data-group={group.id} className="border-b border-border last:border-b-0">
           <GroupHeading group={group} onToggleGroup={onToggleGroup} />
           {!group.collapsed && group.records.length > 0 && (
             <ul className="m-0 list-none border-t border-border p-0">

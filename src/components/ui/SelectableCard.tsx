@@ -49,6 +49,7 @@ export function SelectableCard({
 }: SelectableCardProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       aria-pressed={selected}
       disabled={disabled}

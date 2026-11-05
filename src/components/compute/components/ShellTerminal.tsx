@@ -525,6 +525,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
           {live ? (
             <>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={detach}
                 title="Leave the shell running (Ctrl-])"
@@ -533,6 +534,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
                 detach
               </button>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={kill}
                 title="Kill the shell — it cannot be reattached"
@@ -543,6 +545,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
             </>
           ) : (
             <button
+              data-ui-part=""
               type="button"
               onClick={() => void connect()}
               // Armed only when there is nothing in flight. The strip below
@@ -573,6 +576,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
           </span>
           {phase !== 'connecting' && (
             <button
+              data-ui-part=""
               type="button"
               onClick={() => void connect()}
               className="text-code-green bg-transparent border-none cursor-pointer p-0 hover:underline"

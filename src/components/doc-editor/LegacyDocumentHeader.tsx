@@ -137,6 +137,7 @@ export default function LegacyDocumentHeader({
         <div className={cn('flex items-center gap-2.5')}>
           {onBack && (
             <button
+              data-ui-part=""
               onClick={onBack}
               className={cn('bg-transparent border-none text-info-fg cursor-pointer text-[13px] p-0 flex items-center gap-1 font-[inherit]')}
             >
@@ -191,6 +192,7 @@ export default function LegacyDocumentHeader({
         <div className={cn('flex gap-1')}>
           {modeLabels.map(({ mode: m, label }) => (
             <button
+              data-ui-part=""
               key={m}
               type="button"
               data-testid={`mode-btn-${m}`}
@@ -214,6 +216,7 @@ export default function LegacyDocumentHeader({
               `onToggleVideoCall` for exactly this reason. */}
           {onToggleMyItems && (
             <button
+              data-ui-part=""
               type="button"
               className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-surface text-text-primary cursor-pointer font-[inherit] relative')}
               onClick={onToggleMyItems}
@@ -227,6 +230,7 @@ export default function LegacyDocumentHeader({
               invisible to anyone not seeing colour. */}
           {onToggleVideoCall && (
             <button
+              data-ui-part=""
               type="button"
               aria-pressed={resolvedCallVariant === 'active'}
               data-call-variant={resolvedCallVariant}
@@ -248,6 +252,7 @@ export default function LegacyDocumentHeader({
           {meta.status === 'final'
             ? onUnlock && (
               <button
+                data-ui-part=""
                 type="button"
                 className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
                 onClick={onUnlock}
@@ -257,6 +262,7 @@ export default function LegacyDocumentHeader({
             )
             : onFinalize && (
               <button
+                data-ui-part=""
                 type="button"
                 className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
                 onClick={onFinalize}
@@ -268,6 +274,7 @@ export default function LegacyDocumentHeader({
           {/* More — secondary actions + export */}
           <div className={cn('relative')}>
             <button
+              data-ui-part=""
               type="button"
               className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-surface text-text-primary cursor-pointer font-[inherit] relative tracking-wider')}
               onClick={() => setShowMore((v) => !v)}
@@ -278,6 +285,7 @@ export default function LegacyDocumentHeader({
             {showMore && (
               <div className={cn('absolute top-full right-0 mt-1 bg-surface border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] overflow-hidden')}>
                 <button
+                  data-ui-part=""
                   type="button"
                   className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}
                   onClick={() => { onToggleHistory(); setShowMore(false); }}
@@ -286,6 +294,7 @@ export default function LegacyDocumentHeader({
                 </button>
                 {onToggleVideoHistory && (pastCallsCount ?? 0) > 0 && (
                   <button
+                    data-ui-part=""
                     type="button"
                     className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}
                     onClick={() => { onToggleVideoHistory(); setShowMore(false); }}
@@ -295,6 +304,7 @@ export default function LegacyDocumentHeader({
                 )}
                 {extraMenuItems?.map((item) => (
                   <button
+                    data-ui-part=""
                     key={item.id}
                     type="button"
                     data-testid={`document-header-menu-${item.id}`}
@@ -307,6 +317,7 @@ export default function LegacyDocumentHeader({
                 <div className={cn('border-t border-border-subtle my-1')} />
                 {(['markdown', 'pdf', 'json'] as const).map((fmt) => (
                   <button
+                    data-ui-part=""
                     key={fmt}
                     type="button"
                     className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}
@@ -317,6 +328,7 @@ export default function LegacyDocumentHeader({
                 ))}
                 <div className={cn('border-t border-border-subtle my-1')} />
                 <button
+                  data-ui-part=""
                   type="button"
                   className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-danger-fg text-left cursor-pointer font-[inherit] hover:bg-danger-bg')}
                   onClick={() => { setShowMore(false); if (window.confirm('Clear all document content? This cannot be undone.')) onClearDocument(); }}

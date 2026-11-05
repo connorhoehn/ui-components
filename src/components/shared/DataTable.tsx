@@ -323,7 +323,7 @@ export function DataTable<T>({
         </TableHead>
         {/* DataTable stripes its data rows itself (odd index), so skeleton and
             empty-state rows never band; the body-level stripe stays off. */}
-        <TableBody striped={false}>
+        <TableBody striped={false} data-ui-table-striped={striped ? '' : undefined}>
           {loading
             ? Array.from({ length: loadingRows }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">

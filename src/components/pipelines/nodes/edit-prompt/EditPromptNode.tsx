@@ -59,6 +59,7 @@ export default function EditPromptNode(props: NodeProps<EditPromptFlowNode>) {
     body = (
       <>
         <button
+          data-ui-part=""
           type="button"
           data-testid="edit-prompt-output-preview"
           aria-label={src ? 'View edited image' : 'Image synthesizing'}

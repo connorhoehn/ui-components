@@ -123,6 +123,7 @@ export default function Banner({
   ) : null;
   const dismiss = onDismiss && (
     <button
+      data-ui-part=""
       type="button"
       onClick={onDismiss}
       aria-label="Dismiss"

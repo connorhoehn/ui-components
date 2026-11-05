@@ -117,6 +117,7 @@ export function NewConversationPanel({
         />
         {onCancel && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onCancel}
             disabled={busy}
@@ -137,6 +138,7 @@ export function NewConversationPanel({
           {matches.map((p) => (
             <li key={p.userId}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => void onStartDm(p.userId)}
                 disabled={busy}
@@ -161,6 +163,7 @@ export function NewConversationPanel({
           {canCreateChannel && (
             <li>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => void onCreateChannel?.(channelName)}
                 disabled={busy}

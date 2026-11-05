@@ -141,6 +141,7 @@ export function RecordingExpiryDialog({
           <FormField label="Expires on" hint="At the end of that day, your local time." {...(tooSoon ? { error: 'Pick a date at least an hour from now.' } : {})}>
             {(wiring) => (
               <input
+                data-ui-part=""
                 {...wiring}
                 type="date"
                 value={customDate}

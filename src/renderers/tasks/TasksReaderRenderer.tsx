@@ -95,6 +95,7 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
 
       {/* Status toggle */}
       <button
+        data-ui-part=""
         type="button"
         title={`Status: ${item.status}${onUpdateItem ? ' — click to toggle done' : ''}`}
         onClick={() => {
@@ -158,6 +159,7 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
       {/* Quick-update dropdown — revealed on hover *or* keyboard focus */}
       {onUpdateItem && showQuickUpdate && (
         <select
+          data-ui-part=""
           aria-label={`Set status for ${item.text || 'untitled item'}`}
           value={item.status}
           onChange={(e) => onUpdateItem(item.id, { status: e.target.value as TaskItem['status'] })}
@@ -231,6 +233,7 @@ export default function TasksReaderRenderer({ section, onUpdateItem, onNavigateT
 
       {onNavigateToEditor && (
         <button
+          data-ui-part=""
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
           className="mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0"

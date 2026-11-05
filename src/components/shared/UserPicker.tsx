@@ -280,6 +280,7 @@ function UserPicker({
             >
               {chipLabel(userId)}
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => removeUser(userId)}
                 aria-label={`Remove ${chipLabel(userId)}`
@@ -295,6 +296,7 @@ function UserPicker({
 
       <div className="relative">
         <input
+          data-ui-part=""
           ref={inputRef}
           type="text"
           value={query}

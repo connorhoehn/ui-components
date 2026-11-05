@@ -247,6 +247,7 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
             <div key={step.stepId}>
               {/* Section header */}
               <div
+                data-ui-part=""
                 className={cn(
                   'flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-code-border mb-1.5',
                   step.active ? CODE_TONE_TEXT.info : CODE_TONE_TEXT.neutral,

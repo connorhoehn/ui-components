@@ -143,6 +143,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         aria-invalid={ariaInvalid}
         aria-required={ariaRequired}
         data-testid={testId}
+        data-ui-control="number"
         onChange={handleChange}
         onBlur={handleBlur}
       />

@@ -205,7 +205,7 @@ export default function MappingRuleEditor({
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs">
+          <table data-ui-part="" className="w-full border-collapse text-xs">
             <thead>
               <tr>
                 <th className="px-2.5 py-2 font-semibold text-left border-b border-border text-text-secondary text-[11px] uppercase tracking-tight">Priority</th>
@@ -288,8 +288,8 @@ export default function MappingRuleEditor({
                       </td>
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle text-right">
                         <div className="flex gap-1 justify-end">
-                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={saveEdit}>Save</button>
-                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={cancelEdit}>Cancel</button>
+                          <button data-ui-part="" className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={saveEdit}>Save</button>
+                          <button data-ui-part="" className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={cancelEdit}>Cancel</button>
                         </div>
                       </td>
                     </tr>
@@ -313,14 +313,14 @@ export default function MappingRuleEditor({
                         <span className="text-[11px] text-text-tertiary">—</span>
                       ) : (
                         <div className="flex gap-1 justify-end">
-                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveUp(idx)} disabled={idx === 0} title="Move up">
+                          <button data-ui-part="" className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveUp(idx)} disabled={idx === 0} title="Move up">
                             &uarr;
                           </button>
-                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveDown(idx)} disabled={idx === rules.length - 1} title="Move down">
+                          <button data-ui-part="" className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveDown(idx)} disabled={idx === rules.length - 1} title="Move down">
                             &darr;
                           </button>
-                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => startEdit(idx)}>Edit</button>
-                          <button className="px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]" onClick={() => deleteRule(idx)}>Delete</button>
+                          <button data-ui-part="" className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => startEdit(idx)}>Edit</button>
+                          <button data-ui-part="" className="px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]" onClick={() => deleteRule(idx)}>Delete</button>
                         </div>
                       )}
                     </td>
@@ -336,6 +336,7 @@ export default function MappingRuleEditor({
       {!readOnly && (
         <div className="flex gap-2.5 items-center">
           <button
+            data-ui-part=""
             className="px-3.5 py-1.5 text-xs font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary self-start"
             onClick={addRule}
             data-testid="add-rule-btn"
@@ -355,6 +356,7 @@ export default function MappingRuleEditor({
           placeholder="Enter a file path to preview mapping..."
         />
         <button
+          data-ui-part=""
           className={cn(
             'px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-info-bg cursor-pointer font-[inherit] text-primary self-start',
             (previewLoading || !previewPath.trim()) && 'opacity-50 cursor-not-allowed',

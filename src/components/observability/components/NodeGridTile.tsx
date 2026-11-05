@@ -134,6 +134,7 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
       {/* Kill button (Phase 5 stub) */}
       {onKill && (
         <button
+          data-ui-part=""
           data-testid="node-kill-btn"
           type="button"
           onClick={(e) => {

@@ -55,6 +55,7 @@ export default function LinkBlockEditorRenderer({
       {links.map((l, idx) => (
         <div key={idx} className="flex items-center gap-1.5">
           <input
+            data-ui-part=""
             type="text"
             data-testid={`link-block-label-${section.id}-${idx}`}
             value={l.label}
@@ -64,6 +65,7 @@ export default function LinkBlockEditorRenderer({
             className="flex-1 px-2 py-1 text-[13px] border border-border-emphasis rounded"
           />
           <input
+            data-ui-part=""
             type="url"
             data-testid={`link-block-url-${section.id}-${idx}`}
             value={l.url}
@@ -74,6 +76,7 @@ export default function LinkBlockEditorRenderer({
           />
           {editable && (
             <button
+              data-ui-part=""
               type="button"
               data-testid={`link-block-remove-${section.id}-${idx}`}
               onClick={() => removeLink(idx)}
@@ -86,6 +89,7 @@ export default function LinkBlockEditorRenderer({
       ))}
       {editable && (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`link-block-add-${section.id}`}
           onClick={addLink}

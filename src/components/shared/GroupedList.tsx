@@ -611,6 +611,7 @@ export function GroupedList({
         const gKey: FocusKey = `g:${group.id}`;
         return (
           <section
+            data-ui-part=""
             key={group.id}
             aria-labelledby={headerId}
             data-testid={`${testId}-group-${group.id}`}
@@ -628,6 +629,7 @@ export function GroupedList({
               }}
             >
               <button
+                data-ui-part=""
                 type="button"
                 id={headerId}
                 data-testid={headerId}
@@ -819,6 +821,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
         </span>
       )}
       <button
+        data-ui-part=""
         type="button"
         data-testid={`${testId}-row-open-${row.id}`}
         data-focus-key={rKey}
@@ -929,7 +932,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
             {grip}
           </reorder.sortable.SortableHandle>
         ) : (
-          <button type="button" tabIndex={-1} {...handleProps}>
+          <button data-ui-part="" type="button" tabIndex={-1} {...handleProps}>
             {grip}
           </button>
         ))}

@@ -129,6 +129,7 @@ export function SettingsLayout({
               const isActive = section.id === active;
               return (
                 <button
+                  data-ui-part=""
                   key={section.id}
                   type="button"
                   data-testid={`${testId}-rail-item`}
@@ -203,6 +204,7 @@ export function SettingsLayout({
           <div className="ml-auto flex items-center gap-2">
             {onCancel && (
               <button
+                data-ui-part=""
                 type="button"
                 onClick={onCancel}
                 data-testid={`${testId}-cancel`}
@@ -226,6 +228,7 @@ export function SettingsLayout({
                 save to offer. */}
             {onSave && (
               <button
+                data-ui-part=""
                 type="button"
                 onClick={onSave}
                 data-testid={`${testId}-save`}

@@ -64,6 +64,7 @@ export function OrgGraphLegend({
           return (
             <li key={dept.id}>
               <button
+                data-ui-part=""
                 type="button"
                 aria-pressed={active}
                 onClick={() => onFilter(active ? null : dept.name)}

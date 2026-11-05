@@ -67,6 +67,7 @@ export default function DeadLetterQueuePage() {
             That entry was not updated: {actionError}
           </span>
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setActionError(null)}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
@@ -129,6 +130,7 @@ function DLQRow({ entry, onReplay, onDrop }: DLQRowProps) {
       ) : null}
       <div className="flex gap-2">
         <button
+          data-ui-part=""
           data-testid={`dlq-replay-${entry.id}`}
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
           onClick={onReplay}
@@ -136,6 +138,7 @@ function DLQRow({ entry, onReplay, onDrop }: DLQRowProps) {
           Replay
         </button>
         <button
+          data-ui-part=""
           data-testid={`dlq-drop-${entry.id}`}
           className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
           onClick={onDrop}

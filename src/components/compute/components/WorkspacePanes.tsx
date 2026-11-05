@@ -200,6 +200,7 @@ export function LogsPane({ computer, registerPane, className }: LogsPaneProps) {
           />
         ) : (
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setSearching(true)}
             aria-label="Search the log"
@@ -237,6 +238,7 @@ export function LogsPane({ computer, registerPane, className }: LogsPaneProps) {
         </span>
         <span className="flex-1" />
         <button
+          data-ui-part=""
           type="button"
           onClick={togglePause}
           aria-pressed={paused}
@@ -325,7 +327,7 @@ const PLAN_GLYPH: Record<PlanItem['status'], { glyph: string; className: string;
 function PlanChecklist({ plan }: { plan: readonly PlanItem[] }) {
   const done = plan.filter((item) => item.status === 'completed').length;
   return (
-    <section data-testid="agent-pane-plan" aria-label="Plan" className="shrink-0 px-3 py-2 border-b border-code-border">
+    <section data-ui-part="" data-testid="agent-pane-plan" aria-label="Plan" className="shrink-0 px-3 py-2 border-b border-code-border">
       <div className="flex items-center gap-2 text-[11px] text-code-muted">
         <span className="font-semibold text-code-text">Plan</span>
         <span data-testid="agent-pane-plan-tally" className="tabular-nums">{done} of {plan.length} done</span>
@@ -412,6 +414,7 @@ function QuestionReply({ computer, question }: QuestionReplyProps) {
       ) : (
         <form onSubmit={(e) => void send(e)} className="flex items-end gap-2">
           <textarea
+            data-ui-part=""
             data-testid="agent-pane-reply"
             aria-label={`Reply to ${computer.label}`}
             rows={2}

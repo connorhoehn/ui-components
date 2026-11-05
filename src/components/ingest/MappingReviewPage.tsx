@@ -80,6 +80,7 @@ export default function MappingReviewPage({ idToken: idTokenProp, baseUrl }: Map
             That item was not updated: {actionError}
           </span>
           <button
+            data-ui-part=""
             onClick={() => setActionError(null)}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
           >
@@ -166,6 +167,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
       ) : null}
       <div className="flex gap-2 items-center flex-wrap">
         <button
+          data-ui-part=""
           data-testid={`review-accept-${item.itemId}`}
           className={cn(
             'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]',
@@ -191,6 +193,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
           ]}
         />
         <button
+          data-ui-part=""
           data-testid={`review-remap-${item.itemId}`}
           className={cn(
             'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]',
@@ -202,6 +205,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
           Re-map
         </button>
         <button
+          data-ui-part=""
           data-testid={`review-discard-${item.itemId}`}
           className="px-3 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
           onClick={onDiscard}

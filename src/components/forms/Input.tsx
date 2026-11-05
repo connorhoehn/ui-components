@@ -66,10 +66,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   if (!hasPrefix && !hasSuffix) {
     return (
       <input
+        data-ui-part=""
         ref={ref}
         type={type}
         disabled={disabled}
         data-testid={testId}
+        data-ui-control="input"
         aria-invalid={ariaInvalid}
         className={cn(
           'w-full rounded-md border bg-surface-panel font-inherit text-text-primary',
@@ -116,10 +118,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </span>
       )}
       <input
+        data-ui-part=""
         ref={ref}
         type={type}
         disabled={disabled}
         data-testid={testId}
+        data-ui-control="input"
         aria-invalid={ariaInvalid}
         className={cn(
           'flex-1 min-w-0 bg-transparent font-inherit text-text-primary outline-none',

@@ -96,6 +96,7 @@ export function VisionRunCard({
     const captionPreview = caption ? caption.slice(0, 60) : 'no caption';
     return (
       <button
+        data-ui-part=""
         type="button"
         onClick={onOpen}
         aria-label={`Open vision result: ${endpoint}, ${status}, ${captionPreview}`}

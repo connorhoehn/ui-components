@@ -62,6 +62,7 @@ export default function VariationNode(props: NodeProps<VariationFlowNode>) {
     visual = (
       <>
         <button
+          data-ui-part=""
           type="button"
           data-testid="variation-output-preview"
           aria-label={src ? 'View variation image' : 'Image synthesizing'}

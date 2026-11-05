@@ -66,7 +66,7 @@ export function DetailSection({
     const sm = size === 'sm';
     const hasDescription = description != null && description !== false;
     return (
-      <section className={cn('group/section', className)} data-variant="heading" data-size={size} {...(testId ? { 'data-testid': testId } : {})}>
+      <section data-ui-part="" className={cn('group/section', className)} data-variant="heading" data-size={size} {...(testId ? { 'data-testid': testId } : {})}>
         {!first && <Divider spacing="md" />}
         {/* A fixed 24px row: a hover action may be taller, but never pushes
             the body down (the mockup's heading → text pitch is 24px). */}
@@ -92,7 +92,7 @@ export function DetailSection({
     );
   }
   return (
-    <section className={cn(className)} {...(testId ? { 'data-testid': testId } : {})}>
+    <section data-ui-part="" className={cn(className)} {...(testId ? { 'data-testid': testId } : {})}>
       {!first && <Divider spacing="md" />}
       <div className="mb-2 flex items-baseline gap-2">
         <Heading className="m-0 text-xs font-semibold uppercase tracking-wide text-text-tertiary">

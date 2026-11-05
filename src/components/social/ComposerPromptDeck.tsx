@@ -428,6 +428,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
   return (
     <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border', className)} data-composer-prompt-deck="expanded" data-composer-dialogue={input ? undefined : active.kind} data-deck-variant={variant} data-testid={testId} ref={root}>
       <section
+        data-ui-part=""
         role="group"
         aria-labelledby={titleId}
         aria-describedby={questionId}

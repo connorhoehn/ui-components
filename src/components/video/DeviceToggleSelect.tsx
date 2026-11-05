@@ -120,6 +120,7 @@ export function DeviceToggleSelect({
       data-permission={permission}
     >
       <button
+        data-ui-part=""
         type="button"
         onClick={disabled ? undefined : onToggle}
         disabled={disabled}

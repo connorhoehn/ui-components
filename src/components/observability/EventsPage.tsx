@@ -243,6 +243,7 @@ function EventsPageInner() {
       {/* Top bar */}
       <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel">
         <button
+          data-ui-part=""
           onClick={() => setPaused((p) => !p)}
           data-testid="events-live-toggle"
           className={cn(
@@ -287,6 +288,7 @@ function EventsPageInner() {
               </div>
             )}
             <button
+              data-ui-part=""
               onClick={() => setRailCollapsed((c) => !c)}
               aria-label={railCollapsed ? 'Expand filters' : 'Collapse filters'}
               className="border-none bg-transparent text-text-tertiary cursor-pointer text-xs p-0.5 font-[inherit]"
@@ -391,6 +393,7 @@ function EventsPageInner() {
 
               <div className="px-3.5 py-3">
                 <button
+                  data-ui-part=""
                   data-testid="events-clear-filters"
                   onClick={clearFilters}
                   className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
@@ -403,7 +406,7 @@ function EventsPageInner() {
         </aside>
 
         {/* Center list */}
-        <section className="flex-1 min-w-0 flex flex-col">
+        <section data-ui-part="" className="flex-1 min-w-0 flex flex-col">
           <EventTimeline
             events={visibleEvents}
             selectedId={selectedId}

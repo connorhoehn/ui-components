@@ -141,6 +141,7 @@ function ChaosPanel(props: ChaosPanelProps) {
           </div>
         </div>
         <button
+          data-ui-part=""
           data-testid="chaos-pause-toggle"
           onClick={togglePause}
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
@@ -167,6 +168,7 @@ function ChaosPanel(props: ChaosPanelProps) {
           <span className="text-[11px] text-text-tertiary self-center">ms</span>
         </div>
         <button
+          data-ui-part=""
           data-testid="chaos-latency-apply"
           onClick={applyLatency}
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
@@ -197,6 +199,7 @@ function ChaosPanel(props: ChaosPanelProps) {
           ))}
         </div>
         <button
+          data-ui-part=""
           data-testid="chaos-partition-inject"
           onClick={injectPartition}
           className={cn(
@@ -228,6 +231,7 @@ function ChaosPanel(props: ChaosPanelProps) {
           <span className="text-[11px] text-text-tertiary self-center">%</span>
         </div>
         <button
+          data-ui-part=""
           data-testid="chaos-drop-apply"
           onClick={applyDrop}
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
@@ -239,6 +243,7 @@ function ChaosPanel(props: ChaosPanelProps) {
       {/* Kill all + Reset */}
       <div className="flex flex-col gap-2">
         <button
+          data-ui-part=""
           data-testid="chaos-kill-all"
           onClick={() => setConfirmKill(true)}
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]"
@@ -246,6 +251,7 @@ function ChaosPanel(props: ChaosPanelProps) {
           Kill all
         </button>
         <button
+          data-ui-part=""
           data-testid="chaos-reset"
           onClick={onReset}
           className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
@@ -261,6 +267,7 @@ function ChaosPanel(props: ChaosPanelProps) {
         footer={
           <>
             <button
+              data-ui-part=""
               data-testid="chaos-kill-cancel"
               onClick={() => setConfirmKill(false)}
               className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
@@ -268,6 +275,7 @@ function ChaosPanel(props: ChaosPanelProps) {
               Cancel
             </button>
             <button
+              data-ui-part=""
               data-testid="chaos-kill-confirm"
               onClick={confirmKillAll}
               className="px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]"

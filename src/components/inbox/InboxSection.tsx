@@ -84,6 +84,7 @@ export function InboxSection({
 
   return (
     <section
+      data-ui-part=""
       aria-labelledby={headingId}
       data-testid={testId}
       className={cn('overflow-hidden rounded-lg border border-border bg-surface', className)}

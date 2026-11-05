@@ -211,6 +211,7 @@ function AvatarWithCard({ user, isFollowing, onFollow, children }: {
             <div className="text-[11px] text-text-tertiary whitespace-nowrap mt-0.5">§ {user.location}</div>
           )}
           <button
+            data-ui-part=""
             type="button"
             onClick={(e) => { e.stopPropagation(); onFollow(user.id); }}
             className={cn(
@@ -350,6 +351,7 @@ export function PresenceAvatars({
         if (onUserClick) {
           return wrap(
             <button
+              data-ui-part=""
               key={user.id}
               type="button"
               role="listitem"
@@ -383,6 +385,7 @@ export function PresenceAvatars({
 
       {overflow > 0 && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onMoreClick}
           disabled={!onMoreClick}

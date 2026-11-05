@@ -346,6 +346,7 @@ export function PresentationView({
             {slides.map((slide) => (
               <li key={slide.id}>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => onSlideChange(slide.index)}
                   aria-current={slide.id === current.id ? 'true' : undefined}

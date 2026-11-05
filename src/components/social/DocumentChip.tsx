@@ -32,6 +32,7 @@ export function DocumentChip({ documentId, label, icon, onOpen, unavailable, cla
   const reason = unavailable ? documentUnavailableLabel(unavailable) : null;
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={open ? () => open(documentId) : undefined}
       disabled={!open}

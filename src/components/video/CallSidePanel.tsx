@@ -175,6 +175,7 @@ export function CallSidePanelToggles({
         const isDisabled = disabled || tab.disabled === true;
         return (
           <button
+            data-ui-part=""
             key={tab.id}
             type="button"
             aria-label={tab.label}
@@ -326,6 +327,7 @@ export function CallSidePanel({
               const isActive = tab.id === active.id;
               return (
                 <button
+                  data-ui-part=""
                   key={tab.id}
                   type="button"
                   role="tab"
@@ -350,6 +352,7 @@ export function CallSidePanel({
           <h2 className="m-0 truncate text-sm font-semibold text-white">{active.label}</h2>
         )}
         <button
+          data-ui-part=""
           type="button"
           aria-label="Close"
           onClick={close}

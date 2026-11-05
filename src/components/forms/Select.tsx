@@ -375,6 +375,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   if (native) {
     return (
       <select
+        data-ui-part=""
         id={id}
         name={name}
         disabled={disabled}
@@ -411,6 +412,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
 
   const trigger = (
     <button
+      data-ui-part=""
       {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       ref={triggerRef}
       id={id}
@@ -531,7 +533,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   return (
     <>
       {trigger}
-      {name !== undefined && <input type="hidden" name={name} value={value} />}
+      {name !== undefined && <input data-ui-part="" type="hidden" name={name} value={value} />}
       {panel}
     </>
   );

@@ -292,6 +292,7 @@ export function DeckReader({
             {slides.map((slide, at) => (
               <li key={slide.id}>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => select(slide.id)}
                   aria-current={current?.id === slide.id ? 'true' : undefined}
@@ -372,6 +373,7 @@ export function DeckReader({
           <div className="deck-reader-notes max-h-[120px] shrink-0 overflow-y-auto px-4 pt-1.5 max-[1199px]:px-2 max-[1199px]:pt-0.5">
             {current?.slide ? (
               <section
+                data-ui-part=""
                 className="deck-reader-note-panel flex flex-col gap-1 rounded-lg border border-solid border-border bg-surface px-3 py-2 max-[1199px]:gap-0.5 max-[1199px]:px-2 max-[1199px]:py-1"
                 aria-labelledby={notesLabel}
               >

@@ -589,6 +589,7 @@ export default function WorkspaceDocumentHeader({
               Type {FINALIZE_CONFIRMATION_WORD} to confirm
             </label>
             <input
+              data-ui-part=""
               id="lifecycle-finalize-confirm"
               data-testid="lifecycle-finalize-confirm-input"
               value={typedConfirmation}
@@ -606,6 +607,7 @@ export default function WorkspaceDocumentHeader({
           {reasonRequired ? 'Reason (required)' : 'Reason (optional)'}
         </label>
         <textarea
+          data-ui-part=""
           id="lifecycle-reason"
           data-testid="lifecycle-reason-input"
           value={reason}
@@ -877,6 +879,7 @@ export default function WorkspaceDocumentHeader({
           )}
 
           <input
+            data-ui-part=""
             aria-label="Document title"
             readOnly={!(titleEditable ?? mode === 'editor') || !onUpdateMeta}
             className={TITLE_INPUT_CLASS}

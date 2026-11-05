@@ -96,6 +96,7 @@ function AlertItem({
       </div>
       {onDismiss && (
         <button
+          data-ui-part=""
           data-testid="alert-dismiss"
           aria-label="dismiss alert"
           onClick={() => onDismiss(alert.id)}

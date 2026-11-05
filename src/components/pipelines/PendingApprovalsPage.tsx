@@ -158,6 +158,7 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
           <span className="text-lg" aria-hidden>✋</span>
           <div className="min-w-0">
             <button
+              data-ui-part=""
               type="button"
               onClick={onOpenPipeline}
               data-testid={`open-pipeline-${row.pipelineId}`}
@@ -253,10 +254,10 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
       />
 
       <div className="flex gap-2 justify-end">
-        <button data-testid={`reject-${row.runId}`} onClick={() => submit('reject')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-danger text-white border-none rounded-md font-[inherit] cursor-pointer">
+        <button data-ui-part="" data-testid={`reject-${row.runId}`} onClick={() => submit('reject')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-danger text-white border-none rounded-md font-[inherit] cursor-pointer">
           Reject
         </button>
-        <button data-testid={`approve-${row.runId}`} onClick={() => submit('approve')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-success text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0">
+        <button data-ui-part="" data-testid={`approve-${row.runId}`} onClick={() => submit('approve')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-success text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0">
           Approve
         </button>
       </div>
@@ -410,7 +411,7 @@ export default function PendingApprovalsPage() {
         {error ? (
           <div data-testid="approvals-error" role="alert" className="px-4 py-3 bg-danger-bg border border-danger text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4">
             <span className="text-[13px] font-medium">Couldn't load pending approvals. Try again.</span>
-            <button data-testid="approvals-retry" onClick={retry} className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]">Retry</button>
+            <button data-ui-part="" data-testid="approvals-retry" onClick={retry} className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]">Retry</button>
           </div>
         ) : null}
 

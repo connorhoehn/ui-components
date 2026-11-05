@@ -127,7 +127,7 @@ function NodesPage({
         />
       </div>
 
-      <section className="flex-1 min-w-0 overflow-auto p-6">
+      <section data-ui-part="" className="flex-1 min-w-0 overflow-auto p-6">
         {/* Disclosure, not decoration. With no `nodes` prop this page invents
             three us-east-1 workers with plausible CPU/memory/connection
             numbers and a seeded CPU history, and the drawer reports
@@ -164,6 +164,7 @@ function NodesPage({
               </div>
             </div>
             <button
+              data-ui-part=""
               data-testid="nodes-detail-close"
               onClick={() => setSelectedId(null)}
               aria-label="Close drawer"
@@ -178,7 +179,7 @@ function NodesPage({
             <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
               Metrics
             </div>
-            <table className="w-full text-xs border-collapse">
+            <table data-ui-part="" className="w-full text-xs border-collapse">
               <tbody>
                 {[
                   ['Status', selected.status],
@@ -219,6 +220,7 @@ function NodesPage({
               </div>
               {onAddLatency && (
                 <button
+                  data-ui-part=""
                   onClick={() => onAddLatency(selected.id)}
                   className="self-start px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
                 >
@@ -227,6 +229,7 @@ function NodesPage({
               )}
               {onKillNode && (
                 <button
+                  data-ui-part=""
                   onClick={() => onKillNode(selected.id)}
                   className="self-start px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]"
                 >
@@ -242,6 +245,7 @@ function NodesPage({
                 Actions
               </div>
               <button
+                data-ui-part=""
                 onClick={() => onTransferResource(selected.id)}
                 className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
               >

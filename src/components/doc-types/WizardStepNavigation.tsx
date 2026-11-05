@@ -76,6 +76,7 @@ export function WizardStepNavigation({
     <div className="flex items-center justify-between pt-4 border-t border-border mt-4 shrink-0">
       <div className="flex gap-2">
         <button
+          data-ui-part=""
           type="button"
           onClick={onCancel}
           className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-neutral"
@@ -84,6 +85,7 @@ export function WizardStepNavigation({
         </button>
         {onExportSchema && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onExportSchema}
             title="Download JSON Schema"
@@ -105,6 +107,7 @@ export function WizardStepNavigation({
       <div className="flex gap-2">
         {step > 1 && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onBack}
             className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field"
@@ -113,6 +116,7 @@ export function WizardStepNavigation({
           </button>
         )}
         <button
+          data-ui-part=""
           type="button"
           data-testid="wizard-next"
           onClick={onNext}

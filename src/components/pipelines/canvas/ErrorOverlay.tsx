@@ -128,6 +128,7 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
         </span>
         <span className="flex-1" />
         <button
+          data-ui-part=""
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss error overlay"
@@ -156,6 +157,7 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
         {error.stack && (
           <div>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => setStackOpen((v) => !v)}
               className="bg-transparent border-none p-0 cursor-pointer text-xs font-medium text-text-secondary font-inherit"
@@ -178,6 +180,7 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
       {/* Footer actions */}
       <div className="flex gap-2 px-3.5 pt-2.5 pb-3 border-t border-border">
         <button
+          data-ui-part=""
           type="button"
           onClick={handleCopy}
           className="px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-surface-hover text-text-secondary"
@@ -187,6 +190,7 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
         </button>
         {onRetry && (
           <button
+            data-ui-part=""
             type="button"
             onClick={handleRetry}
             className="px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-primary text-white"

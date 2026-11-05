@@ -181,6 +181,7 @@ function HangoutRoomRowView(rm: HangoutRoomRowModules, {
   // every room turns a navigation list into a toolbar.
   const conversationControl = onOpenConversation ? (
     <button
+      data-ui-part=""
       type="button"
       aria-label={`Open the ${name} conversation`}
       title="Open conversation"

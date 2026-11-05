@@ -31,6 +31,7 @@ export function AttachToggle({
 }: AttachToggleProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       aria-pressed={attached}
       aria-label={ariaLabel}

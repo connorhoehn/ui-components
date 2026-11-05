@@ -97,7 +97,7 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
         />
 
         {/* Redirect URIs */}
-        <section>
+        <section data-ui-part="">
           <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Redirect URIs</h3>
           {/* An <h3> is not a label: these boxes had no accessible name at all,
               only a placeholder — which disappears the moment the field holds a
@@ -130,7 +130,7 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
         </section>
 
         {/* Grant Types */}
-        <section>
+        <section data-ui-part="">
           <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Grant Types</h3>
           <div className="flex flex-col gap-2 mb-4">
             {GRANT_TYPE_OPTIONS.map((gt) => (

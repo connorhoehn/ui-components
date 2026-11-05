@@ -289,6 +289,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
       <div data-testid="source-detail-page" className="p-6 flex flex-col gap-3">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <button
+            data-ui-part=""
             className="text-[13px] text-primary cursor-pointer bg-transparent border-none font-[inherit] p-0 underline"
             onClick={() => navigate('/ingest/sources')}
           >
@@ -298,6 +299,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
         <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
           <span className="text-[13px] font-medium">Failed to load source: {error}</span>
           <button
+            data-ui-part=""
             onClick={() => void fetchSource()}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
@@ -316,6 +318,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-2.5">
           <button
+            data-ui-part=""
             className="text-[13px] text-primary cursor-pointer bg-transparent border-none font-[inherit] p-0 underline"
             onClick={() => navigate('/ingest/sources')}
           >
@@ -333,12 +336,14 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
           {editing ? (
             <>
               <button
+                data-ui-part=""
                 className="px-3.5 py-1.5 text-[13px] font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary"
                 onClick={cancelEdit}
               >
                 Cancel
               </button>
               <button
+                data-ui-part=""
                 className={cn(
                   'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]',
                   saving && 'opacity-50 cursor-not-allowed',
@@ -351,6 +356,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
             </>
           ) : (
             <button
+              data-ui-part=""
               className="px-3.5 py-1.5 text-[13px] font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary"
               onClick={enterEditMode}
             >
@@ -365,6 +371,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
         <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
           <span className="text-[13px] font-medium">{error}</span>
           <button
+            data-ui-part=""
             onClick={() => setError(null)}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
@@ -437,6 +444,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
         <div className="flex items-center justify-between mb-3">
           <div className="text-sm font-semibold text-text-primary">Sync History</div>
           <button
+            data-ui-part=""
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]',
               syncing || source.status === 'paused'
@@ -543,6 +551,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
               <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Pipeline overrides</span>
               <div className="flex-1 flex flex-col gap-2">
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid="overrides-toggle"
                   onClick={() => setShowOverrides(!showOverrides)}
@@ -573,6 +582,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
                             options={pipelineDefs.map((p) => ({ value: p.id, label: p.name }))}
                           />
                           <button
+                            data-ui-part=""
                             type="button"
                             data-testid={`overrides-remove-${typeId}`}
                             onClick={() => {
@@ -633,6 +643,7 @@ export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: Sour
               <span className="flex items-center gap-2.5">
                 <Chip tone={statusTone(source.status)} size="sm">{source.status}</Chip>
                 <button
+                  data-ui-part=""
                   className={cn(
                     'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer font-[inherit] border-none text-white',
                     source.status === 'paused' ? 'bg-state-completed' : 'bg-state-awaiting',

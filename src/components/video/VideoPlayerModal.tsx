@@ -146,6 +146,7 @@ export function VideoPlayerModal({
             <div className="flex items-center gap-1 shrink-0">
               {header}
               <button
+                data-ui-part=""
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
@@ -187,6 +188,7 @@ export function VideoPlayerModal({
               const isActive = i === activeIdx;
               return (
                 <button
+                  data-ui-part=""
                   // Index participates in the key so a caller passing
                   // duplicate URLs (e.g. multiple per-peer recording legs
                   // pointing at the same file) doesn't trip React's

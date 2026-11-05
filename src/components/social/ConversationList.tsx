@@ -485,6 +485,7 @@ export function ConversationList({
     <div className={cn('flex min-h-0 flex-col gap-1', className)} data-testid={testId}>
       {onNewChat && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onNewChat}
           data-testid="conversation-new-chat"
@@ -615,6 +616,7 @@ export function ConversationList({
             return (
               <li key={item.channel} className={cn('relative', menuItems.length > 0 && 'group')}>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => onSelect(item.channel)}
                   // A click moves the roving cursor too, so a subsequent
@@ -820,6 +822,7 @@ export function ConversationList({
               </ul>
               {section.capped && (
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => toggleCap(section.label)}
                   aria-expanded={section.hidden === 0}

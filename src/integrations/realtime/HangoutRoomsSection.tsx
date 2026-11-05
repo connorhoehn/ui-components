@@ -184,6 +184,7 @@ function HangoutRoomsSectionView(HangoutRoomRow: HangoutRoomRowComponent, {
           >
             <span className="truncate">Couldn't load rooms.</span>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => void rooms.refetch()}
               className="text-danger-fg underline hover:text-danger-fg cursor-pointer"

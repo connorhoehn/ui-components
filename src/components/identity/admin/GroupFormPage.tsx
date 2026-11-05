@@ -116,7 +116,7 @@ export function GroupFormPage({
         />
 
         {/* Permissions tag input */}
-        <section>
+        <section data-ui-part="">
           <h3 id={`${uid}-permissions`} className="text-base font-semibold text-text-primary mt-6 mb-2">Permissions</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {permissions.map((perm) => (
@@ -147,7 +147,7 @@ export function GroupFormPage({
 
         {/* Members section (edit mode only) */}
         {isEdit && members && (
-          <section>
+          <section data-ui-part="">
             <h3 id={`${uid}-members`} className="text-base font-semibold text-text-primary mt-6 mb-2">Members</h3>
             {members.length === 0 ? (
               <p className="text-text-tertiary text-sm">

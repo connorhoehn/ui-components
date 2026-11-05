@@ -94,6 +94,7 @@ function DeleteConfirmModal({
       backdropTestId="delete-modal"
       footer={<>
         <button
+          data-ui-part=""
           data-testid="cancel-delete"
           onClick={onCancel}
           className="py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer"
@@ -101,6 +102,7 @@ function DeleteConfirmModal({
           Cancel
         </button>
         <button
+          data-ui-part=""
           data-testid="confirm-delete"
           onClick={onConfirm}
           className="py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer"
@@ -173,6 +175,7 @@ function TypeListItem({
           show a button that does nothing. */}
       {onCreateDocument && (
         <button
+          data-ui-part=""
           data-testid={`new-doc-from-type-${type.id}`}
           onClick={(e) => { e.stopPropagation(); onCreateDocument(); }}
           title={`Start a new ${type.name}`}
@@ -182,6 +185,7 @@ function TypeListItem({
         </button>
       )}
       <button
+        data-ui-part=""
         data-testid={`edit-type-${type.id}`}
         onClick={onSelect}
         title="Edit type"
@@ -193,6 +197,7 @@ function TypeListItem({
         Edit
       </button>
       <button
+        data-ui-part=""
         data-testid={`delete-type-${type.id}`}
         onClick={e => { e.stopPropagation(); onDeleteRequest(); }}
         title="Delete type"
@@ -405,6 +410,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
               {/* Points at the gallery, not the wizard — picking a ready type
                   is the shorter road to a first type by a long way. */}
               {!workspace && <button
+                data-ui-part=""
                 data-testid="empty-browse-types-btn"
                 onClick={() => setCookbooksOpen(true)}
                 className="bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2"
@@ -469,6 +475,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
                 : 'Start from a known type below. It installs as your own type, and you can change any of it afterwards.'}
               action={
                 <button
+                  data-ui-part=""
                   data-testid="idle-create-btn"
                   onClick={handleCreateClick}
                   className="px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer"

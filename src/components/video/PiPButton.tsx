@@ -55,6 +55,7 @@ export function PiPButton({
   const disabled = !supported;
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={toggle}
       disabled={disabled}

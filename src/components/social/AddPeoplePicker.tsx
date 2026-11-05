@@ -91,6 +91,7 @@ export function AddPeoplePicker({
               return (
                 <li key={c.userId}>
                   <button
+                    data-ui-part=""
                     type="button"
                     aria-pressed={on}
                     onClick={() => toggle(c.userId)}

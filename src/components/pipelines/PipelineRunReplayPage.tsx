@@ -442,13 +442,13 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           </IconButton>
           {menuOpen ? (
             <div className="absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] min-w-[200px] z-20 overflow-hidden" role="menu" aria-label="More actions">
-              <button className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleCopyRunId}>
+              <button data-ui-part="" className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleCopyRunId}>
                 Copy runId
               </button>
-              <button className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleExportRun}>
+              <button data-ui-part="" className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleExportRun}>
                 Export run JSON
               </button>
-              <button className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleOpenAsNewDraft}>
+              <button data-ui-part="" className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleOpenAsNewDraft}>
                 Open as new draft
               </button>
             </div>
@@ -633,6 +633,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
               const active = activeTab === tab.id;
               return (
                 <button
+                  data-ui-part=""
                   key={tab.id}
                   role="tab"
                   aria-selected={active}

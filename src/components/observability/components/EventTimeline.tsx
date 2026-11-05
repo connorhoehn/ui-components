@@ -99,6 +99,7 @@ function EventTimeline({ events, selectedId, onSelect, live = false }: EventTime
 
       {live && detached && (
         <button
+          data-ui-part=""
           data-testid="jump-to-live"
           onClick={jumpToLive}
           className={cn(

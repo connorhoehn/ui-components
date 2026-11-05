@@ -331,6 +331,7 @@ function TreeRow({
       >
         {hasChildren ? (
           <button
+            data-ui-part=""
             type="button"
             onClick={(event) => {
               event.stopPropagation();

@@ -2702,6 +2702,7 @@ export function ChatPanel({
           )}
           {collapsible && (
             <button
+              data-ui-part=""
               type="button"
               data-testid="chat-thread-toggle"
               aria-expanded={expanded}
@@ -2743,6 +2744,7 @@ export function ChatPanel({
           // silently drift the next time the rail's padding changes.
           <div className="ml-7 border-l border-transparent pl-2">
             <button
+              data-ui-part=""
               type="button"
               data-testid="chat-thread-reply"
               // "Reply" repeated down a channel is a useless list to a screen
@@ -2903,6 +2905,7 @@ export function ChatPanel({
           {canLoadMore && messages.length > 0 && (
             <div className="flex justify-center pb-1">
               <button
+                data-ui-part=""
                 type="button"
                 data-testid="chat-panel-load-more"
                 onClick={handleLoadMore}
@@ -2999,6 +3002,7 @@ export function ChatPanel({
         </div>
         {unreadBelow > 0 && (
           <button
+            data-ui-part=""
             type="button"
             data-testid="chat-panel-new-messages"
             onClick={scrollToBottom}
@@ -3055,6 +3059,7 @@ export function ChatPanel({
         {onSendFiles && (
           <>
             <button
+              data-ui-part=""
               type="button"
               data-testid="chat-panel-attach"
               aria-label="Attach a file"
@@ -3087,6 +3092,7 @@ export function ChatPanel({
         )}
 
         <button
+          data-ui-part=""
           ref={emojiTriggerRef}
           type="button"
           data-testid="chat-panel-emoji"

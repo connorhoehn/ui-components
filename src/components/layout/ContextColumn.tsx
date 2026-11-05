@@ -299,6 +299,7 @@ export function ContextColumn({
             const iconOnly = crowded && !selected;
             return (
               <button
+                data-ui-part=""
                 key={p.id}
                 type="button"
                 role="tab"

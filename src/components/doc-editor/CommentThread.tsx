@@ -234,6 +234,7 @@ export function ResolvedBanner({ resolvedBy, resolvedAt, expanded, onToggle, onR
   const short = when.replace(/ ago$/, '');
   return (
     <div
+      data-ui-part=""
       role="button"
       tabIndex={0}
       aria-expanded={expanded}
@@ -254,6 +255,7 @@ export function ResolvedBanner({ resolvedBy, resolvedAt, expanded, onToggle, onR
       )}
       {onReopen && (
         <button
+          data-ui-part=""
           type="button"
           aria-label="Reopen"
           title="Reopen thread"
@@ -435,6 +437,7 @@ function CommentThreadNode({
         {/* Reply + Resolve buttons */}
         <div className={cn('pl-[30px] mt-1 flex gap-2')}>
           <button
+            data-ui-part=""
             type="button"
             onClick={() => {
               if (onReplyRequest) {
@@ -459,6 +462,7 @@ function CommentThreadNode({
           </button>
           {depth === 0 && !isResolved && onResolveThread && (
             <button
+              data-ui-part=""
               type="button"
               onClick={() => onResolveThread(comment.id)}
               className={cn('bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
@@ -468,6 +472,7 @@ function CommentThreadNode({
           )}
           {depth === 0 && !isResolved && onAskAgent && (
             <button
+              data-ui-part=""
               type="button"
               onClick={() => onAskAgent(comment.id)}
               title="Hand this comment to the page's agent (⌥2)"
@@ -522,6 +527,7 @@ function CommentThreadNode({
             </div>
             <div className={cn('flex gap-1.5 mt-1.5')}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={handleSubmitReply}
                 className={cn('px-3 py-1 text-xs font-semibold border-none rounded-md bg-info text-white cursor-pointer font-[inherit]')}
@@ -529,6 +535,7 @@ function CommentThreadNode({
                 Reply
               </button>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => setShowReplyForm(false)}
                 className={cn('px-3 py-1 text-xs font-medium border border-border rounded-md bg-transparent text-neutral cursor-pointer font-[inherit]')}

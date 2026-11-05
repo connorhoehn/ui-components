@@ -29,6 +29,7 @@ export function ToolCallRenderer({ toolCall, className }: ToolCallRendererProps)
       )}
     >
       <button
+        data-ui-part=""
         className="flex items-center gap-2 w-full px-2 py-1.5 text-left hover:bg-surface-hover/50 transition-colors"
         onClick={() => setExpanded(!expanded)}
       >

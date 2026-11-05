@@ -63,6 +63,7 @@ export function CircularIconToggle({
       : OFF_NEUTRAL;
   return (
     <button
+      data-ui-part=""
       type="button"
       aria-label={ariaLabel}
       aria-pressed={on}

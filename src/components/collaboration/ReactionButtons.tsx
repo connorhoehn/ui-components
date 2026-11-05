@@ -29,6 +29,7 @@ export function ReactionButtons({ onReact, disabled = false }: Props) {
     <div className="flex gap-1 flex-wrap">
       {EMOJIS.map((emoji) => (
         <button
+          data-ui-part=""
           key={emoji}
           onClick={() => onReact(emoji)}
           disabled={disabled}

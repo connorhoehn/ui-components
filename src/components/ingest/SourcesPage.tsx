@@ -112,6 +112,7 @@ export default function SourcesPage() {
           </span>
         </div>
         <button
+          data-ui-part=""
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]"
           onClick={() => navigate('/ingest/sources')}
           data-testid="add-source-btn"
@@ -125,6 +126,7 @@ export default function SourcesPage() {
         <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
           <span className="text-[13px] font-medium">Failed to load sources.</span>
           <button
+            data-ui-part=""
             onClick={() => void refresh()}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
@@ -145,6 +147,7 @@ export default function SourcesPage() {
             That action did not go through: {actionError}
           </span>
           <button
+            data-ui-part=""
             onClick={clearActionError}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
           >
@@ -164,7 +167,7 @@ export default function SourcesPage() {
         />
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-[13px]">
+          <table data-ui-part="" className="w-full border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-border">
                 <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Name</th>
@@ -183,6 +186,7 @@ export default function SourcesPage() {
                 >
                   <td className="p-2 font-medium text-text-primary">
                     <button
+                      data-ui-part=""
                       type="button"
                       data-testid={`source-name-link-${source.sourceId}`}
                       onClick={() => navigate(`/ingest/sources/${source.sourceId}`)}
@@ -221,6 +225,7 @@ export default function SourcesPage() {
                   <td className="p-2 text-right">
                     <div className="flex gap-1.5 justify-end">
                       <button
+                        data-ui-part=""
                         className={cn(
                           'px-2.5 py-1 text-[11px] font-medium rounded-[5px] cursor-pointer font-[inherit]',
                           syncing.has(source.sourceId) || source.status === 'paused'
@@ -234,6 +239,7 @@ export default function SourcesPage() {
                         {syncing.has(source.sourceId) ? 'Syncing...' : 'Sync Now'}
                       </button>
                       <button
+                        data-ui-part=""
                         className="px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]"
                         onClick={() => void handleDelete(source)}
                         data-testid={`delete-${source.sourceId}`}

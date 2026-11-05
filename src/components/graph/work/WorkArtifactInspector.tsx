@@ -49,7 +49,7 @@ export function WorkArtifactInspector({ node, artifact, selection, onSelectionCh
   return (
     <div className="space-y-3">
       {artifact.revisions.length > 0 && (
-        <section className="space-y-1.5">
+        <section data-ui-part="" className="space-y-1.5">
           <h3 className="text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">Revisions</h3>
           <Tabs idPrefix={tabsId} aria-label="Available revisions" variant="segmented" size="sm" className="w-full [&>button]:flex-1" items={items} value={revision?.id ?? ''} onValueChange={(revisionId) => { if (revisionId !== pending?.id) onSelectionChange({ kind: 'node', id: node.id, revisionId }); }} />
         </section>

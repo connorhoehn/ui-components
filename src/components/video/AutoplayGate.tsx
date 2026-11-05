@@ -90,6 +90,7 @@ export function AutoplayGate({
       {blocked && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <button
+            data-ui-part=""
             type="button"
             onClick={handleTap}
             className={cn(DEFAULT_CHIP_CLASSES, chipClassName)}

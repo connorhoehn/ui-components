@@ -119,6 +119,7 @@ export function ContextJsonTree({
     return (
       <span>
         <span
+          data-ui-part=""
           className="cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center"
           onClick={() => setCollapsed((c) => !c)}
           role="button"
@@ -155,6 +156,7 @@ export function ContextJsonTree({
     return (
       <span>
         <span
+          data-ui-part=""
           className="cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center"
           onClick={() => setCollapsed((c) => !c)}
           role="button"

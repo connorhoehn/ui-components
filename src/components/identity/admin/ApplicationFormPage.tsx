@@ -205,7 +205,7 @@ export function ApplicationFormPage({
         />
 
         {/* Grant Types */}
-        <section>
+        <section data-ui-part="">
           <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Grant Types</h3>
           <div className="flex flex-col gap-2 mb-4">
             {GRANT_TYPE_OPTIONS.map((gt) => (
@@ -221,7 +221,7 @@ export function ApplicationFormPage({
         </section>
 
         {/* Response Types */}
-        <section>
+        <section data-ui-part="">
           <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Response Types</h3>
           <div className="flex flex-col gap-2 mb-4">
             {RESPONSE_TYPE_OPTIONS.map((rt) => (

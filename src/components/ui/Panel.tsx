@@ -103,6 +103,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
       <div className="flex items-center gap-1">
         {actions}
         <button
+          data-ui-part=""
           type="button"
           onClick={onClose}
           className={cn(
@@ -170,6 +171,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => (
   <button
+    data-ui-part=""
     type={type}
     className={cn(
       'rounded-sm cursor-pointer font-medium leading-[1.4]',
@@ -202,6 +204,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   ...rest
 }) => (
   <button
+    data-ui-part=""
     type={type}
     className={cn(
       'flex items-center justify-center border-none rounded-full cursor-pointer p-0 text-inherit',

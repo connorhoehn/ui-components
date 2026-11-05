@@ -70,6 +70,7 @@ export function IconButton({
   const size = requestedSize ?? (density === 'compact' ? 'sm' : 'md');
   return (
     <button
+      data-ui-part=""
       type="button"
       aria-label={ariaLabel}
       disabled={disabled}

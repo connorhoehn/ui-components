@@ -73,7 +73,7 @@ export function NotificationCenter({
   const hasUnread = unread.length > 0;
 
   return (
-    <section data-testid={testId} aria-label="Notifications"
+    <section data-ui-part="" data-testid={testId} aria-label="Notifications"
       className={cn('flex min-h-0 flex-col bg-surface text-text-primary', className)}>
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
         <h2><T as="span" size="sm" weight="semibold">

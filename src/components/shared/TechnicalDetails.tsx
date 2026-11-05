@@ -74,6 +74,7 @@ function TechnicalDetails({
     <div className={cn('flex flex-col gap-1.5', className)} data-testid={testId}>
       <div className="flex items-center gap-2">
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
@@ -90,6 +91,7 @@ function TechnicalDetails({
         </button>
         {open && (
           <button
+            data-ui-part=""
             type="button"
             onClick={copy}
             data-testid={`${testId}-copy`}

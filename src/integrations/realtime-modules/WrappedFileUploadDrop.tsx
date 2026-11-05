@@ -103,6 +103,7 @@ function UploadProgressList({ summaries, onDismiss }: UploadProgressListProps) {
           )}
           {(s.status === 'failed' || s.status === 'infected') && (
             <button
+              data-ui-part=""
               type="button"
               onClick={onDismiss}
               className="text-xs text-danger bg-transparent border-0 cursor-pointer p-0"

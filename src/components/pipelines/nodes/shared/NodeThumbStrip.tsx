@@ -60,6 +60,7 @@ export function NodeThumbStrip({
       <div data-testid={testId} className="flex flex-row items-center gap-1">
         {visible.map((img, i) => (
           <button
+            data-ui-part=""
             key={`${img.imageId}-${i}`}
             type="button"
             data-testid={`${testId}-thumb-${i}`}
@@ -78,6 +79,7 @@ export function NodeThumbStrip({
         ))}
         {hasOverflow && (
           <button
+            data-ui-part=""
             type="button"
             data-testid={`${testId}-overflow`}
             aria-label={`Show all ${images.length} images`}

@@ -1628,7 +1628,8 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         // Alternating rows (table.zebra): a table — native, or hand-rolled
         // with role="table"/"grid" — holding `minRows` body rows or more paints
         // adjacent rows in different backgrounds, so the eye can follow one row
-        // across. A table inside the library stripe marker is trusted.
+        // across. A table carrying the library stripe marker (on itself, an
+        // ancestor, or its body: Table/DataTable put it on <tbody>) is trusted.
         const minRows = rule.minRows ?? 4;
         let measured = 0;
         for (const table of nodes) {
@@ -1640,7 +1641,7 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             .filter(r => visible(r) && !(r.children.length === 1 && r.children[0].hasAttribute('colspan')));
           if (rows.length < minRows) continue;
           measured++;
-          if (rule.marker && table.closest(css(rule.marker))) { samples.push({ rule: rule.id, selector: selectorOf(table), property: 'stripe marker', actual: 'present', expected: 'present or alternating backgrounds' }); continue; }
+          if (rule.marker && (table.closest(css(rule.marker)) || [...table.children].some(c => c.matches(css(rule.marker))))) { samples.push({ rule: rule.id, selector: selectorOf(table), property: 'stripe marker', actual: 'present', expected: 'present or alternating backgrounds' }); continue; }
           // A row's paint is what shows behind its first cell: the cell, the row and everything under them.
           const paint = row => { const c = backdrop([...row.children].find(visible) ?? row); return c && `rgb(${c.r}, ${c.g}, ${c.b})`; };
           const colors = rows.map(paint);
@@ -1722,10 +1723,15 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
       }
       else if (rule.kind === 'unmarked') {
         // Hand-rolled DOM (element.unmarked): an interactive element or page
-        // section in the content column that carries no library marker and
-        // sits inside no library composite (`owners`) was not rendered by the
-        // component library, so every marker-keyed rule is blind to it.
-        const owners = rule.owners ? css(rule.owners) : null, max = rule.maxPerPage ?? 10;
+        // section in the content column was not rendered by the component
+        // library when it carries neither its kind's marker (`spec.marker`)
+        // nor the library-wide part marker (`part`: every raw element a
+        // library component renders internally), and sits inside no library
+        // composite root (`owners`, whose subtree — including cells and slots
+        // the consumer fills — is the composite's). Every marker-keyed rule is
+        // blind to such DOM. Containers that only frame consumer content
+        // (PageSection, Card, the page templates) are deliberately not owners.
+        const owners = rule.owners ? css(rule.owners) : null, part = rule.part ? css(rule.part) : null, max = rule.maxPerPage ?? 10;
         let measured = 0, total = 0;
         const counts = {};
         for (const scope of nodes) for (const spec of rule.elements ?? []) {
@@ -1733,7 +1739,8 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             if (!visible(el)) continue;
             if (spec.topLevel) { const outer = el.parentElement?.closest(css(spec.selector)); if (outer && scope.contains(outer)) continue; }
             measured++;
-            if (el.matches(css(spec.marker)) || (owners && el.closest(owners))) continue;
+            if (el.matches(css(spec.marker)) || (part && el.matches(part))) continue;
+            if (owners) { const owner = el.closest(owners); if (owner && scope.contains(owner)) continue; }
             total++; counts[spec.name] = (counts[spec.name] ?? 0) + 1;
             if (total <= max) add(rule, el, `unmarked ${spec.name}`, `a library component (${spec.marker})`, `hand-rolled <${el.tagName.toLowerCase()}>${(el.textContent ?? '').trim() ? ` "${snippet((el.textContent ?? '').trim())}"` : ''}`);
           }

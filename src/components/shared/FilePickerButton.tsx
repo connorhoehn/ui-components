@@ -40,6 +40,7 @@ export function FilePickerButton({
   return (
     <>
       <button
+        data-ui-part=""
         type="button"
         disabled={disabled}
         aria-label={ariaLabel}
@@ -60,6 +61,7 @@ export function FilePickerButton({
         {children}
       </button>
       <input
+        data-ui-part=""
         ref={input}
         type="file"
         hidden

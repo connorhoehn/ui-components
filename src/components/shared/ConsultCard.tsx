@@ -88,6 +88,7 @@ export function ConsultCard({
 
   return (
     <section
+      data-ui-part=""
       data-testid={testId}
       className={cn(
         'flex flex-col gap-2.5 min-w-0',

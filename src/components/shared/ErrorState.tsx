@@ -59,6 +59,7 @@ function ErrorState({
         ? <div className="mt-2.5">{action}</div>
         : actionLabel && onAction && (
             <button
+              data-ui-part=""
               data-testid={actionTestId}
               onClick={onAction}
               type="button"

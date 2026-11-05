@@ -238,6 +238,7 @@ function LineageNode({ data }: NodeProps<RFNode<LineageNodeData>>) {
     <>
       <Handle type="target" position={Position.Left} id="in" className="w-2 h-2 bg-border-emphasis" />
       <button
+        data-ui-part=""
         type="button"
         onClick={() => onSelect(entry.imageId)}
         className={cn(
@@ -651,6 +652,7 @@ export function ImageLineageGraph({
               Showing {visibleEntries.length} of {totalCount} artifacts
             </span>
             <button
+              data-ui-part=""
               type="button"
               onClick={handleShowAllClick}
               data-testid="lineage-graph-show-all"

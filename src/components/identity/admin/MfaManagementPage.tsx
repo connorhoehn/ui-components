@@ -120,7 +120,7 @@ export function MfaManagementPage({
     >
       {/* Metrics */}
       {metrics && (
-        <section className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
+        <section data-ui-part="" className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
           <Card padding="md">
             <div className="text-[1.75rem] font-bold text-info-fg mb-1">{metrics.totalUsers}</div>
             <div className="text-sm text-neutral">Total Users</div>

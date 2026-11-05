@@ -457,7 +457,7 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
           </ul>
         )}
         {isOrganizer && phase !== 'none' && !folded && unassigned.length > 0 && (
-          <section className="border-t border-border px-3 py-2" data-testid="breakout-unassigned" aria-label="Not in a room">
+          <section data-ui-part="" className="border-t border-border px-3 py-2" data-testid="breakout-unassigned" aria-label="Not in a room">
             <T as="div" size="xs" weight="semibold" tone="secondary" className="mb-1">Not in a room ({unassigned.length})</T>
             <ul className="flex flex-col gap-0.5">
               {unassigned.map((p) => (

@@ -220,6 +220,7 @@ export function InviteCandidateList({
         return (
             <li key={c.userId}>
                 <button
+                    data-ui-part=""
                     type="button"
                     disabled={disabled}
                     aria-pressed={single ? undefined : isSelected}

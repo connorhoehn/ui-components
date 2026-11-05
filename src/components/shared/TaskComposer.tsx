@@ -124,6 +124,7 @@ export function TaskComposer({
 
   return (
     <section
+      data-ui-part=""
       data-testid={testId}
       className={cn('rounded-lg border border-border bg-surface overflow-hidden', className)}
     >

@@ -204,6 +204,7 @@ export function Combobox(props: ComboboxProps) {
         ))}
         {fieldLeading && <span className="flex shrink-0 items-center" data-combobox-leading="">{fieldLeading}</span>}
         <input
+          data-ui-part=""
           ref={inputRef}
           id={id}
           role="combobox"
@@ -225,6 +226,7 @@ export function Combobox(props: ComboboxProps) {
         />
         {showToggle && (
           <button
+            data-ui-part=""
             type="button"
             tabIndex={-1}
             aria-label={open ? 'Close options' : 'Show options'}

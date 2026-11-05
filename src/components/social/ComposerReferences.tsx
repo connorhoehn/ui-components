@@ -141,6 +141,7 @@ export function ComposerReferences({
             <span className="min-w-0 truncate">{reference.label}</span>
             {onRemove && (
               <button
+                data-ui-part=""
                 type="button"
                 aria-label={removeLabel(reference)}
                 onClick={() => onRemove(reference.id)}

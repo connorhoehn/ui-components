@@ -38,6 +38,7 @@ export default function RichTextReaderRenderer({
 
       {onNavigateToEditor && (
         <button
+          data-ui-part=""
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
           className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0"

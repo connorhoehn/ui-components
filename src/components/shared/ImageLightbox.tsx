@@ -138,6 +138,7 @@ export function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageL
 
       {/* Close */}
       <button
+        data-ui-part=""
         type="button"
         aria-label="Close"
         data-testid="image-lightbox-close"
@@ -178,6 +179,7 @@ export function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageL
       {multi && (
         <>
           <button
+            data-ui-part=""
             type="button"
             aria-label="Previous image"
             data-testid="image-lightbox-prev"
@@ -190,6 +192,7 @@ export function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageL
             ‹
           </button>
           <button
+            data-ui-part=""
             type="button"
             aria-label="Next image"
             data-testid="image-lightbox-next"

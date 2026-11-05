@@ -419,6 +419,7 @@ export function TeamChannelTree({
               </span>
               {onCreateChannel && (
                 <button
+                  data-ui-part=""
                   type="button"
                   title={`Create a channel in ${team.name}`}
                   aria-label={`Create a channel in ${team.name}`}
@@ -566,6 +567,7 @@ export function TeamChannelTree({
                     // cursor (tabIndex tied to isChannelCursor, same as the
                     // team row's + and ⋯ trigger above).
                     <button
+                      data-ui-part=""
                       type="button"
                       title={ch.pinned ? 'Unpin' : 'Pin'}
                       aria-label={`${ch.pinned ? 'Unpin' : 'Pin'} ${ch.name}`}

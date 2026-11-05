@@ -180,6 +180,7 @@ export function CanvasCursorBoard({
           <span className="text-[11px] text-neutral">Tool:</span>
           {tools.map((t) => (
             <button
+              data-ui-part=""
               key={t}
               onClick={() => setTool(t)}
               className={cn(

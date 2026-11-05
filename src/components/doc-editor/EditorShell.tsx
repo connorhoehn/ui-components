@@ -288,7 +288,7 @@ export function EditorShell({
   );
 
   const pane = (
-    <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
+    <section data-ui-part="" aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
       <header className={cn('flex flex-col gap-1 border-b border-border pt-3', headerInset === 'page' ? 'px-6' : 'px-5')} data-variant={variant} data-header-inset={headerInset} data-testid={`${testId}-header`}>
         {crumbsRow && (
           <div className="flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs-row`}>

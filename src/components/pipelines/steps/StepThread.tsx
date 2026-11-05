@@ -123,6 +123,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
       />
 
       <div
+        data-ui-part=""
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
         role="button"
@@ -213,7 +214,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
           style={{ border: `1px solid ${statusColor}40` }}
         >
           <StepSection title="Execution Timeline">
-            <table className="w-full text-[11px] border-collapse font-mono">
+            <table data-ui-part="" className="w-full text-[11px] border-collapse font-mono">
               <thead>
                 <tr className="border-b border-border">
                   <th scope="col" className={thClass}>Event</th>
@@ -342,6 +343,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
                     >
                       {onArtifactClick ? (
                         <button
+                          data-ui-part=""
                           type="button"
                           onClick={() => onArtifactClick(img.imageId)}
                           data-testid={`step-artifact-${img.imageId}`}
@@ -404,6 +406,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
             // resolver the preview is simply absent and the rest still renders.
             <StepSection title="Vision result">
               <button
+                data-ui-part=""
                 type="button"
                 onClick={handleCopyOutput}
                 className="mb-1.5 px-2 py-[3px] text-[11px] font-medium border border-border-field rounded bg-transparent cursor-pointer font-[inherit] text-text-secondary"
@@ -461,6 +464,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
             <div className="px-4 py-2.5 border-t border-border flex justify-end gap-2">
               {canResume && onResumeFromStep && (
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid={`resume-from-step-${stepId}`}
                   onClick={(e) => { e.stopPropagation(); onResumeFromStep(stepId); }}
@@ -472,6 +476,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
               )}
               {canRetry && onRetryFromStep && (
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid={`retry-from-step-${stepId}`}
                   onClick={(e) => { e.stopPropagation(); onRetryFromStep(stepId); }}

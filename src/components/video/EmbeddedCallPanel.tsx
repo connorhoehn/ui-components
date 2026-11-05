@@ -61,6 +61,7 @@ export function EmbeddedCallPanel({
 }: EmbeddedCallPanelProps) {
   return (
     <section
+      data-ui-part=""
       className={cn(
         // '@container' only when there's an aside to respond to it — with
         // no aside the output stays byte-for-byte what it was before this

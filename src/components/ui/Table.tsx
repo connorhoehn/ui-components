@@ -52,7 +52,7 @@ export function Table({ children, className, size: sizeProp, ...rest }: TablePro
           table's box instead of running past the column and being cut off
           by the page's scroller. */}
       <div className="w-full min-w-0 max-w-full overflow-x-auto" data-table-scroller="">
-        <table className={cn('w-full text-sm', className)} data-size={size === 'sm' ? 'sm' : undefined} {...rest}>
+        <table data-ui-part="" className={cn('w-full text-sm', className)} data-ui-table="" data-size={size === 'sm' ? 'sm' : undefined} {...rest}>
           {children}
         </table>
       </div>
@@ -97,7 +97,7 @@ export interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> 
 export function TableBody({ children, className, striped = true, ...rest }: TableBodyProps) {
   return (
     <TableStripedContext.Provider value={striped}>
-      <tbody className={cn('', className)} data-striped={striped ? '' : undefined} {...rest}>
+      <tbody className={cn('', className)} data-striped={striped ? '' : undefined} data-ui-table-striped={striped ? '' : undefined} {...rest}>
         {children}
       </tbody>
     </TableStripedContext.Provider>

@@ -152,6 +152,7 @@ export default function CodeEditor({
         <div className="flex flex-wrap gap-1 mb-1">
           {variables.map(v => (
             <button
+              data-ui-part=""
               key={v}
               type="button"
               onClick={() => insertAtCursor(`{{ ${v} }}`)}
@@ -182,6 +183,7 @@ export default function CodeEditor({
         </div>
 
         <textarea
+          data-ui-part=""
           ref={textareaRef}
           value={value}
           onChange={handleChange}

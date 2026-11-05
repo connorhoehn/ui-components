@@ -358,6 +358,7 @@ function FieldChoice({
     <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={`Resolution for ${field.field}`}>
       {options.map((opt) => (
         <button
+          data-ui-part=""
           key={opt.value}
           type="button"
           aria-pressed={side === opt.value}

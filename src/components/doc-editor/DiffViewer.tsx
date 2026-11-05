@@ -174,6 +174,7 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
       <div className={cn('flex items-center justify-between mb-2')}>
         <h4 className={cn('text-[13px] font-semibold text-text-primary m-0')}>Changes from selected version to current</h4>
         <button
+          data-ui-part=""
           type="button"
           className={cn('px-2 py-0.5 text-xs border border-border-field rounded bg-surface text-text-secondary cursor-pointer font-[inherit]')}
           onClick={onClose}

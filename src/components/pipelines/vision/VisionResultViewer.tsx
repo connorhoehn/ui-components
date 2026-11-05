@@ -107,7 +107,7 @@ export function VisionResultViewer({
       ) : null}
 
       {result.text && result.text.length > 0 ? (
-        <section className="flex flex-col gap-1.5">
+        <section data-ui-part="" className="flex flex-col gap-1.5">
           <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
             Text (OCR)
           </h4>
@@ -125,8 +125,9 @@ export function VisionResultViewer({
       ) : null}
 
       {showRawText && result.rawText ? (
-        <section className="flex flex-col gap-1.5">
+        <section data-ui-part="" className="flex flex-col gap-1.5">
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setShowRaw((v) => !v)}
             aria-expanded={showRaw}

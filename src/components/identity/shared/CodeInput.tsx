@@ -156,6 +156,7 @@ export function CodeInput({
       >
         {Array.from({ length }, (_, i) => (
           <input
+            data-ui-part=""
             key={i}
             ref={el => { inputsRef.current[i] = el; }}
             type="text"

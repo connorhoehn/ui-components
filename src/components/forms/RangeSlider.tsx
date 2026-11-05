@@ -27,6 +27,7 @@ export function RangeSlider({ value, min, max, step = 1, minDistance = step, lab
       <div className="absolute top-3 h-1 rounded-full bg-primary/30" style={{ left: `${(lower - min) / span * 100}%`, right: `${(max - upper) / span * 100}%` }} />
       {([0, 1] as const).map((index) => (
         <input
+          data-ui-part=""
           key={index}
           id={`${id}-${index}`}
           type="range"

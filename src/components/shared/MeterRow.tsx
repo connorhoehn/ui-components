@@ -38,6 +38,7 @@ export function MeterRow({
 }: MeterRowProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onClick}
       title={title}

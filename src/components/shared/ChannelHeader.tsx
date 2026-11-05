@@ -155,6 +155,7 @@ export function ChannelHeader({
           <div className="flex items-baseline gap-2">
             {editing ? (
               <input
+                data-ui-part=""
                 ref={input}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value.slice(0, 100))}
@@ -201,6 +202,7 @@ export function ChannelHeader({
             {memberCount !== undefined && (
               onMembersClick ? (
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={onMembersClick}
                   data-testid="channel-header-members"

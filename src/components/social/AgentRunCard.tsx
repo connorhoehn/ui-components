@@ -474,7 +474,7 @@ function LoopRows({ runId, loop, clock, onOpenLab, testId }: { runId: string; lo
           </span>
         )}
         {onOpenLab && (
-          <button type="button" onClick={() => onOpenLab(runId)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-lab`}>
+          <button data-ui-part="" type="button" onClick={() => onOpenLab(runId)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-lab`}>
             Open lab
           </button>
         )}
@@ -675,7 +675,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             It is one short word and there is nowhere else to reach a panel or
             an external link from the collapsed card. */}
         {outcome && onOpenResult && (
-          <button type="button" onClick={() => onOpenResult(outcome)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-result`} data-result-kind={outcome.kind}>
+          <button data-ui-part="" type="button" onClick={() => onOpenResult(outcome)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-result`} data-result-kind={outcome.kind}>
             {resultLabel}
           </button>
         )}
@@ -685,12 +685,12 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
           </a>
         )}
         {onOpenRun && (
-          <button type="button" onClick={() => onOpenRun(runId)} className={ROW_LINK_WIDE_ONLY} data-testid={`${testId}-open-run`}>
+          <button data-ui-part="" type="button" onClick={() => onOpenRun(runId)} className={ROW_LINK_WIDE_ONLY} data-testid={`${testId}-open-run`}>
             Open run
           </button>
         )}
         {showDocument && (
-          <button type="button" onClick={onOpenDocument} className={ROW_LINK_WIDE_ONLY} data-testid={`${testId}-open-document`}>
+          <button data-ui-part="" type="button" onClick={onOpenDocument} className={ROW_LINK_WIDE_ONLY} data-testid={`${testId}-open-document`}>
             Open document
           </button>
         )}
@@ -748,12 +748,12 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
                 at once on an expanded wide card, and two controls announcing
                 the same words is a coin-toss for anyone moving by control. */}
             {onOpenRun && (
-              <button type="button" onClick={() => onOpenRun(runId)} className={cn(ROW_LINK, 'hover:text-text-primary')} data-testid={`${testId}-details-open-run`}>
+              <button data-ui-part="" type="button" onClick={() => onOpenRun(runId)} className={cn(ROW_LINK, 'hover:text-text-primary')} data-testid={`${testId}-details-open-run`}>
                 Open run in the pipeline
               </button>
             )}
             {outcome && onOpenResult && (
-              <button type="button" onClick={() => onOpenResult(outcome)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-details-open-result`}>
+              <button data-ui-part="" type="button" onClick={() => onOpenResult(outcome)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-details-open-result`}>
                 {resultLabel}
               </button>
             )}

@@ -105,6 +105,7 @@ export function DocsSidebar({
         return (
           <div key={section.id} className="mb-2">
             <button
+              data-ui-part=""
               type="button"
               onClick={() => toggle(section.id)}
               aria-expanded={!isCollapsed}

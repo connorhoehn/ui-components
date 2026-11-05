@@ -141,7 +141,7 @@ export function EmailTemplateFormPage({
         />
 
         {/* Variables */}
-        <section>
+        <section data-ui-part="">
           <h3 id={`${uid}-variables`} className="text-base font-semibold text-text-primary mt-6 mb-2">Variables</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {variables.map((v) => (

@@ -33,6 +33,7 @@ export function WorkEdge({
 
   return (
     <button
+      data-ui-part=""
       type="button"
       aria-label={`${fromLabel}: ${relationLabel.toLowerCase()} ${toLabel}${existenceOnly ? ', details restricted' : ''}`}
       aria-pressed={selected}

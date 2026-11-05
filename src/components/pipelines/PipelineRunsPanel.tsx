@@ -241,6 +241,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
         </span>
         <div className="ml-auto flex items-center gap-1.5">
           <button
+            data-ui-part=""
             type="button"
             onClick={() => {
               setCompareMode(!compareMode);
@@ -257,6 +258,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
             Compare
           </button>
           <button
+            data-ui-part=""
             type="button"
             onClick={onClose}
             aria-label="Close runs panel"
@@ -277,6 +279,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
             {comparePair.length}/2 selected
           </span>
           <button
+            data-ui-part=""
             type="button"
             disabled={comparePair.length !== 2}
             onClick={handleCompare}
@@ -314,6 +317,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
           <div role="alert" className="p-4 text-center text-xs text-state-failed">
             {error}
             <button
+              data-ui-part=""
               type="button"
               onClick={() => void fetchRuns()}
               className="mx-auto mt-2 block cursor-pointer border-none bg-transparent font-inherit text-xs text-primary underline"
@@ -337,6 +341,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
               const isCompareSelected = comparePair.includes(run.id);
               return (
                 <li
+                  data-ui-part=""
                   key={run.id}
                   data-testid={`runs-panel-row-${run.id}`}
                   role="button"

@@ -69,6 +69,7 @@ export function CommentHandoffBar({
         </label>
       )}
       <button
+        data-ui-part=""
         type="button"
         onClick={onDismiss}
         aria-label={dismissLabel}

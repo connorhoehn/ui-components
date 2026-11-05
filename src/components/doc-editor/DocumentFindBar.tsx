@@ -133,6 +133,7 @@ export function DocumentFindBar({
       onKeyDown={onKeyDown}
     >
       <input
+        data-ui-part=""
         ref={inputRef}
         data-testid={`${testId}-query`}
         aria-label="Find"
@@ -150,13 +151,14 @@ export function DocumentFindBar({
             ? 'No results'
             : `${index + 1} of ${matches.length}`}
       </span>
-      <button type="button" data-testid={`${testId}-prev`} className={btn} onClick={() => step(-1)} disabled={matches.length === 0} aria-label="Previous match">↑</button>
-      <button type="button" data-testid={`${testId}-next`} className={btn} onClick={() => step(1)} disabled={matches.length === 0} aria-label="Next match">↓</button>
+      <button data-ui-part="" type="button" data-testid={`${testId}-prev`} className={btn} onClick={() => step(-1)} disabled={matches.length === 0} aria-label="Previous match">↑</button>
+      <button data-ui-part="" type="button" data-testid={`${testId}-next`} className={btn} onClick={() => step(1)} disabled={matches.length === 0} aria-label="Next match">↓</button>
 
       {canReplace && (
         <>
           <span aria-hidden className="mx-1 h-4 w-px bg-border" />
           <input
+            data-ui-part=""
             data-testid={`${testId}-replacement`}
             aria-label="Replace with"
             placeholder="Replace with"
@@ -164,12 +166,12 @@ export function DocumentFindBar({
             onChange={(e) => setReplacement(e.target.value)}
             className={cn(field, 'w-[150px]')}
           />
-          <button type="button" data-testid={`${testId}-replace`} className={btn} onClick={replaceCurrent} disabled={matches.length === 0}>Replace</button>
-          <button type="button" data-testid={`${testId}-replace-all`} className={btn} onClick={replaceAll} disabled={matches.length === 0}>All</button>
+          <button data-ui-part="" type="button" data-testid={`${testId}-replace`} className={btn} onClick={replaceCurrent} disabled={matches.length === 0}>Replace</button>
+          <button data-ui-part="" type="button" data-testid={`${testId}-replace-all`} className={btn} onClick={replaceAll} disabled={matches.length === 0}>All</button>
         </>
       )}
 
-      <button type="button" data-testid={`${testId}-close`} className={cn(btn, 'ml-auto')} onClick={onClose} aria-label="Close find">✕</button>
+      <button data-ui-part="" type="button" data-testid={`${testId}-close`} className={cn(btn, 'ml-auto')} onClick={onClose} aria-label="Close find">✕</button>
     </div>
   );
 }

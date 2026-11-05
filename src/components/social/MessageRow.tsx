@@ -121,7 +121,7 @@ export function MessageRow({
   const menuActions = !!actions && (actionsLayout === 'menu' || !metaVisible);
   // Editing removes the actions slot; finishing the edit must not reopen it.
   useEffect(() => { if (!menuActions) setActionsOpen(false); }, [menuActions]);
-  const actionTrigger = <button ref={actionsTrigger} type="button" aria-label="Message actions" aria-expanded={actionsOpen} aria-haspopup="dialog"
+  const actionTrigger = <button data-ui-part="" ref={actionsTrigger} type="button" aria-label="Message actions" aria-expanded={actionsOpen} aria-haspopup="dialog"
     onClick={() => setActionsOpen(open => !open)} data-testid="message-row-actions-toggle"
     className="grid h-5 w-5 shrink-0 place-items-center rounded text-text-secondary opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-primary aria-expanded:opacity-100">
     <MoreIcon size={16} />

@@ -139,7 +139,7 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
   const paneInset = useCanvasPaneInset().right;
   const clearOfPane = paneInset > 0 ? { paddingRight: paneInset } : undefined;
   const paneClass = overlay ? 'absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg' : 'w-[340px] max-w-[45%] shrink-0';
-  return <section ref={root} aria-label="Shared work graph" className={cn('flex h-full min-h-0 min-w-0 flex-col bg-surface', props.className)} onKeyDown={(event) => { if (event.key === 'Escape' && selection) { event.stopPropagation(); close(); } }}>
+  return <section data-ui-part="" ref={root} aria-label="Shared work graph" className={cn('flex h-full min-h-0 min-w-0 flex-col bg-surface', props.className)} onKeyDown={(event) => { if (event.key === 'Escape' && selection) { event.stopPropagation(); close(); } }}>
     {activity.title && <WorkActivityHeader title={activity.title} subtitle={activity.subtitle} expanded={activity.expanded ?? activity.mode === 'full'} onExpand={activity.onExpand} onPopOut={activity.onPopOut} onClose={activity.onClose} effortCount={activity.efforts.length} maxEfforts={maxEfforts} onMaxEffortsChange={changeMaxEfforts}
       viewNote={activity.viewNote}
       actions={activity.headerActions || activity.kindLegend ? <>{activity.headerActions}{activity.kindLegend && <WorkKindLegend nodes={nodes} edges={edges} />}</> : undefined} />}

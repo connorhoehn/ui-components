@@ -60,10 +60,11 @@ export default function EditorOverflowMenu({
         handleRovingKeyDown(e, { itemSelector: '[role="menuitem"]', orientation: 'vertical' })
       }
     >
-      <button className={itemClasses} role="menuitem" onClick={onDuplicate}>
+      <button data-ui-part="" className={itemClasses} role="menuitem" onClick={onDuplicate}>
         Duplicate
       </button>
       <button
+        data-ui-part=""
         className={itemClasses}
         role="menuitem"
         onClick={onCopyMermaid}
@@ -72,6 +73,7 @@ export default function EditorOverflowMenu({
         Copy Mermaid
       </button>
       <button
+        data-ui-part=""
         className={itemClasses}
         role="menuitem"
         onClick={onViewVersions}
@@ -80,6 +82,7 @@ export default function EditorOverflowMenu({
         View changes since publish
       </button>
       <button
+        data-ui-part=""
         className={itemClasses}
         role="menuitem"
         onClick={onRevert}
@@ -89,6 +92,7 @@ export default function EditorOverflowMenu({
       </button>
       <div className="border-t border-border-subtle my-1" />
       <button
+        data-ui-part=""
         className={itemClasses}
         role="menuitem"
         onClick={onToggleShowTags}
@@ -97,6 +101,7 @@ export default function EditorOverflowMenu({
         {showTags ? 'Hide tags' : 'Show tags'}
       </button>
       <button
+        data-ui-part=""
         className={itemClasses}
         role="menuitem"
         onClick={onViewRunHistory}
@@ -104,6 +109,7 @@ export default function EditorOverflowMenu({
         View run history
       </button>
       <button
+        data-ui-part=""
         className={dangerItemClasses}
         role="menuitem"
         onClick={onClearRunHistory}
@@ -114,6 +120,7 @@ export default function EditorOverflowMenu({
         <>
           <div className="border-t border-border-subtle my-1" />
           <button
+            data-ui-part=""
             className={itemClasses}
             role="menuitem"
             data-testid="sim-panel-open"
@@ -126,6 +133,7 @@ export default function EditorOverflowMenu({
       )}
       <div className="border-t border-border-subtle my-1" />
       <button
+        data-ui-part=""
         className={dangerItemClasses}
         role="menuitem"
         onClick={onDelete}

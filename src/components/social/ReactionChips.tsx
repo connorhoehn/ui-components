@@ -84,6 +84,7 @@ export function ReactionChips({
     <div data-testid={testId} className={cn('mt-1 flex flex-wrap gap-1', className)}>
       {groups.map((g) => (
         <button
+          data-ui-part=""
           key={g.emoji}
           type="button"
           data-testid="reaction-chip"

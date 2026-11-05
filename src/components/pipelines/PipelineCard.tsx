@@ -142,6 +142,7 @@ export default function PipelineCard({
 
       <div className="flex items-center gap-1.5">
         <button
+          data-ui-part=""
           data-testid={`run-pipeline-${row.id}`}
           onClick={stop(onRun)}
           disabled={runDisabled}
@@ -151,6 +152,7 @@ export default function PipelineCard({
           Run
         </button>
         <button
+          data-ui-part=""
           data-testid={`edit-pipeline-${row.id}`}
           onClick={stop(onOpen)}
           className="px-3 py-[5px] text-xs font-semibold bg-surface text-text-secondary border border-border-field rounded-md cursor-pointer font-[inherit]"
@@ -159,6 +161,7 @@ export default function PipelineCard({
         </button>
         <div className="relative ml-auto" ref={menuRef}>
           <button
+            data-ui-part=""
             data-testid={`overflow-pipeline-${row.id}`}
             onClick={stop(() => setMenuOpen(v => !v))}
             aria-label="More actions"
@@ -178,13 +181,14 @@ export default function PipelineCard({
               onClick={(e) => e.stopPropagation()}
               className="absolute right-0 top-full mt-1 bg-surface border border-border rounded-lg shadow-[0_8px_24px_rgba(15,23,42,0.12)] min-w-[160px] z-10 overflow-hidden"
             >
-              <button className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]" role="menuitem" onClick={stop(() => { setMenuOpen(false); onDuplicate(); })}>
+              <button data-ui-part="" className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]" role="menuitem" onClick={stop(() => { setMenuOpen(false); onDuplicate(); })}>
                 Duplicate
               </button>
-              <button className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]" role="menuitem" onClick={stop(() => { setMenuOpen(false); onExport(); })}>
+              <button data-ui-part="" className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]" role="menuitem" onClick={stop(() => { setMenuOpen(false); onExport(); })}>
                 Export JSON
               </button>
               <button
+                data-ui-part=""
                 className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-danger-fg"
                 role="menuitem"
                 onClick={stop(() => { setMenuOpen(false); onDelete(); })}

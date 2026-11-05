@@ -54,6 +54,7 @@ export function JudgmentTrendChart({
   if (aggregates.length === 0) {
     return (
       <section
+        data-ui-part=""
         className={cn(
           'flex min-h-[120px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border bg-surface-panel p-4 text-text-tertiary',
           className,
@@ -70,7 +71,7 @@ export function JudgmentTrendChart({
   const overallPassRate = totalJudgments > 0 ? totalPassed / totalJudgments : 0;
 
   return (
-    <section className={cn('flex w-full flex-col gap-2', className)}>
+    <section data-ui-part="" className={cn('flex w-full flex-col gap-2', className)}>
       <header className="flex flex-wrap items-center gap-2">
         <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
           {caption ?? `Judgment trend — ${aggregates.length} days`}
@@ -96,7 +97,7 @@ export function JudgmentTrendChart({
           ariaLabel={`Pass-rate over ${sparklinePoints.length} days, ending at ${(sparklinePoints[sparklinePoints.length - 1] * 100).toFixed(0)}%`}
         />
       </div>
-      <table className="w-full border-collapse text-[12px]">
+      <table data-ui-part="" className="w-full border-collapse text-[12px]">
         <thead>
           <tr className="text-left text-[11px] uppercase tracking-wide text-text-tertiary">
             <th scope="col" className="py-1 pr-2">date</th>

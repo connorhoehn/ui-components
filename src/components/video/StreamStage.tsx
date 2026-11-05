@@ -609,6 +609,7 @@ export function StreamStage({
               that makes a stalled stream and a working one look alike. */}
           {showStageChrome && onHls && showLatency && (phase === 'playing' || phase === 'buffering') && (
             <button
+              data-ui-part=""
               type="button"
               data-testid={`${testId}-latency`}
               onClick={() => hls.seekToLive?.()}
@@ -631,6 +632,7 @@ export function StreamStage({
               a stage with nothing on it is a button that does nothing. */}
           {showStageChrome && playing && (
             <button
+              data-ui-part=""
               type="button"
               data-testid={`${testId}-mute-toggle`}
               aria-label={muted ? 'Unmute' : 'Mute'}
@@ -650,6 +652,7 @@ export function StreamStage({
 
           {showStageChrome && allowFullscreen && fullscreenSupported && (
             <button
+              data-ui-part=""
               type="button"
               data-testid={`${testId}-fullscreen`}
               aria-label={isFullscreen ? 'Exit full screen' : 'Full screen'}
@@ -710,6 +713,7 @@ function RetryButton({
 }) {
   return (
     <button
+      data-ui-part=""
       type="button"
       data-testid={testId}
       onClick={onClick}

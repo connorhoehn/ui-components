@@ -62,6 +62,7 @@ export default function CanvasContextMenu({
       style={{ top: nodeMenu.y, left: nodeMenu.x }}
     >
       <button
+        data-ui-part=""
         type="button"
         role="menuitem"
         onClick={onFilterLog}
@@ -71,6 +72,7 @@ export default function CanvasContextMenu({
         🎯 Filter log to this node
       </button>
       <button
+        data-ui-part=""
         type="button"
         role="menuitem"
         onClick={onCopyNodeId}
@@ -80,6 +82,7 @@ export default function CanvasContextMenu({
         📋 Copy node id
       </button>
       <button
+        data-ui-part=""
         type="button"
         role="menuitem"
         onClick={onDuplicate}
@@ -90,6 +93,7 @@ export default function CanvasContextMenu({
       </button>
       {showBreakpointOption ? (
         <button
+          data-ui-part=""
           type="button"
           role="menuitem"
           onClick={onToggleBreakpoint}

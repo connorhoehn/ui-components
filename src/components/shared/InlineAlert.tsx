@@ -68,6 +68,7 @@ function InlineAlert({
       <span className="flex-1">{children}</span>
       {onDismiss && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss"

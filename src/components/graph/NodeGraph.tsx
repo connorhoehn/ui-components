@@ -181,6 +181,7 @@ export function NodeGraph({
             const clipId = `${testId}-clip-${n.id}`;
             return (
               <g
+                data-ui-part=""
                 key={n.id}
                 role="button"
                 tabIndex={0}

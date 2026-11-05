@@ -73,11 +73,13 @@ function DeleteModal({ name, onConfirm, onCancel }: {
       footer={
         <>
           <button
+            data-ui-part=""
             data-testid="cancel-delete"
             onClick={onCancel}
             className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field"
           >Cancel</button>
           <button
+            data-ui-part=""
             data-testid="confirm-delete"
             onClick={onConfirm}
             className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-danger-fg border border-danger-border"
@@ -494,6 +496,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
 
       <div className="flex justify-between items-center pt-5 mt-5 border-t border-border">
         <button
+          data-ui-part=""
           type="button"
           onClick={onCancel}
           className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-neutral"
@@ -501,6 +504,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
         <div className="flex gap-2">
           {step === 2 && (
             <button
+              data-ui-part=""
               type="button"
               onClick={() => setStep(1)}
               className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field"
@@ -508,6 +512,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
           )}
           {step === 1 ? (
             <button
+              data-ui-part=""
               data-testid="next-button"
               type="button"
               onClick={handleNext}
@@ -521,6 +526,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
             </button>
           ) : (
             <button
+              data-ui-part=""
               data-testid="save-button"
               type="button"
               onClick={handleSave}
@@ -548,6 +554,7 @@ function TypeListItem({
 }) {
   return (
     <div
+      data-ui-part=""
       onClick={onSelect}
       onKeyDown={onActivationKey(onSelect)}
       role="button"
@@ -570,6 +577,7 @@ function TypeListItem({
         </div>
       </div>
       <button
+        data-ui-part=""
         type="button"
         onClick={e => { e.stopPropagation(); onDelete(); }}
         onKeyDown={e => e.stopPropagation()}
@@ -595,6 +603,7 @@ function IdlePanel({ onCreateNew }: { onCreateNew: () => void }) {
         Create custom types to give sections distinct labels and display configuration.
       </div>
       <button
+        data-ui-part=""
         data-testid="new-data-type-empty-btn"
         type="button"
         onClick={onCreateNew}
@@ -654,6 +663,7 @@ export default function FieldTypesPage() {
         <div className="py-4 px-3.5 pb-2.5 flex items-center justify-between">
           <span className="text-[13px] font-bold text-text-primary">Data Types</span>
           <button
+            data-ui-part=""
             data-testid="new-data-type-button"
             type="button"
             onClick={() => { setMode('create'); setEditingId(null); }}

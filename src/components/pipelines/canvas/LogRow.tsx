@@ -77,6 +77,7 @@ function LogRow({ row, isOpen, onToggle }: LogRowProps) {
 
   return (
     <div
+      data-ui-part=""
       className={cn(
         'px-3 py-1 border-b border-border-subtle text-xs text-text-primary cursor-pointer',
         isOpen && 'bg-surface-panel',

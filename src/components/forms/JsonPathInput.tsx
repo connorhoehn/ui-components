@@ -86,6 +86,7 @@ export const JsonPathInput = forwardRef<HTMLInputElement, JsonPathInputProps>(
           <div className="flex flex-wrap gap-1">
             {samples.map((sample) => (
               <button
+                data-ui-part=""
                 key={sample.value}
                 type="button"
                 disabled={disabled}

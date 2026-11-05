@@ -110,6 +110,7 @@ export function ProcedureSteps({
         ) : null;
         const title = onSelectStep ? (
           <button
+            data-ui-part=""
             type="button"
             onClick={() => onSelectStep(step.id)}
             className="min-w-0 cursor-pointer border-none bg-transparent p-0 text-left text-text-primary hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

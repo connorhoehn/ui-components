@@ -191,7 +191,7 @@ export function StartCallDrawer({
         data-testid="start-call-media"
       />
 
-      <section className="flex flex-col gap-1">
+      <section data-ui-part="" className="flex flex-col gap-1">
         <SectionHeading
           action={
             <Button variant="link" onClick={onAdd} data-testid="start-call-add-document" className="inline-flex items-center gap-1 text-sm">
@@ -211,7 +211,7 @@ export function StartCallDrawer({
         </div>
       </section>
 
-      <section className="flex flex-col gap-2">
+      <section data-ui-part="" className="flex flex-col gap-2">
         <SectionHeading>People</SectionHeading>
         <Input
           value={people.query}
@@ -247,7 +247,7 @@ export function StartCallDrawer({
 
       <div className="-my-0.5 h-px shrink-0 bg-border" aria-hidden="true" />
 
-      <section className="flex flex-col gap-1.5">
+      <section data-ui-part="" className="flex flex-col gap-1.5">
         <label htmlFor={`${testId}-message`} className="text-sm text-text-primary">
           Message <span className="text-text-tertiary">(optional)</span>
         </label>

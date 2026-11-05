@@ -127,6 +127,7 @@ export function CallSettingsDialog({
         <header className="flex items-center justify-between gap-3 border-b border-call-chrome-border px-4 py-3">
           <h2 className="m-0 text-sm font-semibold text-white">{title}</h2>
           <button
+            data-ui-part=""
             type="button"
             aria-label="Close"
             onClick={onClose}
@@ -188,6 +189,7 @@ export function CallSettingsDialog({
               >
                 {available.map((t) => (
                   <button
+                    data-ui-part=""
                     key={t}
                     type="button"
                     role="tab"

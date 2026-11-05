@@ -17,7 +17,7 @@ export interface AssetGalleryProps {
 export function AssetGallery({ items, variant = 'images', label, onOpen, actions, onDragStart, className }: AssetGalleryProps) {
   return <div role="list" aria-label={label} data-asset-gallery={variant} className={cn('grid gap-3', variant === 'avatars' ? 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8' : 'grid-cols-2 md:grid-cols-3 xl:grid-cols-4', className)}>
     {items.map(item => <div role="listitem" key={item.id} className="group min-w-0">
-      <button type="button" draggable={!!onDragStart} onDragStart={event => onDragStart?.(item, event)} aria-label={`Inspect ${item.title}`} onClick={() => onOpen(item)} className="block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+      <button data-ui-part="" type="button" draggable={!!onDragStart} onDragStart={event => onDragStart?.(item, event)} aria-label={`Inspect ${item.title}`} onClick={() => onOpen(item)} className="block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
         <span data-gallery-thumbnail className={cn('flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover', variant === 'images' && 'aspect-[4/3]')}>
           {variant === 'avatars' ? <Avatar name={item.title} src={item.src} size={88} /> : item.src ? <img draggable={false} src={item.src} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <span className="text-xs text-text-secondary">Image unavailable</span>}
         </span>

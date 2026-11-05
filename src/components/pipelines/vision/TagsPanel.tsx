@@ -13,7 +13,7 @@ export interface TagsPanelProps {
 export function TagsPanel({ tags, onTagClick, className }: TagsPanelProps) {
   if (!tags || tags.length === 0) return null;
   return (
-    <section className={cn('flex flex-col gap-1.5', className)}>
+    <section data-ui-part="" className={cn('flex flex-col gap-1.5', className)}>
       <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
         Tags
       </h4>
@@ -21,6 +21,7 @@ export function TagsPanel({ tags, onTagClick, className }: TagsPanelProps) {
         {tags.map((t) =>
           onTagClick ? (
             <button
+              data-ui-part=""
               key={t}
               type="button"
               onClick={() => onTagClick(t)}

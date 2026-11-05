@@ -136,6 +136,7 @@ export default function VersionHistoryPanel({
         {!loading &&
           versions.map((v) => (
             <div
+              data-ui-part=""
               key={v.timestamp}
               role="button"
               tabIndex={0}
@@ -172,6 +173,7 @@ export default function VersionHistoryPanel({
                 </span>
               </div>
               {onCompare && <button
+                data-ui-part=""
                 type="button"
                 className={cn(
                   'px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap',

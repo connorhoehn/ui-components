@@ -63,6 +63,7 @@ export const EmojiSuggestions = forwardRef<EmojiSuggestionsHandle, EmojiSuggesti
       >
         {items.map((item, i) => (
           <button
+            data-ui-part=""
             key={item.code}
             type="button"
             role="option"

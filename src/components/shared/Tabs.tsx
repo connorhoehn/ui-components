@@ -253,6 +253,7 @@ export function Tabs({
         const active = item.id === value;
         return (
           <button
+            data-ui-part=""
             key={item.id}
             ref={(el) => {
               if (el) tabRefs.current.set(item.id, el);

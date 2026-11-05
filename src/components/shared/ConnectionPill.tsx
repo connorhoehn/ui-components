@@ -109,6 +109,7 @@ export function ConnectionPill({
       )}
       {action && !compact && (
         <button
+          data-ui-part=""
           type="button"
           onClick={action.onClick}
           disabled={action.disabled}

@@ -371,6 +371,7 @@ function ToolButton({
   const roomy = useContext(RoomyContext);
   return (
     <button
+      data-ui-part=""
       type="button"
       data-testid={testId}
       title={btn.hint}
@@ -727,6 +728,7 @@ function ColorMenu({
   return (
     <span ref={wrapRef} className="relative inline-flex">
       <button
+        data-ui-part=""
         type="button"
         data-testid={testId}
         title={title}
@@ -761,6 +763,7 @@ function ColorMenu({
           className="absolute left-0 top-full z-20 mt-1 grid w-[136px] grid-cols-4 gap-1 rounded-md border border-border bg-surface-panel p-1.5 shadow-lg"
         >
           <button
+            data-ui-part=""
             type="button"
             role="menuitem"
             {...itemProps('none')}
@@ -777,6 +780,7 @@ function ColorMenu({
           </button>
           {swatches.map((c) => (
             <button
+              data-ui-part=""
               key={c.value}
               type="button"
               role="menuitemradio"
@@ -857,6 +861,7 @@ function TableMenu({
   return (
     <span ref={wrapRef} className="relative inline-flex">
       <button
+        data-ui-part=""
         type="button"
         data-testid={testId}
         title={inTable ? 'Table' : 'Insert table'}
@@ -879,6 +884,7 @@ function TableMenu({
           className="absolute left-0 top-full z-20 mt-1 flex min-w-[180px] flex-col rounded-md border border-border bg-surface-panel p-1 shadow-lg"
         >
           <button
+            data-ui-part=""
             type="button"
             role="menuitem"
             {...itemProps('insert')}
@@ -899,6 +905,7 @@ function TableMenu({
               <span aria-hidden className="my-1 h-px bg-border" />
               {TABLE_EDITS.map((e) => (
                 <button
+                  data-ui-part=""
                   key={e.key}
                   type="button"
                   role="menuitem"
@@ -952,6 +959,7 @@ function ListStyleMenu({
     <span ref={wrapRef} className="relative inline-flex items-center">
       {btn && <ToolButton btn={btn} editor={editor} active={active} testId={testId} />}
       <button
+        data-ui-part=""
         type="button"
         data-testid={btn ? `${testId}-styles` : testId}
         title={label}
@@ -977,6 +985,7 @@ function ListStyleMenu({
         >
           {styles.map((style) => (
             <button
+              data-ui-part=""
               key={style}
               type="button"
               role="menuitemradio"
@@ -1042,6 +1051,7 @@ function AlignMenu({
   return (
     <span ref={wrapRef} className="relative inline-flex">
       <button
+        data-ui-part=""
         type="button"
         data-testid={testId}
         title={alignLabel(current)}
@@ -1065,6 +1075,7 @@ function AlignMenu({
         >
           {ALIGNMENTS.map((align) => (
             <button
+              data-ui-part=""
               key={align}
               type="button"
               role="menuitemradio"
@@ -1116,6 +1127,7 @@ function LineSpacingMenu({
   return (
     <span ref={wrapRef} className="relative inline-flex">
       <button
+        data-ui-part=""
         type="button"
         data-testid={testId}
         title={`Line spacing: ${LINE_SPACING_LABELS[current]}`}
@@ -1139,6 +1151,7 @@ function LineSpacingMenu({
         >
           {LINE_SPACINGS.map((spacing) => (
             <button
+              data-ui-part=""
               key={spacing}
               type="button"
               role="menuitemradio"
@@ -1290,6 +1303,7 @@ function GutterToggle({
   const label = `${visible ? 'Hide' : 'Show'} ${noun.toLowerCase()} (${count})`;
   return (
     <button
+      data-ui-part=""
       type="button"
       data-testid={testId}
       title={label}
@@ -1960,6 +1974,7 @@ export default function DocumentToolbar({
             the same three controls, stacked, under the same test ids. */}
         <span ref={stylePanel.wrapRef} className="relative inline-flex">
           <button
+            data-ui-part=""
             type="button"
             data-testid={`${testId}-style`}
             title={`Text style: ${blockLabel}`}
@@ -2036,6 +2051,7 @@ export default function DocumentToolbar({
         <Divider />
         <span ref={more.wrapRef} className="relative inline-flex">
           <button
+            data-ui-part=""
             type="button"
             data-testid={`${testId}-more`}
             title="More formatting"

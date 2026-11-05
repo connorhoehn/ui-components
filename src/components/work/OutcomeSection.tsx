@@ -99,6 +99,7 @@ export function OutcomeSection({
         ) : text ? (
           editable ? (
             <button
+              data-ui-part=""
               type="button"
               onClick={start}
               disabled={pending}

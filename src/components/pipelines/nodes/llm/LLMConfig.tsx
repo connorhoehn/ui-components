@@ -292,6 +292,7 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
 
       {/* Preview */}
       <button
+        data-ui-part=""
         type="button"
         onClick={() => setPreviewOpen((v) => !v)}
         className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit shrink-0"

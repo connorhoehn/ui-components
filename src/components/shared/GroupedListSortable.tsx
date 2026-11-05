@@ -85,7 +85,7 @@ export function SortableHandle({ id, onStateChange, children, ...buttonProps }: 
   // handle a tab stop and point it at keyboard-sensor instructions that do not
   // apply (keyboard reorder is Alt+arrows on the row).
   return (
-    <button type="button" {...buttonProps} {...listeners} ref={setButton} tabIndex={-1}>
+    <button data-ui-part="" type="button" {...buttonProps} {...listeners} ref={setButton} tabIndex={-1}>
       {children}
     </button>
   );

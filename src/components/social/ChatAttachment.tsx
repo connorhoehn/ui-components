@@ -111,6 +111,7 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
     { label: string; className: string; children: React.ReactNode },
   ) => (onOpen ? (
     <button
+      data-ui-part=""
       type="button"
       onClick={() => onOpen(attachment)}
       aria-label={label}
@@ -375,6 +376,7 @@ export function TransferBubble({ transfer, mine = false, onCancel, className }: 
 
       {mine && onCancel && !failed && phase !== 'complete' && (
         <button
+          data-ui-part=""
           type="button"
           onClick={() => onCancel(transfer.transferId)}
           aria-label={`Cancel upload of ${transfer.name}`}

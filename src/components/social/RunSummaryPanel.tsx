@@ -174,7 +174,7 @@ export function RunSummaryPanel({ data, onOpenFull, onOpenChat, onOpenDocument, 
         </header>
 
         {data.steps.length > 0 && (
-          <section aria-label="Steps" data-testid={`${testId}-steps`}>
+          <section data-ui-part="" aria-label="Steps" data-testid={`${testId}-steps`}>
             <h3 className="m-0 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">Steps</h3>
             <ol className="m-0 mt-1 flex list-none flex-col p-0">
               {data.steps.map((step, i) => (
@@ -193,7 +193,7 @@ export function RunSummaryPanel({ data, onOpenFull, onOpenChat, onOpenDocument, 
         )}
 
         {ops.length > 0 && (
-          <section data-testid={`${testId}-ops`}>
+          <section data-ui-part="" data-testid={`${testId}-ops`}>
             <h3 className="m-0 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">What changed</h3>
             <ul className="m-0 mt-0.5 list-none p-0 text-[11px] text-text-secondary">
               {ops.slice(0, MAX_OPS).map((op, i) => (

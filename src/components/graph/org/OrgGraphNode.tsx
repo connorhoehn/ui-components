@@ -58,6 +58,7 @@ export function OrgGraphNode({
 
   return (
     <g
+      data-ui-part=""
       transform={`translate(${node.x}, ${node.y})`}
       onClick={() => onSelect(node.id)}
       onMouseEnter={() => onHover(node.id)}

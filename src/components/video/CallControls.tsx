@@ -185,6 +185,7 @@ function ControlButton({
 }: ControlButtonProps) {
   return (
     <button
+      data-ui-part=""
       ref={buttonRef}
       type="button"
       title={label}
@@ -300,6 +301,7 @@ function OverflowMenu({ controls }: { controls: ControlSpec[] }) {
         >
           {controls.map((c) => (
             <button
+              data-ui-part=""
               key={c.key}
               type="button"
               role="menuitem"
@@ -467,6 +469,7 @@ export function CallControls({
               Add to call
             </span>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => setShowPicker(false)}
               className="text-white/40 hover:text-white/80 text-xs border-none bg-transparent cursor-pointer"
@@ -483,6 +486,7 @@ export function CallControls({
             <div className="max-h-[120px] overflow-y-auto pb-1">
               {addable.map((p) => (
                 <button
+                  data-ui-part=""
                   key={p.id}
                   type="button"
                   className="w-full flex items-center gap-2.5 px-3 py-1.5 border-none bg-transparent text-left cursor-pointer hover:bg-white/10 transition-colors"

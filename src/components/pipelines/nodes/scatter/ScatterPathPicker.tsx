@@ -128,6 +128,7 @@ interface PathRowProps {
 function PathRow({ entry, isSelected, onPick }: PathRowProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={() => onPick(entry.path)}
       aria-pressed={isSelected}

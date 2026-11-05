@@ -85,6 +85,7 @@ function ReplyForm({ onSubmit, placeholder = 'Write a reply…', loading }: Repl
         className="flex-1"
       />
       <button
+        data-ui-part=""
         type="submit"
         disabled={!content.trim() || loading}
         className={cn(
@@ -153,6 +154,7 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
           </div>
           <div className="flex gap-2 items-center">
             <button
+              data-ui-part=""
               onClick={() => setShowReplyForm(prev => !prev)}
               className="text-sm text-text-secondary bg-transparent border-none cursor-pointer p-0 font-[system-ui,-apple-system,sans-serif]"
             >
@@ -160,6 +162,7 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
             </button>
             {isOwn && !showConfirmDelete && (
               <button
+                data-ui-part=""
                 onClick={() => setShowConfirmDelete(true)}
                 className="text-sm text-text-tertiary bg-transparent border-none cursor-pointer p-0 font-[system-ui,-apple-system,sans-serif]"
                 aria-label="Delete comment"
@@ -171,12 +174,14 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
               <div role="group" aria-label="Confirm delete comment" className="flex gap-1.5 items-center">
                 <span className="text-xs text-text-primary">Delete this comment?</span>
                 <button
+                  data-ui-part=""
                   onClick={() => setShowConfirmDelete(false)}
                   className="text-xs text-text-secondary bg-transparent border border-border rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
                 >
                   Cancel
                 </button>
                 <button
+                  data-ui-part=""
                   onClick={() => { void onDelete(comment.commentId).then(() => setShowConfirmDelete(false), () => undefined); }}
                   className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
                 >

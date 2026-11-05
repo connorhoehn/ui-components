@@ -87,7 +87,7 @@ function buildComponents(scale: MarkdownViewScale): Components {
   table({ children }) {
     return (
       <div className="overflow-x-auto">
-        <table className={cn('w-full border-collapse', t.body)}>{children}</table>
+        <table data-ui-part="" className={cn('w-full border-collapse', t.body)}>{children}</table>
       </div>
     );
   },

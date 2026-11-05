@@ -341,6 +341,7 @@ export function CallActivityCard({
 
       {!isLive && recordingId && onOpenRecording && (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${testId}-recording`}
           onClick={() => onOpenRecording(recordingId)}
@@ -352,6 +353,7 @@ export function CallActivityCard({
 
       {isLive && onJoin && (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${testId}-join`}
           onClick={() => onJoin(callId)}

@@ -102,6 +102,7 @@ export function DocumentOutline({
           const active = !!activeId && entry.id === activeId;
           return (
             <button
+              data-ui-part=""
               key={entry.id}
               type="button"
               data-testid={`${testId}-entry`}

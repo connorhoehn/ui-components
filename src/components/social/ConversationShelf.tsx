@@ -93,6 +93,7 @@ export function ConversationShelf({
           return (
             <li key={item.id}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => onSelect(item.id)}
                 title={item.label}
@@ -144,6 +145,7 @@ export function ConversationShelf({
         return (
           <li key={item.id}>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => onSelect(item.id)}
               aria-label={iconOnly ? item.label : undefined}

@@ -108,6 +108,7 @@ export function TabbedEventLog({ entries }: Props) {
 
           return (
             <button
+              data-ui-part=""
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(

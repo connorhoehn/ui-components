@@ -144,14 +144,15 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
       {item.status === 'pending' && (
         <div>
           <div className={cn('flex gap-2 mt-1.5')}>
-            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-success text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleAck} disabled={submitting}>
+            <button data-ui-part="" type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-success text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleAck} disabled={submitting}>
               Acknowledge
             </button>
-            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleReject} disabled={submitting}>
+            <button data-ui-part="" type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleReject} disabled={submitting}>
               Reject
             </button>
             {!showNotes && (
               <button
+                data-ui-part=""
                 type="button"
                 className={cn('px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field')}
                 onClick={() => setShowNotes(true)}
@@ -182,6 +183,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
               />
               <div className={cn('flex gap-1.5 mt-1.5')}>
                 <button
+                  data-ui-part=""
                   type="button"
                   className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-success text-white')}
                   onClick={handleAck}
@@ -191,6 +193,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                   Submit & Acknowledge
                 </button>
                 <button
+                  data-ui-part=""
                   type="button"
                   className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-danger text-white')}
                   onClick={handleReject}
@@ -200,6 +203,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                   Submit & Reject
                 </button>
                 <button
+                  data-ui-part=""
                   type="button"
                   className={cn('px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field')}
                   onClick={() => { setShowNotes(false); setNoteText(''); }}

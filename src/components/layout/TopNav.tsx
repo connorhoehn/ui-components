@@ -188,6 +188,7 @@ export function TopNav({
         {overflowItems.length > 0 && (
           <div className="relative" ref={moreRef}>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => setMoreOpen((v) => !v)}
               aria-haspopup="menu"

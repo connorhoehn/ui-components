@@ -136,6 +136,7 @@ export function FileUploadDrop({
   return (
     <div className={cn('flex flex-col gap-2', className)} data-testid={testId}>
       <div
+        data-ui-part=""
         role="button"
         // A named variant, not an ordinary control: its dashed edge is the
         // drop-target affordance. The DOM audit exempts it from the control
@@ -203,6 +204,7 @@ export function FileUploadDrop({
       )}
 
       <input
+        data-ui-part=""
         aria-hidden="true"
         tabIndex={-1}
         {...inputProps}

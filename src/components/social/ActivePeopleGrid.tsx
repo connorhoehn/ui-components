@@ -190,6 +190,7 @@ export function ActivePeopleGrid({
         if (person.workSharing && onSelectSharedWork) {
           const personTile = onSelectPerson ? (
             <button
+              data-ui-part=""
               type="button"
               onClick={() => onSelectPerson(person.userId)}
               title={label}
@@ -211,6 +212,7 @@ export function ActivePeopleGrid({
             <div key={person.userId} role="listitem" className="relative min-w-0">
               {personTile}
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => onSelectSharedWork(person.userId)}
                 aria-label={`View ${person.displayName}'s ${person.workSharing.state === 'historical' ? 'shared work history' : 'shared work'}`}
@@ -225,6 +227,7 @@ export function ActivePeopleGrid({
         if (onSelectPerson) {
           return (
             <button
+              data-ui-part=""
               key={person.userId}
               type="button"
               role="listitem"
@@ -258,6 +261,7 @@ export function ActivePeopleGrid({
       {overflow > 0 &&
         (onShowAll ? (
           <button
+            data-ui-part=""
             type="button"
             onClick={onShowAll}
             aria-label={`${overflow} more people`}

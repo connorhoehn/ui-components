@@ -36,6 +36,7 @@ export function FieldDefinitionEditor({
       {/* Reorder */}
       <div className="flex flex-col gap-px shrink-0">
         <button
+          data-ui-part=""
           type="button"
           disabled={index === 0}
           onClick={onMoveUp}
@@ -47,6 +48,7 @@ export function FieldDefinitionEditor({
           )}
         >▲</button>
         <button
+          data-ui-part=""
           type="button"
           disabled={index === total - 1}
           onClick={onMoveDown}
@@ -92,6 +94,7 @@ export function FieldDefinitionEditor({
 
       {/* Toggles */}
       <button
+        data-ui-part=""
         type="button"
         onClick={onToggleRequired}
         data-testid={`field-required-${field.id}`}
@@ -106,6 +109,7 @@ export function FieldDefinitionEditor({
         Required
       </button>
       <button
+        data-ui-part=""
         type="button"
         onClick={onToggleCollapsed}
         data-testid={`field-collapsed-${field.id}`}
@@ -122,6 +126,7 @@ export function FieldDefinitionEditor({
 
       {/* Delete */}
       <button
+        data-ui-part=""
         type="button"
         onClick={onRemove}
         data-testid={`field-remove-${field.id}`}

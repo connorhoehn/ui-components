@@ -431,6 +431,7 @@ export function CallDock({
   if (grid && !stage) {
     return (
       <section
+        data-ui-part=""
         className={cn('flex min-w-0 flex-col gap-2 bg-surface p-3', className)}
         aria-label={`Call: ${title}`}
         data-testid={testId}
@@ -445,6 +446,7 @@ export function CallDock({
 
   return (
     <section
+      data-ui-part=""
       className={cn('@container flex flex-col gap-2.5 border-t border-border bg-surface px-5 pt-3 pb-3.5', compactDock && 'gap-0 px-3 py-2', stage && 'h-full min-h-0 border-t-0 px-3', className)}
       aria-label={`Call: ${title}`}
       data-testid={testId}
@@ -463,6 +465,7 @@ export function CallDock({
       <div className={cn('flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2', stage && 'order-last shrink-0 justify-center', compactDock && 'contents')} data-call-dock-header data-testid={`${testId}-header`}>
         {!stage && <div className={cn('flex min-w-0 flex-auto items-baseline gap-3', compactDock && 'col-start-2 row-start-1 flex-col items-start gap-0.5')}>
           <button
+            data-ui-part=""
             type="button"
             onClick={onTitleClick}
             disabled={!onTitleClick}
@@ -477,6 +480,7 @@ export function CallDock({
             <span className="hidden min-w-0 flex-1 items-center gap-4 overflow-hidden @min-[1240px]:flex" data-testid="call-dock-documents-chips">
               {documents.map((d) => (
                 <button
+                  data-ui-part=""
                   key={d.id}
                   type="button"
                   onClick={onDocumentClick ? () => onDocumentClick(d.id) : undefined}

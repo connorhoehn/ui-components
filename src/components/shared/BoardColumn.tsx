@@ -65,6 +65,7 @@ export function BoardColumn({
   // marker (board.lane-surface / board.lane-columns).
   return (
     <section
+      data-ui-part=""
       className={cn(
         'flex h-full min-h-48 min-w-0 flex-col gap-2 rounded-lg p-2',
         'bg-[color-mix(in_srgb,var(--color-text-primary)_4%,transparent)]',

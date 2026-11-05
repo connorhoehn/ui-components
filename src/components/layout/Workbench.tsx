@@ -102,7 +102,7 @@ export function Workbench({
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
         {task && (
-          <section aria-label={taskLabel} className="flex flex-col gap-1.5 px-3 pt-3" data-testid={`${testId}-task`}>
+          <section data-ui-part="" aria-label={taskLabel} className="flex flex-col gap-1.5 px-3 pt-3" data-testid={`${testId}-task`}>
             <h3 className="m-0 text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">{taskLabel}</h3>
             {task}
           </section>

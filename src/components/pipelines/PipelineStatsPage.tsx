@@ -376,6 +376,7 @@ export default function PipelineStatsPage() {
       {/* Top bar */}
       <div className="flex items-center gap-3">
         <button
+          data-ui-part=""
           type="button"
           onClick={() => navigate(`/pipelines/${pipelineId}`)}
           className="bg-transparent border-none text-primary cursor-pointer text-[13px] p-0"
@@ -393,6 +394,7 @@ export default function PipelineStatsPage() {
         >
           {(['10', '50', 'all'] as const).map((r) => (
             <button
+              data-ui-part=""
               key={r}
               type="button"
               onClick={() => setRange(r)}
@@ -553,7 +555,7 @@ export default function PipelineStatsPage() {
                   No failures in this range.
                 </div>
               ) : (
-                <table className="w-full border-collapse text-xs">
+                <table data-ui-part="" className="w-full border-collapse text-xs">
                   <thead>
                     <tr className="text-left">
                       {['Error', 'Count', 'Last seen', 'Example'].map((h) => (
@@ -583,6 +585,7 @@ export default function PipelineStatsPage() {
                         </td>
                         <td className="px-2 py-1.5">
                           <button
+                            data-ui-part=""
                             type="button"
                             onClick={() =>
                               navigate(`/pipelines/${pipelineId}/runs/${row.exampleRunId}`)

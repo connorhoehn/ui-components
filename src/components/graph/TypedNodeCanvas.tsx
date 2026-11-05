@@ -272,6 +272,7 @@ function CanvasEdge({ sourceX, sourceY, targetX, targetY, sourcePosition, target
             <span className="flex h-5 items-center justify-center">
               {entity.marker ? (
                 <button
+                  data-ui-part=""
                   type="button"
                   aria-label={entity.marker.label}
                   aria-pressed={selected}
@@ -407,6 +408,7 @@ function ListView<N extends TypedCanvasNode>({
           <li key={node.id} className={cn('flex min-w-0 flex-col gap-1 px-3 py-2.5', selected && 'bg-surface-hover')} data-testid={`${testId}-list-node-${node.id}`}>
             {onSelectNode ? (
               <button
+                data-ui-part=""
                 type="button"
                 aria-label={label}
                 aria-current={selected ? 'true' : undefined}
@@ -424,6 +426,7 @@ function ListView<N extends TypedCanvasNode>({
                     <li key={edge.id} className="flex min-w-0 flex-wrap items-baseline gap-x-2 text-[12px] text-text-secondary">
                       {onSelectEdge ? (
                         <button
+                          data-ui-part=""
                           type="button"
                           onClick={() => onSelectEdge(edge.id)}
                           aria-current={selectedId === edge.id ? 'true' : undefined}

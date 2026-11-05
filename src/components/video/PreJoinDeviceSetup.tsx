@@ -31,7 +31,7 @@ export function PreJoinDeviceSetup({ value, onChange, devices, permission, micLe
   };
   return <div className={`grid min-w-0 grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] ${className ?? ''}`}
     data-testid={testId} data-layout="prejoin">
-    <section className="flex min-w-0 flex-col gap-3" aria-label="Camera preview">
+    <section data-ui-part="" className="flex min-w-0 flex-col gap-3" aria-label="Camera preview">
       <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-video-stage"
         data-testid="settings-preview" data-mirrored={value.mirrorPreview ? 'true' : 'false'}>
         {preview}
@@ -44,7 +44,7 @@ export function PreJoinDeviceSetup({ value, onChange, devices, permission, micLe
       </div>
       <span className="text-xs text-text-secondary">{cameraOn ? 'Your camera is on. This is how you’ll appear in the huddle.' : 'Your camera is off. You can turn it on when you’re ready.'}</span>
     </section>
-    <section className="flex min-w-0 flex-col gap-4" aria-label="Device setup">
+    <section data-ui-part="" className="flex min-w-0 flex-col gap-4" aria-label="Device setup">
       {device('camera', 'Camera', <VideoIcon size={16} />)}
       <div className="flex min-w-0 flex-col gap-2">
         {device('microphone', 'Microphone', <MicIcon size={16} />)}

@@ -120,6 +120,7 @@ function FilmstripGeneratedThumb({ item, index, selected, viewers, onSelect, tes
       </span>
       <span className="relative flex min-w-0 flex-1 flex-col gap-0.5">
         <button
+          data-ui-part=""
           type="button"
           onClick={() => onSelect(item.id)}
           aria-current={selected ? 'true' : undefined}
@@ -239,6 +240,7 @@ export function FilmstripThumb({
 
       <span className="relative flex min-w-0 flex-1 flex-col gap-0.5">
         <button
+          data-ui-part=""
           type="button"
           onClick={() => onSelect(slide.id)}
           aria-current={selected ? 'true' : undefined}

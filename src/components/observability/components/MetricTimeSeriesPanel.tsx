@@ -141,6 +141,7 @@ function MetricTimeSeriesPanel({
 
         {onResetZoom && (
           <button
+            data-ui-part=""
             data-testid="metrics-reset-zoom"
             onClick={onResetZoom}
             className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
@@ -151,6 +152,7 @@ function MetricTimeSeriesPanel({
 
         {onExportCsv && (
           <button
+            data-ui-part=""
             data-testid="metrics-export-csv"
             onClick={onExportCsv}
             className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"

@@ -64,6 +64,7 @@ export function Wizard({
           return (
             <li key={step.key}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => onStep(step.key)}
                 aria-current={isActive ? 'step' : undefined}
@@ -98,6 +99,7 @@ export function Wizard({
         </div>
         <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
           <button
+            data-ui-part=""
             type="button"
             onClick={goBack}
             disabled={activeIndex <= 0}
@@ -107,6 +109,7 @@ export function Wizard({
             Back
           </button>
           <button
+            data-ui-part=""
             type="button"
             onClick={goNext}
             disabled={!canAdvance}

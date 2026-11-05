@@ -105,7 +105,7 @@ export function JudgmentResultViewer({
       {showCriteria ? <CriteriaPanel result={result} /> : null}
 
       {showMetadata ? (
-        <section className="flex flex-wrap items-center gap-2 text-[11px] text-text-tertiary">
+        <section data-ui-part="" className="flex flex-wrap items-center gap-2 text-[11px] text-text-tertiary">
           <span>
             tokens <span className="font-mono">{result.tokensIn}</span> in /{' '}
             <span className="font-mono">{result.tokensOut}</span> out
@@ -131,8 +131,9 @@ export function JudgmentResultViewer({
       ) : null}
 
       {showRawText && rawTextAvailable ? (
-        <section className="flex flex-col gap-1.5">
+        <section data-ui-part="" className="flex flex-col gap-1.5">
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setShowRaw((v) => !v)}
             className="self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded"

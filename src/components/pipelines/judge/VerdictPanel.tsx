@@ -39,6 +39,7 @@ export function VerdictPanel({ result, className }: VerdictPanelProps) {
 
   return (
     <section
+      data-ui-part=""
       className={cn(
         'flex flex-col gap-2 rounded-lg border border-border bg-surface p-3',
         className,

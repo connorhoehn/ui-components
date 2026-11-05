@@ -69,6 +69,7 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
       />
       <div className="flex gap-1.5">
         <button
+          data-ui-part=""
           type="submit"
           disabled={!name.trim() || loading}
           className={cn(
@@ -79,6 +80,7 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
           {loading ? 'Creating…' : 'Create'}
         </button>
         <button
+          data-ui-part=""
           type="button"
           onClick={onDiscard}
           className="h-7 px-2 border border-border rounded-[5px] bg-surface text-text-secondary text-xs cursor-pointer font-[inherit]"
@@ -129,6 +131,7 @@ function DMRoomButton({ onCreateDM, loading, friends, friendsError }: DMRoomButt
   if (!showForm) {
     return (
       <button
+        data-ui-part=""
         onClick={() => setShowForm(true)}
         className="w-full text-left px-2 py-1 bg-transparent border-none cursor-pointer text-xs text-primary font-semibold font-[system-ui,-apple-system,sans-serif] rounded mb-1"
       >
@@ -165,6 +168,7 @@ function DMRoomButton({ onCreateDM, loading, friends, friendsError }: DMRoomButt
       )}
       <div className="flex gap-1.5">
         <button
+          data-ui-part=""
           type="submit"
           disabled={!peerId.trim() || loading || friends.length === 0}
           className={cn(
@@ -175,6 +179,7 @@ function DMRoomButton({ onCreateDM, loading, friends, friendsError }: DMRoomButt
           Open DM
         </button>
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setShowForm(false)}
           className="h-7 px-2 border border-border rounded-[5px] bg-surface text-text-secondary text-xs cursor-pointer font-[inherit]"
@@ -210,6 +215,7 @@ function RoomRow({ room, isActive, onClick }: RoomRowProps) {
 
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onClick}
       aria-pressed={isActive}
@@ -234,6 +240,7 @@ function RoomRow({ room, isActive, onClick }: RoomRowProps) {
 function CompactRoomRow({ room, isActive, onClick }: RoomRowProps) {
   return (
     <button
+      data-ui-part=""
       onClick={onClick}
       className={cn(
         'flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
@@ -275,6 +282,7 @@ function RoomsErrorState({ message, onRetry, compact }: RoomsErrorStateProps) {
       <div className={cn('text-text-secondary', compact ? 'text-[11px]' : 'text-xs')}>{message}</div>
       {onRetry && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onRetry}
           className={cn(
@@ -315,6 +323,7 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
       <div className="px-2 pt-2">
         {/* Compact "+ New Room" link */}
         <button
+          data-ui-part=""
           onClick={() => setShowCreateForm(prev => !prev)}
           className="w-full text-left px-2 py-1 bg-transparent border-none cursor-pointer text-xs text-primary font-semibold font-[system-ui,-apple-system,sans-serif] rounded"
         >
@@ -354,6 +363,7 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
     <div className="bg-surface border border-border rounded-lg p-5">
       <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">Rooms</h2>
       <button
+        data-ui-part=""
         onClick={() => setShowCreateForm(prev => !prev)}
         className="w-full h-9 mb-2 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]"
       >

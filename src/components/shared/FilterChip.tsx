@@ -65,6 +65,7 @@ export function FilterChip({
 
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onClick}
       disabled={disabled}

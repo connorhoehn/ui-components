@@ -517,6 +517,7 @@ export function FloatingPanel({
       >
         {/* Header / drag handle */}
         <div
+          data-ui-part=""
           data-testid="floating-panel-header"
           role="button"
           tabIndex={0}
@@ -533,6 +534,7 @@ export function FloatingPanel({
             {title}
           </span>
           <button
+            data-ui-part=""
             type="button"
             onClick={onClose}
             // Don't let a click on ✕ start a drag.

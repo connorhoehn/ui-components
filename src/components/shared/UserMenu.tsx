@@ -63,6 +63,7 @@ export function UserMenu({ user, items, className, 'data-testid': testId }: User
     >
       {/* Trigger */}
       <button
+        data-ui-part=""
         type="button"
         aria-label={`User menu for ${user.name}`}
         aria-expanded={open}
@@ -130,6 +131,7 @@ export function UserMenu({ user, items, className, 'data-testid': testId }: User
                   <div className="my-1 border-t border-[var(--color-border)]" />
                 )}
                 <button
+                  data-ui-part=""
                   type="button"
                   role="menuitem"
                   onClick={() => {

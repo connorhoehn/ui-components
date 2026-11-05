@@ -67,6 +67,7 @@ export function ConversationHistory({
             )}
           >
             <button
+              data-ui-part=""
               type="button"
               onClick={onResume ? () => onResume(session) : undefined}
               disabled={!onResume}
@@ -82,6 +83,7 @@ export function ConversationHistory({
             </button>
             {onDelete && (
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => onDelete(session)}
                 aria-label={`Delete conversation ${title}`}

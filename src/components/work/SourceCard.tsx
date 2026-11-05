@@ -63,6 +63,7 @@ function SourceTitle({ id, title, onOpen, href }: Pick<SourceCardProps, 'id' | '
   if (onOpen) {
     return (
       <button
+        data-ui-part=""
         type="button"
         onClick={() => onOpen(id)}
         className={cn(cls, 'cursor-pointer border-none bg-transparent p-0 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary')}
@@ -115,7 +116,7 @@ export function SourceCard({
     const interactive = 'cursor-pointer border-none bg-transparent no-underline hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
     const common = { 'data-testid': testId, 'data-layout': 'row', 'data-ui-source-row': '', 'aria-label': title, ...(current ? { 'aria-current': 'true' as const } : {}) };
     if (onOpen) {
-      return <button type="button" onClick={() => onOpen(id)} className={cn(rowCls, interactive)} {...common}>{inner}</button>;
+      return <button data-ui-part="" type="button" onClick={() => onOpen(id)} className={cn(rowCls, interactive)} {...common}>{inner}</button>;
     }
     if (href) {
       return <a href={href} className={cn(rowCls, interactive)} {...common}>{inner}</a>;

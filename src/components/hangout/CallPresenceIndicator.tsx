@@ -68,6 +68,7 @@ export function CallPresenceIndicator({
     if (onClick) {
         return (
             <button
+                data-ui-part=""
                 type="button"
                 onClick={onClick}
                 data-testid="call-presence-indicator"

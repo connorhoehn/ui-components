@@ -83,6 +83,7 @@ export default function Scrubber({ replay }: ScrubberProps) {
       {/* Transport controls */}
       <div className="flex items-center gap-1 shrink-0">
         <button
+          data-ui-part=""
           type="button"
           className={cn(
             'w-7 h-7 p-0 border rounded-md text-xs font-[inherit] inline-flex items-center justify-center',
@@ -101,6 +102,7 @@ export default function Scrubber({ replay }: ScrubberProps) {
           {playing ? '❚❚' : '▶'}
         </button>
         <button
+          data-ui-part=""
           type="button"
           className={cn(
             'w-7 h-7 p-0 border rounded-md text-xs font-[inherit] inline-flex items-center justify-center',
@@ -117,6 +119,7 @@ export default function Scrubber({ replay }: ScrubberProps) {
           ◼
         </button>
         <button
+          data-ui-part=""
           type="button"
           className={cn(
             'w-7 h-7 p-0 border rounded-md text-xs font-[inherit] inline-flex items-center justify-center',
@@ -133,6 +136,7 @@ export default function Scrubber({ replay }: ScrubberProps) {
           ◀
         </button>
         <button
+          data-ui-part=""
           type="button"
           className={cn(
             'w-7 h-7 p-0 border rounded-md text-xs font-[inherit] inline-flex items-center justify-center',
@@ -154,6 +158,7 @@ export default function Scrubber({ replay }: ScrubberProps) {
       <div className="flex items-center gap-[3px] shrink-0">
         {SPEEDS.map((s) => (
           <button
+            data-ui-part=""
             key={String(s)}
             type="button"
             className={cn(
@@ -192,6 +197,7 @@ export default function Scrubber({ replay }: ScrubberProps) {
               totalEvents > 1 ? (idx / (totalEvents - 1)) * 100 : 50;
             return (
               <button
+                data-ui-part=""
                 key={`${evt.seq}-${evt.eventType}`}
                 type="button"
                 onClick={(e) => {
@@ -225,6 +231,7 @@ export default function Scrubber({ replay }: ScrubberProps) {
 
           {/* Invisible range input for accessible scrubbing */}
           <input
+            data-ui-part=""
             type="range"
             min={0}
             max={totalEvents}

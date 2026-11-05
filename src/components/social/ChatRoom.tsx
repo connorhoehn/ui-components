@@ -184,7 +184,7 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
       <div className="flex-1 overflow-y-auto flex flex-col pb-1">
         {hasMore && (
           <div className="text-center py-2">
-            <button onClick={() => void loadMore()} disabled={loading}
+            <button data-ui-part="" onClick={() => void loadMore()} disabled={loading}
               className={cn(
                 'text-xs text-text-secondary bg-transparent border border-border rounded-full px-3.5 py-0.5 font-[inherit]',
                 loading ? 'cursor-default' : 'cursor-pointer',
@@ -250,6 +250,7 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
           className="flex-1 rounded-[22px] px-4"
         />
         <button
+          data-ui-part=""
           onClick={() => void handleSend()}
           disabled={!message.trim() || sending}
           className={cn(

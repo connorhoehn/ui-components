@@ -47,6 +47,7 @@ function SidebarRoomRow({ room, isActive, unread, onClick }: {
 }) {
   return (
     <button
+      data-ui-part=""
       onClick={onClick}
       className={cn(
         'flex items-center gap-1.5 w-full border-none rounded-[5px] pt-1.5 pb-1.5 pr-2 pl-6 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
@@ -232,6 +233,7 @@ export default function SocialTabContent({
             </div>
           </div>
           <button
+            data-ui-part=""
             onClick={() => setChatSidebarOpen(false)}
             title="Collapse sidebar"
             className="bg-transparent border-none cursor-pointer text-base leading-none px-1 py-0.5 rounded"
@@ -340,6 +342,7 @@ export default function SocialTabContent({
             style={{ borderBottom: `1px solid ${sidebarBorder}` }}
           >
             <button
+              data-ui-part=""
               onClick={() => setChatSidebarOpen(true)}
               title="Expand sidebar"
               className="bg-transparent rounded cursor-pointer text-sm px-2 py-0.5 font-[inherit]"

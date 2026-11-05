@@ -49,6 +49,7 @@ function DevSeedButton({ idToken, baseUrl }: { idToken: string | null; baseUrl: 
   return (
     <div className="flex items-center gap-2">
       <button
+        data-ui-part=""
         data-testid="dev-seed-btn"
         className="px-3 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
         onClick={() => void seed(5)}
@@ -197,6 +198,7 @@ export default function IngestDashboard({ idToken: idTokenProp, baseUrl }: Inges
         <div className="flex gap-2.5 items-center">
           {import.meta.env.DEV ? <DevSeedButton idToken={idToken} baseUrl={resolvedBaseUrl} /> : null}
           <button
+            data-ui-part=""
             className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]"
             onClick={() => navigate('/ingest/sources')}
             data-testid="add-source-btn"
@@ -211,6 +213,7 @@ export default function IngestDashboard({ idToken: idTokenProp, baseUrl }: Inges
         <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
           <span className="text-[13px] font-medium">Failed to load ingest data.</span>
           <button
+            data-ui-part=""
             onClick={handleRetry}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >

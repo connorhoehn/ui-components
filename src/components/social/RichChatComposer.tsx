@@ -2341,6 +2341,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     testId?: string,
   ) => (
     <button
+      data-ui-part=""
       // `testId ?? label`, not `label` alone: the privacy toggle's label TEXT
       // changes with its own state ("Visible to everyone" ↔ "Only you"), and
       // a key that changes is React's signal to unmount the old element and
@@ -2635,6 +2636,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             <span className="min-w-0 flex-1 truncate" title={status.text}>{status.text}</span>
             {status.action && (
               <button
+                data-ui-part=""
                 type="button"
                 onClick={status.action.onSelect}
                 data-testid={status.action['data-testid'] ?? `${testId}-status-action`}
@@ -2645,6 +2647,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             )}
             {status.onDismiss && (
               <button
+                data-ui-part=""
                 type="button"
                 aria-label="Dismiss"
                 onClick={status.onDismiss}
@@ -2859,6 +2862,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           <div className={cn('flex flex-wrap items-center gap-1 px-2 pt-1', reveal)} data-testid={`${testId}-suggestions`}>
             {suggestions!.map((suggestion) => (
               <button
+                data-ui-part=""
                 key={suggestion}
                 type="button"
                 // Keep focus in the composer: a mousedown that blurred the
@@ -2916,6 +2920,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // Pressing it puts the caret in the input (the full composer, mode
           // switch included, comes back) — on click, after the pointer is up.
           <button
+            data-ui-part=""
             type="button"
             onClick={() => editor?.commands.focus()}
             title={`${MODE_NAMES[activeMode]} — click to write`}
@@ -2981,6 +2986,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   {references.length > 1 && <span className="shrink-0 text-text-tertiary">+{references.length - 1}</span>}
                   {onRemoveReference && (
                     <button
+                      data-ui-part=""
                       type="button"
                       aria-label={`Remove ${label} from this draft`}
                       onClick={() => onRemoveReference(references[0]!.id)}
@@ -3103,6 +3109,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           <div className={cn('flex items-center gap-2 px-2 py-2', singleRow && 'min-w-0 flex-1')} data-testid={`${testId}-shell`}>
             <span aria-hidden="true" className="shrink-0 font-mono text-xs text-text-tertiary">$</span>
             <input
+              data-ui-part=""
               ref={shellInputRef}
               type="text"
               value={shellDraft}
@@ -3132,6 +3139,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               if (!hint.onSelect) return <span key={hint.key} className="flex items-center gap-1">{key}{hint.label}</span>;
               return (
                 <button
+                  data-ui-part=""
                   key={hint.key}
                   type="button"
                   onClick={hint.onSelect}
@@ -3207,6 +3215,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             )}
             {hasSearchDocuments && (
               <button
+                data-ui-part=""
                 key="context"
                 type="button"
                 onClick={startContext}
@@ -3405,6 +3414,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             // the alternatives have to be somewhere other than in front of it.
             <span className={cn((submitLead == null || collapsed) && !(showMoreActions && !collapsed) && 'ml-auto', 'flex shrink-0 items-stretch')}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={terminalMode ? submitShell : send}
                 disabled={!canSend}
@@ -3439,6 +3449,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             </span>
           ) : promptCard && !collapsed ? (
             <button
+              data-ui-part=""
               type="button"
               onClick={send}
               disabled={!canSend}
@@ -3455,6 +3466,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             </button>
           ) : (
             <button
+              data-ui-part=""
               type="button"
               onClick={terminalMode ? submitShell : send}
               disabled={!canSend}

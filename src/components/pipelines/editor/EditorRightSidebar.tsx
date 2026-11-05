@@ -32,6 +32,7 @@ export default function EditorRightSidebar({
       {!(selectedNodeId !== null && sidebarTab === 'config') && (
         <div className="h-[38px] flex border-b border-border shrink-0">
           <button
+            data-ui-part=""
             type="button"
             className={cn(
               'flex-1 border-none bg-transparent text-xs font-semibold',
@@ -46,6 +47,7 @@ export default function EditorRightSidebar({
             Config
           </button>
           <button
+            data-ui-part=""
             type="button"
             className={cn(
               'flex-1 border-none bg-transparent text-xs font-semibold',

@@ -97,6 +97,7 @@ export function EditableHeading({
   if (editing) {
     return (
       <input
+        data-ui-part=""
         ref={inputRef}
         value={draft}
         placeholder={placeholder}

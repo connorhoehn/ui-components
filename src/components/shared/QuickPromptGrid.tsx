@@ -40,6 +40,7 @@ export function QuickPromptGrid({
       <div style={{ display: 'grid', gridTemplateColumns, gap: 10 }}>
         {prompts.map((p, i) => (
           <button
+            data-ui-part=""
             key={i}
             type="button"
             onClick={() => onSelect(p.label)}

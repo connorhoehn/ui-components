@@ -26,6 +26,7 @@ export const ColorInput = forwardRef<HTMLInputElement, ColorInputProps>(
   ) {
     return (
       <input
+        data-ui-part=""
         ref={ref}
         type="color"
         value={value}
@@ -37,6 +38,7 @@ export const ColorInput = forwardRef<HTMLInputElement, ColorInputProps>(
           className,
         )}
         data-testid={testId}
+        data-ui-control="color"
       />
     );
   },

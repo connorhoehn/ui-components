@@ -25,6 +25,7 @@ export function WorkReferenceCard({ target, state, node, edge, unavailableLabel,
   return (
     <article aria-label="Shared work reference" className="space-y-3 rounded-lg border border-border bg-surface p-3">
       <button
+        data-ui-part=""
         type="button"
         aria-label={`Select reference: ${title}`}
         disabled={!onSelect}

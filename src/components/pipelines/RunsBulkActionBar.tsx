@@ -20,6 +20,7 @@ export default function RunsBulkActionBar({
         {selectionCount} selected
       </span>
       <button
+        data-ui-part=""
         type="button"
         data-testid="runs-bulk-export"
         onClick={onExport}
@@ -28,6 +29,7 @@ export default function RunsBulkActionBar({
         Export JSON
       </button>
       <button
+        data-ui-part=""
         type="button"
         data-testid="runs-bulk-delete"
         onClick={onDelete}
@@ -36,6 +38,7 @@ export default function RunsBulkActionBar({
         Delete
       </button>
       <button
+        data-ui-part=""
         type="button"
         data-testid="runs-bulk-clear"
         onClick={onClear}

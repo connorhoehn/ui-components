@@ -42,7 +42,7 @@ export function WorkOmittedGroup({ omitted, timezone, className }: WorkOmittedGr
     </div>;
   }
   const remaining = Math.max(0, count - items.length);
-  return <section aria-label={`${countLabel} earlier items`} className={cn('flex max-h-full w-[min(22rem,calc(100vw-2rem))] min-h-0 flex-col rounded-xl border border-dashed border-border bg-surface shadow-md', className)} data-testid="work-omitted-group" data-expanded="true">
+  return <section data-ui-part="" aria-label={`${countLabel} earlier items`} className={cn('flex max-h-full w-[min(22rem,calc(100vw-2rem))] min-h-0 flex-col rounded-xl border border-dashed border-border bg-surface shadow-md', className)} data-testid="work-omitted-group" data-expanded="true">
     <header className="flex items-center justify-between gap-2 border-b border-border-subtle px-3 py-1.5">
       <span className="min-w-0 truncate text-[12px] font-semibold text-text-secondary">{countLabel} more earlier · newest first</span>
       <Button size="sm" variant="link" aria-expanded onClick={onCollapse}>Collapse</Button>

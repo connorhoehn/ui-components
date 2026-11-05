@@ -216,6 +216,7 @@ export default function EditorModeSwitch({
             No document content yet.
           </p>
           <button
+            data-ui-part=""
             onClick={onLoadDemo}
             className={cn(
               'px-6 py-2.5 text-[15px] font-semibold border-none rounded-lg',
@@ -297,6 +298,7 @@ export default function EditorModeSwitch({
                   {sections.find(s => s.id === commentSectionId)?.title ?? 'Comments'}
                 </div>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={onCloseComments}
                   className={cn(

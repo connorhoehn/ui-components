@@ -51,6 +51,7 @@ export function ContextVariablePicker({
           <div className="flex flex-wrap gap-1">
             {paths.map((p) => (
               <button
+                data-ui-part=""
                 key={p.path}
                 type="button"
                 onClick={() => onInsert(`{{${p.path}}}`)}
@@ -103,6 +104,7 @@ export function ContextVariablePicker({
             {paths.map((p) => (
               <li key={p.path} className="flex items-baseline gap-1.5 py-0.5">
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => onRevealNode(p.sourceNodeId)}
                   className="bg-transparent border-none p-0 cursor-pointer text-primary underline font-inherit text-[11px]"

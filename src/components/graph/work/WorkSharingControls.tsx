@@ -133,7 +133,7 @@ export function WorkSharingControls({
   const stateLabel = state === 'off' ? 'Off' : state.charAt(0).toUpperCase() + state.slice(1);
 
   return (
-    <section aria-labelledby="work-sharing-heading" className="space-y-5 rounded-lg border border-border bg-surface p-4">
+    <section data-ui-part="" aria-labelledby="work-sharing-heading" className="space-y-5 rounded-lg border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 id="work-sharing-heading" className="text-base font-semibold text-text-primary">Share work activity</h3>

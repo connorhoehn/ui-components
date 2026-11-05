@@ -108,6 +108,7 @@ function Relationship(props: EdgeProps<ActivityEdge>) {
     <AnimatedEdge {...props} data={{ state: data.failed ? 'traversed-failure' : data.active ? 'active' : 'default' }} />
     <EdgeLabelRenderer>
       <button
+        data-ui-part=""
         type="button"
         className={cn(
           'nodrag nopan pointer-events-auto absolute z-10 flex items-center justify-center rounded-full text-xs font-medium leading-none focus-visible:outline-2 focus-visible:outline-primary',

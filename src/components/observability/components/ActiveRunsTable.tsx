@@ -116,6 +116,7 @@ function Row({
         <td className="px-3 py-2 text-[13px] text-text-primary font-[inherit] border-b border-border text-right w-px whitespace-nowrap">
           {isCancellable && (
             <button
+              data-ui-part=""
               data-testid="active-run-cancel"
               type="button"
               aria-label={`Cancel run ${run.runId}`}
@@ -151,7 +152,7 @@ function ActiveRunsTable({ runs, onRowClick, onCancelRun }: ActiveRunsTableProps
       data-testid="active-runs-table"
       className="border border-border rounded-lg overflow-hidden bg-surface"
     >
-      <table className="w-full border-collapse font-[inherit]">
+      <table data-ui-part="" className="w-full border-collapse font-[inherit]">
         <thead>
           <tr>
             <th className="text-left px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border">

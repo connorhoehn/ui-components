@@ -54,6 +54,7 @@ export default function DocTypeProposalsPage() {
             That proposal was not updated: {actionError}
           </span>
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setActionError(null)}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
@@ -131,6 +132,7 @@ function ProposalRow({ proposal, onPromote, onReject }: ProposalRowProps) {
       ) : null}
       <div className="flex gap-2">
         <button
+          data-ui-part=""
           data-testid={`proposal-promote-${proposal.proposalId}`}
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
           onClick={onPromote}
@@ -138,6 +140,7 @@ function ProposalRow({ proposal, onPromote, onReject }: ProposalRowProps) {
           Promote
         </button>
         <button
+          data-ui-part=""
           data-testid={`proposal-reject-${proposal.proposalId}`}
           className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
           onClick={onReject}

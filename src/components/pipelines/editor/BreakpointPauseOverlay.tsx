@@ -69,6 +69,7 @@ export default function BreakpointPauseOverlay({
         </span>
         {canApplyAndContinue && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onApplyAndContinue}
             disabled={applyingPatch}
@@ -83,6 +84,7 @@ export default function BreakpointPauseOverlay({
           </button>
         )}
         <button
+          data-ui-part=""
           type="button"
           onClick={onContinue}
           disabled={applyingPatch}
@@ -96,6 +98,7 @@ export default function BreakpointPauseOverlay({
           Continue
         </button>
         <button
+          data-ui-part=""
           type="button"
           onClick={onStepOver}
           disabled={applyingPatch}
@@ -109,6 +112,7 @@ export default function BreakpointPauseOverlay({
           Step Over
         </button>
         <button
+          data-ui-part=""
           type="button"
           onClick={onResumeAll}
           disabled={applyingPatch}
@@ -201,6 +205,7 @@ export default function BreakpointPauseOverlay({
                     </div>
                     {!reverted && (
                       <button
+                        data-ui-part=""
                         type="button"
                         data-testid={`breakpoint-patch-revert-${p.patchId}`}
                         onClick={() => onRevertPatch(p.patchId)}

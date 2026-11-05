@@ -205,6 +205,7 @@ export default function DLQInspector() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-5">
         <button
+          data-ui-part=""
           type="button"
           onClick={() => navigate('/pipelines')}
           className="bg-none border-none text-base cursor-pointer text-text-secondary py-1 px-2"
@@ -234,6 +235,7 @@ export default function DLQInspector() {
         </span>
         <div className="flex-1" />
         <button
+          data-ui-part=""
           type="button"
           onClick={() => void fetchEntries(false)}
           className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-surface-hover text-text-secondary border border-border"
@@ -277,6 +279,7 @@ export default function DLQInspector() {
               {selected.size} selected
             </span>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => void handleRedrive(Array.from(selected))}
               className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-primary text-white"
@@ -285,6 +288,7 @@ export default function DLQInspector() {
               Redrive Selected
             </button>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => setPurgeTarget(Array.from(selected))}
               className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-danger-bg text-danger-fg"
@@ -297,6 +301,7 @@ export default function DLQInspector() {
 
         {entries.length > 0 && selected.size === 0 && (
           <button
+            data-ui-part=""
             type="button"
             onClick={() => void handleRedrive(sorted.map((e) => e.messageId))}
             className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-primary text-white"
@@ -335,7 +340,7 @@ export default function DLQInspector() {
       {/* Table */}
       {sorted.length > 0 && (
         <>
-          <table className="w-full border-collapse text-[13px]" data-testid="dlq-table">
+          <table data-ui-part="" className="w-full border-collapse text-[13px]" data-testid="dlq-table">
             <thead>
               <tr>
                 <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap w-8">
@@ -375,6 +380,7 @@ export default function DLQInspector() {
           {hasMore && (
             <div className="text-center mt-4">
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => void fetchEntries(true)}
                 className="py-2 px-4 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-surface-hover text-text-secondary border border-border"
@@ -395,12 +401,14 @@ export default function DLQInspector() {
         footer={
           <>
             <button
+              data-ui-part=""
               onClick={() => setPurgeTarget(null)}
               className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer"
             >
               Cancel
             </button>
             <button
+              data-ui-part=""
               onClick={() => void handlePurgeConfirm()}
               className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer"
             >

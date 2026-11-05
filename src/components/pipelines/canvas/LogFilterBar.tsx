@@ -50,6 +50,7 @@ export default function LogFilterBar({
     <div className="h-10 px-3 flex items-center gap-2.5 border-b border-border shrink-0">
       {!inFullscreen ? (
         <button
+          data-ui-part=""
           type="button"
           className="w-6 h-6 p-0 border-none bg-transparent text-neutral cursor-pointer text-xs leading-none font-inherit"
           onClick={onToggleExpand}
@@ -62,6 +63,7 @@ export default function LogFilterBar({
 
       {/* Export button */}
       <button
+        data-ui-part=""
         type="button"
         className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
         onClick={onExport}
@@ -74,6 +76,7 @@ export default function LogFilterBar({
       {/* Filter dropdown */}
       <div className="relative">
         <button
+          data-ui-part=""
           type="button"
           className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
           onClick={() => setFilterOpen((x) => !x)}
@@ -84,6 +87,7 @@ export default function LogFilterBar({
           <div className="absolute right-0 bottom-full mb-1 bg-surface border border-border rounded-md shadow-lg z-[3] min-w-[140px]">
             {(Object.keys(FILTER_LABEL) as LogFilter[]).map((key) => (
               <button
+                data-ui-part=""
                 type="button"
                 key={key}
                 onClick={() => {
@@ -103,6 +107,7 @@ export default function LogFilterBar({
       </div>
 
       <button
+        data-ui-part=""
         type="button"
         className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
         onClick={onClear}
@@ -112,6 +117,7 @@ export default function LogFilterBar({
       </button>
       {inFullscreen ? (
         <button
+          data-ui-part=""
           type="button"
           className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
           onClick={onFullscreenToggle}
@@ -123,6 +129,7 @@ export default function LogFilterBar({
         </button>
       ) : (
         <button
+          data-ui-part=""
           type="button"
           className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
           onClick={onFullscreenToggle}

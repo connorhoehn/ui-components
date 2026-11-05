@@ -214,6 +214,7 @@ function SourceChip({ source }: { source: RunDraftSourceItem }) {
   if (source.onOpen) {
     return (
       <button
+        data-ui-part=""
         type="button"
         onClick={source.onOpen}
         title={source.title}
@@ -465,6 +466,7 @@ export function RunDraftPanel({
 
   return (
     <section
+      data-ui-part=""
       aria-labelledby={headingId}
       data-status={status}
       data-collapsed={collapsed || undefined}

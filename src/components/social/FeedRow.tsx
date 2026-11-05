@@ -200,6 +200,7 @@ export function FeedRow({
       </span>
       {onJump ? (
         <button
+          data-ui-part=""
           type="button"
           onClick={onJump}
           aria-label={jumpLabel}

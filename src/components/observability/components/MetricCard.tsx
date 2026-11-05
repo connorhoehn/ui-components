@@ -60,6 +60,7 @@ function MetricCard({ title, timeRange, children, onMaximize, sample }: MetricCa
           )}
           {onMaximize && (
             <button
+              data-ui-part=""
               data-testid="metric-card-maximize"
               onClick={onMaximize}
               aria-label={`Maximize ${title}`}

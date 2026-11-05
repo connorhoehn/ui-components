@@ -123,6 +123,7 @@ function BreadcrumbLink({
 
   return (
     <button
+      data-ui-part=""
       type="button"
       title={item.label}
       onClick={activate}
@@ -158,6 +159,7 @@ function OverflowMenu({ items, size }: { items: BreadcrumbItem[]; size: Breadcru
   return (
     <>
       <button
+        data-ui-part=""
         ref={triggerRef}
         type="button"
         aria-label="Show hidden breadcrumbs"

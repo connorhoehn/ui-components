@@ -120,6 +120,7 @@ export function SlideRow({
       {!readOnly && (dragHandle ?? <span className="w-0" aria-hidden="true" />)}
 
       <button
+        data-ui-part=""
         type="button"
         onClick={() => onSelect(slide.id)}
         aria-current={selected ? 'true' : undefined}

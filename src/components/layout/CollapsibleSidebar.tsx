@@ -183,8 +183,9 @@ function CollapsibleSection({
   };
 
   return (
-    <section aria-labelledby={labelId} data-expanded={expanded ? 'true' : 'false'}>
+    <section data-ui-part="" aria-labelledby={labelId} data-expanded={expanded ? 'true' : 'false'}>
       <button
+        data-ui-part=""
         type="button"
         ref={headerRef}
         id={labelId}
@@ -278,6 +279,7 @@ export function CollapsibleSidebar({
         <div className="ml-auto flex gap-1">
           {isConnected ? (
             <button
+              data-ui-part=""
               onClick={onDisconnect}
               className="text-[11px] px-2 py-0.5 border border-border rounded bg-surface text-neutral cursor-pointer font-sans"
             >
@@ -285,6 +287,7 @@ export function CollapsibleSidebar({
             </button>
           ) : (
             <button
+              data-ui-part=""
               onClick={onReconnect}
               className="text-[11px] px-2 py-0.5 border border-info rounded bg-info-bg text-info-fg cursor-pointer font-sans"
             >
@@ -293,6 +296,7 @@ export function CollapsibleSidebar({
           )}
           {onCollapse && (
             <button
+              data-ui-part=""
               onClick={onCollapse}
               title="Collapse sidebar"
               aria-label="Collapse sidebar"
@@ -407,6 +411,7 @@ export function CollapsibleSidebar({
           )}
           {recentDocs.map(doc => (
             <div
+              data-ui-part=""
               key={doc.id}
               onClick={() => onOpenDocument(doc.id)}
               role="button"
@@ -436,6 +441,7 @@ export function CollapsibleSidebar({
                   <span>No pipelines yet</span>
                   {onSeeAllPipelines && (
                     <span
+                      data-ui-part=""
                       role="button"
                       tabIndex={0}
                       onClick={onSeeAllPipelines}
@@ -490,6 +496,7 @@ export function CollapsibleSidebar({
               ))}
               {pipelineList.length > 12 && onSeeAllPipelines && (
                 <div
+                  data-ui-part=""
                   role="button"
                   tabIndex={0}
                   onClick={onSeeAllPipelines}

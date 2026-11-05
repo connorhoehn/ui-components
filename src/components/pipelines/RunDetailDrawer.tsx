@@ -102,6 +102,7 @@ export default function RunDetailDrawer({ pipelineId, run, onBack }: RunDetailDr
       {/* Header */}
       <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-2.5">
         <button
+          data-ui-part=""
           type="button"
           onClick={onBack}
           className="cursor-pointer border-none bg-transparent p-0 font-inherit text-[13px] text-primary"
@@ -197,6 +198,7 @@ export default function RunDetailDrawer({ pipelineId, run, onBack }: RunDetailDr
 
           {/* View full run button */}
           <button
+            data-ui-part=""
             type="button"
             onClick={() => navigate(`/pipelines/${pipelineId}/runs/${run.id}`)}
             data-testid="runs-panel-replay-btn"

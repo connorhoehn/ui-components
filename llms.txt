@@ -22,7 +22,7 @@ Start every routed page from a template inside one `AppShell`; see the canonical
 
 ## Skills
 
-- `skills/ui-page-build/SKILL.md`: building a page from the templates and components.
+- [skills/ui-page-build/SKILL.md](skills/ui-page-build/SKILL.md): building a page from the templates and components.
 - [skills/ui-dom-audit/SKILL.md](skills/ui-dom-audit/SKILL.md): auditing rendered UI for layout, typography, table and composer consistency.
 
 ## Optional

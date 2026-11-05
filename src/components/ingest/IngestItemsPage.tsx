@@ -145,6 +145,7 @@ export default function IngestItemsPage() {
         />
 
         <button
+          data-ui-part=""
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]"
           onClick={() => void refresh()}
           data-testid="refresh-btn"
@@ -158,6 +159,7 @@ export default function IngestItemsPage() {
         <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
           <span className="text-[13px] font-medium">Failed to load ingest items.</span>
           <button
+            data-ui-part=""
             onClick={() => void refresh()}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
@@ -179,6 +181,7 @@ export default function IngestItemsPage() {
             Could not update that item: {actionError}
           </span>
           <button
+            data-ui-part=""
             onClick={clearActionError}
             className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
           >
@@ -196,7 +199,7 @@ export default function IngestItemsPage() {
         />
       ) : !error && (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-[13px]">
+          <table data-ui-part="" className="w-full border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-border">
                 <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">File Path</th>
@@ -211,6 +214,7 @@ export default function IngestItemsPage() {
             <tbody>
               {items.map((item) => (
                 <tr
+                  data-ui-part=""
                   key={item.itemId}
                   className="border-b border-border cursor-pointer hover:bg-surface-hover"
                   onClick={() => setDrawerItem(item)}
@@ -257,6 +261,7 @@ export default function IngestItemsPage() {
                     <div className="flex gap-1.5 justify-end">
                       {item.status === 'failed' && (
                         <button
+                          data-ui-part=""
                           className="px-2.5 py-1 text-[11px] font-medium border border-border rounded-[5px] bg-surface cursor-pointer font-[inherit] text-text-secondary"
                           onClick={() => void handleRetry(item.itemId)}
                           data-testid={`retry-${item.itemId}`}
@@ -266,6 +271,7 @@ export default function IngestItemsPage() {
                       )}
                       {item.status !== 'done' && (
                         <button
+                          data-ui-part=""
                           className="px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]"
                           onClick={() => void handleSkip(item.itemId)}
                           data-testid={`skip-${item.itemId}`}

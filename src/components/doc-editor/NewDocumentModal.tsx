@@ -952,6 +952,7 @@ export default function NewDocumentModal({
                     const isSelected = !pickedCookbook && selectedId === t.id;
                     return (
                       <button
+                        data-ui-part=""
                         key={t.id}
                         type="button"
                         data-testid={`type-option-${t.id}`}
@@ -1066,6 +1067,7 @@ export default function NewDocumentModal({
             types is what left the dialog with nothing but a Close button. */}
         <div className={cn('flex justify-end gap-2 px-6 py-4 border-t border-border bg-surface shrink-0')}>
           <button
+            data-ui-part=""
             data-testid="new-doc-cancel"
             onClick={onClose}
             className={cn('px-4 py-2 text-sm font-medium border border-border rounded-lg bg-surface text-text-secondary cursor-pointer font-[inherit]')}
@@ -1073,6 +1075,7 @@ export default function NewDocumentModal({
             Cancel
           </button>
           <button
+            data-ui-part=""
             data-testid="new-doc-submit"
             onClick={handleSubmit}
             disabled={!canSubmit}

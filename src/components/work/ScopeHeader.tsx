@@ -403,6 +403,7 @@ function ControlsPopover({ label, testId, children }: { label: string; testId: s
   return (
     <>
       <button
+        data-ui-part=""
         ref={triggerRef}
         type="button"
         aria-haspopup="dialog"
@@ -675,7 +676,7 @@ function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boole
   }
   if (item.onClick) {
     return (
-      <button type="button" onClick={item.onClick} className={cn(cls, 'cursor-pointer border-none bg-transparent p-0 text-left [font-family:inherit] hover:text-text-primary')} {...common}>
+      <button data-ui-part="" type="button" onClick={item.onClick} className={cn(cls, 'cursor-pointer border-none bg-transparent p-0 text-left [font-family:inherit] hover:text-text-primary')} {...common}>
         {item.label}
       </button>
     );

@@ -112,6 +112,7 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
 
       <div className={cn('flex justify-between items-center mt-4 py-3')}>
         <button
+          data-ui-part=""
           type="button"
           className={cn(
             'px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]',
@@ -126,6 +127,7 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
           Page {pageIndex + 1} of {totalPages} ({sections.length} sections)
         </span>
         <button
+          data-ui-part=""
           type="button"
           className={cn(
             'px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]',

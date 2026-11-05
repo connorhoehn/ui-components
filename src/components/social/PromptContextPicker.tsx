@@ -63,6 +63,7 @@ export function PromptContextPicker({
   return (
     <>
       <button
+        data-ui-part=""
         ref={triggerRef}
         type="button"
         aria-label={label}
@@ -112,6 +113,7 @@ export function PromptContextPicker({
             return (
               <li key={item.id}>
                 <button
+                  data-ui-part=""
                   type="button"
                   aria-pressed={added}
                   disabled={disabled}

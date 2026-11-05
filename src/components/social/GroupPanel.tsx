@@ -33,6 +33,7 @@ function CompactGroupRow({ group, isSelected, onClick }: {
 }) {
   return (
     <button
+      data-ui-part=""
       onClick={onClick}
       className={cn(
         'flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
@@ -86,13 +87,13 @@ function CompactCreateGroupForm({ onCreate, onDiscard, loading }: {
         className="mb-1.5"
       />
       <div className="flex gap-1.5">
-        <button type="submit" disabled={!name.trim() || loading} className={cn(
+        <button data-ui-part="" type="submit" disabled={!name.trim() || loading} className={cn(
           'flex-1 h-7 border-none rounded-[5px] text-xs font-semibold font-[inherit]',
           !name.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
         )}>
           {loading ? 'Creating…' : 'Create'}
         </button>
-        <button type="button" onClick={onDiscard} className="h-7 px-2 border border-border rounded-[5px] bg-surface text-text-secondary text-xs cursor-pointer font-[inherit]">
+        <button data-ui-part="" type="button" onClick={onDiscard} className="h-7 px-2 border border-border rounded-[5px] bg-surface text-text-secondary text-xs cursor-pointer font-[inherit]">
           Cancel
         </button>
       </div>
@@ -168,7 +169,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
           Members ({members.length})
         </span>
         {isOwner && (
-          <button onClick={() => setShowInvite(v => !v)} className="text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]">
+          <button data-ui-part="" onClick={() => setShowInvite(v => !v)} className="text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]">
             + Invite
           </button>
         )}
@@ -183,7 +184,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
             placeholder="User ID"
             className="flex-1"
           />
-          <button type="submit" disabled={!inviteId.trim()} className={cn(
+          <button data-ui-part="" type="submit" disabled={!inviteId.trim()} className={cn(
             'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
             !inviteId.trim() ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
           )}>
@@ -215,7 +216,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
           Rooms ({groupRooms.length})
         </span>
         {isOwner && (
-          <button onClick={() => setShowCreateRoom(v => !v)} className="text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]">
+          <button data-ui-part="" onClick={() => setShowCreateRoom(v => !v)} className="text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]">
             + Room
           </button>
         )}
@@ -230,7 +231,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
             placeholder="Room name"
             className="flex-1"
           />
-          <button type="submit" disabled={!roomName.trim() || loading} className={cn(
+          <button data-ui-part="" type="submit" disabled={!roomName.trim() || loading} className={cn(
             'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
             !roomName.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
           )}>
@@ -315,7 +316,7 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
         <span className="text-[13px] text-text-primary min-w-[42px]">{visibility === 'public' ? 'Public' : 'Private'}</span>
         {/* The switch had no name at all — the text either side of it is the
             current state and the consequence, not what the control is. */}
-        <button type="button" role="switch" aria-label="Private group" aria-checked={visibility === 'private'}
+        <button data-ui-part="" type="button" role="switch" aria-label="Private group" aria-checked={visibility === 'private'}
           onClick={() => setVisibility(v => v === 'public' ? 'private' : 'public')}
           className={cn(
             'relative w-11 h-6 rounded-xl border-none cursor-pointer p-0 shrink-0 transition-colors duration-200',
@@ -328,13 +329,13 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
         <span className="text-xs text-text-tertiary">{visibility === 'public' ? 'Visible to everyone' : 'Invite only'}</span>
       </div>
       <div className="flex gap-2">
-        <button type="submit" disabled={!name.trim() || loading} className={cn(
+        <button data-ui-part="" type="submit" disabled={!name.trim() || loading} className={cn(
           'flex-1 h-9 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
           !name.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-on-primary border-none cursor-pointer',
         )}>
           {loading ? 'Creating…' : 'Create Group'}
         </button>
-        <button type="button" onClick={onDiscard} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">
+        <button data-ui-part="" type="button" onClick={onDiscard} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">
           Cancel
         </button>
       </div>
@@ -352,6 +353,7 @@ function GroupCard({ group, currentUserId, isSelected, onSelect, onDelete }: {
 
   return (
     <div
+      data-ui-part=""
       role="button"
       tabIndex={0}
       aria-pressed={isSelected}
@@ -379,11 +381,11 @@ function GroupCard({ group, currentUserId, isSelected, onSelect, onDelete }: {
         <div className="shrink-0" onClick={e => e.stopPropagation()}>
           {confirmDeleteId === group.groupId ? (
             <div role="group" aria-label="Confirm delete group" className="flex items-center gap-1">
-              <button onClick={() => setConfirmDeleteId(null)} className="text-xs text-text-secondary bg-transparent border border-border rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
-              <button onClick={() => { void onDelete(group.groupId); setConfirmDeleteId(null); }} className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]">Delete</button>
+              <button data-ui-part="" onClick={() => setConfirmDeleteId(null)} className="text-xs text-text-secondary bg-transparent border border-border rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
+              <button data-ui-part="" onClick={() => { void onDelete(group.groupId); setConfirmDeleteId(null); }} className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]">Delete</button>
             </div>
           ) : (
-            <button onClick={() => setConfirmDeleteId(group.groupId)} className="text-xs text-danger-fg bg-transparent border-none cursor-pointer px-2 py-1 font-[system-ui,-apple-system,sans-serif]" aria-label={`Delete group ${group.name}`}>Delete</button>
+            <button data-ui-part="" onClick={() => setConfirmDeleteId(group.groupId)} className="text-xs text-danger-fg bg-transparent border-none cursor-pointer px-2 py-1 font-[system-ui,-apple-system,sans-serif]" aria-label={`Delete group ${group.name}`}>Delete</button>
           )}
         </div>
       )}
@@ -414,7 +416,7 @@ function InviteForm({ groupId, onInvite }: { groupId: string; onInvite: (groupId
     <>
       <form onSubmit={(e) => { void handleSubmit(e); }} className="flex gap-2 mt-2">
         <Input className="flex-1" value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" />
-        <button type="submit" disabled={!userId.trim()} className={cn(
+        <button data-ui-part="" type="submit" disabled={!userId.trim()} className={cn(
           'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
           !userId.trim() ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-on-primary border-none cursor-pointer',
         )}>Invite</button>
@@ -482,20 +484,20 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
           <form onSubmit={(e) => { void handleCreateRoom(e); }} className="mb-2 p-3 bg-surface-panel rounded-lg border border-border">
             <div className="flex gap-2">
               <Input className="flex-1" value={roomName} onChange={e => setRoomName(e.target.value.slice(0, 50))} placeholder="Room name" maxLength={50} required />
-              <button type="submit" disabled={!roomName.trim() || loading} className={cn(
+              <button data-ui-part="" type="submit" disabled={!roomName.trim() || loading} className={cn(
                 'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
                 !roomName.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-on-primary border-none cursor-pointer',
               )}>
                 {loading ? 'Creating…' : 'Create Room'}
               </button>
-              <button type="button" onClick={() => setShowCreateForm(false)} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
+              <button data-ui-part="" type="button" onClick={() => setShowCreateForm(false)} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
             </div>
             {roomError && (
               <div role="alert" data-testid="group-room-error" className="text-danger-fg text-[13px] mt-1.5">{roomError}</div>
             )}
           </form>
         ) : (
-          <button onClick={() => setShowCreateForm(true)} className="w-full h-9 mb-2 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]">Create Room</button>
+          <button data-ui-part="" onClick={() => setShowCreateForm(true)} className="w-full h-9 mb-2 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]">Create Room</button>
         )
       )}
       {groupRooms.length === 0 ? (
@@ -584,6 +586,7 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
     return (
       <div className="px-2 pt-2">
         <button
+          data-ui-part=""
           onClick={() => setShowCreateForm(prev => !prev)}
           className="w-full text-left px-2 py-1 bg-transparent border-none cursor-pointer text-xs text-primary font-semibold font-[system-ui,-apple-system,sans-serif] rounded"
         >
@@ -604,6 +607,7 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
               <div>Couldn&rsquo;t load groups.</div>
               <div className="text-text-tertiary mt-0.5">{loadError}</div>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => { void refresh(); }}
                 className="mt-1 text-[11px] text-primary bg-transparent border-none cursor-pointer p-0 font-[inherit]"
@@ -664,6 +668,7 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
             <div className="text-sm font-semibold text-danger-fg mb-1">Couldn&rsquo;t load groups</div>
             <div className="text-sm text-text-tertiary mb-2">{loadError}</div>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => { void refresh(); }}
               className="text-sm text-primary bg-transparent border border-border rounded-lg px-3 py-1 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
@@ -694,6 +699,7 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
       )}
 
       <button
+        data-ui-part=""
         onClick={() => setShowCreateForm(prev => !prev)}
         className={cn('w-full h-9 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]', showCreateForm && 'mb-2')}
       >

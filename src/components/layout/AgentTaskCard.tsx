@@ -58,6 +58,7 @@ export function AgentTaskCard({
   const footer = [startedLabel, phase].filter(Boolean).join(' · ');
   return (
     <section
+      data-ui-part=""
       data-testid={testId}
       data-status={status}
       aria-label={`Current task: ${title}`}

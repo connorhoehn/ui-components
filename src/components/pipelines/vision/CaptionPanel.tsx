@@ -16,7 +16,7 @@ export function CaptionPanel({ result, className }: CaptionPanelProps) {
     return null;
   }
   return (
-    <section className={cn('flex flex-col gap-2', className)}>
+    <section data-ui-part="" className={cn('flex flex-col gap-2', className)}>
       {caption ? (
         <p className="text-base leading-relaxed text-text-primary">{caption}</p>
       ) : null}

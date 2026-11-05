@@ -168,6 +168,7 @@ export function LabRail({
       <div className="flex items-center px-3 py-1.5 border-y border-code-border shrink-0">
         {canManage && onCreate ? (
           <button
+            data-ui-part=""
             type="button"
             onClick={onCreate}
             className="text-[11px] font-mono text-code-green bg-transparent border-none cursor-pointer p-0 hover:underline"
@@ -182,6 +183,7 @@ export function LabRail({
             labelled "menu" that opens "Keyboard shortcuts" read as two
             different things in the audit that found it. */}
         <button
+          data-ui-part=""
           type="button"
           onClick={onOpenMenu}
           aria-label="Keyboard shortcuts"
@@ -204,6 +206,7 @@ export function LabRail({
         open={open}
         action={
           <button
+            data-ui-part=""
             type="button"
             onClick={onToggleShowAll}
             aria-pressed={showAllActivity}
@@ -350,6 +353,7 @@ function RailSection({
         )}
       >
       <button
+        data-ui-part=""
         data-rail-row
         type="button"
         role="option"
@@ -410,6 +414,7 @@ function RailSection({
       </button>
       {onWatch && (
         <button
+          data-ui-part=""
           type="button"
           tabIndex={-1}
           onClick={() => onWatch(computer)}

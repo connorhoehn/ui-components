@@ -155,6 +155,7 @@ export function MediaEffectsPreviewPanel({
   if (variant === 'surface') {
     return (
       <section
+        data-ui-part=""
         data-testid={testId}
         data-variant="surface"
         data-preview-active={previewActive ? 'true' : 'false'}
@@ -229,6 +230,7 @@ export function MediaEffectsPreviewPanel({
 
   return (
     <section
+      data-ui-part=""
       data-testid={testId}
       data-preview-active={previewActive ? 'true' : 'false'}
       data-preview-dirty={isDirty ? 'true' : 'false'}
@@ -307,6 +309,7 @@ export function MediaEffectsPreviewPanel({
           {isDirty ? 'Not shared yet' : 'Nothing to apply'}
         </span>
         <button
+          data-ui-part=""
           type="button"
           onClick={onCancel}
           data-testid="media-effects-preview-cancel"
@@ -315,6 +318,7 @@ export function MediaEffectsPreviewPanel({
           Cancel
         </button>
         <button
+          data-ui-part=""
           type="button"
           onClick={onApply}
           disabled={!canApply}

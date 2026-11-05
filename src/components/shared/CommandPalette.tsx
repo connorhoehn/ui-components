@@ -739,6 +739,7 @@ export function CommandPalette({
             >
               <span className="flex-1">Couldn&rsquo;t search records.</span>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={retry}
                 className="rounded border border-border px-2 py-0.5 text-xs hover:bg-surface-hover"
@@ -767,6 +768,7 @@ export function CommandPaletteHint({ className, label = 'Search', size = 'sm' }:
   const { toggle } = useInternal();
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={toggle}
       data-testid="command-palette-hint"

@@ -94,7 +94,7 @@ export function WorkspaceRail({
               {back.label}
             </a>
           ) : (
-            <button type="button" onClick={back.onClick} className={BACK_CLASS} data-testid={`${testId}-back`}>
+            <button data-ui-part="" type="button" onClick={back.onClick} className={BACK_CLASS} data-testid={`${testId}-back`}>
               <ChevronIcon dir="left" size={14} />
               {back.label}
             </button>

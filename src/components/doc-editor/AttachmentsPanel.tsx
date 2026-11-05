@@ -116,6 +116,7 @@ function AddFileForm({ onAdd, onCancel }: { onAdd: (name: string, url: string) =
         className={cn('flex-[2] min-w-[120px]')}
       />
       <button
+        data-ui-part=""
         type="button"
         disabled={!valid}
         onClick={() => { if (valid) onAdd(name, url); }}
@@ -123,7 +124,7 @@ function AddFileForm({ onAdd, onCancel }: { onAdd: (name: string, url: string) =
       >
         Attach
       </button>
-      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-neutral cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
+      <button data-ui-part="" type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-neutral cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
     </div>
   );
 }
@@ -143,6 +144,7 @@ function AddDocumentForm({ onAdd, onCancel }: { onAdd: (title: string) => void; 
         className={cn('flex-1 min-w-[120px]')}
       />
       <button
+        data-ui-part=""
         type="button"
         disabled={!valid}
         onClick={() => { if (valid) onAdd(title); }}
@@ -150,7 +152,7 @@ function AddDocumentForm({ onAdd, onCancel }: { onAdd: (title: string) => void; 
       >
         Link
       </button>
-      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-neutral cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
+      <button data-ui-part="" type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-neutral cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
     </div>
   );
 }
@@ -192,6 +194,7 @@ function AttachmentRow({ attachment, onRemove, editable }: {
       </div>
       {editable && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onRemove}
           title="Remove"
@@ -237,6 +240,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
         {editable && addMode === null && (
           <div className={cn('flex gap-1.5')}>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => setAddMode('file')}
               className={cn('text-xs px-2.5 py-1 font-semibold bg-surface border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}
@@ -244,6 +248,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
               + File
             </button>
             <button
+              data-ui-part=""
               type="button"
               onClick={() => setAddMode('document')}
               className={cn('text-xs px-2.5 py-1 font-semibold bg-surface border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}

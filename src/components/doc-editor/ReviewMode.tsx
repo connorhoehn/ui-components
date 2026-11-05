@@ -293,6 +293,7 @@ export default function ReviewMode({
                     />
                     {isChanging && (
                       <button
+                        data-ui-part=""
                         data-testid={`section-${section.id}-cancel-change`}
                         onClick={() => setChangingReview((prev) => ({ ...prev, [section.id]: false }))}
                         className={cn('bg-transparent border-none text-text-secondary text-xs cursor-pointer underline')}
@@ -318,6 +319,7 @@ export default function ReviewMode({
                       })}
                     </span>
                     <button
+                      data-ui-part=""
                       data-testid={`section-${section.id}-change-review`}
                       onClick={() => setChangingReview((prev) => ({ ...prev, [section.id]: true }))}
                       className={cn('bg-transparent border-none text-info-fg text-xs cursor-pointer underline p-0')}
@@ -446,6 +448,7 @@ function ReviewButton({ label, bg, color, hoverBg, onClick, testid }: {
   const [hovered, setHovered] = useState(false);
   return (
     <button
+      data-ui-part=""
       data-testid={testid}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}

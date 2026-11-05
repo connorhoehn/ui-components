@@ -95,6 +95,7 @@ function CreatePostForm({ onCreate, loading }: CreatePostFormProps) {
       />
       <div className="flex justify-end">
         <button
+          data-ui-part=""
           type="submit"
           disabled={!content.trim() || loading}
           className={cn(
@@ -131,6 +132,7 @@ function LikeButton({ isLiked, likeCount, whoLiked, toggle }: LikeButtonProps) {
   return (
     <>
       <button
+        data-ui-part=""
         onClick={() => void toggle()}
         aria-label="Like post"
         className="bg-transparent border-none cursor-pointer flex items-center gap-1 p-0 font-[system-ui,-apple-system,sans-serif]"
@@ -161,6 +163,7 @@ function EmojiReactionBar({ reactWithEmoji }: EmojiReactionBarProps) {
     <div className="flex flex-wrap gap-0">
       {EMOJIS.map(emoji => (
         <button
+          data-ui-part=""
           key={emoji}
           onClick={() => void reactWithEmoji(emoji)}
           className="text-base bg-transparent border-none px-1 py-0.5 cursor-pointer"
@@ -269,6 +272,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
           />
           <div className="flex gap-2">
             <button
+              data-ui-part=""
               onClick={() => { void handleEditSave(); }}
               disabled={!editContent.trim()}
               className={cn(
@@ -281,6 +285,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
               Save
             </button>
             <button
+              data-ui-part=""
               onClick={() => { setEditMode(false); setEditContent(post.content); }}
               className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]"
             >
@@ -299,6 +304,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
         <LikeButton isLiked={isLiked} likeCount={likeCount} whoLiked={whoLiked} toggle={toggle} />
         <EmojiReactionBar reactWithEmoji={reactWithEmoji} />
         <button
+          data-ui-part=""
           onClick={() => setShowComments(prev => !prev)}
           className="bg-transparent border-none text-sm text-text-secondary cursor-pointer font-[system-ui,-apple-system,sans-serif] p-0"
         >
@@ -306,6 +312,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
         </button>
         {isOwn && !editMode && (
           <button
+            data-ui-part=""
             onClick={() => setEditMode(true)}
             className="bg-transparent border-none text-sm text-text-tertiary cursor-pointer font-[system-ui,-apple-system,sans-serif] p-0"
           >
@@ -314,6 +321,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
         )}
         {isOwn && !showConfirmDelete && !editMode && (
           <button
+            data-ui-part=""
             onClick={() => setShowConfirmDelete(true)}
             className="bg-transparent border-none text-sm text-text-tertiary cursor-pointer font-[system-ui,-apple-system,sans-serif] p-0"
           >
@@ -324,12 +332,14 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
           <div role="group" aria-label="Confirm delete post" className="flex gap-1.5 items-center">
             <span className="text-xs text-text-primary">Delete this post?</span>
             <button
+              data-ui-part=""
               onClick={() => setShowConfirmDelete(false)}
               className="text-xs text-text-secondary bg-transparent border border-border rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
             >
               Cancel
             </button>
             <button
+              data-ui-part=""
               onClick={() => { void handleDelete(); }}
               className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
             >
@@ -377,6 +387,7 @@ export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
       <div className="border-t border-border my-4" />
       {hasMore && (
         <button
+          data-ui-part=""
           onClick={() => void loadMore()}
           disabled={loading}
           className={cn(

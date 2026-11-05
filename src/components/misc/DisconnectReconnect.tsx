@@ -22,6 +22,7 @@ export function DisconnectReconnect({ connectionState, onDisconnect, onReconnect
   return (
     <div className="flex items-center gap-3 flex-wrap">
       <button
+        data-ui-part=""
         onClick={onDisconnect}
         disabled={isDisconnected}
         className={cn(
@@ -35,6 +36,7 @@ export function DisconnectReconnect({ connectionState, onDisconnect, onReconnect
       </button>
 
       <button
+        data-ui-part=""
         onClick={onReconnect}
         disabled={isActiveOrConnecting}
         className={cn(

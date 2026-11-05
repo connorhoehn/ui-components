@@ -288,6 +288,7 @@ export default function PipelineMetrics({ idToken: idTokenProp, baseUrl: baseUrl
       <div className="p-6 flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <button
+            data-ui-part=""
             type="button"
             onClick={() => navigate('/pipelines')}
             className="bg-transparent border-none text-primary cursor-pointer text-[13px] p-0"
@@ -330,6 +331,7 @@ export default function PipelineMetrics({ idToken: idTokenProp, baseUrl: baseUrl
       {/* Top bar */}
       <div className="flex items-center gap-3">
         <button
+          data-ui-part=""
           type="button"
           onClick={() => navigate('/pipelines')}
           className="bg-transparent border-none text-primary cursor-pointer text-[13px] p-0"
@@ -353,6 +355,7 @@ export default function PipelineMetrics({ idToken: idTokenProp, baseUrl: baseUrl
             Updated {relativeTimeAgo(m.asOf)}
           </span>
           <button
+            data-ui-part=""
             type="button"
             onClick={() => void fetchMetrics()}
             className="px-2.5 py-1 text-xs font-medium bg-surface text-text-secondary border border-border rounded cursor-pointer font-[inherit]"

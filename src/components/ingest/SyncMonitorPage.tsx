@@ -158,6 +158,7 @@ export default function SyncMonitorPage() {
           </span>
         </div>
         <button
+          data-ui-part=""
           className="px-3.5 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
           onClick={() => navigate('/ingest/sources')}
         >
@@ -252,6 +253,7 @@ export default function SyncMonitorPage() {
               options={EVENT_TYPE_BUCKETS.map((b) => ({ value: b.value, label: b.label }))}
             />
             <button
+              data-ui-part=""
               data-testid="event-pause-toggle"
               className="px-2.5 py-0.5 text-[11px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
               onClick={() => setPaused((p) => !p)}
@@ -261,6 +263,7 @@ export default function SyncMonitorPage() {
             </button>
             {events.length > 0 && (
               <button
+                data-ui-part=""
                 className="px-2.5 py-0.5 text-[11px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
                 onClick={clearEvents}
               >

@@ -380,6 +380,7 @@ function RingingView({
       <div className="flex gap-4">
         {onDecline && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onDecline}
             className="w-11 h-11 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center hover:bg-danger transition-colors"
@@ -390,6 +391,7 @@ function RingingView({
         )}
         {onAnswer && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onAnswer}
             className="w-11 h-11 rounded-full bg-success text-white border-none cursor-pointer flex items-center justify-center hover:bg-success transition-colors"
@@ -646,6 +648,7 @@ function MinimizedPill({
       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
         {state === 'active' && onToggleMute && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onToggleMute}
             className={cn(
@@ -676,6 +679,7 @@ function MinimizedPill({
             button on the collapsed bar that did nothing. */}
         {onEndCall && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onEndCall}
             className="w-6 h-6 rounded-full bg-danger text-white flex items-center justify-center border-none cursor-pointer hover:bg-danger transition-colors"
@@ -1287,6 +1291,7 @@ export function CallWidget({
                     not see, and the operator was right to send it back. */}
                 {hasMoved && (
                   <button
+                    data-ui-part=""
                     type="button"
                     onClick={resetOffset}
                     className="w-5 h-5 flex items-center justify-center border-none bg-transparent text-white/40 hover:text-white/80 cursor-pointer rounded transition-colors"
@@ -1298,6 +1303,7 @@ export function CallWidget({
                 )}
                 {onExpand && (
                   <button
+                    data-ui-part=""
                     type="button"
                     onClick={onExpand}
                     className="w-5 h-5 flex items-center justify-center border-none bg-transparent text-white/40 hover:text-white/80 cursor-pointer rounded transition-colors"
@@ -1310,6 +1316,7 @@ export function CallWidget({
                 )}
                 {onMinimize && (
                   <button
+                    data-ui-part=""
                     type="button"
                     onClick={onMinimize}
                     className="w-5 h-5 flex items-center justify-center border-none bg-transparent text-white/40 hover:text-white/80 cursor-pointer rounded transition-colors"

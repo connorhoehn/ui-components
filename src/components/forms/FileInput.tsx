@@ -37,6 +37,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(function F
 ) {
   return (
     <input
+      data-ui-part=""
       ref={ref}
       type="file"
       aria-hidden="true"

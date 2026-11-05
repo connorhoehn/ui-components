@@ -89,6 +89,7 @@ export function DecisionBlock({
                 <span className="flex-1" />
                 {editable && onRemove && (
                     <button
+                        data-ui-part=""
                         type="button"
                         aria-label="Remove this decision"
                         onClick={onRemove}

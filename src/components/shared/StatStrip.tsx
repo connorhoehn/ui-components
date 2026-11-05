@@ -286,7 +286,7 @@ export function StatStrip({
             cluster = <a href={item.href} className="min-w-0 rounded no-underline hover:underline" {...tip}>{inner}</a>;
           } else if (item.onSelect) {
             cluster = (
-              <button type="button" onClick={item.onSelect} className="min-w-0 cursor-pointer rounded border-none bg-transparent p-0 text-left hover:underline" {...tip}>
+              <button data-ui-part="" type="button" onClick={item.onSelect} className="min-w-0 cursor-pointer rounded border-none bg-transparent p-0 text-left hover:underline" {...tip}>
                 {inner}
               </button>
             );
@@ -324,7 +324,7 @@ export function StatStrip({
           }
           if (item.onSelect) {
             return (
-              <button key={item.label} type="button" onClick={item.onSelect} className="min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left hover:bg-surface-hover" {...tip}>
+              <button data-ui-part="" key={item.label} type="button" onClick={item.onSelect} className="min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left hover:bg-surface-hover" {...tip}>
                 {inner}
               </button>
             );
@@ -358,6 +358,7 @@ export function StatStrip({
         } else if (item.onSelect) {
           cluster = (
             <button
+              data-ui-part=""
               type="button"
               onClick={item.onSelect}
               className={cn('min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left transition-colors hover:bg-surface-hover', flow && NARROW.cell)}

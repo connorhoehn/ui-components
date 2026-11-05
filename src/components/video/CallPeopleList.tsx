@@ -110,7 +110,7 @@ export function CallPeopleList({
   'data-testid': testId = 'call-people-list',
 }: CallPeopleListProps) {
   return (
-    <section className={cn('flex flex-col', className)} data-testid={testId} aria-label="People">
+    <section data-ui-part="" className={cn('flex flex-col', className)} data-testid={testId} aria-label="People">
       {!hideHeading && (
         <div className="mb-2 flex items-center gap-2">
           <h3 className="m-0 text-base font-semibold text-text-primary">People</h3>

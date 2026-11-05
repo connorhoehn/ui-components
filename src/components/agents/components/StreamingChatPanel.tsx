@@ -200,6 +200,7 @@ export function StreamingChatPanel({
         />
         {isStreaming && onCancel ? (
           <button
+            data-ui-part=""
             onClick={onCancel}
             className="text-sm px-4 py-2.5 bg-danger text-white rounded-lg hover:bg-danger transition-colors font-medium"
           >
@@ -207,6 +208,7 @@ export function StreamingChatPanel({
           </button>
         ) : (
           <button
+            data-ui-part=""
             onClick={handleSend}
             disabled={!input.trim() || isStreaming}
             className={cn(

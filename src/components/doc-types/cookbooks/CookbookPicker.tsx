@@ -132,6 +132,7 @@ function CookbookCard({
           Disabling would say "no" without saying where the first one went. */}
       {installed ? (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${cardPrefix}-installed-${cookbook.id}`}
           onClick={onOpenInstalled ? () => onOpenInstalled(cookbook) : undefined}
@@ -146,6 +147,7 @@ function CookbookCard({
         </button>
       ) : (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${cardPrefix}-use-${cookbook.id}`}
           onClick={() => onPick(cookbook)}
@@ -217,6 +219,7 @@ export function CookbookPicker({
           swap alone said nothing. */}
       <div role="group" aria-label="Filter by category" className="flex flex-wrap gap-1.5 mb-2.5">
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${cardPrefix}-cat-all`}
           aria-pressed={activeCategory === 'All'}
@@ -232,6 +235,7 @@ export function CookbookPicker({
         </button>
         {COOKBOOK_CATEGORIES.map((cat) => (
           <button
+            data-ui-part=""
             type="button"
             key={cat}
             data-testid={`${cardPrefix}-cat-${categorySlug(cat)}`}

@@ -169,6 +169,7 @@ export function MachinePresenceMenu({
   return (
     <>
       <button
+        data-ui-part=""
         ref={triggerRef}
         type="button"
         aria-haspopup="dialog"
@@ -233,6 +234,7 @@ export function MachinePresenceMenu({
             <div className="flex items-center gap-2 border-t border-border pt-2">
               {onOpenLab && (
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => { setOpen(false); onOpenLab(); }}
                   className="text-[11px] font-medium text-primary hover:underline cursor-pointer bg-transparent border-0 p-0"
@@ -243,6 +245,7 @@ export function MachinePresenceMenu({
               <span className="flex-1" />
               {onManage && (
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => { setOpen(false); onManage(); }}
                   className="text-[11px] text-text-secondary hover:underline cursor-pointer bg-transparent border-0 p-0"

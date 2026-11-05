@@ -88,6 +88,7 @@ export function ReactionsBar({
     >
       {collapsed.map((r) => (
         <button
+          data-ui-part=""
           key={r.emoji}
           type="button"
           onClick={() => handleChipClick(r.emoji)}
@@ -112,6 +113,7 @@ export function ReactionsBar({
 
       {!hideAddTrigger && (
         <button
+          data-ui-part=""
           ref={triggerRef}
           type="button"
           onClick={() => !disabled && setPickerOpen((v) => !v)}

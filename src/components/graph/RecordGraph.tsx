@@ -266,6 +266,7 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
     <div className="relative flex h-[104px] w-[140px] flex-col items-center" data-record-key={recordGraphKey(record)}>
       <Handle type="target" position={Position.Left} isConnectable={false} className="opacity-0" />
       <button
+        data-ui-part=""
         type="button"
         onClick={onToggle}
         aria-pressed={selected}

@@ -1153,7 +1153,7 @@ export default function CanvasDocumentView({
         <div ref={contentsRef} tabIndex={-1} data-testid={`${testId}-contents`} className="doc-reading-contents">
           <p className="doc-reading-contents-title">Contents</p>
           <nav aria-label="Document contents">
-            {readingEntries.map(entry => <button key={entry.id} type="button" className="doc-reading-contents-entry"
+            {readingEntries.map(entry => <button data-ui-part="" key={entry.id} type="button" className="doc-reading-contents-entry"
               data-depth={entry.number.split('.').length} aria-current={readingSection === entry.id ? 'location' : undefined}
               onClick={() => goToReadingSection(entry.id)}>
               <span className="doc-reading-section-number">{entry.number}.</span>

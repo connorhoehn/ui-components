@@ -16,7 +16,7 @@ export interface PeoplePanelProps {
 export function PeoplePanel({ people, highlightedIndex, onSelect, className }: PeoplePanelProps) {
   if (!people || people.length === 0) return null;
   return (
-    <section className={cn('flex flex-col gap-1.5', className)}>
+    <section data-ui-part="" className={cn('flex flex-col gap-1.5', className)}>
       <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
         People ({people.length})
       </h4>
@@ -64,6 +64,7 @@ export function PeoplePanel({ people, highlightedIndex, onSelect, className }: P
             return (
               <li key={p.index}>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => onSelect(p)}
                   className={cn(

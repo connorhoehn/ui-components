@@ -57,6 +57,7 @@ export function AgentDirectory({
         />
         <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Filter by status">
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setActiveStatus(null)}
             className={cn(
@@ -70,6 +71,7 @@ export function AgentDirectory({
           </button>
           {filters.map((status) => (
             <button
+              data-ui-part=""
               key={status}
               type="button"
               onClick={() => setActiveStatus(activeStatus === status ? null : status)}

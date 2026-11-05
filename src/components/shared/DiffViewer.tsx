@@ -175,6 +175,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
   return (
     <div className="border border-border rounded-lg overflow-hidden bg-surface">
       <button
+        data-ui-part=""
         type="button"
         onClick={onToggle}
         aria-expanded={!collapsed}
@@ -201,7 +202,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
           {file.binary ? (
             <div className="px-3 py-2 text-[12px] text-text-tertiary">Binary file — no text diff.</div>
           ) : (
-            <table data-ui-table-rows="code-diff" className="w-full border-collapse font-mono text-xs leading-[1.5]">
+            <table data-ui-part="" data-ui-table-rows="code-diff" className="w-full border-collapse font-mono text-xs leading-[1.5]">
               <tbody>
                 {shown.map((l, i) => (
                   l.kind === 'hunk' ? (
@@ -319,6 +320,7 @@ export function DiffViewer({
         </span>
         {files.map((f) => (
           <button
+            data-ui-part=""
             key={f.path}
             type="button"
             onClick={() => jumpTo(f.path)}

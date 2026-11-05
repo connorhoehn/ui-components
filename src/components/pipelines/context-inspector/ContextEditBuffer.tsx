@@ -61,6 +61,7 @@ function ObjectEditor({ k, initial, onCommit, onError, onFocus }: ObjectEditorPr
   });
   return (
     <textarea
+      data-ui-part=""
       data-testid={`context-edit-input-${k}`}
       value={text}
       onChange={(e) => setText(e.target.value)}
@@ -145,6 +146,7 @@ export function ContextEditBuffer({
                 />
               ) : kind === 'number' ? (
                 <input
+                  data-ui-part=""
                   data-testid={`context-edit-input-${key}`}
                   type="number"
                   value={String(baseValue as number)}
@@ -157,6 +159,7 @@ export function ContextEditBuffer({
                 />
               ) : kind === 'string' ? (
                 <input
+                  data-ui-part=""
                   data-testid={`context-edit-input-${key}`}
                   type="text"
                   value={(baseValue as string) ?? ''}
@@ -185,6 +188,7 @@ export function ContextEditBuffer({
             <div className="flex gap-1">
               {dirty && (
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid={`context-edit-revert-${key}`}
                   onClick={() => onRemoveKey(key)}
@@ -205,6 +209,7 @@ export function ContextEditBuffer({
         data-testid="context-edit-add-row"
       >
         <input
+          data-ui-part=""
           data-testid="context-edit-new-key"
           type="text"
           placeholder="key"
@@ -213,6 +218,7 @@ export function ContextEditBuffer({
           className={inputClasses}
         />
         <input
+          data-ui-part=""
           data-testid="context-edit-new-value"
           type="text"
           placeholder="value (string or JSON)"
@@ -227,6 +233,7 @@ export function ContextEditBuffer({
           className={inputClasses}
         />
         <button
+          data-ui-part=""
           type="button"
           data-testid="context-edit-add-btn"
           onClick={onCommitNewKey}

@@ -91,6 +91,7 @@ export default function RunsTable({
 
   return (
     <table
+      data-ui-part=""
       className="w-full border-collapse text-[13px] bg-surface border border-border rounded-lg overflow-hidden"
     >
       <thead>
@@ -169,6 +170,7 @@ export default function RunsTable({
                 {/* Invisible test hook, not a user-facing control — stays a
                     raw input on purpose (tabIndex=-1, zero-size, no pointer). */}
                 <input
+                  data-ui-part=""
                   type="checkbox"
                   data-testid={`run-compare-pick-${r.id}`}
                   checked={comparePair.includes(r.id)}
@@ -237,6 +239,7 @@ export default function RunsTable({
               <td className="px-3 py-2.5 text-xs text-text-secondary text-right" onClick={(e) => e.stopPropagation()}>
                 {isStuck && (
                   <button
+                    data-ui-part=""
                     type="button"
                     data-testid={`force-fail-${r.id}`}
                     onClick={async (e) => {
@@ -256,6 +259,7 @@ export default function RunsTable({
                 )}
                 {r.status === 'failed' && r.error?.nodeId && r.error.nodeId !== 'unknown' && (
                   <button
+                    data-ui-part=""
                     type="button"
                     data-testid={`retry-from-failed-step-${r.id}`}
                     onClick={(e) => { e.stopPropagation(); onOpenRetryModal(r); }}
@@ -266,6 +270,7 @@ export default function RunsTable({
                   </button>
                 )}
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid={`run-view-${r.id}`}
                   aria-label={`View run ${r.id.slice(0, 8)}`}

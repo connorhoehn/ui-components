@@ -67,7 +67,7 @@ export function RailSection({ title, children, className, variant: variantProp }
   const variant = variantProp ?? inheritedVariant;
   const Heading = variant === 'plain' ? 'h2' : 'h3';
   return (
-    <section className={cn('border-b border-border py-3 last:border-b-0', variant === 'card' && 'px-3.5', className)}>
+    <section data-ui-part="" className={cn('border-b border-border py-3 last:border-b-0', variant === 'card' && 'px-3.5', className)}>
       {/* The shared rail group label (railType, 2.397.1) — was 10px, the one
           rail heading left off the 2.397.0 scale. */}
       <Heading className={cn('mb-2', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid="rail-section-title">{title}</Heading>

@@ -70,6 +70,7 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
           </span>
           {info.onRetry && (
             <button
+              data-ui-part=""
               type="button"
               onClick={info.onRetry}
               className="ml-2 bg-transparent border border-border-emphasis rounded px-1.5 py-0.5 text-[11px] cursor-pointer text-text-secondary"
@@ -104,6 +105,7 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
     <div>
       <output aria-live="polite" className="sr-only">{liveStatus}</output>
       <button
+        data-ui-part=""
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="bg-transparent border-none p-0 cursor-pointer font-inherit text-[12px] text-text-secondary font-medium text-left"
@@ -130,6 +132,7 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
       </button>
       {isCompleted && info.imageId && (
         <button
+          data-ui-part=""
           type="button"
           onClick={() => window.dispatchEvent(new CustomEvent('pipeline:open-run-modal'))}
           className="mt-1 block bg-transparent border-none p-0 cursor-pointer text-[11px] text-primary underline font-inherit"
@@ -140,6 +143,7 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
       {info.imageId && (
         <>
           <button
+            data-ui-part=""
             type="button"
             aria-label="View vision input image"
             className={cn(

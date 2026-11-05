@@ -52,6 +52,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <input
+        data-ui-part=""
         ref={ref}
         id={id}
         type="range"
@@ -64,6 +65,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className="flex-1 w-full min-w-0 accent-primary cursor-pointer disabled:cursor-not-allowed"
         data-testid={testId}
+        data-ui-control="slider"
       />
       {readout !== false && (
         <output

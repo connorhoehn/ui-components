@@ -327,6 +327,7 @@ export function FieldBlock({
 
             {field.value !== undefined && (
                 <button
+                    data-ui-part=""
                     type="button"
                     data-testid={`${testId}-clear`}
                     onClick={() => onValueChange?.(undefined)}
@@ -356,6 +357,7 @@ export function FieldBlock({
 
             {onRemove && (
                 <button
+                    data-ui-part=""
                     type="button"
                     aria-label="Remove this field"
                     data-testid={`${testId}-remove`}

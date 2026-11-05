@@ -35,7 +35,7 @@ export function WorkPaneBanner({ banner }: { banner: WorkActivityBanner }) {
 
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <section className="space-y-1.5">
+    <section data-ui-part="" className="space-y-1.5">
       <h3 className="text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">{label}</h3>
       {children}
     </section>
@@ -55,7 +55,7 @@ function ReferenceRow({ item, onSelect }: { item: WorkActivityReference; onSelec
   );
   if (!item.selection || !onSelect) return <div className="flex gap-2 rounded-md border border-border p-2">{body}</div>;
   return (
-    <button type="button" className="flex w-full gap-2 rounded-md border border-border p-2 text-left hover:border-border-emphasis focus-visible:outline-2 focus-visible:outline-primary" onClick={() => onSelect(item.selection!)}>
+    <button data-ui-part="" type="button" className="flex w-full gap-2 rounded-md border border-border p-2 text-left hover:border-border-emphasis focus-visible:outline-2 focus-visible:outline-primary" onClick={() => onSelect(item.selection!)}>
       {body}
     </button>
   );
@@ -239,7 +239,7 @@ export function WorkNodePane({
     // Escape closes the pane from anywhere inside it, as it does from the
     // canvas: a host that draws the pane outside the graph (Active Now's
     // CanvasPaneLayout) otherwise left the keyboard no way out but Tab.
-    <section aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)} onKeyDown={(event) => { if (event.key === 'Escape' && !event.defaultPrevented) { event.stopPropagation(); onClose(); } }}>
+    <section data-ui-part="" aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)} onKeyDown={(event) => { if (event.key === 'Escape' && !event.defaultPrevented) { event.stopPropagation(); onClose(); } }}>
       <header className="flex shrink-0 items-start justify-between gap-2 border-b border-border px-3 py-2">
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</span>

@@ -169,7 +169,7 @@ export default function AllRunsPage() {
         />
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-[13px]">
+          <table data-ui-part="" className="w-full border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-border">
                 <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-left">Pipeline</th>
@@ -184,6 +184,7 @@ export default function AllRunsPage() {
             <tbody>
               {filtered.map((run) => (
                 <tr
+                  data-ui-part=""
                   key={run.id}
                   role="button"
                   tabIndex={0}

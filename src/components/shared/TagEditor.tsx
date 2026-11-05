@@ -110,6 +110,7 @@ export default function TagEditor({
         >
           {tag}
           <button
+            data-ui-part=""
             type="button"
             aria-label={`Remove tag ${tag}`}
             onClick={() => removeTag(tag)}
@@ -121,6 +122,7 @@ export default function TagEditor({
       ))}
       <div className="relative">
         <input
+          data-ui-part=""
           ref={inputRef}
           data-testid="tag-editor-input"
           type="text"
@@ -146,6 +148,7 @@ export default function TagEditor({
           >
             {shownSuggestions.map((s) => (
               <button
+                data-ui-part=""
                 key={s}
                 type="button"
                 onMouseDown={(e) => {

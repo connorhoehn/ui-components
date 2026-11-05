@@ -113,6 +113,7 @@ export default function PipelinesFilterBar({
             : (DEFAULT_STATUS_KEYS as readonly StatusKey[]).includes(s);
           return (
             <button
+              data-ui-part=""
               key={s}
               type="button"
               role="checkbox"

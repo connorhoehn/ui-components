@@ -34,6 +34,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
   return (
     <div className="flex items-center gap-2 py-[5px] border-b border-border-subtle">
       <input
+        data-ui-part=""
         type="checkbox"
         checked={done}
         onChange={() => onUpdate({ status: done ? 'pending' : 'done' })}
@@ -41,6 +42,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
         className={cn('w-[15px] h-[15px] accent-success shrink-0', editable ? 'cursor-pointer' : 'cursor-default')}
       />
       <input
+        data-ui-part=""
         ref={inputRef}
         type="text"
         value={item.text}
@@ -54,6 +56,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
       />
       {editable && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onRemove}
           className="border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none"
@@ -149,6 +152,7 @@ export default function ChecklistEditorRenderer({
 
       {editable && (
         <button
+          data-ui-part=""
           type="button"
           onClick={handleAdd}
           className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer"

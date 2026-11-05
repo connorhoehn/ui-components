@@ -169,6 +169,7 @@ export default function SectionBlock({
       {/* Comment icon button — top-right of section card */}
       {onOpenComments && (
         <button
+          data-ui-part=""
           type="button"
           onClick={(e) => { e.stopPropagation(); onOpenComments(section.id); }}
           onMouseEnter={() => setCommentHovered(true)}
@@ -203,6 +204,7 @@ export default function SectionBlock({
       )}
       <div className={cn('flex items-center gap-2 py-2.5 px-3.5 bg-surface-panel border-b border-border rounded-t-lg')}>
         <button
+          data-ui-part=""
           type="button"
           onClick={toggleCollapse}
           className={cn(

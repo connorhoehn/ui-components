@@ -124,7 +124,7 @@ export default function IngestAuditPage() {
           testId="audit-empty"
         />
       ) : (
-        <table data-testid="audit-table" className="w-full border-collapse bg-surface border border-border rounded-[10px] overflow-hidden">
+        <table data-ui-part="" data-testid="audit-table" className="w-full border-collapse bg-surface border border-border rounded-[10px] overflow-hidden">
           <thead>
             <tr>
               <th className="text-left text-[11px] font-semibold text-text-tertiary uppercase p-2 border-b border-border">Time</th>
@@ -164,6 +164,7 @@ function AuditRow({ entry, expanded, onToggle }: { entry: IngestAuditEntry; expa
         <td className="text-[13px] p-2 align-top border-b border-border">{entry.summary}</td>
         <td className="text-[13px] p-2 align-top border-b border-border">
           <button
+            data-ui-part=""
             data-testid={`audit-detail-toggle-${entry.auditId}`}
             className="text-[11px] text-primary bg-transparent border-none p-0 cursor-pointer underline"
             onClick={onToggle}

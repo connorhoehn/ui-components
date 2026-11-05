@@ -174,6 +174,7 @@ function NewPipelineModal({
       footer={
         <>
           <button
+            data-ui-part=""
             data-testid="new-pipeline-cancel"
             className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer"
             onClick={onClose}
@@ -181,6 +182,7 @@ function NewPipelineModal({
             Cancel
           </button>
           <button
+            data-ui-part=""
             data-testid="new-pipeline-confirm"
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer',
@@ -706,6 +708,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
         <div className="text-lg font-bold text-text-primary">Pipelines</div>
         <div className="flex items-center gap-2">
           <button
+            data-ui-part=""
             data-testid="metrics-btn"
             onClick={() => navigate('/pipelines/metrics')}
             className={cn(
@@ -718,6 +721,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
             Metrics
           </button>
           <button
+            data-ui-part=""
             data-testid="templates-btn"
             onClick={() => setTemplatesModalOpen(true)}
             className={cn(
@@ -730,6 +734,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
             Templates
           </button>
           <button
+            data-ui-part=""
             data-testid="new-pipeline-btn"
             onClick={() => setNewModalOpen(true)}
             className={cn(
@@ -810,6 +815,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
             </div>
             <div className="flex justify-center items-center gap-2.5 text-[13px] text-text-tertiary px-6 pb-8">
               <button
+                data-ui-part=""
                 data-testid="empty-state-demo"
                 onClick={handleSpawnDemo}
                 className="bg-transparent border-none p-1 px-2 text-[13px] text-primary cursor-pointer underline font-inherit"
@@ -818,6 +824,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
               </button>
               <span aria-hidden>·</span>
               <button
+                data-ui-part=""
                 data-testid="empty-state-templates"
                 onClick={() => setTemplatesModalOpen(true)}
                 className="bg-transparent border-none p-1 px-2 text-[13px] text-primary cursor-pointer underline font-inherit"
@@ -883,6 +890,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
         footer={
           <>
             <button
+              data-ui-part=""
               data-testid="delete-pipeline-cancel"
               className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer"
               onClick={() => setDeleteId(null)}
@@ -890,6 +898,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
               Cancel
             </button>
             <button
+              data-ui-part=""
               data-testid="delete-pipeline-confirm"
               onClick={handleDeleteConfirm}
               className={cn(
@@ -921,6 +930,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
         footer={
           <>
             <button
+              data-ui-part=""
               data-testid="bulk-delete-cancel"
               className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer"
               onClick={() => setBulkDeleteOpen(false)}
@@ -928,6 +938,7 @@ export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: 
               Cancel
             </button>
             <button
+              data-ui-part=""
               data-testid="bulk-delete-confirm"
               onClick={handleBulkDeleteConfirm}
               className={cn(

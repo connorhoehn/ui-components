@@ -77,6 +77,7 @@ function CollapsibleGroup({
   return (
     <div className={cn('mb-2')}>
       <button
+        data-ui-part=""
         onClick={() => setOpen(!open)}
         className={cn('bg-transparent border-none cursor-pointer flex items-center gap-1.5 py-1 px-0 text-[13px] font-semibold text-text-primary font-[inherit] w-full')}
       >
@@ -322,6 +323,7 @@ export function SectionSummariesCard({
                 data-testid={`reader-section-${section.id}`}
               >
                 <button
+                  data-ui-part=""
                   onClick={() => toggle(section.id)}
                   className={cn(
                     'border-none cursor-pointer flex items-center gap-2 py-2 px-1.5 rounded-md w-full font-[inherit] text-[13px] text-text-primary transition-colors duration-100',

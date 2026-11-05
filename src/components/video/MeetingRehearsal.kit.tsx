@@ -79,7 +79,7 @@ export function RehearsalSeat({
   const roster = people.map((p) => ({ id: p.userId, displayName: p.displayName, isLocal: p.userId === person.userId }));
 
   return (
-    <section hidden={hidden} aria-label={`${person.displayName}'s screen`} data-testid={`seat-${person.userId}`} className="flex h-[720px] w-full flex-col bg-surface">
+    <section data-ui-part="" hidden={hidden} aria-label={`${person.displayName}'s screen`} data-testid={`seat-${person.userId}`} className="flex h-[720px] w-full flex-col bg-surface">
       <MeetingToolbar
         compact={false}
         start={<T size="sm" tone="secondary">Viewing as {person.displayName}{meeting.isOrganizer ? ' (organizer)' : ''}</T>}

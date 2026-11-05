@@ -246,6 +246,7 @@ export function SuggestionCard({
           that takes the reader to the change. */}
       {hasBody && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onFocus}
           disabled={!onFocus}

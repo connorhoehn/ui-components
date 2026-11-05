@@ -162,6 +162,7 @@ export function AddToChatDialog({
                 <Avatar name={p?.name ?? id} src={p?.avatarUrl} size={16} />
                 <span className="max-w-[9rem] truncate">{p?.name ?? id}</span>
                 <button
+                  data-ui-part=""
                   type="button"
                   aria-label={`Remove ${p?.name ?? id}`}
                   onClick={() => toggle(id)}
@@ -194,6 +195,7 @@ export function AddToChatDialog({
           return (
             <li key={p.id} role="option" aria-selected={on}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => toggle(p.id)}
                 disabled={inert}
@@ -237,6 +239,7 @@ export function AddToChatDialog({
         <div className="flex items-center gap-2 text-[11px] text-text-secondary">
           <span>The past</span>
           <input
+            data-ui-part=""
             type="number"
             min={HISTORY_DAYS_MIN}
             max={HISTORY_DAYS_MAX}

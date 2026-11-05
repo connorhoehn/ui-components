@@ -195,6 +195,7 @@ export function WorkSearchPicker<T>({
               {state.items.map((item) => (
                 <li key={itemKey(item)}>
                   <button
+                    data-ui-part=""
                     type="button"
                     onClick={() => { onPick(item); onClose(); }}
                     className="flex w-full cursor-pointer items-center gap-2 rounded-md border-none bg-transparent px-2 py-1.5 text-left font-[inherit] text-sm text-text-primary hover:bg-surface-hover focus-visible:bg-surface-hover"
@@ -392,6 +393,7 @@ function OwnerField({ f, boxed: boxedIn, big = false }: { f: NonNullable<WorkIte
       {editable ? (
         <>
           <button
+            data-ui-part=""
             ref={triggerRef}
             type="button"
             disabled={f.pending}

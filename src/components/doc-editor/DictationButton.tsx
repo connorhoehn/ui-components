@@ -67,6 +67,7 @@ export function DictationButton({
 
   return (
     <button
+      data-ui-part=""
       type="button"
       aria-label={label}
       title={label}

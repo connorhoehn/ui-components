@@ -123,6 +123,7 @@ function TemplateCard({ template, meta, onPick }: TemplateCardProps) {
         </div>
       )}
       <button
+        data-ui-part=""
         type="button"
         data-testid={`template-use-${template.id}`}
         onClick={() => onPick(template)}

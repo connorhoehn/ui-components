@@ -97,6 +97,7 @@ export function ChatComposer({
     >
       {multiline ? (
         <textarea
+          data-ui-part=""
           aria-label={fieldName}
           aria-labelledby={ariaLabelledBy}
           className={fieldBase}
@@ -111,6 +112,7 @@ export function ChatComposer({
         />
       ) : (
         <input
+          data-ui-part=""
           type="text"
           aria-label={fieldName}
           aria-labelledby={ariaLabelledBy}
@@ -124,6 +126,7 @@ export function ChatComposer({
         />
       )}
       <button
+        data-ui-part=""
         type="button"
         aria-label={submitName}
         onClick={handleSubmit}

@@ -66,6 +66,7 @@ function StripButton({
         <span aria-hidden="true" data-testid={testId ? `${testId}-bar` : undefined} className="absolute inset-y-1 left-0 w-[3px] rounded-r bg-primary" />
       )}
       <button
+        data-ui-part=""
         type="button"
         className={cn(
           'flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border-none p-0 font-[inherit]',

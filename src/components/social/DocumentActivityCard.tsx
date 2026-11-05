@@ -143,6 +143,7 @@ export function DocumentActivityCard({
 
       {onOpen && !unavailable && (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${testId}-open`}
           onClick={() => onOpen(documentId)}

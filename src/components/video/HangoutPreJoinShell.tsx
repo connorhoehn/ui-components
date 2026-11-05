@@ -243,7 +243,7 @@ export default function HangoutPreJoinShell({
       <div className="mx-auto w-full max-w-5xl flex flex-col gap-4 px-4 py-4 sm:px-5">
         <div className="flex flex-col lg:flex-row lg:items-start gap-4">
           {/* Left: the self-view IS the screen, Teams/Zoom-style. */}
-          <section className="w-full min-w-0 lg:flex-1 flex flex-col gap-4">
+          <section data-ui-part="" className="w-full min-w-0 lg:flex-1 flex flex-col gap-4">
             <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-border bg-video-stage">
               {previewStream && isCamReady && (
                 <video
@@ -377,7 +377,7 @@ export default function HangoutPreJoinShell({
               column is shorter than the 16:9 preview, so left to itself it
               ended at Cancel with ~100px of nothing under it — the same dead
               space as the old centred header, just rotated. */}
-          <section className="w-full lg:w-72 xl:w-80 lg:shrink-0 lg:self-stretch flex flex-col gap-3 lg:justify-between">
+          <section data-ui-part="" className="w-full lg:w-72 xl:w-80 lg:shrink-0 lg:self-stretch flex flex-col gap-3 lg:justify-between">
             {/* One top group — heading AND roster — so `justify-between`
                 splits the column in two, not three. As three children it
                 spread them evenly and opened a gap under the heading. */}
@@ -458,6 +458,7 @@ export default function HangoutPreJoinShell({
                 <div data-testid="prejoin-secondary-actions">{secondaryActions}</div>
               )}
               <button
+                data-ui-part=""
                 type="button"
                 onClick={onCancel}
                 data-testid="prejoin-cancel"

@@ -164,7 +164,7 @@ export function CitedRecordList({
     const rows = records.filter((r) => r.type === section.type);
     if (!rows.length) return null;
     return (
-      <section key={section.type} aria-label={section.title}>
+      <section data-ui-part="" key={section.type} aria-label={section.title}>
         <Stack gap="xs">
           <h4 className="m-0 text-sm font-semibold text-text-primary">{section.title}</h4>
           <ul className="m-0 list-none overflow-hidden rounded-md border border-border p-0">
@@ -178,7 +178,7 @@ export function CitedRecordList({
   return (
     <Stack gap="md" className={cn('min-w-0', className)} data-testid={testId}>
       {blocks}
-      <section aria-label={sourcesLabel}>
+      <section data-ui-part="" aria-label={sourcesLabel}>
         <Stack gap="xs">
           <h4 className="m-0 text-sm font-semibold text-text-primary">{sourcesLabel}</h4>
           <Inline gap="sm" justify="between" align="center">

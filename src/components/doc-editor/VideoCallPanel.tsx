@@ -278,18 +278,18 @@ export default function VideoCallPanel({
         <span className={cn('text-[11px] font-semibold text-text-tertiary m-0')}>Video</span>
         <div className={cn('flex items-center gap-0.5')}>
           {onDockToSidebar && !isDocked && (
-            <button type="button" onClick={onDockToSidebar} title="Dock to sidebar"
+            <button data-ui-part="" type="button" onClick={onDockToSidebar} title="Dock to sidebar"
               className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-text-tertiary cursor-pointer text-xs leading-none p-0')}>
               {'←'}
             </button>
           )}
           {isDocked && onUndock && (
-            <button type="button" onClick={onUndock} title="Undock from sidebar"
+            <button data-ui-part="" type="button" onClick={onUndock} title="Undock from sidebar"
               className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-text-tertiary cursor-pointer text-xs leading-none p-0')}>
               {'→'}
             </button>
           )}
-          <button type="button" onClick={onClose} title="Close video"
+          <button data-ui-part="" type="button" onClick={onClose} title="Close video"
             className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-text-tertiary cursor-pointer text-sm leading-none p-0')}>
             {'✕'}
           </button>

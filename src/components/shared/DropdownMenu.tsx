@@ -192,6 +192,7 @@ export function DropdownMenu({
   return (
     <>
       <button
+        data-ui-part=""
         ref={triggerRef}
         type="button"
         aria-label={triggerLabel}
@@ -327,6 +328,7 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
   if (!item.submenu || item.disabled) {
     return (
       <button
+        data-ui-part=""
         type="button"
         role={item.checked !== undefined ? 'menuitemcheckbox' : 'menuitem'}
         aria-checked={item.checked !== undefined ? item.checked : undefined}
@@ -357,6 +359,7 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
   return (
     <>
       <button
+        data-ui-part=""
         ref={rowRef}
         type="button"
         role="menuitem"

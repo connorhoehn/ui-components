@@ -35,6 +35,7 @@ export function Card({
   return (
     <div
       ref={ref}
+      data-ui-card=""
       className={cn(
         'border border-border rounded-lg bg-surface overflow-hidden',
         paddingClasses[padding],

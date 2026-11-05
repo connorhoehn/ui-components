@@ -50,6 +50,7 @@ export default function DateEditorRenderer(props: SectionRendererProps) {
         )}
         {value && (
           <button
+            data-ui-part=""
             type="button"
             data-testid={`date-field-clear-${section.id}`}
             onClick={() => onUpdateSection?.(setScalarPatch(section, undefined))}

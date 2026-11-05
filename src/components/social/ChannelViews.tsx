@@ -140,6 +140,7 @@ export function PinnedMessagesPanel({
             actions={
               onUnpin && (
                 <button
+                  data-ui-part=""
                   type="button"
                   aria-label="Unpin"
                   title="Unpin"
@@ -526,6 +527,7 @@ export function ChannelDocumentsPanel({
     centred = false,
   ) => (
     <button
+      data-ui-part=""
       key={key}
       type="button"
       onClick={onClick}

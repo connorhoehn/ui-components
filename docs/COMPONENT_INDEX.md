@@ -7,7 +7,7 @@ Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-co
 
 958 components across 20 entry points; 811 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
-Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), `skills/ui-page-build/SKILL.md` (building a page) and `skills/ui-dom-audit/SKILL.md` (auditing one).
+Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
 ## Canonical choices
 
@@ -16,7 +16,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | Job | Use | Import | Notes | Don't use for |
 |---|---|---|---|---|
 | Frame for any page | `PageFrame` | `@connorhoehnslalom/ui-components` | The outer frame of every routed page: title row, width and gutters. Use it (or a template built on it) instead of a hand-rolled `<div className="p-6 max-w-…">`. | Not for panels or drawers inside a page. |
-| A list / collection page | `CollectionPage` | `@connorhoehnslalom/ui-components` | Title, description, header actions and a `CollectionToolbar` (search, filters, view switch) over your table or cards. | Not for a list with a persistent detail pane (use `MasterDetailPage`) or a single record. |
+| A list / collection page | `CollectionPage` | `@connorhoehnslalom/ui-components` | Title, description, header actions and a `CollectionToolbar` (search, filters, view switch) over the body. Pass rows as `table` (a striped `DataTable` with its `loading`/`empty`/`error` states) or a custom body as `children`; pass `gutter="page"` (its default is `none`). | Not for a list with a persistent detail pane (use `MasterDetailPage`) or a single record. |
 | A list with a detail panel | `MasterDetailPage` | `@connorhoehnslalom/ui-components` | Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.) | Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`). |
 | One record's detail page | `DetailPage` | `@connorhoehnslalom/ui-components` | Header with the record's title/status/actions, then **tabs** for the record's facets. | Don't stack a column of `Card`s for each facet; put facets in tabs and use `DetailSection` inside a tab. |
 | A dashboard | `DashboardPage` | `@connorhoehnslalom/ui-components` | KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it. | Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath. |

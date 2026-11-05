@@ -18,6 +18,7 @@ export default function ConfigSection({ title, defaultCollapsed = false, childre
   return (
     <div className={cn('flex flex-col', className)}>
       <button
+        data-ui-part=""
         type="button"
         onClick={() => setCollapsed((v) => !v)}
         className="flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer font-inherit text-xs font-semibold text-text-secondary"

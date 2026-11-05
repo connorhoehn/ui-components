@@ -142,6 +142,7 @@ export function VerdictChip({
 
         {hasReasoning && (
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}

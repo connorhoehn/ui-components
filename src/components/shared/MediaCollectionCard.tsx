@@ -18,8 +18,8 @@ export function MediaCollectionCard({title,headingAs:Heading='h3',status,preview
  const [selected,setSelected]=useState(0);
  const index=Math.min(selected,Math.max(0,previews.length-1)), preview=previews[index];
  return <Card padding="none" className="min-w-0 overflow-hidden" data-media-collection>
-  <Heading className="m-0 px-3 py-2 text-sm font-semibold"><button type="button" onClick={onOpen} className="block w-full truncate text-left text-text-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" title={title}>{title}</button></Heading>
-  <button type="button" disabled={!preview} aria-label={`Play ${title}`} onClick={()=>preview&&onPlay(preview)} className="group relative flex aspect-video w-full items-center justify-center overflow-hidden bg-surface-muted text-text-secondary focus-visible:outline-2 focus-visible:outline-primary">
+  <Heading className="m-0 px-3 py-2 text-sm font-semibold"><button data-ui-part="" type="button" onClick={onOpen} className="block w-full truncate text-left text-text-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" title={title}>{title}</button></Heading>
+  <button data-ui-part="" type="button" disabled={!preview} aria-label={`Play ${title}`} onClick={()=>preview&&onPlay(preview)} className="group relative flex aspect-video w-full items-center justify-center overflow-hidden bg-surface-muted text-text-secondary focus-visible:outline-2 focus-visible:outline-primary">
     {preview?.image ? <img src={preview.image} alt={`${title} · ${preview.label}`} className="h-full w-full object-cover"/> : <span className="text-xs">{preview ? 'Preview unavailable' : 'No review movie'}</span>}
     {preview && <span className="absolute rounded-full bg-surface p-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"><PlayCircleIcon size={24}/></span>}
   </button>

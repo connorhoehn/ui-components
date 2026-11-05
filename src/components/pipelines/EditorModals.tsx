@@ -67,10 +67,11 @@ export default function EditorModals(props: EditorModalsProps) {
         maxWidth={420}
         footer={
           <>
-            <button onClick={onPublishClose} className={cancelBtnClass}>
+            <button data-ui-part="" onClick={onPublishClose} className={cancelBtnClass}>
               Cancel
             </button>
             <button
+              data-ui-part=""
               onClick={onPublishConfirm}
               disabled={hasErrors}
               className={cn(
@@ -108,10 +109,10 @@ export default function EditorModals(props: EditorModalsProps) {
         maxWidth={400}
         footer={
           <>
-            <button onClick={onDeleteClose} className={cancelBtnClass}>
+            <button data-ui-part="" onClick={onDeleteClose} className={cancelBtnClass}>
               Cancel
             </button>
-            <button onClick={onDeleteConfirm} className={dangerBtnClass}>
+            <button data-ui-part="" onClick={onDeleteConfirm} className={dangerBtnClass}>
               Delete
             </button>
           </>
@@ -130,10 +131,10 @@ export default function EditorModals(props: EditorModalsProps) {
         maxWidth={400}
         footer={
           <>
-            <button onClick={onClearRunsClose} className={cancelBtnClass}>
+            <button data-ui-part="" onClick={onClearRunsClose} className={cancelBtnClass}>
               Cancel
             </button>
-            <button onClick={onClearRunsConfirm} className={dangerBtnClass}>
+            <button data-ui-part="" onClick={onClearRunsConfirm} className={dangerBtnClass}>
               Clear history
             </button>
           </>

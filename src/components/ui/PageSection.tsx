@@ -86,7 +86,7 @@ export function PageSection({
   const Heading = md ? 'h2' : 'h1';
   const isEmpty = empty != null && empty !== false;
   return (
-    <section className={cn('flex flex-col', compactGap ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined} data-density={sizeProp === undefined && density === 'compact' ? 'compact' : undefined} data-ui-section="" data-section-empty={isEmpty ? '' : undefined}>
+    <section data-ui-part="" className={cn('flex flex-col', compactGap ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined} data-density={sizeProp === undefined && density === 'compact' ? 'compact' : undefined} data-ui-section="" data-section-empty={isEmpty ? '' : undefined}>
       {/* The row wraps (since 2.446.4): when the title and the actions do not
           fit side by side, the actions take their own row, capped at its
           width, instead of squeezing the title into a sliver or running past

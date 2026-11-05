@@ -495,6 +495,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
               {effectiveIds.length} nodes selected
             </div>
             <button
+              data-ui-part=""
               type="button"
               onClick={close}
               className="w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit"
@@ -510,6 +511,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
             </div>
             <div className="flex gap-2">
               <button
+                data-ui-part=""
                 type="button"
                 onClick={handleDelete}
                 className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-danger-border rounded-md cursor-pointer font-inherit"
@@ -517,6 +519,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
                 Delete all
               </button>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={handleDuplicate}
                 className="px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit"
@@ -537,6 +540,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
               {meta.name}
             </div>
             <button
+              data-ui-part=""
               type="button"
               onClick={close}
               className="w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit"
@@ -585,6 +589,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
                 : 'Bench';
               return (
                 <button
+                  data-ui-part=""
                   key={key}
                   type="button"
                   role="tab"
@@ -688,6 +693,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
           </div>
           <div className="h-10 px-3 flex items-center justify-between gap-2 border-t border-border shrink-0">
             <button
+              data-ui-part=""
               type="button"
               onClick={handleDelete}
               className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-transparent rounded-md cursor-pointer font-inherit"
@@ -695,6 +701,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
               🗑 Delete node
             </button>
             <button
+              data-ui-part=""
               type="button"
               onClick={handleDuplicate}
               className="px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit"

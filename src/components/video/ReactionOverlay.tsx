@@ -143,6 +143,7 @@ export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, className, st
         const name = reactionEmojiName(emoji);
         return (
           <button
+            data-ui-part=""
             key={emoji}
             type="button"
             onClick={() => onReact(emoji)}
@@ -221,6 +222,7 @@ export function ReactionPickerButton({
   return (
     <div className={cn('relative inline-flex', className)}>
       <button
+        data-ui-part=""
         type="button"
         title="Send a reaction"
         aria-label="Send a reaction"

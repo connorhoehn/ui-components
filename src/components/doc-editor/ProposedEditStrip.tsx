@@ -168,6 +168,7 @@ export function ProposedEditStrip({
   const heading = title ?? (visible.length === 1 ? 'Proposed edit' : `${visible.length} proposed edits`);
   return (
     <section
+      data-ui-part=""
       aria-label={heading}
       aria-live="polite"
       className={cn('flex min-w-0 flex-col gap-2 rounded-md border border-border border-l-[3px] border-l-primary bg-surface px-3 py-2 shadow-sm', className)}

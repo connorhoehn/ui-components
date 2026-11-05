@@ -117,6 +117,7 @@ export default function SectionComments({
     <div>
       {/* Toggle button */}
       <button
+        data-ui-part=""
         type="button"
         onClick={() => {
           setExpanded((v) => !v);
@@ -159,6 +160,7 @@ export default function SectionComments({
               )}
             </div>
             <button
+              data-ui-part=""
               type="button"
               onClick={handlePost}
               className={cn('px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-info text-white cursor-pointer font-[inherit] whitespace-nowrap self-end')}
@@ -171,6 +173,7 @@ export default function SectionComments({
           {comments.length > 1 && (
             <div className={cn('flex justify-end px-3 pt-1 border-b border-border-subtle')}>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => setSortNewest(v => !v)}
                 className={cn('bg-transparent border-none cursor-pointer text-[11px] text-neutral px-1.5 py-0.5 font-[inherit]')}

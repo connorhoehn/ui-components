@@ -800,6 +800,7 @@ export default function NodePalette({
             className="flex-1 min-w-0"
           />
           <button
+            data-ui-part=""
             type="button"
             onClick={() => setCompact((v) => !v)}
             title={compact ? 'Switch to card view' : 'Switch to compact view'}
@@ -854,6 +855,7 @@ export default function NodePalette({
         {showPinned && (
           <div data-testid="palette-recents">
             <button
+              data-ui-part=""
               type="button"
               onClick={() => toggleCollapsed('__recents__', !!collapsed['__recents__'])}
               className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]"
@@ -881,6 +883,7 @@ export default function NodePalette({
           >
             <span className="text-xs text-text-tertiary">No nodes match</span>
             <button
+              data-ui-part=""
               type="button"
               onClick={clearFilters}
               data-testid="palette-clear-filters"
@@ -904,6 +907,7 @@ export default function NodePalette({
             return (
               <div key={cat.name} data-testid={`palette-category-${cat.name}`}>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => toggleCollapsed(cat.name, isCollapsed)}
                   className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]"

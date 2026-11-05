@@ -352,6 +352,7 @@ export function TailPane({ computer, registerPane, className }: TailPaneProps) {
           </div>
         ) : newCount > 0 ? (
           <button
+            data-ui-part=""
             type="button"
             data-testid="tail-pane-jump"
             onClick={repin}

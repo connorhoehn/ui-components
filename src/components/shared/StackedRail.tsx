@@ -558,7 +558,7 @@ export function StackedRail({
               {body}
             </a>
           ) : (
-            <button type="button" onClick={() => activate()} {...common}>
+            <button data-ui-part="" type="button" onClick={() => activate()} {...common}>
               {body}
             </button>
           )}
@@ -631,6 +631,7 @@ export function StackedRail({
         );
         return (
           <section
+            data-ui-part=""
             key={group.id}
             aria-labelledby={headerId}
             aria-busy={group.pending || undefined}
@@ -647,6 +648,7 @@ export function StackedRail({
             >
               {collapsible ? (
                 <button
+                  data-ui-part=""
                   type="button"
                   id={headerId}
                   data-testid={headerId}

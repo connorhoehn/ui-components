@@ -196,6 +196,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       onKeyDown: handleKeyDown,
       onChange: handleChange,
       'data-testid': testId,
+      'data-ui-control': 'checkbox',
     };
 
     if (shape === 'round') {
@@ -215,6 +216,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           )}
         >
           <input
+            data-ui-part=""
             {...shared}
             ref={setRef}
             className="peer absolute inset-0 m-0 h-full w-full cursor-pointer rounded-full opacity-0 disabled:cursor-not-allowed"
@@ -250,6 +252,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     return (
       <input
+        data-ui-part=""
         ref={(el) => {
           innerRef.current = el;
           if (typeof forwardedRef === 'function') forwardedRef(el);
@@ -288,6 +291,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           className,
         )}
         data-testid={testId}
+        data-ui-control="checkbox"
       />
     );
   },

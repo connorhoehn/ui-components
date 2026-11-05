@@ -141,6 +141,7 @@ function LiveToggle({
 }) {
   return (
     <button
+      data-ui-part=""
       data-testid="live-toggle"
       onClick={() => onChange(!live)}
       className={cn(
@@ -217,6 +218,7 @@ function RecentEventsCard({
           Recent events (last 20)
         </div>
         <button
+          data-ui-part=""
           data-testid="recent-events-view-all"
           onClick={onViewAll}
           className="bg-transparent border-none text-primary text-xs font-semibold cursor-pointer font-[inherit]"
@@ -411,6 +413,7 @@ export default function DashboardPage({ activeRuns }: DashboardPageProps = {}) {
           >
             No active-run source is wired to this dashboard.{' '}
             <button
+              data-ui-part=""
               data-testid="active-runs-go-to-pipelines"
               onClick={handleGoToPipelines}
               className="bg-transparent border-none text-primary text-[13px] font-semibold cursor-pointer font-[inherit] p-0"

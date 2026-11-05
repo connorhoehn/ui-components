@@ -73,6 +73,7 @@ export default function FollowModeBar({
         {location ? <span className="font-normal"> · {location}</span> : null}
       </span>
       <button
+        data-ui-part=""
         data-testid={`${testId}-stop`}
         onClick={onStopFollow}
         className={cn('bg-transparent border border-info-border rounded px-2 py-0.5 text-xs font-semibold text-info-fg cursor-pointer font-[inherit]')}

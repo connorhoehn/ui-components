@@ -75,6 +75,7 @@ function MentionRow({
 }) {
   return (
     <div
+      data-ui-part=""
       role="button"
       tabIndex={0}
       className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset')}
@@ -99,6 +100,7 @@ function MentionRow({
       </div>
       <div className={cn('text-[11px] text-text-tertiary shrink-0 mt-0.5')}>{formatRelativeTime(item.timestamp)}</div>
       <button
+        data-ui-part=""
         type="button"
         onClick={(e) => { e.stopPropagation(); onDismiss(); }}
         aria-label="Dismiss mention"
@@ -136,6 +138,7 @@ function TaskRow({
 
   return (
     <div
+      data-ui-part=""
       role="button"
       tabIndex={0}
       className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset')}
@@ -163,6 +166,7 @@ function TaskRow({
         )}
       </div>
       <button
+        data-ui-part=""
         type="button"
         onClick={(e) => { e.stopPropagation(); onDismiss(); }}
         aria-label="Dismiss task"
@@ -231,6 +235,7 @@ export default function MyMentionsPanel({
       <div className={cn('flex gap-0 border-b border-border shrink-0')}>
         {(['all', 'mentions', 'tasks'] as const).map((tab) => (
           <button
+            data-ui-part=""
             key={tab}
             type="button"
             className={cn(

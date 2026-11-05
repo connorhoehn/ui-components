@@ -311,7 +311,7 @@ export function ConversationSurface({
   };
 
   return (
-    <section className={cn('flex min-w-0 flex-col', className)} data-testid={testId}>
+    <section data-ui-part="" className={cn('flex min-w-0 flex-col', className)} data-testid={testId}>
       <ChannelHeader
         headingLevel={headingLevel}
         className={headerClassName}

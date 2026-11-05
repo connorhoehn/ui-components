@@ -48,6 +48,7 @@ function renderRow(
   const canJump = kind !== 'removed' && !!onJump;
   return (
     <button
+      data-ui-part=""
       key={`${kind}-${row.node.id}`}
       type="button"
       disabled={!canJump}
@@ -102,6 +103,7 @@ function VersionDiffModal({
       maxWidth={820}
       footer={
         <button
+          data-ui-part=""
           onClick={onClose}
           className="px-4 py-[7px] text-[13px] font-semibold bg-primary text-white border-none rounded-[7px] cursor-pointer font-[inherit]"
         >

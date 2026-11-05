@@ -143,6 +143,7 @@ export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSu
         <div role="listbox" data-ui-listbox="command-suggestions" aria-label={label} className="max-h-56 overflow-y-auto">
           {items.map((item, i) => (
             <button
+              data-ui-part=""
               key={item.id}
               type="button"
               role="option"

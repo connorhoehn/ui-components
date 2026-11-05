@@ -135,22 +135,23 @@ export default function PipelinesBulkActionBar({
       </span>
       <span className="text-text-tertiary">·</span>
 
-      <button data-testid="bulk-clear" className={pillBtn} onClick={onClear}>
+      <button data-ui-part="" data-testid="bulk-clear" className={pillBtn} onClick={onClear}>
         Clear
       </button>
-      <button data-testid="bulk-publish" className={pillBtn} onClick={onPublish}>
+      <button data-ui-part="" data-testid="bulk-publish" className={pillBtn} onClick={onPublish}>
         Publish selected
       </button>
-      <button data-testid="bulk-archive" className={pillBtn} onClick={onArchive}>
+      <button data-ui-part="" data-testid="bulk-archive" className={pillBtn} onClick={onArchive}>
         Archive selected
       </button>
-      <button data-testid="bulk-export-json" className={pillBtn} onClick={onExportAsJSON}>
+      <button data-ui-part="" data-testid="bulk-export-json" className={pillBtn} onClick={onExportAsJSON}>
         Export selected as JSON
       </button>
-      <button data-testid="bulk-export" className={pillBtn} onClick={onExport}>
+      <button data-ui-part="" data-testid="bulk-export" className={pillBtn} onClick={onExport}>
         Export all
       </button>
       <button
+        data-ui-part=""
         data-testid="bulk-delete-confirm-prompt"
         className={pillBtn}
         onClick={onDeleteWithConfirm}
@@ -160,7 +161,7 @@ export default function PipelinesBulkActionBar({
 
       {/* Add tag button + popover */}
       <div className="relative">
-        <button data-testid="bulk-add-tag-btn" className={pillBtn} onClick={onAddTag}>
+        <button data-ui-part="" data-testid="bulk-add-tag-btn" className={pillBtn} onClick={onAddTag}>
           Add tag...
         </button>
         {addTagOpen && (
@@ -198,6 +199,7 @@ export default function PipelinesBulkActionBar({
               aria-label="Tag name"
             />
             <button
+              data-ui-part=""
               data-testid="bulk-add-tag-submit"
               disabled={addTagText.trim().length === 0}
               onClick={handleAddTagSubmit}
@@ -216,6 +218,7 @@ export default function PipelinesBulkActionBar({
       {/* Remove tag button + popover */}
       <div className="relative">
         <button
+          data-ui-part=""
           data-testid="bulk-remove-tag-btn"
           className={cn(
             pillBtn,
@@ -252,6 +255,7 @@ export default function PipelinesBulkActionBar({
               ) : (
                 unionTags.map((tag) => (
                   <button
+                    data-ui-part=""
                     key={tag}
                     data-testid={`bulk-remove-tag-chip-${tag}`}
                     onClick={() => onSubmitRemoveTag(tag)}
@@ -272,6 +276,7 @@ export default function PipelinesBulkActionBar({
       </div>
 
       <button
+        data-ui-part=""
         data-testid="bulk-delete"
         className={cn(
           'px-3 py-[5px] text-xs font-semibold',

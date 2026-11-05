@@ -108,6 +108,7 @@ export function DLQEntryCard({
       <td className="p-2.5 border-b border-border align-top">
         <div className="flex gap-1">
           <button
+            data-ui-part=""
             type="button"
             onClick={() => onRedrive([entry.messageId])}
             className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-info-bg text-info-fg"
@@ -116,6 +117,7 @@ export function DLQEntryCard({
             Redrive
           </button>
           <button
+            data-ui-part=""
             type="button"
             onClick={() => onPurge([entry.messageId])}
             className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-danger-bg text-danger-fg"

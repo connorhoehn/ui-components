@@ -262,6 +262,7 @@ export default function EditorTopBar({
         />
       ) : (
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setNameEditing(true)}
           className={cn(
@@ -299,6 +300,7 @@ export default function EditorTopBar({
 
       <div className="relative" ref={validationRef}>
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setValidationOpen((x) => !x)}
           className={cn(
@@ -319,6 +321,7 @@ export default function EditorTopBar({
           >
             {allIssues.map((issue, idx) => (
               <button
+                data-ui-part=""
                 key={`${issue.code}-${idx}`}
                 type="button"
                 onClick={() => jumpToNode(issue.nodeId)}
@@ -392,6 +395,7 @@ export default function EditorTopBar({
       </Button>
 
       <button
+        data-ui-part=""
         type="button"
         onClick={onPublishClick}
         title={isPublished ? 'Already published at this version' : 'Publish pipeline to enable runs'}
@@ -408,6 +412,7 @@ export default function EditorTopBar({
       </button>
 
       <button
+        data-ui-part=""
         type="button"
         onClick={onRunClick}
         disabled={runDisabled || isTriggering}
@@ -431,6 +436,7 @@ export default function EditorTopBar({
 
       {breakpoints.size > 0 && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onDebugRunClick}
           disabled={runDisabled || isRunActive}

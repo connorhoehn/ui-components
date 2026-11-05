@@ -139,6 +139,7 @@ function SortablePage({
       )}>
         <div className="flex items-center gap-2 mb-2.5">
           <button
+            data-ui-part=""
             type="button"
             data-testid={`page-drag-handle-${page.id}`}
             {...attributes}
@@ -147,6 +148,7 @@ function SortablePage({
             title="Drag to reorder pages"
           >⋮⋮</button>
           <button
+            data-ui-part=""
             type="button"
             data-testid={`page-up-${page.id}`}
             disabled={pageIdx === 0}
@@ -157,6 +159,7 @@ function SortablePage({
             )}
           >▲</button>
           <button
+            data-ui-part=""
             type="button"
             data-testid={`page-down-${page.id}`}
             disabled={pageIdx === totalPages - 1}
@@ -182,6 +185,7 @@ function SortablePage({
             onFocus={() => setActivePageId(page.id)}
           />
           <button
+            data-ui-part=""
             type="button"
             data-testid={`page-remove-${page.id}`}
             disabled={totalPages <= 1}
@@ -246,6 +250,7 @@ function SortableSection({ sectionId, page, idx, pages, renderRow, moveSectionTo
   return (
     <div ref={setNodeRef} style={style} className="flex items-center gap-1.5">
       <button
+        data-ui-part=""
         type="button"
         data-testid={`section-drag-handle-${sectionId}`}
         {...attributes}
@@ -488,6 +493,7 @@ function Step2Fields({
 
         {/* + Add Page */}
         <button
+          data-ui-part=""
           type="button"
           data-testid="add-page"
           onClick={addPage}
@@ -521,6 +527,7 @@ function Step2Fields({
         <div className="flex flex-col gap-1.5">
           {getFieldTypes().map(fieldDef => (
             <button
+              data-ui-part=""
               key={fieldDef.type}
               data-testid={`add-field-${fieldDef.type}`}
               type="button"
@@ -634,7 +641,7 @@ function Step3ViewModes({ fields, setFields }: {
       <p className="text-[13px] text-neutral mb-4">
         Configure which view modes each field appears in and which renderer to use.
       </p>
-      <table className="w-full border-collapse text-[13px]">
+      <table data-ui-part="" className="w-full border-collapse text-[13px]">
         <thead>
           <tr className="bg-surface-panel">
             <th className="p-[10px_12px] text-left font-semibold text-text-primary border-b-2 border-border whitespace-nowrap">

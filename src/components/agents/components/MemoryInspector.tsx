@@ -55,6 +55,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
         <div className="flex text-[10px] border border-border rounded overflow-hidden">
           {(['all', 'session', 'long-term'] as const).map((f) => (
             <button
+              data-ui-part=""
               key={f}
               className={cn(
                 'px-2 py-0.5 transition-colors',
@@ -94,6 +95,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
                 </div>
                 {onDelete && (
                   <button
+                    data-ui-part=""
                     // focus-visible, not just hover: the delete control was opacity-0 with
                     // only a group-hover reveal, so tabbing to it focused an
                     // invisible button.

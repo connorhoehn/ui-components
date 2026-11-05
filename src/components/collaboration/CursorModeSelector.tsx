@@ -32,6 +32,7 @@ export function CursorModeSelector({ activeMode, onModeChange }: CursorModeSelec
         const isActive = mode === activeMode;
         return (
           <button
+            data-ui-part=""
             key={mode}
             onClick={() => onModeChange(mode)}
             className={cn(

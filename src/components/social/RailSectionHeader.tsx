@@ -123,6 +123,7 @@ export function RailSectionHeader({
     >
       {isDisclosure ? (
         <button
+          data-ui-part=""
           type="button"
           id={toggleId}
           aria-expanded={!collapsed}
@@ -187,6 +188,7 @@ export function RailSectionHeader({
       )}
       {actions.map((action) => (
         <button
+          data-ui-part=""
           key={action.label}
           type="button"
           title={action.label}

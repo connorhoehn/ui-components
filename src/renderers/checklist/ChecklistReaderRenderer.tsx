@@ -63,6 +63,7 @@ export default function ChecklistReaderRenderer({
                 className="flex items-center gap-2 py-[5px] border-b border-border-subtle"
               >
                 <input
+                  data-ui-part=""
                   type="checkbox"
                   checked={done}
                   onChange={() => onUpdateItem?.(item.id, { status: done ? 'pending' : 'done' })}
@@ -80,6 +81,7 @@ export default function ChecklistReaderRenderer({
 
       {onNavigateToEditor && (
         <button
+          data-ui-part=""
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
           className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0"

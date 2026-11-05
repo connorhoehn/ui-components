@@ -74,6 +74,7 @@ export function RecordingConsentNotice({
   }
   return (
     <section
+      data-ui-part=""
       role="status"
       aria-live="polite"
       aria-label={title}

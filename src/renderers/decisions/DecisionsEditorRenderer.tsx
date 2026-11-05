@@ -48,6 +48,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
       </span>
 
       <input
+        data-ui-part=""
         ref={inputRef}
         type="text"
         value={item.text}
@@ -62,6 +63,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
 
       {editable && (
         <select
+          data-ui-part=""
           value={item.status === 'done' ? 'acked' : item.status}
           onChange={(e) => onUpdate({ status: e.target.value as TaskItem['status'] })}
           className="text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none shrink-0 appearance-none"
@@ -79,6 +81,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
 
       {editable && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onRemove}
           className="border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none"
@@ -176,6 +179,7 @@ export default function DecisionsEditorRenderer({
 
       {editable && (
         <button
+          data-ui-part=""
           type="button"
           onClick={handleAdd}
           className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer"

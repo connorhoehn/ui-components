@@ -48,7 +48,7 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
   return (
     <PageSection title="Dashboard">
       {/* Stats */}
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
+      <section data-ui-part="" className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
         {statsCards.map((s) => (
           <Card key={s.label} padding="md">
             <div className="text-[2rem] font-bold text-info-fg mb-1">{s.value}</div>
@@ -58,7 +58,7 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
       </section>
 
       {/* Pools */}
-      <section className="flex flex-col gap-3">
+      <section data-ui-part="" className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-text-primary m-0">User Pools</h2>
         <Card>
           {pools.length === 0 ? (
@@ -83,7 +83,7 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
       </section>
 
       {/* Quick Links */}
-      <section className="flex flex-col gap-3">
+      <section data-ui-part="" className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-text-primary m-0">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Button variant="secondary" size="lg" onClick={() => onNavigate('/identity/admin/pools/new')}>

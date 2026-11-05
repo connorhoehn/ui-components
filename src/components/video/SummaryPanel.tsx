@@ -43,7 +43,7 @@ export function SummaryPanel({
 }: SummaryPanelProps) {
   if (status === 'idle') {
     return (
-      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-text-secondary mb-2">{title}</header>
         <div className="text-sm text-text-tertiary">
           {idleState ?? 'No summary generated for this recording.'}
@@ -54,7 +54,7 @@ export function SummaryPanel({
 
   if (status === 'pending' || status === 'processing') {
     return (
-      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-text-secondary mb-2 flex items-center gap-2">
           <span>{title}</span>
           <span className="inline-block h-2 w-2 rounded-full bg-warning animate-pulse" aria-hidden="true" />
@@ -68,7 +68,7 @@ export function SummaryPanel({
 
   if (status === 'failed') {
     return (
-      <section className={cn('rounded-lg border border-danger-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-danger-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-danger mb-2">
           {title} — failed
         </header>
@@ -83,7 +83,7 @@ export function SummaryPanel({
   // status === 'ready'
   if (!markdown || markdown.trim().length === 0) {
     return (
-      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-text-secondary mb-2">{title}</header>
         <div className="text-sm text-text-tertiary">
           No summary content was generated.
@@ -93,7 +93,7 @@ export function SummaryPanel({
   }
 
   return (
-    <section className={cn('rounded-lg border border-border bg-surface flex flex-col', className)}>
+    <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface flex flex-col', className)}>
       <header className="text-sm font-medium text-text-secondary px-4 py-3 border-b border-border">
         {title}
       </header>

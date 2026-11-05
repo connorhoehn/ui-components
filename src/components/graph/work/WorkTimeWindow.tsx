@@ -107,6 +107,7 @@ export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkA
           const inWindow = event.at >= selection[0] && event.at <= selection[1];
           return (
             <button
+              data-ui-part=""
               key={event.at}
               type="button"
               aria-label={`${event.count} events at ${format(event.at)}`}

@@ -280,6 +280,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
                   {webhookFullUrl}
                 </span>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={onCopyWebhookUrl}
                   className="text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans"
@@ -306,6 +307,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
                     {secretRevealed ? webhookSecret : '•'.repeat(32)}
                   </span>
                   <button
+                    data-ui-part=""
                     type="button"
                     onClick={() => setSecretRevealed((v) => !v)}
                     className="text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans"
@@ -313,6 +315,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
                     {secretRevealed ? 'Hide' : 'Reveal'}
                   </button>
                   <button
+                    data-ui-part=""
                     type="button"
                     onClick={onCopyWebhookSecret}
                     className="text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans"

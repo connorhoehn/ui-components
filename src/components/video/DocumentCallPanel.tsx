@@ -136,7 +136,7 @@ export function DocumentCallPanel({
 
           <div className="h-px shrink-0 bg-border" aria-hidden="true" />
 
-          <section className="-mx-2 flex flex-col gap-2" aria-label="Review documents">
+          <section data-ui-part="" className="-mx-2 flex flex-col gap-2" aria-label="Review documents">
             <div className="flex items-center gap-2 px-2">
               <h3 className="m-0 text-base font-semibold text-text-primary">Review documents</h3>
               <Badge variant="count" value={docCount} color="muted" aria-label={`${docCount} documents`} />

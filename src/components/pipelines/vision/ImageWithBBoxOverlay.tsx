@@ -96,6 +96,7 @@ export function ImageWithBBoxOverlay({
     const palette = BBOX_PALETTE[tone];
     return (
       <button
+        data-ui-part=""
         key={key}
         type="button"
         onClick={onClick}

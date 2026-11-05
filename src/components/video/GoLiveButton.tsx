@@ -212,6 +212,7 @@ export function GoLiveButton({
           )}
           {onEndBroadcast && (
             <button
+              data-ui-part=""
               type="button"
               data-testid={`${testId}-end`}
               onClick={onEndBroadcast}
@@ -239,6 +240,7 @@ export function GoLiveButton({
   return (
     <div className={cn('flex flex-col gap-1', className)}>
       <button
+        data-ui-part=""
         type="button"
         data-testid={testId}
         data-live="false"

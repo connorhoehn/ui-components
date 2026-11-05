@@ -129,6 +129,7 @@ export function CallStartedBanner({
       <div className="flex items-center gap-2">
         {onDismiss && (
           <button
+            data-ui-part=""
             type="button"
             onClick={() => { setVisible(false); onDismiss(); }}
             className="text-xs text-white/60 hover:text-white px-2 py-1 rounded"
@@ -140,6 +141,7 @@ export function CallStartedBanner({
         )}
         {onJoin && (
           <button
+            data-ui-part=""
             type="button"
             onClick={() => { setVisible(false); onJoin(); }}
             className="text-xs font-semibold bg-success hover:bg-success text-white px-3 py-1.5 rounded"

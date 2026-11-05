@@ -117,6 +117,7 @@ function PresenceAvatars({
 
         return (
           <button
+            data-ui-part=""
             key={u.userId}
             type="button"
             title={`${u.displayName} — ${isIdle ? 'Away' : modeInfo.label}`}
@@ -203,6 +204,7 @@ export default function DocumentListPage({
       <div className={cn('flex items-center justify-between mb-5')}>
         <h1 className={cn('m-0 text-[22px] font-bold text-text-primary')}>Documents</h1>
         <button
+          data-ui-part=""
           data-testid="new-document-btn"
           onClick={() => setShowModal(true)}
           className={cn('flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-info text-white cursor-pointer font-[inherit]')}
@@ -230,6 +232,7 @@ export default function DocumentListPage({
 
             return (
               <div
+                data-ui-part=""
                 key={doc.id}
                 data-testid={`document-card-${doc.id}`}
                 role="button"
@@ -298,6 +301,7 @@ export default function DocumentListPage({
                 {/* Delete button — revealed on hover *or* keyboard focus */}
                 {isRevealed && (
                   <button
+                    data-ui-part=""
                     type="button"
                     onClick={(e) => handleDelete(e, doc.id, doc.title)}
                     onKeyDown={(e) => e.stopPropagation()}
@@ -321,6 +325,7 @@ export default function DocumentListPage({
           className={cn('flex items-center justify-center gap-3 mt-4 pt-3 border-t border-border')}
         >
           <button
+            data-ui-part=""
             data-testid="pagination-prev"
             disabled={safeCurrentPage <= 1}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -338,6 +343,7 @@ export default function DocumentListPage({
             Page {safeCurrentPage} of {totalPages}
           </span>
           <button
+            data-ui-part=""
             data-testid="pagination-next"
             disabled={safeCurrentPage >= totalPages}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}

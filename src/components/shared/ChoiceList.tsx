@@ -86,6 +86,7 @@ export function ChoiceRow({
   return (
     <div role="listitem" data-testid={testId} data-open={disclosure ? String(open) : undefined}>
       <button
+        data-ui-part=""
         type="button"
         role={radio ? 'radio' : undefined}
         aria-checked={radio ? selected : undefined}
@@ -138,6 +139,7 @@ export interface ChoiceOptionProps {
 export function ChoiceOption({ icon, label, onSelect, disabled = false, 'data-testid': testId = 'choice-option' }: ChoiceOptionProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       disabled={disabled}
       onClick={onSelect}

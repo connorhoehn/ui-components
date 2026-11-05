@@ -222,6 +222,7 @@ export default function VisionConfig({ data, onChange, nodeId }: VisionConfigPro
 
       <div>
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setAdvancedOpen((v) => !v)}
           aria-expanded={advancedOpen}

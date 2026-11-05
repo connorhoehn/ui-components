@@ -57,6 +57,7 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
       <div className="flex gap-1 flex-wrap mb-2 items-center">
         {TOOLBAR.map(({ cmd, label, title }) => (
           <button
+            data-ui-part=""
             key={cmd}
             onMouseDown={(e) => { e.preventDefault(); exec(cmd); }}
             disabled={disabled}
@@ -93,6 +94,7 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
               sitting there — the one thing a dismiss button must not do. */}
           {onDismissConflict && (
             <button
+              data-ui-part=""
               onClick={onDismissConflict}
               aria-label="Dismiss conflict indicator"
               className="bg-transparent border-none cursor-pointer text-base text-warning-fg pl-3 leading-none"

@@ -108,6 +108,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
   return (
     <div className={cn('bg-surface-panel border border-border rounded-lg overflow-hidden')}>
       <button
+        data-ui-part=""
         type="button"
         aria-expanded={!collapsed}
         className={cn('w-full text-left font-[inherit] flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-text-primary cursor-pointer select-none')}

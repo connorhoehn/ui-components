@@ -46,6 +46,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             {this.state.error?.message ?? 'An unexpected error occurred.'}
           </p>
           <button
+            data-ui-part=""
             onClick={this.handleRetry}
             className="bg-danger text-white border-none rounded-md px-4 py-1.5 text-[0.8rem] font-semibold cursor-pointer font-[inherit]"
           >

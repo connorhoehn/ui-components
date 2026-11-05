@@ -231,6 +231,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
       {/* Assignee picker */}
       <div ref={pickerRef} className={cn('relative')}>
         <button
+          data-ui-part=""
           type="button"
           onClick={openPicker}
           title={item.assignee || 'Unassigned'}
@@ -273,6 +274,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
             {/* Unassign option */}
             {item.assignee && (
               <button
+                data-ui-part=""
                 type="button"
                 onClick={clearAssignee}
                 className={cn('flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-text-primary')}
@@ -284,6 +286,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
 
             {filteredUsers.map((user, idx) => (
               <button
+                data-ui-part=""
                 key={user.userId}
                 type="button"
                 onClick={() => selectUser(user)}
@@ -345,6 +348,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
 
       {editable && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onRemove}
           title="Remove task"

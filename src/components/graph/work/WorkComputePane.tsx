@@ -201,7 +201,7 @@ function Metric({ label, value, title }: { label: string; value: ReactNode; titl
 
 function Card({ label, trailing, children }: { label: string; trailing?: ReactNode; children: ReactNode }) {
   return (
-    <section className="space-y-1.5 rounded-md border border-border p-2.5">
+    <section data-ui-part="" className="space-y-1.5 rounded-md border border-border p-2.5">
       <h4 className="flex items-baseline gap-2 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">
         <span className="min-w-0 truncate">{label}</span>
         {trailing && <span className="ml-auto shrink-0 normal-case tracking-normal text-text-tertiary">{trailing}</span>}
@@ -297,6 +297,7 @@ export function WorkComputePane({
             )}
             {event.detail && (
               <button
+                data-ui-part=""
                 type="button"
                 aria-expanded={open}
                 onClick={() => setExpanded((prev) => (prev.includes(event.id) ? prev.filter((x) => x !== event.id) : [...prev, event.id]))}
@@ -584,6 +585,7 @@ export function WorkComputePane({
                 <>
                   {item.onOpen ? (
                     <button
+                      data-ui-part=""
                       type="button"
                       onClick={item.onOpen}
                       data-testid={`${testId}-work-item`}

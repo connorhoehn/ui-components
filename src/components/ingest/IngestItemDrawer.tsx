@@ -229,6 +229,7 @@ export default function IngestItemDrawer({
         <div className="px-5 py-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-[1]">
           <h3 className="text-base font-bold text-text-primary m-0">Ingest Item</h3>
           <button
+            data-ui-part=""
             className="bg-transparent border-none text-[22px] leading-none cursor-pointer text-text-tertiary p-1 font-[inherit]"
             onClick={onClose}
             aria-label="Close"
@@ -415,6 +416,7 @@ export default function IngestItemDrawer({
         {/* Footer actions */}
         <div className="px-4 py-4 border-t border-border flex gap-2 justify-end flex-wrap bg-surface sticky bottom-0">
           <button
+            data-ui-part=""
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-surface border border-border text-text-secondary',
               (busy || item.status === 'done') && 'opacity-50 cursor-not-allowed',
@@ -427,6 +429,7 @@ export default function IngestItemDrawer({
             {busy === 'remap' ? 'Re-mapping…' : 'Re-map'}
           </button>
           <button
+            data-ui-part=""
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] rounded-md cursor-pointer',
               busy || !failed
@@ -441,6 +444,7 @@ export default function IngestItemDrawer({
             {busy === 'retry' ? 'Retrying…' : 'Retry'}
           </button>
           <button
+            data-ui-part=""
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer',
               busy || item.status === 'done'

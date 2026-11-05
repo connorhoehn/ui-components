@@ -39,6 +39,7 @@ export default function SamplePills({
     >
       {samples.map((s) => (
         <button
+          data-ui-part=""
           key={s}
           type="button"
           onClick={() => onSelect(s)}

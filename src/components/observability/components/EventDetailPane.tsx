@@ -72,6 +72,7 @@ function EventDetailPane({ event }: EventDetailPaneProps) {
 
       <div className="px-3.5 py-2.5 flex gap-2 border-b border-border">
         <button
+          data-ui-part=""
           data-testid="event-detail-copy"
           onClick={onCopy}
           className={cn(
@@ -84,6 +85,7 @@ function EventDetailPane({ event }: EventDetailPaneProps) {
           Copy
         </button>
         <button
+          data-ui-part=""
           data-testid="event-detail-download"
           onClick={onDownload}
           className={cn(

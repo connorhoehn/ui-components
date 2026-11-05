@@ -103,6 +103,7 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
 
         return (
           <button
+            data-ui-part=""
             key={section.id}
             type="button"
             onClick={() => handleClick(section.id)}

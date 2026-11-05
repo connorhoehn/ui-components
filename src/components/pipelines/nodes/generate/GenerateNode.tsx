@@ -70,6 +70,7 @@ export default function GenerateNode(props: NodeProps<GenerateFlowNode>) {
     body = (
       <>
         <button
+          data-ui-part=""
           type="button"
           data-testid="generate-output-preview"
           aria-label={src ? 'View generated image' : 'Image synthesizing'}

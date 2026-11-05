@@ -53,7 +53,7 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
 
   return (
     <div className="overflow-auto border border-border rounded">
-      <table className="border-collapse w-full">
+      <table data-ui-part="" className="border-collapse w-full">
         <thead>
           <tr>
             {/* empty corner cell */}

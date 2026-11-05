@@ -111,6 +111,7 @@ export function ComposerAttachments({
             <span className="text-[11px] text-text-tertiary">{formatBytes(file.size)}</span>
           </span>
           <button
+            data-ui-part=""
             type="button"
             // Named for the file: a row of identical "Remove attachment"
             // buttons is unusable by screen reader when you have four staged.

@@ -102,6 +102,7 @@ export function AttachmentBlock({
                 <div className="flex min-w-0 flex-1 flex-col">
                     {onOpen ? (
                         <button
+                            data-ui-part=""
                             type="button"
                             data-testid={`${testId}-open`}
                             onClick={onOpen}

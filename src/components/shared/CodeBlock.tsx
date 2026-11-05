@@ -181,6 +181,7 @@ export function CodeBlock({
     >
       {copyButton && (
         <button
+          data-ui-part=""
           type="button"
           onClick={handleCopy}
           aria-label={copied ? 'Copied' : 'Copy code'}

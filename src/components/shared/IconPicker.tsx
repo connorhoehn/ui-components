@@ -62,6 +62,7 @@ function IconCell({
 }) {
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={() => onPick(emoji)}
       className={cn(
@@ -129,6 +130,7 @@ export default function IconPicker({
   return (
     <div className="relative inline-block" ref={rootRef}>
       <button
+        data-ui-part=""
         type="button"
         onClick={() => setOpen((x) => !x)}
         className="w-[34px] h-[34px] inline-flex items-center justify-center p-0 text-[22px] leading-none border border-border rounded-md cursor-pointer font-[inherit] shrink-0 hover:bg-surface-hover hover:border-border-emphasis"
@@ -156,6 +158,7 @@ export default function IconPicker({
           </div>
           <div className="flex gap-1.5 mt-2.5 pt-2.5 border-t border-border">
             <input
+              data-ui-part=""
               type="text"
               value={customDraft}
               onChange={(e) => setCustomDraft(e.target.value)}
@@ -173,6 +176,7 @@ export default function IconPicker({
               aria-label="Custom emoji"
             />
             <button
+              data-ui-part=""
               type="button"
               onClick={handleCustomCommit}
               disabled={customDraft.trim().length === 0}

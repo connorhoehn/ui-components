@@ -213,7 +213,7 @@ export function LoginPage({
 
         {tab === 'signin' && (
           <form onSubmit={handleLogin} aria-label="Sign in form">
-            <input type="hidden" name="uid" value={uid} />
+            <input data-ui-part="" type="hidden" name="uid" value={uid} />
             <FormField
               label="Email"
               name="login-email"

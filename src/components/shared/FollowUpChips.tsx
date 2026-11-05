@@ -27,6 +27,7 @@ export function FollowUpChips({
       )}
       {suggestions.map((s, i) => (
         <button
+          data-ui-part=""
           key={i}
           type="button"
           onClick={() => onSelect(s)}
@@ -37,6 +38,7 @@ export function FollowUpChips({
       ))}
       {onRefresh && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onRefresh}
           className="inline-flex items-center justify-center w-7 h-7 rounded-full border border-[var(--color-border)] text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] transition-colors text-base"

@@ -24,8 +24,10 @@ These files ship in the package, so they are readable from
   page archetype (`CollectionPage`, `MasterDetailPage`, `DetailPage`,
   `DashboardPage`, `SettingsPage`, all inside `PageFrame` and one
   `AppShell`), then a decision tree for the pieces inside the page.
-- `skills/ui-page-build/SKILL.md`: the agent skill for building a page from
-  the templates; `skills/ui-dom-audit/SKILL.md` audits the rendered result.
+- [`skills/ui-page-build/SKILL.md`](skills/ui-page-build/SKILL.md): the agent
+  skill for building a page from the templates;
+  [`skills/ui-dom-audit/SKILL.md`](skills/ui-dom-audit/SKILL.md) audits the
+  rendered result.
 - [`llms.txt`](llms.txt): the same map in the llms.txt format.
 
 Layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are

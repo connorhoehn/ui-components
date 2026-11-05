@@ -94,10 +94,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <textarea
+        data-ui-part=""
         ref={setRef}
         rows={rowsProp}
         disabled={disabled}
         data-testid={testId}
+        data-ui-control="textarea"
         aria-invalid={ariaInvalid}
         value={value}
         onChange={handleChange}

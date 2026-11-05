@@ -193,6 +193,7 @@ window.location.href = authUrl;`}</pre>
                 with a mouse. Nothing inside the header is interactive, so a
                 button is the correct element rather than an ARIA patch. */}
             <button
+              data-ui-part=""
               type="button"
               className="flex items-center justify-between w-full text-left px-5 py-4 cursor-pointer select-none bg-transparent border-none font-[inherit]"
               onClick={() => toggleStep(idx)}

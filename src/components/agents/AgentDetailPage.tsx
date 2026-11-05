@@ -21,7 +21,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
       <div className={cn('text-center py-12', className)}>
         <div className="text-text-tertiary text-sm">Agent not found: {agentId}</div>
         {onBack && (
-          <button className="mt-2 text-xs text-info-fg hover:underline" onClick={onBack}>
+          <button data-ui-part="" className="mt-2 text-xs text-info-fg hover:underline" onClick={onBack}>
             Back to dashboard
           </button>
         )}
@@ -35,7 +35,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
       <div className="flex items-start justify-between">
         <div>
           {onBack && (
-            <button className="text-xs text-info-fg hover:underline mb-2 block" onClick={onBack}>
+            <button data-ui-part="" className="text-xs text-info-fg hover:underline mb-2 block" onClick={onBack}>
               ← Back
             </button>
           )}

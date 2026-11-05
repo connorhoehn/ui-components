@@ -617,6 +617,7 @@ export function ComputerLab({
       : `Instruction for ${scopedComputers.length} ${scopedComputers.length === 1 ? 'computer' : 'computers'} — ⏎ to send`;
   const composer = (
     <textarea
+      data-ui-part=""
       ref={composerRef}
       rows={1}
       value={broadcastText}
@@ -732,6 +733,7 @@ export function ComputerLab({
               {headerActions}
               {variant === 'overlay' && (
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={onClose}
                   title={`Leave the lab${chord('exit') ? ` · ${chord('exit')}` : ''}`}
@@ -918,6 +920,7 @@ export function ComputerLab({
                 <span aria-hidden="true" className="font-mono text-[12px] text-text-tertiary pl-1">&gt;</span>
                 {composer}
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => void sendInstruction()}
                   disabled={!broadcastText.trim() || targetCount === 0 || instructing}
@@ -1016,6 +1019,7 @@ export function ComputerLab({
             const isActive = window.id === layout.activeWindow?.id;
             return (
               <button
+                data-ui-part=""
                 key={window.id}
                 type="button"
                 onClick={() => layout.selectWindow(window.id)}
@@ -1031,6 +1035,7 @@ export function ComputerLab({
             );
           })}
           <button
+            data-ui-part=""
             type="button"
             onClick={() => activePane && layout.newWindow(activePane.computerId, kindIdFor(byId.get(activePane.computerId)))}
             disabled={!activePane}
@@ -1076,6 +1081,7 @@ export function ComputerLab({
         )}
 
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setShowHelp((v) => !v)}
           aria-pressed={showHelp}
@@ -1089,6 +1095,7 @@ export function ComputerLab({
             for the same reason — see the keymap handler. */}
         {variant === 'overlay' && (
           <button
+            data-ui-part=""
             type="button"
             onClick={onClose}
             title={`Leave the lab${chord('exit') ? ` · ${chord('exit')}` : ''}`}
@@ -1204,6 +1211,7 @@ export function ComputerLab({
               </div>
               {canManage && (
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => provision()}
                   // Same tinted treatment as `send`. This is the only thing to
@@ -1236,6 +1244,7 @@ export function ComputerLab({
         )}
       >
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setBroadcast((v) => !v)}
           aria-pressed={broadcast}
@@ -1263,6 +1272,7 @@ export function ComputerLab({
         {composer}
 
         <button
+          data-ui-part=""
           type="button"
           onClick={sendBroadcast}
           disabled={!broadcastText.trim() || targets.length === 0}
@@ -1416,6 +1426,7 @@ function LabPane({
       titleAction={
         <span className="inline-flex items-center gap-1.5">
           <button
+            data-ui-part=""
             type="button"
             onClick={onToggleKind}
             title={nextKind(kinds, pane.kindId)?.description ?? 'Switch pane kind'}
@@ -1424,6 +1435,7 @@ function LabPane({
             {kind.label}
           </button>
           <button
+            data-ui-part=""
             type="button"
             onClick={onClose}
             aria-label={`Close pane ${computer.label}`}
@@ -1528,6 +1540,7 @@ function ShortcutSheet({
           )}
           <span className="flex-1" />
           <button
+            data-ui-part=""
             type="button"
             onClick={onClose}
             className="text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text"

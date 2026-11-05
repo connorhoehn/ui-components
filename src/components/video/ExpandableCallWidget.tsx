@@ -548,6 +548,7 @@ function ModeButton({
 }) {
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onClick}
       aria-pressed={active}

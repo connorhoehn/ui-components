@@ -43,6 +43,7 @@ export function SpeakerNotes({
   const near = length >= maxLength * 0.9;
   return (
     <section
+      data-ui-part=""
       aria-labelledby={labelId}
       className={cn('flex flex-col gap-1 rounded-lg border border-border bg-surface px-3 py-2', className)}
       data-testid={`${testId}-pane`}

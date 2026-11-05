@@ -234,6 +234,7 @@ export default function ShortcutsHelp({ open, onClose, sections = SECTIONS }: Sh
       </div>
       <div className="flex justify-end mt-[18px]">
         <button
+          data-ui-part=""
           onClick={onClose}
           className="py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-surface text-text-primary cursor-pointer font-[inherit]"
         >

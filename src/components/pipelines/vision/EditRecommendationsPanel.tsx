@@ -43,7 +43,7 @@ export function EditRecommendationsPanel({
   const anyEdits = (edits ?? []).length > 0;
   if (!anyVerdict && !anyEdits) return null;
   return (
-    <section className={cn('flex flex-col gap-2', className)}>
+    <section data-ui-part="" className={cn('flex flex-col gap-2', className)}>
       <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
         Edits &amp; Quality
       </h4>
@@ -103,6 +103,7 @@ export function EditRecommendationsPanel({
               <span className="flex-1 text-text-primary">{edit}</span>
               {onApplyEdit ? (
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => onApplyEdit(edit)}
                   className="shrink-0 rounded-md border border-border bg-surface-hover px-2 py-0.5 text-[11px] font-medium text-text-primary hover:bg-surface-panel focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"

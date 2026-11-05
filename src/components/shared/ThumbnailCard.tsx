@@ -137,6 +137,7 @@ export function ThumbnailCard({
   if (onClick) {
     return (
       <button
+        data-ui-part=""
         type="button"
         onClick={onClick}
         data-testid={testId}

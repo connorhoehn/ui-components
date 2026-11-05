@@ -113,6 +113,7 @@ function CollapsibleSection({
     >
       <div className="flex items-stretch bg-[var(--color-surface)]">
       <button
+        data-ui-part=""
         type="button"
         ref={headerRef}
         data-testid={testId}

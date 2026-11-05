@@ -364,6 +364,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
       footer={
         <>
           <button
+            data-ui-part=""
             type="button"
             onClick={onClose}
             className="py-1.5 px-3 text-[13px] bg-none border-none text-neutral cursor-pointer font-[inherit]"
@@ -371,6 +372,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
             Close
           </button>
           <button
+            data-ui-part=""
             type="button"
             onClick={handleEmit}
             data-testid="sim-emit-button"
@@ -403,6 +405,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
               Recent fires ({history.length})
             </span>
             <button
+              data-ui-part=""
               type="button"
               data-testid="sim-history-clear"
               onClick={handleClearHistory}
@@ -436,6 +439,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
                   {entry.eventType}
                 </span>
                 <button
+                  data-ui-part=""
                   type="button"
                   data-testid="sim-history-refire"
                   onClick={() => handleRefire(entry)}

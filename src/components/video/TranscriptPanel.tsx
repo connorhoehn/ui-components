@@ -135,7 +135,7 @@ export function TranscriptPanel({
 
   if (status === 'idle') {
     return (
-      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-text-secondary mb-2">{title}</header>
         <div className="text-sm text-text-tertiary">
           {idleState ?? 'Transcription was not enabled for this recording.'}
@@ -146,7 +146,7 @@ export function TranscriptPanel({
 
   if (status === 'pending' || status === 'processing') {
     return (
-      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-text-secondary mb-2 flex items-center gap-2">
           <span>{title}</span>
           <span className="inline-block h-2 w-2 rounded-full bg-warning animate-pulse" aria-hidden="true" />
@@ -167,7 +167,7 @@ export function TranscriptPanel({
 
   if (status === 'failed') {
     return (
-      <section className={cn('rounded-lg border border-danger-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-danger-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-danger mb-2">
           {title} — failed
         </header>
@@ -182,7 +182,7 @@ export function TranscriptPanel({
   // status === 'ready'
   if (!segments || segments.length === 0) {
     return (
-      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+      <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface p-4', className)}>
         <header className="text-sm font-medium text-text-secondary mb-2">{title}</header>
         <div className="text-sm text-text-tertiary">
           No audible speech was captured in this recording.
@@ -192,7 +192,7 @@ export function TranscriptPanel({
   }
 
   return (
-    <section className={cn('rounded-lg border border-border bg-surface flex flex-col', className)}>
+    <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface flex flex-col', className)}>
       <header className="text-sm font-medium text-text-secondary px-4 py-3 border-b border-border">
         {title}
         <span className="ml-2 text-xs font-normal text-text-tertiary">

@@ -131,6 +131,7 @@ function NotificationBanner({ notifications, onDismiss, onClick }: {
             {n.message}
           </span>
           <button
+            data-ui-part=""
             onClick={() => onDismiss(n.id)}
             aria-label="Dismiss notification"
             className="text-base text-text-tertiary bg-none border-none cursor-pointer pl-3 leading-none"
@@ -633,6 +634,7 @@ function AppLayoutInner({
             </span>
           )}
           <button
+            data-ui-part=""
             onClick={onSignOut}
             className="bg-none border border-border rounded-md px-3 py-1 cursor-pointer text-sm text-text-primary"
           >
@@ -641,6 +643,7 @@ function AppLayoutInner({
           {/* Hamburger — app-level menu */}
           <div className="relative" ref={appMenuRef}>
             <button
+              data-ui-part=""
               type="button"
               ref={appMenuTriggerRef}
               onClick={() => setShowAppMenu(v => !v)}
@@ -664,6 +667,7 @@ function AppLayoutInner({
                   Content
                 </div>
                 <button
+                  data-ui-part=""
                   onClick={() => { navigate('/document-types'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'doc-types')}
                 >
@@ -671,6 +675,7 @@ function AppLayoutInner({
                   Document Types
                 </button>
                 <button
+                  data-ui-part=""
                   onClick={() => { navigate('/field-types'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'field-types')}
                 >
@@ -682,6 +687,7 @@ function AppLayoutInner({
                   Automation
                 </div>
                 <button
+                  data-ui-part=""
                   onClick={() => { navigate('/pipelines'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'pipelines')}
                 >
@@ -689,6 +695,7 @@ function AppLayoutInner({
                   Pipelines
                 </button>
                 <button
+                  data-ui-part=""
                   onClick={() => { navigate('/observability'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'observability')}
                 >
@@ -700,6 +707,7 @@ function AppLayoutInner({
                   Analytics
                 </div>
                 <button
+                  data-ui-part=""
                   onClick={() => { navigate('/dashboard'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'dashboard')}
                 >
@@ -711,6 +719,7 @@ function AppLayoutInner({
                   Developer
                 </div>
                 <button
+                  data-ui-part=""
                   onClick={() => { setShowDevTools(v => !v); setShowAppMenu(false); }}
                   className={menuBtnClass(showDevTools)}
                 >
@@ -799,6 +808,7 @@ function AppLayoutInner({
                     const isActive = view === 'doc-editor' ? inContent : activeView === view;
                     return (
                       <button
+                        data-ui-part=""
                         key={view}
                         onClick={() => navigate(path)}
                         className={cn(tabBtnClass(isActive), 'text-sm')}
@@ -810,6 +820,7 @@ function AppLayoutInner({
                   {/* New Document button */}
                   {activeView === 'doc-editor' && location.pathname === '/documents' && (
                     <button
+                      data-ui-part=""
                       data-testid="new-document-btn"
                       onClick={() => setShowNewDocModal(true)}
                       className="ml-auto flex items-center gap-1 px-3 py-[5px] text-[13px] font-semibold border-none rounded-md bg-info text-white cursor-pointer font-[inherit]"
@@ -830,6 +841,7 @@ function AppLayoutInner({
                       const isActive = activeView === view;
                       return (
                         <button
+                          data-ui-part=""
                           key={view}
                           onClick={() => navigate(path)}
                           className={subTabClass(isActive)}
@@ -853,6 +865,7 @@ function AppLayoutInner({
                       const showBadge = path === '/pipelines/approvals' && pendingApprovalsCount > 0;
                       return (
                         <button
+                          data-ui-part=""
                           key={path}
                           onClick={() => navigate(path)}
                           className={cn(subTabClass(isActive), 'flex items-center gap-1.5')}
@@ -889,6 +902,7 @@ function AppLayoutInner({
                       const isActive = isActiveFn(location.pathname);
                       return (
                         <button
+                          data-ui-part=""
                           key={path}
                           onClick={() => navigate(path)}
                           className={cn(subTabClass(isActive), 'flex items-center gap-1.5')}
@@ -912,6 +926,7 @@ function AppLayoutInner({
                       const isActive = isActiveFn(location.pathname);
                       return (
                         <button
+                          data-ui-part=""
                           key={path}
                           onClick={() => navigate(path)}
                           className={cn(
@@ -979,6 +994,7 @@ function AppLayoutInner({
               Dev Tools
             </span>
             <button
+              data-ui-part=""
               onClick={() => setShowDevTools(false)}
               className="bg-none border-none cursor-pointer text-xl text-text-tertiary leading-none px-1"
             >

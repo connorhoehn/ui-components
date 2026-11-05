@@ -188,6 +188,7 @@ export function LabFleetRail({
       </div>
       {onCreate && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onCreate}
           data-testid="lab-fleet-empty-create"
@@ -252,6 +253,7 @@ export function LabFleetRail({
               <div key={group.id} role="presentation">
                 {group.name && (
                   <button
+                    data-ui-part=""
                     type="button"
                     tabIndex={-1}
                     aria-expanded={!isCollapsed}
@@ -315,6 +317,7 @@ function RailTab({ selected, onSelect, icon, label, count }: {
 }) {
   return (
     <button
+      data-ui-part=""
       type="button"
       role="tab"
       aria-selected={selected}
@@ -388,6 +391,7 @@ function FleetRow({
       )}
     >
       <button
+        data-ui-part=""
         data-rail-row
         type="button"
         role="option"
@@ -442,6 +446,7 @@ function FleetRow({
       </button>
       {onOpenInPane && (
         <button
+          data-ui-part=""
           type="button"
           tabIndex={-1}
           onClick={() => onOpenInPane(computer)}

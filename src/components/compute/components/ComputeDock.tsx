@@ -122,6 +122,7 @@ function ShellPane({ shell, active, labelled }: {
           <span className="text-[10px] font-mono text-code-muted">{shell.label}</span>
           <div className="flex-1" />
           <button
+            data-ui-part=""
             type="button"
             onClick={() => closeShell(shell.id)}
             aria-label={`Close ${shell.label}`}
@@ -193,6 +194,7 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
                 active ? 'bg-code-surface' : 'bg-transparent hover:bg-code-surface/60'}`}
             >
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => focusShell(s.id)}
                 title={`${s.label} · ⌥${i + 1}`}
@@ -210,6 +212,7 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
                 )}
               </button>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => closeShell(s.id)}
                 aria-label={`Close ${s.label}`}
@@ -235,6 +238,7 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
         <div className="flex rounded border overflow-hidden mr-1 shrink-0 border-code-border">
           {(Object.keys(MODE_GLYPH) as Exclude<DockMode, 'hidden'>[]).map((m) => (
             <button
+              data-ui-part=""
               key={m}
               type="button"
               onClick={() => setMode(m)}
@@ -250,6 +254,7 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
           ))}
         </div>
         <button
+          data-ui-part=""
           type="button"
           onClick={() => setDockVisible(false)}
           title="Hide — ⌘'. The shells keep running."

@@ -176,6 +176,7 @@ export function RecordingActivityCard({
     >
       <div className="flex items-stretch">
         <button
+          data-ui-part=""
           type="button"
           onClick={playable ? open : undefined}
           disabled={!playable}

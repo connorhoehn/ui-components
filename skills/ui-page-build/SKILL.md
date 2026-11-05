@@ -18,8 +18,9 @@ here are a starting point; the index and `dist/*.d.ts` are authoritative.
 Every page starts from exactly one template (each emits
 `data-page-template="<Name>"`). Import from
 `@connorhoehnslalom/ui-components/shared` (or the root). Put it inside the
-app's `AppShell`; use `AppShell layout="fill"` (100dvh, no document scroll) so
-the template's body owns scrolling.
+app's one `AppShell` (a root-only import: there is no `/layout` subpath); use
+`AppShell layout="fill"` (no document scroll) so the template's body owns
+scrolling.
 
 | Archetype | Template | Not this |
 | --- | --- | --- |
@@ -35,26 +36,34 @@ the template's body owns scrolling.
 ```tsx
 import { CollectionPage, DataTable, Button } from '@connorhoehnslalom/ui-components/shared';
 
-export function RunsPage({ runs, query, setQuery, onOpen, onNew }: RunsPageProps) {
+export function RunsPage({ runs, loading, error, query, setQuery, onOpen, onNew }: RunsPageProps) {
   return (
     <CollectionPage
       title="Runs"
+      gutter="page"
       headerActions={<Button variant="primary" onClick={onNew}>New run</Button>}
       toolbar={{ label: 'Run controls', search: { value: query, onChange: setQuery, placeholder: 'Search runs' } }}
-    >
-      <DataTable
-        data={runs}
-        keyField={r => r.id}
-        columns={[{ key: 'name', header: 'Name' }, { key: 'status', header: 'Status' }]}
-        onRowClick={r => onOpen(r.id)}
-      />
-    </CollectionPage>
+      loading={loading}
+      error={error}
+      empty={{ title: 'No runs yet' }}
+      table={{
+        data: runs,
+        keyField: r => r.id,
+        columns: [{ key: 'name', header: 'Name' }, { key: 'status', header: 'Status' }],
+        onRowClick: r => onOpen(r.id),
+      }}
+    />
   );
 }
 ```
 
-Rows open a routed record page (`onRowClick` navigates). A table with nothing
-to open declares `staticRows="<reason>"`.
+Pass the rows as `table` (DataTableProps): the template renders a striped
+`DataTable`, its skeleton while `loading`, and `empty` when `data` is empty.
+Use `children` (a `DataTable`, cards) only when the body is not one table,
+with `isEmpty` for its empty state. `CollectionPage` is the one template whose
+`gutter` defaults to `none`; new pages pass `gutter="page"`. Rows open a routed
+record page (`onRowClick` navigates). A table with nothing to open declares
+`staticRows="<reason>"`.
 
 **Master-detail**
 
@@ -161,20 +170,27 @@ export function DiagramPage({ diagram, onShare }: DiagramPageProps) {
 - **Separate groups.** Adjacent groups get a divider or the section gap:
   `PageSection divided`, `Divider`, or the template's own spacing. Never stack
   two groups flush. Audit: `section.separator`.
+- **Section headers.** A titled page section is `PageSection title=…`; the
+  header row of a card or panel is `CardHeader` (title, actions, the rule under
+  it), or `PaneHeader` when the pane has tabs. Never hand-draw a `border-b`
+  header band. (`PanelHeader` is internal and not exported.)
 - **The frame owns the gutter.** Do not put `p-*`, `px-*` or `mx-*` on a page
-  wrapper; the template applies the page gutter (`gutter` prop when it must
-  differ). Audit: `content.gutter`.
+  wrapper; the template applies the page gutter (`gutter="page"`, the default
+  everywhere except `CollectionPage`, which needs it passed). Audit:
+  `content.gutter`.
 - **Buttons.** Always pass `variant` explicitly (`primary`, `secondary`,
   `ghost`, `danger`, `danger-solid`, `success`, `info`, `link`). One `primary`
   per view; everything else is `secondary` or `ghost`. Icon-only actions use
   `IconButton` with an `aria-label`.
 - **Forms.** Controls come from the forms family: `Input`, `Select`,
-  `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`,
-  `Switch` (`ToggleField` on `/pipelines`). Never a raw `<input>`, `<select>`
-  or `<textarea>`.
+  `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`
+  (root-only), `Switch`, `SearchInput` (`ToggleField` on `/pipelines`), with
+  `FormField` for label, help and error. Never a raw `<input>`, `<select>` or
+  `<textarea>`.
 - **States.** Empty, loading and error use `EmptyState`, `LoadingState`,
-  `ErrorState` (or the template's `loading`/`error` props). An empty
-  `PageSection` takes its `empty` prop: one row, not a heading over a paragraph.
+  `ErrorState` (on a collection, `CollectionPage`'s `loading`, `error`,
+  `onRetry` and `empty` props). An empty `PageSection` takes its `empty` prop:
+  one row, not a heading over a paragraph.
 
 ## 3. Tokens, classes and styles
 
@@ -191,9 +207,9 @@ export function DiagramPage({ diagram, onShare }: DiagramPageProps) {
 - Compose class names with the app's `cn()`/`clsx` helper; do not concatenate
   strings with conditionals inline.
 - The ESLint plugin enforces most of this:
-  `@connorhoehnslalom/ui-components/eslint-plugin` (raw controls, inline style,
-  arbitrary token values, explicit Button variant). Do not disable its rules
-  with comments.
+  `@connorhoehnslalom/ui-components/eslint-plugin` (`no-raw-controls`,
+  `no-inline-style`, `no-arbitrary-token-values`, `button-explicit-variant`,
+  `no-hand-rolled-separators`). Do not disable its rules with comments.
 
 ## 4. Realtime features
 

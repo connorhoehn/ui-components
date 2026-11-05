@@ -135,6 +135,7 @@ export function MediaControlsBar({
       )}
       {extras}
       <button
+        data-ui-part=""
         type="button"
         onClick={onLeave}
         aria-label={leaveLabel}

@@ -64,6 +64,7 @@ export function SuggestionCard({
 }: SuggestionCardProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       data-testid={testId}
       onClick={onSelect}

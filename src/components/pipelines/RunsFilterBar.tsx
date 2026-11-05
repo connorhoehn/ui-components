@@ -68,6 +68,7 @@ function FilterDropdown<T extends string>({
   return (
     <div ref={ref} className="relative">
       <button
+        data-ui-part=""
         type="button"
         onClick={() => setOpen(!open)}
         data-testid={`${testIdPrefix}-dropdown`}
@@ -173,6 +174,7 @@ export default function RunsFilterBar({
       >
         {DATE_RANGE_KEYS.map((r) => (
           <button
+            data-ui-part=""
             key={r}
             type="button"
             role="radio"
@@ -216,6 +218,7 @@ export default function RunsFilterBar({
 
       {hasActiveFilters && (
         <button
+          data-ui-part=""
           type="button"
           onClick={onClearFilters}
           className="px-2 py-[3px] text-[11px] bg-none border-none text-text-tertiary cursor-pointer font-[inherit] underline"

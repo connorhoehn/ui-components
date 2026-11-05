@@ -53,7 +53,7 @@ export function WorkTableView({
   const cell = 'border-b border-border px-0 py-[3px] text-sm leading-5 text-text-secondary h-11';
   const heading = 'border-b border-border px-0 py-2 text-xs font-semibold normal-case tracking-normal text-text-secondary';
 
-  return <section className={cn('min-w-0 px-6 pb-6 pt-4', className)} aria-label={title} data-testid={testId}>
+  return <section data-ui-part="" className={cn('min-w-0 px-6 pb-6 pt-4', className)} aria-label={title} data-testid={testId}>
     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
       <div className="flex flex-wrap items-baseline gap-3">
         <h2 className="m-0 text-sm font-semibold text-text-primary">{title} {!loading && !error && <span className="ml-1 font-normal text-text-secondary">{count}</span>}</h2>
@@ -90,7 +90,7 @@ export function WorkTableView({
             // nth-child stripe would band the wrong rows; stripe by item index.
             return <TableBody key={key} striped={false}>
               <Tr><Th colSpan={4} scope="rowgroup" className="border-b border-border p-0 normal-case tracking-normal">
-                <button type="button" aria-expanded={!closed} onClick={() => setCollapsed((prev) => ({ ...prev, [key]: !closed }))}
+                <button data-ui-part="" type="button" aria-expanded={!closed} onClick={() => setCollapsed((prev) => ({ ...prev, [key]: !closed }))}
                   className="flex w-full items-center gap-3 bg-transparent px-2.5 py-3 text-left text-sm font-semibold text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                   <ChevronIcon dir={closed ? 'right' : 'down'} size={14} />
                   {groupBy === 'status' && groupColors?.[group.id] && <StatusDot color={groupColors[group.id]} />}
@@ -107,13 +107,13 @@ export function WorkTableView({
                 <Td className={cn(cell, 'min-w-0 px-2.5 text-text-primary')} data-testid="work-table-title-cell">
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="min-w-0 flex-1">
-                      {onOpenItem ? <button type="button" disabled={item.disabled} title={item.title} data-work-title=""
+                      {onOpenItem ? <button data-ui-part="" type="button" disabled={item.disabled} title={item.title} data-work-title=""
                         className="block max-w-full truncate bg-transparent text-left text-sm font-medium leading-5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                         onClick={() => onOpenItem(item)}>{item.title}</button> : <span data-work-title="" className="block min-w-0 truncate text-sm font-medium leading-5" title={item.title}>{item.title}</span>}
                       <div className="flex min-w-0 items-center gap-2 text-xs leading-4 text-text-secondary" data-work-description="">
                         {item.reference && <span className="shrink-0 font-mono" data-work-reference="">{item.reference}</span>}
                         <span className="truncate" title={item.kindLabel ?? defaultKindLabel}>{item.kindLabel ?? defaultKindLabel}</span>
-                        {item.signal && (item.signal.onClick ? <button type="button" disabled={item.disabled} className="shrink-0 text-sm text-primary hover:underline" onClick={item.signal.onClick}>{item.signal.label}</button> : <span className={cn('shrink-0', item.signal.state === 'blocked' ? 'text-danger' : item.signal.state === 'running' && 'text-primary')}>{item.signal.label}</span>)}
+                        {item.signal && (item.signal.onClick ? <button data-ui-part="" type="button" disabled={item.disabled} className="shrink-0 text-sm text-primary hover:underline" onClick={item.signal.onClick}>{item.signal.label}</button> : <span className={cn('shrink-0', item.signal.state === 'blocked' ? 'text-danger' : item.signal.state === 'running' && 'text-primary')}>{item.signal.label}</span>)}
                         {[...(item.tag ? [item.tag] : []), ...(item.chips ?? [])].map((chip) => <span key={chip.label} className={cn('truncate', chip.tone === 'danger' && 'text-danger')}>{chip.label}</span>)}
                       </div>
                     </div>

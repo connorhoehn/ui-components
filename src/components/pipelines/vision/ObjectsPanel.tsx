@@ -13,7 +13,7 @@ export interface ObjectsPanelProps {
 export function ObjectsPanel({ objects, onSelect, className }: ObjectsPanelProps) {
   if (!objects || objects.length === 0) return null;
   return (
-    <section className={cn('flex flex-col gap-1.5', className)}>
+    <section data-ui-part="" className={cn('flex flex-col gap-1.5', className)}>
       <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
         Objects ({objects.length})
       </h4>
@@ -34,6 +34,7 @@ export function ObjectsPanel({ objects, onSelect, className }: ObjectsPanelProps
             return (
               <li key={`${o.label}-${i}`}>
                 <button
+                  data-ui-part=""
                   type="button"
                   onClick={() => onSelect(o)}
                   className={cn(

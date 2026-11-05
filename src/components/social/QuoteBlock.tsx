@@ -91,6 +91,7 @@ export function QuoteBlock({
     >
       {onJump ? (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${testId}-jump`}
           onClick={() => onJump(quote.messageId)}
@@ -105,6 +106,7 @@ export function QuoteBlock({
 
       {onDismiss && (
         <button
+          data-ui-part=""
           type="button"
           data-testid={`${testId}-dismiss`}
           aria-label="Remove quote"

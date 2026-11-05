@@ -342,7 +342,7 @@ function LegacyWorkGraph({
 
   if (state === 'loading' || state === 'error' || state === 'empty' || nodes.length === 0) {
     return (
-      <section aria-label="Shared work graph" className={cn('min-w-0', className)}>
+      <section data-ui-part="" aria-label="Shared work graph" className={cn('min-w-0', className)}>
         <WorkGraphPlaceholder state={state === 'ready' ? 'empty' : state} errorMessage={errorMessage} onRetry={onRetry} />
       </section>
     );
@@ -351,7 +351,7 @@ function LegacyWorkGraph({
   const unavailableSources = sources.filter((source) => source.health !== 'available');
 
   return (
-    <section aria-label="Shared work graph" className={cn('min-w-0 space-y-4', className)} data-state={state}>
+    <section data-ui-part="" aria-label="Shared work graph" className={cn('min-w-0 space-y-4', className)} data-state={state}>
       {state === 'partial' ? (
         <div role="status" data-testid="work-graph-partial" className="rounded-lg border border-warning-border bg-warning-bg px-3 py-2 text-sm text-warning-fg">
           <p className="font-medium">Some work sources are unavailable or delayed.</p>

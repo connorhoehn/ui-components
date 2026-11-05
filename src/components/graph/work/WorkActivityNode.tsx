@@ -66,6 +66,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
       onClick={select}
     >
       <article
+        data-ui-part=""
         role="button"
         tabIndex={0}
         aria-label={`${title}, ${cardState}`}

@@ -92,6 +92,7 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
         const active = btn.isActive(editor);
         return (
           <button
+            data-ui-part=""
             key={btn.label}
             type="button"
             onClick={() => btn.action(editor)}

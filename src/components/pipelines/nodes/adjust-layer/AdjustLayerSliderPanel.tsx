@@ -207,6 +207,7 @@ function LayerRow({ layer, index, onUpdate, onRemove }: LayerRowProps) {
 
       {/* Delete */}
       <button
+        data-ui-part=""
         type="button"
         onClick={onRemove}
         className={cn(
@@ -382,6 +383,7 @@ export default function AdjustLayerSliderPanel({
             data-testid="new-layer-kind-select"
           />
           <button
+            data-ui-part=""
             type="button"
             onClick={addLayer}
             className={cn(
@@ -412,6 +414,7 @@ export default function AdjustLayerSliderPanel({
             >
               <span>Source: pinned ({shortenImageId(effectiveSourceId)})</span>
               <button
+                data-ui-part=""
                 type="button"
                 onClick={handleClearPin}
                 aria-label="Clear pinned source image"

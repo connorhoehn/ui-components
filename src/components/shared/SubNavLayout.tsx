@@ -372,8 +372,9 @@ function GroupSection({
     : undefined;
 
   return (
-    <section className="border-b border-[var(--color-border)]">
+    <section data-ui-part="" className="border-b border-[var(--color-border)]">
       <button
+        data-ui-part=""
         type="button"
         ref={headerRef}
         onClick={toggle}
@@ -462,6 +463,7 @@ function ItemLink({
   if (item.onClick) {
     return (
       <button
+        data-ui-part=""
         type="button"
         onClick={item.onClick}
         className={cn('block w-full px-[14px] border-l-[3px] border-transparent border-t-0 border-r-0 border-b-0 bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover', RAIL_ROW_PAD_Y)}

@@ -34,12 +34,12 @@ export function WorkEntityList({ nodes, edges, selection, onSelectionChange, hea
   }, [selectionKey]);
   const nodeItem = (node: WorkGraphNodeData) => {
     const selected = isSelected(selection, 'node', node.id);
-    return <li key={node.id}><button ref={selected ? selectedItem : undefined} type="button" aria-label={`Work item: ${nodeLabel(node)}`} aria-pressed={selected} aria-current={selected ? 'true' : undefined} data-selected={selected || undefined} onClick={() => onSelectionChange({ kind: 'node', id: node.id })} className={itemClass(selected)}><span className="block break-words font-medium text-text-primary">{nodeLabel(node)}</span><span className="text-xs text-text-tertiary">{node.kind === 'conversation' ? 'Chat · Recent activity' : `${node.kind} · ${statusLabelOf?.(node) ?? node.status}`}</span></button></li>;
+    return <li key={node.id}><button data-ui-part="" ref={selected ? selectedItem : undefined} type="button" aria-label={`Work item: ${nodeLabel(node)}`} aria-pressed={selected} aria-current={selected ? 'true' : undefined} data-selected={selected || undefined} onClick={() => onSelectionChange({ kind: 'node', id: node.id })} className={itemClass(selected)}><span className="block break-words font-medium text-text-primary">{nodeLabel(node)}</span><span className="text-xs text-text-tertiary">{node.kind === 'conversation' ? 'Chat · Recent activity' : `${node.kind} · ${statusLabelOf?.(node) ?? node.status}`}</span></button></li>;
   };
   const sections = groups?.map((group) => ({ ...group, items: group.nodeIds.map((id) => nodeById.get(id)).filter((node): node is WorkGraphNodeData => !!node) })).filter((group) => group.items.length > 0);
   const empty = sections ? sections.length === 0 && edges.length === 0 : nodes.length === 0 && edges.length === 0;
   return (
-    <section aria-labelledby="work-entity-list-heading" className="min-w-0 space-y-3">
+    <section data-ui-part="" aria-labelledby="work-entity-list-heading" className="min-w-0 space-y-3">
       <h3 id="work-entity-list-heading" className="text-sm font-semibold text-text-primary">{heading}</h3>
       {empty ? (
         <p className="text-sm text-text-secondary">No shared work is available.</p>
@@ -49,7 +49,7 @@ export function WorkEntityList({ nodes, edges, selection, onSelectionChange, hea
             <h4 className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">Items</h4>
             {sections
               ? sections.map((group) => (
-                <section key={group.id} aria-label={group.title} className="mb-2" data-testid="work-entity-list-group">
+                <section data-ui-part="" key={group.id} aria-label={group.title} className="mb-2" data-testid="work-entity-list-group">
                   <h5 className="mb-1 truncate text-xs font-semibold text-text-secondary">{group.title}{group.subtitle && <span className="font-normal text-text-tertiary"> · {group.subtitle}</span>}</h5>
                   <ul className="space-y-1">{group.items.map(nodeItem)}</ul>
                 </section>
@@ -62,7 +62,7 @@ export function WorkEntityList({ nodes, edges, selection, onSelectionChange, hea
               {edges.map((edge) => {
                 const selected = isSelected(selection, 'edge', edge.id);
                 const label = edgeLabel(edge, nodeById);
-                return <li key={edge.id}><button ref={selected ? selectedItem : undefined} type="button" aria-label={`Relationship: ${label}`} aria-pressed={selected} aria-current={selected ? 'true' : undefined} data-selected={selected || undefined} onClick={() => onSelectionChange({ kind: 'edge', id: edge.id })} className={itemClass(selected)}><span className="block break-words font-medium text-text-primary">{label}</span><span className="text-xs text-text-tertiary">{edge.relation} · {edge.status}</span></button></li>;
+                return <li key={edge.id}><button data-ui-part="" ref={selected ? selectedItem : undefined} type="button" aria-label={`Relationship: ${label}`} aria-pressed={selected} aria-current={selected ? 'true' : undefined} data-selected={selected || undefined} onClick={() => onSelectionChange({ kind: 'edge', id: edge.id })} className={itemClass(selected)}><span className="block break-words font-medium text-text-primary">{label}</span><span className="text-xs text-text-tertiary">{edge.relation} · {edge.status}</span></button></li>;
               })}
             </ul>
           </div>

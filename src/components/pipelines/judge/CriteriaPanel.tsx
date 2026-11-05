@@ -26,7 +26,7 @@ export function CriteriaPanel({ result, className }: CriteriaPanelProps) {
   for (const c of result.rubricSnapshot.criteria) defById.set(c.id, c);
 
   return (
-    <section className={cn('flex flex-col gap-1.5', className)}>
+    <section data-ui-part="" className={cn('flex flex-col gap-1.5', className)}>
       <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
         Criteria ({result.criteria.length})
       </h4>

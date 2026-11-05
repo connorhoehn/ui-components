@@ -247,6 +247,7 @@ export default function ExecutorLog({
           const active = activeChips.has(chip.label);
           return (
             <button
+              data-ui-part=""
               key={chip.label}
               type="button"
               className={cn(
@@ -282,6 +283,7 @@ export default function ExecutorLog({
           const active = timePreset === preset;
           return (
             <button
+              data-ui-part=""
               key={preset}
               type="button"
               className={cn(
@@ -338,6 +340,7 @@ export default function ExecutorLog({
           const stepId = isStepRow ? extractStepId(row) : undefined;
           return (
             <div
+              data-ui-part=""
               key={row.auditId}
               role="button"
               tabIndex={0}

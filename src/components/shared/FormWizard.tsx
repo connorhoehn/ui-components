@@ -261,6 +261,7 @@ export function FormWizard({
               const showError = !!s.error && shown.has(s.key);
               return (
                 <section
+                  data-ui-part=""
                   key={s.key}
                   ref={(el) => { if (el) sectionRefs.current.set(s.key, el); else sectionRefs.current.delete(s.key); }}
                   aria-labelledby={headingId}
@@ -290,7 +291,7 @@ export function FormWizard({
           {hasSide && (
             <div className="flex min-w-0 flex-col gap-4 @min-[56rem]:sticky @min-[56rem]:top-4" data-form-wizard-side="">
               {summary !== undefined && (
-                <section aria-labelledby={`${uid}-summary`} data-form-wizard-summary=""
+                <section data-ui-part="" aria-labelledby={`${uid}-summary`} data-form-wizard-summary=""
                   className="flex flex-col gap-4 rounded-lg border border-border bg-surface-panel p-4" data-testid={`${testId}-summary`}>
                   <h2 id={`${uid}-summary`} className="m-0 text-sm font-semibold leading-5 text-text-primary">{summaryTitle}</h2>
                   <div className="flex min-w-0 flex-col gap-3">{summary}</div>

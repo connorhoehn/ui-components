@@ -122,6 +122,7 @@ function EffectChip({
 }: EffectChipProps) {
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onClick}
       disabled={disabled}
@@ -165,7 +166,7 @@ function TraySection({
   children: ReactNode;
 }) {
   return (
-    <section className={cn('flex flex-col', compact ? 'gap-1.5' : 'gap-2')}>
+    <section data-ui-part="" className={cn('flex flex-col', compact ? 'gap-1.5' : 'gap-2')}>
       <h3 className="text-[11px] font-semibold uppercase tracking-wide text-white/60">
         {label}
       </h3>
@@ -408,6 +409,7 @@ function Thumb({
 }) {
   return (
     <button
+      data-ui-part=""
       type="button"
       onClick={onClick}
       disabled={disabled}
@@ -523,7 +525,7 @@ function EffectsGrid({
 
   return (
     <div data-testid={testId} data-layout="grid" className={cn('flex flex-col gap-3 text-text-primary', className)}>
-      <section className="flex flex-col gap-2" aria-label="Filter">
+      <section data-ui-part="" className="flex flex-col gap-2" aria-label="Filter">
         <GridHeading
           action={
             <Button
@@ -569,7 +571,7 @@ function EffectsGrid({
         </div>
       </section>
 
-      <section className="flex flex-col gap-2" aria-label="Background">
+      <section data-ui-part="" className="flex flex-col gap-2" aria-label="Background">
         <GridHeading>Background</GridHeading>
         {backgroundsUnsupported ? (
           <InlineAlert tone="info" data-testid="effects-background-unsupported">
@@ -618,6 +620,7 @@ function EffectsGrid({
               >
                 <PlusIcon size={22} />
                 <input
+                  data-ui-part=""
                   ref={fileRef}
                   type="file"
                   accept="image/*"
@@ -635,7 +638,7 @@ function EffectsGrid({
         )}
       </section>
 
-      <section className="flex flex-col gap-2" aria-label="Face effects">
+      <section data-ui-part="" className="flex flex-col gap-2" aria-label="Face effects">
         <GridHeading>Face effects</GridHeading>
         <Select
           value={activeFaceSpriteId ?? ''}
@@ -654,6 +657,7 @@ function EffectsGrid({
               const { glyph, text } = splitEffectLabel(f.label);
               return (
                 <button
+                  data-ui-part=""
                   key={f.id}
                   type="button"
                   onClick={() => onSelectFaceSprite(active ? null : f.id)}
@@ -675,6 +679,7 @@ function EffectsGrid({
             })}
             {spritesFold && (
               <button
+                data-ui-part=""
                 type="button"
                 onClick={() => setAllSprites(true)}
                 disabled={disabled}

@@ -50,6 +50,7 @@ function EventRow({ timestamp, type, summary, severity = 'info', onClick, select
   if (onClick) {
     return (
       <button
+        data-ui-part=""
         data-testid="event-row"
         type="button"
         onClick={onClick}

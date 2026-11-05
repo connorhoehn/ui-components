@@ -63,8 +63,10 @@ export function RadioGroup<T extends string = string>({
             {/* Native radio — visually hidden dot replaced by styled ring */}
             <span className="relative flex shrink-0 mt-0.5">
               <input
+                data-ui-part=""
                 id={optionId}
                 type="radio"
+                data-ui-control="radio"
                 name={name}
                 value={option.value}
                 checked={isChecked}

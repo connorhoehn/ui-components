@@ -392,6 +392,7 @@ export function BBoxAuthoringCanvas({
     };
     return (
       <button
+        data-ui-part=""
         key={corner}
         type="button"
         aria-label={`Resize ${corner}`}
@@ -457,6 +458,7 @@ export function BBoxAuthoringCanvas({
           />
         ) : (
           <button
+            data-ui-part=""
             type="button"
             tabIndex={0}
             aria-label={`Label: ${box.label || 'Unlabeled'}. Double-click to edit.`}

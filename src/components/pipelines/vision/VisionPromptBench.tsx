@@ -453,6 +453,7 @@ export default function VisionPromptBench({
           data-testid="bench-model-select"
         />
         <button
+          data-ui-part=""
           type="button"
           onClick={() => void handleTry()}
           disabled={running}
@@ -517,6 +518,7 @@ export default function VisionPromptBench({
 
           {/* Save to node */}
           <button
+            data-ui-part=""
             type="button"
             onClick={handleSave}
             className={cn(

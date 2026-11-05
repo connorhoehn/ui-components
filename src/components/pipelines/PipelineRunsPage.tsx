@@ -281,6 +281,7 @@ export default function PipelineRunsPage() {
       {/* Header / breadcrumb */}
       <div className="flex items-center gap-3">
         <button
+          data-ui-part=""
           type="button"
           onClick={() => navigate(`/pipelines/${pipelineId}`)}
           className="bg-none border-none text-primary cursor-pointer text-[13px] p-0"
@@ -295,6 +296,7 @@ export default function PipelineRunsPage() {
           {runs.length} run{runs.length === 1 ? '' : 's'} persisted
         </span>
         <button
+          data-ui-part=""
           type="button"
           onClick={() => navigate(`/pipelines/${pipelineId}/stats`)}
           data-testid="runs-stats-link"
@@ -303,6 +305,7 @@ export default function PipelineRunsPage() {
           📊 Stats
         </button>
         <button
+          data-ui-part=""
           type="button"
           disabled={comparePair.length !== 2}
           onClick={() => {

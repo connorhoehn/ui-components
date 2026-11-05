@@ -99,6 +99,7 @@ export function WorkActivityTimeline({ day, timezone, nodes, edges, selection, o
           const live = group.some((item) => item.live);
           return (
             <button
+              data-ui-part=""
               key={hour}
               type="button"
               aria-label={`${group.length} visible ${group.length === 1 ? 'item' : 'items'} around ${String(hour).padStart(2, '0')}:00. Select latest.`}
@@ -126,6 +127,7 @@ export function WorkActivityTimeline({ day, timezone, nodes, edges, selection, o
             {activities.map((activity) => (
               <li key={activity.key}>
                 <button
+                  data-ui-part=""
                   type="button"
                   className={`w-full rounded px-2 py-1 text-left hover:bg-surface-hover ${selection?.kind === activity.selection.kind && selection.id === activity.selection.id ? 'font-semibold text-primary' : 'text-text-primary'}`}
                   onClick={() => onSelectionChange(activity.selection)}

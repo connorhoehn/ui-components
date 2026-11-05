@@ -135,6 +135,7 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
                   >
                     {a.type === 'role' ? '🎖' : '👤'} {a.value}
                     <button
+                      data-ui-part=""
                       type="button"
                       onClick={() => removeApprover(idx)}
                       aria-label={`Remove ${a.value}`}
