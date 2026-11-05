@@ -106,20 +106,26 @@ export function CollectionToolbar({ label, layout = 'table', search, filters = [
   const showSummary = summary != null && summary !== false && resultCount !== 0;
   // The query controls (search, filters, refresh) sit at the row's trailing
   // end beside the named actions; the start keeps what describes the
-  // results (active filters, count, notices).
+  // results (active filters, count, notices). They share one marked group,
+  // `data-collection-query`, so the DOM audit's `collection.refresh-with-query`
+  // can check Refresh stays with the query rather than drifting among the
+  // named actions — whether the search is open or folded to its icon.
+  const hasQuery = Boolean(search || filters.length > 0 || filterPanel || onRefresh);
   const query = <>
+    {hasQuery && <div className="flex min-w-0 items-center gap-2" data-collection-query="">
     {search && <SearchInput {...searchProps} collapsible={collapsible} className={collapsible ? 'min-w-0 w-56 max-w-full' : 'min-w-0 w-full max-w-64'} />}
     {(filters.length > 0 || filterPanel) && <FilterPopover label="Filters" trigger="icon" placement="bottom-end" activeCount={active.length + (filterPanel?.activeCount ?? 0)} panelLabel={label} onClear={() => { filters.forEach(f => f.onChange(f.emptyValue ?? '')); filterPanel?.onClear?.(); }}>
       {filters.map(filter => <FormField key={filter.id} label={filter.label}>{wiring => <Select {...wiring} aria-label={filter.label} value={filter.value} options={filter.options} onChange={event => filter.onChange(event.target.value)} chevron="custom" />}</FormField>)}
       {filterPanel?.content}
     </FilterPopover>}
     {onRefresh && <Tooltip content="Refresh"><IconButton aria-label="Refresh" icon={<RepeatIcon />} onClick={onRefresh} disabled={refreshing} /></Tooltip>}
+    </div>}
     {actions.map(action => <Tooltip key={action.id} content={action.label}><IconButton aria-label={action.label} icon={action.icon} onClick={action.onClick} disabled={action.disabled} data-testid={action['data-testid']} /></Tooltip>)}
   </>;
   const described = active.length > 0 || showSummary || notices.length > 0 || children != null;
   return <Toolbar aria-label={label} wrap={placement === 'band'} variant="collection" bordered={false} data-collection-layout={layout} data-collection-placement={placement}
     className={placement === 'header' ? 'min-h-0 px-0 py-0' : layout === 'cards' ? 'px-0' : undefined} data-collection-selection={selection ? 'idle' : undefined}
-    end={search || filters.length > 0 || filterPanel || onRefresh || actions.length ? query : undefined}>
+    end={hasQuery || actions.length ? query : undefined}>
     {described && <>
       {active.length > 0 && <span className="min-w-0 truncate text-xs text-text-primary" title={active.map(f => `${f.label}: ${f.options.find(o => o.value === f.value)?.label ?? f.value}`).join(' · ')}>{active.map(f => f.options.find(o => o.value === f.value)?.label ?? f.value).join(' · ')}</span>}
       {showSummary && <span className="min-w-0 text-xs text-text-secondary" data-collection-summary>{summary}</span>}

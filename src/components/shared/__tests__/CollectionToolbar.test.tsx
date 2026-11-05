@@ -48,8 +48,13 @@ describe('collection design inheritance', () => {
     expect(start).toContainElement(screen.getByText('3 contacts'));
     expect(start).not.toContainElement(screen.getByRole('button', { name: 'Find person' }));
     expect(start).not.toContainElement(screen.getByRole('button', { name: 'Refresh' }));
-    const end = screen.getByRole('button', { name: 'Find person' }).parentElement!;
-    expect(end).toContainElement(screen.getByRole('button', { name: 'Add contact' }));
+    // Search and refresh share the marked query group (what the audit's
+    // collection.refresh-with-query anchors to); the named actions follow it.
+    const query = screen.getByRole('toolbar').querySelector('[data-collection-query]')!;
+    expect(query).toContainElement(screen.getByRole('button', { name: 'Find person' }));
+    expect(query).toContainElement(screen.getByRole('button', { name: 'Refresh' }));
+    expect(query).not.toContainElement(screen.getByRole('button', { name: 'Add contact' }));
+    expect(query.parentElement).toContainElement(screen.getByRole('button', { name: 'Add contact' }));
     fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
     expect(refresh).toHaveBeenCalledOnce();
   });

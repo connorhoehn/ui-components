@@ -92,6 +92,13 @@ function MasterDetailRecipe() {
         body: <GroupedList groups={[{ id: 'regressed', title: 'Regressed' }, { id: 'improved', title: 'Improved' }, { id: 'unchanged', title: 'Unchanged' }]}
           rows={ROWS.map((r) => ({ id: r.id, groupId: r.verdict, title: r.name, subline: r.model }))} currentId={id} onOpenRow={(row) => setId(row.id)} />,
       }}
+      body="docked"
+      emptyDetail={<>
+        <KeyValue items={[{ label: 'Runs', value: String(ROWS.length) }, { label: 'Regressed', value: String(ROWS.filter((r) => r.verdict === 'regressed').length) }]} />
+        <ColumnDock>
+          <PageSection title="Command" className="border-t border-border px-[var(--ui-page-gutter,1.5rem)] py-3">The overview's composer, docked at the column's bottom.</PageSection>
+        </ColumnDock>
+      </>}
     >
       {current && <KeyValue items={[{ label: 'Model', value: current.model }, { label: 'Verdict', value: current.verdict }]} />}
     </MasterDetailPage>
@@ -102,7 +109,9 @@ const MASTER_DETAIL_CODE = `<MasterDetailPage
   title={current?.name ?? 'Eval runs'} breadcrumbs={trail}
   list={{ label: 'runs', title: 'Runs', count: runs.length,
     body: <GroupedList groups={groups} rows={rows} currentId={id} onOpenRow={(r) => setId(r.id)} /> }}
-  emptyDetail={<EmptyState title="Pick a run" />}
+  // Nothing selected: an overview whose command composer docks at the column's bottom.
+  body="docked"
+  emptyDetail={<><RunsOverview /><ColumnDock><CollectionCommandHost inPlace … /></ColumnDock></>}
 >
   {current && <RunRecord run={current} />}
 </MasterDetailPage>`;
@@ -266,7 +275,7 @@ const listRail = useRailFold({ storageKey: 'evals.list-rail' });
 
 const RECIPES = [
   { id: 'collection', label: 'CollectionPage', when: 'The page is a list of records.', Recipe: CollectionRecipe, code: COLLECTION_CODE },
-  { id: 'master-detail', label: 'MasterDetailPage', when: 'A list you pick from, the picked record beside it.', Recipe: MasterDetailRecipe, code: MASTER_DETAIL_CODE },
+  { id: 'master-detail', label: 'MasterDetailPage', when: 'A list you pick from, the picked record beside it (body="docked" docks an overview\'s composer).', Recipe: MasterDetailRecipe, code: MASTER_DETAIL_CODE },
   { id: 'detail', label: 'DetailPage', when: 'One record, its sections as tabs.', Recipe: DetailRecipe, code: DETAIL_CODE },
   { id: 'dashboard', label: 'DashboardPage', when: 'An overview that fits one screen.', Recipe: DashboardRecipe, code: DASHBOARD_CODE },
   { id: 'settings', label: 'SettingsPage', when: 'Settings in sections with a save bar.', Recipe: SettingsRecipe, code: SETTINGS_CODE },
