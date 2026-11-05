@@ -1,3 +1,11 @@
+## 2.505.0
+
+- `AppShell`, `ThemeProvider`, `useTheme` and `useThemeContext` are exported from `/shared`, so an app importing only subpaths never reaches the root barrel (which pulls every optional peer; `sideEffects` stays undeclared, see `docs/bundle-side-effects.md`). The component index now names a subpath wherever one exists; `llms.txt` and `ui-page-build` say to avoid root imports.
+- `MasterDetailPage` `body="docked"` / `dockedBody`: the `footer` and any `ColumnDock` in the body dock at the column bottom.
+- `CollectionToolbar` groups search, filters and Refresh in `data-collection-query`; DOM audit `collection.refresh-with-query` reads that group, so the collapsed search from 2.503.0 no longer trips it.
+- `StatusPill` no longer wraps: it shrinks with its row, truncates with an ellipsis and keeps the full label on hover.
+- The package ships `CHANGELOG.md` and `docs/consumer-handoffs/`.
+
 ## 2.504.0
 
 Make the library discoverable to agents in consumer repos, and make the right page the default.

@@ -13698,8 +13698,15 @@ export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, r
  *   emptyDetail={<EmptyState title="Pick a request" />}>
  *   {selected && <RequestRecord request={selected} />}
  * </MasterDetailPage>
+ *
+ * @example
+ * // A catalog: an overview when nothing is selected, its command composer docked at the column's bottom.
+ * <MasterDetailPage title={selected?.name ?? 'Designs'} breadcrumbs={trail} list={rail} body="docked"
+ *   emptyDetail={<><CatalogOverview /><ColumnDock><CollectionCommandHost inPlace … /></ColumnDock></>}>
+ *   {selected && <DesignRecord design={selected} />}
+ * </MasterDetailPage>
  */
-export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
+export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, body, dockedBody, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
 
 export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     /** The rail, as data (`ListRail`): title, count, search header, rows body, footer, label. */
@@ -13710,8 +13717,16 @@ export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     emptyDetail?: ReactNode;
     /** Right of the record (a `ContextColumn`). */
     aside?: ReactNode;
-    /** Docked under the record (a composer). */
+    /** Docked under the record (a composer). With `body="docked"` it goes into the column's dock. */
     footer?: ReactNode;
+    /**
+     * `scroll` (default): the record scrolls; `footer` is a fixed band under it.
+     * `docked` (since 2.505.0): the record column is a `DockedColumn` — the record, or `emptyDetail` (an overview), scrolls
+     * over a dock at the column's bottom, and `footer` and any `ColumnDock` inside the body render there, spanning the column.
+     */
+    body?: 'scroll' | 'docked';
+    /** With `body="docked"`: `scroll` (default) the body scrolls over the dock; `fill` it is a fixed frame whose panes scroll (a conversation). Since 2.505.0. */
+    dockedBody?: 'scroll' | 'fill';
     /** The reader's fold of the rail (`useRailFold`). */
     fold?: ListRailLayoutProps['fold'];
     /** Rail width; default `ms` (264px). */

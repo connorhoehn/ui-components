@@ -83,7 +83,7 @@ function u({ state: t, tone: i, label: u, icon: d, meta: f, size: p = "md", vari
 		"data-testid": g,
 		"data-state": _,
 		"data-variant": m,
-		className: e("inline-flex items-center font-medium leading-none select-none", m === "pill" ? e("rounded-full border", v.pill, o[p]) : m === "tag" || m === "label" ? e("rounded-md border-0", v.pill, c[p]) : s[p], m === "tag" && _ === "neutral" ? "text-text-primary" : v.text, h),
+		className: e("inline-flex max-w-full min-w-0 items-center whitespace-nowrap font-medium leading-none select-none", m === "pill" ? e("rounded-full border", v.pill, o[p]) : m === "tag" || m === "label" ? e("rounded-md border-0", v.pill, c[p]) : s[p], m === "tag" && _ === "neutral" ? "text-text-primary" : v.text, h),
 		children: [
 			m === "tag" ? null : d ? /* @__PURE__ */ n("span", {
 				"aria-hidden": "true",
@@ -99,10 +99,15 @@ function u({ state: t, tone: i, label: u, icon: d, meta: f, size: p = "md", vari
 					className: e("relative rounded-full", l[p], v.dot)
 				})]
 			}),
-			u,
+			/* @__PURE__ */ n("span", {
+				className: "min-w-0 truncate",
+				title: u,
+				"data-status-pill-label": "",
+				children: u
+			}),
 			f && /* @__PURE__ */ r("span", {
 				"data-testid": g ? `${g}-meta` : void 0,
-				className: "font-normal text-text-tertiary",
+				className: "shrink-0 font-normal text-text-tertiary",
 				children: [/* @__PURE__ */ n("span", {
 					"aria-hidden": "true",
 					children: "· "

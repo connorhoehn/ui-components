@@ -183,6 +183,88 @@ export declare const AGENT_TASK_STATUS_LABELS: Record<AgentTaskStatus, string>;
 /** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
 export declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
 
+/**
+ * AppShell wraps its children in a ToastProvider by default.
+ * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
+ */
+export declare function AppShell({ sidebar, header, subheader, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, headerHeight, subheaderHeight, subheaderInset, contentPadding, sidebarClassName, sidebarLabel, sidebarTestId, subheaderTestId, sidebarFullHeight, layout, }: AppShellProps): JSX.Element;
+
+export declare interface AppShellProps {
+    /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
+    sidebar?: ReactNode;
+    /**
+     * Slot: the header row's content. The shell draws the row itself — a
+     * flex row of `headerHeight`, padded, bordered, sticky — so its height is
+     * pinned rather than derived from the tallest control in it. Every offset
+     * below (the sidebar's top, the body's minimum height) reads that one
+     * number, so a taller control can never move the anchors.
+     */
+    header: ReactNode;
+    /**
+     * Slot: a second row of chrome under the header — a section band. Sticky
+     * with the header, full window width, and the sidebar hangs beneath both.
+     * Rendered only when present; its height counts only then.
+     */
+    subheader?: ReactNode;
+    /** Page content */
+    children: ReactNode;
+    /** Slot: override default ToastProvider region (pass null to suppress) */
+    toastRegion?: ReactNode | null;
+    /** When truthy, renders a full-screen loading overlay */
+    loading?: boolean | ReactNode;
+    /** When truthy, renders an API-degraded banner below the header */
+    apiDegraded?: ReactNode;
+    /**
+     * Slot: a global command palette (e.g. `<CommandPalette />`). Rendered
+     * once at the shell level so any page can open it via `useCommandPalette`.
+     * Wrap the AppShell in `<CommandPaletteProvider>` so the palette and the
+     * pages inside share the same registry.
+     */
+    commandPalette?: ReactNode;
+    className?: string;
+    /** Width of the sidebar slot in px (default 260) */
+    sidebarWidth?: number;
+    /** The header row's height in px (default 53). Also published as `--app-shell-header-h`. */
+    headerHeight?: number;
+    /** The subheader row's height in px (default 36), counted only when `subheader` is present. */
+    subheaderHeight?: number;
+    /**
+     * Left inset of the subheader's content in px, so its tabs can share a
+     * left edge with the header's own nav rather than with whatever the
+     * sidebar's width happens to be. Default: the header's padding.
+     */
+    subheaderInset?: number;
+    /** Padding around the routed page. `none` for a full-bleed surface. Default `md`. */
+    contentPadding?: 'none' | 'md';
+    /** Classes for the sidebar column — its padding when open vs folded, say. */
+    sidebarClassName?: string;
+    /** Accessible name of the sidebar landmark. Default "App sidebar". */
+    sidebarLabel?: string;
+    sidebarTestId?: string;
+    subheaderTestId?: string;
+    /**
+     * The sidebar runs the full window height and the header row starts beside
+     * it (2.386.0) — the collapsed icon strip's layout, where the strip's first
+     * button sits in the header row. Default false: the header spans the window
+     * and the sidebar hangs below the chrome.
+     */
+    sidebarFullHeight?: boolean;
+    /**
+     * How the shell sizes against the window (since 2.504.0).
+     *
+     * - `document` (default, back-compat): the shell is at least the window's
+     *   height and the document scrolls; the chrome is sticky. Stacked pages
+     *   scroll like a web page.
+     * - `fill` (**recommended for portal apps**): the shell is exactly `100dvh`
+     *   and the document never scrolls. The main region is `min-h-0
+     *   overflow-hidden`, so a child layout (`ExplorerLayout`, `SplitPane`,
+     *   `MasterDetail`, `SubNavLayout`, `WorkArea`) gets a definite height and
+     *   overflow lives inside its panes. Give the page's root `flex-1 min-h-0`
+     *   (the layouts above already do).
+     */
+    layout?: 'document' | 'fill';
+}
+
 /** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
 export declare function ArrowRightIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -4177,8 +4259,15 @@ export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, r
  *   emptyDetail={<EmptyState title="Pick a request" />}>
  *   {selected && <RequestRecord request={selected} />}
  * </MasterDetailPage>
+ *
+ * @example
+ * // A catalog: an overview when nothing is selected, its command composer docked at the column's bottom.
+ * <MasterDetailPage title={selected?.name ?? 'Designs'} breadcrumbs={trail} list={rail} body="docked"
+ *   emptyDetail={<><CatalogOverview /><ColumnDock><CollectionCommandHost inPlace … /></ColumnDock></>}>
+ *   {selected && <DesignRecord design={selected} />}
+ * </MasterDetailPage>
  */
-export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
+export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, body, dockedBody, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
 
 export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     /** The rail, as data (`ListRail`): title, count, search header, rows body, footer, label. */
@@ -4189,8 +4278,16 @@ export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     emptyDetail?: ReactNode;
     /** Right of the record (a `ContextColumn`). */
     aside?: ReactNode;
-    /** Docked under the record (a composer). */
+    /** Docked under the record (a composer). With `body="docked"` it goes into the column's dock. */
     footer?: ReactNode;
+    /**
+     * `scroll` (default): the record scrolls; `footer` is a fixed band under it.
+     * `docked` (since 2.505.0): the record column is a `DockedColumn` — the record, or `emptyDetail` (an overview), scrolls
+     * over a dock at the column's bottom, and `footer` and any `ColumnDock` inside the body render there, spanning the column.
+     */
+    body?: 'scroll' | 'docked';
+    /** With `body="docked"`: `scroll` (default) the body scrolls over the dock; `fill` it is a fixed frame whose panes scroll (a conversation). Since 2.505.0. */
+    dockedBody?: 'scroll' | 'fill';
     /** The reader's fold of the rail (`useRailFold`). */
     fold?: ListRailLayoutProps['fold'];
     /** Rail width; default `ms` (264px). */
@@ -7553,6 +7650,88 @@ declare type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inherit';
 declare type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
 
 /**
+ * Injects the theme as CSS custom properties on the document root.
+ *
+ * Writes BOTH namespaces:
+ *   - `--ui-*`   for every ThemeTokens key (kept for `cssVar()` callers)
+ *   - `--color-*` / `--radius-*` for keys with a real token counterpart, which
+ *     is what Tailwind utilities compile against
+ *
+ * The second half is what makes this component do anything. Until v2.40.2 it
+ * wrote only `--ui-*`, which no utility class reads, so
+ * `<ThemeProvider theme={{ primary: 'red' }}>` was silently inert.
+ *
+ * Mounting with no overrides is a no-op: the light preset mirrors the @theme
+ * defaults in src/styles.css.
+ *
+ * `preset="dark"` is PARTIAL — it re-tones text/surface/border and the semantic
+ * colours, but the token set has no dark-specific palette, so surfaces that use
+ * literal utilities won't follow. Treat it as a starting point.
+ */
+export declare function ThemeProvider({ children, preset, theme, tones }: ThemeProviderProps): JSX.Element;
+
+export declare interface ThemeProviderProps {
+    children?: ReactNode;
+    /** Base preset to use. Defaults to 'light'. */
+    preset?: 'light' | 'dark';
+    /** Partial overrides merged on top of the preset. */
+    theme?: Partial<ThemeTokens>;
+    /**
+     * Rebrand tones from the semantic scale — the recommended path, because it
+     * maps 1:1 onto what every tinted surface in the library reads:
+     *
+     *   <ThemeProvider tones={{ accent: { base: '#0d9488', bg: '#f0fdfa' } }}>
+     *
+     * Equivalent to overriding `--color-accent` / `--color-accent-bg` in CSS.
+     */
+    tones?: Record<string, ToneOverride>;
+}
+
+/** The full set of design tokens exposed as CSS custom properties. */
+export declare interface ThemeTokens {
+    primary: string;
+    primaryDark: string;
+    primaryLight: string;
+    danger: string;
+    dangerLight: string;
+    success: string;
+    successLight: string;
+    warning: string;
+    warningLight: string;
+    info: string;
+    infoLight: string;
+    textPrimary: string;
+    textSecondary: string;
+    textMuted: string;
+    textInverse: string;
+    background: string;
+    surface: string;
+    surfaceRaised: string;
+    surfaceOverlay: string;
+    border: string;
+    borderLight: string;
+    spaceXs: string;
+    spaceSm: string;
+    spaceMd: string;
+    spaceLg: string;
+    spaceXl: string;
+    fontXs: string;
+    fontSm: string;
+    fontMd: string;
+    fontLg: string;
+    fontXl: string;
+    radiusSm: string;
+    radiusMd: string;
+    radiusLg: string;
+    radiusXl: string;
+    radiusFull: string;
+    shadowSm: string;
+    shadowMd: string;
+    shadowLg: string;
+    shadowXl: string;
+}
+
+/**
  * A collapsible `<details>` block for showing chain-of-thought reasoning.
  *
  * Pair with a parser that strips `<thinking>...</thinking>` from the assistant
@@ -7713,6 +7892,18 @@ export declare function toneKey(tone: ToneOrAlias): Tone;
 
 /** Tone plus the historical alias kept for source compatibility. */
 export declare type ToneOrAlias = Tone | 'purple';
+
+/** Overrides for one tone in the semantic scale. Omitted roles keep their default. */
+export declare interface ToneOverride {
+    /** Solid fill / icon / indicator dot. */
+    base?: string;
+    /** Soft tinted background. */
+    bg?: string;
+    /** Readable text on the soft background. */
+    fg?: string;
+    /** Border for the soft surface. */
+    border?: string;
+}
 
 export declare const TONES: readonly ["neutral", "success", "warning", "danger", "info", "caution", "accent"];
 
@@ -8221,6 +8412,18 @@ export declare interface UserPickerProps {
      */
     baseUrl?: string;
 }
+
+/**
+ * Returns the current resolved theme tokens from the nearest ThemeProvider.
+ * Falls back to the default light theme if no provider is present.
+ */
+export declare function useTheme(): ThemeTokens;
+
+/**
+ * Returns the current resolved theme tokens from the nearest ThemeProvider.
+ * Falls back to the light theme if no provider is present.
+ */
+export declare function useThemeContext(): ThemeTokens;
 
 export declare function useToast(): ToastContextValue;
 

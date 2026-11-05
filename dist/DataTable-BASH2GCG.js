@@ -38,53 +38,56 @@ function E({ label: e, layout: t = "table", search: n, filters: r = [], filterPa
 	let { collapsible: P = !0, ...F } = n ?? {
 		value: "",
 		onChange: () => {}
-	}, I = a != null && a !== !1 && o !== 0, L = /* @__PURE__ */ T(C, { children: [
-		n && /* @__PURE__ */ w(v, {
-			...F,
-			collapsible: P,
-			className: P ? "min-w-0 w-56 max-w-full" : "min-w-0 w-full max-w-64"
-		}),
-		(r.length > 0 || i) && /* @__PURE__ */ T(h, {
-			label: "Filters",
-			trigger: "icon",
-			placement: "bottom-end",
-			activeCount: N.length + (i?.activeCount ?? 0),
-			panelLabel: e,
-			onClear: () => {
-				r.forEach((e) => e.onChange(e.emptyValue ?? "")), i?.onClear?.();
-			},
-			children: [r.map((e) => /* @__PURE__ */ w(_, {
-				label: e.label,
-				children: (t) => /* @__PURE__ */ w(f, {
-					...t,
-					"aria-label": e.label,
-					value: e.value,
-					options: e.options,
-					onChange: (t) => e.onChange(t.target.value),
-					chevron: "custom"
+	}, I = a != null && a !== !1 && o !== 0, L = !!(n || r.length > 0 || i || E), R = /* @__PURE__ */ T(C, { children: [L && /* @__PURE__ */ T("div", {
+		className: "flex min-w-0 items-center gap-2",
+		"data-collection-query": "",
+		children: [
+			n && /* @__PURE__ */ w(v, {
+				...F,
+				collapsible: P,
+				className: P ? "min-w-0 w-56 max-w-full" : "min-w-0 w-full max-w-64"
+			}),
+			(r.length > 0 || i) && /* @__PURE__ */ T(h, {
+				label: "Filters",
+				trigger: "icon",
+				placement: "bottom-end",
+				activeCount: N.length + (i?.activeCount ?? 0),
+				panelLabel: e,
+				onClear: () => {
+					r.forEach((e) => e.onChange(e.emptyValue ?? "")), i?.onClear?.();
+				},
+				children: [r.map((e) => /* @__PURE__ */ w(_, {
+					label: e.label,
+					children: (t) => /* @__PURE__ */ w(f, {
+						...t,
+						"aria-label": e.label,
+						value: e.value,
+						options: e.options,
+						onChange: (t) => e.onChange(t.target.value),
+						chevron: "custom"
+					})
+				}, e.id)), i?.content]
+			}),
+			E && /* @__PURE__ */ w(p, {
+				content: "Refresh",
+				children: /* @__PURE__ */ w(s, {
+					"aria-label": "Refresh",
+					icon: /* @__PURE__ */ w(d, {}),
+					onClick: E,
+					disabled: D
 				})
-			}, e.id)), i?.content]
-		}),
-		E && /* @__PURE__ */ w(p, {
-			content: "Refresh",
-			children: /* @__PURE__ */ w(s, {
-				"aria-label": "Refresh",
-				icon: /* @__PURE__ */ w(d, {}),
-				onClick: E,
-				disabled: D
 			})
-		}),
-		b.map((e) => /* @__PURE__ */ w(p, {
-			content: e.label,
-			children: /* @__PURE__ */ w(s, {
-				"aria-label": e.label,
-				icon: e.icon,
-				onClick: e.onClick,
-				disabled: e.disabled,
-				"data-testid": e["data-testid"]
-			})
-		}, e.id))
-	] }), R = N.length > 0 || I || y.length > 0 || k != null;
+		]
+	}), b.map((e) => /* @__PURE__ */ w(p, {
+		content: e.label,
+		children: /* @__PURE__ */ w(s, {
+			"aria-label": e.label,
+			icon: e.icon,
+			onClick: e.onClick,
+			disabled: e.disabled,
+			"data-testid": e["data-testid"]
+		})
+	}, e.id))] }), z = N.length > 0 || I || y.length > 0 || k != null;
 	return /* @__PURE__ */ w(g, {
 		"aria-label": e,
 		wrap: u === "band",
@@ -94,8 +97,8 @@ function E({ label: e, layout: t = "table", search: n, filters: r = [], filterPa
 		"data-collection-placement": u,
 		className: u === "header" ? "min-h-0 px-0 py-0" : t === "cards" ? "px-0" : void 0,
 		"data-collection-selection": O ? "idle" : void 0,
-		end: n || r.length > 0 || i || E || b.length ? L : void 0,
-		children: R && /* @__PURE__ */ T(C, { children: [
+		end: L || b.length ? R : void 0,
+		children: z && /* @__PURE__ */ T(C, { children: [
 			N.length > 0 && /* @__PURE__ */ w("span", {
 				className: "min-w-0 truncate text-xs text-text-primary",
 				title: N.map((e) => `${e.label}: ${e.options.find((t) => t.value === e.value)?.label ?? e.value}`).join(" · "),
