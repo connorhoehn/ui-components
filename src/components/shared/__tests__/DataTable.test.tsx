@@ -296,7 +296,7 @@ describe('DataTable', () => {
     );
   });
 
-  it('is striped by default (since 2.501.0)', () => {
+  it('is striped by default (since 2.504.0)', () => {
     const { container } = render(
       <DataTable
         data={[{ id: 'a' }, { id: 'b' }]}

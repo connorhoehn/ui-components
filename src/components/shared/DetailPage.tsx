@@ -38,7 +38,7 @@ export interface DetailPageProps {
   /** The trail above the header. */
   breadcrumbs?: BreadcrumbItem[];
   /**
-   * The title's heading level (since 2.502.0). Default `h1`: a routed record
+   * The title's heading level (since 2.504.0). Default `h1`: a routed record
    * page's title is the page heading. `h2`/`h3` when the record sits under a
    * host that already draws the page's `h1`. The visual size is unchanged.
    */

@@ -84,7 +84,7 @@ const LongPane = ({ label }: { label: string }) => (
 );
 
 /**
- * `layout="fill"`, the recommended mode for portal apps (since 2.501.0).
+ * `layout="fill"`, the recommended mode for portal apps (since 2.504.0).
  * The shell is exactly 100dvh, the document never scrolls, and each pane of
  * the child layout scrolls on its own.
  */

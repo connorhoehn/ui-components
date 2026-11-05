@@ -223,7 +223,7 @@ function RailItem({
           {item.label}
         </span>
         {item.badge != null && (
-          <span className={cn('ml-auto flex-none', RAIL_ITEM_COUNT, palette.hint)} data-testid="nav-rail-badge">
+          <span className={cn('ml-auto flex-none', RAIL_ITEM_COUNT, palette.label)} data-testid="nav-rail-badge">
             {item.badge}
           </span>
         )}

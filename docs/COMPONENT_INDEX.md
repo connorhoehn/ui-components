@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-959 components across 20 entry points; 812 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+960 components across 20 entry points; 813 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -26,7 +26,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | A data table | `DataTable` | `@connorhoehnslalom/ui-components` | Columns + rows with sorting, selection, empty/loading states and row striping by default. Start here for any tabular data. | Don't drop to `Table` primitives unless you need cell layouts `DataTable` cannot express. |
 | Table building blocks | `Table` | `@connorhoehnslalom/ui-components` | `Table`, `TableHead`, `TableBody`, `TableRow`, `TableTh`, `TableTd`: the styled primitives `DataTable` is made of. | Not a first choice: no sorting, selection or states built in. |
 | Identity admin tables | `EntityTable` | `@connorhoehnslalom/ui-components` | The identity-admin entity list (users, groups, roles) with row actions. | Not a general-purpose table; use `DataTable` outside identity admin. |
-| Separate sections | `Divider` | `@connorhoehnslalom/ui-components` | A hairline (optionally captioned) between blocks of one column. For titled page sections use `PageSection` (with `divided` for a rule between them); inside a detail surface use `DetailSection`. | Don't separate sections with nested `Card`s, `<hr>`, or border utility classes. |
+| Separate sections | `SectionStack` | `@connorhoehnslalom/ui-components` | Stacks a page's sections with a full-width hairline between each (none before the first or after the last; skips null children). `Divider` is a single (optionally captioned) hairline; `PageSection divided` rules the groups inside one section; inside a detail surface use `DetailSection`. | Don't separate sections with nested `Card`s, `<hr>`, or border utility classes. |
 | A section of a page | `PageSection` | `@connorhoehnslalom/ui-components` | Titled section with description, count and actions; sizes `lg`/`md`/`sm`. | Not for sections inside a drawer or detail tab (use `DetailSection`). |
 | A section inside a detail surface | `DetailSection` | `@connorhoehnslalom/ui-components` | Titled block with a hairline above it (`first` suppresses the first rule); `variant="heading"` for document-like bodies. | Not for top-level page sections (use `PageSection`). |
 | A section or panel header inside a page | `CardHeader` | `@connorhoehnslalom/ui-components` | Title + actions row with the separator under it, for a card or panel section. Use `PaneHeader` when the pane has tabs. Never hand-draw `border-b` header bands. | Not a page header (use `PageHeader` or a page template) or a channel/room header (use `ChannelHeader`). |
@@ -41,7 +41,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 - [Page templates](#page-templates) (7)
 - [Shells & layouts](#shells--layouts) (41)
-- [Page structure, sections & dividers](#page-structure-sections--dividers) (56)
+- [Page structure, sections & dividers](#page-structure-sections--dividers) (57)
 - [Tables & lists](#tables--lists) (31)
 - [Forms](#forms) (29)
 - [Buttons & actions](#buttons--actions) (15)
@@ -158,6 +158,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `RunDraftPanel` | `@connorhoehnslalom/ui-components` | The right-hand "Run draft" pane of the Documents four-pane view: pick a workflow, agent and model, see what similar runs cost and how long they took, set an enforced token budget, then Save and Dispatch. | `work-rundraftpanel` |  |
 | `ScopeHeader` | `@connorhoehnslalom/ui-components` | The band over a work surface's columns that says what they are all looking at: where it sits (a crumb trail), what it is (title + status), how it is going (a line of stats), who owns it (labelled avatar groups), and w… | `work-scopeheader` |  |
 | `SectionLabel` | `@connorhoehnslalom/ui-components` | The tiny uppercase caption that titles a block INSIDE a panel. |  |  |
+| `SectionStack` | `@connorhoehnslalom/ui-components` | The page's sections, one under the other, with a hairline between each. | `ui-sectionstack` |  |
 | `SelectableCard` | `@connorhoehnslalom/ui-components` | A card that is also a radio: click it and it becomes the one selected tile in its grid, driving a detail panel elsewhere on the page. |  |  |
 | `SignoffPanel` | `@connorhoehnslalom/ui-components` | Who has ratified a decision, and what it still needs. |  |  |
 | `SkeletonCard` | `@connorhoehnslalom/ui-components` | Shimmer placeholder used while content loads. | `shared-skeletoncard` |  |

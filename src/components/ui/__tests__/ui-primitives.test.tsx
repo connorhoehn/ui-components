@@ -207,7 +207,7 @@ describe('Table primitives', () => {
     expect(screen.getByText('Alice')).toBeInTheDocument();
   });
 
-  it('TableBody stripes its rows by default with the DataTable token (since 2.501.0)', () => {
+  it('TableBody stripes its rows by default with the DataTable token (since 2.504.0)', () => {
     render(
       <Table>
         <TableHead><TableRow><TableTh>Name</TableTh></TableRow></TableHead>

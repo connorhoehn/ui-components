@@ -39,7 +39,7 @@ describe('PageFrame', () => {
     expect(container.querySelector('[data-page-footer]')!.textContent).toBe('save bar');
   });
 
-  it('marks the column and the header for the DOM audit, and keeps the 2.501.0 header without trail-row props', () => {
+  it('marks the column and the header for the DOM audit, and keeps the 2.504.0 header without trail-row props', () => {
     const { container } = render(<PageFrame title="T" breadcrumbs={[{ label: 'A' }, { label: 'T' }]}><p>x</p></PageFrame>);
     const root = container.querySelector('[data-page-template="page-frame"]')!;
     expect(root.hasAttribute('data-page-column')).toBe(true);

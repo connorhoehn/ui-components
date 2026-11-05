@@ -141,8 +141,21 @@ export interface ActionRowListProps {
   /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
   accent?: 'none' | 'bar';
   /**
-   * Alternate neutral row surfaces. Semantic row tones always take precedence.
-   * Default `true` since 2.501.0 (was `false`); pass `striped={false}` for a
+   * Zebra rows: every second neutral row (the 2nd, 4th, …) sits on
+   * `surface-inset`, the tint `DataTable striped` uses, so a striped list and a
+   * striped table beside it read as one system. The first row stays on the
+   * page's own surface, so the list opens flush rather than on a band.
+   *
+   * Hover (`surface-hover`) is darker than the stripe, so the row under the
+   * pointer stays unambiguous on a striped row too; a disabled row keeps the
+   * stripe and its muted text, with no hover fill. A toned row keeps its tone
+   * (semantic tones always win over the stripe). The keyboard focus ring is
+   * unchanged. Works with and without `columns`. Emits `data-striped` on the
+   * list and `data-stripe` on each striped row. Since 2.502.0 the stripe is
+   * `surface-inset` (it was `surface-panel` on odd rows and an opaque
+   * `surface` on even ones, which painted white over a tinted host).
+   *
+   * Default `true` since 2.504.0 (was `false`); pass `striped={false}` for a
    * ruled-only list.
    */
   striped?: boolean;
@@ -268,6 +281,8 @@ export function ActionRowList({
             const rowTone = item.tone ?? tone;
             const rowAccent = item.accent ?? accent;
             const rowAction = item.action ?? action;
+            // Odd rows (2nd, 4th, …), as DataTable stripes them. A toned row keeps its tone.
+            const stripe = striped && rowTone === 'neutral' && index % 2 === 1;
             const rowClass = cn(
               ROW_CLASS,
               hasColumns && cn(size === 'sm' ? 'min-h-10' : 'min-h-[45px]', 'py-[3px]'),
@@ -277,7 +292,7 @@ export function ActionRowList({
             );
             const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} size={size} />;
             return (
-            <li key={item.id} className={cn(!toned && 'border-b border-border', striped && rowTone === 'neutral' && (index % 2 ? 'bg-surface-panel' : 'bg-surface'))} data-testid={`${testId}-row-${item.id}`} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
+            <li key={item.id} className={cn(!toned && 'border-b border-border', stripe && 'bg-surface-inset')} data-testid={`${testId}-row-${item.id}`} {...(stripe ? { 'data-stripe': '' } : {})} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (
                 <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`}>
                   {body}

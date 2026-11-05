@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { PageSection } from '../PageSection';
 import { DetailSection } from '../../shared/DetailSection';
 
-describe('PageSection divided (2.501.0)', () => {
+describe('PageSection divided (2.504.0)', () => {
   it('draws token-coloured rules between its direct child groups', () => {
     render(
       <PageSection size="sm" title="Overview" divided data-testid="ps">
@@ -30,7 +30,7 @@ describe('PageSection divided (2.501.0)', () => {
   });
 });
 
-describe('DetailSection heading divider (2.501.0)', () => {
+describe('DetailSection heading divider (2.504.0)', () => {
   it('draws a leading hairline like the label variant', () => {
     const { container } = render(<DetailSection variant="heading" title="Plan next">x</DetailSection>);
     expect(container.querySelector('hr')).not.toBeNull();

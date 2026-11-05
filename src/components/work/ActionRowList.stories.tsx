@@ -12,10 +12,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Striped by default since 2.501.0. */
+/** Striped by default since 2.504.0. */
 export const Default: Story = {};
 export const Unstriped: Story = { args: { striped: false } };
-export const Striped: Story = { args: { striped: true } };
+/** Zebra rows on `surface-inset`, DataTable's stripe; hover stays darker than the stripe. */
+export const Striped: Story = { args: { striped: true, items: [
+  ...meta.args.items,
+  { id: 'traces', title: 'Trace sampling rules', description: 'ORG-OBS-14', meta: '3 pts' },
+  { id: 'retention', title: 'Log retention tiers', description: 'ORG-OBS-15', meta: '8 pts', disabled: true, disabledReason: 'Waiting on the storage review' },
+] } };
+export const StripedWithColumns: Story = { args: { striped: true, size: 'sm',
+  columns: [{ id: 'owner', width: 'lg', label: 'Owner' }, { id: 'points', width: 'xs', align: 'end', label: 'Points' }],
+  items: meta.args.items.map((item, index) => ({ ...item, meta: undefined, cells: { owner: ['Layla Hassan', 'Ken Ito', 'Ana Ruiz'][index], points: item.meta } })),
+} };
 export const StripedWithStatus: Story = { args: { striped: true,
   items: meta.args.items.map((item, index) => index === 1 ? { ...item, tone: 'warning', description: 'ORG-OBS-10 · Blocked' } : item),
 } };

@@ -220,4 +220,11 @@ describe('NavRailStack', () => {
     // Two groups → one hairline, above the second.
     expect(container.querySelectorAll('section > div.border-t')).toHaveLength(1);
   });
+
+  it('a count badge uses the readable label tone, not the tertiary hint tone', () => {
+    render(<NavRail title="Platform" items={ITEMS} />);
+    const badge = screen.getByTestId('nav-rail-badge');
+    expect(badge.className).toContain('text-text-secondary');
+    expect(badge.className).not.toContain('text-text-tertiary');
+  });
 });

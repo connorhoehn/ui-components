@@ -69,7 +69,7 @@ export interface AppShellProps {
    */
   sidebarFullHeight?: boolean;
   /**
-   * How the shell sizes against the window (since 2.501.0).
+   * How the shell sizes against the window (since 2.504.0).
    *
    * - `document` (default, back-compat): the shell is at least the window's
    *   height and the document scrolls; the chrome is sticky. Stacked pages

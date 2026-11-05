@@ -65,7 +65,7 @@ at the shell, never per page.
 
 **Stable.** `AppShell` and `CollapsibleSidebar` are on the no-touch list: a
 consumer handoff is required before any signature change. `layout` and the
-gutter token were additive (2.501.0).
+gutter token were additive (2.504.0).
 
 ## Notes
 

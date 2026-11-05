@@ -32,7 +32,7 @@ export interface DetailSectionProps {
    * drawer or side panel. `heading` (since 2.386.15): a 16px sentence-case
    * heading for a document-like body (a work item's Brief); its `actions`
    * stay quiet until the section is hovered or focused (always shown where
-   * there is no hover). Since 2.501.0 the `heading` variant draws the same
+   * there is no hover). Since 2.504.0 the `heading` variant draws the same
    * leading hairline as `label` (suppressed by `first`): stacked heading
    * sections with no rule read as one long section.
    */

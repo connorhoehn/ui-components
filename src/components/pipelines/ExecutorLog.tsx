@@ -225,7 +225,7 @@ export default function ExecutorLog({
       <div className="sticky top-0 z-[2] flex flex-wrap items-center gap-2 px-3 py-2.5 bg-surface-panel border-b border-border text-xs">
         <span
           className={cn(
-            'inline-flex items-center text-[11px] font-semibold',
+            'inline-flex items-center text-xs font-semibold',
             error ? 'text-text-tertiary' : 'text-text-secondary',
           )}
           data-testid="executor-log-live-indicator"
@@ -251,7 +251,7 @@ export default function ExecutorLog({
               key={chip.label}
               type="button"
               className={cn(
-                'font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
+                'font-[inherit] text-xs font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
                 active
                   ? 'bg-info-bg text-info-fg border-info-border'
                   : 'bg-surface text-text-secondary border-border',
@@ -287,7 +287,7 @@ export default function ExecutorLog({
               key={preset}
               type="button"
               className={cn(
-                'font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
+                'font-[inherit] text-xs font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
                 active
                   ? 'bg-info-bg text-info-fg border-info-border'
                   : 'bg-surface text-text-secondary border-border',

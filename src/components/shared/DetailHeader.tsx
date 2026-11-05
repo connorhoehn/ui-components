@@ -29,7 +29,7 @@ export interface DetailHeaderProps {
   aside?: ReactNode;
   /** Width of the aside in px. Default 260. */
   asideWidth?: number;
-  /** Heading level, so a panel nested under a page h1 does not claim h1. `h1` (since 2.502.0) when the header is the page's (`DetailPage`). */
+  /** Heading level, so a panel nested under a page h1 does not claim h1. `h1` (since 2.504.0) when the header is the page's (`DetailPage`). */
   as?: 'h1' | 'h2' | 'h3';
   className?: string;
   'data-testid'?: string;

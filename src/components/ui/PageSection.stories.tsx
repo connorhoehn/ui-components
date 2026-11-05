@@ -13,7 +13,7 @@ export const Empty: StoryObj<typeof PageSection> = {
   args: { size: 'sm', title: 'Needs your attention', empty: 'Nothing right now — questions and reviews will appear in the composer.' },
 };
 
-/** `divided`: a token hairline between each direct child group (since 2.501.0). */
+/** `divided`: a token hairline between each direct child group (since 2.504.0). */
 export const Divided: StoryObj<typeof PageSection> = {
   args: {
     size: 'sm',

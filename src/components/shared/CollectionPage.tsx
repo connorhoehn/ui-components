@@ -35,7 +35,7 @@ export interface CollectionPageProps<T = unknown> extends Omit<HTMLAttributes<HT
   badge?: ReactNode;
   /** Header density; default `compact`. */
   density?: Density;
-  /** The title's heading level (since 2.502.0); default `h1`. */
+  /** The title's heading level (since 2.504.0); default `h1`. */
   titleAs?: 'h1' | 'h2' | 'h3';
   /**
    * The body as a striped `DataTable` (striping on unless the props say otherwise).

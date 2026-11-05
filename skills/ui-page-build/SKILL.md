@@ -207,7 +207,7 @@ Without `header`, pass a page template as the child (`<PageFrame>`,
   stripe by default. Do not turn striping off, and never build a table from
   divs. Audit: `table.zebra`.
 - **Separate groups.** Adjacent groups get a divider or the section gap:
-  `PageSection divided`, `Divider`, or the template's own spacing. Never stack
+  `SectionStack` around a page's sections, `PageSection divided`, `Divider`, or the template's own spacing. Never stack
   two groups flush. Audit: `section.separator`.
 - **Section headers.** A titled page section is `PageSection title=…`; the
   header row of a card or panel is `CardHeader` (title, actions, the rule under

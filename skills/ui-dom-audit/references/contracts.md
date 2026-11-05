@@ -113,7 +113,7 @@ band's content box: the band is padded by `--ui-page-gutter`, so its padding
 *is* the gutter. A page without a trail (the native Social tenant, a canvas
 shell) is unexercised (`matched: 0`), never passed.
 
-**Library template columns (2.502.0).** The contract's `librarySelectors`
+**Library template columns (2.504.0).** The contract's `librarySelectors`
 extend an alias with the component library's own markers, whatever the
 adapter binds (the two are joined; an unbound alias uses the library's
 alone), so a page built from a template is measured with no adapter entry:
@@ -960,3 +960,11 @@ Select's label uses the trigger's small/medium inset (8/10px left; 6/8px right,
 2px less on the right for pills). `data-ui-size` and `data-variant` select the
 exact profile. Only the label is omitted from the page reading-line heuristic;
 the trigger and popup keep typography, focus, containment and contrast checks.
+
+Section separation markers (ui-components 2.502.0, no rule yet):
+`SectionStack` emits `data-ui-section-stack="comfortable|compact"` on the
+container and `data-ui-section-rule` on each `<hr>` between its sections
+(24px / 16px either side; `data-divided="false"` for rhythm without rules).
+`ActionRowList striped` emits `data-striped` on the list and `data-stripe` on
+each `surface-inset` row, matching `DataTable striped`. A future rule that
+flags hand-rolled section borders should bind these rather than page names.

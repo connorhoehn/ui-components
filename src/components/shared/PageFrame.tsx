@@ -19,17 +19,17 @@ export interface PageFrameProps extends PageTemplateHeaderProps, PageTemplateTra
   children: ReactNode;
   /**
    * `scroll` (default): the body scrolls. `fill`: the body is a fixed-height flex column whose children scroll themselves.
-   * `docked` (since 2.502.0): the body scrolls over a dock at the column's bottom (`DockedColumn`): `footer`, and any
+   * `docked` (since 2.504.0): the body scrolls over a dock at the column's bottom (`DockedColumn`): `footer`, and any
    * `ColumnDock` inside the body (a section's command composer), render there, spanning the column.
    */
   body?: 'scroll' | 'fill' | 'docked';
-  /** With `body="docked"`: `scroll` (default) the body scrolls over the dock; `fill` it is a fixed frame whose panes scroll (a conversation). Since 2.502.0. */
+  /** With `body="docked"`: `scroll` (default) the body scrolls over the dock; `fill` it is a fixed frame whose panes scroll (a conversation). Since 2.504.0. */
   dockedBody?: 'scroll' | 'fill';
   /** Docked under the body, full width, never scrolls (a save bar, a composer). With `body="docked"` it goes into the column's dock. */
   footer?: ReactNode;
   /** Default `page` — the `--ui-page-gutter` inset on header and body. */
   gutter?: PageGutter;
-  /** The body's inset when it differs from the header's (since 2.502.0): `none` for a conversation that owns its gutters. Default: `gutter`. */
+  /** The body's inset when it differs from the header's (since 2.504.0): `none` for a conversation that owns its gutters. Default: `gutter`. */
   bodyGutter?: PageGutter;
   /** Extra classes for the body region. */
   bodyClassName?: string;

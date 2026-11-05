@@ -48,6 +48,18 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 /**
+ * The status badge uses the theme's tinted pairs, which meet text contrast in
+ * both themes; white on the raw status colour fell to 1.92:1 on dark success.
+ */
+const STATUS_BADGE: Record<string, string> = {
+  completed: 'bg-success-bg text-success-fg',
+  failed: 'bg-danger-bg text-danger-fg',
+  running: 'bg-info-bg text-info-fg',
+  awaiting: 'bg-warning-bg text-warning-fg',
+};
+const STATUS_BADGE_DEFAULT = 'bg-surface-inset text-text-secondary';
+
+/**
  * Coerce an untyped token count off a step's `output` bag. Anything that isn't
  * a finite number contributes 0 rather than poisoning the sum with NaN.
  */
@@ -156,16 +168,16 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
         </span>
         <span
           aria-label={`Status: ${step.status}`}
-          className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded-[3px] uppercase shrink-0"
-          style={{ background: statusColor }}
+          data-step-status={step.status}
+          className={cn('text-[11px] font-bold px-1.5 py-0.5 rounded-[3px] uppercase shrink-0', STATUS_BADGE[step.status] ?? STATUS_BADGE_DEFAULT)}
         >
           {step.status}
         </span>
-        <span className="text-[13px] font-semibold text-text-primary">
+        <span className="min-w-0 break-words text-[13px] font-semibold text-text-primary">
           {index + 1}. {stepTitle}
         </span>
         {stepSubtitle && (
-          <span className="text-[11px] font-mono text-text-tertiary" title={knownType ? `${nodeType} · ${stepId}` : stepId}>
+          <span className="shrink-0 whitespace-nowrap text-[11px] font-mono text-text-tertiary" title={knownType ? `${nodeType} · ${stepId}` : stepId}>
             {stepSubtitle}
           </span>
         )}

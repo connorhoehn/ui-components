@@ -34,14 +34,14 @@ export interface PageTemplateHeaderProps {
   /** Header density; default `compact` (one 28px title row). */
   density?: Density;
   /**
-   * The title's heading level (since 2.502.0). Default `h1`; `h2`/`h3` when a
+   * The title's heading level (since 2.504.0). Default `h1`; `h2`/`h3` when a
    * host above the template already draws the page heading. Size is unchanged.
    */
   titleAs?: 'h1' | 'h2' | 'h3';
 }
 
 /**
- * The trail row as its own band (since 2.502.0): right-hand controls on the
+ * The trail row as its own band (since 2.504.0): right-hand controls on the
  * crumb line, and the title that can fold into it. Given any of these, a
  * template draws `TrailHeader` instead of `TemplateHeader`.
  */
@@ -82,7 +82,7 @@ export function TemplateHeader({
 }
 
 /**
- * The trail-row header (since 2.502.0): the trail as its own row at the page
+ * The trail-row header (since 2.504.0): the trail as its own row at the page
  * gutter (`ScopeHeader variant="crumbs"`, marked `data-page-trail`) with the
  * controls and link on its right, then the title band (`data-page-title`)
  * under it — or, collapsed, the title folded into the trail and no band.

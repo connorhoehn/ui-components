@@ -51,7 +51,7 @@ export interface PageSectionProps {
    * Draw a token-coloured hairline (`border`) between the section's direct
    * child groups, with `--ui-section-gap` above and below each rule, so a
    * stack of groups reads as separate blocks rather than one long scroll.
-   * Emits `data-section-divided`. Default false. Since 2.501.0.
+   * Emits `data-section-divided`. Default false. Since 2.504.0.
    */
   divided?: boolean;
   className?: string;

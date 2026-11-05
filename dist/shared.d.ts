@@ -1204,7 +1204,7 @@ export declare interface CollectionFilter {
  *   empty={{ title: 'No connectors yet', action: <Button>New connector</Button> }}
  *   detail={selected ? { title: selected.name, onClose: () => setSelected(null), content: <ConnectorSummary c={selected} /> } : null} />
  */
-export declare function CollectionPage<T>({ title, description, headerActions, toolbar, back, children, breadcrumbs, badge, density, table, loading, error, onRetry, empty, isEmpty, detail, gutter, className, ...rest }: CollectionPageProps<T>): JSX.Element;
+export declare function CollectionPage<T>({ title, description, headerActions, toolbar, back, children, breadcrumbs, badge, density, titleAs, table, loading, error, onRetry, empty, isEmpty, detail, gutter, className, ...rest }: CollectionPageProps<T>): JSX.Element;
 
 /** The selected row's pane: a `SidePane` registration plus its body. */
 export declare type CollectionPageDetail = Omit<SidePaneProps, 'children'> & {
@@ -1224,6 +1224,8 @@ export declare interface CollectionPageProps<T = unknown> extends Omit<HTMLAttri
     badge?: ReactNode;
     /** Header density; default `compact`. */
     density?: Density;
+    /** The title's heading level (since 2.504.0); default `h1`. */
+    titleAs?: 'h1' | 'h2' | 'h3';
     /**
      * The body as a striped `DataTable` (striping on unless the props say otherwise).
      * Wins over `children`. Its `data.length === 0` is the empty state.
@@ -1602,7 +1604,7 @@ export declare type DashboardColumns = 2 | 3 | 4;
  *     { id: 'errors', title: 'Recent errors', content: <EventList … /> },
  *   ]} />
  */
-export declare function DashboardPage({ title, description, breadcrumbs, actions, badge, back, density, stats, kpis, panels, columns, children, gutter, className, 'data-testid': testId, }: DashboardPageProps): JSX.Element;
+export declare function DashboardPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, stats, kpis, panels, columns, children, gutter, className, 'data-testid': testId, }: DashboardPageProps): JSX.Element;
 
 export declare interface DashboardPageProps extends PageTemplateHeaderProps {
     /** The stat row as data — drawn as a `StatStrip`. */
@@ -1712,7 +1714,7 @@ export declare interface DataTableProps<T> {
      * than no stripe, because it makes the row under the pointer ambiguous.
      * Both are tokens, so the relationship holds in dark mode too.
      *
-     * Default `true` since 2.501.0 (was `false`): an unstriped wide table is
+     * Default `true` since 2.504.0 (was `false`): an unstriped wide table is
      * the default nobody should get by accident. Pass `striped={false}` to opt
      * out, e.g. for a two-row summary table.
      */
@@ -1790,8 +1792,8 @@ export declare interface DetailHeaderProps {
     aside?: ReactNode;
     /** Width of the aside in px. Default 260. */
     asideWidth?: number;
-    /** Heading level, so a panel nested under a page h1 does not claim h1. */
-    as?: 'h2' | 'h3';
+    /** Heading level, so a panel nested under a page h1 does not claim h1. `h1` (since 2.504.0) when the header is the page's (`DetailPage`). */
+    as?: 'h1' | 'h2' | 'h3';
     className?: string;
     'data-testid'?: string;
 }
@@ -1810,7 +1812,7 @@ export declare interface DetailHeaderProps {
  *   ]}
  *   aside={<ContextColumn … />} />
  */
-export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, tabs, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, }: DetailPageProps): JSX.Element;
+export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, }: DetailPageProps): JSX.Element;
 
 export declare interface DetailPageProps {
     /** What the record is. */
@@ -1825,6 +1827,12 @@ export declare interface DetailPageProps {
     actions?: ReactNode;
     /** The trail above the header. */
     breadcrumbs?: BreadcrumbItem[];
+    /**
+     * The title's heading level (since 2.504.0). Default `h1`: a routed record
+     * page's title is the page heading. `h2`/`h3` when the record sits under a
+     * host that already draws the page's `h1`. The visual size is unchanged.
+     */
+    titleAs?: 'h1' | 'h2' | 'h3';
     /** The record's sections. With none, `children` is the one body. */
     tabs?: DetailPageTab[];
     /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
@@ -1869,7 +1877,7 @@ export declare interface DetailSectionProps {
      * drawer or side panel. `heading` (since 2.386.15): a 16px sentence-case
      * heading for a document-like body (a work item's Brief); its `actions`
      * stay quiet until the section is hovered or focused (always shown where
-     * there is no hover). Since 2.501.0 the `heading` variant draws the same
+     * there is no hover). Since 2.504.0 the `heading` variant draws the same
      * leading hairline as `label` (suppressed by `first`): stacked heading
      * sections with no rule read as one long section.
      */
@@ -4073,7 +4081,7 @@ export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, r
  *   {selected && <RequestRecord request={selected} />}
  * </MasterDetailPage>
  */
-export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, list, children, emptyDetail, aside, footer, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
+export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
 
 export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     /** The rail, as data (`ListRail`): title, count, search header, rows body, footer, label. */
@@ -4569,25 +4577,41 @@ export declare interface NumberInputProps {
 /**
  * Use this when a page is a form, an overview or any page no other template fits: trail, title/actions, and a body at the page gutter.
  *
- * Fills its parent (`h-full min-h-0`); only the body scrolls.
+ * Fills its parent (`h-full min-h-0`); only the body scrolls. Given `trailControls`, `trailLink`, `collapsed` or
+ * `onToggleCollapsed`, the trail is its own row (controls on its right) with the title band under it, or folded into it.
  *
  * @example
  * <PageFrame title="New connector" breadcrumbs={[{ label: 'Connectors', href: '/connectors' }, { label: 'New' }]}
  *   actions={<Button>Save</Button>}>
  *   <FormField label="Name">{({ id }) => <Input id={id} value={name} onChange={(e) => setName(e.target.value)} />}</FormField>
  * </PageFrame>
+ *
+ * @example
+ * // A section page: scope selector on the trail row, its command composer docked at the column's bottom.
+ * <PageFrame title="Communication" breadcrumbs={trail} trailControls={<Select … />} body="docked"
+ *   footer={<CollectionCommandHost inPlace … />}>
+ *   <PageSection title="Channels">…</PageSection>
+ * </PageFrame>
  */
-export declare function PageFrame({ title, description, breadcrumbs, actions, badge, back, density, children, body, footer, gutter, bodyClassName, className, ...rest }: PageFrameProps): JSX.Element;
+export declare function PageFrame({ title, description, breadcrumbs, actions, badge, back, density, titleAs, trailControls, trailLink, collapsed, onToggleCollapsed, children, body, dockedBody, footer, gutter, bodyGutter, bodyClassName, className, ...rest }: PageFrameProps): JSX.Element;
 
-export declare interface PageFrameProps extends PageTemplateHeaderProps, Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
+export declare interface PageFrameProps extends PageTemplateHeaderProps, PageTemplateTrailProps, Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
     /** The page content, at the page gutter. */
     children: ReactNode;
-    /** `scroll` (default): the body scrolls. `fill`: the body is a fixed-height flex column whose children scroll themselves. */
-    body?: 'scroll' | 'fill';
-    /** Docked under the body, full width, never scrolls (a save bar, a composer). */
+    /**
+     * `scroll` (default): the body scrolls. `fill`: the body is a fixed-height flex column whose children scroll themselves.
+     * `docked` (since 2.504.0): the body scrolls over a dock at the column's bottom (`DockedColumn`): `footer`, and any
+     * `ColumnDock` inside the body (a section's command composer), render there, spanning the column.
+     */
+    body?: 'scroll' | 'fill' | 'docked';
+    /** With `body="docked"`: `scroll` (default) the body scrolls over the dock; `fill` it is a fixed frame whose panes scroll (a conversation). Since 2.504.0. */
+    dockedBody?: 'scroll' | 'fill';
+    /** Docked under the body, full width, never scrolls (a save bar, a composer). With `body="docked"` it goes into the column's dock. */
     footer?: ReactNode;
     /** Default `page` — the `--ui-page-gutter` inset on header and body. */
     gutter?: PageGutter;
+    /** The body's inset when it differs from the header's (since 2.504.0): `none` for a conversation that owns its gutters. Default: `gutter`. */
+    bodyGutter?: PageGutter;
     /** Extra classes for the body region. */
     bodyClassName?: string;
 }
@@ -4729,7 +4753,7 @@ export declare interface PageSectionProps {
      * Draw a token-coloured hairline (`border`) between the section's direct
      * child groups, with `--ui-section-gap` above and below each rule, so a
      * stack of groups reads as separate blocks rather than one long scroll.
-     * Emits `data-section-divided`. Default false. Since 2.501.0.
+     * Emits `data-section-divided`. Default false. Since 2.504.0.
      */
     divided?: boolean;
     className?: string;
@@ -4751,6 +4775,31 @@ export declare interface PageTemplateHeaderProps {
     back?: PageHeaderBack;
     /** Header density; default `compact` (one 28px title row). */
     density?: Density;
+    /**
+     * The title's heading level (since 2.504.0). Default `h1`; `h2`/`h3` when a
+     * host above the template already draws the page heading. Size is unchanged.
+     */
+    titleAs?: 'h1' | 'h2' | 'h3';
+}
+
+/**
+ * The trail row as its own band (since 2.504.0): right-hand controls on the
+ * crumb line, and the title that can fold into it. Given any of these, a
+ * template draws `TrailHeader` instead of `TemplateHeader`.
+ */
+export declare interface PageTemplateTrailProps {
+    /** Right of the trail, on the crumb row: a scope selector, a filter. */
+    trailControls?: ReactNode;
+    /** Right of the trail: an outbound link ("Agent library ↗"). */
+    trailLink?: {
+        label: string;
+        href: string;
+        icon?: ReactNode;
+    } | null;
+    /** The title folds into the trail's last crumb (a conversation view); no title band is drawn. */
+    collapsed?: boolean;
+    /** Draws the collapse/expand chevron. */
+    onToggleCollapsed?: () => void;
 }
 
 /** One record a host's search returned (a person, an initiative, a request…). */
@@ -5801,6 +5850,117 @@ export declare interface SectionLabelProps {
      */
     as?: ElementType;
     className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * Use this when a page lives in a sectioned area: the section rail on the left, optionally the page's list as a second rail, and the content column (trail row, title band, a body whose command composer docks at the column's bottom), filling the viewport.
+ *
+ * Without `header`, the children are the column: pass a page template (`PageFrame`, `DetailPage`, `CollectionPage`).
+ *
+ * @example
+ * <SectionLayout title="Observability" items={sectionItems} renderNavItem={navLink}
+ *   railFold={{ folded: rail.folded, onToggle: rail.toggle }}
+ *   list={{ label: 'runs', title: 'Runs', count: runs.length, body: <GroupedList … /> }}
+ *   header={{ breadcrumbs: trail, title: 'Runs', trailControls: <Select … /> }}
+ *   footer={<CollectionCommandHost inPlace … />}>
+ *   <RunRecord run={run} />
+ * </SectionLayout>
+ */
+export declare function SectionLayout({ title, items, renderNavItem, storageKey, railWidth, titleAction, railHeader, railContent, railLabel, railFold, secondary, list, listFold, listRailWidth, aside, header, body, gutter, footer, fill, bottomGap, contentLabel, bodyClassName, children, className, 'data-testid': testId, }: SectionLayoutProps): JSX.Element;
+
+/** A rail's fold, as `useRailFold` returns it. */
+export declare interface SectionLayoutFold {
+    folded: boolean;
+    onToggle: () => void;
+}
+
+/** The content column's header: the trail row, and the view's title band under it. */
+export declare interface SectionLayoutHeader extends PageTemplateTrailProps {
+    breadcrumbs?: BreadcrumbItem[];
+    /** The view's title (rule: the view's name, not the record's). Omitted: the trail row alone. */
+    title?: string;
+    description?: string;
+    badge?: ReactNode;
+    actions?: ReactNode;
+    /** Default `h1`. */
+    titleAs?: 'h1' | 'h2' | 'h3';
+    /** Default `compact`. */
+    density?: Density;
+}
+
+export declare interface SectionLayoutProps {
+    /** The section's name: the section rail's caption and the region names. */
+    title: string;
+    /** The section rail's items. */
+    items: SubNavItem[];
+    /** Router integration for the rail's links (a `NavLink`, `activeNavItemClassName`). */
+    renderNavItem?: SubNavLayoutProps['renderNavItem'];
+    /** Remembered group folds in the rail. */
+    storageKey?: string;
+    /** Section rail width, px. Default 220. */
+    railWidth?: number;
+    /** A control in the rail's caption row (kept on the folded strip). */
+    titleAction?: ReactNode;
+    /** Under the caption row: a scope selector. */
+    railHeader?: ReactNode;
+    /** Replaces the item list (a combined `RailNavList`, a tree). */
+    railContent?: ReactNode;
+    /** The rail's accessible name. Default "<title> navigation". */
+    railLabel?: string;
+    /** The section rail's fold (`useRailFold`): folds to a 44px strip holding its » control. */
+    railFold?: SectionLayoutFold;
+    /** A second section rail between the first and the content. */
+    secondary?: {
+        title?: string;
+        items: SubNavItem[];
+        storageKey?: string;
+        railWidth?: number;
+    };
+    /** The section page's own list, as a flush list rail beside the section rail (`ListRailLayout`). */
+    list?: ListRail;
+    /** The list rail's fold («/» on the rail). */
+    listFold?: SectionLayoutFold;
+    /** List rail width; default `ms` (264px). */
+    listRailWidth?: ListRailLayoutProps['railWidth'];
+    /** Right of the content column (a `ContextColumn`); list layouts only. */
+    aside?: ReactNode;
+    /** Given, the layout draws the content column's trail row and title band. Omitted, the children draw their own (a page template). */
+    header?: SectionLayoutHeader;
+    /** `scroll` (default): the body scrolls over the dock. `fill`: a fixed frame whose panes scroll (a canvas + inspector). */
+    body?: 'scroll' | 'fill';
+    /** The body's inset. Default `page` (`--ui-page-gutter`); `none` for a canvas or conversation that owns its gutters. */
+    gutter?: PageGutter;
+    /** Docked at the content column's bottom, spanning it: the section's command composer. A `ColumnDock` in the body lands there too. */
+    footer?: ReactNode;
+    /** `viewport` (default): the frame fills from its top to the window's bottom (`ViewportFillRegion`). `parent`: `h-full` (an AppShell fill region). */
+    fill?: 'viewport' | 'parent';
+    /** `fill="viewport"`: space kept under the frame, px. Default 0. */
+    bottomGap?: number;
+    /** The content region's accessible name. Default "<title> workspace". */
+    contentLabel?: string;
+    /** Extra classes for the body region. */
+    bodyClassName?: string;
+    children: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function SectionStack({ children, density: densityProp, divided, as, className, ref, ...rest }: SectionStackProps): JSX.Element;
+
+export declare interface SectionStackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+    /** The sections — typically `PageSection`s, or any block. Null/false children are skipped. */
+    children?: ReactNode;
+    /**
+     * Vertical rhythm. `comfortable`: 24px either side of each rule. `compact`:
+     * 16px. Unset, follows the nearest `DensityProvider` (comfortable without one).
+     */
+    density?: Density;
+    /** Draw a rule between sections. `false` keeps the spacing, no rule. Default `true`. */
+    divided?: boolean;
+    /** Container element. Default `div`; `section` when the stack is itself a landmark region. */
+    as?: 'div' | 'section';
+    ref?: Ref<HTMLElement>;
     'data-testid'?: string;
 }
 
@@ -6927,7 +7087,7 @@ export declare interface TableBodyProps extends HTMLAttributes<HTMLTableSectionE
     /**
      * Tint every second row (the even DOM children, so the first row stays on
      * the plain surface) with the same `surface-inset` band `DataTable` uses.
-     * Default `true` since 2.501.0: zebra rows are the reading aid a wide table
+     * Default `true` since 2.504.0: zebra rows are the reading aid a wide table
      * needs, and a hand-composed table should not have to opt in to it. A row
      * that sets its own `bg-*` class keeps it. Pass `false` when the body
      * stripes itself or holds non-data rows (group headers) that would shift
@@ -8050,7 +8210,7 @@ export declare interface WorkflowStep {
     outcome?: 'failed' | 'cancelled';
 }
 
-export declare function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+export declare function WorkflowStepper({ steps, size: sizeProp, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
 
 export declare interface WorkflowStepperProps {
     steps: WorkflowStep[];
@@ -8062,6 +8222,11 @@ export declare interface WorkflowStepperProps {
     size?: 'sm' | 'md' | 'compact';
     /** Names the track for assistive tech ("Level L1 of target L3"). */
     'aria-label'?: string;
+    /**
+     * Wrap onto further rows instead of scrolling when the steps don't fit, so
+     * no step is ever hidden past the track's edge. Default false (scrolls).
+     */
+    wrap?: boolean;
     className?: string;
     'data-testid'?: string;
 }

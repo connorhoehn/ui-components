@@ -85,7 +85,7 @@ export interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> 
   /**
    * Tint every second row (the even DOM children, so the first row stays on
    * the plain surface) with the same `surface-inset` band `DataTable` uses.
-   * Default `true` since 2.501.0: zebra rows are the reading aid a wide table
+   * Default `true` since 2.504.0: zebra rows are the reading aid a wide table
    * needs, and a hand-composed table should not have to opt in to it. A row
    * that sets its own `bg-*` class keeps it. Pass `false` when the body
    * stripes itself or holds non-data rows (group headers) that would shift

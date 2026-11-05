@@ -2,7 +2,7 @@
 // section rail, an optional list rail beside it, and the content column.
 //
 // Upstreamed from the aws-agentcore portal's `BuildSectionLayout` and
-// `StackedCatalogLayout` shims (2.502.0). Those composed the same five pieces
+// `StackedCatalogLayout` shims (2.504.0). Those composed the same five pieces
 // by hand on every sectioned area (Observability, Knowledge, Identity, the
 // Design catalogs…): `SubNavLayout` for the section rail, `ListRailLayout`
 // for a section page's own list, `ViewportFillRegion` so the frame fills the

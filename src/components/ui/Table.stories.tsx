@@ -29,7 +29,7 @@ const meta: Meta<typeof RunsTable> = { title: 'UI/Table', component: RunsTable, 
 export default meta;
 type Story = StoryObj<typeof RunsTable>;
 
-/** Hand-composed rows stripe by default (since 2.501.0), with the DataTable band. */
+/** Hand-composed rows stripe by default (since 2.504.0), with the DataTable band. */
 export const Striped: Story = {};
 /** `TableBody striped={false}` opts out. */
 export const Unstriped: Story = { args: { striped: false } };

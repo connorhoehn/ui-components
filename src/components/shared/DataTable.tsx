@@ -86,7 +86,7 @@ export interface DataTableProps<T> {
    * than no stripe, because it makes the row under the pointer ambiguous.
    * Both are tokens, so the relationship holds in dark mode too.
    *
-   * Default `true` since 2.501.0 (was `false`): an unstriped wide table is
+   * Default `true` since 2.504.0 (was `false`): an unstriped wide table is
    * the default nobody should get by accident. Pass `striped={false}` to opt
    * out, e.g. for a two-row summary table.
    */

@@ -102,7 +102,7 @@ function flexClasses(
   );
 }
 
-// `data-ui-layout` marks the element as library layout (since 2.502.0): the DOM
+// `data-ui-layout` marks the element as library layout (since 2.504.0): the DOM
 // audit's `element.unmarked` accepts a `<Stack as="section">` as library DOM
 // instead of reporting it as a hand-rolled section.
 
