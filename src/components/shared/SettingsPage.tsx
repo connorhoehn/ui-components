@@ -28,9 +28,9 @@ export interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
 export function SettingsPage({ breadcrumbs, gutter = 'page', className, 'data-testid': testId = 'settings-page', ...layout }: SettingsPageProps) {
   const trail = !!breadcrumbs && breadcrumbs.length > 0;
   return (
-    <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="settings" data-testid={testId}>
+    <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="settings" data-page-column="" data-testid={testId}>
       {trail && (
-        <div className={cn('shrink-0 min-w-0 border-b border-border py-2', gutter === 'page' && PAGE_GUTTER_X)}>
+        <div className={cn('shrink-0 min-w-0 border-b border-border py-2', gutter === 'page' && PAGE_GUTTER_X)} data-page-trail="">
           <Breadcrumbs items={breadcrumbs!} separator="›" maxItems={5} className="min-w-0" />
         </div>
       )}

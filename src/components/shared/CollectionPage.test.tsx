@@ -73,4 +73,11 @@ describe('CollectionPage', () => {
     expect(screen.getAllByTestId('side-pane-split')).toHaveLength(1);
     expect(screen.getByText('alpha pane')).toBeTruthy();
   });
+
+  it('titleAs sets the header heading level; h1 by default', () => {
+    const { rerender } = render(<CollectionPage title="Runs"><p>rows</p></CollectionPage>);
+    expect(screen.getByRole('heading', { name: 'Runs', level: 1 })).toBeTruthy();
+    rerender(<CollectionPage title="Runs" titleAs="h2"><p>rows</p></CollectionPage>);
+    expect(screen.getByRole('heading', { name: 'Runs', level: 2 })).toBeTruthy();
+  });
 });

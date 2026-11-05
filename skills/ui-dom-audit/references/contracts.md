@@ -57,7 +57,7 @@ leave that count unchanged (a duplicate React child key caused this regression).
 | `zebra` | selector (tables: native, `role=table`, `role=grid`), minRows, marker? | A table with `minRows`+ body rows whose adjacent rows paint the same background (judged behind each row's first cell, so cell- and row-painted stripes both count); a table inside `marker` is trusted (`table.zebra`). Hand-rolled tables are judged the same way |
 | `separator` | selector (scope), groups, minGap, maxPerPage? | Two sibling content groups stacked one above the other with no facing border/shadow, no divider (`hr`, `role=separator`) between or at their edge, the same surface, and less than `minGap` between their ink (`section.separator`) |
 | `vertical-budget` | selector (content columns), groups, maxScrollRatio, maxStackedSections, scrollingContent? | At rest, more than `maxStackedSections` rows of top-level groups (side-by-side tiles count as one row), or a column (or its main inner scroller) longer than `maxScrollRatio` viewports unless it holds one long flow named by `scrollingContent` (`page.vertical-budget`) |
-| `unmarked` | selector (scope), elements[{name, selector, marker, topLevel?}], part, owners, maxPerPage | An element matching an entry's `selector` that carries none of its library `marker`s, is not itself a library `part` (`[data-ui-part]`, which ui-components puts on every raw element it renders internally) and sits inside no `owners` composite root within the scope: DOM the component library did not render, which every marker-keyed rule cannot see (`element.unmarked`). Framing containers that hold consumer children (PageSection, Card, the page templates) are not owners, so a raw button placed in them still fails. Beyond `maxPerPage`, one finding carries the per-kind counts |
+| `unmarked` | selector (scope), elements[{name, selector, marker, topLevel?}], part, owners, maxPerPage | An element matching an entry's `selector` that carries none of its library `marker`s, is not itself a library `part` (`[data-ui-part]`, which ui-components puts on every raw element it renders internally) and sits inside no `owners` composite root within the scope: DOM the component library did not render, which every marker-keyed rule cannot see (`element.unmarked`). Framing containers that hold consumer children (PageSection, Card, the page templates) are not owners, so a raw button placed in them still fails. A section rendered by a library layout primitive (`Stack`/`Inline` with `as="section"`, marked `data-ui-layout`) is library DOM. Beyond `maxPerPage`, one finding carries the per-kind counts |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -112,6 +112,23 @@ and a ListRailLayout header column both qualify) and its edge is the trail
 band's content box: the band is padded by `--ui-page-gutter`, so its padding
 *is* the gutter. A page without a trail (the native Social tenant, a canvas
 shell) is unexercised (`matched: 0`), never passed.
+
+**Library template columns (2.502.0).** The contract's `librarySelectors`
+extend an alias with the component library's own markers, whatever the
+adapter binds (the two are joined; an unbound alias uses the library's
+alone), so a page built from a template is measured with no adapter entry:
+
+| Alias | Library markers |
+| --- | --- |
+| `contentColumns` | `[data-page-column]` (PageFrame, CollectionPage, DashboardPage, SettingsPage, DetailPage's column, SectionLayout's column when it draws `header`), outermost only, and not inside another column's `DockedColumn` body |
+| `trail` | `[data-page-trail]` (every `ScopeHeader variant="crumbs"` row, DetailPage's header band, SettingsPage's trail), or a column's direct `[data-page-header]` (`PageHeader` drawn as the template header) |
+| `sectionTitles` | `[data-page-title]` (the title band under a trail row) |
+| `containmentRegions` | `[data-page-column]` |
+| `composerColumns`, `composerBoundary` | `[data-docked-column]` |
+
+An adapter keeps binding its own hand-built columns (aws-agentcore's
+`section-crumbs`, `data-section-content`, `data-section-title`); it never
+lists templates by name.
 
 **Ink, not boxes.** `gutter`, `row-start` and `sparse-row` measure what is
 drawn: visible text runs, `img`/`svg`/`canvas`/`video` and

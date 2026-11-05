@@ -35,4 +35,10 @@ describe('DashboardPage', () => {
     const body = screen.getByText('a body').parentElement!;
     expect(body.className).toContain('overflow-auto');
   });
+
+  it('titleAs sets the header heading level; the root is the audit column', () => {
+    const { container } = render(<DashboardPage title="Overview" titleAs="h2" />);
+    expect(screen.getByRole('heading', { name: 'Overview', level: 2 })).toBeTruthy();
+    expect(container.querySelector('[data-page-template="dashboard"][data-page-column] > [data-page-header]')).toBeTruthy();
+  });
 });

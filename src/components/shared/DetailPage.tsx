@@ -37,6 +37,12 @@ export interface DetailPageProps {
   actions?: ReactNode;
   /** The trail above the header. */
   breadcrumbs?: BreadcrumbItem[];
+  /**
+   * The title's heading level (since 2.502.0). Default `h1`: a routed record
+   * page's title is the page heading. `h2`/`h3` when the record sits under a
+   * host that already draws the page's `h1`. The visual size is unchanged.
+   */
+  titleAs?: 'h1' | 'h2' | 'h3';
   /** The record's sections. With none, `children` is the one body. */
   tabs?: DetailPageTab[];
   /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
@@ -67,7 +73,7 @@ export interface DetailPageProps {
  *   aside={<ContextColumn … />} />
  */
 export function DetailPage({
-  title, badge, description, meta, actions, breadcrumbs, tabs, activeTab, onTabChange, children, aside,
+  title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, activeTab, onTabChange, children, aside,
   gutter = 'page', className, 'data-testid': testId,
 }: DetailPageProps) {
   const idPrefix = useId();
@@ -86,11 +92,11 @@ export function DetailPage({
 
   return (
     <div className={cn('flex h-full min-h-0 min-w-0 flex-row', className)} data-page-template="detail" data-testid={testId}>
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className={cn('flex shrink-0 min-w-0 flex-col gap-2', gx, trail ? 'pt-2' : 'pt-3')} data-detail-page-header="">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-page-column="">
+        <div className={cn('flex shrink-0 min-w-0 flex-col gap-2', gx, trail ? 'pt-2' : 'pt-3')} data-detail-page-header="" data-page-trail="">
           {trail && <Breadcrumbs items={breadcrumbs!} separator="›" maxItems={5} className="min-w-0" />}
           <div className="flex min-w-0 items-start gap-3">
-            <DetailHeader title={title} as="h2" className="min-w-0 flex-1"
+            <DetailHeader title={title} as={titleAs} className="min-w-0 flex-1"
               {...(badge != null ? { badge } : {})} {...(description != null ? { description } : {})} {...(meta != null ? { meta } : {})} />
             {actions != null && <div className="flex shrink-0 items-center gap-2" data-detail-page-actions="">{actions}</div>}
           </div>

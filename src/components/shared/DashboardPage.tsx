@@ -68,14 +68,14 @@ const LG_SPAN: Record<1 | 2 | 3, string> = {
  *   ]} />
  */
 export function DashboardPage({
-  title, description, breadcrumbs, actions, badge, back, density,
+  title, description, breadcrumbs, actions, badge, back, density, titleAs,
   stats, kpis, panels, columns = 3, children, gutter = 'page', className, 'data-testid': testId,
 }: DashboardPageProps) {
   const gx = gutter === 'page' && PAGE_GUTTER_X;
   const statRow = kpis ?? (stats && stats.length > 0 ? <StatStrip items={stats} size="sm" aria-label={`${title} summary`} /> : null);
   return (
-    <div className={cn('flex h-full min-h-0 min-w-0 flex-col gap-[var(--ui-section-gap,0.75rem)]', className)} data-page-template="dashboard" data-testid={testId}>
-      <TemplateHeader {...{ title, description, breadcrumbs, actions, badge, back, density, gutter }} />
+    <div className={cn('flex h-full min-h-0 min-w-0 flex-col gap-[var(--ui-section-gap,0.75rem)]', className)} data-page-template="dashboard" data-page-column="" data-testid={testId}>
+      <TemplateHeader {...{ title, description, breadcrumbs, actions, badge, back, density, titleAs, gutter }} />
       {statRow != null && <div className={cn('shrink-0 min-w-0', gx)} data-dashboard-stats="">{statRow}</div>}
       <div
         className={cn(

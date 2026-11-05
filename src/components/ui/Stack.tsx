@@ -102,12 +102,16 @@ function flexClasses(
   );
 }
 
+// `data-ui-layout` marks the element as library layout (since 2.502.0): the DOM
+// audit's `element.unmarked` accepts a `<Stack as="section">` as library DOM
+// instead of reporting it as a hand-rolled section.
+
 /** Vertical flex column with a scale gap. */
 export function Stack({
   children, gap, align, justify, wrap = false, as: As = 'div', className, ref, ...rest
 }: StackProps) {
   return (
-    <As ref={ref} className={cn(flexClasses('col', { gap, align, justify, wrap }), className)} {...rest}>
+    <As ref={ref} className={cn(flexClasses('col', { gap, align, justify, wrap }), className)} data-ui-layout="stack" {...rest}>
       {children}
     </As>
   );
@@ -122,7 +126,7 @@ export function Inline({
   children, gap = 'sm', align = 'center', justify, wrap = true, as: As = 'div', className, ref, ...rest
 }: StackProps) {
   return (
-    <As ref={ref} className={cn(flexClasses('row', { gap, align, justify, wrap }), className)} {...rest}>
+    <As ref={ref} className={cn(flexClasses('row', { gap, align, justify, wrap }), className)} data-ui-layout="inline" {...rest}>
       {children}
     </As>
   );

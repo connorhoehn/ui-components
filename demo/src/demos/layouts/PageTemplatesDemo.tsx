@@ -20,11 +20,15 @@ import {
   MasterDetailPage,
   MetaLine,
   PageFrame,
+  SectionLayout,
   SettingsPage,
   StatusPill,
   Tabs,
   Textarea,
 } from '../../../../src/components/shared';
+import { ColumnDock } from '../../../../src/components/layout';
+import { Select } from '../../../../src/components/forms';
+import { PageSection } from '../../../../src/components/ui/PageSection';
 import { DemoIntro } from './chrome';
 
 type Verdict = 'regressed' | 'improved' | 'unchanged';
@@ -210,6 +214,56 @@ const FRAME_CODE = `<PageFrame title="New connector" breadcrumbs={trail}
   <FormField label="Name">{({ id }) => <Input id={id} value={name} onChange={(e) => setName(e.target.value)} />}</FormField>
 </PageFrame>`;
 
+const SECTION_ITEMS = [
+  { label: 'Summary', path: '#summary', group: 'Overview' },
+  { label: 'Runs', path: '#runs', group: 'Overview' },
+  { label: 'Traces', path: '#traces', group: 'Debug' },
+];
+
+function SectionRecipe() {
+  const [id, setId] = useState<string | null>(ROWS[0]!.id);
+  const [railFolded, setRailFolded] = useState(false);
+  const [listFolded, setListFolded] = useState(false);
+  const [env, setEnv] = useState('prod');
+  const current = ROWS.find((r) => r.id === id) ?? null;
+  return (
+    <SectionLayout
+      title="Evals" items={SECTION_ITEMS} fill="parent"
+      railFold={{ folded: railFolded, onToggle: () => setRailFolded((f) => !f) }}
+      list={{
+        label: 'runs', title: 'Runs', count: ROWS.length,
+        body: <GroupedList groups={[{ id: 'regressed', title: 'Regressed' }, { id: 'improved', title: 'Improved' }, { id: 'unchanged', title: 'Unchanged' }]}
+          rows={ROWS.map((r) => ({ id: r.id, groupId: r.verdict, title: r.name, subline: r.model }))} currentId={id} onOpenRow={(row) => setId(row.id)} />,
+      }}
+      listFold={{ folded: listFolded, onToggle: () => setListFolded((f) => !f) }}
+      header={{
+        breadcrumbs: [{ label: 'Evals', href: '#' }, { label: 'Runs', href: '#' }, { label: current?.name ?? 'Runs' }],
+        title: 'Runs',
+        trailControls: <Select aria-label="Environment" size="sm" value={env} onChange={(e) => setEnv(e.target.value)}
+          options={[{ value: 'prod', label: 'Production' }, { value: 'stage', label: 'Staging' }]} />,
+      }}
+    >
+      {current && <KeyValue items={[{ label: 'Model', value: current.model }, { label: 'Verdict', value: current.verdict }, { label: 'Environment', value: env }]} />}
+      <ColumnDock>
+        <PageSection title="Command" className="border-t border-border px-[var(--ui-page-gutter,1.5rem)] py-3">Docked at the column's bottom.</PageSection>
+      </ColumnDock>
+    </SectionLayout>
+  );
+}
+
+const SECTION_CODE = `const rail = useRailFold({ storageKey: 'evals.section-rail' });
+const listRail = useRailFold({ storageKey: 'evals.list-rail' });
+<SectionLayout
+  title="Evals" items={sectionItems} renderNavItem={navLink}
+  railFold={{ folded: rail.folded, onToggle: rail.toggle }}
+  list={{ label: 'runs', title: 'Runs', count: runs.length, body: <GroupedList … /> }}
+  listFold={{ folded: listRail.folded, onToggle: listRail.toggle }}
+  header={{ breadcrumbs: trail, title: 'Runs', trailControls: <Select … /> }}
+  footer={<CollectionCommandHost inPlace … />}
+>
+  {current && <RunRecord run={current} />}
+</SectionLayout>`;
+
 const RECIPES = [
   { id: 'collection', label: 'CollectionPage', when: 'The page is a list of records.', Recipe: CollectionRecipe, code: COLLECTION_CODE },
   { id: 'master-detail', label: 'MasterDetailPage', when: 'A list you pick from, the picked record beside it.', Recipe: MasterDetailRecipe, code: MASTER_DETAIL_CODE },
@@ -217,6 +271,7 @@ const RECIPES = [
   { id: 'dashboard', label: 'DashboardPage', when: 'An overview that fits one screen.', Recipe: DashboardRecipe, code: DASHBOARD_CODE },
   { id: 'settings', label: 'SettingsPage', when: 'Settings in sections with a save bar.', Recipe: SettingsRecipe, code: SETTINGS_CODE },
   { id: 'page-frame', label: 'PageFrame', when: 'A form, or anything the others do not fit.', Recipe: FrameRecipe, code: FRAME_CODE },
+  { id: 'section-layout', label: 'SectionLayout', when: 'Pages inside a sectioned area: section rail, optional list rail, a column whose composer docks at the bottom.', Recipe: SectionRecipe, code: SECTION_CODE },
 ] as const;
 
 export default function PageTemplatesDemo() {
@@ -226,7 +281,7 @@ export default function PageTemplatesDemo() {
   return (
     <div className="mx-auto flex max-w-[1280px] flex-col gap-4">
       <DemoIntro title="Page templates">
-        Six page shapes, six templates from `/shared`. Each fills its parent, draws the header at the page
+        Six page shapes, six templates from `/shared`, plus SectionLayout, the frame around the pages of a sectioned area. Each fills its parent, draws the header at the page
         gutter and scrolls exactly one region, so the page itself never scrolls. Pick a shape; the frame
         below is the whole page and the code under it is the recipe.
       </DemoIntro>

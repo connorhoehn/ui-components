@@ -1,6 +1,6 @@
 ---
 name: ui-page-build
-description: Build or change any page, view, route, screen, panel, table or form in a frontend that uses @connorhoehnslalom/ui-components (also aliased as @connorhoehn/ui-components). Load before writing JSX: it picks the page template (PageFrame, CollectionPage, MasterDetailPage, DetailPage, DashboardPage, SettingsPage), the components, tokens and realtime-modules hooks, enforces the portal density rules (one viewport, tabs instead of stacked cards, striped tables, separated groups, explicit Button variants), and ends with lint plus the ui-dom-audit check on the changed route.
+description: Build or change any page, view, route, screen, panel, table or form in a frontend that uses @connorhoehnslalom/ui-components (also aliased as @connorhoehn/ui-components). Load before writing JSX: it picks the page template (PageFrame, CollectionPage, MasterDetailPage, DetailPage, DashboardPage, SettingsPage, SectionLayout), the components, tokens and realtime-modules hooks, enforces the portal density rules (one viewport, tabs instead of stacked cards, striped tables, separated groups, explicit Button variants), and ends with lint plus the ui-dom-audit check on the changed route.
 ---
 
 Compose pages from the library. Never hand-roll a page, table, control or
@@ -30,6 +30,14 @@ scrolling.
 | Numbers and summary panels | `DashboardPage` | A grid of hand-sized divs |
 | Preferences grouped by topic | `SettingsPage` | One long form |
 | Anything else (a canvas, an editor, a wizard) | `PageFrame` | A page-level `<div className="p-6">` |
+| A section page whose trail carries controls, or whose composer docks at the bottom | `PageFrame` with `trailControls` / `collapsed` / `body="docked"` | A hand-made `ScopeHeader` + `DockedColumn` shim |
+| The frame around the pages of a sectioned area (section rail, optional list rail) | `SectionLayout` (wraps the page; the page is one of the above, or `header` draws its column) | `SubNavLayout` + `ListRailLayout` + `ViewportFillRegion` + `DockedColumn` composed by hand |
+
+Title level: every template's title is the page `h1` by default; pass
+`titleAs="h2"` only when a host above it already draws the page heading.
+Templates emit the DOM-audit markers themselves (`data-page-column`,
+`data-page-trail`, `data-page-title`, `data-page-body`); never re-add them on
+a page.
 
 **Collection**
 
@@ -153,6 +161,37 @@ export function DiagramPage({ diagram, onShare }: DiagramPageProps) {
   );
 }
 ```
+
+**Sectioned area**
+
+```tsx
+import { SectionLayout, GroupedList, Select, useRailFold } from '@connorhoehnslalom/ui-components/shared';
+import { NavLink } from 'react-router';
+
+export function ObservabilityRuns({ runs, current, onOpen, env, setEnv, trail, sectionItems, composer }: RunsSectionProps) {
+  const rail = useRailFold({ storageKey: 'observability.section-rail' });
+  const listRail = useRailFold({ storageKey: 'observability.list-rail' });
+  return (
+    <SectionLayout
+      title="Observability" items={sectionItems}
+      renderNavItem={(item, body) => <NavLink to={item.path}>{body}</NavLink>}
+      railFold={{ folded: rail.folded, onToggle: rail.toggle }}
+      list={{ label: 'runs', title: 'Runs', count: runs.length,
+        body: <GroupedList groups={groups} rows={runs} currentId={current?.id} onOpenRow={r => onOpen(r.id)} /> }}
+      listFold={{ folded: listRail.folded, onToggle: listRail.toggle }}
+      header={{ breadcrumbs: trail, title: 'Runs',
+        trailControls: <Select aria-label="Environment" size="sm" value={env} onChange={e => setEnv(e.target.value)} options={envs} /> }}
+      footer={composer}
+    >
+      {current && <RunRecord run={current} />}
+    </SectionLayout>
+  );
+}
+```
+
+Without `header`, pass a page template as the child (`<PageFrame>`,
+`<DetailPage>`): it draws its own trail and title, and `body="docked"` on a
+`PageFrame` gives it the column-bottom dock.
 
 ## 2. Density rules (the portal contract)
 

@@ -2,6 +2,16 @@ import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import { Stack, Inline } from '../Stack';
 
+describe('layout marker', () => {
+  it('marks Stack and Inline as library layout, whatever element they render', () => {
+    render(<><Stack as="section" data-testid="s">a</Stack><Inline as="ul" data-testid="i">b</Inline></>);
+    const s = screen.getByTestId('s');
+    expect(s.tagName).toBe('SECTION');
+    expect(s.getAttribute('data-ui-layout')).toBe('stack');
+    expect(screen.getByTestId('i').getAttribute('data-ui-layout')).toBe('inline');
+  });
+});
+
 describe('Stack', () => {
   it('is a flex column with the default md gap', () => {
     render(<Stack data-testid="s">child</Stack>);

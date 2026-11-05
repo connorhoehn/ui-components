@@ -599,7 +599,7 @@ function ScopeCrumbs({
   const folded = collapsed;
   const trail = folded ? foldTitleIntoTrail(breadcrumbs, title) : breadcrumbs ?? [];
   return (
-    <div data-testid={testId} data-variant="crumbs" data-collapsed={folded ? 'true' : 'false'} className={cn('flex min-w-0 items-start gap-4 px-[var(--ui-page-gutter,1.5rem)] pb-1 pt-2', className)}>
+    <div data-testid={testId} data-variant="crumbs" data-page-trail="" data-collapsed={folded ? 'true' : 'false'} className={cn('flex min-w-0 items-start gap-4 px-[var(--ui-page-gutter,1.5rem)] pb-1 pt-2', className)}>
       <div className="flex h-5 min-w-0 flex-1 items-center gap-2">
         {trail.length > 0 && (
           <Breadcrumbs aria-label={`${title ?? "Scope"} location`} items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />

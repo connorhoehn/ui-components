@@ -32,3 +32,13 @@ export const Invocation: Story = {
     ],
   },
 };
+
+/** `titleAs="h2"`: the record sits under a host that already draws the page's h1 (the default is h1). */
+export const UnderAHostHeading: Story = {
+  args: {
+    title: 'Invocation 7f3a',
+    titleAs: 'h2',
+    breadcrumbs: [{ label: 'Observability', href: '#' }, { label: '7f3a' }],
+    tabs: [{ id: 'summary', label: 'Summary', content: <KeyValue items={[{ label: 'Agent', value: 'support-agent' }]} /> }],
+  },
+};

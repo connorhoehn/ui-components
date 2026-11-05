@@ -5,6 +5,9 @@ import { Button } from '../ui/Button';
 import FormField from './FormField';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
+import { Select } from '../forms/Select';
+import { ColumnDock } from '../layout/DockedColumn';
+import { PageSection } from '../ui/PageSection';
 
 const meta: Meta<typeof PageFrame> = {
   title: 'Templates/PageFrame',
@@ -37,4 +40,34 @@ export const FillWithFooter: Story = {
       <div className="min-h-0 flex-1 rounded-lg border border-border bg-surface-subtle" />
     </PageFrame>
   ),
+};
+
+/** Trail-row controls and a docked body: a scope selector on the crumb row, the section's command composer docked at the column's bottom. */
+export const SectionPage: Story = {
+  render: () => {
+    const [scope, setScope] = useState('all');
+    return (
+      <PageFrame title="Communication" breadcrumbs={[{ label: 'Org', href: '#' }, { label: 'Communication' }]}
+        trailControls={<Select aria-label="Scope" size="sm" value={scope} onChange={(e) => setScope(e.target.value)}
+          options={[{ value: 'all', label: 'All channels' }, { value: 'mine', label: 'My channels' }]} />}
+        trailLink={{ label: 'Channel docs', href: '#' }}
+        body="docked">
+        <PageSection title="Channels">12 channels in this workspace.</PageSection>
+        <ColumnDock><div className="border-t border-border px-[var(--ui-page-gutter,1.5rem)] py-3 text-sm text-text-secondary">Command composer (docked)</div></ColumnDock>
+      </PageFrame>
+    );
+  },
+};
+
+/** `collapsed`: the title folds into the trail (a conversation view); the chevron expands it again. */
+export const CollapsedIntoTrail: Story = {
+  render: () => {
+    const [collapsed, setCollapsed] = useState(true);
+    return (
+      <PageFrame title="general" breadcrumbs={[{ label: 'Social', href: '#' }, { label: 'Channels' }]}
+        collapsed={collapsed} onToggleCollapsed={() => setCollapsed((c) => !c)} body="docked" dockedBody="fill" bodyGutter="none">
+        <div className="px-[var(--ui-page-gutter,1.5rem)] py-3 text-sm text-text-secondary">Conversation transcript</div>
+      </PageFrame>
+    );
+  },
 };

@@ -2,6 +2,14 @@
   "version": 1,
   "name": "Work shared UI compact layout",
   "tolerance": 1,
+  "librarySelectors": {
+    "contentColumns": "[data-page-column]:not([data-page-column] *, [data-docked-column-body] *)",
+    "trail": "[data-page-trail], [data-page-column] > [data-page-header]",
+    "sectionTitles": "[data-page-title]",
+    "containmentRegions": "[data-page-column]",
+    "composerColumns": "[data-docked-column]",
+    "composerBoundary": "[data-docked-column]"
+  },
   "rules": [
     {
       "id": "composer.dialogue-tools",
@@ -1803,7 +1811,7 @@
         {
           "name": "section",
           "selector": "section",
-          "marker": "[data-ui-section]",
+          "marker": "[data-ui-section], [data-ui-layout]",
           "topLevel": true
         }
       ],

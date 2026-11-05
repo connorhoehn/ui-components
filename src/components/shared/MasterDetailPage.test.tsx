@@ -27,4 +27,9 @@ describe('MasterDetailPage', () => {
     expect(screen.getByText('Pick one')).toBeTruthy();
     expect(container.querySelector('[data-master-detail-body]')!.className).toContain('px-[var(--ui-page-gutter,1.5rem)]');
   });
+
+  it('titleAs sets the header heading level', () => {
+    render(<MasterDetailPage title="Request A" titleAs="h3" list={list}><p>record A</p></MasterDetailPage>);
+    expect(screen.getByRole('heading', { name: 'Request A', level: 3 })).toBeTruthy();
+  });
 });

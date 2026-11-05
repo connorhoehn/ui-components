@@ -41,4 +41,18 @@ describe('DetailPage', () => {
     expect(screen.getByText('only body')).toBeTruthy();
     expect(container.querySelector('[data-detail-page-aside]')!.textContent).toBe('context');
   });
+
+  it('titleAs: the title is the page h1 by default, h2/h3 under a host heading', () => {
+    const { rerender } = render(<DetailPage title="Run 42" tabs={tabs} />);
+    expect(screen.getByRole('heading', { name: 'Run 42', level: 1 })).toBeTruthy();
+    rerender(<DetailPage title="Run 42" tabs={tabs} titleAs="h2" />);
+    expect(screen.getByRole('heading', { name: 'Run 42', level: 2 })).toBeTruthy();
+  });
+
+  it('marks its content column and its header band (the reading edge) for the DOM audit', () => {
+    const { container } = render(<DetailPage title="Run 42" tabs={tabs} aside={<div>ctx</div>} />);
+    const column = container.querySelector('[data-page-column]')!;
+    expect(column.querySelector(':scope > [data-page-trail][data-detail-page-header]')).toBeTruthy();
+    expect(column.textContent).not.toContain('ctx');
+  });
 });

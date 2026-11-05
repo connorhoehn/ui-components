@@ -156,7 +156,7 @@ function PageHeader({
 
   if (collapsed) {
     return (
-      <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-density={density} data-collapsed="true">
+      <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-page-header="" data-density={density} data-collapsed="true">
         <div className="flex min-w-0 items-center gap-2">
           {compactBack}
           <div className="min-w-0 flex-1"><HeaderTrailFold breadcrumbs={breadcrumbs} title={title} badge={badge} actions={actions} data-testid={`${testId}-fold`}
@@ -169,7 +169,7 @@ function PageHeader({
 
   if (density === 'compact') {
     return (
-      <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-density="compact" data-collapsed="false">
+      <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-page-header="" data-density="compact" data-collapsed="false">
         {trail}
         <div className="flex h-7 min-w-0 items-center gap-3" data-testid={`${testId}-row`}>
           {compactBack}
@@ -191,7 +191,7 @@ function PageHeader({
   }
 
   return (
-    <div className={cn('flex flex-col gap-1.5', hasTrail && 'pt-3', className)} data-testid={testId} data-density="comfortable" data-collapsed="false">
+    <div className={cn('flex flex-col gap-1.5', hasTrail && 'pt-3', className)} data-testid={testId} data-page-header="" data-density="comfortable" data-collapsed="false">
       {trail && <div className="mb-2.5">{trail}</div>}
       {back && (
         <a

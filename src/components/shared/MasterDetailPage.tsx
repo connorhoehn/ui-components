@@ -49,7 +49,7 @@ export interface MasterDetailPageProps extends PageTemplateHeaderProps {
  * </MasterDetailPage>
  */
 export function MasterDetailPage({
-  title, description, breadcrumbs, actions, badge, back, density,
+  title, description, breadcrumbs, actions, badge, back, density, titleAs,
   list, children, emptyDetail, aside, footer, fold, railWidth, gutter = 'page', className, 'data-testid': testId,
 }: MasterDetailPageProps) {
   const selected = children != null && children !== false;
@@ -57,7 +57,7 @@ export function MasterDetailPage({
     <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="master-detail" data-testid={testId}>
       <ListRailLayout
         list={list}
-        header={<TemplateHeader {...{ title, description, breadcrumbs, actions, badge, back, density, gutter }} />}
+        header={<TemplateHeader {...{ title, description, breadcrumbs, actions, badge, back, density, titleAs, gutter }} />}
         {...(aside != null ? { aside } : {})}
         {...(footer != null ? { footer } : {})}
         {...(fold ? { fold } : {})}

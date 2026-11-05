@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-958 components across 20 entry points; 811 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+959 components across 20 entry points; 812 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -20,6 +20,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | A list with a detail panel | `MasterDetailPage` | `@connorhoehnslalom/ui-components` | Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.) | Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`). |
 | One record's detail page | `DetailPage` | `@connorhoehnslalom/ui-components` | Header with the record's title/status/actions, then **tabs** for the record's facets. | Don't stack a column of `Card`s for each facet; put facets in tabs and use `DetailSection` inside a tab. |
 | A dashboard | `DashboardPage` | `@connorhoehnslalom/ui-components` | KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it. | Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath. |
+| Pages inside a sectioned area | `SectionLayout` | `@connorhoehnslalom/ui-components` | Section rail (`items`, `railFold`) + optional list rail (`list`, `listFold`) + the content column: with `header`, the trail row (`trailControls`), the title band and a body whose `footer`/`ColumnDock` composer docks at the column's bottom; fills the viewport (`fill="viewport"`). Without `header` the child page template is the column. | Not for one standalone page (use `PageFrame` or the matching template); not for a list + record with no section rail (use `MasterDetailPage`). |
 | A settings page | `SettingsPage` | `@connorhoehnslalom/ui-components` | Section rail + settings content with consistent row spacing. (`SettingsLayout` is the lower-level shell.) | Not for a one-off form inside a modal (use the `forms/` controls in a `Modal`). |
 | App chrome | `AppShell` | `@connorhoehnslalom/ui-components` | Sidebar + top bar + content region. Pass `layout="fill"` when the content area must fill the viewport (canvases, chat, editors) rather than scroll as a document. | Not inside a page; there is exactly one per app. Root-only import: there is no `/layout` subpath. |
 | A data table | `DataTable` | `@connorhoehnslalom/ui-components` | Columns + rows with sorting, selection, empty/loading states and row striping by default. Start here for any tabular data. | Don't drop to `Table` primitives unless you need cell layouts `DataTable` cannot express. |
@@ -38,7 +39,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 ## Contents
 
-- [Page templates](#page-templates) (6)
+- [Page templates](#page-templates) (7)
 - [Shells & layouts](#shells--layouts) (41)
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (56)
 - [Tables & lists](#tables--lists) (31)
@@ -65,6 +66,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DetailPage` | `@connorhoehnslalom/ui-components` | Use this when a page shows one record: `DetailHeader` (title, badge, meta, actions, trail), `Tabs` for its sections instead of a stack of Cards, and an optional `ContextColumn` on the right. | `templates-detailpage` |  |
 | `MasterDetailPage` | `@connorhoehnslalom/ui-components` | Use this when a page is a list you pick from and the picked record beside it: list rail on the left, header and record on the right, an empty-selection state. | `templates-masterdetailpage` |  |
 | `PageFrame` | `@connorhoehnslalom/ui-components` | Use this when a page is a form, an overview or any page no other template fits: trail, title/actions, and a body at the page gutter. | `templates-pageframe` |  |
+| `SectionLayout` | `@connorhoehnslalom/ui-components` | Use this when a page lives in a sectioned area: the section rail on the left, optionally the page's list as a second rail, and the content column (trail row, title band, a body whose command composer docks at the colu… | `templates-sectionlayout` |  |
 | `SettingsPage` | `@connorhoehnslalom/ui-components` | Use this when a page edits settings in sections: a section rail, one scrolling section body and a sticky save bar while dirty (`SettingsLayout`), under the page trail. | `templates-settingspage` |  |
 
 ## Shells & layouts

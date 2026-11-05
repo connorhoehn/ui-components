@@ -1597,8 +1597,37 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.setContent(`${base}<main id="col">${'<button>Raw</button>'.repeat(12)}</main>`);
     const flood = await judge(marked);
     assert.equal(flood.issues.length, 11, 'ten located findings and one count of the rest');
+    // A library layout primitive rendered as a section (`<Stack as="section">`) is library DOM; a raw section is not.
+    await page.setContent(library);
+    await page.evaluate(() => { const s = document.querySelector('section'); s.removeAttribute('data-ui-section'); s.setAttribute('data-ui-layout', 'stack'); });
+    await passes(marked, 'a Stack/Inline rendered as a section carries data-ui-layout');
+    await page.evaluate(() => document.querySelector('section').insertAdjacentHTML('afterend', '<section><p>Raw</p></section>'));
+    await fails(marked, 'element.unmarked', 'a raw section beside a library Stack section');
+
+    // Library template markers (contract `librarySelectors`): a page template's column (data-page-column), its
+    // trail row (data-page-trail) and title band (data-page-title) are measured with NO adapter binding, and
+    // a template nested in another template's column is not a second column.
+    const columnRules = ['content.gutter', 'content.header-alignment', 'section.gutter', 'element.unmarked'];
+    const bare = ids => page.evaluate(measureDOM, { contract: { ...fullContract, rules: fullContract.rules.filter(r => ids.includes(r.id)) }, selectors: {} });
+    const template = `${base}<style>:root{--ui-page-gutter:24px}.g{padding:0 24px}</style><div id="frame" data-page-column style="width:900px;display:flex;flex-direction:column"><div data-page-trail class="g"><nav data-ui-breadcrumbs>Section › View</nav></div><div data-page-title class="g"><h1 style="font-size:20px;margin:0">View</h1></div><div id="body" class="g"><section data-ui-section><p style="margin:0">Body copy</p><button data-variant="primary">Save</button></section><div data-page-column id="nested"><div data-page-trail style="padding:0 60px">nested</div></div></div></div>`;
+    await page.setContent(template);
+    const clean = await bare(columnRules);
+    assert.deepEqual(clean.issues, [], `a library template column passes unbound: ${JSON.stringify(clean.issues)}`);
+    assert.ok(clean.samples.some(x => x.rule === 'content.gutter' && /frame/.test(x.selector)), 'the template column is measured without an adapter binding');
+    assert.ok(!clean.samples.some(x => x.rule === 'content.gutter' && /nested/.test(x.selector)), 'a template nested in a column is not a second column');
+    for (const [why, mutate, rule] of [
+      ['body flush to the column edge', () => { document.querySelector('#body').style.padding = '0'; }, 'content.gutter'],
+      ['title band indented past the trail', () => { document.querySelector('[data-page-title]').style.paddingLeft = '48px'; }, 'content.header-alignment'],
+      ['title band off the page gutter', () => { document.querySelector('[data-page-title]').style.padding = '0 12px'; }, 'section.gutter'],
+      ['raw button in a template body', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<button>Raw</button>'), 'element.unmarked'],
+    ]) {
+      await page.setContent(template);
+      await page.evaluate(mutate);
+      const r = await bare(columnRules);
+      assert.ok(r.issues.some(i => i.rule === rule && i.category === 'violation'), `${rule} must fail unbound: ${why} ${JSON.stringify(r.issues)}`);
+    }
     await page.close();
-    console.log('PASS table.zebra, section.separator, page.vertical-budget and element.unmarked catch hand-rolled density defects and accept library pages');
+    console.log('PASS table.zebra, section.separator, page.vertical-budget and element.unmarked catch hand-rolled density defects and accept library pages (layout primitives and template columns included)');
   }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

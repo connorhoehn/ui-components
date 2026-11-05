@@ -22,7 +22,16 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     const result = parts.join(' > '); selectorCache.set(el, result); return result;
   };
   // `$alias` resolves through the adapter's bindings; `$alias|css` falls back to the CSS when the alias is unbound.
-  const css = name => { if (!name?.startsWith('$')) return name; const [alias, fallback] = name.slice(1).split('|'); return selectors[alias] ?? fallback; };
+  // The contract's `librarySelectors` add the component library's own markers to an alias whatever the adapter
+  // binds (a template's `data-page-column`, `data-page-trail`…), so pages built from library templates are
+  // measured without an adapter naming them.
+  const library = contract.librarySelectors ?? {};
+  const css = name => {
+    if (!name?.startsWith('$')) return name;
+    const [alias, fallback] = name.slice(1).split('|');
+    const bound = selectors[alias] ?? fallback, own = library[alias];
+    return bound && own ? `${bound}, ${own}` : bound ?? own;
+  };
   const query = (name, includeHidden = false) => {
     const s = css(name);
     if (!s) throw new Error(`Unbound selector ${name}`);

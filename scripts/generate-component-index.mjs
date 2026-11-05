@@ -352,7 +352,7 @@ export const GROUPS = [
 /** Curated: names whose job the directory or name pattern would misfile. */
 const CANONICAL_GROUP = {
   PageFrame: 'Page templates', CollectionPage: 'Page templates', MasterDetailPage: 'Page templates',
-  DetailPage: 'Page templates', SettingsPage: 'Page templates',
+  DetailPage: 'Page templates', SettingsPage: 'Page templates', SectionLayout: 'Page templates',
   AppShell: 'Shells & layouts', AppLayout: 'Shells & layouts', CollapsibleSidebar: 'Shells & layouts',
   WorkArea: 'Shells & layouts', SubNavLayout: 'Shells & layouts', SettingsLayout: 'Shells & layouts',
   PageHeader: 'Page structure, sections & dividers', PageSection: 'Page structure, sections & dividers',
@@ -422,6 +422,7 @@ const CANONICAL = [
   ['A list with a detail panel', 'MasterDetailPage', 'Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.)', 'Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`).'],
   ['One record\'s detail page', 'DetailPage', 'Header with the record\'s title/status/actions, then **tabs** for the record\'s facets.', 'Don\'t stack a column of `Card`s for each facet; put facets in tabs and use `DetailSection` inside a tab.'],
   ['A dashboard', 'DashboardPage', 'KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it.', 'Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath.', ['/observability']],
+  ['Pages inside a sectioned area', 'SectionLayout', 'Section rail (`items`, `railFold`) + optional list rail (`list`, `listFold`) + the content column: with `header`, the trail row (`trailControls`), the title band and a body whose `footer`/`ColumnDock` composer docks at the column\'s bottom; fills the viewport (`fill="viewport"`). Without `header` the child page template is the column.', 'Not for one standalone page (use `PageFrame` or the matching template); not for a list + record with no section rail (use `MasterDetailPage`).'],
   ['A settings page', 'SettingsPage', 'Section rail + settings content with consistent row spacing. (`SettingsLayout` is the lower-level shell.)', 'Not for a one-off form inside a modal (use the `forms/` controls in a `Modal`).'],
   ['App chrome', 'AppShell', 'Sidebar + top bar + content region. Pass `layout="fill"` when the content area must fill the viewport (canvases, chat, editors) rather than scroll as a document.', 'Not inside a page; there is exactly one per app. Root-only import: there is no `/layout` subpath.'],
   ['A data table', 'DataTable', 'Columns + rows with sorting, selection, empty/loading states and row striping by default. Start here for any tabular data.', 'Don\'t drop to `Table` primitives unless you need cell layouts `DataTable` cannot express.'],
