@@ -53,7 +53,7 @@ describe('DataTable — absent data/columns', () => {
       />,
     );
     // The surrounding page chrome is what the crash destroyed.
-    expect(screen.getByTestId('datatable-search')).toBeInTheDocument();
+    expect(screen.getByTestId('datatable-search-toggle')).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
   });
 

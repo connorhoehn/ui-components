@@ -30,6 +30,14 @@ const columns: DataTableColumn<Row>[] = [
 
 const keyField = (row: Row) => row.id;
 
+
+/** The table's search is collapsed to an icon by default (2.503.0); expand it first. */
+function openSearch(): HTMLElement {
+  const toggle = screen.queryByTestId('datatable-search-toggle');
+  if (toggle) fireEvent.click(toggle);
+  return screen.getByTestId('datatable-search');
+}
+
 describe('DataTable', () => {
   it('leaves a click or key on a control inside a clickable row to that control', () => {
     const open = vi.fn();
@@ -91,7 +99,7 @@ describe('DataTable', () => {
     render(
       <DataTable data={rows} columns={columns} keyField={keyField} searchable />,
     );
-    fireEvent.change(screen.getByTestId('datatable-search'), {
+    fireEvent.change(openSearch(), {
       target: { value: 'failed' },
     });
     expect(screen.getByText('Bravo')).toBeInTheDocument();
@@ -193,7 +201,7 @@ describe('DataTable', () => {
     expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent(
       'Page 2 of 2',
     );
-    fireEvent.change(screen.getByTestId('datatable-search'), {
+    fireEvent.change(openSearch(), {
       target: { value: 'a' },
     });
     expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent(
@@ -393,7 +401,7 @@ describe('DataTable', () => {
     render(
       <DataTable data={nested} columns={nestedCols} keyField={(r) => r.id} searchable />,
     );
-    fireEvent.change(screen.getByTestId('datatable-search'), {
+    fireEvent.change(openSearch(), {
       target: { value: 'hopper' },
     });
     expect(screen.getByText('Grace Hopper')).toBeInTheDocument();
@@ -408,8 +416,8 @@ describe('DataTable', () => {
     render(
       <DataTable data={opaque} columns={opaqueCols} keyField={(r) => r.id} searchable />,
     );
-    fireEvent.change(screen.getByTestId('datatable-search'), { target: { value: 'x' } });
-    fireEvent.change(screen.getByTestId('datatable-search'), { target: { value: 'xy' } });
+    fireEvent.change(openSearch(), { target: { value: 'x' } });
+    fireEvent.change(openSearch(), { target: { value: 'xy' } });
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn.mock.calls[0]![0]).toContain('blob');
     warn.mockRestore();
@@ -449,5 +457,23 @@ describe('DataTable size="sm" (2.434.0)', () => {
     const { container } = render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} />);
     expect(container.querySelector('table')?.hasAttribute('data-size')).toBe(false);
     expect(container.querySelector('tbody td')!.className).toContain('py-3');
+  });
+});
+
+// Empty-chrome rule (2.503.0): the pager is chrome for MORE than one page.
+describe('DataTable pager visibility', () => {
+  it('draws no pager with zero rows', () => {
+    const { container } = render(<DataTable data={[]} columns={columns} keyField={keyField} pageSize={2} />);
+    expect(container.querySelector('[data-collection-pager]')).toBeNull();
+  });
+  it('draws no pager when every row fits on one page', () => {
+    const { container } = render(<DataTable data={rows} columns={columns} keyField={keyField} pageSize={4} />);
+    expect(container.querySelector('[data-collection-pager]')).toBeNull();
+  });
+  it('drops the pager when a search leaves zero results', () => {
+    const { container } = render(<DataTable data={rows} columns={columns} keyField={keyField} pageSize={2} searchable />);
+    expect(container.querySelector('[data-collection-pager]')).not.toBeNull();
+    fireEvent.change(openSearch(), { target: { value: 'zzz-no-match' } });
+    expect(container.querySelector('[data-collection-pager]')).toBeNull();
   });
 });

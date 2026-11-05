@@ -54,6 +54,7 @@ leave that count unchanged (a duplicate React child key caused this regression).
 | `panel-empty` | selector (open panels), empty (empty-state marker), maxGap | A panel holding an empty state with a blank band (between what it draws, padded top to padded bottom) taller than `maxGap`: a fixed height where the cap should be a maximum |
 | `composer-last` | selector (composers), column, dock?, ignore? | Ink in the composer's column laid out below it (scrolled into view or not; its own dock and fixed layers excepted), or a composer band with side margins inside its column |
 | `section-empty` | selector (page sections), empty (empty-state marker), maxLines | A page section with nothing to show (its own empty state, no ink but headings and controls) drawn on more than `maxLines` lines |
+| `empty-chrome` | selector (collection hosts), empty (empty-state marker), items, counts, pagers, toolbars, header, countText | A collection showing zero items (a visible empty state, no visible item) that still draws a count, a pager or an empty full-width search band |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -944,3 +945,26 @@ container and `data-ui-section-rule` on each `<hr>` between its sections
 `ActionRowList striped` emits `data-striped` on the list and `data-stripe` on
 each `surface-inset` row, matching `DataTable striped`. A future rule that
 flags hand-rolled section borders should bind these rather than page names.
+
+## Empty collections draw no result chrome (2.503.0)
+
+Storymaker's Artwork page drew a full-width search band and a "0 of 0
+artworks" line above its empty state; a pager over nothing is the same
+defect. **`collection.empty-chrome`** (`empty-chrome`) binds
+`$collectionPages` (default `[data-collection-page]`) and `$emptyStates`. A
+collection qualifies when it holds a visible empty state and no visible item
+(`[data-collection-item]`, body rows, list items). It then fails for any
+visible `[data-collection-summary]`, `[data-collection-pager]` /
+`[aria-label="Pagination"]`, an empty text input in a collection toolbar that
+is not in the page header (a search band), or hand-rolled leaf text matching
+`countText` ("0 of 0 artworks", "0 results", "Page 1 of 1"). A search that
+holds a query is allowed: it is the way out of a fruitless search. The
+library owners are `CollectionToolbar resultCount` and `CollectionPage`'s
+header-hosted toolbar, and the `DataTable`, `ChangeReviewList` and
+`DocumentListPage` pagers, which already render only for more than one page.
+
+Fixtures (`self-test.mjs`): valid — header-hosted collapsed search over an
+empty state, a full collection with count and pager, a search holding a
+query over "no matches", an empty side panel beside real items; defects — a
+marked count, a hand-rolled "0 of 0 artworks" line, a pager, and an empty
+full-width search band over the empty state.

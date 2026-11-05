@@ -608,6 +608,53 @@ try {
     await page.close();
   }
 
+  // An empty collection draws no result chrome (collection.empty-chrome):
+  // storymaker's Artwork page drew a full-width search band and "0 of 0
+  // artworks" over its empty state, and a pager above nothing is the same
+  // defect. A search that holds a query stays — it is the way back out.
+  {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const ids = ['collection.empty-chrome'];
+    const emptyHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui;width:900px} [data-collection-page]{display:flex;flex-direction:column;gap:12px;padding:16px}
+header{display:flex;justify-content:space-between;align-items:center} h1{margin:0;font-size:20px} [role=toolbar]{display:flex;gap:8px;align-items:center}
+</style></head><body>
+<div id="empty" data-collection-page><header data-testid="page-header"><h1>Artwork</h1><div><div role="toolbar" data-toolbar-variant="collection" data-collection-placement="header"><button aria-label="Search artworks">S</button><button aria-label="Filters">F</button></div><button>Generate artwork</button></div></header>
+<div data-ui-empty><strong>No artwork yet</strong><p style="margin:0">Generate artwork to start the catalog.</p></div></div>
+<div id="full" data-collection-page><header data-testid="page-header-2"><h1>Characters</h1></header><div role="toolbar" data-toolbar-variant="collection"><input type="text" aria-label="Search characters" value=""><span data-collection-summary>2 of 2 characters</span></div>
+<ul><li data-collection-item>Mira</li><li data-collection-item>Oskar</li></ul><div data-collection-pager>Page 1 of 3</div></div>
+</body></html>`;
+    const emeasure = () => page.evaluate(measureDOM, only(ids));
+    await page.setContent(emptyHtml);
+    const clean = await emeasure();
+    assert.deepEqual(clean.issues, [], 'an empty collection with header-hosted controls, and a full one with its chrome, pass: ' + JSON.stringify(clean.issues));
+    assert.ok(clean.coverage.some(c => c.rule === 'collection.empty-chrome' && c.matched === 1), 'only the empty collection is judged: ' + JSON.stringify(clean.coverage));
+    const valid = [
+      ['a search band that holds a query over "no matches"', () => { document.querySelector('#empty [data-ui-empty]').insertAdjacentHTML('beforebegin', '<div role="toolbar" data-toolbar-variant="collection"><input type="text" aria-label="Search" value="moon"></div>'); }],
+      ['an empty state beside real items (a side panel) does not make the collection empty', () => { document.querySelector('#full ul').insertAdjacentHTML('afterend', '<div data-ui-empty>No comments</div>'); }],
+    ];
+    for (const [name, mutate] of valid) {
+      await page.setContent(emptyHtml); await page.evaluate(mutate);
+      const result = await emeasure();
+      assert.deepEqual(result.issues, [], `${name}: ${JSON.stringify(result.issues)}`);
+      console.log('PASS allows ' + name);
+    }
+    const defects = [
+      ['a marked count over the empty state', 'count while the collection is empty', () => { document.querySelector('#empty [data-ui-empty]').insertAdjacentHTML('beforebegin', '<span data-collection-summary>0 of 0 artworks</span>'); }],
+      ['a hand-rolled "0 of 0 artworks" line', 'count while the collection is empty', () => { document.querySelector('#empty [data-ui-empty]').insertAdjacentHTML('beforebegin', '<p>0 of 0 artworks</p>'); }],
+      ['a pager over the empty state', 'pager while the collection is empty', () => { document.querySelector('#empty').insertAdjacentHTML('beforeend', '<div data-collection-pager><button>Prev</button> Page 1 of 1 <button>Next</button></div>'); }],
+      ['a full-width empty search band', 'search band while the collection is empty', () => { document.querySelector('#empty [data-ui-empty]').insertAdjacentHTML('beforebegin', '<div role="toolbar" data-toolbar-variant="collection"><input type="text" aria-label="Search artworks" value="" style="width:100%"></div>'); }],
+    ];
+    for (const [name, property, mutate] of defects) {
+      await page.setContent(emptyHtml); await page.evaluate(mutate);
+      const result = await emeasure();
+      assert.ok(result.issues.some(i => i.rule === 'collection.empty-chrome' && i.property === property), `${name} must fail collection.empty-chrome (${property}): ${JSON.stringify(result.issues)}`);
+      console.log('PASS detects ' + name);
+    }
+    console.log('PASS an empty collection draws its empty state and no result chrome');
+    await page.close();
+  }
+
   // Legible text (text.cramped, text.overlap, text.clipped,
   // placeholder.squeezed): a red callout split into side-by-side columns
   // left its message ~3 words wide and 12+ lines tall; a flow strip's labels

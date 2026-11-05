@@ -148,3 +148,19 @@ describe('DocumentListPage — Delete is reachable without a mouse', () => {
     expect(onOpenDocument).not.toHaveBeenCalled();
   });
 });
+
+// Empty-chrome rule (2.503.0): a pager appears only when there is more than
+// one page — never above an empty list, never for a list that fits.
+describe('DocumentListPage pager', () => {
+  it('draws no pager with zero documents or a list that fits on one page', () => {
+    renderList({ documents: [] });
+    expect(screen.queryByTestId('pagination-controls')).toBeNull();
+    cleanup();
+    renderList({ documents: Array.from({ length: 10 }, (_, i) => doc({ id: `d${i}`, title: `Doc ${i}` })) });
+    expect(screen.queryByTestId('pagination-controls')).toBeNull();
+  });
+  it('draws the pager once the list spans pages', () => {
+    renderList({ documents: Array.from({ length: 11 }, (_, i) => doc({ id: `d${i}`, title: `Doc ${i}` })) });
+    expect(screen.getByTestId('pagination-controls')).toHaveAttribute('data-collection-pager');
+  });
+});

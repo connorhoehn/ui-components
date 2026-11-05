@@ -41,12 +41,15 @@ describe('collection design inheritance', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open graph' }));
     expect(run).toHaveBeenCalledOnce();
   });
-  it('groups refresh with the query and keeps record actions in the trailing slot', () => {
+  it('puts the query controls (search, filters, refresh) at the trailing end beside the actions', () => {
     const refresh = vi.fn();
-    render(<CollectionToolbar label="Contacts" search={{ value: '', onChange: () => {}, 'aria-label': 'Find person' }} onRefresh={refresh} actions={[{ id: 'add', label: 'Add contact', icon: '+', onClick: () => {} }]} />);
-    const controls = screen.getByRole('textbox').closest('[data-toolbar-controls]');
-    expect(controls).toContainElement(screen.getByRole('button', { name: 'Refresh' }));
-    expect(controls).not.toContainElement(screen.getByRole('button', { name: 'Add contact' }));
+    render(<CollectionToolbar label="Contacts" summary="3 contacts" search={{ value: '', onChange: () => {}, 'aria-label': 'Find person' }} onRefresh={refresh} actions={[{ id: 'add', label: 'Add contact', icon: '+', onClick: () => {} }]} />);
+    const start = screen.getByRole('toolbar').querySelector('[data-toolbar-controls]')!;
+    expect(start).toContainElement(screen.getByText('3 contacts'));
+    expect(start).not.toContainElement(screen.getByRole('button', { name: 'Find person' }));
+    expect(start).not.toContainElement(screen.getByRole('button', { name: 'Refresh' }));
+    const end = screen.getByRole('button', { name: 'Find person' }).parentElement!;
+    expect(end).toContainElement(screen.getByRole('button', { name: 'Add contact' }));
     fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
     expect(refresh).toHaveBeenCalledOnce();
   });
@@ -67,14 +70,14 @@ describe('collection design inheritance', () => {
     const { container, rerender } = render(<CollectionToolbar label="Submission filters" search={{ value: '', onChange: () => {}, 'aria-label': 'Search submissions' }} summary="4 of 4" selection={{ count: 0, onClear: clear }} />);
     expect(container.querySelectorAll('[role="toolbar"]')).toHaveLength(1);
     expect(screen.getByRole('toolbar')).toHaveAttribute('data-collection-selection', 'idle');
-    expect(screen.getByRole('textbox', { name: 'Search submissions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search submissions' })).toBeInTheDocument();
     rerender(<CollectionToolbar label="Submission filters" search={{ value: '', onChange: () => {}, 'aria-label': 'Search submissions' }} summary="4 of 4" selection={{ count: 2, onClear: clear, actions: <Button size="sm">Clear selected</Button> }} />);
     expect(container.querySelectorAll('[role="toolbar"]')).toHaveLength(1);
     const row = screen.getByRole('toolbar');
     expect(row).toHaveAttribute('data-collection-selection', 'active');
     expect(row).toHaveAttribute('data-toolbar-variant', 'collection');
     expect(row.className).toContain('py-1.5');
-    expect(screen.queryByRole('textbox', { name: 'Search submissions' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Search submissions' })).not.toBeInTheDocument();
     expect(screen.getByText('2 selected')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear selected' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Clear selection' }));

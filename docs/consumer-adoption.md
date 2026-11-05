@@ -411,6 +411,25 @@ blocking errors and action-required warnings visible in page content.
 </CollectionPage>
 ```
 
+### Search lives in the header; empty collections draw no result chrome (2.503.0)
+
+- **Search is collapsed by default.** `CollectionToolbar` draws its search as
+  a search icon that expands on click or `/` and folds away on Escape/blur
+  while empty (`SearchInput collapsible`). It sits at the row's trailing end
+  with the filters, never as a full-width bar. Opt out with
+  `search: { collapsible: false }` only when searching IS the page's task.
+- **The toolbar goes in the header.** `CollectionPage` hosts a toolbar's
+  search, filters and count in the header actions row, before
+  `headerActions`, whenever nothing in it needs a full row (no `selection`,
+  no `children`). Do not render a search band between the header and the
+  collection; `toolbarPlacement="band"` is the explicit exception.
+- **Count and pagination only when there are results — on every page.** Pass
+  `resultCount` with `summary` so "0 of 0 artworks" never draws; the library
+  pagers (`DataTable pageSize`, `ChangeReviewList`, `DocumentListPage`)
+  render only when there is more than one page. With zero items the empty
+  state replaces count, pager and search band. Never hand-roll a count
+  `<p>`. The DOM audit enforces this as `collection.empty-chrome`.
+
 A simple `DataTable searchable` uses CollectionToolbar internally. Do not add
 another search toolbar above it. Consumers own fetching, permission checks,
 row schemas, filtering and navigation; the library owns visual policy.
