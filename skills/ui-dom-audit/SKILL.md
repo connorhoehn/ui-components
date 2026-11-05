@@ -1,7 +1,15 @@
 ---
 name: ui-dom-audit
-description: Audit rendered UI consistency across tenant frontends using deterministic DOM geometry and computed-style contracts. Use for recurring layout, button, typography, table, sidebar or composer defects, and for extending reusable audit rules after a reported UI regression.
+description: Audit rendered UI consistency across tenant frontends using deterministic DOM geometry and computed-style contracts. Run it after building or changing any page, view, route, table or form in a frontend that uses @connorhoehnslalom/ui-components, as the last step of ui-page-build; also use for recurring layout, button, typography, table, sidebar or composer defects, and for extending reusable audit rules after a reported UI regression.
 ---
+
+**Building a page?** Load [`ui-page-build`](../ui-page-build/SKILL.md) first;
+it picks the page template and components. Come back here to verify the
+changed route: `--path <exact route> --states default` is the minimum, and the
+resting gate includes the build-time density rules (`table.zebra`,
+`section.separator`, `page.vertical-budget`, `element.unmarked`). A finding
+from `element.unmarked` means DOM the library did not render: replace it with
+the library component rather than adding a marker by hand.
 
 Measure the rendered app against a shared contract. Fix a component family once,
 then verify its consumers. When the user asks to fix findings or improve the UI,

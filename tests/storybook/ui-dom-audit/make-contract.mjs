@@ -22,6 +22,9 @@ export const NOT_APPLICABLE = {
   'density.table-first': 'Content-column edges: list-page density judged inside $contentColumns, absent in a story.',
   'density.narrow-block': 'Content-column edges: max-width blocks judged against $contentColumns, absent in a story.',
   'align.grid': 'Content-column edges: inset grid anchored on $contentColumns, absent in a story.',
+  'section.separator': 'Content-column edges: sibling groups judged inside $contentColumns, absent in a story.',
+  'page.vertical-budget': 'Page length: a page budget judged on $contentColumns; a story is not a page.',
+  'element.unmarked': 'Content-column edges: hand-rolled DOM judged inside $contentColumns; story scaffolding is not app content.',
   'consistency.fingerprint': 'Page title/H1 + content column: fingerprints a page title and its column, neither exists in a story.',
   'ticker.font-size': 'Shell chrome: the footer ticker only exists in the app footer.',
 };

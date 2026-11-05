@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseAuditArgs } from './cli-options.mjs';
 import { measureDOM } from './measure.mjs';
-import { runAudit, summarize, validateContract, consistencyOutliers, loadContract, measureCase, isDeepRule } from './run.mjs';
+import { runAudit, summarize, validateContract, consistencyOutliers, loadContract, measureCase, isDeepRule, withRuleOptions } from './run.mjs';
 import { probes } from './probes.mjs';
 const project = process.argv[process.argv.indexOf('--project') + 1];
 if (!project || !process.argv.includes('--project')) throw new Error('Usage: node self-test.mjs --project <package with @playwright/test>');
@@ -1499,6 +1499,100 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     }
     await page.close();
     console.log('PASS inline-code and notice profiles preserve neighboring prose alignment');
+  }
+  {
+    // Build-time density rules: striped tables, separated groups, a page that
+    // fits the viewport, and library-owned DOM. Each runs in the resting gate.
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    for (const id of ['table.zebra', 'section.separator', 'page.vertical-budget', 'element.unmarked']) {
+      const rule = fullContract.rules.find(r => r.id === id);
+      assert.ok(rule && !rule.deep && !isDeepRule(fullContract, id), `${id} is shipped in the resting (non-deep) gate`);
+    }
+    const judge = (ids, contractIn = fullContract) => page.evaluate(measureDOM, { contract: { ...contractIn, rules: contractIn.rules.filter(r => ids.includes(r.id)) }, selectors: { contentColumns: '#col' } });
+    const fails = async (ids, rule, why, contractIn) => { const r = await judge(ids, contractIn); assert.ok(r.issues.some(i => i.rule === rule && i.category === 'violation'), `${rule} must fail: ${why} ${JSON.stringify(r.issues)}`); return r; };
+    const passes = async (ids, why, contractIn) => { const r = await judge(ids, contractIn); assert.deepEqual(r.issues, [], `${why}`); return r; };
+    const base = '<style>:root{--ui-section-gap:12px}*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}#col{width:900px;padding:0 24px}td{height:44px;padding:0 12px}.stripe > tbody > tr:nth-child(even){background:#f3f4f6}[role=row]{display:flex;height:44px}</style>';
+    const rows = n => Array.from({ length: n }, (_, i) => `<tr><td>Record ${i + 1}</td><td>Ready</td></tr>`).join('');
+
+    // table.zebra
+    const zebra = ['table.zebra'];
+    await page.setContent(`${base}<main id="col"><table class="stripe"><thead><tr><th>Name</th><th>State</th></tr></thead><tbody>${rows(6)}</tbody></table><table><tbody>${rows(3)}</tbody></table></main>`);
+    await passes(zebra, 'a striped table and a three-row table are valid');
+    await page.locator('table.stripe').evaluate(el => el.classList.remove('stripe'));
+    await fails(zebra, 'table.zebra', 'six flat rows');
+    await page.locator('table').first().evaluate(el => { const w = document.createElement('div'); w.setAttribute('data-ui-table-striped', ''); el.before(w); w.append(el); });
+    await passes(zebra, 'the library stripe marker is trusted');
+    await page.setContent(`${base}<main id="col"><div role="table"><div role="row"><span role="columnheader">Name</span></div>${Array.from({ length: 5 }, (_, i) => `<div role="row"><span role="cell">Row ${i}</span></div>`).join('')}</div></main>`);
+    await fails(zebra, 'table.zebra', 'a hand-rolled role=table without stripes');
+    await page.evaluate(() => document.querySelectorAll('[role=row]:nth-child(odd) [role=cell]').forEach(c => { c.style.background = '#eef'; c.style.flex = '1'; }));
+    await passes(zebra, 'a cell-painted stripe on a hand-rolled table is valid');
+    await page.setContent(`${base}<main id="col"><article role="document"><table><tbody>${rows(6)}</tbody></table></article></main>`);
+    await passes(zebra, 'a table authored inside a document is prose');
+
+    // section.separator
+    const sep = ['section.separator'];
+    const groupsFixture = `${base}<main id="col"><div id="stack" style="display:flex;flex-direction:column;gap:12px"><section data-ui-section><h2>Overview</h2><p style="margin:0">Summary text</p></section><section data-ui-section><h2 style="margin-top:0">Activity</h2><p style="margin:0">Recent events</p></section></div></main>`;
+    await page.setContent(groupsFixture);
+    await passes(sep, 'groups a section gap apart are separated');
+    await page.locator('#stack').evaluate(el => { el.style.gap = '0'; el.querySelectorAll('h2').forEach(h => { h.style.margin = '0'; }); });
+    await fails(sep, 'section.separator', 'flush stacked groups');
+    await page.locator('#stack > section:nth-child(2)').evaluate(el => { el.style.borderTop = '1px solid #d1d5db'; });
+    await passes(sep, 'a top border separates flush groups');
+    await page.locator('#stack > section:nth-child(2)').evaluate(el => { el.style.borderTop = ''; el.before(document.createElement('hr')); });
+    await passes(sep, 'a divider element separates flush groups');
+    await page.locator('#stack hr').evaluate(el => el.remove());
+    await page.locator('#stack > section:nth-child(2)').evaluate(el => { el.style.background = '#f3f4f6'; });
+    await passes(sep, 'distinct surfaces separate flush groups');
+    await page.locator('#stack > section:nth-child(2)').evaluate(el => { el.style.background = ''; el.parentElement.style.flexDirection = 'row'; });
+    await passes(sep, 'side-by-side groups are a columns concern');
+    await page.setContent(`${base}<main id="col"><div><section><b>Hand-rolled one</b></section><section><b>Hand-rolled two</b></section></div></main>`);
+    await fails(sep, 'section.separator', 'hand-rolled flush sections');
+
+    // page.vertical-budget
+    const budget = ['page.vertical-budget'];
+    const sections = (n, h = 100) => Array.from({ length: n }, (_, i) => `<section data-ui-section style="height:${h}px;margin-bottom:12px">Section ${i + 1}</section>`).join('');
+    await page.setContent(`${base}<main id="col"><div data-page-template="DetailPage"><header><h1>Record</h1></header><div role="tablist"><button role="tab" aria-selected="true">Overview</button><button role="tab">Activity</button><button role="tab">Settings</button></div><div role="tabpanel">${sections(2)}</div><div role="tabpanel" hidden>${sections(6)}</div></div></main>`);
+    await passes(budget, 'a DetailPage shows one tab of groups at rest');
+    await page.setContent(`${base}<main id="col">${sections(6)}</main>`);
+    await fails(budget, 'page.vertical-budget', 'six stacked sections');
+    await page.setContent(`${base}<main id="col"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">${sections(4)}</div>${sections(2)}</main>`);
+    await passes(budget, 'a dashboard row of tiles counts as one row');
+    await page.setContent(`${base}<main id="col"><section data-ui-section style="height:2000px">Long</section></main>`);
+    const long = await fails(budget, 'page.vertical-budget', 'a page two and a half viewports long');
+    assert.ok(long.issues.some(i => i.property === 'content height / viewport'), 'the length, not the section count, fails');
+    await page.locator('#col').evaluate(el => el.setAttribute('data-collection-page', ''));
+    await passes(budget, "a collection's own rows may scroll");
+    await page.setContent(`${base}<main id="col" style="height:800px;overflow:hidden"><div style="height:100%;overflow:auto"><section data-ui-section style="height:2000px">Long</section></div></main>`);
+    await fails(budget, 'page.vertical-budget', 'a fill-layout shell scrolling an inner body');
+    const tuned = withRuleOptions(fullContract, { 'page.vertical-budget': { maxScrollRatio: 3 } });
+    await passes(budget, 'an adapter may raise the length budget', tuned);
+    assert.throws(() => withRuleOptions(fullContract, { 'page.vertical-budget': { selector: 'body' } }), /only a declared threshold/);
+    assert.throws(() => withRuleOptions(fullContract, { 'page.vertical-budget': { maxStacked: 9 } }), /only a declared threshold/);
+    assert.throws(() => withRuleOptions(fullContract, { 'page.nope': { maxScrollRatio: 9 } }), /unknown rule/);
+
+    // element.unmarked
+    const marked = ['element.unmarked'];
+    const library = `${base}<main id="col"><section data-ui-section><button data-variant="primary">Save</button><div data-table-scroller><table><tbody><tr><td>Row</td></tr></tbody></table></div><select data-ui-native-select data-ui-native-reason="OS picker"><option>A</option></select><div data-toolbar-variant="collection"><input aria-label="Search"></div><div role="tablist"><button role="tab">Tab</button></div><button data-ui-control="select">Pick</button></section></main><button id="outside">Outside the content column</button>`;
+    await page.setContent(library);
+    await passes(marked, 'library-marked elements and composite internals are valid');
+    for (const [name, mutate] of [
+      ['button', () => document.querySelector('[data-variant]').removeAttribute('data-variant')],
+      ['button', () => document.querySelector('section').insertAdjacentHTML('beforeend', '<div role="button" tabindex="0">Div button</div>')],
+      ['table', () => document.querySelector('[data-table-scroller]').removeAttribute('data-table-scroller')],
+      ['select', () => document.querySelector('select').removeAttribute('data-ui-native-select')],
+      ['input', () => document.querySelector('section').insertAdjacentHTML('beforeend', '<input aria-label="Name">')],
+      ['section', () => document.querySelector('section').removeAttribute('data-ui-section')],
+    ]) {
+      await page.setContent(library);
+      await page.evaluate(mutate);
+      const r = await fails(marked, 'element.unmarked', `hand-rolled ${name}`);
+      assert.ok(r.issues.some(i => i.property === `unmarked ${name}`), `the finding names the ${name}`);
+    }
+    await page.setContent(`${base}<main id="col">${'<button>Raw</button>'.repeat(12)}</main>`);
+    const flood = await judge(marked);
+    assert.equal(flood.issues.length, 11, 'ten located findings and one count of the rest');
+    await page.close();
+    console.log('PASS table.zebra, section.separator, page.vertical-budget and element.unmarked catch hand-rolled density defects and accept library pages');
   }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

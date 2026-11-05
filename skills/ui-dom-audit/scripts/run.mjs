@@ -9,7 +9,7 @@ const hash = x => crypto.createHash('sha256').update(JSON.stringify(x)).digest('
 
 export function validateContract(contract) {
   if (contract.version !== 1 || !Array.isArray(contract.rules) || !contract.rules.length) throw new Error('Contract requires version: 1 and nonempty rules');
-  const ids = new Set(), kinds = new Set(['breadcrumb', 'style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer', 'composer-presence', 'record-popout', 'row-activatable', 'selection-shift', 'gutter', 'row-start', 'title-count', 'contained', 'sparse-row', 'in-viewport', 'dock-clearance', 'popover-fit', 'surface-distinct', 'text-cramped', 'text-overlap', 'text-clipped', 'placeholder-squeezed', 'panel-inset', 'panel-empty', 'composer-last', 'section-empty', 'fingerprint', 'blank-band', 'table-first', 'narrow-block', 'alignment-grid', 'baseline', 'icon-center', 'scroll-owner', 'content-share', 'content-honesty', 'a11y-names', 'contrast', 'heading-order', 'landmarks', 'composer-readonly', 'layer', 'focus-walk', 'tab-stability', 'data-state', 'geometry-snapshot', 'text-fragmented', 'leading-separator', 'selection-column', 'column-hog', 'marker-first-line']);
+  const ids = new Set(), kinds = new Set(['breadcrumb', 'style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer', 'composer-presence', 'record-popout', 'row-activatable', 'selection-shift', 'gutter', 'row-start', 'title-count', 'contained', 'sparse-row', 'in-viewport', 'dock-clearance', 'popover-fit', 'surface-distinct', 'text-cramped', 'text-overlap', 'text-clipped', 'placeholder-squeezed', 'panel-inset', 'panel-empty', 'composer-last', 'section-empty', 'fingerprint', 'blank-band', 'table-first', 'narrow-block', 'alignment-grid', 'baseline', 'icon-center', 'scroll-owner', 'content-share', 'content-honesty', 'a11y-names', 'contrast', 'heading-order', 'landmarks', 'composer-readonly', 'layer', 'focus-walk', 'tab-stability', 'data-state', 'geometry-snapshot', 'text-fragmented', 'leading-separator', 'selection-column', 'column-hog', 'marker-first-line', 'zebra', 'separator', 'vertical-budget', 'unmarked']);
   for (const rule of contract.rules) {
     if (!rule.id || ids.has(rule.id) || !kinds.has(rule.kind)) throw new Error('Invalid/duplicate rule: ' + rule.id);
     ids.add(rule.id);
@@ -31,6 +31,22 @@ export function loadContract(file) {
   const contract = JSON.parse(fs.readFileSync(file ?? fileURLToPath(new URL('../references/work-ui.contract.json', import.meta.url)), 'utf8'));
   validateContract(contract);
   return contract;
+}
+/**
+ * Apply an adapter's per-rule thresholds (`ruleOptions: { 'page.vertical-budget': { maxScrollRatio: 3 } }`).
+ * Only fields a rule already declares may change, never its id, kind, deep flag or exclusions:
+ * an adapter tunes a threshold for its product, it does not redefine or silence the rule.
+ */
+export function withRuleOptions(contract, ruleOptions) {
+  if (!ruleOptions) return contract;
+  for (const id of Object.keys(ruleOptions)) if (!contract.rules.some(r => r.id === id)) throw new Error(`ruleOptions names an unknown rule: ${id}`);
+  const rules = contract.rules.map(r => {
+    const o = ruleOptions[r.id];
+    if (!o) return r;
+    for (const key of Object.keys(o)) if (['id', 'kind', 'deep', 'exclude', 'selector'].includes(key) || !(key in r)) throw new Error(`ruleOptions.${r.id}.${key}: only a declared threshold may be tuned`);
+    return { ...r, ...o };
+  });
+  const out = { ...contract, rules }; validateContract(out); return out;
 }
 /** A rule that belongs to the deep audit (contract `deep: true`), judged apart from the resting-state gate. */
 export const isDeepRule = (contract, id) => id.startsWith('consistency.') || id === 'theme.parity' ? true : !!contract.rules.find(r => r.id === id)?.deep;
@@ -193,7 +209,7 @@ async function deepStates(page, spec, adapter, options, seen) {
 export async function runAudit(browser, adapter, options) {
   if (options.strictCoverage !== undefined && typeof options.strictCoverage !== 'boolean') throw new Error('strictCoverage must be boolean');
   const start = Date.now(), out = path.resolve(options.out); fs.mkdirSync(out, { recursive: true });
-  const contract = loadContract(options.contract ?? adapter.contract);
+  const contract = withRuleOptions(loadContract(options.contract ?? adapter.contract), adapter.ruleOptions);
   const matrix = await adapter.cases(options);
   if (!matrix.length) throw new Error('No audit cases selected; an empty sweep is not a pass');
   const report = { version: 1, contract: contract.name, contractHash: hash(contract), revision: await adapter.revision?.() ?? null, cases: [], groups: [], failures: 0, elapsedMs: 0 };

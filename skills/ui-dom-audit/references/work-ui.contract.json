@@ -1732,6 +1732,81 @@
         "columnGap": "8px"
       },
       "owner": "AccessNotice marker-to-prose gap"
+    },
+    {
+      "id": "table.zebra",
+      "kind": "zebra",
+      "selector": "$zebraTables|table:not([role=\"presentation\"]), [role=\"table\"], [role=\"grid\"]",
+      "minRows": 4,
+      "marker": "[data-ui-table-striped]",
+      "owner": "DataTable / Table (striped by default); a hand-rolled table becomes one of them",
+      "exclude": [
+        {
+          "selector": "[role=\"document\"], .ProseMirror, [contenteditable=\"true\"]",
+          "reason": "Tables inside a document or editor are authored content; the reader styles them as prose, not as a collection."
+        },
+        {
+          "selector": "[data-ui-table-rows=\"code-diff\"]",
+          "reason": "DiffViewer lines are coloured by change kind (added/removed/context); a stripe would compete with that meaning."
+        }
+      ]
+    },
+    {
+      "id": "section.separator",
+      "kind": "separator",
+      "selector": "$contentColumns",
+      "groups": "$contentGroups|[data-ui-section], section, article, [role=\"region\"], [data-ui-card]",
+      "minGap": {
+        "token": "--ui-section-gap"
+      },
+      "maxPerPage": 8,
+      "owner": "PageSection (divided) / the page template stacking the groups"
+    },
+    {
+      "id": "page.vertical-budget",
+      "kind": "vertical-budget",
+      "selector": "$contentColumns",
+      "groups": "$contentGroups|[data-ui-section], section, article, [role=\"region\"], [data-ui-card]",
+      "maxScrollRatio": 2,
+      "maxStackedSections": 4,
+      "scrollingContent": "[data-collection-page], [data-collection-table], [role=\"feed\"], [role=\"log\"], [role=\"document\"], [contenteditable=\"true\"], [data-ui-board]",
+      "owner": "the page template: DetailPage (DetailHeader + Tabs), MasterDetailPage or CollectionPage instead of stacked cards"
+    },
+    {
+      "id": "element.unmarked",
+      "kind": "unmarked",
+      "selector": "$contentColumns",
+      "maxPerPage": 10,
+      "owners": "[data-ui-listbox], [data-ui-control], [data-collection-table], [data-toolbar-variant], [data-ui-breadcrumbs], [data-ui-board], [data-composer-surface], [data-ui-dropzone], [data-ui-code-surface], [data-ui-diff-scroll], [data-ui-source-row], [data-tab-scroller], [role=\"tablist\"], [data-segmented-width], [contenteditable=\"true\"], [role=\"document\"]",
+      "elements": [
+        {
+          "name": "button",
+          "selector": "button, [role=\"button\"]",
+          "marker": "[data-variant], [data-ui-control]"
+        },
+        {
+          "name": "table",
+          "selector": "table, [role=\"table\"], [role=\"grid\"]",
+          "marker": "[data-table-scroller] > table, [data-ui-table-rows]"
+        },
+        {
+          "name": "select",
+          "selector": "select",
+          "marker": "[data-ui-native-select]"
+        },
+        {
+          "name": "input",
+          "selector": "input:not([type=\"hidden\"]), textarea",
+          "marker": "[data-ui-control], [data-ui-text=\"code\"]"
+        },
+        {
+          "name": "section",
+          "selector": "section",
+          "marker": "[data-ui-section]",
+          "topLevel": true
+        }
+      ],
+      "owner": "the page: render Button/Table/DataTable/forms controls/PageSection from ui-components instead of raw elements"
     }
   ]
 }
