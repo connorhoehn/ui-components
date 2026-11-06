@@ -499,6 +499,13 @@ declare type CropFlowNode = Node_2<CropData, 'image:crop'>;
 
 export declare function CropNode(props: NodeProps<CropFlowNode>): JSX.Element;
 
+/**
+ * Default `canRetry` / `canResume`: a step can be re-run once it has
+ * finished. A pending, running, skipped or awaiting step has nothing to re-run
+ * from yet, and offering the button there started a second copy of a live run.
+ */
+export declare function defaultCanRerunStep(step: StepExecution): boolean;
+
 export declare function DimensionsConfig({ data, onChange, nodeId }: DimensionsConfigProps): JSX.Element;
 
 export declare interface DimensionsConfigProps {
@@ -3008,7 +3015,7 @@ export declare interface StepSectionProps {
 
 declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
 
-export declare function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepThreadProps): default_2.JSX.Element;
+export declare function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail, canRetry: canRetryProp, canResume: canResumeProp, defaultExpanded, showTechnicalDetails, }: StepThreadProps): default_2.JSX.Element;
 
 export declare interface StepThreadProps {
     stepId: string;
@@ -3037,9 +3044,31 @@ export declare interface StepThreadProps {
      * card for the one step that has one.
      */
     renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
+    /**
+     * Whether "Retry from here" is offered for this step. Consulted only when
+     * `onRetryFromStep` is given. Default: only a step that has finished —
+     * `completed`, `failed` or `cancelled` ({@link defaultCanRerunStep}); never
+     * one that is pending, running, skipped or awaiting. A refused step never
+     * offers it, whatever this returns.
+     */
+    canRetry?: (step: StepExecution, stepId: string) => boolean;
+    /** The same gate for "Resume from here" / `onResumeFromStep`. Same default. */
+    canResume?: (step: StepExecution, stepId: string) => boolean;
+    /** Start with the row expanded. Default false: a run reads as its step list. */
+    defaultExpanded?: boolean;
+    /**
+     * The step's internals — execution timeline, node configuration, runtime
+     * input, resolved prompt, raw JSON output and token usage. They are for
+     * debugging, not for reading a run, so inside an expanded row they sit
+     * behind a "Technical details" disclosure: `'collapsed'` (default),
+     * `'expanded'` (disclosure starts open) or `'hidden'` (not rendered).
+     * Results a person reads — produced images, a response, an agent trace, a
+     * vision result, attempts and the error — stay in the expanded row.
+     */
+    showTechnicalDetails?: 'collapsed' | 'hidden' | 'expanded';
 }
 
-export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepTreeProps): default_2.JSX.Element;
+export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail, canRetry, canResume, defaultExpanded, showTechnicalDetails, }: StepTreeProps): default_2.JSX.Element;
 
 export declare interface StepTreeProps {
     steps: Record<string, StepExecution>;
@@ -3063,6 +3092,14 @@ export declare interface StepTreeProps {
      * only a duration.
      */
     renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
+    /** Forwarded to every step. See {@link StepThreadProps.canRetry}. */
+    canRetry?: StepThreadProps['canRetry'];
+    /** Forwarded to every step. See {@link StepThreadProps.canResume}. */
+    canResume?: StepThreadProps['canResume'];
+    /** Forwarded to every step: start rows expanded. Default false. */
+    defaultExpanded?: boolean;
+    /** Forwarded to every step. See {@link StepThreadProps.showTechnicalDetails}. Default `'collapsed'`. */
+    showTechnicalDetails?: StepThreadProps['showTechnicalDetails'];
 }
 
 /**

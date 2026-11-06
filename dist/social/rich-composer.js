@@ -9,9 +9,9 @@ import { t as u } from "../DecisionPath-DsZclIl1.js";
 import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-BUIwnQlH.js";
 import { a as v, i as y, n as ee, r as b, t as x } from "../composerContext-BLn1-Nao.js";
 import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-tjSIC0L-.js";
-import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as M, t as N, u as P } from "../RichChatComposer-DBr8FO96.js";
-import { t as ae } from "../ContextComposer-D15KqD7W.js";
-import { t as F } from "../AgentComposerDock-CutzMbR8.js";
+import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as M, t as N, u as P } from "../RichChatComposer-CCA_J0J7.js";
+import { t as ae } from "../ContextComposer-BFy24psc.js";
+import { t as F } from "../AgentComposerDock-CoG50bh2.js";
 import { useCallback as I, useEffect as L, useId as oe, useMemo as se, useRef as R, useState as z } from "react";
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx

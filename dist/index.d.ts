@@ -1525,7 +1525,7 @@ declare type AssertTrue<T extends true> = T;
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, onDragStart, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, onDragStart, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -1533,6 +1533,14 @@ export declare interface AssetGalleryProps {
     label: string;
     onOpen: (item: GalleryAsset) => void;
     actions?: (item: GalleryAsset) => ReactNode;
+    /**
+     * When the `actions` row is visible. `'hover'` (default, the pre-2.503
+     * behaviour) reveals it on pointer hover or keyboard focus within the card,
+     * and always on touch screens. `'always'` shows it at rest — use it when an
+     * action is the main thing a person does with the card (approve, use,
+     * regenerate): an action nobody can see is an action nobody finds.
+     */
+    actionsVisibility?: 'hover' | 'always';
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
@@ -1839,6 +1847,15 @@ export declare interface AutoplayGateProps extends StreamVideoProps {
 }
 
 export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
+
+/**
+ * Fills for name-derived avatars. Each one carries the white initials at
+ * ≥4.5:1 (WCAG AA for normal text), so the 9–16px initials read at every
+ * size. The fill and the text are both literal, so the ratio is the same in
+ * light and dark themes. Before 2.503.0 these were the 400/500 shades, and
+ * white on orange measured 2.8:1. Pinned by `Avatar.contrast.test.tsx`.
+ */
+export declare const AVATAR_PALETTE: readonly string[];
 
 export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
 
@@ -10434,7 +10451,19 @@ export declare interface GalleryAsset {
     title: string;
     src?: string;
     subtitle?: string;
+    /**
+     * Shown on the card, over the thumbnail's top-left corner: StatusPill props
+     * (rendered as a small StatusPill) or any node. The card's button is
+     * described by it, so a screen reader hears "Inspect Cup, Needs review".
+     */
+    status?: GalleryAssetStatus | ReactNode;
 }
+
+/**
+ * A card's status as StatusPill props — `{ state: 'warning', label: 'Needs review' }`.
+ * `tone` and `state` mean the same thing, as on StatusPill.
+ */
+export declare type GalleryAssetStatus = Pick<StatusPillProps, 'state' | 'tone' | 'label' | 'meta'>;
 
 /** Runtime configuration read from env vars */
 export declare interface GatewayConfig {
@@ -11835,6 +11864,40 @@ export declare interface ImageAdjustLayerNodeData {
      * `useLatestStepForNode`. Cleared via the caption "x" affordance.
      */
     previewSourceImageId?: string;
+}
+
+export declare function ImageCompare({ images, label, aspect, fit, zoomable, className, 'data-testid': testId, }: ImageCompareProps): JSX.Element | null;
+
+export declare type ImageCompareAspect = 'square' | 'landscape' | 'portrait' | 'wide';
+
+export declare interface ImageCompareImage {
+    src: string;
+    /** Short name shown under the pane — "Reference", "Current", "Candidate". */
+    label: string;
+    /** Alt text. Defaults to `label`. */
+    alt?: string;
+    /** A quieter line under the label — "v3 · 2 days ago". */
+    description?: string;
+    /** A node beside the label, usually a StatusPill ("Approved"). */
+    meta?: ReactNode;
+}
+
+export declare interface ImageCompareProps {
+    /** Two or three images, in reading order. Extras past three are ignored. */
+    images: readonly ImageCompareImage[];
+    /** Accessible name for the group. Default "Image comparison". */
+    label?: string;
+    /**
+     * The shared frame every pane uses, so heights match. `landscape` (4:3,
+     * default), `square` (1:1), `portrait` (3:4), `wide` (16:9).
+     */
+    aspect?: ImageCompareAspect;
+    /** `contain` (default) shows each whole image; `cover` fills the frame and crops. */
+    fit?: 'contain' | 'cover';
+    /** Open the lightbox on click/Enter. Default true. */
+    zoomable?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface ImageCropNodeData {
