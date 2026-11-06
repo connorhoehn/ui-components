@@ -6239,7 +6239,7 @@ function ta({ item: e, variant: n, onOpen: r, actions: i, actionsVisibility: a, 
 				"data-gallery-status": !0,
 				className: "pointer-events-none absolute left-2 top-2 max-w-[calc(100%-1rem)]",
 				children: ea(c) ? /* @__PURE__ */ Z(z, {
-					size: "sm",
+					size: "md",
 					...c
 				}) : c
 			}),
