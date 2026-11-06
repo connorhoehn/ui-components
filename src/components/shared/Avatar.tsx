@@ -2,15 +2,22 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { TONE_SOFT, toneKey, type ToneOrAlias } from './tones';
 
-const AVATAR_PALETTE = [
-  '#4f7cff',
-  '#22c55e',
-  '#f59e0b',
-  '#ef4444',
-  '#a855f7',
-  '#14b8a6',
-  '#0ea5e9',
-  '#f97316',
+/**
+ * Fills for name-derived avatars. Each one carries the white initials at
+ * ≥4.5:1 (WCAG AA for normal text), so the 9–16px initials read at every
+ * size. The fill and the text are both literal, so the ratio is the same in
+ * light and dark themes. Before 2.503.0 these were the 400/500 shades, and
+ * white on orange measured 2.8:1. Pinned by `Avatar.contrast.test.tsx`.
+ */
+export const AVATAR_PALETTE: readonly string[] = [
+  '#2563eb', // blue    5.17:1
+  '#15803d', // green   5.02:1
+  '#b45309', // amber   5.02:1
+  '#dc2626', // red     4.83:1
+  '#9333ea', // purple  5.38:1
+  '#0f766e', // teal    5.47:1
+  '#0369a1', // sky     5.93:1
+  '#c2410c', // orange  5.18:1
 ];
 
 export function nameToColor(name: string): string {

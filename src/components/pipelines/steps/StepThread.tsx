@@ -1,4 +1,4 @@
-import React, { useCallback, useState, type ReactNode } from 'react';
+import React, { useCallback, useId, useState, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import type { StepExecution } from '../../../types/pipeline';
 import { StepSection } from './StepSection';
@@ -39,6 +39,39 @@ export interface StepThreadProps {
    * card for the one step that has one.
    */
   renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
+  /**
+   * Whether "Retry from here" is offered for this step. Consulted only when
+   * `onRetryFromStep` is given. Default: only a step that has finished —
+   * `completed`, `failed` or `cancelled` ({@link defaultCanRerunStep}); never
+   * one that is pending, running, skipped or awaiting. A refused step never
+   * offers it, whatever this returns.
+   */
+  canRetry?: (step: StepExecution, stepId: string) => boolean;
+  /** The same gate for "Resume from here" / `onResumeFromStep`. Same default. */
+  canResume?: (step: StepExecution, stepId: string) => boolean;
+  /** Start with the row expanded. Default false: a run reads as its step list. */
+  defaultExpanded?: boolean;
+  /**
+   * The step's internals — execution timeline, node configuration, runtime
+   * input, resolved prompt, raw JSON output and token usage. They are for
+   * debugging, not for reading a run, so inside an expanded row they sit
+   * behind a "Technical details" disclosure: `'collapsed'` (default),
+   * `'expanded'` (disclosure starts open) or `'hidden'` (not rendered).
+   * Results a person reads — produced images, a response, an agent trace, a
+   * vision result, attempts and the error — stay in the expanded row.
+   */
+  showTechnicalDetails?: 'collapsed' | 'hidden' | 'expanded';
+}
+
+const RERUNNABLE_STATUSES = new Set<StepExecution['status']>(['completed', 'failed', 'cancelled']);
+
+/**
+ * Default `canRetry` / `canResume`: a step can be re-run once it has
+ * finished. A pending, running, skipped or awaiting step has nothing to re-run
+ * from yet, and offering the button there started a second copy of a live run.
+ */
+export function defaultCanRerunStep(step: StepExecution): boolean {
+  return RERUNNABLE_STATUSES.has(step.status);
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -89,7 +122,21 @@ function visionResultFrom(
   } as VisionResult;
 }
 
-export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepThreadProps) {
+export function StepThread({
+  stepId,
+  step,
+  index,
+  nodeType,
+  nodeConfig,
+  onRetryFromStep,
+  onResumeFromStep,
+  onArtifactClick,
+  renderStepDetail,
+  canRetry: canRetryProp,
+  canResume: canResumeProp,
+  defaultExpanded = false,
+  showTechnicalDetails = 'collapsed',
+}: StepThreadProps) {
   // A step whose node is not in the definition (a deleted node, a definition
   // that never loaded, a run recorded elsewhere) has no type to show. Its own
   // id is the only true name it has — "unknown" says nothing, three times over.
@@ -97,7 +144,9 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
   const knownType = !!nodeType && nodeType !== 'unknown';
   const stepTitle = label ?? (knownType ? nodeType : stepId);
   const stepSubtitle = label ? (knownType ? nodeType : undefined) : knownType ? stepId.slice(0, 8) : undefined;
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [technicalOpen, setTechnicalOpen] = useState(showTechnicalDetails === 'expanded');
+  const technicalId = useId();
   const detail = renderStepDetail?.(step, stepId);
   const [copyLabel, setCopyLabel] = useState<'Copy JSON' | 'Copied!'>('Copy JSON');
   // Optional on purpose: a run-detail page is read-only and does not mount the
@@ -124,8 +173,29 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
   // retrying or resuming from it refuses the same way. So its row offers
   // neither — absent, not disabled — and its error section names the refusal.
   const refusal = stepRefusal(step);
-  const canRetry = !refusal && !!onRetryFromStep;
-  const canResume = !refusal && !!onResumeFromStep;
+  const canRetry = !refusal && !!onRetryFromStep && (canRetryProp ?? defaultCanRerunStep)(step, stepId);
+  const canResume = !refusal && !!onResumeFromStep && (canResumeProp ?? defaultCanRerunStep)(step, stepId);
+
+  // Empty sections are omitted, not printed as "No output data".
+  const hasTimeline =
+    !!step.startedAt ||
+    !!llmData?.streamOpened ||
+    llmData?.firstTokenLatencyMs != null ||
+    (!!step.completedAt && step.status === 'completed') ||
+    step.status === 'failed';
+  const configEntries = nodeConfig ? Object.entries(nodeConfig).filter(([k]) => k !== 'type') : [];
+  const hasInput = !!input && Object.keys(input).length > 0;
+  const hasRawOutput = !!output && Object.keys(output).length > 0;
+  const hasLlmResponse = !!(llmResponse || llmData?.response);
+  const isAgentOutput = isAgentStepOutput(output);
+  const isLiveAgent = !isAgentOutput && step.status === 'running' && (!!step.agentLive || nodeType === 'agent');
+  const isVision = !!output && classifyStepOutput(output) === 'vision';
+  // The raw JSON is a technical section only when no richer renderer claimed it.
+  const showRawOutput = !hasLlmResponse && !isAgentOutput && !isLiveAgent && !isVision && hasRawOutput;
+  const hasTokens = !!llmData || output?.tokensIn != null;
+  const hasTechnical =
+    showTechnicalDetails !== 'hidden' &&
+    (hasTimeline || configEntries.length > 0 || hasInput || !!llmData?.prompt || showRawOutput || hasTokens);
 
   return (
     <div className="relative pl-9 mb-1">
@@ -224,101 +294,6 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
           className="border-t-0 rounded-b-lg bg-surface overflow-hidden"
           style={{ border: `1px solid ${statusColor}40` }}
         >
-          <StepSection title="Execution Timeline">
-            <table className="w-full text-[11px] border-collapse font-mono">
-              <thead>
-                <tr className="border-b border-border">
-                  <th scope="col" className={thClass}>Event</th>
-                  <th scope="col" className={thClass}>Time</th>
-                  <th scope="col" className={thClass}>Detail</th>
-                </tr>
-              </thead>
-              <tbody>
-                {step.startedAt && (
-                  <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('var(--color-info)')}>started</span></td>
-                    <td className={tdClass}>{new Date(step.startedAt).toLocaleTimeString()}</td>
-                    <td className={tdClass}>Node {stepId.slice(0, 8)} ({nodeType}) began execution</td>
-                  </tr>
-                )}
-                {llmData?.streamOpened && (
-                  <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('var(--color-cat-ai)')}>stream.opened</span></td>
-                    <td className={tdClass}>—</td>
-                    <td className={tdClass}>LLM stream connection established</td>
-                  </tr>
-                )}
-                {llmData?.firstTokenLatencyMs != null && (
-                  <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('var(--color-cat-ai)')}>first.token</span></td>
-                    <td className={tdClass}>+{llmData.firstTokenLatencyMs}ms</td>
-                    <td className={tdClass}>First token received from LLM</td>
-                  </tr>
-                )}
-                {step.completedAt && step.status === 'completed' && (
-                  <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('var(--color-success)')}>completed</span></td>
-                    <td className={tdClass}>{new Date(step.completedAt).toLocaleTimeString()}</td>
-                    <td className={tdClass}>
-                      Finished in {step.durationMs != null ? (step.durationMs < 1000 ? `${step.durationMs}ms` : `${(step.durationMs / 1000).toFixed(1)}s`) : '—'}
-                    </td>
-                  </tr>
-                )}
-                {step.status === 'failed' && (
-                  <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('var(--color-danger)')}>failed</span></td>
-                    <td className={tdClass}>{step.completedAt ? new Date(step.completedAt).toLocaleTimeString() : '—'}</td>
-                    <td className={tdClass}>{step.error ?? 'Unknown error'}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </StepSection>
-
-          {/* Retry history. Renders itself away when there is nothing to say
-              (a single clean attempt), so no guard is needed here. */}
-          <StepAttempts attempts={step.attempts ?? []} />
-
-          <StepSection title="Node Configuration">
-            {nodeConfig && Object.keys(nodeConfig).length > 1 ? (
-              <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
-                {Object.entries(nodeConfig)
-                  .filter(([k]) => k !== 'type')
-                  .map(([key, value]) => (
-                    <React.Fragment key={key}>
-                      <span className="text-text-tertiary font-medium">{key}</span>
-                      <span
-                        className={cn(
-                          'text-text-secondary break-words',
-                          typeof value === 'string' && value.length > 60 ? 'whitespace-pre-wrap font-sans' : 'whitespace-nowrap font-mono',
-                        )}
-                      >
-                        {typeof value === 'string' ? value : JSON.stringify(value)}
-                      </span>
-                    </React.Fragment>
-                  ))}
-              </div>
-            ) : (
-              <span className="text-xs text-text-tertiary italic">No configuration</span>
-            )}
-          </StepSection>
-
-          {input && Object.keys(input).length > 0 && (
-            <StepSection title="Runtime Input">
-              <pre className={codeBlockClass}>
-                {JSON.stringify(input, null, 2)}
-              </pre>
-            </StepSection>
-          )}
-
-          {llmData?.prompt && (
-            <StepSection title="Resolved Prompt">
-              <div className={proseBlockClass}>
-                {llmData.prompt}
-              </div>
-            </StepSection>
-          )}
-
           {/* Produced images — populated by `pipeline:step:image:produced`
               events (crop / adjust / save handlers). Rendered BEFORE the
               output section so image pipelines surface their artifacts at
@@ -379,13 +354,13 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
             </StepSection>
           )}
 
-          {(llmResponse || llmData?.response) ? (
+          {hasLlmResponse ? (
             <StepSection title="Response">
               <div className={proseBlockClass}>
                 {llmResponse ?? llmData?.response}
               </div>
             </StepSection>
-          ) : isAgentStepOutput(output) ? (
+          ) : isAgentOutput ? (
             // `agent` steps get the tool-call waterfall + an honest header
             // instead of a JSON dump. See AgentTraceSection.
             <AgentTraceSection
@@ -394,7 +369,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
               startedAt={step.startedAt}
               completedAt={step.completedAt}
             />
-          ) : step.status === 'running' && (step.agentLive || nodeType === 'agent') ? (
+          ) : isLiveAgent ? (
             // LIVE agent trace: the step has no persisted output yet, but
             // `pipeline.step.agent.tool` events have been streaming into
             // `step.agentLive` (or the agent step just started and no tool
@@ -408,7 +383,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
               startedAt={step.startedAt}
               live
             />
-          ) : output && classifyStepOutput(output) === 'vision' ? (
+          ) : isVision && output ? (
             // image:vision-analyze steps deserve the structured
             // VisionResultViewer composite — caption + tags + extracted JSON
             // + image preview — rather than a raw JSON dump. The viewer wants
@@ -424,29 +399,11 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
               </button>
               <VisionResultViewer result={visionResultFrom(output, imageUrl)} />
             </StepSection>
-          ) : (
-            <StepSection title="Output">
-              {output && Object.keys(output).length > 0 ? (
-                <pre className={codeBlockClass}>
-                  {JSON.stringify(output, null, 2)}
-                </pre>
-              ) : (
-                <span className="text-xs text-text-tertiary italic">No output data</span>
-              )}
-            </StepSection>
-          )}
+          ) : null}
 
-          {(llmData || output?.tokensIn != null) && (
-            <StepSection title="Token Usage">
-              <div className="flex gap-5 flex-wrap text-xs text-text-secondary">
-                <span>Tokens in: <strong>{String(llmData?.tokensIn ?? output?.tokensIn ?? '—')}</strong></span>
-                <span>Tokens out: <strong>{String(llmData?.tokensOut ?? output?.tokensOut ?? '—')}</strong></span>
-                {llmData?.firstTokenLatencyMs != null && (
-                  <span>First token: <strong>{llmData.firstTokenLatencyMs}ms</strong></span>
-                )}
-              </div>
-            </StepSection>
-          )}
+          {/* Retry history. Renders itself away when there is nothing to say
+              (a single clean attempt), so no guard is needed here. */}
+          <StepAttempts attempts={step.attempts ?? []} />
 
           {step.error && (
             <StepSection title={refusal ? `Refused (${refusal.code}):` : 'Error'}>
@@ -467,6 +424,129 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
                 </div>
               )}
             </StepSection>
+          )}
+
+          {hasTechnical && (
+            <div className="px-4 py-2 border-t border-border" data-testid={`step-technical-${stepId}`}>
+              <button
+                type="button"
+                aria-expanded={technicalOpen}
+                aria-controls={technicalId}
+                data-testid={`step-technical-toggle-${stepId}`}
+                onClick={() => setTechnicalOpen((v) => !v)}
+                className="flex items-center gap-1.5 p-0 bg-transparent border-none cursor-pointer font-[inherit] text-xs font-medium text-text-secondary hover:text-text-primary"
+              >
+                <span aria-hidden="true" className={cn('text-[10px] transition-transform duration-150', technicalOpen && 'rotate-90')}>▶</span>
+                Technical details
+              </button>
+            </div>
+          )}
+          {hasTechnical && technicalOpen && (
+            <div id={technicalId} data-testid={`step-technical-body-${stepId}`}>
+              {hasTimeline && (
+                <StepSection title="Execution Timeline">
+                  <table className="w-full text-[11px] border-collapse font-mono">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th scope="col" className={thClass}>Event</th>
+                        <th scope="col" className={thClass}>Time</th>
+                        <th scope="col" className={thClass}>Detail</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {step.startedAt && (
+                        <tr className="border-b border-border">
+                          <td className={tdClass}><span className={eventChipClass('var(--color-info)')}>started</span></td>
+                          <td className={tdClass}>{new Date(step.startedAt).toLocaleTimeString()}</td>
+                          <td className={tdClass}>{knownType ? `Node ${stepId.slice(0, 8)} (${nodeType}) began execution` : `Step ${stepId.slice(0, 8)} began execution`}</td>
+                        </tr>
+                      )}
+                      {llmData?.streamOpened && (
+                        <tr className="border-b border-border">
+                          <td className={tdClass}><span className={eventChipClass('var(--color-cat-ai)')}>stream.opened</span></td>
+                          <td className={tdClass}>—</td>
+                          <td className={tdClass}>LLM stream connection established</td>
+                        </tr>
+                      )}
+                      {llmData?.firstTokenLatencyMs != null && (
+                        <tr className="border-b border-border">
+                          <td className={tdClass}><span className={eventChipClass('var(--color-cat-ai)')}>first.token</span></td>
+                          <td className={tdClass}>+{llmData.firstTokenLatencyMs}ms</td>
+                          <td className={tdClass}>First token received from LLM</td>
+                        </tr>
+                      )}
+                      {step.completedAt && step.status === 'completed' && (
+                        <tr className="border-b border-border">
+                          <td className={tdClass}><span className={eventChipClass('var(--color-success)')}>completed</span></td>
+                          <td className={tdClass}>{new Date(step.completedAt).toLocaleTimeString()}</td>
+                          <td className={tdClass}>
+                            Finished in {step.durationMs != null ? (step.durationMs < 1000 ? `${step.durationMs}ms` : `${(step.durationMs / 1000).toFixed(1)}s`) : '—'}
+                          </td>
+                        </tr>
+                      )}
+                      {step.status === 'failed' && (
+                        <tr className="border-b border-border">
+                          <td className={tdClass}><span className={eventChipClass('var(--color-danger)')}>failed</span></td>
+                          <td className={tdClass}>{step.completedAt ? new Date(step.completedAt).toLocaleTimeString() : '—'}</td>
+                          <td className={tdClass}>{step.error ?? 'Unknown error'}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </StepSection>
+              )}
+              {configEntries.length > 0 && (
+                <StepSection title="Node Configuration">
+                  <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
+                    {configEntries.map(([key, value]) => (
+                      <React.Fragment key={key}>
+                        <span className="text-text-tertiary font-medium">{key}</span>
+                        <span
+                          className={cn(
+                            'text-text-secondary break-words',
+                            typeof value === 'string' && value.length > 60 ? 'whitespace-pre-wrap font-sans' : 'whitespace-nowrap font-mono',
+                          )}
+                        >
+                          {typeof value === 'string' ? value : JSON.stringify(value)}
+                        </span>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </StepSection>
+              )}
+              {hasInput && (
+                <StepSection title="Runtime Input">
+                  <pre className={codeBlockClass}>
+                    {JSON.stringify(input, null, 2)}
+                  </pre>
+                </StepSection>
+              )}
+              {llmData?.prompt && (
+                <StepSection title="Resolved Prompt">
+                  <div className={proseBlockClass}>
+                    {llmData.prompt}
+                  </div>
+                </StepSection>
+              )}
+              {showRawOutput && (
+                <StepSection title="Output">
+                  <pre className={codeBlockClass}>
+                    {JSON.stringify(output, null, 2)}
+                  </pre>
+                </StepSection>
+              )}
+              {hasTokens && (
+                <StepSection title="Token Usage">
+                  <div className="flex gap-5 flex-wrap text-xs text-text-secondary">
+                    <span>Tokens in: <strong>{String(llmData?.tokensIn ?? output?.tokensIn ?? '—')}</strong></span>
+                    <span>Tokens out: <strong>{String(llmData?.tokensOut ?? output?.tokensOut ?? '—')}</strong></span>
+                    {llmData?.firstTokenLatencyMs != null && (
+                      <span>First token: <strong>{llmData.firstTokenLatencyMs}ms</strong></span>
+                    )}
+                  </div>
+                </StepSection>
+              )}
+            </div>
           )}
 
           {(canRetry || canResume) && (

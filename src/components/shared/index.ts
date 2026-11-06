@@ -54,6 +54,8 @@ export { default as IconPicker } from './IconPicker';
 export * from './IconPicker';
 export { default as ImageLightbox } from './ImageLightbox';
 export * from './ImageLightbox';
+export { default as ImageCompare } from './ImageCompare';
+export * from './ImageCompare';
 export { default as Modal } from './Modal';
 export * from './Modal';
 export { default as ShortcutsHelp } from './ShortcutsHelp';
@@ -538,7 +540,7 @@ export * from './CollectionToolbar';
 export * from './CollectionPage';
 export * from './ComposerSurface';
 export { AssetGallery } from './AssetGallery';
-export type { AssetGalleryProps, GalleryAsset } from './AssetGallery';
+export type { AssetGalleryProps, GalleryAsset, GalleryAssetStatus } from './AssetGallery';
 
 export { MediaCollectionCard } from './MediaCollectionCard';
 export type { MediaCollectionCardProps, MediaCollectionPreview } from './MediaCollectionCard';

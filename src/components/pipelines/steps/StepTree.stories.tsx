@@ -216,3 +216,53 @@ export const ArtifactsAndRetries: Story = {
     },
   },
 };
+
+// A live run, as a person reading it sees it: rows expanded, internals
+// behind "Technical details", and "Retry from here" only on finished steps —
+// the default gate. The pending and running steps offer nothing to re-run.
+export const LiveRunWithRetryGate: Story = {
+  args: {
+    defaultExpanded: true,
+    onRetryFromStep: () => {},
+    steps: {
+      'trigger-1': completed('trigger-1', '2026-11-04T10:00:00.000Z', 40, { documentId: 'ep-12' }),
+      'render-2': {
+        nodeId: 'render-2',
+        status: 'running',
+        startedAt: '2026-11-04T10:00:00.100Z',
+      },
+      'publish-3': { nodeId: 'publish-3', status: 'pending' },
+    },
+    nodeDataMap: {
+      'trigger-1': node('trigger', { label: 'Episode approved' }),
+      'render-2': node('action', { label: 'Render storyboard' }),
+      'publish-3': node('action', { label: 'Publish' }),
+    },
+  },
+};
+
+// The host decides: `canRetry` replaces the default, and
+// `showTechnicalDetails="hidden"` drops the internals for a viewer-only page.
+export const HostGatedNoTechnicalDetails: Story = {
+  args: {
+    defaultExpanded: true,
+    showTechnicalDetails: 'hidden',
+    onRetryFromStep: () => {},
+    canRetry: (step) => step.status === 'failed',
+    steps: {
+      'trigger-1': completed('trigger-1', '2026-11-04T10:00:00.000Z', 40),
+      'render-2': {
+        nodeId: 'render-2',
+        status: 'failed',
+        startedAt: '2026-11-04T10:00:00.100Z',
+        completedAt: '2026-11-04T10:00:03.100Z',
+        durationMs: 3000,
+        error: 'Renderer ran out of GPU memory',
+      },
+    },
+    nodeDataMap: {
+      'trigger-1': node('trigger', { label: 'Episode approved' }),
+      'render-2': node('action', { label: 'Render storyboard' }),
+    },
+  },
+};
