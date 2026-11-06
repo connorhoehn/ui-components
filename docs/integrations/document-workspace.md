@@ -1,8 +1,8 @@
 # Shared document workspace composition
 
 The reference application's header, authenticated image renderer and upload
-completion binding are now library-owned. Existing paper/ruler/toolbar/zoom remain
-`CanvasDocumentView`; this release does not create another editor.
+completion binding are library-owned. Existing paper/ruler/toolbar/zoom remain
+`CanvasDocumentView`; this layer does not add another editor.
 
 - `DocumentHeader` without `onModeChange` uses access-derived mode and the reference
   ownership/lifecycle composition. `workflowActions` and `formatActions` are host
@@ -34,8 +34,3 @@ completion binding are now library-owned. Existing paper/ruler/toolbar/zoom rema
 Both consumers assemble the rich schema through realtime-modules'
 `createCanvasExtensions`. Header migration does not make example permissions or
 backend persistence production-ready; use the server grant and receipt contracts.
-
-Release handoff: rebuild tracked dist once after merging source, bump the additive
-API minor version, update exact consumer package pins, and test both the reference
-editor and assessment route. The examples' four unrelated pre-existing frontend
-changes must not be swept into this release.

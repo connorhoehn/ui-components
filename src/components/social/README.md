@@ -1,8 +1,8 @@
 # Social — `@connorhoehnslalom/ui-components/social`
 
 Chat, presence, reactions, posts, and follow-graph composites for
-social surfaces. Root-reachable since v2.12.0 (hub#1058) under
-disambiguated aliases — see the notes below.
+social surfaces. Also reachable from the root barrel, under
+disambiguated aliases where names collide — see the notes below.
 
 Subpath import:
 
@@ -24,10 +24,10 @@ import {
 
 | Export | Purpose |
 |---|---|
-| `ChatPanel` | Top-level chat surface: header, message list, composer, optional roster. Charter §1 no-touch — public props are a contract. |
+| `ChatPanel` | Top-level chat surface: header, message list, composer, optional roster. Its public props are a contract. |
 | `ChatRoom` + `RoomList` | Multi-room chat shell. |
-| `MessageRow` + `MessageGroup` | Row-level primitives extracted from ChatPanel (#985) for alternate layouts. |
-| `ReactionsBar` + `ReactionPickerPopover` | Per-message reaction chip bar + cmdk-driven picker (#988). |
+| `MessageRow` + `MessageGroup` | Row-level primitives extracted from ChatPanel for alternate layouts. |
+| `ReactionsBar` + `ReactionPickerPopover` | Per-message reaction chip bar + cmdk-driven picker. |
 | `PresencePanel` | Live presence list (driven by `usePresence` in consumer apps or by `<WrappedPresencePanel>` in `/integrations`). |
 | `ActivityPanel` | Activity-feed surface. |
 | `PostFeed` + `GroupPanel` | Post and group composites. |
@@ -36,10 +36,9 @@ import {
 
 ## Stability
 
-**Stable.** Public ChatPanel props are on the charter §1 no-touch list.
-Root-reachable since 2.12.0; `CommentThread` is aliased to
-`CommentThreadPanel` at root to avoid colliding with the pre-existing
-`CommentThread` type export.
+**Stable.** Public `ChatPanel` props are a contract; changing them needs a
+major version bump. `CommentThread` is aliased to `CommentThreadPanel` at
+root to avoid colliding with the `CommentThread` type export.
 
 ## Wrapped variants
 
@@ -52,7 +51,7 @@ channel name and handle the hook plumbing internally.
 
 ## Context composer
 
-`ContextComposer` (2.407.0, `…/social/rich-composer`; lazy on the root) is the
+`ContextComposer` (`…/social/rich-composer`; lazy on the root) is the
 one composer for a conversation, a document, a work item, a diagram, an
 initiative or a search: one idle row (mode pill, chips, placeholder, Send)
 that expands to the `Agent ⌄` editor card, with each feature gated by its
@@ -65,7 +64,7 @@ A host's own controls go in four slots that stay off the idle row:
 
 `ComposerPromptDeck` (`/social/rich-composer`) asks a page's questions in the
 docked composer, one card at a time, answered from the keyboard
-(`composerPromptModel.ts` holds the contract). Since 2.482.0 an answer may
+(`composerPromptModel.ts` holds the contract). An answer may
 resolve `{ next: ComposerPrompt }` to route to a follow-up in the same card
 (no receipt; Back returns to the question), a prompt may carry a `path`
 (`DecisionPath` on `/shared`: "Choose → Draft request → Confirm → Done"), and
@@ -80,8 +79,8 @@ external editor bridge or the separate compose message flow.
 
 ## Agent composer dock (deprecated)
 
-Deprecated since 2.407.0 — a thin preset over `ContextComposer`.
-`AgentComposerDock` (2.403.0, `…/social/rich-composer`; lazy on the root) is
+Deprecated: a thin preset over `ContextComposer`.
+`AgentComposerDock` (`…/social/rich-composer`; lazy on the root) is
 the pinned composer a page docks under its content — the rich composer with
 the mode menu, chips, `Workflow ⌄` and `/ commands` preset. See
 `AgentComposerDock.md`.
@@ -91,8 +90,6 @@ the mode menu, chips, `Workflow ⌄` and `/ commands` preset. See
 - `ChatPanel`, `ReactionsBar`, `MessageRow`, `MessageGroup` have
   behavioural tests in `__tests__/`.
 - `ReactionsBar.stories.tsx` covers the chip-bar variants.
-- Older composites (ChatRoom, RoomList, PostFeed, PresencePanel) are
-  light on tests; tracked under #1051.
 
 ## See also
 

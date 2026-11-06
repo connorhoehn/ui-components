@@ -1,10 +1,10 @@
-# Layout — `@connorhoehnslalom/ui-components/layout`
+# Layout — `@connorhoehnslalom/ui-components`
 
 App-shell, documentation-shell, and settings-shell composites. Wraps
 shared primitives into the full-page compositions every consumer app
-uses for its top-level layout. Root-reachable since v2.12.0 (hub#1021).
+uses for its top-level layout.
 
-Subpath import:
+There is no `/layout` subpath; these components are exported from the root:
 
 ```tsx
 import {
@@ -17,8 +17,7 @@ import {
   DocsTopNav,
   SettingsLayout,
   TopNav,
-} from '@connorhoehnslalom/ui-components/layout';
-// also reachable from the root barrel.
+} from '@connorhoehnslalom/ui-components';
 ```
 
 ## Exports
@@ -31,33 +30,22 @@ import {
 | `CollapsedIconStrip` | Icon-only rail rendered when the sidebar collapses. |
 | `ConnectionStatus` | Deprecated alias for `<ConnectionPill>` (in `/shared`). |
 | `ApiDegradedBanner` | "Live updates degraded" banner with retry slot. |
-| `DocsShell` + `DocsSidebar` + `DocsTopNav` | Documentation-shell trio: collapsible-section sidebar with active-route highlight, sticky topnav with brand + search-hotkey slot. (#1018) |
-| `SettingsLayout` | Section-rail + content + sticky-save-bar shell for identity/admin settings pages. (#1044) |
-| `TopNav` + `NavTabs` | Generic top-nav with tabs, brand, search slot. (#983) |
+| `DocsShell` + `DocsSidebar` + `DocsTopNav` | Documentation-shell trio: collapsible-section sidebar with active-route highlight, sticky topnav with brand + search-hotkey slot. |
+| `SettingsLayout` | Section-rail + content + sticky-save-bar shell for identity/admin settings pages. |
+| `TopNav` + `NavTabs` | Generic top-nav with tabs, brand, search slot. |
 
 ## Stability
 
-**Stable.** Root-reachable since 2.12.0. AppShell + AppLayout +
-CollapsibleSidebar are on the charter §1 no-touch list — a handoff to
-each consumer is required before any signature change lands.
+**Stable.** `AppShell`, `AppLayout` and `CollapsibleSidebar` are public API
+used by every consumer; signature changes need a major version bump.
 
-`ConnectionStatus` is marked `@deprecated`. Scheduled for removal in
-2.15 (rollover deferred since 2.14 — consumers still import it).
-Replacement is `<ConnectionPill>` in `/shared`.
-
-## Tests
-
-- `AppShell` — 24 cases.
-- `AppLayout` — 13 cases (#1204, May 2026).
-- `CollapsibleSidebar` — 26 cases (#1080, May 2026).
-- `DocsShell` trio — covered by AppShell stories + the docs demo.
+`ConnectionStatus` is marked `@deprecated`. The replacement is
+`<ConnectionPill>` in `/shared`.
 
 ## See also
 
 - [`../shared/README.md`](../shared/README.md) — atoms composed by these
   shells.
-- Wave 1 in [`../../../ROADMAP.md`](../../../ROADMAP.md) for the
-  docs-shell / settings-shell primitives shipped in 2.13–2.14.
 
 `ExplorerLayout.railResize` enables a bounded, keyboard-resizable work list
 with an optional device storage key and a widen/reset action. Folding preserves

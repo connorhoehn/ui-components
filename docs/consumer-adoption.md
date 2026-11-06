@@ -1,21 +1,17 @@
 # Consumer adoption guide
 
 > Cheatsheet for picking the right `@connorhoehnslalom/ui-components` primitive for
-> the page you're building. Pairs with the surfaces table in
-> [`README.md`](../README.md) and the entry-points table in
-> [`CLAUDE.md`](../CLAUDE.md).
+> the page you're building. Pairs with the entry points listed in
+> [`README.md`](../README.md).
 
-The global rule (from `~/.claude/CLAUDE.md`):
+The rule of thumb: build pages from the library's shells and composites,
+the `realtime-modules/client` hooks, and the `integrations/realtime-modules`
+adapters where they fit, rather than hand-rolled HTML, CSS or inline styles.
 
-> Frontend pages, demos, examples, or showcases are **not complete** unless
-> they use ui-components shells/composites + `realtime-modules/client` hooks +
-> the `integrations/realtime-modules` adapters where they fit. Never ship
-> hand-rolled HTML/CSS/inline styles in any page or demo.
-
-If a needed primitive doesn't exist, **stop and ship the primitive to
-ui-components first**, then use it. Do not inline a one-off; the whole point
-of the library is to absorb that complexity. See
-[Missing primitive workflow](#missing-primitive-workflow) at the bottom.
+If a needed primitive doesn't exist, add it to ui-components and then use it
+instead of inlining a one-off; the point of the library is to absorb that
+complexity. See [Missing primitive workflow](#missing-primitive-workflow) at
+the bottom.
 
 ---
 
@@ -26,9 +22,9 @@ before reaching for `<div>`. All importable from the root unless noted.
 
 | Composite | Use for | Subpath if needed |
 |---|---|---|
-| `AppShell` | The outer chrome of any logged-in app: sidebar + topbar + content area. | `/layout` |
-| `AppLayout` | The room-shaped variant (rooms sidebar + presence + nested content). | `/layout` |
-| `CollapsibleSidebar` | Standalone sidebar with persisted collapsed state. | `/layout` |
+| `AppShell` | The outer chrome of any logged-in app: sidebar + topbar + content area. | root |
+| `AppLayout` | The room-shaped variant (rooms sidebar + presence + nested content). | root |
+| `CollapsibleSidebar` | Standalone sidebar with persisted collapsed state. | root |
 | `PageHeader` | Title + subtitle + actions + breadcrumbs strip at the top of any page. | `/shared` or root |
 | `ChannelHeader` | Channel/room title bar with presence + actions for chat/hangout surfaces. | `/shared` or root |
 | `ChatPanel` | Full chat surface: message list, composer, attachments, typing indicator. | `/social` or root |
@@ -39,9 +35,7 @@ before reaching for `<div>`. All importable from the root unless noted.
 | `CallWidget` | Self-contained call surface (controls + tiles + chat). | `/video` or root |
 | `CommandPalette` | Cmd-K command palette with registry hook + per-command hotkeys. | `/shared` or root |
 
-For the full surface map (every export, stability rating, intended consumer)
-see the **Surfaces** table in [README](../README.md#surfaces) and the entry-
-points table in [CLAUDE.md](../CLAUDE.md).
+For the full list of entry points see [README](../README.md#entry-points).
 
 ---
 
@@ -136,10 +130,10 @@ I need…
 │   └── <CodeBlock language="ts" code={...} />
 │
 ├── a documentation shell (sidebar + topnav + content)
-│   └── <DocsShell> from /layout
+│   └── <DocsShell> from the root
 │
 └── a settings page (left rail of section links + right pane)
-    └── <SettingsLayout> from /layout
+    └── <SettingsLayout> from the root
 ```
 
 ---
@@ -340,18 +334,16 @@ If you find yourself thinking *"there's no `<X>` for this; I'll just inline
 it here"* — **stop**. The hand-rolled version solves the problem once;
 adding `<X>` to ui-components solves it forever, for every consumer.
 
-1. Confirm the gap. Search the surfaces table in [README](../README.md), the
-   entry-points table in [CLAUDE.md](../CLAUDE.md), and the
-   `src/components/**` tree. Maybe it's there under a different name.
+1. Confirm the gap. Search the entry points in [README](../README.md) and
+   the `src/components/**` tree. Maybe it's there under a different name.
 
-2. File a hub task in the `ui-components` queue describing:
+2. Open an issue or change in this repo describing:
    - the composite you need,
    - the props you'd want it to accept,
    - which consumer page it unblocks.
 
-3. Pause the consumer-side work on this primitive. Pick up a different task
-   while the primitive is shipped. (Per the global rule, do not inline a
-   one-off "just for now" — there is no "for now.")
+3. Pause the consumer-side work on this primitive until it ships. Avoid
+   inlining a one-off "just for now"; it tends to stay.
 
 4. When the primitive lands in `ui-components`, bump your consumer pin and
    come back. The composite-first version is almost always smaller, more
@@ -364,10 +356,9 @@ adding `<X>` to ui-components solves it forever, for every consumer.
 - Every release-worthy change bumps the package version (`patch` for
   bugfix/internal/tests, `minor` for additive public API, `major` for
   breaking). Consumers should pin against a specific version.
-- Breaking changes to stable subpaths (`/`, `/shared`, `/layout`, `/social`,
-  `/video`, `/identity`, `/hooks`, `/styles.css`,
-  `/integrations/realtime-modules`) require a handoff to every consumer
-  before landing.
+- Breaking changes to stable subpaths (`/`, `/shared`, `/social`, `/video`,
+  `/identity`, `/hooks`, `/styles.css`, `/integrations/realtime-modules`)
+  need a major bump and a heads-up to every consumer before landing.
 - In-flux subpaths (`/doc-editor`, `/pipelines`, `/agents`, `/observability`,
   `/ingest`) may change shape between minors — pin to a minor and read the
   changelog before bumping.
@@ -376,16 +367,12 @@ adding `<X>` to ui-components solves it forever, for every consumer.
 
 ## See also
 
-- [`README.md`](../README.md) — surfaces table, install, dev loop.
-- [`CLAUDE.md`](../CLAUDE.md) — full exports map, no-touch list, hard rules.
-- [`docs/AUTONOMY_CHARTER.md`](AUTONOMY_CHARTER.md) — release-cadence and
-  per-task LOC cap for autonomous contributors.
+- [`README.md`](../README.md) — entry points, install, dev loop.
 - [`docs/integrations-realtime-modules.md`](integrations-realtime-modules.md)
   — adapter prop-shape contract for the `/integrations/realtime-modules`
   subpath.
-- [`ROADMAP.md`](../ROADMAP.md) — the 5-wave plan for current work.
 
-## Collection and composer inheritance (2.440.2)
+## Collection and composer inheritance
 
 Use `DensityProvider density="compact"` around the real application shell,
 not only test fixtures. Button, IconButton, Input, Select, SearchInput,
