@@ -16,7 +16,7 @@ export interface GalleryAsset {
   subtitle?: string;
   /**
    * Shown on the card, over the thumbnail's top-left corner: StatusPill props
-   * (rendered as a small StatusPill) or any node. The card's button is
+   * (rendered as a md StatusPill, 12px: the sm size is 10px, under the type floor) or any node. The card's button is
    * described by it, so a screen reader hears "Inspect Cup, Needs review".
    */
   status?: GalleryAssetStatus | ReactNode;
@@ -82,7 +82,7 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, onDragSt
           status text. Pointer events pass through to the card. */}
       {hasStatus && (
         <span id={statusId} data-gallery-status className="pointer-events-none absolute left-2 top-2 max-w-[calc(100%-1rem)]">
-          {isStatusProps(status) ? <StatusPill size="sm" {...status} /> : status}
+          {isStatusProps(status) ? <StatusPill size="md" {...status} /> : status}
         </span>
       )}
       {actions && (

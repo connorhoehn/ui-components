@@ -1,3 +1,7 @@
+## 2.503.1
+
+- `AssetGallery`: a card's `status` given as StatusPill props renders at `size="md"` (12px) instead of `sm` (10px), which fell under the type floor in consumer DOM audits.
+
 ## 2.503.0
 
 Fixes from the Storymaker Studio audit. Version note: an unpushed local branch (`audit/agent-discoverability`, page templates) also claims 2.501.0; it was never released from main, so this release follows main's 2.502.0 and that branch will need a new number when it lands.

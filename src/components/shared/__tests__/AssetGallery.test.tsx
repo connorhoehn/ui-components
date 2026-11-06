@@ -26,6 +26,8 @@ describe('AssetGallery', () => {
  const button=screen.getByRole('button',{name:'Inspect Cup'});
  expect(button).toHaveAccessibleDescription('Needs review');
  expect(button).not.toContainElement(pill);
+ // md (12px), not sm (10px): sm falls under the consumer type floor.
+ expect(pill.closest('[data-state]')!.className).toContain('text-[12px]');
  });
  it('renders a node status as given', () => {
  render(<AssetGallery label="Cast" items={[{id:'a',title:'Cup',status:<em>Approved</em>}]} onOpen={()=>{}} />);
