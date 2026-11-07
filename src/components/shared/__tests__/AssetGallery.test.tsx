@@ -51,7 +51,7 @@ describe('AssetGallery', () => {
  });
 });
 
-describe('AssetGallery tile actions and status (2.503.0)', () => {
+describe('AssetGallery tile actions and status (2.504.0)', () => {
   const item = { id: 'mina', title: 'Mina' };
   const setup = (menuOnSelect = false) => {
     const open = vi.fn(), develop = vi.fn(), art = vi.fn();

@@ -2,21 +2,12 @@ import { n as e } from "../Button-C-I3BxWI.js";
 import { g as t } from "../MediaIcons-_ai5Til2.js";
 import { c as n, l as r, n as i } from "../Text-BAAQrepu.js";
 import { t as a } from "../Modal-PO0F6rAp.js";
-<<<<<<< HEAD
 import { n as o } from "../Slider-DCKY5jPg.js";
 import { t as s } from "../DropdownMenu-DP3rRjEd.js";
-import { C as c } from "../BreakoutRoomsPanel-WejdbFuq.js";
-import { n as l, r as u } from "../RecordingConsentNotice-xcasITdM.js";
+import { C as c } from "../BreakoutRoomsPanel-DdDOzxDb.js";
+import { n as l, r as u } from "../RecordingConsentNotice-Bcz5w5On.js";
 import { i as d, n as f, r as p, t as m } from "../useDocumentImageUpload-Cd_KXczH.js";
-import { $ as h, A as g, B as ee, C as _, D as v, E as y, F as b, G as x, H as S, I as C, J as w, K as T, L as E, M as D, N as O, O as k, P as A, Q as j, R as M, S as N, St as P, T as F, U as I, V as te, W as ne, X as re, Y as ie, Z as L, _ as ae, _t as oe, a as se, at as R, b as ce, bt as z, c as B, ct as le, d as V, dt as ue, et as de, f as H, ft as fe, g as pe, gt as me, h as U, ht as he, i as ge, it as W, j as _e, k as ve, l as ye, lt as be, m as xe, mt as Se, n as Ce, nt as we, o as Te, ot as Ee, p as De, pt as Oe, q as ke, r as Ae, rt as je, s as Me, st as Ne, t as Pe, tt as Fe, u as Ie, ut as Le, v as Re, vt as ze, w as Be, x as Ve, xt as He, y as Ue, yt as We, z as Ge } from "../meeting-Rg7BRrJb.js";
-=======
-import { n as o } from "../Slider-DEbQCKD1.js";
-import { t as s } from "../DropdownMenu-DcFIdC5O.js";
-import { C as c } from "../BreakoutRoomsPanel-QoQ2mL_g.js";
-import { n as l, r as u } from "../RecordingConsentNotice-EH4yemQv.js";
-import { i as d, n as f, r as p, t as m } from "../useDocumentImageUpload-nQ26kXw3.js";
-import { $ as h, A as g, B as ee, C as _, D as v, E as y, F as b, G as x, H as S, I as C, J as w, K as T, L as E, M as D, N as O, O as k, P as A, Q as j, R as M, S as N, St as P, T as F, U as I, V as te, W as ne, X as re, Y as ie, Z as L, _ as ae, _t as oe, a as se, at as R, b as ce, bt as z, c as B, ct as le, d as V, dt as ue, et as de, f as H, ft as fe, g as pe, gt as me, h as U, ht as he, i as ge, it as W, j as _e, k as ve, l as ye, lt as be, m as xe, mt as Se, n as Ce, nt as we, o as Te, ot as Ee, p as De, pt as Oe, q as ke, r as Ae, rt as je, s as Me, st as Ne, t as Pe, tt as Fe, u as Ie, ut as Le, v as Re, vt as ze, w as Be, x as Ve, xt as He, y as Ue, yt as We, z as Ge } from "../meeting-BNBixSQY.js";
->>>>>>> origin/main
+import { $ as h, A as g, B as ee, C as _, D as v, E as y, F as b, G as x, H as S, I as C, J as w, K as T, L as E, M as D, N as O, O as k, P as A, Q as j, R as M, S as N, St as P, T as F, U as I, V as te, W as ne, X as re, Y as ie, Z as L, _ as ae, _t as oe, a as se, at as R, b as ce, bt as z, c as B, ct as le, d as V, dt as ue, et as de, f as H, ft as fe, g as pe, gt as me, h as U, ht as he, i as ge, it as W, j as _e, k as ve, l as ye, lt as be, m as xe, mt as Se, n as Ce, nt as we, o as Te, ot as Ee, p as De, pt as Oe, q as ke, r as Ae, rt as je, s as Me, st as Ne, t as Pe, tt as Fe, u as Ie, ut as Le, v as Re, vt as ze, w as Be, x as Ve, xt as He, y as Ue, yt as We, z as Ge } from "../meeting-CAMUvHNZ.js";
 import { createContext as Ke, useCallback as G, useContext as K, useEffect as q, useLayoutEffect as qe, useMemo as J, useRef as Y, useState as X, useSyncExternalStore as Je } from "react";
 import { Fragment as Ye, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { createPortal as Xe } from "react-dom";

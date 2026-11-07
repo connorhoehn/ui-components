@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.506.0",
+  "version": "2.507.0",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -136,6 +136,11 @@
     "docs/COMPONENT_INDEX.md",
     "docs/consumer-adoption.md",
     "docs/page-spec.md",
+    "docs/integrations/document-workspace.md",
+    "docs/chat-draft-continuity.md",
+    "docs/bundle-side-effects.md",
+    "src/components/shared/README.md",
+    "src/components/layout/README.md",
     "docs/integrations-realtime-modules.md",
     "docs/consumer-handoffs",
     "patterns",

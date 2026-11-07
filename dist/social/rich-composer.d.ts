@@ -530,7 +530,7 @@ export declare interface ComposerPrompt {
      * The context that asked this question (a page, section or record key such
      * as `assets/artwork`). A deck given a `scope` drops prompts scoped to any
      * other context, so a question raised on one page never follows the user to
-     * the next. Unscoped prompts show everywhere. Since 2.503.0.
+     * the next. Unscoped prompts show everywhere. Since 2.504.0.
      */
     scope?: string;
     /** The prepopulated header card. */
@@ -641,7 +641,7 @@ export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, inp
 /** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
 export declare interface ComposerPromptDeckOptions {
     /**
-     * The current context key (2.503.0). Prompts whose own `scope` differs are
+     * The current context key (2.504.0). Prompts whose own `scope` differs are
      * dropped, and changing the scope resets the deck — the open card, a
      * collapsed state, the last receipt and errors — so navigating to another
      * context never leaves the previous one's card on screen.
@@ -653,7 +653,7 @@ export declare interface ComposerPromptDeckProps {
     /** From `useComposerPromptDeck`; or pass `prompts` and the deck keeps its own state. */
     deck?: ComposerPromptDeckState;
     prompts?: readonly ComposerPrompt[];
-    /** With `prompts`: the current context key; see `ComposerPromptDeckOptions.scope`. Since 2.503.0. */
+    /** With `prompts`: the current context key; see `ComposerPromptDeckOptions.scope`. Since 2.504.0. */
     scope?: string | null;
     /** External answer input, when embedded above an existing editor. Without one, text/number prompts own a plain answer field; choices own focus. */
     input?: ComposerPromptInput | null;
@@ -1244,7 +1244,7 @@ export declare interface ConversationComposerOwnProps {
     prompts?: readonly ComposerPrompt[];
     /**
      * The context the composer is in (a page/section/record key). Prompts
-     * scoped elsewhere are dropped and a change resets the deck. Since 2.503.0.
+     * scoped elsewhere are dropped and a change resets the deck. Since 2.504.0.
      */
     promptScope?: string | null;
 }

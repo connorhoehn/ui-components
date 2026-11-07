@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-972 components across 20 entry points; 824 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+973 components across 20 entry points; 825 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -56,7 +56,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (9)
-- [Other](#other) (78)
+- [Other](#other) (79)
 - [Icons](#icons) (112)
 
 ## Page templates
@@ -951,6 +951,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `HeaderTrailFold` | `@connorhoehnslalom/ui-components/shared` | The collapsed header: one trail row, the title as its last crumb, then the badge and the expand chevron; actions on the right. |  |  |
 | `Highlight` | `@connorhoehnslalom/ui-components/shared` | Marks the matched search terms inside a run of text. | `shared-highlight` |  |
 | `IdentityProvider` | `@connorhoehnslalom/ui-components` | — |  |  |
+| `ImageCompare` | `@connorhoehnslalom/ui-components/shared` | Two or three images side by side for judging one against another — the original reference, the current version and a new candidate. | `shared-imagecompare` |  |
 | `ImageLightbox` | `@connorhoehnslalom/ui-components/shared` | Full-screen image overlay primitive. | `shared-imagelightbox` |  |
 | `ImageThumbnail` | `@connorhoehnslalom/ui-components/shared` | Square / aspect-ratio image preview with skeleton loading state and a graceful error fallback. | `image-imagethumbnail` |  |
 | `ImageUploader` | `@connorhoehnslalom/ui-components/shared` | Composes FileUploadDrop + ImageThumbnail + the host's uploadImage service into a single self-contained image picker. | `image-imageuploader` |  |

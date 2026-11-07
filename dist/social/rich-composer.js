@@ -4,27 +4,15 @@ import { c as n, n as r } from "../Button-C-I3BxWI.js";
 import { c as i, l as a, n as o } from "../Text-BAAQrepu.js";
 import { t as s } from "../Select-CpZyUWay.js";
 import { t as c } from "../FormField-CQ27qxWt.js";
-<<<<<<< HEAD
 import { t as l } from "../Textarea-CvdLeuO_.js";
 import { t as u } from "../DecisionPath-BC9qttuI.js";
 import { a as d, c as f, i as p, l as m, n as ee, r as h, t as g } from "../composerSendError-BTSwRiUg.js";
 import { a as _, i as v, n as y, r as b, t as x } from "../composerContext-BLn1-Nao.js";
 import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-Du5oOgKC.js";
-import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as ae, t as M, u as N } from "../RichChatComposer-C28KC2WL.js";
-import { t as oe } from "../ContextComposer-rfaUEumg.js";
-import { t as P } from "../AgentComposerDock-BPn5vJBU.js";
+import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as ae, t as M, u as N } from "../RichChatComposer-DV2DGfTE.js";
+import { t as oe } from "../ContextComposer-aPwiEy_A.js";
+import { t as P } from "../AgentComposerDock-BjPQqd1C.js";
 import { useCallback as F, useEffect as I, useId as se, useMemo as L, useRef as R, useState as z } from "react";
-=======
-import { t as l } from "../Textarea-BwvE1HPn.js";
-import { t as u } from "../DecisionPath-DsZclIl1.js";
-import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-BUIwnQlH.js";
-import { a as v, i as y, n as ee, r as b, t as x } from "../composerContext-BLn1-Nao.js";
-import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-tjSIC0L-.js";
-import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as M, t as N, u as P } from "../RichChatComposer-CCA_J0J7.js";
-import { t as ae } from "../ContextComposer-BFy24psc.js";
-import { t as F } from "../AgentComposerDock-CoG50bh2.js";
-import { useCallback as I, useEffect as L, useId as oe, useMemo as se, useRef as R, useState as z } from "react";
->>>>>>> origin/main
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx
 function ce(e) {

@@ -1,3 +1,8 @@
+## 2.507.0
+
+- Page specs (`/shared`): describe a page as data and render it with `PageFromSpec`. A `PageSpec` names a template (`collection`, `master-detail`, `detail`, `dashboard`, `settings`, `frame`); its content slots take `SectionSpec[]` / `LeafSpec[]`, never JSX, and each leaf `kind` is one library component (`button` with a required `variant`, `table` striped, `stats`, `key-values`, `form` over the `forms/` controls, `tabs`, `list`, `activity`, `search`, …). `custom` is the audited escape hatch (`reason` required, `data-page-spec-custom`). Apps add kinds by augmenting `PageSpecLeafKinds` and calling `registerLeafKind` or wrapping in `PageSpecProvider`; a kind registered after a page mounted renders without a remount. `definePage` and `tableLeaf<T>` type a spec. Templates accept `data-page-spec`. Reference: `docs/page-spec.md`; the `ui-page-build` skill makes a spec the default for new pages.
+- Merged upstream 2.503.0–2.503.1. `GalleryAsset.status` takes StatusPill props or any node (upstream) and still the `{ label, tone }` shape from 2.504.0 (`caution` and `accent` draw as `warning` and `info`); it now draws top-left as a md `StatusPill`, outside the tile button, instead of a bottom chip. `tileActions` / `menuOnSelect` and `actionsVisibility` work together.
+
 ## 2.506.0
 
 - `/shared` now exports the root-only layout components (`TopNav`, `NavTabs`, `ApiDegradedBanner`, `SidePane`, `SidePaneSplit`, `SettingsLayout`, `ViewportFillRegion`, `CollapsibleSidebar`, `DocsShell`…; not `AppLayout`, which wires the pipelines providers) and the `work`, `sidebar`, `hangout`, `inbox`, `change-review`, `image` and `misc` barrels (`WorkListFilters`, `CallPresenceIndicator`, `ErrorBoundary`…). One root-only name in an app shell kept the whole root barrel, and every optional peer, in consumer entry chunks. `/shared`'s static and dynamic peer sets are unchanged.
@@ -140,7 +145,7 @@ The inline multi-stage response flow aws-agentcore approved in its dispatch prot
 - Hangout creation uses shared compact forms; call rejoin forwards audio-only configuration. Card collection toolbars align to their content gutter.
 - Table headers and solid danger buttons meet text contrast in both themes; `--color-on-danger` is the shared danger-button foreground.
 - DOM audit coverage now checks page gutters, duplicate activity regions, card toolbars and painted combobox frames, with valid and broken fixtures.
-- Consumer migration and verification: [contextual hangouts handoff](docs/consumer-handoffs/contextual-hangouts.md).
+- Consumer migration and verification: the contextual hangouts handoff (removed from the repo in 2.503.0).
 
 ## 2.480.5
 

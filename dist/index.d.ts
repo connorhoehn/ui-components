@@ -2,6 +2,7 @@ import { AnchorHTMLAttributes } from 'react';
 import { Awareness } from 'y-protocols/awareness';
 import { ButtonHTMLAttributes } from 'react';
 import { Component } from 'react';
+import { ComponentType } from 'react';
 import { Context } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
@@ -215,6 +216,14 @@ export declare interface ActionRowPersonProps {
     size?: number;
 }
 
+/** `ActionRowList`: a short ruled list of things to open next. */
+export declare interface ActionRowsLeaf extends Omit<ActionRowListProps, 'className' | 'footer'> {
+    kind: 'list';
+    variant: 'action-rows';
+    /** "See all 11 work items →". */
+    footer?: ButtonLeaf;
+}
+
 /** Row tint. `neutral` (and absent) draws none. */
 export declare type ActionRowTone = Exclude<Tone, 'neutral'> | 'neutral';
 
@@ -393,6 +402,11 @@ export declare interface ActivityItem {
 }
 
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
+
+/** `WorkActivityList`: history, newest first. */
+export declare interface ActivityLeaf extends Omit<WorkActivityListProps, 'className'> {
+    kind: 'activity';
+}
 
 export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity, onError, }: ActivityPanelProps): JSX.Element;
 
@@ -1572,11 +1586,7 @@ declare type AssertTrue<T extends true> = T;
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-<<<<<<< HEAD
-export declare function AssetGallery({ items, variant, label, onOpen, actions, tileActions, menuOnSelect, onDragStart, className }: AssetGalleryProps): JSX.Element;
-=======
-export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, onDragStart, className }: AssetGalleryProps): JSX.Element;
->>>>>>> origin/main
+export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -1585,20 +1595,6 @@ export declare interface AssetGalleryProps {
     onOpen: (item: GalleryAsset) => void;
     actions?: (item: GalleryAsset) => ReactNode;
     /**
-<<<<<<< HEAD
-     * Icon actions for a tile (since 2.503.0): a compact toolbar over the
-     * thumbnail's corner, revealed on hover or keyboard focus (always shown on
-     * touch), with the chat message bar's roving keys. The same actions are
-     * the tile's context menu (right-click, the Menu key or Shift+F10).
-     */
-    tileActions?: (item: GalleryAsset) => readonly GalleryTileAction[];
-    /**
-     * With `tileActions`: selecting a tile opens its action menu — "Open"
-     * (`onOpen`) first, then the tile's actions — instead of opening it
-     * directly. Since 2.503.0.
-     */
-    menuOnSelect?: boolean;
-=======
      * When the `actions` row is visible. `'hover'` (default, the pre-2.503
      * behaviour) reveals it on pointer hover or keyboard focus within the card,
      * and always on touch screens. `'always'` shows it at rest — use it when an
@@ -1606,7 +1602,20 @@ export declare interface AssetGalleryProps {
      * regenerate): an action nobody can see is an action nobody finds.
      */
     actionsVisibility?: 'hover' | 'always';
->>>>>>> origin/main
+    /**
+     * Icon actions for a tile (since 2.504.0): a compact toolbar over the
+     * thumbnail's top-right corner, revealed on hover or keyboard focus (always
+     * shown on touch), with the chat message bar's roving keys. The same
+     * actions are the tile's context menu (right-click, the Menu key or
+     * Shift+F10).
+     */
+    tileActions?: (item: GalleryAsset) => readonly GalleryTileAction[];
+    /**
+     * With `tileActions`: selecting a tile opens its action menu — "Open"
+     * (`onOpen`) first, then the tile's actions — instead of opening it
+     * directly. Since 2.504.0.
+     */
+    menuOnSelect?: boolean;
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
@@ -2047,6 +2056,11 @@ export declare function Badge({ variant, value, color, 'aria-label': ariaLabel, 
 
 export declare type BadgeColor = 'accent' | 'success' | 'danger' | 'muted';
 
+/** `Badge` (count, dot, pulse). */
+export declare interface BadgeLeaf extends Omit<BadgeProps, 'className'> {
+    kind: 'badge';
+}
+
 export declare interface BadgeProps {
     variant: BadgeVariant;
     /** Required for variant="count". Ignored otherwise. */
@@ -2062,6 +2076,13 @@ export declare interface BadgeProps {
 export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
 export declare function Banner({ variant, title, layout, icon, onDismiss, action, accent, meta, size, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+
+/** `Banner`. */
+export declare interface BannerLeaf extends Omit<BannerProps, 'children' | 'className' | 'style' | 'action' | 'icon' | 'meta'> {
+    kind: 'banner';
+    message?: string;
+    action?: ButtonLeaf;
+}
 
 export declare interface BannerProps {
     variant?: BannerVariant;
@@ -2452,6 +2473,10 @@ export declare interface BuildRailSectionOptions<T> {
     'data-testid'?: string;
 }
 
+export declare type BuiltinLeafKind = BuiltinLeafSpec['kind'];
+
+export declare type BuiltinLeafSpec = ButtonLeaf | ButtonGroupLeaf | MenuLeaf | TableLeaf | StatsLeaf | StatStripLeaf | KeyValuesLeaf | StatusLeaf | BadgeLeaf | TextLeaf | MetaLeaf | EmptyLeaf | BannerLeaf | ListLeaf | FormLeaf | TabsLeaf | ChartLeaf | ActivityLeaf | SearchLeaf | CustomLeaf;
+
 /** Three dotted lines: "bulleted list". Since 2.386.5. */
 export declare function BulletListIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -2464,6 +2489,21 @@ export declare function Button({ variant, size: requestedSize, tone, disabled, f
  * writing `font-medium`/`font-semibold` so the app has one button weight.
  */
 export declare const BUTTON_WEIGHT = "font-semibold";
+
+/** `ToolbarGroup` of buttons and menus: related actions side by side. */
+export declare interface ButtonGroupLeaf {
+    kind: 'button-group';
+    /** Names the group for screen readers. */
+    label?: string;
+    items: ReadonlyArray<ButtonLeaf | MenuLeaf>;
+}
+
+/** `Button`. `variant` is required: one primary action per region, never the default by accident. */
+export declare interface ButtonLeaf extends Omit<ButtonProps, 'children' | 'variant' | 'ref' | 'style' | 'className'> {
+    kind: 'button';
+    label: string;
+    variant: ButtonVariant;
+}
 
 export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
     /**
@@ -4070,6 +4110,21 @@ export declare interface ChannelRecordingsPanelProps {
 /** Bars on a baseline: measurements, "how much of this over time". */
 export declare function ChartIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** `TrendSparkline`: the library's light (inline SVG, no chart peer) chart. */
+export declare interface ChartLeaf {
+    kind: 'chart';
+    type: 'sparkline';
+    points: number[];
+    /** What the line shows, for screen readers. */
+    label: string;
+    yMin?: number;
+    yMax?: number;
+    width?: number;
+    height?: number;
+    showFill?: boolean;
+    showLastPoint?: boolean;
+}
+
 export declare interface ChatAttachment {
     /** Correlation id shared with the sender's in-flight transfer. */
     id: string;
@@ -5612,7 +5667,7 @@ export declare interface CollectionPageProps<T = unknown> extends Omit<HTMLAttri
     headerActions?: ReactNode;
     toolbar?: CollectionToolbarProps;
     /**
-     * Where the toolbar draws (since 2.503.0). `auto` (default) puts its
+     * Where the toolbar draws (since 2.504.0). `auto` (default) puts its
      * search, filters and count in the header's actions row — before
      * `headerActions` — whenever nothing in it needs a full row (no active
      * `selection` prop, no `children`), so a collection page has no separate
@@ -5656,9 +5711,40 @@ export declare interface CollectionPageProps<T = unknown> extends Omit<HTMLAttri
     gutter?: PageGutter;
 }
 
+/** `CollectionPage`. */
+export declare interface CollectionPageSpec extends SpecHeader {
+    template: 'collection';
+    toolbar?: Omit<CollectionToolbarProps, 'children' | 'filterPanel' | 'placement'> & {
+        filterPanel?: {
+            content: LeafList;
+            activeCount?: number;
+            onClear?: () => void;
+        };
+    };
+    toolbarPlacement?: 'auto' | 'header' | 'band';
+    /** The body as a striped `DataTable`; wins over `sections`. */
+    table?: Omit<TableLeaf, 'kind'>;
+    /** Any other body. */
+    sections?: SectionList;
+    loading?: boolean;
+    error?: string | null;
+    onRetry?: () => void;
+    empty?: {
+        title: string;
+        description?: string;
+        action?: ButtonLeaf;
+    };
+    /** A sections body has no rows. */
+    isEmpty?: boolean;
+    /** The selected row in a `SidePane`; `null` while nothing is selected. */
+    detail?: (Omit<CollectionPageDetail, 'content' | 'footer' | 'trailing'> & {
+        content: SectionList;
+    }) | null;
+}
+
 /**
  * The toolbar's search. Collapsed to a search icon by default (since
- * 2.503.0): it expands on click or `/` and folds away again while empty, so a
+ * 2.504.0): it expands on click or `/` and folds away again while empty, so a
  * collection never carries a full-width search band. `collapsible: false`
  * keeps the open field.
  */
@@ -5689,7 +5775,7 @@ export declare function CollectionToolbar({ label, layout, search, filters, filt
 /**
  * Whether a toolbar can live in a page header's actions row instead of its
  * own band: nothing in it needs the full row. A selection replaces the row's
- * controls, and `children` are host content of unknown width. Since 2.503.0.
+ * controls, and `children` are host content of unknown width. Since 2.504.0.
  */
 export declare function collectionToolbarFitsHeader(toolbar: CollectionToolbarProps): boolean;
 
@@ -5703,7 +5789,7 @@ export declare interface CollectionToolbarProps {
      * Host-built content for the same Filters popover, for filters that are not
      * single selects (multi-select facets such as `WorkListFilters`). Drawn
      * after any `filters`; `activeCount` joins the trigger's count and
-     * `onClear` runs with the panel's Clear. Since 2.503.0.
+     * `onClear` runs with the panel's Clear. Since 2.504.0.
      */
     filterPanel?: {
         content: ReactNode;
@@ -5713,14 +5799,14 @@ export declare interface CollectionToolbarProps {
     /** A count line ("12 of 40 runs"). Hidden while `resultCount` is 0 — the empty state says it instead. */
     summary?: ReactNode;
     /**
-     * How many items the collection is showing right now (since 2.503.0). At
+     * How many items the collection is showing right now (since 2.504.0). At
      * `0` the toolbar draws no count: "0 of 0 artworks" above an empty state is
      * chrome describing nothing. Leave it undefined to always draw `summary`.
      */
     resultCount?: number;
     /**
      * `band` (default) is the toolbar's own row above the collection. `header`
-     * (since 2.503.0) is the same controls with no row of their own, for a
+     * (since 2.504.0) is the same controls with no row of their own, for a
      * page header's actions row — `CollectionPage` uses it automatically.
      */
     placement?: 'band' | 'header';
@@ -7760,6 +7846,18 @@ export declare interface CustomFieldTypeDisplay {
     renderer?: string;
 }
 
+/**
+ * The audited escape hatch: anything a spec cannot express. Renders inside a
+ * `data-page-spec-custom="<reason>"` marker so the audit can count and list
+ * every one. Prefer registering a leaf kind.
+ */
+export declare interface CustomLeaf {
+    kind: 'custom';
+    render: () => ReactNode;
+    /** Why no library leaf fits ("canvas editor", "third-party map"). Required. */
+    reason: string;
+}
+
 /** Dark theme preset — proper dark UI design, not simply inverted.
  *
  * MUST stay consistent with the `[data-theme="dark"]` token block in
@@ -7784,7 +7882,7 @@ export declare type DashboardColumns = 2 | 3 | 4;
  *     { id: 'errors', title: 'Recent errors', content: <EventList … /> },
  *   ]} />
  */
-export declare function DashboardPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, stats, kpis, panels, columns, children, gutter, className, 'data-testid': testId, }: DashboardPageProps): JSX.Element;
+export declare function DashboardPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, stats, kpis, panels, columns, children, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DashboardPageProps): JSX.Element;
 
 export declare interface DashboardPageProps extends PageTemplateHeaderProps {
     /** The stat row as data — drawn as a `StatStrip`. */
@@ -7801,6 +7899,22 @@ export declare interface DashboardPageProps extends PageTemplateHeaderProps {
     gutter?: PageGutter;
     className?: string;
     'data-testid'?: string;
+    /** Set by `PageFromSpec`: the spec template this page was built from. */
+    'data-page-spec'?: string;
+}
+
+/** `DashboardPage`: a stat row, then a grid of titled panels. */
+export declare interface DashboardPageSpec extends SpecHeader {
+    template: 'dashboard';
+    stats?: StatStripItem[];
+    panels?: ReadonlyArray<{
+        id: string;
+        title: string;
+        action?: LeafList;
+        span?: 1 | 2 | 3;
+        content: LeafList;
+    }>;
+    columns?: DashboardColumns;
 }
 
 /** One panel of the grid. */
@@ -8049,6 +8163,9 @@ export declare const DEFAULT_PIPELINE_ICONS: string[];
 
 export declare function DefaultRenderer({ section, fragment, ydoc, provider, user, editable, onAddItem, onUpdateItem, onRemoveItem, onUpdateCursorInfo, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
 
+/** Typed identity for authoring a spec: `const page = definePage({ template: 'collection', … })`. */
+export declare function definePage<S extends PageSpec>(spec: S): S;
+
 /** id → degree (count of links touching that id), from a flat list of
  *  {source, target} pairs. Self-loops (shouldn't occur in this graph) count
  *  once, not twice. */
@@ -8215,7 +8332,7 @@ export declare interface DetailHeaderProps {
  *   ]}
  *   aside={<ContextColumn … />} />
  */
-export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, }: DetailPageProps): JSX.Element;
+export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DetailPageProps): JSX.Element;
 
 export declare interface DetailPageProps {
     /** What the record is. */
@@ -8248,6 +8365,35 @@ export declare interface DetailPageProps {
     /** Default `page` — header, tabs and bodies at `--ui-page-gutter`. */
     gutter?: PageGutter;
     className?: string;
+    'data-testid'?: string;
+    /** Set by `PageFromSpec`: the spec template this page was built from. */
+    'data-page-spec'?: string;
+}
+
+/** `DetailPage`: header, then tabs for the record's facets. */
+export declare interface DetailPageSpec {
+    template: 'detail';
+    title: string;
+    badge?: LeafSpec;
+    description?: string;
+    /** The metadata line — a `meta` leaf. */
+    meta?: LeafSpec;
+    actions?: LeafList;
+    breadcrumbs?: BreadcrumbItem[];
+    titleAs?: 'h1' | 'h2' | 'h3';
+    tabs?: ReadonlyArray<{
+        id: string;
+        label: string;
+        badge?: number | string;
+        disabled?: boolean;
+        content: SectionList;
+    }>;
+    activeTab?: string;
+    onTabChange?: (id: string) => void;
+    /** The body when there are no tabs. */
+    sections?: SectionList;
+    aside?: LeafList;
+    gutter?: PageGutter;
     'data-testid'?: string;
 }
 
@@ -9430,6 +9576,18 @@ export declare interface EmojiShortcode {
     keywords?: readonly string[];
 }
 
+/** `EmptyState`. */
+export declare interface EmptyLeaf extends Pick<EmptyStateProps, 'size' | 'layout' | 'align' | 'density' | 'tone' | 'actionsDirection'> {
+    kind: 'empty';
+    title: string;
+    description?: string;
+    /** The one action ("New connector"). */
+    action?: ButtonLeaf;
+    /** Several actions, as EmptyState data (links, copyable commands). */
+    actions?: EmptyStateAction[];
+    'data-testid'?: string;
+}
+
 export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size: sizeProp, layout, density, align, actionsDirection, details, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
@@ -10519,6 +10677,17 @@ export declare function formatTypingBanner(names: string[]): string;
  */
 export declare function FormField({ label, hint, error, required, layout, children, className, labelClassName, style, hintTestId, 'data-testid': testId, }: FormFieldProps): JSX.Element;
 
+declare interface FormFieldBase {
+    /** Stable key; defaults to the label. */
+    id?: string;
+    label: string;
+    hint?: string;
+    error?: string;
+    required?: boolean;
+    disabled?: boolean;
+    'data-testid'?: string;
+}
+
 export declare type FormFieldLayout = 'stacked' | 'inline';
 
 export declare interface FormFieldProps {
@@ -10570,6 +10739,55 @@ export declare interface FormFieldProps {
     labelClassName?: string;
     style?: CSSProperties;
     'data-testid'?: string;
+}
+
+/** One field of a `form` leaf: `FormField` around a `forms/` control. */
+export declare type FormFieldSpec = FormFieldBase & ({
+    control: 'input';
+    value: string;
+    onChange: (value: string) => void;
+    type?: InputType;
+    placeholder?: string;
+    name?: string;
+} | {
+    control: 'textarea';
+    value: string;
+    onChange: (value: string) => void;
+    rows?: number;
+    placeholder?: string;
+    name?: string;
+} | {
+    control: 'select';
+    value: string;
+    onChange: (value: string) => void;
+    options: SelectOption[];
+    placeholder?: string;
+    searchable?: boolean;
+    name?: string;
+} | {
+    control: 'number';
+    value: number | undefined;
+    onChange: (value: number) => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    unit?: string;
+    placeholder?: string;
+    name?: string;
+} | {
+    control: 'checkbox';
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+} | {
+    control: 'toggle';
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+});
+
+/** A stack of `FormField`s, each wrapping an `Input`/`Select`/`Textarea`/`NumberInput`/`Checkbox`/`Switch`. */
+export declare interface FormLeaf {
+    kind: 'form';
+    fields: ReadonlyArray<FormFieldSpec | false | null | undefined>;
 }
 
 export declare function FormRow({ children, stackBelow, gap, className, 'data-testid': testId, }: FormRowProps): JSX.Element;
@@ -10724,6 +10942,24 @@ export declare function ForwardIcon({ size, ...rest }: GlyphProps): JSX.Element;
  */
 export declare function forwardOriginLabel(from: ForwardedFrom): string;
 
+/** `PageFrame`: a form, an overview, anything no other template fits. */
+export declare interface FramePageSpec extends SpecHeader {
+    template: 'frame';
+    sections: SectionList;
+    trailControls?: LeafList;
+    trailLink?: {
+        label: string;
+        href: string;
+    } | null;
+    collapsed?: boolean;
+    onToggleCollapsed?: () => void;
+    body?: 'scroll' | 'fill' | 'docked';
+    dockedBody?: 'scroll' | 'fill';
+    bodyGutter?: PageGutter;
+    /** Docked under the body (a save bar). */
+    footer?: LeafList;
+}
+
 /**
  * The unabbreviated date, for the separator's accessible name and for the
  * `title` on a row's HH:MM.
@@ -10759,19 +10995,6 @@ export declare interface GalleryAsset {
     title: string;
     src?: string;
     subtitle?: string;
-<<<<<<< HEAD
-    status?: GalleryAssetStatus;
-}
-
-/** A tile's live state ("Running · Generate", "Waiting for review"), drawn over its thumbnail. Since 2.503.0. */
-declare interface GalleryAssetStatus {
-    label: string;
-    tone?: ToneOrAlias;
-}
-
-/** One icon action on a tile — the chat hover toolbar's action shape. Since 2.503.0. */
-declare type GalleryTileAction = MessageAction;
-=======
     /**
      * Shown on the card, over the thumbnail's top-left corner: StatusPill props
      * (rendered as a md StatusPill, 12px: the sm size is 10px, under the type floor) or any node. The card's button is
@@ -10782,10 +11005,18 @@ declare type GalleryTileAction = MessageAction;
 
 /**
  * A card's status as StatusPill props — `{ state: 'warning', label: 'Needs review' }`.
- * `tone` and `state` mean the same thing, as on StatusPill.
+ * `tone` and `state` mean the same thing, as on StatusPill. `tone` also takes
+ * any library tone (the 2.504–2.506 shape, `{ label, tone }`): `caution`
+ * draws as `warning`, `accent` as `info`.
  */
-export declare type GalleryAssetStatus = Pick<StatusPillProps, 'state' | 'tone' | 'label' | 'meta'>;
->>>>>>> origin/main
+export declare type GalleryAssetStatus = Pick<StatusPillProps, 'state' | 'tone' | 'label' | 'meta'> | {
+    label: string;
+    tone?: ToneOrAlias;
+    meta?: string;
+};
+
+/** One icon action on a tile — the chat hover toolbar's action shape. Since 2.504.0. */
+declare type GalleryTileAction = MessageAction;
 
 /** Runtime configuration read from env vars */
 export declare interface GatewayConfig {
@@ -11221,6 +11452,12 @@ export declare interface GroupedListGroup {
     defaultOpen?: boolean;
     /** What an open group with no rows says. Default "Nothing here". */
     emptyLabel?: string;
+}
+
+/** `GroupedList`: two-line rows under collapsible group headers. */
+export declare interface GroupedListLeaf extends Omit<GroupedListProps, 'className'> {
+    kind: 'list';
+    variant: 'grouped';
 }
 
 export declare interface GroupedListProps {
@@ -13030,6 +13267,9 @@ export declare interface InviteToCallDialogProps {
     shareLink?: string;
 }
 
+/** True for a kind the library renders itself. */
+export declare function isBuiltinLeafKind(kind: string): kind is BuiltinLeafKind;
+
 /** True when `command` is offered in `ctx`. */
 export declare function isChatCommandInScope(command: Pick<ChatCommand, 'scope'>, ctx: ChatCommandScopeContext): boolean;
 
@@ -13185,6 +13425,11 @@ export declare interface KeyValueProps {
     'data-testid'?: string;
 }
 
+/** `KeyValue`: labelled facts. */
+export declare interface KeyValuesLeaf extends Omit<KeyValueProps, 'className'> {
+    kind: 'key-values';
+}
+
 export declare interface KnowledgeBaseNodeData {
     type: 'knowledge-base';
     knowledgeBaseId: string;
@@ -13286,6 +13531,14 @@ export declare function layoutTypedNodes(nodes: TypedCanvasNode[], edges: Pick<T
     x: number;
     y: number;
 }>;
+
+export declare type LeafKind = LeafSpec['kind'];
+
+/** A list of leaves. `false`/`null`/`undefined` entries are skipped, so `cond && { kind: … }` works. */
+export declare type LeafList = ReadonlyArray<LeafSpec | false | null | undefined>;
+
+/** One leaf: exactly one library (or registered) component, picked by `kind`. */
+export declare type LeafSpec = BuiltinLeafSpec | RegisteredLeafSpec;
 
 /**
  * @deprecated Pre-2.106 spelling. 'docked' is now 'window'; everything
@@ -13463,6 +13716,8 @@ export declare function listDLQEntries(options?: {
 
 /** Three dots and three lines: a bulleted list. Since 2.386.0. */
 export declare function ListIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare type ListLeaf = GroupedListLeaf | ActionRowsLeaf;
 
 /**
  * Fetch pipeline run history from the backend API.
@@ -13823,7 +14078,7 @@ export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, r
  *   {selected && <DesignRecord design={selected} />}
  * </MasterDetailPage>
  */
-export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, body, dockedBody, fold, railWidth, gutter, className, 'data-testid': testId, }: MasterDetailPageProps): JSX.Element;
+export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, body, dockedBody, fold, railWidth, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: MasterDetailPageProps): JSX.Element;
 
 export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     /** The rail, as data (`ListRail`): title, count, search header, rows body, footer, label. */
@@ -13852,6 +14107,30 @@ export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     gutter?: PageGutter;
     className?: string;
     'data-testid'?: string;
+    /** Set by `PageFromSpec`: the spec template this page was built from. */
+    'data-page-spec'?: string;
+}
+
+/** `MasterDetailPage`. */
+export declare interface MasterDetailPageSpec extends SpecHeader {
+    template: 'master-detail';
+    list: Omit<ListRail, 'actions' | 'header' | 'body' | 'footer'> & {
+        actions?: LeafList;
+        /** Under the rail head: a `search` leaf, a filter menu. */
+        header?: LeafList;
+        /** The rows: a `list` leaf, or an `empty` leaf. */
+        body: LeafList;
+        footer?: LeafList;
+    };
+    /** The selected record. `null`/omitted: `emptyDetail` shows. */
+    detail?: SectionList | null;
+    emptyDetail?: LeafList;
+    aside?: LeafList;
+    footer?: LeafList;
+    body?: 'scroll' | 'docked';
+    dockedBody?: 'scroll' | 'fill';
+    fold?: ListRailLayoutProps['fold'];
+    railWidth?: ListRailLayoutProps['railWidth'];
 }
 
 export declare interface MasterDetailProps<T> {
@@ -14399,6 +14678,12 @@ declare interface MentionUser {
 /** Three stacked bars: "open the menu", or "unfold the rail this collapsed into". */
 export declare function MenuIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** `DropdownMenu`. The trigger is a label, drawn by the menu's own trigger button. */
+export declare interface MenuLeaf extends Omit<DropdownMenuProps, 'trigger' | 'className' | 'triggerClassName'> {
+    kind: 'menu';
+    trigger: string;
+}
+
 /** Later commands win by trigger (case-insensitive); the first occurrence keeps its position. */
 export declare function mergeChatCommands(...layers: ReadonlyArray<readonly ChatCommand[] | undefined>): ChatCommand[];
 
@@ -14595,6 +14880,12 @@ export declare interface MessageRowProps {
      */
     contentLayout?: 'inline' | 'block';
     className?: string;
+}
+
+/** `MetaLine`: the dot-separated secondary line under a title. */
+export declare interface MetaLeaf extends Omit<MetaLineProps, 'className' | 'items' | 'separator'> {
+    kind: 'meta';
+    items: ReadonlyArray<string>;
 }
 
 export declare function MetaLine({ items, separator, size, tone, className, 'data-testid': testId, }: MetaLineProps): JSX.Element | null;
@@ -15671,6 +15962,26 @@ export declare interface PageFrameProps extends PageTemplateHeaderProps, PageTem
     bodyClassName?: string;
 }
 
+/**
+ * Use this to build a page from data: a `PageSpec` (template → regions → sections → leaves) rendered through the matching page template, every leaf a library component.
+ *
+ * Emits `data-page-spec="<template>"` on the template root and `data-spec-leaf="<kind>"` on each leaf.
+ *
+ * @example
+ * <PageFromSpec spec={definePage({
+ *   template: 'collection', title: 'Runs',
+ *   actions: [{ kind: 'button', variant: 'primary', label: 'New run', onClick: onNew }],
+ *   toolbar: { label: 'Run controls', search: { value: q, onChange: setQ } },
+ *   table: { data: runs, keyField: (r) => r.id, columns, onRowClick: open },
+ *   empty: { title: 'No runs yet' },
+ * })} />
+ */
+export declare function PageFromSpec({ spec }: PageFromSpecProps): JSX.Element;
+
+export declare interface PageFromSpecProps {
+    spec: PageSpec;
+}
+
 /** `page`: the template draws the `--ui-page-gutter` inset. `none`: the host already did. */
 export declare type PageGutter = 'page' | 'none';
 
@@ -15781,7 +16092,7 @@ export declare interface PageSectionProps {
     empty?: ReactNode;
     /**
      * A count beside the title in a neutral chip — "Needs attention 1". Absent
-     * draws none, and so does zero (2.503.0): the empty state says it, a "0"
+     * draws none, and so does zero (2.504.0): the empty state says it, a "0"
      * chip over it is chrome describing nothing. Since 2.392.0.
      */
     count?: number;
@@ -15815,6 +16126,44 @@ export declare interface PageSectionProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** A whole page as data, discriminated on `template`. */
+export declare type PageSpec = CollectionPageSpec | MasterDetailPageSpec | DetailPageSpec | DashboardPageSpec | SettingsPageSpec | FramePageSpec;
+
+/** The component a registered kind renders: its spec's props, plus the leaf marker to put on its root. */
+export declare type PageSpecLeafComponent<K extends keyof PageSpecLeafKinds> = ComponentType<PageSpecLeafKinds[K] & {
+    kind: K;
+    'data-spec-leaf': K;
+}>;
+
+/**
+ * App-defined leaf kinds. Augment it to add one, then register its component:
+ *
+ *   declare module '@connorhoehnslalom/ui-components/shared' {
+ *     interface PageSpecLeafKinds { 'cost-meter': { spent: number; budget: number } }
+ *   }
+ *   registerLeafKind('cost-meter', CostMeter);
+ *
+ * Each key becomes a `{ kind: key } & props` member of `LeafSpec`.
+ */
+export declare interface PageSpecLeafKinds {
+}
+
+/** A map of registered kinds to their components. */
+export declare type PageSpecLeafMap = {
+    [K in keyof PageSpecLeafKinds]?: PageSpecLeafComponent<K>;
+};
+
+/** Provides app-defined leaf kinds to every `PageFromSpec` / `renderLeaf` under it. */
+export declare function PageSpecProvider({ leaves, children }: PageSpecProviderProps): JSX.Element;
+
+export declare interface PageSpecProviderProps {
+    /** Components for app-defined kinds, for this subtree. Wins over `registerLeafKind`. */
+    leaves: PageSpecLeafMap;
+    children?: ReactNode;
+}
+
+export declare type PageSpecTemplate = PageSpec['template'];
 
 /** The header every page template draws: the trail, the title row, the actions. */
 export declare interface PageTemplateHeaderProps {
@@ -19294,7 +19643,19 @@ export declare function redriveDLQEntries(ids: string[], options?: {
     preview?: boolean;
 }): Promise<DLQRedriveResponse>;
 
+export declare type RegisteredLeafSpec = {
+    [K in keyof PageSpecLeafKinds]: {
+        kind: K;
+    } & PageSpecLeafKinds[K];
+}[keyof PageSpecLeafKinds];
+
 export declare function registerFieldType(def: FieldTypeDefinition): void;
+
+/**
+ * Make an app-defined kind renderable everywhere. Returns an unregister function.
+ * The kind must be declared on `PageSpecLeafKinds`, and must not be a built-in kind.
+ */
+export declare function registerLeafKind<K extends keyof PageSpecLeafKinds>(kind: K, component: PageSpecLeafComponent<K>): () => void;
 
 /**
  * @deprecated The (sectionType × viewMode) renderer registry only serves the
@@ -19331,6 +19692,23 @@ export declare interface RemoteTileSlotProps {
 
 /** Drop a slide. The last slide cannot be removed — a deck of none is not a deck. */
 export declare function removeSlide(spec: DeckSpec, id: string): DeckSpec;
+
+/** One leaf as an element, for composing a spec leaf into JSX. */
+export declare function renderLeaf(leaf: LeafSpec, key?: string | number): ReactNode;
+
+/** A leaf list as siblings; `null` when the list renders nothing (so a template's slot stays absent). */
+export declare function renderLeaves(list: LeafList | null | undefined): ReactNode;
+
+/** One section: a `PageSection` when titled, else its leaves in a `Stack` (a `SectionStack` when `divided`). */
+export declare function renderSection(section: SectionSpec, options?: RenderSectionOptions, key?: string | number): ReactNode;
+
+export declare interface RenderSectionOptions {
+    /** The heading size for sections that do not set one. Default `md`. */
+    size?: 'md' | 'sm';
+}
+
+/** Sections in a `SectionStack`, a hairline between each. `null` when there are none. */
+export declare function renderSections(list: SectionList | null | undefined, options?: RenderSectionOptions): ReactNode;
 
 /** Two arrows chasing each other: something that runs again — a loop, a re-run. */
 export declare function RepeatIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -20839,7 +21217,7 @@ export declare interface SearchInputProps {
      */
     'data-testid'?: string;
     /**
-     * Since 2.503.0 — a toolbar search. While collapsed the field is a search
+     * Since 2.504.0 — a toolbar search. While collapsed the field is a search
      * `IconButton` (named by `aria-label`/`placeholder`); a click, or the
      * `shortcut` key anywhere outside a text field, expands it and focuses the
      * input. It collapses again on Escape or blur while empty, and never while
@@ -20856,6 +21234,11 @@ export declare interface SearchInputProps {
 
 /** @see SurfaceTone — which colour family the field paints in. */
 export declare type SearchInputTone = SurfaceTone;
+
+/** `SearchInput` (`collapsible` for a header search). */
+export declare interface SearchLeaf extends Omit<SearchInputProps, 'className' | 'style' | 'inputClassName'> {
+    kind: 'search';
+}
 
 /**
  * Host search. Must honour `signal` (the palette aborts it when the query
@@ -21021,6 +21404,9 @@ export declare interface SectionLayoutProps {
     'data-testid'?: string;
 }
 
+/** A list of sections. `false`/`null`/`undefined` entries are skipped. */
+export declare type SectionList = ReadonlyArray<SectionSpec | false | null | undefined>;
+
 export declare type SectionRenderer = React.ComponentType<SectionRendererProps>;
 
 export declare interface SectionRendererProps {
@@ -21080,6 +21466,26 @@ export declare interface SectionReview {
     status: 'reviewed' | 'approved' | 'changes_requested';
     timestamp: string;
     comment?: string;
+}
+
+/**
+ * A titled block (`PageSection`); sections stack in a `SectionStack` with a
+ * hairline between each. Untitled, the body renders as a plain `Stack`.
+ */
+export declare interface SectionSpec {
+    id?: string;
+    title?: string;
+    description?: string;
+    /** A count chip beside the title (hidden at zero). */
+    count?: number;
+    /** The section has nothing to show: one quiet line beside the title. */
+    empty?: string;
+    actions?: LeafList;
+    body: LeafList;
+    /** A hairline between the body's leaves. */
+    divided?: boolean;
+    /** Heading size. Default `md` (`sm` inside detail tabs). */
+    size?: 'md' | 'sm';
 }
 
 export declare function SectionStack({ children, density: densityProp, divided, as, className, ref, ...rest }: SectionStackProps): JSX.Element;
@@ -21341,13 +21747,40 @@ export declare interface SettingsLayoutProps {
  *     { id: 'members', label: 'Members', content: <MembersForm /> },
  *   ]} />
  */
-export declare function SettingsPage({ breadcrumbs, gutter, className, 'data-testid': testId, ...layout }: SettingsPageProps): JSX.Element;
+export declare function SettingsPage({ breadcrumbs, gutter, className, 'data-testid': testId, 'data-page-spec': spec, ...layout }: SettingsPageProps): JSX.Element;
 
 export declare interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
     /** The trail above the settings rail. */
     breadcrumbs?: BreadcrumbItem[];
     /** Default `page` — the trail at `--ui-page-gutter`. The rail stays flush. */
     gutter?: PageGutter;
+    /** Set by `PageFromSpec`: the spec template this page was built from. */
+    'data-page-spec'?: string;
+}
+
+/** `SettingsPage`: a section rail, one section body, a save bar while dirty. */
+export declare interface SettingsPageSpec {
+    template: 'settings';
+    title: string;
+    subtitle?: string;
+    breadcrumbs?: BreadcrumbItem[];
+    sections: ReadonlyArray<{
+        id: string;
+        label: string;
+        description?: string;
+        content: SectionList;
+    }>;
+    activeSectionId?: string;
+    onSectionChange?: (id: string) => void;
+    dirty?: boolean;
+    saveLabel?: string;
+    cancelLabel?: string;
+    onSave?: () => void;
+    onCancel?: () => void;
+    saving?: boolean;
+    railWidth?: number;
+    gutter?: PageGutter;
+    'data-testid'?: string;
 }
 
 export declare interface SettingsSection {
@@ -21906,6 +22339,27 @@ export declare interface SparklineProps {
 /** A speaker with sound waves: output volume / "Test sound". */
 export declare function SpeakerIcon({ size, ...rest }: IconProps): JSX.Element;
 
+declare interface SpecHeader {
+    title: string;
+    description?: string;
+    breadcrumbs?: BreadcrumbItem[];
+    /** The header's action row. */
+    actions?: LeafList;
+    /** Beside the title — a `status` leaf, usually. */
+    badge?: LeafSpec;
+    back?: PageHeaderBack;
+    density?: Density;
+    titleAs?: 'h1' | 'h2' | 'h3';
+    /** Default `page` for every template. */
+    gutter?: PageGutter;
+    'data-testid'?: string;
+}
+
+/** Renders one leaf as its library (or registered) component. */
+export declare function SpecLeaf({ leaf }: {
+    leaf: LeafSpec;
+}): ReactNode;
+
 export declare function Spinner({ size, color, className, style, decorative, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
 
 export declare interface SpinnerProps {
@@ -22364,6 +22818,15 @@ export declare interface StatsCardProps {
     style?: CSSProperties;
 }
 
+/** `KPIGrid` of `StatCard`s. */
+export declare interface StatsLeaf {
+    kind: 'stats';
+    items: ReadonlyArray<Omit<StatCardProps, 'as' | 'style' | 'className'>>;
+    columns?: KPIGridColumns;
+    mdColumns?: KPIGridColumns;
+    dense?: boolean;
+}
+
 export declare function StatStrip({ items, frameless, connectors, variant, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
@@ -22400,6 +22863,11 @@ export declare interface StatStripItem {
      * continuous reading of a stepped fact. Wins over `progress`.
      */
     track?: ReactNode;
+}
+
+/** `StatStrip`: a row of small stats in one card, where the numbers are context. */
+export declare interface StatStripLeaf extends Omit<StatStripProps, 'className'> {
+    kind: 'stat-strip';
 }
 
 export declare interface StatStripProps {
@@ -22487,6 +22955,11 @@ export declare interface StatusDotProps {
 }
 
 export declare type StatusDotSize = 'xs' | 'sm' | 'md';
+
+/** `StatusPill`. */
+export declare interface StatusLeaf extends Omit<StatusPillProps, 'className' | 'icon'> {
+    kind: 'status';
+}
 
 export declare function StatusPill({ state: stateProp, tone, label, icon, meta, size, variant, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
 
@@ -23209,6 +23682,14 @@ export declare interface TableHeadProps extends HTMLAttributes<HTMLTableSectionE
     children: ReactNode;
 }
 
+/** `DataTable`, striped unless `striped: false`. Use `tableLeaf<T>()` to type the rows. */
+export declare interface TableLeaf<T = any> extends Omit<DataTableProps<T>, 'className'> {
+    kind: 'table';
+}
+
+/** Typed identity for a `table` leaf, so `columns` and `keyField` check against the row type. */
+export declare function tableLeaf<T>(leaf: Omit<TableLeaf<T>, 'kind'>): TableLeaf<T>;
+
 export declare interface TableProps extends HTMLAttributes<HTMLTableElement> {
     children: ReactNode;
     /** Row density for every cell inside. Default `md`. Since 2.434.0. */
@@ -23265,6 +23746,25 @@ export declare interface TabPanelProps {
 }
 
 export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, overflowBelow, }: TabsProps): JSX.Element;
+
+/** `Tabs` + `TabPanel`: one viewport with tabs instead of stacked cards. */
+export declare interface TabsLeaf {
+    kind: 'tabs';
+    /** Names the tab list. */
+    label: string;
+    items: ReadonlyArray<{
+        id: string;
+        label: string;
+        badge?: number | string;
+        disabled?: boolean;
+        content: LeafList;
+    }>;
+    /** Controlled tab. Uncontrolled (first enabled) when omitted. */
+    value?: string;
+    onValueChange?: (id: string) => void;
+    variant?: TabsVariant;
+    size?: 'sm' | 'md';
+}
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -23644,6 +24144,12 @@ export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLT
 export declare function TextEditorRenderer(props: SectionRendererProps): JSX.Element;
 
 export declare const textFieldType: FieldTypeDefinition;
+
+/** `Text`. */
+export declare interface TextLeaf extends Omit<TextProps, 'children' | 'className' | 'onClick' | 'role'> {
+    kind: 'text';
+    text: string;
+}
 
 export declare interface TextProps {
     /** Type scale step. Since 2.420.0; omitted: inherits. */
@@ -24081,7 +24587,7 @@ export declare interface ToolbarProps {
     /** Set by `CollectionToolbar`: `active` while the row shows a selection in place of its controls. Since 2.442.0. */
     'data-collection-selection'?: 'idle' | 'active';
     'data-collection-layout'?: 'table' | 'cards';
-    /** Set by `CollectionToolbar`: `header` when its controls sit in a page header's actions row. Since 2.503.0. */
+    /** Set by `CollectionToolbar`: `header` when its controls sit in a page header's actions row. Since 2.504.0. */
     'data-collection-placement'?: 'band' | 'header';
 }
 
