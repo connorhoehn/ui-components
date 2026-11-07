@@ -56,6 +56,8 @@ export interface DetailPageProps {
   gutter?: PageGutter;
   className?: string;
   'data-testid'?: string;
+  /** Set by `PageFromSpec`: the spec template this page was built from. */
+  'data-page-spec'?: string;
 }
 
 /**
@@ -74,7 +76,7 @@ export interface DetailPageProps {
  */
 export function DetailPage({
   title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, activeTab, onTabChange, children, aside,
-  gutter = 'page', className, 'data-testid': testId,
+  gutter = 'page', className, 'data-testid': testId, 'data-page-spec': spec,
 }: DetailPageProps) {
   const idPrefix = useId();
   const firstEnabled = tabs?.find((t) => !t.disabled)?.id ?? tabs?.[0]?.id ?? '';
@@ -91,7 +93,7 @@ export function DetailPage({
   const trail = !!breadcrumbs && breadcrumbs.length > 0;
 
   return (
-    <div className={cn('flex h-full min-h-0 min-w-0 flex-row', className)} data-page-template="detail" data-testid={testId}>
+    <div className={cn('flex h-full min-h-0 min-w-0 flex-row', className)} data-page-template="detail" data-page-spec={spec} data-testid={testId}>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-page-column="">
         <div className={cn('flex shrink-0 min-w-0 flex-col gap-2', gx, trail ? 'pt-2' : 'pt-3')} data-detail-page-header="" data-page-trail="">
           {trail && <Breadcrumbs items={breadcrumbs!} separator="›" maxItems={5} className="min-w-0" />}

@@ -7,6 +7,7 @@ Paths below are relative to the package root (`node_modules/@connorhoehnslalom/u
 ## Start here
 
 - [Component index](docs/COMPONENT_INDEX.md): every exported component grouped by job, with import path, one-line description, Storybook id and deprecated flag. The "Canonical choices" table at the top names one component per common job and what not to use it for. Generated from the source by `npm run docs:index`.
+- [Page specs](docs/page-spec.md): the default for a new page. Describe it as data (`PageSpec`: template, sections, leaves) and render it with `PageFromSpec` from `/shared`; every leaf `kind` is one library component.
 - [Consumer adoption guide](docs/consumer-adoption.md): pick the page archetype first, then the pieces inside the page; before/after refactors of common hand-rolled patterns.
 
 ## Starters (page templates)

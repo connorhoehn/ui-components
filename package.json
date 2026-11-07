@@ -135,6 +135,7 @@
     "skills/ui-page-build",
     "docs/COMPONENT_INDEX.md",
     "docs/consumer-adoption.md",
+    "docs/page-spec.md",
     "docs/integrations-realtime-modules.md",
     "docs/consumer-handoffs",
     "patterns",

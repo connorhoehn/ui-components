@@ -11,6 +11,8 @@ export interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
   breadcrumbs?: BreadcrumbItem[];
   /** Default `page` — the trail at `--ui-page-gutter`. The rail stays flush. */
   gutter?: PageGutter;
+  /** Set by `PageFromSpec`: the spec template this page was built from. */
+  'data-page-spec'?: string;
 }
 
 /**
@@ -25,10 +27,10 @@ export interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
  *     { id: 'members', label: 'Members', content: <MembersForm /> },
  *   ]} />
  */
-export function SettingsPage({ breadcrumbs, gutter = 'page', className, 'data-testid': testId = 'settings-page', ...layout }: SettingsPageProps) {
+export function SettingsPage({ breadcrumbs, gutter = 'page', className, 'data-testid': testId = 'settings-page', 'data-page-spec': spec, ...layout }: SettingsPageProps) {
   const trail = !!breadcrumbs && breadcrumbs.length > 0;
   return (
-    <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="settings" data-page-column="" data-testid={testId}>
+    <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="settings" data-page-column="" data-page-spec={spec} data-testid={testId}>
       {trail && (
         <div className={cn('shrink-0 min-w-0 border-b border-border py-2', gutter === 'page' && PAGE_GUTTER_X)} data-page-trail="">
           <Breadcrumbs items={breadcrumbs!} separator="›" maxItems={5} className="min-w-0" />

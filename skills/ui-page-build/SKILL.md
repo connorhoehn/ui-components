@@ -7,6 +7,42 @@ Compose pages from the library. Never hand-roll a page, table, control or
 section: the DOM audit cannot measure DOM the library did not render, and its
 `element.unmarked` rule fails it.
 
+## Page specs: the default for a new page
+
+Describe a new page as data and render it with `PageFromSpec`. No slot takes
+JSX, so the page cannot hold a hand-rolled element; the template underneath
+owns header, toolbar and scroll rules.
+
+```tsx
+import { PageFromSpec, definePage } from '@connorhoehnslalom/ui-components/shared';
+
+const spec = definePage({
+  template: 'detail',
+  title: run.name,
+  breadcrumbs: trail,
+  badge: { kind: 'status', tone: 'success', label: 'Succeeded' },
+  meta: { kind: 'meta', items: [run.agent, run.duration] },
+  actions: [{ kind: 'button', variant: 'secondary', label: 'Re-run', onClick: rerun }],
+  tabs: [
+    { id: 'summary', label: 'Summary', content: [
+      { title: 'Inputs', body: [{ kind: 'key-values', items: run.inputs }] },
+      { title: 'Cost', body: [{ kind: 'stat-strip', items: run.cost }] },
+    ] },
+    { id: 'activity', label: 'Activity', content: [{ body: [{ kind: 'activity', events: run.events }] }] },
+  ],
+});
+
+export const RunPage = () => <PageFromSpec spec={spec} />;
+```
+
+`template` is `collection`, `master-detail`, `detail`, `dashboard`,
+`settings` or `frame`; sections hold leaves, and each leaf `kind` is one
+library component. Every `button` needs a `variant`. For something no kind
+covers, register an app kind (`PageSpecLeafKinds` + `registerLeafKind`)
+before using `{ kind: 'custom', reason, render }`. Full reference:
+[`docs/page-spec.md`](../../docs/page-spec.md). Write JSX against the
+templates below only for what a spec cannot express (a canvas, an editor).
+
 ## 0. Read the index first
 
 Before writing JSX, read `node_modules/@connorhoehnslalom/ui-components/docs/COMPONENT_INDEX.md`

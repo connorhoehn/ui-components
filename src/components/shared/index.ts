@@ -551,6 +551,8 @@ export type { SettingsPageProps } from './SettingsPage';
 export { SectionLayout } from './SectionLayout';
 export type { SectionLayoutProps, SectionLayoutHeader, SectionLayoutFold } from './SectionLayout';
 export type { PageGutter, PageTemplateHeaderProps, PageTemplateTrailProps } from './pageTemplate';
+// Page specs (since 2.507.0): a page as data, rendered through the templates above.
+export * from './page-spec';
 export * from './ActivityResumeChip';
 export * from './ComposerSurface';
 export { AssetGallery } from './AssetGallery';

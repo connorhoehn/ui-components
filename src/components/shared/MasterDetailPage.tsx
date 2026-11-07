@@ -49,6 +49,8 @@ export interface MasterDetailPageProps extends PageTemplateHeaderProps {
   gutter?: PageGutter;
   className?: string;
   'data-testid'?: string;
+  /** Set by `PageFromSpec`: the spec template this page was built from. */
+  'data-page-spec'?: string;
 }
 
 /**
@@ -72,14 +74,14 @@ export interface MasterDetailPageProps extends PageTemplateHeaderProps {
  */
 export function MasterDetailPage({
   title, description, breadcrumbs, actions, badge, back, density, titleAs,
-  list, children, emptyDetail, aside, footer, body = 'scroll', dockedBody = 'scroll', fold, railWidth, gutter = 'page', className, 'data-testid': testId,
+  list, children, emptyDetail, aside, footer, body = 'scroll', dockedBody = 'scroll', fold, railWidth, gutter = 'page', className, 'data-testid': testId, 'data-page-spec': spec,
 }: MasterDetailPageProps) {
   const selected = children != null && children !== false;
   const docked = body === 'docked';
   const bodyClass = cn('flex min-w-0 flex-col gap-3 pt-3', gutter === 'page' && cn(PAGE_GUTTER_X, PAGE_GUTTER_B));
   const content = selected ? children : (emptyDetail ?? <EmptyState title="Select an item from the list" />);
   return (
-    <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="master-detail" data-testid={testId}>
+    <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="master-detail" data-page-spec={spec} data-testid={testId}>
       <ListRailLayout
         list={list}
         header={<TemplateHeader {...{ title, description, breadcrumbs, actions, badge, back, density, titleAs, gutter }} />}

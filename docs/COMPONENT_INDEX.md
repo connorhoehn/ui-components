@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-969 components across 20 entry points; 821 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+972 components across 20 entry points; 824 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -15,6 +15,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 | Job | Use | Import | Notes | Don't use for |
 |---|---|---|---|---|
+| A new page (the default) | `PageFromSpec` | `@connorhoehnslalom/ui-components/shared` | Describe the page as data (`PageSpec`: `template` → regions → `SectionSpec[]` → `LeafSpec[]`) and render it; `definePage(spec)` types it. Each leaf `kind` (`button`, `table`, `stats`, `form`, `tabs`, …) is one library component, so the page cannot contain hand-rolled markup. Reference: `docs/page-spec.md`. | Not for what a spec cannot express (a canvas, an editor): use the JSX template directly, or a registered leaf kind (`registerLeafKind` / `PageSpecProvider`) before reaching for `custom`. |
+| App-defined leaf kinds | `PageSpecProvider` | `@connorhoehnslalom/ui-components/shared` | Supplies components for the kinds an app declares on `PageSpecLeafKinds` (module augmentation), so they type-check in a spec; `registerLeafKind` does the same globally. | Not to replace a built-in kind (it throws); not for one-off markup (that is a `custom` leaf with a `reason`). |
 | Frame for any page | `PageFrame` | `@connorhoehnslalom/ui-components/shared` | The outer frame of every routed page: title row, width and gutters. Use it (or a template built on it) instead of a hand-rolled `<div className="p-6 max-w-…">`. | Not for panels or drawers inside a page. |
 | A list / collection page | `CollectionPage` | `@connorhoehnslalom/ui-components/shared` | Title, description, header actions and a `CollectionToolbar` (search, filters, view switch) over the body. Pass rows as `table` (a striped `DataTable` with its `loading`/`empty`/`error` states) or a custom body as `children`; pass `gutter="page"` (its default is `none`). | Not for a list with a persistent detail pane (use `MasterDetailPage`) or a single record. |
 | A list with a detail panel | `MasterDetailPage` | `@connorhoehnslalom/ui-components/shared` | Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.) | Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`). |
@@ -39,7 +41,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 ## Contents
 
-- [Page templates](#page-templates) (7)
+- [Page templates](#page-templates) (10)
 - [Shells & layouts](#shells--layouts) (41)
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (59)
 - [Tables & lists](#tables--lists) (31)
@@ -66,8 +68,11 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DetailPage` | `@connorhoehnslalom/ui-components/shared` | Use this when a page shows one record: `DetailHeader` (title, badge, meta, actions, trail), `Tabs` for its sections instead of a stack of Cards, and an optional `ContextColumn` on the right. | `templates-detailpage` |  |
 | `MasterDetailPage` | `@connorhoehnslalom/ui-components/shared` | Use this when a page is a list you pick from and the picked record beside it: list rail on the left, header and record on the right, an empty-selection state. | `templates-masterdetailpage` |  |
 | `PageFrame` | `@connorhoehnslalom/ui-components/shared` | Use this when a page is a form, an overview or any page no other template fits: trail, title/actions, and a body at the page gutter. | `templates-pageframe` |  |
+| `PageFromSpec` | `@connorhoehnslalom/ui-components/shared` | Use this to build a page from data: a `PageSpec` (template → regions → sections → leaves) rendered through the matching page template, every leaf a library component. | `pagespec-pagefromspec` |  |
+| `PageSpecProvider` | `@connorhoehnslalom/ui-components/shared` | Provides app-defined leaf kinds to every `PageFromSpec` / `renderLeaf` under it. | `pagespec-pagespecprovider` |  |
 | `SectionLayout` | `@connorhoehnslalom/ui-components/shared` | Use this when a page lives in a sectioned area: the section rail on the left, optionally the page's list as a second rail, and the content column (trail row, title band, a body whose command composer docks at the colu… | `templates-sectionlayout` |  |
 | `SettingsPage` | `@connorhoehnslalom/ui-components/shared` | Use this when a page edits settings in sections: a section rail, one scrolling section body and a sticky save bar while dirty (`SettingsLayout`), under the page trail. | `templates-settingspage` |  |
+| `SpecLeaf` | `@connorhoehnslalom/ui-components/shared` | Renders one leaf as its library (or registered) component. | `pagespec-leaves` |  |
 
 ## Shells & layouts
 

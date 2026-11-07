@@ -353,6 +353,7 @@ export const GROUPS = [
 const CANONICAL_GROUP = {
   PageFrame: 'Page templates', CollectionPage: 'Page templates', MasterDetailPage: 'Page templates',
   DetailPage: 'Page templates', SettingsPage: 'Page templates', SectionLayout: 'Page templates',
+  PageFromSpec: 'Page templates', PageSpecProvider: 'Page templates', SpecLeaf: 'Page templates',
   AppShell: 'Shells & layouts', AppLayout: 'Shells & layouts', CollapsibleSidebar: 'Shells & layouts',
   WorkArea: 'Shells & layouts', SubNavLayout: 'Shells & layouts', SettingsLayout: 'Shells & layouts',
   PageHeader: 'Page structure, sections & dividers', PageSection: 'Page structure, sections & dividers',
@@ -417,6 +418,8 @@ function groupOf(name, decl) {
 // ---------------------------------------------------------------------------
 
 const CANONICAL = [
+  ['A new page (the default)', 'PageFromSpec', 'Describe the page as data (`PageSpec`: `template` → regions → `SectionSpec[]` → `LeafSpec[]`) and render it; `definePage(spec)` types it. Each leaf `kind` (`button`, `table`, `stats`, `form`, `tabs`, …) is one library component, so the page cannot contain hand-rolled markup. Reference: `docs/page-spec.md`.', 'Not for what a spec cannot express (a canvas, an editor): use the JSX template directly, or a registered leaf kind (`registerLeafKind` / `PageSpecProvider`) before reaching for `custom`.'],
+  ['App-defined leaf kinds', 'PageSpecProvider', 'Supplies components for the kinds an app declares on `PageSpecLeafKinds` (module augmentation), so they type-check in a spec; `registerLeafKind` does the same globally.', 'Not to replace a built-in kind (it throws); not for one-off markup (that is a `custom` leaf with a `reason`).'],
   ['Frame for any page', 'PageFrame', 'The outer frame of every routed page: title row, width and gutters. Use it (or a template built on it) instead of a hand-rolled `<div className="p-6 max-w-…">`.', 'Not for panels or drawers inside a page.'],
   ['A list / collection page', 'CollectionPage', 'Title, description, header actions and a `CollectionToolbar` (search, filters, view switch) over the body. Pass rows as `table` (a striped `DataTable` with its `loading`/`empty`/`error` states) or a custom body as `children`; pass `gutter="page"` (its default is `none`).', 'Not for a list with a persistent detail pane (use `MasterDetailPage`) or a single record.'],
   ['A list with a detail panel', 'MasterDetailPage', 'Selectable list on one side, the selected record on the other; owns selection layout and the narrow-screen fallback. (`MasterDetail` is the lower-level rail + pane primitive it builds on.)', 'Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`).'],
