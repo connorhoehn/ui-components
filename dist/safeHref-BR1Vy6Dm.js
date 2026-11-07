@@ -52,4 +52,12 @@ function i({ size: n = "md", className: r }) {
 	});
 }
 //#endregion
-export { r as n, i as t };
+//#region src/lib/safeHref.ts
+var a = /^(https?:|mailto:)/i;
+function o(e) {
+	if (!e) return null;
+	let t = e.trim();
+	return t.startsWith("/") && t[1] !== "/" && t[1] !== "\\" || t.startsWith("#") || a.test(t) ? t : null;
+}
+//#endregion
+export { i as n, r, o as t };

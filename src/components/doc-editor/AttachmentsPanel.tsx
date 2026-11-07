@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { safeHref } from '../../lib/safeHref';
 import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
@@ -175,14 +176,23 @@ function AttachmentRow({ attachment, onRemove, editable }: {
       </span>
       <div className={cn('flex-1 min-w-0')}>
         {isFile ? (
-          <a
-            href={(attachment as FileAttachment).url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn('text-[13px] text-info-fg font-medium no-underline hover:underline')}
-          >
-            {(attachment as FileAttachment).name}
-          </a>
+          (() => {
+            const file = attachment as FileAttachment;
+            const href = safeHref(file.url);
+            // Refused schemes (javascript:, data:, ...) render as plain text.
+            return href ? (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn('text-[13px] text-info-fg font-medium no-underline hover:underline')}
+              >
+                {file.name}
+              </a>
+            ) : (
+              <span className={cn('text-[13px] text-text-primary font-medium')}>{file.name}</span>
+            );
+          })()
         ) : (
           <span className={cn('text-[13px] text-text-primary font-medium')}>
             {(attachment as DocumentLink).title}

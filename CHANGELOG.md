@@ -1,3 +1,7 @@
+## 2.507.1
+
+- Security: `SharedTextEditor` renders collaborator content as text instead of assigning it to `innerHTML` (stored XSS); formatting no longer round-trips. `EmailTemplateFormPage` previews in a `sandbox=""` iframe. `AttachmentsPanel` runs hrefs through the shared `safeHref` (now `src/lib/safeHref.ts`, which also refuses protocol-relative `//` links) and shows refused schemes as text. `@tiptap/core` floor raised to ^3.30.5 and `prosemirror-view` to >=1.42.3 (GHSA-cp6q-959q-f8rh, GHSA-c8x8-7fp4-3x9w).
+
 ## 2.507.0
 
 - Page specs (`/shared`): describe a page as data and render it with `PageFromSpec`. A `PageSpec` names a template (`collection`, `master-detail`, `detail`, `dashboard`, `settings`, `frame`); its content slots take `SectionSpec[]` / `LeafSpec[]`, never JSX, and each leaf `kind` is one library component (`button` with a required `variant`, `table` striped, `stats`, `key-values`, `form` over the `forms/` controls, `tabs`, `list`, `activity`, `search`, …). `custom` is the audited escape hatch (`reason` required, `data-page-spec-custom`). Apps add kinds by augmenting `PageSpecLeafKinds` and calling `registerLeafKind` or wrapping in `PageSpecProvider`; a kind registered after a page mounted renders without a remount. `definePage` and `tableLeaf<T>` type a spec. Templates accept `data-page-spec`. Reference: `docs/page-spec.md`; the `ui-page-build` skill makes a spec the default for new pages.

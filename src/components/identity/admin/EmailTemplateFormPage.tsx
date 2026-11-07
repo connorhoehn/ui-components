@@ -124,9 +124,13 @@ export function EmailTemplateFormPage({
             className="resize-y font-mono"
           />
           {showPreview && (
-            <div
-              className="border border-border rounded-sm p-4 bg-surface min-h-[200px] mt-2"
-              dangerouslySetInnerHTML={{ __html: htmlBody }}
+            // sandbox="" disables scripts, forms and same-origin access, so a
+            // saved template cannot run code in the admin's session.
+            <iframe
+              title="Email template preview"
+              sandbox=""
+              srcDoc={htmlBody}
+              className="border border-border rounded-sm bg-surface min-h-[200px] w-full mt-2"
             />
           )}
         </div>

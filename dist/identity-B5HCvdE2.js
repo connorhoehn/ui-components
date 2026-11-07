@@ -1667,9 +1667,11 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 								rows: 10,
 								className: "resize-y font-mono"
 							}),
-							w && /* @__PURE__ */ A("div", {
-								className: "border border-border rounded-sm p-4 bg-surface min-h-[200px] mt-2",
-								dangerouslySetInnerHTML: { __html: p }
+							w && /* @__PURE__ */ A("iframe", {
+								title: "Email template preview",
+								sandbox: "",
+								srcDoc: p,
+								className: "border border-border rounded-sm bg-surface min-h-[200px] w-full mt-2"
 							})
 						]
 					}),

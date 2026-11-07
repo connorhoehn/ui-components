@@ -1,6 +1,14 @@
 // frontend/src/components/SharedTextEditor.tsx
 //
-// WYSIWYG rich text editor bound to useCRDT content and applyLocalEdit.
+// Text editor bound to useCRDT content and applyLocalEdit.
+//
+// Security / behaviour change: collaborator content is rendered as TEXT
+// (textContent), never as HTML, and edits are sent back as text. It used to
+// be assigned to innerHTML, which let any collaborator store script in
+// everyone else's page (stored XSS). DOMPurify is not a dependency here, so
+// rich formatting no longer round-trips: the toolbar commands still run in the
+// local DOM, but only the text survives a sync. For formatted collaborative
+// editing use the Tiptap-based editor.
 
 import { useRef, useEffect } from 'react';
 import { cn } from '../../lib/cn';
@@ -33,8 +41,8 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
   // Sync remote CRDT changes into the editor without clobbering cursor position
   useEffect(() => {
     if (!editorRef.current || internalChange.current) return;
-    if (editorRef.current.innerHTML !== content) {
-      editorRef.current.innerHTML = content;
+    if (editorRef.current.textContent !== content) {
+      editorRef.current.textContent = content;
     }
   }, [content]);
 
@@ -47,7 +55,7 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
   const flush = () => {
     if (!editorRef.current) return;
     internalChange.current = true;
-    applyLocalEdit(editorRef.current.innerHTML);
+    applyLocalEdit(editorRef.current.textContent ?? '');
     setTimeout(() => { internalChange.current = false; }, 0);
   };
 

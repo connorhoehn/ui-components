@@ -27,7 +27,7 @@ import { t as Le } from "./FormField-CQ27qxWt.js";
 import { t as Re } from "./SearchInput-D5AvHiLn.js";
 import { n as ze, r as Be, t as Ve } from "./DataTable-BASH2GCG.js";
 import { t as He } from "./EmptyState-pOG782nO.js";
-import { n as Ue, t as We } from "./ThinkingDots-BHtlGy_Q.js";
+import { n as Ue, r as We } from "./safeHref-BR1Vy6Dm.js";
 import "./Drawer-DmPnSirj.js";
 import { t as Ge } from "./Spinner-CYflBP-c.js";
 import { n as Ke, t as qe } from "./StatusPill-cLjwbEQM.js";
@@ -35,7 +35,7 @@ import { t as Je } from "./Sparkline-B-z1C40M.js";
 import { i as Ye } from "./focusTrap-D9J7npjl.js";
 import { t as Xe } from "./FilterChip-BHmUM2tY.js";
 import "./SkeletonCard-D3FL0TB7.js";
-import { $ as Ze, Q as Qe, at as $e, et, it as tt, t as nt } from "./ChatPanel-DjYpjtqu.js";
+import { $ as Ze, Q as Qe, at as $e, et, it as tt, t as nt } from "./ChatPanel-C01wXs5Z.js";
 import { n as rt, t as it } from "./Slider-DCKY5jPg.js";
 import { t as at } from "./DropdownMenu-DP3rRjEd.js";
 import "./DockedPanelContext-pH9A5z1h.js";
@@ -62,7 +62,7 @@ import { t as Et } from "./PresenceAvatars-BEy1DnNW.js";
 import "./FileUploadDrop-CF2-g14E.js";
 import { t as Dt } from "./ActivityFeed-CF1uFMm2.js";
 import { a as Ot, c as kt, d as At, i as jt, l as Mt, o as Nt } from "./railType-AsIPWdQ5.js";
-import { n as Pt, o as Ft, r as It, t as Lt } from "./ActivityPanel-BjicR50G.js";
+import { n as Pt, o as Ft, r as It, t as Lt } from "./ActivityPanel-MTx9T-ju.js";
 import { t as Rt } from "./useMeasuredWidth-B4suQnvy.js";
 import "./SectionLabel-Ch_rkHQZ.js";
 import "./InlinePlaceholder-DiPQ7hOM.js";
@@ -2400,7 +2400,7 @@ function Wr({ role: e, content: t, toolCalls: r, streaming: i = !1, agentName: a
 				children: t ? s ? s(t) : /* @__PURE__ */ X("span", {
 					className: "whitespace-pre-wrap",
 					children: t
-				}) : i ? /* @__PURE__ */ X(We, {}) : null
+				}) : i ? /* @__PURE__ */ X(Ue, {}) : null
 			})
 		]
 	});
@@ -2431,11 +2431,11 @@ function Gr({ content: e, streaming: t = !1, defaultOpen: r = !1, className: i }
 					className: "text-[11px] font-semibold uppercase tracking-wide",
 					children: a
 				}),
-				t && !e && /* @__PURE__ */ X(We, { size: "sm" })
+				t && !e && /* @__PURE__ */ X(Ue, { size: "sm" })
 			]
 		}), /* @__PURE__ */ X("div", {
 			className: "px-3 py-2 text-xs text-[var(--color-text-secondary)] italic border-t border-[var(--color-border)] bg-surface whitespace-pre-wrap leading-relaxed",
-			children: e || /* @__PURE__ */ X(We, {})
+			children: e || /* @__PURE__ */ X(Ue, {})
 		})]
 	});
 }
@@ -7342,7 +7342,7 @@ function ms({ title: e, description: t, headerActions: r, toolbar: i, toolbarPla
 		...i,
 		placement: "header"
 	}), r] }) : r, T = f ? f.data.length : null, E = !p && m == null && (f ? T === 0 : !!_) && g != null, D;
-	D = m != null && m !== !1 ? typeof m == "string" ? /* @__PURE__ */ X(Ue, {
+	D = m != null && m !== !1 ? typeof m == "string" ? /* @__PURE__ */ X(We, {
 		title: "Couldn't load this list",
 		description: m,
 		...h ? {
@@ -11315,7 +11315,7 @@ function ou({ items: e, groups: t, count: r = e.length, title: i = "Work", curre
 				onClearFilters: ee,
 				className: "mb-3 max-w-[420px]"
 			}),
-			c ? /* @__PURE__ */ X(Ke, { label: "Loading work…" }) : l ? /* @__PURE__ */ X(Ue, {
+			c ? /* @__PURE__ */ X(Ke, { label: "Loading work…" }) : l ? /* @__PURE__ */ X(We, {
 				title: "Work unavailable",
 				body: l,
 				action: u ? /* @__PURE__ */ X(f, {
@@ -14471,12 +14471,12 @@ var Hd = [
 function Ud({ content: e, applyLocalEdit: t, disabled: r = !1, hasConflict: i = !1, onDismissConflict: a }) {
 	let o = q(null), s = q(!1);
 	W(() => {
-		!o.current || s.current || o.current.innerHTML !== e && (o.current.innerHTML = e);
+		!o.current || s.current || o.current.textContent !== e && (o.current.textContent = e);
 	}, [e]);
 	let c = (e) => {
 		document.execCommand(e, !1), o.current?.focus(), l();
 	}, l = () => {
-		o.current && (s.current = !0, t(o.current.innerHTML), setTimeout(() => {
+		o.current && (s.current = !0, t(o.current.textContent ?? ""), setTimeout(() => {
 			s.current = !1;
 		}, 0));
 	};

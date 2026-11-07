@@ -74,3 +74,17 @@ describe('AttachmentsPanel document scoping', () => {
     expect(screen.queryByText('a-spec.pdf')).toBeNull();
   });
 });
+
+describe('AttachmentsPanel link schemes', () => {
+  it('renders data: and javascript: attachments as text, not anchors', () => {
+    localStorage.setItem(key('d'), JSON.stringify([
+      { id: 'a', kind: 'file', name: 'evil-data', url: 'data:text/html,<script>1</script>', addedAt: new Date(0).toISOString() },
+      { id: 'b', kind: 'file', name: 'evil-js', url: 'javascript:alert(1)', addedAt: new Date(0).toISOString() },
+      { id: 'c', kind: 'file', name: 'fine', url: 'https://x/fine', addedAt: new Date(0).toISOString() },
+    ]));
+    render(<AttachmentsPanel documentId="d" editable={false} />);
+    expect(screen.getByText('evil-data').closest('a')).toBeNull();
+    expect(screen.getByText('evil-js').closest('a')).toBeNull();
+    expect(screen.getByText('fine').closest('a')).not.toBeNull();
+  });
+});

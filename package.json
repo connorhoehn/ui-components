@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.507.0",
+  "version": "2.507.1",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -196,7 +196,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@excalidraw/excalidraw": "^0.18.0",
-    "@tiptap/core": "^3.0.0",
+    "@tiptap/core": "^3.30.5",
     "@tiptap/extension-collaboration": "^3.22.3",
     "@tiptap/extension-link": "^3.22.3",
     "@tiptap/extension-mention": "^3.22.3",
@@ -204,6 +204,7 @@
     "@tiptap/extension-task-item": "^3.22.3",
     "@tiptap/extension-task-list": "^3.22.3",
     "@tiptap/pm": "^3.0.0",
+    "prosemirror-view": ">=1.42.3",
     "@tiptap/react": "^3.0.0",
     "@tiptap/starter-kit": "^3.22.3",
     "@tiptap/y-tiptap": "^3.0.3",
@@ -242,6 +243,9 @@
       ]
     },
     "@tiptap/core": {
+      "optional": true
+    },
+    "prosemirror-view": {
       "optional": true
     },
     "@tiptap/extension-collaboration": {
@@ -320,15 +324,18 @@
     "@tailwindcss/vite": "^4.2.4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.0.0",
-    "@tiptap/extension-collaboration": "^3.22.3",
-    "@tiptap/extension-mention": "^3.22.3",
-    "@tiptap/extension-placeholder": "^3.22.3",
-    "@tiptap/extension-table": "3.30.2",
-    "@tiptap/extension-task-item": "^3.22.3",
-    "@tiptap/extension-task-list": "^3.22.3",
-    "@tiptap/pm": "^3.22.3",
-    "@tiptap/react": "^3.22.3",
-    "@tiptap/starter-kit": "^3.22.3",
+    "@tiptap/extension-bubble-menu": "3.30.6",
+    "@tiptap/extension-collaboration": "3.30.6",
+    "@tiptap/extension-floating-menu": "3.30.6",
+    "@tiptap/extension-mention": "3.30.6",
+    "@tiptap/extension-placeholder": "3.30.6",
+    "@tiptap/core": "3.30.6",
+    "@tiptap/extension-table": "3.30.6",
+    "@tiptap/extension-task-item": "3.30.6",
+    "@tiptap/extension-task-list": "3.30.6",
+    "@tiptap/pm": "3.30.6",
+    "@tiptap/react": "3.30.6",
+    "@tiptap/starter-kit": "3.30.6",
     "@tiptap/y-tiptap": "^3.0.3",
     "@types/d3-force": "^3.0.10",
     "@types/react": "^19.2.18",
@@ -355,6 +362,7 @@
     "vite": "^8.2.2",
     "vite-plugin-dts": "^5.1.1",
     "vitest": "^4.0.0",
+    "prosemirror-view": "^1.42.3",
     "y-prosemirror": "^1.3.7",
     "y-protocols": "^1.0.7",
     "yjs": "^13.6.29"

@@ -20,6 +20,7 @@
 // (`onerror`, `javascript:`, `<svg><script>`, data: URLs, `<iframe>`), and a
 // block-list is a promise to have thought of all of them.
 
+import { safeHref } from '../../lib/safeHref';
 import { useMemo, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
@@ -28,22 +29,6 @@ const ALLOWED = new Set([
   'P', 'BR', 'STRONG', 'B', 'EM', 'I', 'S', 'DEL', 'CODE', 'PRE',
   'UL', 'OL', 'LI', 'BLOCKQUOTE', 'A', 'SPAN',
 ]);
-
-/**
- * Schemes a link may use.
- *
- * `javascript:` is the obvious exclusion; `data:` is the less obvious one —
- * `data:text/html` in an anchor executes in the page's origin on click.
- */
-const SAFE_SCHEME = /^(https?:|mailto:)/i;
-
-function safeHref(raw: string | null): string | null {
-  if (!raw) return null;
-  const v = raw.trim();
-  // Relative links stay in-app and cannot carry a scheme.
-  if (v.startsWith('/') || v.startsWith('#')) return v;
-  return SAFE_SCHEME.test(v) ? v : null;
-}
 
 function toReact(node: Node, key: string): ReactNode {
   if (node.nodeType === Node.TEXT_NODE) return node.textContent;

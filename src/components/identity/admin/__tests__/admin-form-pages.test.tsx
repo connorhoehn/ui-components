@@ -147,4 +147,21 @@ describe('EmailTemplateFormPage', () => {
       variables: ['name'],
     });
   });
+
+  it('renders the preview in a script-less sandboxed iframe', () => {
+    const { container } = render(
+      <EmailTemplateFormPage
+        isEdit={false}
+        template={{ name: 'n', subject: 's', htmlBody: '<img src=x onerror=alert(1)>', textBody: '', variables: [] } as never}
+        onSubmit={resolved()}
+        onCancel={() => {}}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Show Preview/i }));
+    const frame = container.querySelector('iframe');
+    expect(frame).not.toBeNull();
+    expect(frame!.hasAttribute('sandbox')).toBe(true);
+    expect(frame!.getAttribute('sandbox')).toBe('');
+    expect(container.querySelector('img')).toBeNull();
+  });
 });

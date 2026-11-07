@@ -32,10 +32,20 @@ describe('SharedTextEditor', () => {
 
   it('seeds the editor surface with the initial content', () => {
     const { container } = render(
-      <SharedTextEditor content="<p>hello</p>" applyLocalEdit={() => {}} />,
+      <SharedTextEditor content="hello" applyLocalEdit={() => {}} />,
     );
     const surface = container.querySelector('[contenteditable]') as HTMLDivElement;
     expect(surface).not.toBeNull();
-    expect(surface.innerHTML).toBe('<p>hello</p>');
+    expect(surface.textContent).toBe('hello');
+  });
+
+  it('renders collaborator content as text, with no event-handler attributes', () => {
+    const { container } = render(
+      <SharedTextEditor content="<img src=x onerror=alert(1)>" applyLocalEdit={() => {}} />,
+    );
+    expect(container.querySelector('[onerror]')).toBeNull();
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.innerHTML).not.toMatch(/onerror=(?!.*&gt;)/);
+    expect(container.textContent).toContain('<img src=x onerror=alert(1)>');
   });
 });
