@@ -118,7 +118,7 @@ export interface ComposerPrompt {
    * The context that asked this question (a page, section or record key such
    * as `assets/artwork`). A deck given a `scope` drops prompts scoped to any
    * other context, so a question raised on one page never follows the user to
-   * the next. Unscoped prompts show everywhere. Since 2.503.0.
+   * the next. Unscoped prompts show everywhere. Since 2.504.0.
    */
   scope?: string;
   /** The prepopulated header card. */

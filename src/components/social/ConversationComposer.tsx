@@ -204,7 +204,7 @@ export interface ConversationComposerOwnProps {
   prompts?: readonly ComposerPrompt[];
   /**
    * The context the composer is in (a page/section/record key). Prompts
-   * scoped elsewhere are dropped and a change resets the deck. Since 2.503.0.
+   * scoped elsewhere are dropped and a change resets the deck. Since 2.504.0.
    */
   promptScope?: string | null;
 }

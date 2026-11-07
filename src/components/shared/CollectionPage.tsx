@@ -28,7 +28,7 @@ export interface CollectionPageProps<T = unknown> extends Omit<HTMLAttributes<HT
   headerActions?: ReactNode;
   toolbar?: CollectionToolbarProps;
   /**
-   * Where the toolbar draws (since 2.503.0). `auto` (default) puts its
+   * Where the toolbar draws (since 2.504.0). `auto` (default) puts its
    * search, filters and count in the header's actions row — before
    * `headerActions` — whenever nothing in it needs a full row (no active
    * `selection` prop, no `children`), so a collection page has no separate

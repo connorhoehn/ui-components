@@ -57,7 +57,7 @@ export interface SearchInputProps {
    */
   'data-testid'?: string;
   /**
-   * Since 2.503.0 — a toolbar search. While collapsed the field is a search
+   * Since 2.504.0 — a toolbar search. While collapsed the field is a search
    * `IconButton` (named by `aria-label`/`placeholder`); a click, or the
    * `shortcut` key anywhere outside a text field, expands it and focuses the
    * input. It collapses again on Escape or blur while empty, and never while

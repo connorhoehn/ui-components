@@ -29,21 +29,15 @@ observability/
 
 ## Stability
 
-**In-flux.** Subpath-only. Wave 5 graduation task not yet filed; will
-follow after Wave 3 reduces inline-style debt in this domain.
+**In-flux.** Subpath-only; the API may change between minor versions.
 
 The observability surface composes shared primitives — `<HealthGrid>`,
 `<HealthCell>`, `<AlertList>`, `<AlertItem>`, `<LogStream>`,
-`<StatCard>`, `<KPIGrid>` — all of which graduated from this domain to
-`/shared` during Wave 1.
-
-## Tests
-
-Light. Tracked under #1051.
+`<StatCard>`, `<KPIGrid>` — which live in `/shared`.
 
 ## See also
 
-- [`../shared/README.md`](../shared/README.md) — atoms graduated out of
-  observability during Wave 1.
+- [`../shared/README.md`](../shared/README.md) — the shared primitives
+  this domain composes.
 - Demo route `/workflows/observability-shell` for the dashboard
   composition.

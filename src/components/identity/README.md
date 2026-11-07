@@ -1,7 +1,7 @@
 # Identity — `@connorhoehnslalom/ui-components/identity`
 
 Authentication flows, admin identity panels, and the `IdentityContext`
-provider. Root-reachable since v2.12.0 (hub#1058).
+provider. Also reachable from the root barrel.
 
 Subpath import:
 
@@ -36,11 +36,11 @@ identity/
 
 ## Stability
 
-**Stable.** Public surface used by `websocket-gateway` admin UI and
-`vnl-ads` social flows. On the charter §1 no-touch list.
+**Stable.** Public surface used by consumer admin UIs and social flows;
+changing its exports needs a major version bump.
 
-Two name disambiguations apply at the root barrel (introduced with
-hub#1058 to avoid colliding with pre-existing root exports):
+Three name disambiguations apply at the root barrel, to avoid colliding with
+other root exports:
 
 - `FormField` / `FormFieldProps` — root resolves to the
   `shared/FormField`. Identity-flavoured variants are exported at root
@@ -52,13 +52,6 @@ hub#1058 to avoid colliding with pre-existing root exports):
 - `MfaDevice` — root resolves to `types/identity`. The page-local
   `MfaDevice` shape in `auth/MfaDashboardPage.tsx` stays subpath-only.
 
-## Tests
-
-Light overall. Auth happy-path flows have demo coverage in
-`/workflows/identity`. Targeted test coverage tracked under #1051.
-
 ## See also
 
-- [`../../../docs/AUTONOMY_CHARTER.md`](../../../docs/AUTONOMY_CHARTER.md)
-  §1 — identity stable-exports list.
 - Demo route `/workflows/identity` for the live flows.

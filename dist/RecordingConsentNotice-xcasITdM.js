@@ -3,7 +3,11 @@ import { t } from "./IconButton-Bf5Wy0tS.js";
 import { h as n } from "./Icons-CqVFbuiZ.js";
 import { t as r } from "./Text-BAAQrepu.js";
 import { t as i } from "./Link-h2c9gcsw.js";
+<<<<<<<< HEAD:dist/RecordingConsentNotice-xcasITdM.js
 import { J as a } from "./BreakoutRoomsPanel-WejdbFuq.js";
+========
+import { J as a } from "./BreakoutRoomsPanel-QoQ2mL_g.js";
+>>>>>>>> origin/main:dist/RecordingConsentNotice-EH4yemQv.js
 import { useCallback as o, useEffect as s, useState as c } from "react";
 import { Fragment as l, jsx as u, jsxs as d } from "react/jsx-runtime";
 //#region src/components/video/RecordingConsentNotice.tsx

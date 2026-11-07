@@ -17,7 +17,7 @@ one component.
 
 ## Wire contract
 
-Subscribes to four signal events (declared in `event-catalog` wave 3):
+Subscribes to four signal events (declared in `event-catalog`):
 
 - `pipeline.judge.started`         (running)
 - `pipeline.judge.scored`          (scored — carries the full JudgmentResult)

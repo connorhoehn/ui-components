@@ -7,22 +7,20 @@
 > the package, so an agent working in a consumer repo can read them from
 > `node_modules/@connorhoehnslalom/ui-components/`.
 
-The global rule (from `~/.claude/CLAUDE.md`):
+The rule of thumb: build pages from the library's shells and composites,
+the `realtime-modules/client` hooks, and the `integrations/realtime-modules`
+adapters where they fit, rather than hand-rolled HTML, CSS or inline styles.
 
-> Frontend pages, demos, examples, or showcases are **not complete** unless
-> they use ui-components shells/composites + `realtime-modules/client` hooks +
-> the `integrations/realtime-modules` adapters where they fit. Never ship
-> hand-rolled HTML/CSS/inline styles in any page or demo.
+If a needed primitive doesn't exist, add it to ui-components and then use it
+instead of inlining a one-off; the point of the library is to absorb that
+complexity. See [Missing primitive workflow](#missing-primitive-workflow) at
+the bottom.
 
-If a needed primitive doesn't exist, **stop and ship the primitive to
-ui-components first**, then use it. Do not inline a one-off; the whole point
-of the library is to absorb that complexity. See
-[Missing primitive workflow](#missing-primitive-workflow) at the bottom.
-
-**Import paths.** Everything below imports from the package root unless a
-subpath is named. Layout components (`AppShell`, `AppLayout`,
-`CollapsibleSidebar`, `DocsShell`, `SettingsLayout`) are **root-only**: there
-is no `/layout` subpath, and importing one fails to resolve.
+**Import paths.** Import from the subpath that
+[`COMPONENT_INDEX.md`](COMPONENT_INDEX.md) names for each component, usually
+`/shared`. Since 2.506.0 the layout components (`AppShell`,
+`CollapsibleSidebar`, `DocsShell`, `SettingsLayout`) are on `/shared` too;
+only `AppLayout` is root-only. There is no `/layout` subpath.
 
 ---
 
@@ -40,7 +38,7 @@ the index has the "don't use for" notes for each.
 | a list / collection of things | `CollectionPage` | Title + `CollectionToolbar` (search, filters, summary, refresh) + your `DataTable` or card grid. |
 | a list with a detail panel beside it | `MasterDetailPage` | Selection on the left, the selected record on the right, narrow-screen fallback included. If each row opens its own route instead, use `CollectionPage` + `DetailPage`. |
 | one record's detail | `DetailPage` | Title/status/actions header, then **tabs** for the record's facets. Use `DetailSection` inside a tab; don't stack a column of `Card`s. |
-| a dashboard | `DashboardPage` (root) | KPI row (`KPIGrid` / `StatCard`) + panel grid. The `/observability` `DashboardPage` is the cluster dashboard, a different component. |
+| a dashboard | `DashboardPage` (`/shared`) | KPI row (`KPIGrid` / `StatCard`) + panel grid. The `/observability` `DashboardPage` is the cluster dashboard, a different component. |
 | settings | `SettingsPage` | Section rail + settings rows; `SettingsLayout` is the lower-level shell. |
 | documentation | `DocsShell` | Sidebar + top nav + content. |
 
@@ -146,18 +144,18 @@ Inside the page I need…
 
 Hook-wired components come from
 `@connorhoehnslalom/ui-components/integrations/realtime-modules`; everything
-else in the tree imports from the package root.
+else in the tree imports from the subpath the index names (usually `/shared`).
 
 ## Composite index — the 12 you'll reach for first
 
-The highest-leverage composites below the page templates. All importable from
-the root (the subpath column is for code-splitting only).
+The highest-leverage composites below the page templates. Import each from
+its subpath; the root works too but pulls every optional peer into the bundle.
 
 | Composite | Use for | Also on subpath |
 |---|---|---|
-| `AppShell` | The outer chrome of any logged-in app: sidebar + topbar + content area. | none (root-only) |
+| `AppShell` | The outer chrome of any logged-in app: sidebar + topbar + content area. | `/shared` |
 | `AppLayout` | The room-shaped variant (rooms sidebar + presence + nested content). | none (root-only) |
-| `CollapsibleSidebar` | Standalone sidebar with persisted collapsed state. | none (root-only) |
+| `CollapsibleSidebar` | Standalone sidebar with persisted collapsed state. | `/shared` |
 | `PageHeader` | Title + subtitle + actions + breadcrumbs strip at the top of any page. | `/shared` |
 | `ChannelHeader` | Channel/room title bar with presence + actions for chat/hangout surfaces. | `/shared` |
 | `ChatPanel` | Full chat surface: message list, composer, attachments, typing indicator. | `/social` |
@@ -377,9 +375,8 @@ adding `<X>` to ui-components solves it forever, for every consumer.
    - the props you'd want it to accept,
    - which consumer page it unblocks.
 
-3. Pause the consumer-side work on this primitive. Pick up a different task
-   while the primitive is shipped. (Per the global rule, do not inline a
-   one-off "just for now" — there is no "for now.")
+3. Pause the consumer-side work on this primitive until it ships. Avoid
+   inlining a one-off "just for now"; it tends to stay.
 
 4. When the primitive lands in `ui-components`, bump your consumer pin and
    come back. The composite-first version is almost always smaller, more
@@ -395,8 +392,8 @@ adding `<X>` to ui-components solves it forever, for every consumer.
 - Breaking changes to stable subpaths (`/`, `/shared`, `/social`, `/video`,
   `/identity`, `/hooks`, `/styles.css`, `/integrations/realtime`,
   `/integrations/realtime-modules`) require a handoff to every consumer
-  before landing. (Layout components are part of the root; there is no
-  `/layout` subpath.)
+  before landing. (There is no `/layout` subpath; layout
+  components are on `/shared`, except root-only `AppLayout`.)
 - `/doc-editor` and `/pipelines` are frozen public API (since 2026-06-10):
   breaking changes need a major bump and a consumer handoff.
 - In-flux subpaths (`/compute`, `/observability`, `/ingest`) may change shape
@@ -420,7 +417,7 @@ adding `<X>` to ui-components solves it forever, for every consumer.
   [`CLAUDE.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/CLAUDE.md) (exports map, no-touch list, hard
   rules) and [`CONTRIBUTING.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/CONTRIBUTING.md).
 
-## Collection and composer inheritance (2.440.2)
+## Collection and composer inheritance
 
 Use `DensityProvider density="compact"` around the real application shell,
 not only test fixtures. Button, IconButton, Input, Select, SearchInput,

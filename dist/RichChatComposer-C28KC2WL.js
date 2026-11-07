@@ -2,9 +2,15 @@ import { t as e } from "./cn-D4QmbyEy.js";
 import { t } from "./Button-C-I3BxWI.js";
 import { t as n } from "./IconButton-Bf5Wy0tS.js";
 import { B as r, D as i, E as a, S as o, U as s, V as c, X as l, _ as u, _t as d, ct as f, d as p, ft as m, gt as h, h as g, m as _, n as v, pt as y, r as b, st as x } from "./Icons-CqVFbuiZ.js";
+<<<<<<<< HEAD:dist/RichChatComposer-C28KC2WL.js
 import { a as ee, i as S, o as C } from "./Text-BAAQrepu.js";
 import { t as w } from "./DropdownMenu-DP3rRjEd.js";
 import { t as te } from "./Avatar-DkkMISPQ.js";
+========
+import { a as ee, i as S, o as C } from "./Text-AlKB4riU.js";
+import { t as w } from "./DropdownMenu-DcFIdC5O.js";
+import { n as te } from "./Avatar-GvBbrBxQ.js";
+>>>>>>>> origin/main:dist/RichChatComposer-CCA_J0J7.js
 import { t as ne } from "./RovingToolbar-B1Fai5PF.js";
 import { a as re, i as ie, n as ae, o as oe, s as se } from "./backdropTone-BzPocySl.js";
 import { i as ce, n as le, r as ue } from "./ReactionPickerPopover-wsdZyMqU.js";

@@ -8,7 +8,7 @@ function Harness({ initial = '', onExpandedChange }: { initial?: string; onExpan
   return <><SearchInput collapsible value={value} onChange={setValue} aria-label="Search artworks" onExpandedChange={onExpandedChange} /><button type="button">elsewhere</button></>;
 }
 
-describe('SearchInput collapsible (2.503.0)', () => {
+describe('SearchInput collapsible (2.504.0)', () => {
   it('rests as a named search icon button with no field', () => {
     render(<Harness />);
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();

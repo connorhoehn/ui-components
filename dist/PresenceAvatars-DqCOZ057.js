@@ -1,5 +1,5 @@
 import { t as e } from "./cn-D4QmbyEy.js";
-import { t } from "./Avatar-DkkMISPQ.js";
+import { n as t } from "./Avatar-GvBbrBxQ.js";
 import { t as n } from "./StatusDot-GwVn-q5q.js";
 import { useEffect as r, useLayoutEffect as i, useRef as a, useState as o } from "react";
 import { Fragment as s, jsx as c, jsxs as l } from "react/jsx-runtime";

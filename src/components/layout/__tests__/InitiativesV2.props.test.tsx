@@ -221,7 +221,7 @@ describe('PageSection count / size', () => {
     expect(screen.getByTestId('ps-count')).toHaveTextContent('1');
     expect(screen.getByRole('link', { name: 'View all 11' })).toBeInTheDocument();
   });
-  it('a zero count draws no chip (2.503.0: no count over an empty section); the default stays an h1 with no count', () => {
+  it('a zero count draws no chip (2.504.0: no count over an empty section); the default stays an h1 with no count', () => {
     const { rerender } = render(<PageSection title="Up next" size="md" count={0} data-testid="ps">x</PageSection>);
     expect(screen.queryByTestId('ps-count')).toBeNull();
     rerender(<PageSection title="Up next" size="md" count={3} data-testid="ps">x</PageSection>);

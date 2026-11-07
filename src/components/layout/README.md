@@ -1,15 +1,15 @@
 # Layout
 
-App shells and pane layouts. Every layout component is a **root import**;
-there is no `/layout` subpath (`package.json` `exports` has none):
+App shells and pane layouts. Since 2.506.0 every layout component except
+`AppLayout` is on the `/shared` subpath; there is no `/layout` subpath
+(`package.json` `exports` has none):
 
 ```tsx
-import { AppShell, ExplorerLayout, SplitPane } from '@connorhoehnslalom/ui-components';
+import { AppShell, ExplorerLayout, SplitPane } from '@connorhoehnslalom/ui-components/shared';
 ```
 
-`MasterDetail`, `SubNavLayout`, `RailLayout` and `WorkArea` live in
-`src/components/shared/` and are also reachable from `/shared`; the rest are
-root-only.
+`AppLayout` stays root-only because it wires the pipelines providers. Avoid
+root imports otherwise: they pull every optional peer into the bundle.
 
 ## Start here: the shell
 

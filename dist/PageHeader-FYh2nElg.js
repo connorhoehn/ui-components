@@ -4,8 +4,13 @@ import { t as n } from "./IconButton-Bf5Wy0tS.js";
 import { I as r, m as i } from "./Icons-CqVFbuiZ.js";
 import { a, i as o, n as s, o as c } from "./Text-BAAQrepu.js";
 import { t as l } from "./Tooltip-Q0urBp4N.js";
+<<<<<<<< HEAD:dist/PageHeader-FYh2nElg.js
 import { t as u } from "./Avatar-DkkMISPQ.js";
 import { t as d } from "./Breadcrumbs-CirFL-yi.js";
+========
+import { n as u } from "./Avatar-GvBbrBxQ.js";
+import { t as d } from "./Breadcrumbs-DVQuOJ2R.js";
+>>>>>>>> origin/main:dist/PageHeader-DUgrZmT_.js
 import { useCallback as f, useEffect as p, useId as m, useLayoutEffect as h, useRef as g, useState as _ } from "react";
 import { Fragment as v, jsx as y, jsxs as b } from "react/jsx-runtime";
 import { createPortal as x } from "react-dom";

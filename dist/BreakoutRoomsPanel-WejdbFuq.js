@@ -9,6 +9,7 @@ import { t as C } from "./Banner-400g6E1q.js";
 import { t as w } from "./Select-CpZyUWay.js";
 import { t as T } from "./InlinePopover-Dx8-r-XU.js";
 import { t as E } from "./SkeletonCard-D3FL0TB7.js";
+<<<<<<<< HEAD:dist/BreakoutRoomsPanel-WejdbFuq.js
 import { n as D, t as O } from "./Slider-DCKY5jPg.js";
 import { t as k } from "./DropdownMenu-DP3rRjEd.js";
 import { t as A } from "./Textarea-CvdLeuO_.js";
@@ -20,6 +21,19 @@ import { t as F } from "./ActivityFeed-BU9LDJNO.js";
 import { t as I } from "./NumberInput-Cyc37Ssv.js";
 import { t as L } from "./Checkbox-BW-hyqCM.js";
 import { t as ee } from "./InlineEditableText-c94ETQ89.js";
+========
+import { n as D, t as O } from "./Slider-DEbQCKD1.js";
+import { t as k } from "./DropdownMenu-DcFIdC5O.js";
+import { t as A } from "./Textarea-BwvE1HPn.js";
+import { n as j } from "./Avatar-GvBbrBxQ.js";
+import { t as M } from "./StatusDot-GwVn-q5q.js";
+import { t as N } from "./SegmentedControl-CMpxVHLC.js";
+import { t as P } from "./InlineAlert-BqOYETP1.js";
+import { t as F } from "./ActivityFeed-CF1uFMm2.js";
+import { t as I } from "./NumberInput-C1JOoCoC.js";
+import { t as L } from "./Checkbox-Dvt09s3H.js";
+import { t as ee } from "./InlineEditableText-CzB64Ufv.js";
+>>>>>>>> origin/main:dist/BreakoutRoomsPanel-QoQ2mL_g.js
 import { memo as R, useCallback as te, useEffect as z, useId as ne, useLayoutEffect as B, useMemo as V, useRef as H, useState as U } from "react";
 import { Fragment as W, jsx as G, jsxs as K } from "react/jsx-runtime";
 //#region src/components/video/MeetingIcons.tsx

@@ -92,7 +92,7 @@ export function ChangeReviewList({
           >
             {documentTitle}
           </h2>
-          {/* No count while empty (2.503.0): the empty state says it, and a
+          {/* No count while empty (2.504.0): the empty state says it, and a
               "No changes to review" line above it was chrome describing nothing. */}
           {(total > 0 || documentMeta) && <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
             {total > 0 && <span className="text-[13px] text-text-secondary" data-testid={`${testId}-count`} data-collection-summary>

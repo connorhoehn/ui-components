@@ -6,6 +6,7 @@ import { t as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-D4QmbyEy.js";
 import { n as m } from "./Button-C-I3BxWI.js";
 import { n as h } from "./overlayStack-DxIDMUs-.js";
+<<<<<<<< HEAD:dist/DocumentEditorPage-Cxe2_SuC.js
 import { t as g } from "./IconButton-Bf5Wy0tS.js";
 import { B as _, C as v, Ct as y, E as b, J as x, P as S, S as C, St as w, _t as T, bt as ee, d as E, h as D, it as O, k as te, l as ne, m as re, mt as ie, nt as ae, ot as oe, p as se, w as ce, x as le, y as ue } from "./Icons-CqVFbuiZ.js";
 import { a as de, i as fe, t as k } from "./ErrorBoundary-qKmbG5Sw.js";
@@ -24,6 +25,27 @@ import { t as xe } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { forwardRef as N, useCallback as P, useEffect as F, useImperativeHandle as I, useMemo as L, useRef as R, useState as z } from "react";
 import { Fragment as B, jsx as V, jsxs as H } from "react/jsx-runtime";
 import Se, { createPortal as Ce } from "react-dom";
+========
+import { t as g } from "./IconButton-J9jGN6eo.js";
+import { B as _, C as v, Ct as y, E as b, J as x, P as S, S as C, St as w, _t as ee, bt as te, d as T, h as E, it as D, k as O, l as ne, m as re, mt as ie, nt as ae, ot as oe, p as se, w as ce, x as le, y as ue } from "./Icons-CqVFbuiZ.js";
+import { n as de, t as fe } from "./FollowBanner-DnuzvkQu.js";
+import { t as k } from "./Banner-DTMyQNum.js";
+import { t as pe } from "./ConfirmDialog-BxFrBQ52.js";
+import { t as A } from "./Input-B0LB5k_L.js";
+import { t as me } from "./StatusPill-CLkB5jFS.js";
+import { t as j } from "./DropdownMenu-DcFIdC5O.js";
+import { t as M } from "./Textarea-BwvE1HPn.js";
+import { n as he } from "./Avatar-GvBbrBxQ.js";
+import { t as N } from "./activationKey-CjbL3LUv.js";
+import { O as ge } from "./renderers-DarOLZU_.js";
+import { Y as _e } from "./ProposedEditStrip-CTAVqwk4.js";
+import { t as ve } from "./TiptapEditor-BjjwDyPa.js";
+import { t as ye } from "./useHangoutEmbed-ChkoGDC_.js";
+import { t as P } from "./useActiveSpeaker-BGKJU3Lb.js";
+import { forwardRef as F, useCallback as I, useEffect as L, useImperativeHandle as R, useMemo as be, useRef as z, useState as B } from "react";
+import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";
+import xe, { createPortal as Se } from "react-dom";
+>>>>>>>> origin/main:dist/DocumentEditorPage-DqT0dUvy.js
 //#region src/utils/markdownParser.ts
 function we() {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);

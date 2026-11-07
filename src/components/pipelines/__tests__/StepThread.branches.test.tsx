@@ -92,11 +92,13 @@ describe('StepThread — output branch selection', () => {
     expect(screen.getByText('A red bicycle')).toBeInTheDocument();
   });
 
-  it('falls back to the raw JSON dump for an unrecognised output shape', () => {
+  it('falls back to the raw JSON dump, under Technical details, for an unrecognised output shape', () => {
     render(
       <StepThread stepId="s4" index={0} nodeType="transform" step={step({ output: { rows: 3 } })} />,
     );
     expand('s4');
+    expect(screen.queryByText('Output')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('step-technical-toggle-s4'));
     expect(screen.getByText('Output')).toBeInTheDocument();
   });
 });

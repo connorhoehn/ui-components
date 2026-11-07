@@ -1,7 +1,13 @@
 import { o as e } from "./Button-C-I3BxWI.js";
+<<<<<<<< HEAD:dist/PresentationAgentComposer-CRFkIozH.js
 import { t } from "./SegmentedControl-DAjnOtF4.js";
 import { t as n } from "./FollowUpChips-DDg0E5cL.js";
 import { r } from "./RichChatComposer-C28KC2WL.js";
+========
+import { t } from "./SegmentedControl-CMpxVHLC.js";
+import { t as n } from "./FollowUpChips-BWHw0Y0h.js";
+import { r } from "./RichChatComposer-CCA_J0J7.js";
+>>>>>>>> origin/main:dist/PresentationAgentComposer-Dt3goGsC.js
 import { jsx as i, jsxs as a } from "react/jsx-runtime";
 //#region src/components/doc-editor/presentation/PresentationAgentComposer.tsx
 var o = {

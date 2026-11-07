@@ -1,8 +1,9 @@
 // Every StepThread story renders COLLAPSED first — that is the component's
-// default state. The interesting surface (execution timeline, node config,
-// runtime input, resolved prompt, response / agent waterfall, token usage,
-// error block, footer actions) only appears in the expanded panel, so click
-// the step row in each story to see what the story is actually about.
+// default state (`defaultExpanded` opens it). The expanded panel shows what a
+// person reads (response / agent waterfall, produced images, attempts, error,
+// footer actions); the internals (execution timeline, node config, runtime
+// input, resolved prompt, raw output, token usage) sit behind its "Technical
+// details" disclosure unless `showTechnicalDetails` says otherwise.
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StepThread } from './StepThread';
@@ -426,5 +427,46 @@ export const RetriesExhausted: Story = {
         },
       ],
     }),
+  },
+};
+
+// Expanded at rest with the internals one click away: the default
+// `showTechnicalDetails="collapsed"`.
+export const ExpandedTechnicalCollapsed: Story = {
+  args: {
+    stepId: 'transform-3',
+    index: 2,
+    nodeType: 'transform',
+    nodeConfig: { type: 'transform', label: 'Shape bullets', language: 'jsonata', expression: '$.bullets' },
+    step: makeStep({ nodeId: 'transform-3', output: { items: 12 } }),
+    defaultExpanded: true,
+    onRetryFromStep: () => {},
+  },
+};
+
+// A pending step: no "Retry from here" even with `onRetryFromStep` wired —
+// the default gate offers re-runs only on completed, failed or cancelled steps.
+export const PendingNoRetry: Story = {
+  args: {
+    stepId: 'publish-4',
+    index: 3,
+    nodeType: 'action',
+    nodeConfig: { type: 'action', label: 'Publish' },
+    step: { nodeId: 'publish-4', status: 'pending' },
+    defaultExpanded: true,
+    onRetryFromStep: () => {},
+    onResumeFromStep: () => {},
+  },
+};
+
+// A step whose node is gone from the definition: titled by its id, never "(unknown)".
+export const UnknownNodeType: Story = {
+  args: {
+    stepId: 'a91f3c02-deleted',
+    index: 0,
+    nodeType: 'unknown',
+    step: makeStep({ nodeId: 'a91f3c02-deleted' }),
+    defaultExpanded: true,
+    showTechnicalDetails: 'expanded',
   },
 };

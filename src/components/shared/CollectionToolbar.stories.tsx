@@ -34,12 +34,12 @@ export const Selection: Story = {
 
 export const CardCollection: Story = { args: { label: 'Hangouts', layout: 'cards', search: { value: '', onChange: () => {}, placeholder: 'Find a hangout' }, summary: '2 hangouts' } };
 
-/** Search, filters and refresh sit at the trailing end beside the record actions (2.503.0). */
+/** Search, filters and refresh sit at the trailing end beside the record actions (2.504.0). */
 export const QueryAndActions: Story = {
   args: { label: 'Contacts', search: { value: '', onChange: () => {}, placeholder: 'Find a person' }, summary: '16 people', onRefresh: () => {}, actions: [{ id: 'add', label: 'Add contact', icon: '+', onClick: () => {} }] },
 };
 
-/** Zero results: no count — the empty state says it (2.503.0). */
+/** Zero results: no count — the empty state says it (2.504.0). */
 export const EmptyCollection: Story = {
   render: () => {
     const [query, setQuery] = useState('');
@@ -52,7 +52,7 @@ export const OpenSearch: Story = {
   args: { label: 'Directory', search: { value: '', onChange: () => {}, placeholder: 'Search people', collapsible: false }, summary: '16 people' },
 };
 
-/** `CollectionPage` hosts a search/filter toolbar in its header actions row, so the page has no search band (2.503.0). */
+/** `CollectionPage` hosts a search/filter toolbar in its header actions row, so the page has no search band (2.504.0). */
 export const InPageHeader: Story = {
   render: () => {
     const [query, setQuery] = useState('');

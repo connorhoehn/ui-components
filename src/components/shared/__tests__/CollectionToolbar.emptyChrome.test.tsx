@@ -6,7 +6,7 @@ import { Button } from '../../ui/Button';
 
 const search = { value: '', onChange: () => {}, 'aria-label': 'Search artworks' };
 
-describe('CollectionToolbar search and empty chrome (2.503.0)', () => {
+describe('CollectionToolbar search and empty chrome (2.504.0)', () => {
   it('collapses its search by default and opts out with collapsible: false', () => {
     const { rerender } = render(<CollectionToolbar label="Artworks" search={search} />);
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
@@ -38,7 +38,7 @@ describe('CollectionToolbar search and empty chrome (2.503.0)', () => {
   });
 });
 
-describe('CollectionPage hosts the toolbar in the header (2.503.0)', () => {
+describe('CollectionPage hosts the toolbar in the header (2.504.0)', () => {
   it('puts search + filters in the header actions row, before the page action, with no separate band', () => {
     const { container } = render(<CollectionPage title="Artwork" headerActions={<Button>Generate artwork</Button>}
       toolbar={{ label: 'Artwork filters', search, filters: [{ id: 'kind', label: 'Kind', value: '', onChange: () => {}, options: [{ value: '', label: 'All' }] }] }}>
@@ -60,7 +60,7 @@ describe('CollectionPage hosts the toolbar in the header (2.503.0)', () => {
   });
 });
 
-describe('CollectionToolbar filterPanel (2.503.0)', () => {
+describe('CollectionToolbar filterPanel (2.504.0)', () => {
   it('draws host filter content in the Filters popover, counts it and clears it', () => {
     let cleared = 0;
     render(<CollectionToolbar label="Artwork" filterPanel={{ content: <p>Facet list</p>, activeCount: 2, onClear: () => { cleared++; } }} />);
@@ -71,7 +71,7 @@ describe('CollectionToolbar filterPanel (2.503.0)', () => {
   });
 });
 
-describe('CollectionPage badge (2.503.0)', () => {
+describe('CollectionPage badge (2.504.0)', () => {
   it('draws the badge beside the title', () => {
     render(<CollectionPage title="Artwork" badge={<span>Episode 2</span>}><p>grid</p></CollectionPage>);
     expect(screen.getByTestId('page-header')).toHaveTextContent('Episode 2');

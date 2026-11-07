@@ -44,7 +44,7 @@ export interface CollectionSelection {
 }
 /**
  * The toolbar's search. Collapsed to a search icon by default (since
- * 2.503.0): it expands on click or `/` and folds away again while empty, so a
+ * 2.504.0): it expands on click or `/` and folds away again while empty, so a
  * collection never carries a full-width search band. `collapsible: false`
  * keeps the open field.
  */
@@ -61,20 +61,20 @@ export interface CollectionToolbarProps {
    * Host-built content for the same Filters popover, for filters that are not
    * single selects (multi-select facets such as `WorkListFilters`). Drawn
    * after any `filters`; `activeCount` joins the trigger's count and
-   * `onClear` runs with the panel's Clear. Since 2.503.0.
+   * `onClear` runs with the panel's Clear. Since 2.504.0.
    */
   filterPanel?: { content: ReactNode; activeCount?: number; onClear?: () => void };
   /** A count line ("12 of 40 runs"). Hidden while `resultCount` is 0 — the empty state says it instead. */
   summary?: ReactNode;
   /**
-   * How many items the collection is showing right now (since 2.503.0). At
+   * How many items the collection is showing right now (since 2.504.0). At
    * `0` the toolbar draws no count: "0 of 0 artworks" above an empty state is
    * chrome describing nothing. Leave it undefined to always draw `summary`.
    */
   resultCount?: number;
   /**
    * `band` (default) is the toolbar's own row above the collection. `header`
-   * (since 2.503.0) is the same controls with no row of their own, for a
+   * (since 2.504.0) is the same controls with no row of their own, for a
    * page header's actions row — `CollectionPage` uses it automatically.
    */
   placement?: 'band' | 'header';
@@ -141,7 +141,7 @@ export function CollectionToolbar({ label, layout = 'table', search, filters = [
 /**
  * Whether a toolbar can live in a page header's actions row instead of its
  * own band: nothing in it needs the full row. A selection replaces the row's
- * controls, and `children` are host content of unknown width. Since 2.503.0.
+ * controls, and `children` are host content of unknown width. Since 2.504.0.
  */
 export function collectionToolbarFitsHeader(toolbar: CollectionToolbarProps): boolean {
   return !toolbar.selection && toolbar.children == null;

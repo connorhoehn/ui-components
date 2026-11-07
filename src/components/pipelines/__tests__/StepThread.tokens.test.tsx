@@ -46,6 +46,7 @@ describe('StepThread token summary', () => {
   it('agrees with the expanded detail panel', () => {
     renderThread(baseStep({ tokensIn: 4200 }));
     fireEvent.click(screen.getByRole('button', { name: /transform/ }));
+    fireEvent.click(screen.getByTestId('step-technical-toggle-embed'));
     expect(screen.getByText('4200')).toBeInTheDocument(); // Tokens in
     expect(screen.getByText('—')).toBeInTheDocument(); // Tokens out
   });

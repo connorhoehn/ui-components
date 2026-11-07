@@ -1,15 +1,22 @@
 # @connorhoehnslalom/ui-components
 
-React component library for real-time collaborative applications.
+A React component library and set of page templates used by Connor Hoehn's
+realtime apps. It is built on Tailwind v4 design tokens and ships composites for
+chat, presence, calls, documents, work items, pipelines, search and graphs, plus
+adapters that wire those composites to the hooks in `@connorhoehn/realtime-modules`.
 
-> **Not published yet.** Both `@connorhoehnslalom/*` and the
-> `@connorhoehn/realtime-modules` peer dep still 404 on the registry, so every
-> consumer is on a `file:`/git-SHA pin. Publishing is tracked as hub **#1493**
-> and needs all four repos moved together. The install snippet below is what
-> will work once that lands.
+## What's in the repo
 
-Consumed by `event-catalog`, `realtime-examples` (formerly
-`websocket-gateway`), and `vnl-ads`.
+- `src/components/` - the components, one folder per domain (`shared`, `social`,
+  `video`, `doc-editor`, `pipelines`, `graph`, `search`, `work`, ...). Many
+  folders have their own README.
+- `src/integrations/` - adapters and wrapped components for `@connorhoehn/realtime-modules`.
+- `src/styles.css` - the Tailwind v4 `@theme` tokens every component uses.
+- `demo/` - the demo site, with a mock mode that needs no gateway.
+- `tests/` - Playwright end-to-end and Storybook tests. Unit tests sit beside the code.
+- `docs/` - adoption and integration guides. `patterns/` - recipes for common setups.
+- `skills/ui-dom-audit/` - a DOM audit tool shipped with the package.
+- `dist/` - the built output, committed so a git install works without a toolchain.
 
 ## Start here (for humans and agents)
 
@@ -30,18 +37,20 @@ These files ship in the package, so they are readable from
   rendered result.
 - [`llms.txt`](llms.txt): the same map in the llms.txt format.
 
-Layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are
-root-only imports; there is no `/layout` subpath.
+Layout components (`AppShell`, `CollapsibleSidebar`, `DocsShell`,
+`SettingsLayout`) import from `/shared` since 2.506.0; only `AppLayout` is
+root-only. There is no `/layout` subpath.
 
 ## Install
 
 ```bash
-npm install @connorhoehnslalom/ui-components
+npm install ./connorhoehnslalom-ui-components-<version>.tgz
 ```
 
-This is a multi-entry-point library — pick the surface you need. The root
-import is fine for most consumers; sub-paths exist for code-splitting and
-for surfaces that have not yet graduated to stable.
+`@connorhoehn/realtime-modules` is a peer dependency, required only by the
+`integrations/*` entry points. Most other peers (Tiptap, Yjs, `@xyflow/react`,
+`recharts`, `hls.js`, ...) are optional and only needed for the entry points that
+use them. Import the stylesheet once in your app:
 
 ```tsx
 // Prefer subpaths: a root import pulls every optional peer into your bundle
@@ -76,7 +85,7 @@ common hand-rolled patterns onto the canonical ui-components composites.
 
 | Sub-path | What's there | Stability |
 |---|---|---|
-| `/` (root) | Shared primitives, hooks, contexts, types, layout (root-only: AppShell, AppLayout, CollapsibleSidebar, DocsShell + DocsSidebar + DocsTopNav, SettingsLayout; there is no `/layout` subpath), social, video, identity, theme, renderers | **Stable** |
+| `/` (root) | Shared primitives, hooks, contexts, types, layout (also on `/shared` since 2.506.0, except root-only AppLayout; there is no `/layout` subpath), social, video, identity, theme, renderers | **Stable** |
 | `/shared` | Core primitives — Button, Card, Modal, Toast, Table, TagEditor, CodeEditor, CodeBlock, EmptyState, PageHeader, ChannelHeader, NotificationCenter, FileUploadDrop, Breadcrumbs, NavRail/NavRailStack, Toolbar, WorkArea, PresenceAvatars, ConnectionPill, LogStream, ThumbnailCard, StackDiagram, StatCard, KPIGrid, DataTable, Tabs, TypingIndicator, ErrorState/LoadingState, etc. | **Stable** |
 | `/social` | ChatPanel, ChatRoom, RoomList, PostFeed, ReactionsBar, ReactionPickerPopover, MessageRow, MessageGroup, GroupPanel, PresencePanel, ActivityPanel | **Stable** |
 | `/video` | VideoPlayer, VideoGrid, CallWidget, CallControls, CallParticipantStrip, CallStatsOverlay, CallSidePanel, HangoutLayout, HangoutGrid, HangoutSpotlight, RosterPanel, StreamVideo, AutoplayGate, RecordingPlayer, RecordingList, RecordingRow, TranscriptOverlay, MediaEffectsTray, MediaEffectsPreviewPanel | **Stable** |
@@ -126,56 +135,31 @@ read the bound set with `useRealtimeIntegrations()`. The bag
 
 ```bash
 npm install
-npm test            # vitest run (currently ~400 files / ~4,000 tests)
-npm run lint        # tsc --noEmit over BOTH src and demo/
-npm run build       # vite build (lib mode, multi-entry) + fix-subpath-dts
-npm run demo        # demo site at http://localhost:5174
-npm run storybook   # Storybook 10 at http://localhost:6006
-npm run test:e2e    # playwright (17 specs — routes smoke, visual, journeys)
-
-# Guards, each enforcing a rule the type system cannot:
-npm run lint:hex-colors    # no arbitrary hex colour utilities (zero tolerance)
-npm run lint:static-styles # no new static inline styles
-npm run lint:node-controls # no hand-rolled form controls
+npm run dev               # vite build --watch
+npm run build             # library build for every entry point
+npm test                  # vitest
+npm run lint              # type-check src and demo
+npm run demo              # demo site on http://localhost:5174
+npm run storybook         # Storybook on http://localhost:6006
+npm run test:e2e          # Playwright end-to-end tests
+npm run test:e2e:storybook
+npm pack                  # tarball for a consumer to install
 ```
 
-### Storybook
-
-~199 story files. Every component under `shared/` and `forms/` has one, as do
-`identity/`, `ingest/`, `observability/`, `video/`, `layout/`, `social/`,
-`doc-editor/` and `integrations/`. Each variant renders in isolation with
-arg-driven controls; components needing context are driven from mocked
-provider values rather than a live runtime.
-
-### Demo site
-
-The demo site at `http://localhost:5174` hosts a catalog of in-context
-flows. Highlights:
-
-| Route | What it shows |
-|---|---|
-| `/workflows/hook-chat` | `<ChatPanel>` driven by `useChat(channel)` |
-| `/workflows/hook-presence` | `<PresencePanel>` driven by `usePresence(channel)` |
-| `/workflows/hook-reactions` | `<ReactionsBar>` + `<ReactionsOverlay>` driven by `useReactions(channel)` |
-| `/workflows/hook-fileupload` | `<FileUploadDrop>` driven by `useFileUpload(channel)` |
-| `/workflows/hook-videohangout` | `<HangoutLayout>` driven by `useVideoHangout(channel)` |
-| `/workflows/hook-hangoutrooms` | `<HangoutRoomsList>` driven by `useHangoutRooms` |
-| `/workflows/wrapped-components` | Showcase of the integrations adapter layer |
-| `/workflows/document-workspace` | Doc-editor with comments, sections, reader/review modes |
-| `/workflows/pipeline-editor` | Live pipeline editor + runs UI |
-| `/workflows/social-panel`, `/observability-shell`, `/ingest-dashboard`, `/identity`, `/video-streaming`, `/call-widget-live`, `/agents/*` | Domain-shaped showcases |
-
-Each hook integration runs in **mock mode** by default (no gateway
-required) and switches to live mode when `VITE_GATEWAY_URL` is set:
+Repo guards, each enforcing a rule the type checker cannot:
 
 ```bash
-VITE_GATEWAY_URL=ws://localhost:4000 npm run demo
+npm run lint:static-styles   # no new static inline styles
+npm run lint:hex-colors      # no arbitrary hex colours; use tones and tokens
+npm run lint:node-controls   # form controls come from the forms components
+npm run lint:readme          # README imports must exist
+npm run snapshot:exports     # refresh the public export snapshot
 ```
 
-The mock wiring uses a synthetic message bus so no real WebSocket is
-needed for local development.
+Conventions: style with Tailwind classes composed through `cn()` and the tokens in
+`src/styles.css`, not inline `style`; give every exported component a test and a story.
 
-## Operating model
+## Entry points
 
 This repo runs under an autonomous operating model. The
 [`docs/AUTONOMY_CHARTER.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/docs/AUTONOMY_CHARTER.md) governs what an
@@ -186,12 +170,23 @@ self-driven backlog and per-task LOC cap.
 
 See [`ROADMAP.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/ROADMAP.md) for the current 5-wave plan.
 
-## Tech stack
+There is no `/layout` subpath; layout components come from `/shared` (`AppLayout` from the root).
 
-- React 19, TypeScript 5.9 (strict)
-- Vite 7 (library mode, multi-entry) + Vitest
-- Tailwind v4 (`@theme` tokens, `cn()` for class composition)
-- TipTap + Yjs for collaborative editing
-- `@xyflow/react` for pipeline + A2A canvases
-- AWS IVS for `/video-ivs`
-- Storybook 10 + Playwright
+## Related repositories
+
+- `connorhoehn/realtime-modules` - the peer dependency: gateway server, client hooks, video.
+- `connorhoehnslalom/aws-agentcore` - consumes the library in its portal.
+- `connorhoehn/realtime-examples` - example apps that consume it.
+- `connorhoehn/live-video-streaming` - another consumer.
+- `connorhoehnslalom/event-catalog` - another consumer.
+
+## Documentation
+
+- [`docs/consumer-adoption.md`](docs/consumer-adoption.md) - which composite to reach for, with before/after examples.
+- [`docs/integrations-realtime-modules.md`](docs/integrations-realtime-modules.md) - the realtime-modules adapter layer.
+- [`docs/integrations/document-workspace.md`](docs/integrations/document-workspace.md) - the shared document workspace.
+- [`docs/chat-draft-continuity.md`](docs/chat-draft-continuity.md) - controlled drafts and privacy for the rich composer.
+- [`docs/bundle-side-effects.md`](docs/bundle-side-effects.md) - why `sideEffects` is not declared.
+- [`patterns/`](patterns/README.md) - theming, websocket provider, auth, custom renderers, embedding, simulations.
+- [`CHANGELOG.md`](CHANGELOG.md) - release history.
+- Component READMEs live next to the code, for example [`src/components/shared`](src/components/shared/README.md).

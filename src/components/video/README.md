@@ -15,7 +15,7 @@ import {
   StreamVideo,
   RecordingPlayer,
 } from '@connorhoehnslalom/ui-components/video';
-// also reachable from the root barrel since 2.12.0.
+// also reachable from the root barrel.
 ```
 
 ## Surfaces
@@ -33,38 +33,20 @@ import {
 
 ## Stability
 
-**Stable API**, minor churn. On the charter §1 no-touch list. The
-`VideoPlayer`, `VideoGrid`, `StreamVideo`, `CallWidget`, `HangoutLayout`,
-and `RecordingPlayer` props are contracts for `websocket-gateway` and
-must not change without a handoff.
+**Stable API**, minor churn. The `VideoPlayer`, `VideoGrid`, `StreamVideo`,
+`CallWidget`, `HangoutLayout`, and `RecordingPlayer` props are contracts for
+consumer apps and must not change without a major version bump.
 
-Recent splits (Wave 1, May 2026):
+Composition: `<CallWidget>` is built from `<CallControls>`,
+`<CallParticipantStrip>` and `<CallStatsOverlay>`; `<HangoutLayout>` is built
+from `<HangoutGrid>`, `<HangoutSpotlight>` and the `useStableActiveSpeaker`
+hysteresis hook.
 
-- `<CallWidget>` 1009 LOC → composes `<CallControls>` +
-  `<CallParticipantStrip>` + `<CallStatsOverlay>` (#1205). Public API
-  unchanged.
-- `<HangoutLayout>` → composes `<HangoutGrid>` + `<HangoutSpotlight>`
-  + `useStableActiveSpeaker` hysteresis hook (#1224). Public API
-  unchanged.
-
-## Tests
-
-- `RecordingPlayer` 17 cases (#1222, May 2026).
-- `<CallControls>` / `<CallParticipantStrip>` / `<CallStatsOverlay>`
-  — 47 cases combined (#1205).
-- Coverage still light for the older composites; tracked under #1051.
-
-## See also
-
-- [`../../../docs/AUTONOMY_CHARTER.md`](../../../docs/AUTONOMY_CHARTER.md)
-  §1 — `/video` stable-exports list.
-- Wave 5 `/video-ivs` graduation is not yet filed.
-
-## Persistent playback (2.491.0)
+## Persistent playback
 
 `MediaPlaybackDock` is a nonshrinking shell footer composed from `Stack`, `Inline`, `IconButton`, `Button`, `Slider` and `Select`. Mount one outside the page scroll area. Pass a registered `PlaybackSource`; the host owns file authorization and queue selection. A source change or close stops the previous decoder. The dock owns seeking, volume, speed, errors and an expandable video surface. Set `autoPlay` only after a user action. Do not mount a second inline player for the same source. Storybook: Video/MediaPlaybackDock (idle, audio, narrow, missing video, persistent footer).
 
-## Shared huddle device check (2.492.0)
+## Shared huddle device check
 
 `createCallBlockHost` owns the start/join device dialog for every tenant. It uses
 `AudioVideoSettingsForm layout="prejoin"`: a responsive preview and controls toolbar,
@@ -72,7 +54,7 @@ library device selects, and collapsible microphone, speaker and advanced setting
 `previewControls` supplies capture/effects actions below the preview. The ordinary
 call-settings form keeps its stacked layout.
 
-Provide realtime-modules 0.141's `useCallMediaEffects` with the other factory modules
+Provide realtime-modules' `useCallMediaEffects` with the other factory modules
 to enable blur, backgrounds and appearance filters. Preview and outgoing video use
 separate media engines with shared preferences; closing the dialog cannot end the
 call's camera stream. Applications supply identity and page title through the host,

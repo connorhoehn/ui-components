@@ -22,7 +22,7 @@ export { default as PendingApprovalsPage } from './PendingApprovalsPage';
 // services seam (see useImageUrlOptional below).
 export { StepTree } from './steps/StepTree';
 export type { StepTreeProps } from './steps/StepTree';
-export { StepThread } from './steps/StepThread';
+export { StepThread, defaultCanRerunStep } from './steps/StepThread';
 export type { StepThreadProps } from './steps/StepThread';
 // A refused run/step (category `Refused`, retryability `terminal`, or a
 // refusal code in the message) is terminal: the run page and <StepThread>

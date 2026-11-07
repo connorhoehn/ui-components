@@ -1,6 +1,6 @@
 # `sideEffects` — investigated, deliberately NOT declared
 
-**Verdict (2026-08-23, v2.76.0): DO NOT declare `sideEffects` in `package.json`.**
+**Verdict: do not declare `sideEffects` in `package.json`.**
 Not `false`, and not the array form either. The bytes it buys are small; the
 failure it risks is silent and uncatchable by any gate in this repo.
 
@@ -11,8 +11,7 @@ add the field because a bundle-size audit flagged its absence — read this firs
 
 Without the field, a consumer's bundler must assume every module in the package
 may have side effects and cannot elide unused ones. Declaring it is the last
-remaining tree-shaking lever (the big win, externalising `cmdk`, already landed
-in v2.73.0).
+remaining tree-shaking lever (the big win, externalising `cmdk`, has already landed).
 
 ## What was actually measured
 
@@ -127,6 +126,6 @@ module-level side effects at all, and
 becomes both safe and sufficient — no chunk-name globs, no conjunction, no
 cliff.
 
-That touches `src/renderers/` and `src/index.ts`, which is on the no-touch list,
-so it needs a handoff. Pair it with a consumer-side regression test (a real
+That touches `src/renderers/` and `src/index.ts`, the public root barrel, so
+consumers should be told first. Pair it with a consumer-side regression test (a real
 webpack build asserting a non-empty registry) before declaring anything.

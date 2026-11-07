@@ -72,7 +72,7 @@ export interface ToolbarProps {
   /** Set by `CollectionToolbar`: `active` while the row shows a selection in place of its controls. Since 2.442.0. */
   'data-collection-selection'?: 'idle' | 'active';
   'data-collection-layout'?: 'table' | 'cards';
-  /** Set by `CollectionToolbar`: `header` when its controls sit in a page header's actions row. Since 2.503.0. */
+  /** Set by `CollectionToolbar`: `header` when its controls sit in a page header's actions row. Since 2.504.0. */
   'data-collection-placement'?: 'band' | 'header';
 }
 

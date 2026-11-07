@@ -511,7 +511,11 @@ export declare function ArtifactTile({ name, type, url }: {
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
+<<<<<<< HEAD
 export declare function AssetGallery({ items, variant, label, onOpen, actions, tileActions, menuOnSelect, onDragStart, className }: AssetGalleryProps): JSX.Element;
+=======
+export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, onDragStart, className }: AssetGalleryProps): JSX.Element;
+>>>>>>> origin/main
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -520,6 +524,7 @@ export declare interface AssetGalleryProps {
     onOpen: (item: GalleryAsset) => void;
     actions?: (item: GalleryAsset) => ReactNode;
     /**
+<<<<<<< HEAD
      * Icon actions for a tile (since 2.503.0): a compact toolbar over the
      * thumbnail's corner, revealed on hover or keyboard focus (always shown on
      * touch), with the chat message bar's roving keys. The same actions are
@@ -532,6 +537,15 @@ export declare interface AssetGalleryProps {
      * directly. Since 2.503.0.
      */
     menuOnSelect?: boolean;
+=======
+     * When the `actions` row is visible. `'hover'` (default, the pre-2.503
+     * behaviour) reveals it on pointer hover or keyboard focus within the card,
+     * and always on touch screens. `'always'` shows it at rest — use it when an
+     * action is the main thing a person does with the card (approve, use,
+     * regenerate): an action nobody can see is an action nobody finds.
+     */
+    actionsVisibility?: 'hover' | 'always';
+>>>>>>> origin/main
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
@@ -559,6 +573,15 @@ export declare interface AttachToggleProps {
 }
 
 export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
+
+/**
+ * Fills for name-derived avatars. Each one carries the white initials at
+ * ≥4.5:1 (WCAG AA for normal text), so the 9–16px initials read at every
+ * size. The fill and the text are both literal, so the ratio is the same in
+ * light and dark themes. Before 2.503.0 these were the 400/500 shades, and
+ * white on orange measured 2.8:1. Pinned by `Avatar.contrast.test.tsx`.
+ */
+export declare const AVATAR_PALETTE: readonly string[];
 
 export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
 
@@ -4309,7 +4332,16 @@ export declare interface GalleryAsset {
     title: string;
     src?: string;
     subtitle?: string;
+<<<<<<< HEAD
     status?: GalleryAssetStatus;
+=======
+    /**
+     * Shown on the card, over the thumbnail's top-left corner: StatusPill props
+     * (rendered as a md StatusPill, 12px: the sm size is 10px, under the type floor) or any node. The card's button is
+     * described by it, so a screen reader hears "Inspect Cup, Needs review".
+     */
+    status?: GalleryAssetStatus | ReactNode;
+>>>>>>> origin/main
 }
 
 /** A tile's live state ("Running · Generate", "Waiting for review"), drawn over its thumbnail. Since 2.503.0. */
@@ -4353,6 +4385,12 @@ export declare interface GenerativeImagePreviewProps {
 }
 
 export declare type GenerativeImagePreviewStatus = 'synthesizing' | 'done';
+
+/**
+ * A card's status as StatusPill props — `{ state: 'warning', label: 'Needs review' }`.
+ * `tone` and `state` mean the same thing, as on StatusPill.
+ */
+export declare type GalleryAssetStatus = Pick<StatusPillProps, 'state' | 'tone' | 'label' | 'meta'>;
 
 /**
  * Maps an event type prefix to a category for filter UIs.
@@ -4749,6 +4787,40 @@ export declare interface IconPickerProps {
 
 declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
     size?: number;
+}
+
+export declare function ImageCompare({ images, label, aspect, fit, zoomable, className, 'data-testid': testId, }: ImageCompareProps): JSX.Element | null;
+
+export declare type ImageCompareAspect = 'square' | 'landscape' | 'portrait' | 'wide';
+
+export declare interface ImageCompareImage {
+    src: string;
+    /** Short name shown under the pane — "Reference", "Current", "Candidate". */
+    label: string;
+    /** Alt text. Defaults to `label`. */
+    alt?: string;
+    /** A quieter line under the label — "v3 · 2 days ago". */
+    description?: string;
+    /** A node beside the label, usually a StatusPill ("Approved"). */
+    meta?: ReactNode;
+}
+
+export declare interface ImageCompareProps {
+    /** Two or three images, in reading order. Extras past three are ignored. */
+    images: readonly ImageCompareImage[];
+    /** Accessible name for the group. Default "Image comparison". */
+    label?: string;
+    /**
+     * The shared frame every pane uses, so heights match. `landscape` (4:3,
+     * default), `square` (1:1), `portrait` (3:4), `wide` (16:9).
+     */
+    aspect?: ImageCompareAspect;
+    /** `contain` (default) shows each whole image; `cover` fills the frame and crops. */
+    fit?: 'contain' | 'cover';
+    /** Open the lightbox on click/Enter. Default true. */
+    zoomable?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 /** A framed picture with a sun and a hill: "image". Since 2.386.5. */

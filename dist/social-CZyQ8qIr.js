@@ -1,5 +1,6 @@
 import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-5S1qyvsv.js";
 import { t as o } from "./cn-D4QmbyEy.js";
+<<<<<<<< HEAD:dist/social-CZyQ8qIr.js
 import { s } from "./usePromptContext-CUNhKC01.js";
 import { n as c, o as l } from "./Button-C-I3BxWI.js";
 import { n as u } from "./overlayStack-DxIDMUs-.js";
@@ -38,6 +39,50 @@ import { d as De } from "./ConversationSurface-D3BZ7i0h.js";
 import { i as Oe, r as ke } from "./composerSendError-BTSwRiUg.js";
 import { r as Ae } from "./PaneStatusLine-CJqgPf85.js";
 import { Suspense as je, createContext as Me, lazy as Ne, useCallback as K, useContext as Pe, useEffect as q, useId as Fe, useMemo as J, useRef as Y, useState as X } from "react";
+========
+import { n as s } from "./ToastProvider-CJAceUvq.js";
+import { s as c } from "./usePromptContext-CUNhKC01.js";
+import { n as l, o as u } from "./Button-C-I3BxWI.js";
+import { t as d } from "./Card-CbTNNNkk.js";
+import { n as f } from "./overlayStack-DxIDMUs-.js";
+import { t as p } from "./IconButton-J9jGN6eo.js";
+import { J as m, S as h, Tt as g, U as _, et as v, ft as y, h as b, it as x, k as S, m as C, o as w, t as T, tt as E, w as D } from "./Icons-CqVFbuiZ.js";
+import { c as O, i as k, l as A, t as j } from "./Text-AlKB4riU.js";
+import { t as M } from "./Banner-DTMyQNum.js";
+import { t as N } from "./Modal-PO0F6rAp.js";
+import { t as P } from "./Input-B0LB5k_L.js";
+import { t as F } from "./Select-BFyECVVL.js";
+import { t as I } from "./InlinePopover-Dx8-r-XU.js";
+import { t as L } from "./SearchInput-DDKsA6gZ.js";
+import { t as R } from "./DataTable-CLja8caN.js";
+import { t as z } from "./EmptyState-D5ucMp2y.js";
+import { n as B } from "./ThinkingDots-52RnodUR.js";
+import { n as V } from "./StatusPill-CLkB5jFS.js";
+import { t as ee } from "./SkeletonCard-D3FL0TB7.js";
+import { t as te } from "./DropdownMenu-DcFIdC5O.js";
+import { t as ne } from "./Textarea-BwvE1HPn.js";
+import { n as H, r as re } from "./Avatar-GvBbrBxQ.js";
+import { t as ie } from "./DotMeter-B6ZDgLU7.js";
+import { t as U } from "./StatusDot-GwVn-q5q.js";
+import { i as ae, n as oe, r as W, t as se } from "./ChoiceList-B3BfW3Ls.js";
+import { t as ce } from "./SegmentedControl-CMpxVHLC.js";
+import { t as le } from "./InlineAlert-BqOYETP1.js";
+import { t as ue } from "./LogStream-C9pn1oLa.js";
+import { a as de, n as fe, o as G, s as pe, t as me } from "./backdropTone-BzPocySl.js";
+import { l as he } from "./railType-AsIPWdQ5.js";
+import { n as ge, s as _e, t as ve } from "./PopoverForm-BCwQf8d0.js";
+import { t as ye } from "./InlinePlaceholder-DiPQ7hOM.js";
+import { t as be } from "./MetaLine-DFn2XXGU.js";
+import { D as xe, F as Se, R as Ce, j as we, lt as Te, rt as Ee, st as De, tt as Oe } from "./ConversationSurface-BZwwnoUE.js";
+import "./ChatSidePanelRegistry-DYq1787t.js";
+import { t as ke } from "./rovingFocus-Bj5Y6kwY.js";
+import { n as Ae, t as je } from "./ReactionPickerPopover-Dwr2gY0t.js";
+import { n as Me } from "./useComputeProjects-ZSazDRet.js";
+import "./QuoteBlock-qqQqscMP.js";
+import { i as Ne, r as Pe } from "./composerSendError-BUIwnQlH.js";
+import { r as Fe } from "./PaneStatusLine-CJqgPf85.js";
+import { Suspense as Ie, createContext as Le, lazy as Re, useCallback as K, useContext as ze, useEffect as q, useId as Be, useMemo as J, useRef as Y, useState as X } from "react";
+>>>>>>>> origin/main:dist/social-CPfqaFMc.js
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";
 //#region src/components/social/SocialPanel.tsx
 function Ie(e, t) {
@@ -2819,10 +2864,17 @@ function It(e, t) {
 	}
 	return a;
 }
+<<<<<<<< HEAD:dist/social-CZyQ8qIr.js
 function Lt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, onNewChat: i, grouped: a = !0, sectionOrder: s = "channels-first", sectionActions: c, collapsedSections: l, onToggleSection: u, onStartCall: p, maxVisible: m, emptyLabel: h, header: g, title: v, actions: y, beforeList: b, footer: S, onTogglePin: C, onToggleMute: w, onMarkUnread: T, onRename: E, canRename: D, onSetSection: k, collapsible: A = !1, collapsed: j = !1, onToggleCollapse: M, shelfLayout: N = "list", search: F, sections: I, sectionLayout: L, onSectionLayoutChange: R, showSections: ee, className: z, "data-testid": B = "conversation-rail" }) {
 	let [V, te] = X(!1), [ne, H] = X(!1), ie = Y(null), U = !!F && (V || F.value !== ""), ae = F?.label ?? "Find a chat", oe = () => {
 		F?.onChange(""), te(!1), ie.current?.focus();
 	}, W = A && j, se = n?.kind === "shelf" ? n.id : null, ce = {
+========
+function Qt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, onNewChat: i, grouped: a = !0, sectionOrder: s = "channels-first", sectionActions: c, collapsedSections: l, onToggleSection: u, onStartCall: d, maxVisible: f, emptyLabel: h, header: g, title: _, actions: v, beforeList: b, footer: x, onTogglePin: S, onToggleMute: w, onMarkUnread: T, onRename: E, canRename: D, onSetSection: O, collapsible: k = !1, collapsed: A = !1, onToggleCollapse: M, shelfLayout: N = "list", search: P, sections: F, sectionLayout: I, onSectionLayoutChange: R, showSections: z, className: B, "data-testid": V = "conversation-rail" }) {
+	let [ee, ne] = X(!1), [H, re] = X(!1), ie = Y(null), U = !!P && (ee || P.value !== ""), ae = P?.label ?? "Find a chat", oe = () => {
+		P?.onChange(""), ne(!1), ie.current?.focus();
+	}, W = k && A, se = n?.kind === "shelf" ? n.id : null, ce = {
+>>>>>>>> origin/main:dist/social-CPfqaFMc.js
 		sectionActions: c,
 		collapsedSections: l,
 		onToggleSection: u,
@@ -2920,13 +2972,19 @@ function Lt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, 
 			triggerTestId: `${B}-options`,
 			triggerClassName: "h-7 w-7 border-transparent px-0 py-0 text-text-secondary",
 			sections: [{ items: [{
+<<<<<<<< HEAD:dist/social-CZyQ8qIr.js
 				label: ne ? "Done arranging" : "Arrange sections…",
 				onSelect: () => H((e) => !e),
 				"data-testid": `${B}-arrange`
+========
+				label: H ? "Done arranging" : "Arrange sections…",
+				onSelect: () => re((e) => !e),
+				"data-testid": `${V}-arrange`
+>>>>>>>> origin/main:dist/social-CPfqaFMc.js
 			}, {
 				label: "Reset layout",
 				onSelect: () => {
-					R(null), H(!1);
+					R(null), re(!1);
 				},
 				"data-testid": `${B}-reset-layout`
 			}] }]
@@ -2984,7 +3042,11 @@ function Lt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, 
 				className: o("shrink-0", "px-2"),
 				children: b
 			}),
+<<<<<<<< HEAD:dist/social-CZyQ8qIr.js
 			!W && I && ne && /* @__PURE__ */ Q("div", {
+========
+			!W && F && H && /* @__PURE__ */ Q("div", {
+>>>>>>>> origin/main:dist/social-CPfqaFMc.js
 				className: o("shrink-0 py-2", "px-2"),
 				"data-testid": `${B}-arranging`,
 				children: /* @__PURE__ */ Q("ul", {
@@ -3026,8 +3088,13 @@ function Lt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, 
 					}, e))
 				})
 			}),
+<<<<<<<< HEAD:dist/social-CZyQ8qIr.js
 			!W && I && !ne && pe.map(xe),
 			!W && I && !ne && ve && ye === 0 && /* @__PURE__ */ Q(Ke, {
+========
+			!W && F && !H && pe.map(be),
+			!W && F && !H && ve && ye === 0 && /* @__PURE__ */ Q(et, {
+>>>>>>>> origin/main:dist/social-CPfqaFMc.js
 				items: [],
 				...ce,
 				emptyLabel: h,

@@ -1,9 +1,16 @@
 import { t as e } from "./cn-D4QmbyEy.js";
 import { n as t } from "./Button-C-I3BxWI.js";
 import { n } from "./overlayStack-DxIDMUs-.js";
+<<<<<<<< HEAD:dist/ChangeReviewCard-C1MgH_7X.js
 import { t as r } from "./Input-Brvp1kPv.js";
 import { t as i } from "./Avatar-DkkMISPQ.js";
 import { o as a, s as o, t as s } from "./VerdictChip-FaK2Mxij.js";
+========
+import { t as r } from "./Input-B0LB5k_L.js";
+import { n as i } from "./Avatar-GvBbrBxQ.js";
+import { t as a } from "./ChangeDiff-CGfT-mcu.js";
+import { o, t as s } from "./VerdictChip-DDweSKeO.js";
+>>>>>>>> origin/main:dist/ChangeReviewCard-B9kLiqD1.js
 import { Children as c, useState as l } from "react";
 import { Fragment as u, jsx as d, jsxs as f } from "react/jsx-runtime";
 //#region src/components/change-review/ChangeReviewList.tsx

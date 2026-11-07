@@ -1,5 +1,9 @@
 import { t as e } from "./cn-D4QmbyEy.js";
+<<<<<<<< HEAD:dist/ExcalidrawCanvas-DOogpG-s.js
 import { n as t, t as n } from "./useResolvedTheme-Bv8p_fl8.js";
+========
+import { n as t, t as n } from "./useResolvedTheme-DBcWp6nT.js";
+>>>>>>>> origin/main:dist/ExcalidrawCanvas-2BcAEaiX.js
 import { useCallback as r, useEffect as i, useMemo as a, useRef as o, useState as s } from "react";
 import { jsx as c, jsxs as l } from "react/jsx-runtime";
 import { CaptureUpdateAction as u, Excalidraw as d, reconcileElements as f } from "@excalidraw/excalidraw";

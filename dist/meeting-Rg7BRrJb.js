@@ -14,6 +14,7 @@ import { t as h } from "./EmptyState-pOG782nO.js";
 import { n as g } from "./ThinkingDots-BHtlGy_Q.js";
 import { n as _ } from "./StatusPill-cLjwbEQM.js";
 import { t as v } from "./SkeletonCard-D3FL0TB7.js";
+<<<<<<<< HEAD:dist/meeting-Rg7BRrJb.js
 import { $ as y, Q as b, t as x } from "./ChatPanel-jp8pa6bo.js";
 import { n as S } from "./Slider-DCKY5jPg.js";
 import { t as C } from "./Textarea-CvdLeuO_.js";
@@ -29,6 +30,22 @@ import { d as ne, n as F, t as I, u as re } from "./ConversationSurface-D3BZ7i0h
 import { E as ie, G as ae, R as L, T as oe, Y as se, _ as ce, i as R, k as z, n as le, q as ue, s as de, t as fe, w as pe, x as me, y as B } from "./BreakoutRoomsPanel-WejdbFuq.js";
 import { t as V } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as he, o as ge, s as _e } from "./useDocumentImageUpload-Cd_KXczH.js";
+========
+import { n as y } from "./Slider-DEbQCKD1.js";
+import { t as b } from "./Textarea-BwvE1HPn.js";
+import { n as x } from "./Avatar-GvBbrBxQ.js";
+import { t as S } from "./SegmentedControl-CMpxVHLC.js";
+import { t as C } from "./InlineAlert-BqOYETP1.js";
+import { n as w, r as T, t as E } from "./NotificationBell-Arag4pi9.js";
+import { t as D } from "./PresenceAvatars-DQpu2QO1.js";
+import { t as O } from "./FileUploadDrop-BuUUNs9k.js";
+import { t as k } from "./ActivityFeed-CF1uFMm2.js";
+import { a as A, i as j, n as M, o as N } from "./DockedAside-CsUdDjfd.js";
+import { d as P, dt as F, lt as ee, n as te, t as I, u as ne, ut as re } from "./ConversationSurface-BZwwnoUE.js";
+import { E as ie, G as ae, R as L, T as oe, Y as se, _ as R, i as z, k as B, n as ce, q as le, s as ue, t as de, w as fe, x as pe, y as V } from "./BreakoutRoomsPanel-QoQ2mL_g.js";
+import { t as me } from "./useActiveSpeaker-BGKJU3Lb.js";
+import { c as he, o as ge, s as _e } from "./useDocumentImageUpload-nQ26kXw3.js";
+>>>>>>>> origin/main:dist/meeting-BNBixSQY.js
 import { Component as ve, createContext as H, createElement as ye, useCallback as U, useContext as be, useEffect as W, useId as xe, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 import * as Se from "yjs";

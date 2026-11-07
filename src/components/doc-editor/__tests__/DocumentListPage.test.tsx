@@ -149,7 +149,7 @@ describe('DocumentListPage — Delete is reachable without a mouse', () => {
   });
 });
 
-// Empty-chrome rule (2.503.0): a pager appears only when there is more than
+// Empty-chrome rule (2.504.0): a pager appears only when there is more than
 // one page — never above an empty list, never for a list that fits.
 describe('DocumentListPage pager', () => {
   it('draws no pager with zero documents or a list that fits on one page', () => {

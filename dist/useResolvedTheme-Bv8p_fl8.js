@@ -1,6 +1,11 @@
 import { t as e } from "./cn-D4QmbyEy.js";
+<<<<<<<< HEAD:dist/useResolvedTheme-Bv8p_fl8.js
 import { t } from "./DropdownMenu-DP3rRjEd.js";
 import { t as n } from "./PresenceAvatars-DqCOZ057.js";
+========
+import { t } from "./DropdownMenu-DcFIdC5O.js";
+import { t as n } from "./PresenceAvatars-DQpu2QO1.js";
+>>>>>>>> origin/main:dist/useResolvedTheme-DBcWp6nT.js
 import { useEffect as r, useState as i } from "react";
 import { Fragment as a, jsx as o, jsxs as s } from "react/jsx-runtime";
 //#region src/components/diagram/DiagramPresenceBar.tsx

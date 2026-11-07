@@ -410,7 +410,7 @@ describe('ChangeReviewList', () => {
       </ChangeReviewList>,
     );
     expect(screen.getByText('All clear')).toBeInTheDocument();
-    // No count line above an empty state (2.503.0): the empty state says it.
+    // No count line above an empty state (2.504.0): the empty state says it.
     expect(screen.queryByTestId('change-review-list-count')).not.toBeInTheDocument();
   });
 

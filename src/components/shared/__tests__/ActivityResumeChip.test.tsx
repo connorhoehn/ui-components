@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ActivityResumeChip, activityAge } from '../ActivityResumeChip';
 
-describe('ActivityResumeChip (2.503.0)', () => {
+describe('ActivityResumeChip (2.504.0)', () => {
   const now = Date.parse('2026-11-04T12:00:00Z');
   it('names the activity, its state and its age, and resumes on click', () => {
     const resume = vi.fn();

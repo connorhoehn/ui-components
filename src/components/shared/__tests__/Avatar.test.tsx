@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Avatar, nameToInitials, nameToColor } from '../Avatar';
+import { Avatar, AVATAR_PALETTE, nameToInitials, nameToColor } from '../Avatar';
 
 describe('Avatar', () => {
   it('renders initials derived from the name when no src is provided', () => {
@@ -71,16 +71,7 @@ describe('nameToColor', () => {
   });
 
   it('returns one of the palette colors', () => {
-    const palette = new Set([
-      '#4f7cff',
-      '#22c55e',
-      '#f59e0b',
-      '#ef4444',
-      '#a855f7',
-      '#14b8a6',
-      '#0ea5e9',
-      '#f97316',
-    ]);
+    const palette = new Set(AVATAR_PALETTE);
     expect(palette.has(nameToColor('alice'))).toBe(true);
     expect(palette.has(nameToColor('bob'))).toBe(true);
   });

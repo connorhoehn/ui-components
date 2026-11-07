@@ -31,7 +31,7 @@ const columns: DataTableColumn<Row>[] = [
 const keyField = (row: Row) => row.id;
 
 
-/** The table's search is collapsed to an icon by default (2.503.0); expand it first. */
+/** The table's search is collapsed to an icon by default (2.504.0); expand it first. */
 function openSearch(): HTMLElement {
   const toggle = screen.queryByTestId('datatable-search-toggle');
   if (toggle) fireEvent.click(toggle);
@@ -474,7 +474,7 @@ describe('DataTable size="sm" (2.434.0)', () => {
   });
 });
 
-// Empty-chrome rule (2.503.0): the pager is chrome for MORE than one page.
+// Empty-chrome rule (2.504.0): the pager is chrome for MORE than one page.
 describe('DataTable pager visibility', () => {
   it('draws no pager with zero rows', () => {
     const { container } = render(<DataTable data={[]} columns={columns} keyField={keyField} pageSize={2} />);

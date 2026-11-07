@@ -1,6 +1,6 @@
 import React, { useMemo, type ReactNode } from 'react';
 import type { NodeType, PipelineEdge, StepExecution } from '../../../types/pipeline';
-import { StepThread } from './StepThread';
+import { StepThread, type StepThreadProps } from './StepThread';
 
 export interface StepTreeProps {
   steps: Record<string, StepExecution>;
@@ -21,6 +21,14 @@ export interface StepTreeProps {
    * only a duration.
    */
   renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
+  /** Forwarded to every step. See {@link StepThreadProps.canRetry}. */
+  canRetry?: StepThreadProps['canRetry'];
+  /** Forwarded to every step. See {@link StepThreadProps.canResume}. */
+  canResume?: StepThreadProps['canResume'];
+  /** Forwarded to every step: start rows expanded. Default false. */
+  defaultExpanded?: boolean;
+  /** Forwarded to every step. See {@link StepThreadProps.showTechnicalDetails}. Default `'collapsed'`. */
+  showTechnicalDetails?: StepThreadProps['showTechnicalDetails'];
 }
 
 export interface StepTreeNode {
@@ -57,7 +65,19 @@ function stepStartMs(step: StepExecution): number {
   return Number.POSITIVE_INFINITY;
 }
 
-export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepTreeProps) {
+export function StepTree({
+  steps,
+  nodeDataMap,
+  edges,
+  onRetryFromStep,
+  onResumeFromStep,
+  onArtifactClick,
+  renderStepDetail,
+  canRetry,
+  canResume,
+  defaultExpanded,
+  showTechnicalDetails,
+}: StepTreeProps) {
   const tree = useMemo(() => {
     const sorted = Object.entries(steps).sort(([, a], [, b]) => {
       const aT = stepStartMs(a);
@@ -198,6 +218,10 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
             onRetryFromStep={onRetryFromStep}
             onResumeFromStep={onResumeFromStep}
             renderStepDetail={renderStepDetail}
+            canRetry={canRetry}
+            canResume={canResume}
+            defaultExpanded={defaultExpanded}
+            showTechnicalDetails={showTechnicalDetails}
           />
           {node.children.length > 0 && (
             <div className="ml-9 pl-5 border-l-2 border-dashed border-border mb-1">

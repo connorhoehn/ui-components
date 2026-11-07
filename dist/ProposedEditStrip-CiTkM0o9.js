@@ -21,9 +21,15 @@ import { t as k } from "./Textarea-CvdLeuO_.js";
 import { t as A } from "./DotMeter-B6ZDgLU7.js";
 import { t as j } from "./SegmentedControl-DAjnOtF4.js";
 import { n as M } from "./RovingToolbar-B1Fai5PF.js";
+<<<<<<<< HEAD:dist/ProposedEditStrip-CiTkM0o9.js
 import { t as N } from "./InlineAlert-CnWUBrte.js";
 import { t as P } from "./PresenceAvatars-DqCOZ057.js";
 import { t as F } from "./useMeasuredWidth-B4suQnvy.js";
+========
+import { t as N } from "./InlineAlert-BqOYETP1.js";
+import { t as P } from "./PresenceAvatars-DQpu2QO1.js";
+import { t as F } from "./useMeasuredWidth-DtK0ADKg.js";
+>>>>>>>> origin/main:dist/ProposedEditStrip-CTAVqwk4.js
 import { t as I } from "./SectionLabel-Ch_rkHQZ.js";
 import { G as L, U as R } from "./renderers-C5HikurY.js";
 import { a as re } from "./composerSendError-BTSwRiUg.js";
@@ -1213,8 +1219,13 @@ function Ze(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
+<<<<<<<< HEAD:dist/ProposedEditStrip-CiTkM0o9.js
 var Qe = se(() => import("./SortableSlideList-BhRNoOYv.js"));
 function $e(e, t) {
+========
+var nt = le(() => import("./SortableSlideList-B4ldmInZ.js"));
+function rt(e, t) {
+>>>>>>>> origin/main:dist/ProposedEditStrip-CTAVqwk4.js
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
 function et(e, t) {
@@ -2396,8 +2407,13 @@ function Dt({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
+<<<<<<<< HEAD:dist/ProposedEditStrip-CiTkM0o9.js
 var Ot = se(() => import("./PresentationAgentComposer-CRFkIozH.js").catch(() => ({ default: Dt })));
 function kt({ back: e }) {
+========
+var Mt = le(() => import("./PresentationAgentComposer-Dt3goGsC.js").catch(() => ({ default: jt })));
+function Nt({ back: e }) {
+>>>>>>>> origin/main:dist/ProposedEditStrip-CTAVqwk4.js
 	return /* @__PURE__ */ G("svg", {
 		viewBox: "0 0 16 16",
 		className: r("h-3.5 w-3.5", e && "rotate-180"),

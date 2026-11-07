@@ -24,7 +24,7 @@ export interface PageSectionProps {
   empty?: ReactNode;
   /**
    * A count beside the title in a neutral chip — "Needs attention 1". Absent
-   * draws none, and so does zero (2.503.0): the empty state says it, a "0"
+   * draws none, and so does zero (2.504.0): the empty state says it, a "0"
    * chip over it is chrome describing nothing. Since 2.392.0.
    */
   count?: number;
