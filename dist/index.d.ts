@@ -12898,6 +12898,8 @@ export declare type IngestSourceType = 'local' | 's3' | 'google-drive' | 'webhoo
 
 /**
  * Returns a CSS string for injecting into a <style> tag or :root selector.
+ * Under a strict style-src CSP, give that tag the page nonce, or apply the
+ * string through a constructed stylesheet (`sheet.replaceSync`) instead.
  *
  * Example output:
  *   :root {

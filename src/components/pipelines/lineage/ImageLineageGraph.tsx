@@ -667,9 +667,9 @@ export function ImageLineageGraph({
           </Banner>
         </div>
       )}
-      <div className="flex-1 min-h-0 relative">
-        {/* xyflow requires absolute positioning for its internal elements */}
-        <style>{`.react-flow__node { position: absolute; }`}</style>
+      {/* xyflow requires absolute positioning for its internal nodes; a
+          class variant instead of a rendered <style> keeps strict style-src happy. */}
+      <div className="flex-1 min-h-0 relative [&_.react-flow__node]:absolute">
         <ReactFlow
           nodes={nodes}
           edges={edges}

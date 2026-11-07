@@ -113,14 +113,32 @@ export function canvasFragmentToMarkdown(frag: { toString(): string } | null | u
 /**
  * Minimal markdown-to-HTML converter for PDF export.
  */
-function simpleMarkdownToHtml(md: string): string {
+const PRINT_CSS = `
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1e293b; line-height: 1.6; }
+  h1 { font-size: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+  h2 { font-size: 18px; margin-top: 24px; }
+  h3 { font-size: 14px; color: #64748b; }
+  ul { padding-left: 20px; }
+  li { margin: 4px 0; }
+  blockquote { border-left: 3px solid #e2e8f0; margin: 8px 0; padding: 4px 12px; color: #64748b; }
+  code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-size: 13px; }
+  @media print { body { margin: 0; } }
+`;
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function simpleMarkdownToHtml(rawMd: string): string {
+  // Escaped first: the print window is same-origin, so raw markup would run.
+  const md = escapeHtml(rawMd);
   return md
     .split('\n')
     .map(line => {
       if (line.startsWith('### ')) return `<h3>${line.slice(4)}</h3>`;
       if (line.startsWith('## ')) return `<h2>${line.slice(3)}</h2>`;
       if (line.startsWith('# ')) return `<h1>${line.slice(2)}</h1>`;
-      if (line.startsWith('> ')) return `<blockquote>${line.slice(2)}</blockquote>`;
+      if (line.startsWith('&gt; ')) return `<blockquote>${line.slice(5)}</blockquote>`;
       if (line.startsWith('- [x] ')) return `<li>&#9745; ${line.slice(6)}</li>`;
       if (line.startsWith('- [ ] ')) return `<li>&#9744; ${line.slice(6)}</li>`;
       if (line.startsWith('- ')) return `<li>${line.slice(2)}</li>`;
@@ -171,25 +189,16 @@ function writeExport(
 
   const printWindow = window.open('', '_blank');
   if (!printWindow) return;
-  printWindow.document.write(`
-    <html>
-    <head>
-      <title>${title || 'Document'}</title>
-      <style>
-        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1e293b; line-height: 1.6; }
-        h1 { font-size: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
-        h2 { font-size: 18px; margin-top: 24px; }
-        h3 { font-size: 14px; color: #64748b; }
-        ul { padding-left: 20px; }
-        li { margin: 4px 0; }
-        blockquote { border-left: 3px solid #e2e8f0; margin: 8px 0; padding: 4px 12px; color: #64748b; }
-        code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-size: 13px; }
-        @media print { body { margin: 0; } }
-      </style>
-    </head>
-    <body>${simpleMarkdownToHtml(markdown)}</body>
-    </html>
-  `);
+  printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title || 'Document')}</title></head><body>${simpleMarkdownToHtml(markdown)}</body></html>`);
+  // Styled through a constructed stylesheet (CSSOM), not a <style> element or
+  // style attribute, so a strict style-src CSP on the opener does not block it.
+  try {
+    const sheet = new (printWindow as unknown as { CSSStyleSheet: typeof CSSStyleSheet }).CSSStyleSheet();
+    sheet.replaceSync(PRINT_CSS);
+    printWindow.document.adoptedStyleSheets = [sheet];
+  } catch {
+    /* unstyled print is still readable */
+  }
   printWindow.document.close();
   printWindow.print();
 }

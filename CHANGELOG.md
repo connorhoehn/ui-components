@@ -1,3 +1,7 @@
+## 2.507.2
+
+- Security (CSP readiness): `CodeBlock` emits `<span class="tok-…">` styled from `styles.css` (`[data-code-palette]`) instead of inline `style=`; the `ImageLineageGraph` rendered `<style>` is a class variant; the document PDF export styles its print window through a constructed stylesheet and now HTML-escapes the title and markdown (it wrote them raw into a same-origin window). `injectThemeVars` documents the nonce route.
+
 ## 2.507.1
 
 - Security: `SharedTextEditor` renders collaborator content as text instead of assigning it to `innerHTML` (stored XSS); formatting no longer round-trips. `EmailTemplateFormPage` previews in a `sandbox=""` iframe. `AttachmentsPanel` runs hrefs through the shared `safeHref` (now `src/lib/safeHref.ts`, which also refuses protocol-relative `//` links) and shows refused schemes as text. `@tiptap/core` floor raised to ^3.30.5 and `prosemirror-view` to >=1.42.3 (GHSA-cp6q-959q-f8rh, GHSA-c8x8-7fp4-3x9w).

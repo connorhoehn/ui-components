@@ -23135,9 +23135,9 @@ function ip({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 					})]
 				})
 			}),
-			/* @__PURE__ */ G("div", {
-				className: "flex-1 min-h-0 relative",
-				children: [/* @__PURE__ */ W("style", { children: ".react-flow__node { position: absolute; }" }), /* @__PURE__ */ G(Kt, {
+			/* @__PURE__ */ W("div", {
+				className: "flex-1 min-h-0 relative [&_.react-flow__node]:absolute",
+				children: /* @__PURE__ */ G(Kt, {
 					nodes: x,
 					edges: w,
 					onNodesChange: C,
@@ -23158,7 +23158,7 @@ function ip({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 						showInteractive: !1,
 						className: "bg-surface border border-border rounded"
 					})]
-				})]
+				})
 			}),
 			/* @__PURE__ */ W(be, {
 				open: c,

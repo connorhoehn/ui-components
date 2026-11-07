@@ -48,71 +48,54 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function highlightTs(escaped: string, palette: Palette): string {
-  let out = escaped.replace(/(\/\/.*?)(\n|$)/g, `<span style="color:${palette.comment}">$1</span>$2`);
-  out = out.replace(/(\/\*[\s\S]*?\*\/)/g, `<span style="color:${palette.comment}">$1</span>`);
+function highlightTs(escaped: string): string {
+  let out = escaped.replace(/(\/\/.*?)(\n|$)/g, `<span class="tok-comment">$1</span>$2`);
+  out = out.replace(/(\/\*[\s\S]*?\*\/)/g, `<span class="tok-comment">$1</span>`);
   out = out.replace(
     /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g,
-    `<span style="color:${palette.string}">$1</span>`,
+    `<span class="tok-string">$1</span>`,
   );
   const kw = new RegExp(`\\b(${KEYWORDS_JS.join('|')})\\b`, 'g');
-  out = out.replace(kw, `<span style="color:${palette.keyword}">$1</span>`);
-  out = out.replace(/\b(\d+(?:\.\d+)?)\b/g, `<span style="color:${palette.number}">$1</span>`);
+  out = out.replace(kw, `<span class="tok-keyword">$1</span>`);
+  out = out.replace(/\b(\d+(?:\.\d+)?)\b/g, `<span class="tok-number">$1</span>`);
   return out;
 }
 
-function highlightJson(escaped: string, palette: Palette): string {
+function highlightJson(escaped: string): string {
   let out = escaped.replace(
     /("(?:[^"\\]|\\.)*")(\s*:)/g,
-    `<span style="color:${palette.property}">$1</span>$2`,
+    `<span class="tok-property">$1</span>$2`,
   );
-  out = out.replace(/("(?:[^"\\]|\\.)*")/g, `<span style="color:${palette.string}">$1</span>`);
-  out = out.replace(/\b(true|false|null)\b/g, `<span style="color:${palette.keyword}">$1</span>`);
-  out = out.replace(/\b(-?\d+(?:\.\d+)?)\b/g, `<span style="color:${palette.number}">$1</span>`);
+  out = out.replace(/("(?:[^"\\]|\\.)*")/g, `<span class="tok-string">$1</span>`);
+  out = out.replace(/\b(true|false|null)\b/g, `<span class="tok-keyword">$1</span>`);
+  out = out.replace(/\b(-?\d+(?:\.\d+)?)\b/g, `<span class="tok-number">$1</span>`);
   return out;
 }
 
-function highlightBash(escaped: string, palette: Palette): string {
-  let out = escaped.replace(/(#.*?)(\n|$)/g, `<span style="color:${palette.comment}">$1</span>$2`);
-  out = out.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, `<span style="color:${palette.string}">$1</span>`);
+function highlightBash(escaped: string): string {
+  let out = escaped.replace(/(#.*?)(\n|$)/g, `<span class="tok-comment">$1</span>$2`);
+  out = out.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, `<span class="tok-string">$1</span>`);
   const kw = new RegExp(`\\b(${KEYWORDS_BASH.join('|')})\\b`, 'g');
-  out = out.replace(kw, `<span style="color:${palette.keyword}">$1</span>`);
+  out = out.replace(kw, `<span class="tok-keyword">$1</span>`);
   const builtins = new RegExp(`\\b(${BASH_BUILTINS.join('|')})\\b`, 'g');
-  out = out.replace(builtins, `<span style="color:${palette.builtin}">$1</span>`);
-  out = out.replace(/(\$\w+|\$\{[^}]+\})/g, `<span style="color:${palette.variable}">$1</span>`);
+  out = out.replace(builtins, `<span class="tok-builtin">$1</span>`);
+  out = out.replace(/(\$\w+|\$\{[^}]+\})/g, `<span class="tok-variable">$1</span>`);
   return out;
 }
 
-interface Palette {
-  comment: string; string: string; keyword: string; number: string;
-  property: string; builtin: string; variable: string;
-}
-
-const DARK: Palette = {
-  comment: 'var(--color-neutral)', string: '#4ade80', keyword: 'var(--color-state-pending)', number: '#fbbf24',
-  property: '#7dd3fc', builtin: '#c4b5fd', variable: '#fbbf24',
-};
-
-const CONSOLE: Palette = {
-  comment: 'var(--color-code-comment)', string: 'var(--color-code-green)', keyword: 'var(--color-code-mauve)',
-  number: 'var(--color-code-peach)', property: 'var(--color-code-blue)', builtin: 'var(--color-code-mauve)',
-  variable: 'var(--color-code-yellow)',
-};
-
-const LIGHT: Palette = {
-  comment: 'var(--color-neutral)', string: '#15803d', keyword: 'var(--color-info-fg)', number: '#a16207',
-  property: '#0369a1', builtin: 'var(--color-cat-ai)', variable: '#a16207',
-};
-
-function highlight(code: string, language: CodeBlockLanguage, theme: CodeBlockTheme): string {
-  const palette = theme === 'light' ? LIGHT : theme === 'console' ? CONSOLE : DARK;
+/**
+ * Emits `<span class="tok-…">` only; the colours live in styles.css under
+ * `[data-code-palette]`, so the markup carries no `style=` attribute and a
+ * strict `style-src` CSP does not block it. Input is HTML-escaped first.
+ */
+function highlight(code: string, language: CodeBlockLanguage): string {
   const escaped = escapeHtml(code);
   switch (language) {
     case 'json':
-      return highlightJson(escaped, palette);
+      return highlightJson(escaped);
     case 'bash':
     case 'sh':
-      return highlightBash(escaped, palette);
+      return highlightBash(escaped);
     case 'text':
       return escaped;
     case 'tsx':
@@ -120,7 +103,7 @@ function highlight(code: string, language: CodeBlockLanguage, theme: CodeBlockTh
     case 'jsx':
     case 'js':
     default:
-      return highlightTs(escaped, palette);
+      return highlightTs(escaped);
   }
 }
 
@@ -156,13 +139,14 @@ export function CodeBlock({
   // so it re-ran for the `copied` toggle above — which touches nothing the
   // highlighter reads — and on any parent re-render, over payloads that can
   // be tens of KB (pipeline step output, LLM responses, JSON blobs).
-  const html = useMemo(() => highlight(code, language, theme), [code, language, theme]);
+  const html = useMemo(() => highlight(code, language), [code, language]);
 
   return (
     <div
       data-testid={testId}
       data-language={language}
       data-theme={theme}
+      data-code-palette={theme}
       className={cn(
         // The monospace face is the code's (on the <pre>), not the block's: the
         // copy button beside it is a control and keeps the page face (2.441.3).

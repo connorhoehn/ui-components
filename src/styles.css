@@ -2374,3 +2374,27 @@
 .doc-page.doc-page--reading .ProseMirror [data-reading-number]::before { content: attr(data-reading-number) ". "; font-variant-numeric: tabular-nums; color: var(--color-paper-ink-muted); }
 .doc-page.doc-page--reading .ProseMirror h3 { color: var(--color-paper-ink-muted); }
 .doc-page.doc-page--reading .ProseMirror em { color: var(--color-paper-ink-muted); }
+
+/* CodeBlock syntax colours. CodeBlock emits <span class="tok-…"> (no inline
+ * style=) so a CSP with a strict style-src can still colour code. The palette
+ * is chosen by the block's own data-code-palette, not the app theme. */
+[data-code-palette="dark"] {
+  --tok-comment: var(--color-neutral); --tok-string: #4ade80; --tok-keyword: var(--color-state-pending);
+  --tok-number: #fbbf24; --tok-property: #7dd3fc; --tok-builtin: #c4b5fd; --tok-variable: #fbbf24;
+}
+[data-code-palette="console"] {
+  --tok-comment: var(--color-code-comment); --tok-string: var(--color-code-green); --tok-keyword: var(--color-code-mauve);
+  --tok-number: var(--color-code-peach); --tok-property: var(--color-code-blue); --tok-builtin: var(--color-code-mauve);
+  --tok-variable: var(--color-code-yellow);
+}
+[data-code-palette="light"] {
+  --tok-comment: var(--color-neutral); --tok-string: #15803d; --tok-keyword: var(--color-info-fg);
+  --tok-number: #a16207; --tok-property: #0369a1; --tok-builtin: var(--color-cat-ai); --tok-variable: #a16207;
+}
+.tok-comment { color: var(--tok-comment); }
+.tok-string { color: var(--tok-string); }
+.tok-keyword { color: var(--tok-keyword); }
+.tok-number { color: var(--tok-number); }
+.tok-property { color: var(--tok-property); }
+.tok-builtin { color: var(--tok-builtin); }
+.tok-variable { color: var(--tok-variable); }
