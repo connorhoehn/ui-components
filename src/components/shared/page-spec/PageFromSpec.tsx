@@ -21,8 +21,8 @@ export function definePage<S extends PageSpec>(spec: S): S {
 }
 
 /** Typed identity for a `table` leaf, so `columns` and `keyField` check against the row type. */
-export function tableLeaf<T>(leaf: Omit<TableLeaf<T>, 'kind'>): TableLeaf {
-  return { kind: 'table', ...leaf } as TableLeaf;
+export function tableLeaf<T>(leaf: Omit<TableLeaf<T>, 'kind'>): TableLeaf<T> {
+  return { kind: 'table', ...leaf };
 }
 
 /** Spreads `{ key: value }` only when `value` is set, so a template default is never overridden by `undefined`. */

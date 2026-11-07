@@ -1,14 +1,15 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { PageFromSpec, definePage, tableLeaf } from './PageFromSpec';
 import { SpecLeaf, renderSection } from './render';
 import { PageSpecProvider, registerLeafKind } from './registry';
-import type { BuiltinLeafKind, LeafSpec, PageSpec } from './types';
+import type { BuiltinLeafKind, LeafSpec, PageSpec, TableLeaf } from './types';
 
 // An app-defined kind, declared the way a consumer augments the shipped interface.
 declare module './types' {
   interface PageSpecLeafKinds {
     'test-meter': { value: number; label: string };
+    'test-late-meter': { value: number; label: string };
   }
 }
 
@@ -199,8 +200,9 @@ describe('registered leaf kinds', () => {
 
   it('renders a kind registered with registerLeafKind', () => {
     const unregister = registerLeafKind('test-meter', Meter);
-    const { container } = render(<SpecLeaf leaf={{ kind: 'test-meter', value: 64, label: 'Budget' }} />);
+    const { container, unmount } = render(<SpecLeaf leaf={{ kind: 'test-meter', value: 64, label: 'Budget' }} />);
     expect(leafMarker(container, 'test-meter')?.textContent).toBe('64%');
+    unmount();
     unregister();
   });
 
@@ -211,6 +213,17 @@ describe('registered leaf kinds', () => {
       </PageSpecProvider>,
     );
     expect(leafMarker(container, 'test-meter')?.textContent).toBe('12%');
+  });
+
+  it('a page already mounted picks up a kind registered after it, and drops it on unregister', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { container } = render(<SpecLeaf leaf={{ kind: 'test-late-meter', value: 30, label: 'Late' }} />);
+    expect(leafMarker(container, 'test-late-meter')).toBeNull();
+    let unregister = () => {};
+    act(() => { unregister = registerLeafKind('test-late-meter', Meter); });
+    expect(leafMarker(container, 'test-late-meter')?.textContent).toBe('30%');
+    act(() => unregister());
+    expect(leafMarker(container, 'test-late-meter')).toBeNull();
   });
 
   it('an unregistered kind renders nothing and reports it', () => {
@@ -240,5 +253,9 @@ describe('spec types', () => {
     expectTypeOf<{ kind: 'button'; label: string; variant: 'primary' }>().toMatchTypeOf<LeafSpec>();
     expectTypeOf<{ kind: 'test-meter'; value: number; label: string }>().toMatchTypeOf<LeafSpec>();
     expectTypeOf(definePage({ template: 'dashboard', title: 'x' })).toMatchTypeOf<PageSpec>();
+    // tableLeaf keeps its row type, and the typed leaf still fits a spec slot.
+    const typed = tableLeaf({ data: rows, columns, keyField: (r) => r.id });
+    expectTypeOf(typed).toEqualTypeOf<TableLeaf<(typeof rows)[number]>>();
+    expectTypeOf(typed).toMatchTypeOf<LeafSpec>();
   });
 });

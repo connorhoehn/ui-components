@@ -3,7 +3,7 @@
 // (`registerLeafKind`) or for a subtree (`PageSpecProvider leaves={…}`); the
 // provider wins over the global registry. Built-in kinds cannot be replaced:
 // a spec's `button` is always the library Button.
-import { createContext, useContext, useMemo, type ComponentType, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, useSyncExternalStore, type ComponentType, type ReactNode } from 'react';
 import type { BuiltinLeafKind, PageSpecLeafKinds } from './types';
 
 /** The component a registered kind renders: its spec's props, plus the leaf marker to put on its root. */
@@ -25,6 +25,19 @@ export function isBuiltinLeafKind(kind: string): kind is BuiltinLeafKind {
 }
 
 const registry = new Map<string, ComponentType<never>>();
+// Pages that read the global registry subscribe to it, so a kind registered
+// (or unregistered) after a page mounted re-renders that page's leaves.
+const listeners = new Set<() => void>();
+let version = 0;
+function notify() {
+  version += 1;
+  for (const listener of listeners) listener();
+}
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
+const getVersion = () => version;
 
 /**
  * Make an app-defined kind renderable everywhere. Returns an unregister function.
@@ -34,8 +47,12 @@ export function registerLeafKind<K extends keyof PageSpecLeafKinds>(kind: K, com
   const name = kind as string;
   if (isBuiltinLeafKind(name)) throw new Error(`registerLeafKind: "${name}" is a built-in leaf kind and cannot be replaced.`);
   registry.set(name, component as ComponentType<never>);
+  notify();
   return () => {
-    if (registry.get(name) === (component as ComponentType<never>)) registry.delete(name);
+    if (registry.get(name) === (component as ComponentType<never>)) {
+      registry.delete(name);
+      notify();
+    }
   };
 }
 
@@ -60,5 +77,6 @@ export function PageSpecProvider({ leaves, children }: PageSpecProviderProps) {
 /** The component for an app-defined kind, or undefined. */
 export function useRegisteredLeaf(kind: string): ComponentType<never> | undefined {
   const provided = useContext(LeafMapContext);
+  useSyncExternalStore(subscribe, getVersion, getVersion);
   return provided?.[kind] ?? registry.get(kind);
 }
