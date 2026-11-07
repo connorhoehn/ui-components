@@ -10,7 +10,7 @@ import { t as re } from "./QuoteBlock-NVq2JJEM.js";
 import { i as ie } from "./composerSendError-BTSwRiUg.js";
 import { a as ae, i as oe, r as c } from "./composerContext-BLn1-Nao.js";
 import { i as se, t as ce } from "./FloatingComposerDock-D10uQ4k3.js";
-import { r as le } from "./RichChatComposer-C0wm4sKU.js";
+import { r as le } from "./RichChatComposer-DvLdanaL.js";
 import { useCallback as l, useId as ue, useMemo as de, useRef as u, useState as d } from "react";
 import { Fragment as f, jsx as p, jsxs as m } from "react/jsx-runtime";
 //#region src/components/social/ContextComposer.tsx
@@ -44,7 +44,7 @@ function g(e) {
 		...e,
 		look: {
 			preset: o,
-			toolbar: "editor",
+			toolbar: e.toolbar ?? "editor",
 			density: n === "document" ? "comfortable" : "compact",
 			collapseWhenIdle: !0,
 			passModes: !0,
@@ -53,21 +53,21 @@ function g(e) {
 		}
 	});
 }
-function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, modes: _, disabledModes: _e, modeUnavailableReasons: ve, placeholder: v, modePlaceholders: ye, modeHints: be, hints: xe, submitLabel: Se, contextChip: y = !0, onRemoveContext: b, references: Ce, onRemoveReference: x, commands: S, onCommand: we, workflows: Te, onWorkflow: C, workflowSubmitLabel: Ee = "Prepare run", onSearchPeople: De, mentionMembers: Oe, onMentionNonMember: ke, onSearchDocuments: Ae, documentMenu: je, allowAttachments: Me = !0, allowEmoji: Ne = !0, onRequestLink: Pe, privacy: Fe, onPrivacyChange: Ie, privacyLabels: Le, sendOptions: Re, onSendOption: ze, onShareDocument: Be, shareDocumentTestId: Ve, offline: He, onMakeDeck: Ue, makeDeckLabel: We = "Make a deck from this page", makeDeckTestId: Ge, moreActions: Ke, moreActionsLabel: qe = "Page actions", dock: Je, above: w, header: T, strip: E, task: D, reply: O, replacement: k, modelUnavailable: Ye, toolbarExtras: Xe, submitLead: Ze, modeRowEnd: Qe, modeRowStart: $e, sendWithReferencesOnly: et, referencesAction: tt, referenceDrop: nt, processes: rt, onQuickOpen: it, onShellCommand: at, draft: ot, onDraftChange: st, defaultDraft: ct, draftKey: lt, onSend: ut, identity: dt, expanded: ft, collapsible: A = !1, collapsedLabel: pt, responsive: mt, working: ht, console: gt = !0, disabled: _t, readOnly: j, status: vt, suggestions: yt, onSuggestion: bt, maxInputHeight: xt, composerRef: St, label: Ct, inputLabel: wt = "Message", className: Tt, "data-testid": M = "context-composer", composerTestId: Et }) {
-	let { preset: N } = e, P = N.features, F = lt ?? `${c.kind}:${c.id}`, I = _ ?? N.modes, L = _e ?? N.disabledModes.filter((e) => I.includes(e)), [Dt, Ot] = d(() => {
+function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, modes: _, disabledModes: _e, modeUnavailableReasons: ve, placeholder: v, modePlaceholders: ye, modeHints: be, hints: xe, submitLabel: Se, contextChip: y = !0, onRemoveContext: b, references: Ce, onRemoveReference: x, commands: S, onCommand: we, workflows: Te, onWorkflow: Ee, workflowSubmitLabel: De = "Prepare run", onSearchPeople: Oe, mentionMembers: ke, onMentionNonMember: Ae, onSearchDocuments: je, documentMenu: Me, allowAttachments: Ne = !0, allowEmoji: Pe = !0, onRequestLink: Fe, privacy: Ie, onPrivacyChange: Le, privacyLabels: Re, sendOptions: ze, onSendOption: Be, onShareDocument: Ve, shareDocumentTestId: He, offline: Ue, onMakeDeck: We, makeDeckLabel: Ge = "Make a deck from this page", makeDeckTestId: Ke, moreActions: qe, moreActionsLabel: Je = "Page actions", dock: C, above: w, header: T, strip: E, task: D, reply: O, replacement: k, modelUnavailable: Ye, toolbarExtras: Xe, submitLead: Ze, modeRowEnd: Qe, modeRowStart: $e, sendWithReferencesOnly: et, referencesAction: tt, referenceDrop: nt, processes: rt, onQuickOpen: it, onShellCommand: at, draft: ot, onDraftChange: st, defaultDraft: ct, draftKey: lt, onSend: ut, identity: dt, expanded: ft, collapsible: A = !1, collapsedLabel: pt, responsive: mt, working: ht, console: gt = !0, disabled: _t, readOnly: j, status: vt, suggestions: yt, onSuggestion: bt, suggestionsVisible: xt, maxInputHeight: St, composerRef: Ct, label: wt, inputLabel: Tt = "Message", className: Et, "data-testid": M = "context-composer", composerTestId: Dt }) {
+	let { preset: N } = e, P = N.features, F = lt ?? `${c.kind}:${c.id}`, I = _ ?? N.modes, L = _e ?? N.disabledModes.filter((e) => I.includes(e)), [Ot, kt] = d(() => {
 		let e = ge ?? N.defaultMode;
 		return I.includes(e) ? e : I.find((e) => !L.includes(e)) ?? e;
-	}), R = h ?? Dt, kt = l((e) => {
-		h === void 0 && Ot(e), g?.(e);
-	}, [h, g]), [At, jt] = d(() => fe(ct)), [Mt, Nt] = d(0), [Pt, Ft] = d(F), [It, Lt] = d(!1), [Rt, z] = d(!1), B = ue(), zt = u(null), V = A && Rt && !k && !T;
-	Pt !== F && (Ft(F), jt(fe(ct)), Nt(0), Lt(!1), z(!1));
-	let H = ot !== void 0, U = H ? ot : At, W = u(U);
+	}), R = h ?? Ot, At = l((e) => {
+		h === void 0 && kt(e), g?.(e);
+	}, [h, g]), [jt, Mt] = d(() => fe(ct)), [Nt, Pt] = d(0), [Ft, It] = d(F), [Lt, Rt] = d(!1), [zt, z] = d(!1), B = ue(), Bt = u(null), V = A && zt && !k && !T;
+	Ft !== F && (It(F), Mt(fe(ct)), Pt(0), Rt(!1), z(!1));
+	let H = ot !== void 0, U = H ? ot : jt, W = u(U);
 	W.current = U;
 	let G = l((e, t) => {
-		H || jt(e), st?.(e, t);
-	}, [H, st]), K = P.workflows && Te ? Te : he, q = P.workflowCommand, Bt = l((e) => {
-		if (C) {
-			C(e);
+		H || Mt(e), st?.(e, t);
+	}, [H, st]), K = P.workflows && Te ? Te : he, q = P.workflowCommand, Vt = l((e) => {
+		if (Ee) {
+			Ee(e);
 			return;
 		}
 		let t = K.find((t) => t.id === e), n = q && t ? {
@@ -82,9 +82,9 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 				}
 			}
 		} : ae(`/${e} `);
-		G(n, W.current), Nt((e) => e + 1);
+		G(n, W.current), Pt((e) => e + 1);
 	}, [
-		C,
+		Ee,
 		K,
 		q,
 		G
@@ -112,18 +112,18 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 		S,
 		K,
 		q
-	]), Vt = U?.html?.replace(/<[^>]*>/g, "").trimStart() ?? "", Ht = !!q && K.length > 0 && (U?.command?.trigger === q || Vt.toLowerCase().startsWith(`${q} `)), Y = u(null), Ut = l((e) => {
-		Y.current = e, pe(St, e ? {
+	]), Ht = U?.html?.replace(/<[^>]*>/g, "").trimStart() ?? "", Ut = !!q && K.length > 0 && (U?.command?.trigger === q || Ht.toLowerCase().startsWith(`${q} `)), Y = u(null), Wt = l((e) => {
+		Y.current = e, pe(Ct, e ? {
 			...e,
 			focus: () => {
 				z(!1), requestAnimationFrame(() => e.focus());
 			}
 		} : null);
-	}, [St]), Wt = () => {
+	}, [Ct]), Gt = () => {
 		z(!1), requestAnimationFrame(() => Y.current?.focus());
-	}, Gt = () => {
-		Y.current?.editor?.commands.blur(), z(!0), requestAnimationFrame(() => zt.current?.focus());
-	}, X = oe(dt), Kt = l((e) => {
+	}, Kt = () => {
+		Y.current?.editor?.commands.blur(), z(!0), requestAnimationFrame(() => Bt.current?.focus());
+	}, X = oe(dt), qt = l((e) => {
 		let t = e;
 		if (P.typedText) {
 			let n = Y.current?.editor?.getText();
@@ -151,13 +151,13 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 		ut,
 		c,
 		X
-	]), Z = P.contextChip && y !== !1 && !It ? typeof y == "string" ? y : N.chipLabel : null, Q = `context:${c.kind}:${c.id}`, qt = Z ? [{
+	]), Z = P.contextChip && y !== !1 && !Lt ? typeof y == "string" ? y : N.chipLabel : null, Q = `context:${c.kind}:${c.id}`, Jt = Z ? [{
 		id: Q,
 		label: Z,
 		marker: "dot"
-	}, ...Ce ?? []] : Ce, Jt = l((e) => {
+	}, ...Ce ?? []] : Ce, Yt = l((e) => {
 		if (e === Q) {
-			Lt(!0), b?.();
+			Rt(!0), b?.();
 			return;
 		}
 		x?.(e);
@@ -165,24 +165,24 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 		Q,
 		b,
 		x
-	]), $ = j != null && j !== !1, Yt = !$ && (!!x || !!Z && !!b), Xt = P.pageActions ? [...Ue ? [{
+	]), $ = j != null && j !== !1, Xt = !$ && (!!x || !!Z && !!b), Zt = P.pageActions ? [...We ? [{
 		label: "This page",
 		items: [{
-			label: We,
+			label: Ge,
 			description: "Drafts a presentation that cites this page, then opens it",
-			onSelect: Ue,
-			"data-testid": Ge ?? `${M}-make-deck`
+			onSelect: We,
+			"data-testid": Ke ?? `${M}-make-deck`
 		}]
-	}] : [], ...Ke ?? []] : [], Zt = P.sendOptions && Be ? /* @__PURE__ */ p(i, {
+	}] : [], ...qe ?? []] : [], Qt = P.sendOptions && Ve ? /* @__PURE__ */ p(i, {
 		"aria-label": "Share a document",
 		title: "Share a document",
 		variant: "ghost",
 		size: "sm",
 		icon: /* @__PURE__ */ p(a, { size: 14 }),
 		disabled: $,
-		onClick: (e) => Be(e.currentTarget),
-		"data-testid": Ve ?? `${M}-share-document`
-	}) : null, Qt = K.length > 0 ? /* @__PURE__ */ p(te, {
+		onClick: (e) => Ve(e.currentTarget),
+		"data-testid": He ?? `${M}-share-document`
+	}) : null, $t = K.length > 0 ? /* @__PURE__ */ p(te, {
 		trigger: /* @__PURE__ */ m("span", {
 			className: "inline-flex items-center gap-2",
 			children: [
@@ -208,22 +208,22 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 			disabled: e.disabled,
 			disabledReason: e.disabledReason,
 			active: U?.command?.trigger === q && U?.command?.argument?.id === e.id,
-			onSelect: () => Bt(e.id),
+			onSelect: () => Vt(e.id),
 			"data-testid": `${M}-workflow-${e.id}`
 		})) }]
-	}) : null, $t = Qt || Zt || Xe != null ? /* @__PURE__ */ m(f, { children: [
+	}) : null, en = $t || Qt || Xe != null ? /* @__PURE__ */ m(f, { children: [
+		$t,
 		Qt,
-		Zt,
 		Xe
-	] }) : void 0, en = P.modelUnavailable && Ye ? /* @__PURE__ */ p(ee, {
+	] }) : void 0, tn = P.modelUnavailable && Ye ? /* @__PURE__ */ p(ee, {
 		variant: "warning",
 		"data-testid": `${M}-model-unavailable`,
 		children: Ye
-	}) : null, tn = P.offline && He ? /* @__PURE__ */ p(ee, {
+	}) : null, nn = P.offline && Ue ? /* @__PURE__ */ p(ee, {
 		variant: "warning",
 		"data-testid": `${M}-offline`,
-		children: He
-	}) : null, nn = P.reply && O ? /* @__PURE__ */ p(re, {
+		children: Ue
+	}) : null, rn = P.reply && O ? /* @__PURE__ */ p(re, {
 		quote: {
 			messageId: O.messageId ?? "",
 			author: O.author,
@@ -233,16 +233,16 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 		...O.onDismiss ? { onDismiss: O.onDismiss } : {},
 		...O.onJump && O.messageId ? { onJump: O.onJump } : {},
 		"data-testid": `${M}-reply`
-	}) : null, rn = !!(en || tn || nn || w != null && w !== !1), an = rn ? /* @__PURE__ */ m("div", {
+	}) : null, an = !!(tn || nn || rn || w != null && w !== !1), on = an ? /* @__PURE__ */ m("div", {
 		className: "flex flex-col gap-1.5",
 		"data-testid": `${M}-above`,
 		children: [
-			en,
 			tn,
+			nn,
 			w,
-			nn
+			rn
 		]
-	}) : void 0, on = P.taskStrip && D ? /* @__PURE__ */ p(ne, {
+	}) : void 0, sn = P.taskStrip && D ? /* @__PURE__ */ p(ne, {
 		label: D.label,
 		status: D.status,
 		...D.phase ? { phase: D.phase } : {},
@@ -251,33 +251,33 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 		...D.onStop ? { onStop: D.onStop } : {},
 		...D.onDismiss ? { onDismiss: D.onDismiss } : {},
 		"data-testid": `${M}-task`
-	}) : null, sn = E != null && E !== !1 ? E : on, cn = T != null && T !== !1, ln = !!ft || rn || cn || sn != null, un = P.attachments === "chat-only" && R !== "chat", dn = {
+	}) : null, cn = E != null && E !== !1 ? E : sn, ln = T != null && T !== !1, un = !!ft || an || ln || cn != null, dn = P.attachments === "chat-only" && R !== "chat", fn = {
 		...N.modePlaceholders,
 		...v ? { agent: v } : {},
 		...ye
-	}, fn = {
+	}, pn = {
 		...N.modeUnavailableReasons,
 		...ve
 	};
-	return L.includes("agent") && fn.agent && !ye?.agent && !v && (dn.agent = fn.agent), /* @__PURE__ */ p(ce.Provider, {
+	return L.includes("agent") && pn.agent && !ye?.agent && !v && (fn.agent = pn.agent), /* @__PURE__ */ p(ce.Provider, {
 		value: "pinned",
 		children: /* @__PURE__ */ p(se, {
-			label: Ct ?? N.regionLabel,
+			label: wt ?? N.regionLabel,
 			"data-testid": M,
-			className: t(e.className, Tt),
-			above: V ? void 0 : an,
-			strip: V ? void 0 : sn ?? void 0,
+			className: t(e.className, Et),
+			above: V ? void 0 : on,
+			strip: V ? void 0 : cn ?? void 0,
 			composer: /* @__PURE__ */ m(f, { children: [
-				Je != null && Je !== !1 && /* @__PURE__ */ p("div", {
+				C != null && C !== !1 && /* @__PURE__ */ p("div", {
 					className: "shrink-0",
 					"data-testid": `${M}-dock-slot`,
-					children: Je
+					children: C
 				}),
 				V && /* @__PURE__ */ m(n, {
-					ref: zt,
+					ref: Bt,
 					variant: "ghost",
 					size: "sm",
-					onClick: Wt,
+					onClick: Gt,
 					"data-composer-readonly-allow": $ ? "Expand composer" : void 0,
 					"aria-label": "Expand composer",
 					"aria-expanded": !1,
@@ -294,7 +294,7 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 							className: "min-w-0 flex-1 truncate text-left font-normal text-text-secondary",
 							children: pt || c.title || "Write a message…"
 						}),
-						Vt || U?.files.length ? /* @__PURE__ */ m("span", {
+						Ht || U?.files.length ? /* @__PURE__ */ m("span", {
 							className: "shrink-0 text-xs text-text-secondary",
 							children: ["Draft kept", U?.files.length ? ` · ${U.files.length} attached` : ""]
 						}) : null,
@@ -308,60 +308,61 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 					id: B,
 					hidden: V,
 					children: k != null && k !== !1 ? k : /* @__PURE__ */ p(le, {
-						ref: Ut,
-						"data-testid": Et,
+						ref: Wt,
+						"data-testid": Dt,
 						mode: R,
-						onModeChange: kt,
+						onModeChange: At,
 						modeControl: "menu",
 						singleModeLabel: !!e.singleModeLabel,
 						layout: "auto",
 						toolbar: e.toolbar,
 						density: e.density,
 						collapseWhenIdle: e.collapseWhenIdle,
-						expanded: ln,
+						expanded: un,
 						...mt ? { responsive: mt } : {},
 						modeShortcuts: !0,
 						modeTriggers: !0,
 						backdropTone: gt ? "auto" : "none",
 						working: ht,
-						allowAttachments: Me && !un,
-						allowEmoji: P.emoji && Ne,
-						onRequestLink: Pe,
-						privacy: Fe,
-						onPrivacyChange: Ie,
-						privacyLabels: Le,
-						references: qt,
-						onRemoveReference: Yt ? Jt : void 0,
+						allowAttachments: Ne && !dn,
+						allowEmoji: P.emoji && Pe,
+						onRequestLink: Fe,
+						privacy: Ie,
+						onPrivacyChange: Le,
+						privacyLabels: Re,
+						references: Jt,
+						onRemoveReference: Xt ? Yt : void 0,
 						modes: e.passModes ? I : _,
 						disabledModes: L,
-						modeUnavailableReasons: fn,
+						modeUnavailableReasons: pn,
 						modeHints: be,
 						placeholder: v,
-						inputLabel: wt,
-						modePlaceholders: dn,
+						inputLabel: Tt,
+						modePlaceholders: fn,
 						commands: J,
 						onCommand: we,
-						onSearchDocuments: Ae,
-						documentMenu: je,
-						onSearchPeople: P.mentions ? De : void 0,
-						mentionMembers: Oe,
-						onMentionNonMember: ke,
+						onSearchDocuments: je,
+						documentMenu: Me,
+						onSearchPeople: P.mentions ? Oe : void 0,
+						mentionMembers: ke,
+						onMentionNonMember: Ae,
 						disabled: _t,
 						...$ ? { readOnly: j } : {},
 						status: vt,
 						hints: xe,
 						suggestions: yt,
 						onSuggestion: bt,
+						...xt ? { suggestionsVisible: xt } : {},
 						processes: rt,
 						onQuickOpen: it,
 						onShellCommand: at,
-						sendOptions: P.sendOptions ? Re : void 0,
-						onSendOption: P.sendOptions ? ze : void 0,
-						moreActions: Xt.length ? Xt : void 0,
-						moreActionsLabel: qe,
-						submitLabel: Ht ? Ee : Se,
-						maxInputHeight: xt,
-						toolbarExtras: $t,
+						sendOptions: P.sendOptions ? ze : void 0,
+						onSendOption: P.sendOptions ? Be : void 0,
+						moreActions: Zt.length ? Zt : void 0,
+						moreActionsLabel: Je,
+						submitLabel: Ut ? De : Se,
+						maxInputHeight: St,
+						toolbarExtras: en,
 						submitLead: Ze,
 						modeRowEnd: Qe != null || A ? /* @__PURE__ */ m(f, { children: [Qe, A && !T && /* @__PURE__ */ p(i, {
 							size: "sm",
@@ -370,7 +371,7 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 							title: "Collapse composer",
 							"aria-expanded": !0,
 							"aria-controls": B,
-							onClick: Gt,
+							onClick: Kt,
 							icon: /* @__PURE__ */ p(s, {
 								dir: "down",
 								size: 16
@@ -378,14 +379,14 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 							"data-testid": `${M}-collapse`
 						})] }) : void 0,
 						modeRowStart: $e,
-						...cn ? { header: T } : {},
+						...ln ? { header: T } : {},
 						sendWithReferencesOnly: et,
 						referencesAction: tt,
 						referenceDrop: nt,
 						draft: U,
 						onDraftChange: G,
-						onSend: Kt
-					}, `${F}:${Mt}`)
+						onSend: qt
+					}, `${F}:${Nt}`)
 				})
 			] })
 		})

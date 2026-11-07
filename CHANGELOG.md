@@ -1,3 +1,11 @@
+## 2.508.0
+
+- `RichChatComposer` `toolbar="prompt"` is a real preset: a box for one instruction with no formatting controls anywhere (not on the strip, not under `?`, not behind `⋯`). The strip is attach (only with `allowAttachments`), the divider, then `toolbarExtras`; extras alone get no divider. Bold/italic keyboard shortcuts still work. Below wide the `Aa` toggle reads "Show tools" and appears only when the strip has something to show. Under `modeControl="menu"` it docks like `basic` (boxed picker, input well, labelled Send). Before, an undocked `prompt` drew the `editor` strip.
+- **Renamed:** the docked mockup card that `toolbar="prompt"` drew since 2.389.11 (`/ Commands`, `# Context`, "Return to send", round icon Send) is now `toolbar="prompt-card"`. No consumer in the workspace used it; a host that did passes `prompt-card`.
+- `ContextComposer` (and so `ConversationComposer`) takes `toolbar` (default `editor`) and passes it to the composer.
+- `suggestionsVisible?: 'focused' | 'empty'` on `RichChatComposer` and `ContextComposer`: `empty` shows the wide chip row while the input is empty, focused or not (never on the folded idle row). Default `focused` is unchanged.
+- `FilePickerButton` renders `data-variant` as `Button` does, so a primary picker audits as primary.
+
 ## 2.507.2
 
 - Security (CSP readiness): `CodeBlock` emits `<span class="tok-…">` styled from `styles.css` (`[data-code-palette]`) instead of inline `style=`; the `ImageLineageGraph` rendered `<style>` is a class variant; the document PDF export styles its print window through a constructed stylesheet and now HTML-escapes the title and markdown (it wrote them raw into a same-origin window). `injectThemeVars` documents the nonce route.

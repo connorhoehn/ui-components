@@ -6455,7 +6455,7 @@ export declare interface ComposerTaskReport {
 }
 
 /** See `RichChatComposerProps.toolbar`. */
-declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'basic';
+declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'prompt-card' | 'basic';
 
 /** One row of the `Workflow ⌄` menu. A disabled row shows its reason and cannot be picked. */
 export declare interface ComposerWorkflow {
@@ -6812,6 +6812,12 @@ export declare interface ContextComposerProps {
     context: ComposerContext;
     /** `document`: comfortable density, for a full-width page. Default `compact`. */
     presentation?: 'compact' | 'document';
+    /**
+     * The strip's preset, as `RichChatComposerProps.toolbar` (since 2.508.0).
+     * Default `editor`. `prompt` drops every formatting control and keeps
+     * attach (when allowed), the divider and the host's extras.
+     */
+    toolbar?: ComposerToolbarPreset;
     /** Controlled mode. Pair with `onModeChange`. */
     mode?: ComposerMode;
     /** Uncontrolled starting mode. Default: the context's. */
@@ -6965,6 +6971,8 @@ export declare interface ContextComposerProps {
     status?: ComposerStatus | null;
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
+    /** `RichChatComposerProps.suggestionsVisible` (since 2.508.0). Default `focused`. */
+    suggestionsVisible?: 'focused' | 'empty';
     maxInputHeight?: number | string;
     composerRef?: Ref<RichChatComposerHandle>;
     /** Accessible name of the region. Default: the context's. */
@@ -20115,6 +20123,21 @@ declare interface RichChatComposerProps {
      *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
      *   bordered well and no rule over the strip — the Initiatives mockup.
      *
+     * - `prompt` (2.508.0): a box for one instruction, not a document — no
+     *   formatting controls at all. The strip is attach (only when
+     *   `allowAttachments`), then the divider, then `toolbarExtras`; with
+     *   neither there is no strip, only Send. Bold and italic keyboard
+     *   shortcuts still work in the input. The `?` menu holds keyboard hints
+     *   only (no "Formatting" section), and below wide the `Aa` toggle becomes
+     *   "Show tools" and appears only when the strip has something to show.
+     *   Docks like `basic` under `modeControl="menu"`: boxed mode picker,
+     *   bordered input well, labelled Send.
+     *
+     * - `prompt-card` (2.389.11, named `prompt` until 2.508.0): the docked
+     *   mockup card with `/ Commands`, `# Context`, the host's extras,
+     *   "Return to send" and a round icon Send. Under any other `modeControl`
+     *   it falls back to `prompt`.
+     *
      * In docked mode, the mode menu contains modes, host actions and keyboard
      * hints only; formatting belongs on the editor's toolbar.
      * Sizes are unchanged in all of them: every control is the same 28px box.
@@ -20302,6 +20325,14 @@ declare interface RichChatComposerProps {
      */
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
+    /**
+     * When the wide chip row shows (2.508.0). `focused` (default): while the
+     * input is empty and focused, as described at `suggestions`. `empty`: while
+     * the input is empty, focused or not — the page's quick actions visible at
+     * rest. Either way never on the one-row idle composer (`collapseWhenIdle`
+     * folded), and below wide they stay in the `?` menu.
+     */
+    suggestionsVisible?: 'focused' | 'empty';
     /** At the end of the compact mode row — a scope switch, a count. */
     modeRowEnd?: ReactNode;
     /**

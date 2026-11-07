@@ -5671,6 +5671,7 @@ function Ja({ onFiles: e, accept: t, multiple: r = !1, variant: i = "secondary",
 		"aria-label": u,
 		"data-testid": d,
 		"data-size": a === "sm" ? "sm" : void 0,
+		"data-variant": i,
 		onClick: () => f.current?.click(),
 		className: n("inline-flex cursor-pointer items-center gap-2 rounded-lg text-sm font-medium transition-colors duration-100", a === "sm" ? "h-8 px-3" : "h-9 px-3.5", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50", i === "primary" ? "border-none bg-primary text-on-primary hover:bg-primary-hover" : "border border-border bg-surface text-text-primary hover:bg-surface-hover", l),
 		children: [o, c]
