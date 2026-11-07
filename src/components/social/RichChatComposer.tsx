@@ -387,6 +387,21 @@ export interface RichChatComposerProps {
    *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
    *   bordered well and no rule over the strip — the Initiatives mockup.
    *
+   * - `prompt` (2.508.0): a box for one instruction, not a document — no
+   *   formatting controls at all. The strip is attach (only when
+   *   `allowAttachments`), then the divider, then `toolbarExtras`; with
+   *   neither there is no strip, only Send. Bold and italic keyboard
+   *   shortcuts still work in the input. The `?` menu holds keyboard hints
+   *   only (no "Formatting" section), and below wide the `Aa` toggle becomes
+   *   "Show tools" and appears only when the strip has something to show.
+   *   Docks like `basic` under `modeControl="menu"`: boxed mode picker,
+   *   bordered input well, labelled Send.
+   *
+   * - `prompt-card` (2.389.11, named `prompt` until 2.508.0): the docked
+   *   mockup card with `/ Commands`, `# Context`, the host's extras,
+   *   "Return to send" and a round icon Send. Under any other `modeControl`
+   *   it falls back to `prompt`.
+   *
    * In docked mode, the mode menu contains modes, host actions and keyboard
    * hints only; formatting belongs on the editor's toolbar.
    * Sizes are unchanged in all of them: every control is the same 28px box.
@@ -571,6 +586,14 @@ export interface RichChatComposerProps {
    */
   suggestions?: readonly string[];
   onSuggestion?: (suggestion: string) => void;
+  /**
+   * When the wide chip row shows (2.508.0). `focused` (default): while the
+   * input is empty and focused, as described at `suggestions`. `empty`: while
+   * the input is empty, focused or not — the page's quick actions visible at
+   * rest. Either way never on the one-row idle composer (`collapseWhenIdle`
+   * folded), and below wide they stay in the `?` menu.
+   */
+  suggestionsVisible?: 'focused' | 'empty';
   /** At the end of the compact mode row — a scope switch, a count. */
   modeRowEnd?: ReactNode;
   /**
@@ -685,7 +708,7 @@ export interface RichChatComposerProps {
 /** How much room the composer has, from its own width. */
 export type ComposerSize = 'wide' | 'medium' | 'narrow';
 /** See `RichChatComposerProps.toolbar`. */
-export type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'basic';
+export type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'prompt-card' | 'basic';
 export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
@@ -1058,6 +1081,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   status,
   suggestions,
   onSuggestion,
+  suggestionsVisible = 'focused',
   modeRowEnd,
   hideModeMenu = false,
   singleModeLabel = false,
@@ -2196,15 +2220,17 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // (2.386.0): `✦ Agent ⌄` whose menu also holds what `?` and `⋯` held, the
   // picked command as a chip at the START of the instruction line, a
   // larger strip and Send. Every other composer keeps its own layout.
-  const docked = menuModeRow && (toolbar === 'editor' || toolbar === 'prompt' || toolbar === 'basic');
-  // The prompt card (2.390.0): the docked card with no formatting strip — its
-  // foot is `/ Commands`, `# Context`, the host's extras (a mic), the send
-  // key and a round Send — and the command chip switches commands.
-  const promptCard = docked && toolbar === 'prompt';
+  const docked = menuModeRow && (toolbar === 'editor' || toolbar === 'prompt' || toolbar === 'prompt-card' || toolbar === 'basic');
+  // The prompt card (2.390.0; `prompt-card` since 2.508.0): the docked card
+  // with no formatting strip — its foot is `/ Commands`, `# Context`, the
+  // host's extras (a mic), the send key and a round Send — and the command
+  // chip switches commands.
+  const promptCard = docked && toolbar === 'prompt-card';
   // The basic box (2.390.0): the docked card with its mode as a boxed
   // picker ("Agent ⌄", no glyph), the input in its own bordered well, and the
-  // strip under it with no rule — the Initiatives mockup's composer.
-  const basicBox = docked && toolbar === 'basic';
+  // strip under it with no rule — the Initiatives mockup's composer. The
+  // `prompt` preset docks the same way (2.508.0), minus the formatting.
+  const basicBox = docked && (toolbar === 'basic' || toolbar === 'prompt');
   // Send's size and content, shared by the plain Send and the split one's
   // primary half. Before 2.407.8 the split stayed `text-xs` whatever `docked`
   // said while the plain docked Send was `h-9` (idle rows 42px vs 50px).
@@ -2241,7 +2267,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const hasSuggestions = !!suggestions?.length && !!onSuggestion;
   // Never on the one-row idle composer: the chips there would sit where the
   // next click lands (a chip click STARTS a run) and grow the idle dock.
-  const showSuggestionRow = hasSuggestions && wide && empty && focusWithin && !(collapseWhenIdle && !engaged);
+  // `suggestionsVisible="empty"` keeps them at rest, still never on the folded idle row.
+  const showSuggestionRow = hasSuggestions && wide && empty && (suggestionsVisible === 'empty'
+    ? !(collapseWhenIdle && !engaged && !forceExpanded)
+    : focusWithin && !(collapseWhenIdle && !engaged));
   const suggestionsInMenu = hasSuggestions && !wide;
   // Idle: one row (pill · input · Send). Anything worth reading — a status,
   // a running process, a staged file, a command, a notice, words in the box —
@@ -2274,15 +2303,22 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // strikethrough and numbered list fold under `?` with `compact`'s.
   const compactToolbar = toolbar === 'compact';
   const basicToolbar = toolbar === 'basic';
+  // `prompt` (2.508.0): no formatting controls anywhere — not on the strip,
+  // not under `?`, not behind `⋯`. `prompt-card` off the docked card is the same.
+  const promptToolbar = toolbar === 'prompt' || toolbar === 'prompt-card';
   // `basic` is `editor` without the bulleted list and quote on the strip.
-  const editorToolbar = toolbar === 'editor' || toolbar === 'prompt' || basicToolbar;
+  const editorToolbar = toolbar === 'editor' || promptToolbar || basicToolbar;
   const fullToolbar = !compactToolbar && !editorToolbar;
   const showSecondaryMarks = wide && fullToolbar;
   const showCode = wide && !compactToolbar;
   const showListControls = wide && fullToolbar;
   const showQuote = wide && !compactToolbar && !basicToolbar;
   const showBulletedList = wide && !basicToolbar;
-  const formatInHints = wide && !fullToolbar;
+  const formatInHints = wide && !fullToolbar && !promptToolbar;
+  // What the prompt strip holds besides extras; the divider before
+  // `toolbarExtras` only separates it from something.
+  const promptStripLead = attachmentsEnabled || (allowEmoji && !!editor) || !!onPrivacyChange;
+  const promptStrip = promptStripLead || toolbarExtras != null;
   // The editor dock has no `?` and no `⋯` on its strip (the mockup's strip
   // ends in `/ commands` and Send). Its mode menu carries host actions and
   // keyboard hints only; formatting belongs to the editor toolbar.
@@ -3173,8 +3209,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           data-ui-composer-tools={docked ? 'docked' : 'compact'}
           data-testid={`${testId}-toolbar`}
         >
-          {(narrow || pane) && !collapsed && (!pane || paneTools) && toolbarButton(
-            formatOpen ? 'Hide formatting' : 'Show formatting',
+          {(narrow || pane) && !collapsed && (!pane || paneTools) && (!promptToolbar || promptStrip) && toolbarButton(
+            promptToolbar
+              ? (formatOpen ? 'Hide tools' : 'Show tools')
+              : (formatOpen ? 'Hide formatting' : 'Show formatting'),
             formatOpen,
             () => setFormatOpen((v) => !v),
             <span className="text-xs font-semibold">Aa</span>,
@@ -3238,7 +3276,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
           {!singleRow && !promptCard && (
           <RovingToolbar label="Message formatting" className={cn('min-w-0 gap-0.5', narrow && 'flex-wrap')} data-testid={`${testId}-format-toolbar`}>
-          {editor && [
+          {editor && !promptToolbar && [
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
             showSecondaryMarks && toolbarButton('Strikethrough', editor.isActive('strike'), () => editor.chain().focus().toggleStrike().run(), <s>S</s>),
@@ -3326,7 +3364,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             );
           })()}
 
-          {editorToolbar && toolbarExtras != null && (
+          {editorToolbar && toolbarExtras != null && (!promptToolbar || promptStripLead) && (
             <span aria-hidden className={cn('shrink-0 bg-border', docked ? 'mx-2.5 h-6 w-px' : 'mx-1 h-4 w-px')} data-testid={`${testId}-extras-divider`} />
           )}
           {toolbarExtras}

@@ -1,4 +1,4 @@
-// The prompt card (toolbar="prompt", 2.390.0): the docked card with no
+// The prompt card (toolbar="prompt-card"; `prompt` until 2.508.0): the docked card with no
 // formatting strip — a host mode select at the head, `/ Commands` and
 // `# Context` at the foot with the host's extras, "⌘ Return to send" and a
 // round Send — whose command chip switches commands, and whose `#` menu can
@@ -25,7 +25,7 @@ const base = {
   modeControl: 'menu',
   onModeChange: () => {},
   hideModeMenu: true,
-  toolbar: 'prompt',
+  toolbar: 'prompt-card',
   commands,
   onSearchDocuments: () => [],
   onDraftChange: () => {},

@@ -13,3 +13,13 @@ describe('FilePickerButton size', () => {
     expect(button).toHaveAttribute('data-size', 'sm');
   });
 });
+
+describe('FilePickerButton variant', () => {
+  it('carries data-variant like Button, so a primary picker audits as primary', () => {
+    const { rerender } = render(<FilePickerButton onFiles={() => {}}>Add images</FilePickerButton>);
+    const button = screen.getByRole('button', { name: 'Add images' });
+    expect(button).toHaveAttribute('data-variant', 'secondary');
+    rerender(<FilePickerButton variant="primary" onFiles={() => {}}>Add images</FilePickerButton>);
+    expect(button).toHaveAttribute('data-variant', 'primary');
+  });
+});

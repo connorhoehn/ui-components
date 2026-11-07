@@ -14,8 +14,10 @@
 // or a forced `expanded` bring the full card: the `Agent ⌄` mode menu, the
 // editor strip, Send. Empty and blurred, it folds back. Host content the
 // composer cannot see (a reply quote, a notice, a task strip) forces the card,
-// so a reply never sits over a one-line row. There is no `modeControl`,
-// `toolbar` or `collapseWhenIdle` here: the look is not a per-host choice.
+// so a reply never sits over a one-line row. There is no `modeControl` or
+// `collapseWhenIdle` here: the look is not a per-host choice. `toolbar`
+// (2.508.0) picks only the strip's preset — `prompt` for a host whose
+// composer takes one instruction, never a formatted document.
 //
 // Agent and Terminal crossfade the card onto the dark console surface (the
 // box changes surface when Enter stops being a message); the idle row stays
@@ -132,6 +134,12 @@ export interface ContextComposerProps {
   context: ComposerContext;
   /** `document`: comfortable density, for a full-width page. Default `compact`. */
   presentation?: 'compact' | 'document';
+  /**
+   * The strip's preset, as `RichChatComposerProps.toolbar` (since 2.508.0).
+   * Default `editor`. `prompt` drops every formatting control and keeps
+   * attach (when allowed), the divider and the host's extras.
+   */
+  toolbar?: ComposerToolbarPreset;
 
   // ── modes ──
   /** Controlled mode. Pair with `onModeChange`. */
@@ -305,6 +313,8 @@ export interface ContextComposerProps {
   status?: ComposerStatus | null;
   suggestions?: readonly string[];
   onSuggestion?: (suggestion: string) => void;
+  /** `RichChatComposerProps.suggestionsVisible` (since 2.508.0). Default `focused`. */
+  suggestionsVisible?: 'focused' | 'empty';
   maxInputHeight?: number | string;
   composerRef?: Ref<RichChatComposerHandle>;
 
@@ -369,7 +379,7 @@ export function ContextComposer(props: ContextComposerProps) {
       {...props}
       look={{
         preset,
-        toolbar: 'editor',
+        toolbar: props.toolbar ?? 'editor',
         density: presentation === 'document' ? 'comfortable' : 'compact',
         collapseWhenIdle: true,
         passModes: true,
@@ -460,6 +470,7 @@ export function ContextComposerBase({
   status,
   suggestions,
   onSuggestion,
+  suggestionsVisible,
   maxInputHeight,
   composerRef,
   label,
@@ -788,6 +799,7 @@ export function ContextComposerBase({
                 hints={hints}
                 suggestions={suggestions}
                 onSuggestion={onSuggestion}
+                {...(suggestionsVisible ? { suggestionsVisible } : {})}
                 processes={processes}
                 onQuickOpen={onQuickOpen}
                 onShellCommand={onShellCommand}
