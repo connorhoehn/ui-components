@@ -60,6 +60,14 @@ A host's own controls go in four slots that stay off the idle row:
 `submitLead` (beside Send), `modeRowEnd` (a scope switch), `referencesAction`
 (after the chips) and `referenceDrop` (the card as a drop target, idle too).
 
+`presentation="prompt"` (2.510.0) is the quiet prompt box for a host whose
+composer takes one instruction (Studio's work composer): the record and any
+references in one header row with `modeRowEnd`, the suggestion chips, the
+text box and one button that reads `submitLabel` — no mode label or menu, no
+`/ commands` hint, no glyph on Send. A command with no `argument` picked from
+the `/` menu is sent at once (a `ConversationComposer` runs its `run` with
+empty `argumentText`), and references never add a row.
+
 ## Composer prompts and the confirm flow
 
 `ComposerPromptDeck` (`/social/rich-composer`) asks a page's questions in the
@@ -71,6 +79,11 @@ resolve `{ next: ComposerPrompt }` to route to a follow-up in the same card
 `kind: 'compose'` draws `ComposerConfirmFlow` inside the card — a prefilled,
 editable message, its review and its done state, with no modal and no toolbar.
 `ComposerConfirmFlow` is also exported on its own.
+
+`ComposerPrompt.back` (2.510.0, `{ label?, onBack, disabledReason? }`) draws a
+ghost Back in the card header, on a one-prompt deck too; a `{ next }`
+follow-up without one gets a Back to the question it followed. Alt+Backspace
+takes it while the input is empty.
 
 For text/number questions where the deck owns the input, `inputDraft` lets the
 host retain unsent text across remounts or conflicts. The host chooses its

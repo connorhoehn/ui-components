@@ -128,6 +128,21 @@ export const AgentQuestion: Story = {
   },
 };
 
+/** Back (2.510.0): one prompt, no pager, and a Back to the host's previous step. */
+export const WithBack: Story = {
+  args: {
+    prompts: [
+      {
+        id: 'kind', eyebrow: 'Plan', title: 'Create artwork', kind: 'choice',
+        question: 'Which kind of artwork?',
+        options: [{ id: 'still', label: 'A still' }, { id: 'plate', label: 'A background plate' }],
+        back: { label: 'Back', onBack: () => undefined },
+        onAnswer: () => undefined,
+      },
+    ],
+  },
+};
+
 /** A reader sees the setup and why they cannot decide. */
 export const ReadOnly: Story = {
   args: {

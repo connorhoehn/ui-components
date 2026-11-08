@@ -15,6 +15,9 @@
 //   ⌘/Ctrl+↓ / ↑   next / previous prompt (J / K when the input is empty and
 //                  the prompt is not a typed one: there, letters are the answer)
 //   Esc            collapse the deck to the plain composer, answering nothing
+//   Alt+Backspace  Back (2.510.0), when the prompt has one (its own `back`,
+//                  or a follow-up's return to its question) and the input is
+//                  empty or focus is in the deck
 //
 // A `compose` prompt (2.482.0) owns its keys: it draws `ComposerConfirmFlow`
 // (draft → review → done) in the card, so Enter, digits and Esc are the
@@ -36,6 +39,20 @@ export interface ComposerPromptField {
   tone?: ComposerPromptTone;
   /** An identifier value (ids, repos): tabular figures in the body face, never monospace. */
   mono?: boolean;
+}
+
+/**
+ * A Back control on a prompt's card (since 2.510.0): the step before this
+ * question in the host's own flow (a wizard's previous question, the choice
+ * that opened a plan). Rendered in the card header whenever present, single
+ * prompt or not. Answers nothing: `onBack` decides what comes back.
+ */
+export interface ComposerPromptBack {
+  /** Default "Back". */
+  label?: string;
+  onBack: () => void | Promise<void>;
+  /** Off, with why (the button's title). */
+  disabledReason?: string;
 }
 
 /** One answer a prompt offers. Its position (1–9) is its default shortcut. */
@@ -156,6 +173,14 @@ export interface ComposerPrompt {
   path?: DecisionPathState;
   /** Compose: the message flow's wording and prefilled text. */
   compose?: ComposerPromptCompose;
+  /**
+   * Back in the card header (2.510.0), on a one-prompt deck too. A follow-up
+   * reached through `{ next }` without its own `back` gets one that returns
+   * to the question it followed (`deck.back()`) — except a compose follow-up,
+   * whose flow already draws that Back. A rejected `onBack` shows its message
+   * on the card like a refused answer.
+   */
+  back?: ComposerPromptBack;
   onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
 }
 
@@ -277,6 +302,7 @@ export type DeckKeyAction =
   | { type: 'pick'; optionId: string }
   | { type: 'default'; optionId: string }
   | { type: 'page'; delta: 1 | -1 }
+  | { type: 'back' }
   | { type: 'collapse' }
   | { type: 'expand' }
   | null;
@@ -298,9 +324,13 @@ export interface DeckKey {
  */
 export function deckKeyAction(
   event: DeckKey,
-  state: { prompt: ComposerPrompt | null; collapsed: boolean; inputEmpty: boolean; inDeck: boolean; busy: boolean },
+  state: {
+    prompt: ComposerPrompt | null; collapsed: boolean; inputEmpty: boolean; inDeck: boolean; busy: boolean;
+    /** The card shows an enabled Back (2.510.0). */
+    canBack?: boolean;
+  },
 ): DeckKeyAction {
-  const { prompt, collapsed, inputEmpty, inDeck, busy } = state;
+  const { prompt, collapsed, inputEmpty, inDeck, busy, canBack } = state;
   if (!prompt) return null;
   const mod = !!(event.metaKey || event.ctrlKey);
   const quiet = inputEmpty || inDeck;
@@ -314,6 +344,9 @@ export function deckKeyAction(
   // draft) and every typed key; the deck only pages.
   if (prompt.kind === 'compose') return null;
   if (event.key === 'Escape' && quiet) return { type: 'collapse' };
+  // Back: Alt+Backspace where Backspace would delete nothing (an empty input,
+  // or focus on the deck's own buttons) — never a word being typed.
+  if (event.key === 'Backspace' && event.altKey && !mod && !event.shiftKey && quiet && canBack && !busy) return { type: 'back' };
   if (mod || event.shiftKey) return null;
   const typed = takesTypedAnswer(prompt);
   // J / K page only where letters are not the answer being typed.

@@ -177,6 +177,28 @@ export const SingleMode: Story = {
 };
 
 /**
+ * `presentation="prompt"` (2.510.0): the quiet prompt box — the record and
+ * its references in one header row, suggestion chips, the text box and one
+ * button that reads `submitLabel`. No mode label, no `/ commands` hint; a
+ * command with nothing to ask runs on the pick. The second panel adds a
+ * reference: same rows, same height.
+ */
+export const PromptPresentation: Story = {
+  name: 'Prompt presentation',
+  render: () => (
+    <div className="grid grid-cols-1 gap-4 bg-surface p-4 lg:grid-cols-2">
+      {([[], [{ id: 'guide', label: 'Guide' }]] as const).map((references) => (
+        <Panel key={references.length} theme="light" caption={references.length ? 'with a reference' : 'record only'}>
+          <ContextComposer context={CONTEXTS.initiative!} presentation="prompt" modes={['agent']} defaultMode="agent" expanded
+            submitLabel="Plan" commands={commands} suggestions={['Create a new episode', 'Add a character']} onSuggestion={noop}
+            suggestionsVisible="empty" references={references} onRemoveReference={noop} onSend={() => true} />
+        </Panel>
+      ))}
+    </div>
+  ),
+};
+
+/**
  * Read-only (2.450.0): a reader on a discussion. The note takes the
  * placeholder's place; format buttons, Workflow ⌄, `/ commands` and Send are
  * off in muted ink. With only Chat the mode label is off too; with Agent on,

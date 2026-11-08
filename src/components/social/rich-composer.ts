@@ -147,6 +147,7 @@ export {
 export type {
   ComposerPrompt,
   ComposerPromptAnswer,
+  ComposerPromptBack,
   ComposerPromptCompose,
   ComposerPromptField,
   ComposerPromptFollowUps,

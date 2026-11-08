@@ -132,12 +132,30 @@ export interface ContextComposerSendContext {
 export interface ContextComposerProps {
   /** What the composer is attached to. Decides modes, chip, and which features may render. */
   context: ComposerContext;
-  /** `document`: comfortable density, for a full-width page. Default `compact`. */
-  presentation?: 'compact' | 'document';
+  /**
+   * `document`: comfortable density, for a full-width page. Default `compact`.
+   *
+   * `prompt` (since 2.510.0): a quiet prompt box for a host whose composer
+   * takes one instruction — the record (context chip) and any references in
+   * one header row with `modeRowEnd`, the suggestion chips, the text box, and
+   * one primary button showing `submitLabel` alone. Comfortable density;
+   * `toolbar` defaults to `prompt` (attach only when allowed, then
+   * `toolbarExtras`). No mode label, pill, picker, menu or `⌥n` badge in any
+   * state, and no mode shortcuts or mode triggers: the mode stays what
+   * `mode` / `defaultMode` says, so Enter still routes there. No `/ commands`
+   * hint (typing `/` still opens the menu), and picking a command that has no
+   * `argument` from that menu sends it at once — the draft is cleared and
+   * `onSend` receives `{ text: trigger, command: { trigger } }` (in a
+   * `ConversationComposer`, the command's `run` with empty `argumentText`),
+   * so no command chip waits beside an empty box. Adding references never
+   * changes the card's height. `data-presentation="prompt"` on the composer.
+   */
+  presentation?: 'compact' | 'document' | 'prompt';
   /**
    * The strip's preset, as `RichChatComposerProps.toolbar` (since 2.508.0).
-   * Default `editor`. `prompt` drops every formatting control and keeps
-   * attach (when allowed), the divider and the host's extras.
+   * Default `editor` (`prompt` under `presentation="prompt"`). `prompt` drops
+   * every formatting control and keeps attach (when allowed), the divider
+   * and the host's extras.
    */
   toolbar?: ComposerToolbarPreset;
 
@@ -341,6 +359,8 @@ export interface ContextComposerLook {
   passModes: boolean;
   /** One offered mode renders as a static label, not a one-item menu. */
   singleModeLabel?: boolean;
+  /** `prompt`: the quiet prompt box (`ContextComposerProps.presentation`). Default `card`. */
+  presentation?: 'card' | 'prompt';
   className?: string;
 }
 
@@ -379,11 +399,12 @@ export function ContextComposer(props: ContextComposerProps) {
       {...props}
       look={{
         preset,
-        toolbar: props.toolbar ?? 'editor',
-        density: presentation === 'document' ? 'comfortable' : 'compact',
+        toolbar: props.toolbar ?? (presentation === 'prompt' ? 'prompt' : 'editor'),
+        density: presentation === 'compact' ? 'compact' : 'comfortable',
         collapseWhenIdle: true,
         passModes: true,
         singleModeLabel: true,
+        presentation: presentation === 'prompt' ? 'prompt' : 'card',
         className: DEFAULT_CLASS[context.kind],
       }}
     />
@@ -600,6 +621,14 @@ export function ContextComposerBase({
     }
     return onSend(out, { mode: message.mode ?? mode, context, ...(author ? { author } : {}) });
   }, [f.typedText, allCommands, mode, onSend, context, author]);
+  // The quiet prompt box (2.510.0): a command with nothing to ask is sent the
+  // moment it is picked. The editor is already empty, so this skips `send`'s
+  // read-back of the typed text and hands over the command itself.
+  const quietPrompt = look.presentation === 'prompt';
+  const sendPickedCommand = useCallback((command: ComposerCommand) => onSend({
+    html: '', text: command.trigger, mentions: [], files: [], privacy: 'visible',
+    command: { trigger: command.trigger }, mode,
+  }, { mode, context, ...(author ? { author } : {}) }), [onSend, mode, context, author]);
 
   // ── chips ──
   const chipLabel = f.contextChip && contextChip !== false && !chipHidden
@@ -767,8 +796,9 @@ export function ContextComposerBase({
                 collapseWhenIdle={look.collapseWhenIdle}
                 expanded={forceExpanded}
                 {...(responsive ? { responsive } : {})}
-                modeShortcuts
-                modeTriggers
+                modeShortcuts={!quietPrompt}
+                modeTriggers={!quietPrompt}
+                {...(quietPrompt ? { presentation: 'prompt' as const, onCommandPick: sendPickedCommand } : {})}
                 backdropTone={consoleOn ? 'auto' : 'none'}
                 working={working}
                 allowAttachments={allowAttachments && !chatOnlyAttachments}
