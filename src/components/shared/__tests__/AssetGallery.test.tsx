@@ -90,3 +90,42 @@ describe('AssetGallery tile actions and status (2.504.0)', () => {
     expect(screen.getByText('No image yet')).toBeInTheDocument();
   });
 });
+
+describe('AssetGallery avatars status and placeholder (2.512.0)', () => {
+  it('avatars: the status is the caption\'s first line, the full label, never truncated', () => {
+    const { container } = render(<AssetGallery label="Cast" variant="avatars" items={[{ id: 'mina', title: 'Mina', status: { label: 'Candidate', tone: 'warning' } }]} onOpen={() => {}} />);
+    const slot = container.querySelector('[data-gallery-status]')!;
+    expect(slot).toHaveAttribute('data-gallery-status', 'caption');
+    const label = slot.querySelector('[data-status-pill-label]')!;
+    expect(label.textContent).toBe('Candidate');
+    expect(slot.querySelector('.truncate')).toBeNull();
+    expect(slot.querySelector('[data-state]')!.className).not.toContain('whitespace-nowrap');
+    // Not over the 88px tile any more: under it, before the title.
+    expect(slot.className).not.toContain('absolute');
+    const button = screen.getByRole('button', { name: 'Inspect Mina' });
+    expect(button).toHaveAccessibleDescription('Candidate');
+    const title = screen.getByText('Mina', { selector: 'span[title]' });
+    expect(slot.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(container.querySelector('[data-gallery-thumbnail]')!.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+  it('images keep the pill over the thumbnail', () => {
+    const { container } = render(<AssetGallery label="Art" items={[{ id: 'a', title: 'Cup', status: { label: 'Candidate', tone: 'warning' } }]} onOpen={() => {}} />);
+    expect(container.querySelector('[data-gallery-status]')!.className).toContain('absolute');
+  });
+  it('a placeholder replaces the initials with an empty tile, in both variants', () => {
+    const items = [{ id: 'mina', title: 'Mina Park', placeholder: 'No picture yet' }];
+    const { container, rerender } = render(<AssetGallery label="Cast" variant="avatars" items={items} onOpen={() => {}} />);
+    const tile = container.querySelector('[data-gallery-placeholder]')!;
+    expect(tile).toHaveTextContent('No picture yet');
+    expect(tile.querySelector('svg')).not.toBeNull();
+    expect(screen.queryByText('MP')).toBeNull();
+    rerender(<AssetGallery label="Cast" items={items} onOpen={() => {}} />);
+    expect(container.querySelector('[data-gallery-placeholder]')).toHaveTextContent('No picture yet');
+    expect(screen.queryByText('Image unavailable')).toBeNull();
+  });
+  it('a src wins over the placeholder', () => {
+    const { container } = render(<AssetGallery label="Cast" items={[{ id: 'm', title: 'Mina', src: '/m.png', placeholder: 'No picture yet' }]} onOpen={() => {}} />);
+    expect(container.querySelector('[data-gallery-placeholder]')).toBeNull();
+    expect(screen.getByRole('img')).toHaveAttribute('src', '/m.png');
+  });
+});
