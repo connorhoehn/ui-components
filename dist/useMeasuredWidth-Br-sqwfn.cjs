@@ -1,1 +1,0 @@
-const e=require("./Tabs-C_M08aD-.cjs");function t(t){let{ref:n,size:r}=e.a(t?{forward:t}:{});return{ref:n,width:r}}Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return t}});

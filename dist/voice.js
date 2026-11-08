@@ -1,11 +1,10 @@
-import { t as e } from "./cn-D4QmbyEy.js";
-import { n as t } from "./Button-C-I3BxWI.js";
-import { t as n } from "./IconButton-Bf5Wy0tS.js";
-import { a as r, i, u as a } from "./MediaIcons-_ai5Til2.js";
-import { i as o, r as s, t as c } from "./Text-k7rQu4ud.js";
-import { t as l } from "./InlinePopover-CPu3gKSr.js";
-import { t as u } from "./DotMeter-B6ZDgLU7.js";
-import { t as d } from "./StatusPill-Dh1Ary6I.js";
+import { d as e, n as t } from "./Button-DQoeE5dN.js";
+import { i as n, r, t as i } from "./Text-DAQCiXe4.js";
+import { t as a } from "./IconButton-BgM9MvwA.js";
+import { a as o, i as s, u as c } from "./MediaIcons-_ai5Til2.js";
+import { t as l } from "./InlinePopover-BQTS5egk.js";
+import { t as u } from "./DotMeter-DJzl5dNX.js";
+import { t as d } from "./StatusPill-CoaiP2Bt.js";
 import { useCallback as f, useEffect as p, useRef as m, useState as h } from "react";
 import { jsx as g, jsxs as _ } from "react/jsx-runtime";
 //#region src/components/voice/voiceTypes.ts
@@ -102,48 +101,48 @@ var w = {
 	refused: "warning",
 	failed: "danger"
 };
-function T({ pending: n, handleEscape: r = !0, autoFocus: i = !0, className: a, "data-testid": l = "voice-confirm-card" }) {
+function T({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, "data-testid": l = "voice-confirm-card" }) {
 	let u = m(null);
 	return p(() => {
-		i && u.current?.focus();
-	}, [i]), /* @__PURE__ */ _(o, {
+		s && u.current?.focus();
+	}, [s]), /* @__PURE__ */ _(n, {
 		ref: u,
 		gap: "sm",
 		tabIndex: 0,
 		role: "group",
-		"aria-label": `Confirm: ${n.title}`,
+		"aria-label": `Confirm: ${a.title}`,
 		onKeyDown: (e) => {
-			e.key === "Escape" && r ? (e.stopPropagation(), n.onCancel()) : e.key === "Enter" && e.target === e.currentTarget && (e.preventDefault(), n.onConfirm());
+			e.key === "Escape" && o ? (e.stopPropagation(), a.onCancel()) : e.key === "Enter" && e.target === e.currentTarget && (e.preventDefault(), a.onConfirm());
 		},
 		"data-testid": l,
-		className: e("rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary", a),
+		className: e("rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary", c),
 		children: [
-			/* @__PURE__ */ g(c, {
+			/* @__PURE__ */ g(i, {
 				size: "sm",
 				weight: "semibold",
 				tone: "primary",
 				as: "p",
-				children: n.title
+				children: a.title
 			}),
-			n.detail ? /* @__PURE__ */ g(c, {
+			a.detail ? /* @__PURE__ */ g(i, {
 				size: "xs",
 				tone: "secondary",
 				as: "p",
-				children: n.detail
+				children: a.detail
 			}) : null,
-			/* @__PURE__ */ _(s, {
+			/* @__PURE__ */ _(r, {
 				gap: "sm",
 				justify: "end",
 				children: [/* @__PURE__ */ g(t, {
 					variant: "secondary",
 					size: "sm",
-					onClick: n.onCancel,
+					onClick: a.onCancel,
 					"data-testid": `${l}-cancel`,
 					children: "Cancel"
 				}), /* @__PURE__ */ g(t, {
 					variant: "primary",
 					size: "sm",
-					onClick: n.onConfirm,
+					onClick: a.onConfirm,
 					"data-testid": `${l}-confirm`,
 					children: "Confirm"
 				})]
@@ -159,46 +158,46 @@ function E(e) {
 		minute: "2-digit"
 	});
 }
-function D({ turns: n, maxVisible: r = 4, onClear: i, pending: a = null, className: l, "data-testid": u = "voice-turn-strip" }) {
-	let f = r > 0 ? n.slice(-r) : n;
-	return /* @__PURE__ */ _(o, {
+function D({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, className: l, "data-testid": u = "voice-turn-strip" }) {
+	let f = o > 0 ? a.slice(-o) : a;
+	return /* @__PURE__ */ _(n, {
 		gap: "sm",
 		className: e("min-w-0", l),
 		"data-testid": u,
 		children: [
-			f.length === 0 && !a ? /* @__PURE__ */ g(c, {
+			f.length === 0 && !c ? /* @__PURE__ */ g(i, {
 				size: "xs",
 				tone: "tertiary",
 				"data-testid": `${u}-empty`,
 				children: "Nothing said yet."
 			}) : null,
-			f.map((e) => /* @__PURE__ */ _(o, {
+			f.map((e) => /* @__PURE__ */ _(n, {
 				gap: "xs",
 				"data-testid": `${u}-turn-${e.id}`,
 				"data-role": e.role,
 				children: [
-					/* @__PURE__ */ _(s, {
+					/* @__PURE__ */ _(r, {
 						gap: "sm",
-						children: [/* @__PURE__ */ g(c, {
+						children: [/* @__PURE__ */ g(i, {
 							size: "xs",
 							weight: "semibold",
 							tone: e.role === "you" ? "secondary" : "primary",
 							children: e.role === "you" ? "You" : "Assistant"
-						}), /* @__PURE__ */ g(c, {
+						}), /* @__PURE__ */ g(i, {
 							size: "xs",
 							tone: "tertiary",
 							tabular: !0,
 							children: E(e.at)
 						})]
 					}),
-					/* @__PURE__ */ g(c, {
+					/* @__PURE__ */ g(i, {
 						size: "sm",
 						tone: "primary",
 						as: "p",
 						wrap: !0,
 						children: e.text
 					}),
-					e.toolCalls?.map((t, n) => /* @__PURE__ */ _(s, {
+					e.toolCalls?.map((t, n) => /* @__PURE__ */ _(r, {
 						gap: "sm",
 						"data-testid": `${u}-tool-${e.id}-${n}`,
 						"data-status": t.status,
@@ -208,13 +207,13 @@ function D({ turns: n, maxVisible: r = 4, onClear: i, pending: a = null, classNa
 								tone: w[t.status],
 								label: t.status
 							}),
-							/* @__PURE__ */ g(c, {
+							/* @__PURE__ */ g(i, {
 								size: "xs",
 								weight: "medium",
 								tone: "secondary",
 								children: t.name
 							}),
-							/* @__PURE__ */ g(c, {
+							/* @__PURE__ */ g(i, {
 								size: "xs",
 								tone: "tertiary",
 								children: t.summary
@@ -223,13 +222,13 @@ function D({ turns: n, maxVisible: r = 4, onClear: i, pending: a = null, classNa
 					}, `${t.name}-${n}`))
 				]
 			}, e.id)),
-			a ? /* @__PURE__ */ g(T, { pending: a }) : null,
-			i && n.length > 0 ? /* @__PURE__ */ g(s, {
+			c ? /* @__PURE__ */ g(T, { pending: c }) : null,
+			s && a.length > 0 ? /* @__PURE__ */ g(r, {
 				justify: "end",
 				children: /* @__PURE__ */ g(t, {
 					variant: "ghost",
 					size: "sm",
-					onClick: i,
+					onClick: s,
 					"data-testid": `${u}-clear`,
 					children: "Clear"
 				})
@@ -255,33 +254,33 @@ function k(e) {
 	return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
 var A = (e) => `$${e.toFixed(2)}`;
-function j({ phase: o, level: v, outputLevel: b, elapsedSeconds: x, budget: S = null, pending: w = null, lastLine: E = null, onStart: D, onStop: j, onMute: M, muted: N = !1, unavailableReason: P, compact: F = !1, size: I = "panel", startLabel: L = "Voice", className: R, ref: z, "data-testid": B = "voice-dock" }) {
+function j({ phase: n, level: v, outputLevel: b, elapsedSeconds: x, budget: S = null, pending: w = null, lastLine: E = null, onStart: D, onStop: j, onMute: M, muted: N = !1, unavailableReason: P, compact: F = !1, size: I = "panel", startLabel: L = "Voice", className: R, ref: z, "data-testid": B = "voice-dock" }) {
 	let V = m(null), [H, U] = h(!1);
 	p(() => U(!0), []);
 	let W = f((e) => {
 		V.current = e, typeof z == "function" ? z(e) : z && (z.current = e);
-	}, [z]), G = o !== "off" && o !== "ended" && o !== "unavailable", K = H && !!w && o === "confirming", q = o === "unavailable" ? P : void 0, J = y[o], Y = I === "footer";
-	return /* @__PURE__ */ _(s, {
+	}, [z]), G = n !== "off" && n !== "ended" && n !== "unavailable", K = H && !!w && n === "confirming", q = n === "unavailable" ? P : void 0, J = y[n], Y = I === "footer";
+	return /* @__PURE__ */ _(r, {
 		ref: W,
 		wrap: !1,
 		gap: "sm",
 		className: e("min-w-0", Y ? "px-1" : "px-2 py-1", R),
 		"data-testid": B,
-		"data-phase": o,
+		"data-phase": n,
 		"data-size": I,
 		"data-voice-dock": "",
 		children: [
 			/* @__PURE__ */ g(C, {
 				level: v,
 				outputLevel: b,
-				phase: o,
+				phase: n,
 				size: F || Y ? "sm" : "md",
 				"data-testid": `${B}-ring`
 			}),
-			/* @__PURE__ */ g(c, {
+			/* @__PURE__ */ g(i, {
 				title: q,
 				"data-testid": `${B}-phase`,
-				children: Y ? /* @__PURE__ */ g(c, {
+				children: Y ? /* @__PURE__ */ g(i, {
 					size: "xs",
 					tone: "secondary",
 					className: "whitespace-nowrap",
@@ -289,11 +288,11 @@ function j({ phase: o, level: v, outputLevel: b, elapsedSeconds: x, budget: S = 
 					children: J
 				}) : /* @__PURE__ */ g(d, {
 					size: "sm",
-					tone: O[o],
+					tone: O[n],
 					label: J
 				})
 			}),
-			!F && E ? /* @__PURE__ */ g(c, {
+			!F && E ? /* @__PURE__ */ g(i, {
 				size: Y ? "xs" : "sm",
 				tone: E.role === "you" ? "secondary" : "primary",
 				className: "min-w-0 flex-1 truncate",
@@ -301,7 +300,7 @@ function j({ phase: o, level: v, outputLevel: b, elapsedSeconds: x, budget: S = 
 				"data-testid": `${B}-last-line`,
 				"data-role": E.role,
 				children: E.text
-			}) : /* @__PURE__ */ g(c, {
+			}) : /* @__PURE__ */ g(i, {
 				className: "min-w-0 flex-1",
 				"aria-hidden": "true",
 				children: ""
@@ -314,19 +313,19 @@ function j({ phase: o, level: v, outputLevel: b, elapsedSeconds: x, budget: S = 
 				tone: "surface",
 				"data-testid": `${B}-budget`
 			}) : null,
-			G && x !== void 0 ? /* @__PURE__ */ g(c, {
+			G && x !== void 0 ? /* @__PURE__ */ g(i, {
 				size: "xs",
 				tone: "tertiary",
 				tabular: !0,
 				"data-testid": `${B}-elapsed`,
 				children: k(x)
 			}) : null,
-			G && M ? /* @__PURE__ */ g(n, {
+			G && M ? /* @__PURE__ */ g(a, {
 				"aria-label": N ? "Unmute microphone" : "Mute microphone",
 				"aria-pressed": N,
 				size: "sm",
 				variant: "ghost",
-				icon: g(N ? r : i, { size: 16 }),
+				icon: g(N ? o : s, { size: 16 }),
 				onClick: M,
 				"data-testid": `${B}-mute`
 			}) : null,
@@ -337,7 +336,7 @@ function j({ phase: o, level: v, outputLevel: b, elapsedSeconds: x, budget: S = 
 				className: "gap-1.5",
 				onClick: j,
 				"data-testid": `${B}-stop`,
-				children: [/* @__PURE__ */ g(a, {
+				children: [/* @__PURE__ */ g(c, {
 					size: 16,
 					className: "text-danger"
 				}), "End"]
@@ -346,24 +345,24 @@ function j({ phase: o, level: v, outputLevel: b, elapsedSeconds: x, budget: S = 
 				size: "sm",
 				"aria-label": "Start voice session",
 				className: "gap-1.5",
-				disabled: o === "unavailable" || !D,
+				disabled: n === "unavailable" || !D,
 				title: q,
 				onClick: D,
 				"data-testid": `${B}-start`,
-				children: [/* @__PURE__ */ g(i, { size: 16 }), L]
-			}) : G ? /* @__PURE__ */ g(n, {
+				children: [/* @__PURE__ */ g(s, { size: 16 }), L]
+			}) : G ? /* @__PURE__ */ g(a, {
 				"aria-label": "End voice session",
 				size: "sm",
 				variant: "danger",
-				icon: /* @__PURE__ */ g(a, { size: 16 }),
+				icon: /* @__PURE__ */ g(c, { size: 16 }),
 				onClick: j,
 				"data-testid": `${B}-stop`
-			}) : /* @__PURE__ */ g(n, {
+			}) : /* @__PURE__ */ g(a, {
 				"aria-label": "Start voice session",
 				size: "sm",
 				variant: "primary",
-				icon: /* @__PURE__ */ g(i, { size: 16 }),
-				disabled: o === "unavailable" || !D,
+				icon: /* @__PURE__ */ g(s, { size: 16 }),
+				disabled: n === "unavailable" || !D,
 				title: q,
 				onClick: D,
 				"data-testid": `${B}-start`

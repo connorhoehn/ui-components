@@ -1,13 +1,13 @@
-import { n as e } from "../Button-C-I3BxWI.js";
-import { g as t } from "../MediaIcons-_ai5Til2.js";
-import { i as n, n as r, r as i } from "../Text-k7rQu4ud.js";
-import { t as a } from "../Modal-Dzo5wx1N.js";
-import { n as o } from "../Slider-DCKY5jPg.js";
-import { t as s } from "../DropdownMenu-LGowvfrE.js";
-import { C as c } from "../BreakoutRoomsPanel-7DUp5qIh.js";
-import { n as l, r as u } from "../RecordingConsentNotice-DzA7Irzc.js";
-import { i as d, n as f, r as p, t as m } from "../useDocumentImageUpload-veB1uWeR.js";
-import { $ as h, A as g, B as ee, C as _, D as v, E as y, F as b, G as x, H as S, I as C, J as w, K as T, L as E, M as D, N as O, O as k, P as A, Q as j, R as M, S as N, St as P, T as F, U as I, V as te, W as ne, X as re, Y as ie, Z as L, _ as ae, _t as oe, a as se, at as R, b as ce, bt as z, c as B, ct as le, d as V, dt as ue, et as de, f as H, ft as fe, g as pe, gt as me, h as U, ht as he, i as ge, it as W, j as _e, k as ve, l as ye, lt as be, m as xe, mt as Se, n as Ce, nt as we, o as Te, ot as Ee, p as De, pt as Oe, q as ke, r as Ae, rt as je, s as Me, st as Ne, t as Pe, tt as Fe, u as Ie, ut as Le, v as Re, vt as ze, w as Be, x as Ve, xt as He, y as Ue, yt as We, z as Ge } from "../meeting-BCT6M_6U.js";
+import { n as e } from "../Button-DQoeE5dN.js";
+import { i as t, n, r } from "../Text-DAQCiXe4.js";
+import { g as i } from "../MediaIcons-_ai5Til2.js";
+import { t as a } from "../Modal-C88cabjQ.js";
+import { n as o } from "../Slider-CSRLb6ho.js";
+import { t as s } from "../DropdownMenu-DoCRgXx4.js";
+import { C as c } from "../BreakoutRoomsPanel-BD9tUho8.js";
+import { n as l, r as u } from "../RecordingConsentNotice-DzIE-vBv.js";
+import { i as d, n as f, r as p, t as m } from "../useDocumentImageUpload-BPS-VfBJ.js";
+import { $ as h, A as g, B as ee, C as _, D as v, E as y, F as b, G as x, H as S, I as C, J as w, K as T, L as E, M as D, N as O, O as k, P as A, Q as j, R as M, S as N, St as P, T as F, U as I, V as te, W as ne, X as re, Y as ie, Z as L, _ as ae, _t as oe, a as se, at as R, b as ce, bt as z, c as B, ct as le, d as V, dt as ue, et as de, f as H, ft as fe, g as pe, gt as me, h as U, ht as he, i as ge, it as W, j as _e, k as ve, l as ye, lt as be, m as xe, mt as Se, n as Ce, nt as we, o as Te, ot as Ee, p as De, pt as Oe, q as ke, r as Ae, rt as je, s as Me, st as Ne, t as Pe, tt as Fe, u as Ie, ut as Le, v as Re, vt as ze, w as Be, x as Ve, xt as He, y as Ue, yt as We, z as Ge } from "../meeting-CaVM8jj9.js";
 import { createContext as Ke, useCallback as G, useContext as K, useEffect as q, useLayoutEffect as qe, useMemo as J, useRef as Y, useState as X, useSyncExternalStore as Je } from "react";
 import { Fragment as Ye, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { createPortal as Xe } from "react-dom";
@@ -226,7 +226,7 @@ function kt(d) {
 			cardClassName: "flex max-h-[90dvh] flex-col gap-5 overflow-hidden border border-border p-5 sm:p-6",
 			backdropTestId: "prejoin-backdrop",
 			children: [
-				/* @__PURE__ */ Q(i, {
+				/* @__PURE__ */ Q(r, {
 					justify: "between",
 					align: "baseline",
 					gap: "md",
@@ -236,7 +236,7 @@ function kt(d) {
 					children: [/* @__PURE__ */ Z("h2", {
 						className: "m-0 shrink-0 text-lg font-semibold text-text-primary",
 						children: ht[l]
-					}), /* @__PURE__ */ Z(r, {
+					}), /* @__PURE__ */ Z(n, {
 						size: "sm",
 						weight: "medium",
 						className: "min-w-0 truncate text-right",
@@ -245,7 +245,7 @@ function kt(d) {
 						children: u
 					})]
 				}),
-				/* @__PURE__ */ Q(n, {
+				/* @__PURE__ */ Q(t, {
 					gap: "md",
 					className: "min-h-0 overflow-y-auto",
 					"data-testid": "prejoin-dialog",
@@ -255,7 +255,7 @@ function kt(d) {
 					onKeyDownCapture: () => {
 						k.current = !0, O(null);
 					},
-					children: [/* @__PURE__ */ Q(r, {
+					children: [/* @__PURE__ */ Q(n, {
 						size: "xs",
 						tone: "secondary",
 						children: ["Joining as ", f]
@@ -306,7 +306,7 @@ function kt(d) {
 								"aria-pressed": x.backgroundMode === "blur",
 								onClick: () => x.setBackgroundMode(x.backgroundMode === "blur" ? "none" : "blur"),
 								"data-testid": "prejoin-blur",
-								children: [/* @__PURE__ */ Z(t, { size: 16 }), "Blur"]
+								children: [/* @__PURE__ */ Z(i, { size: 16 }), "Blur"]
 							}), /* @__PURE__ */ Z(s, {
 								trigger: "Effects",
 								triggerLabel: "Camera effects",
@@ -345,14 +345,14 @@ function kt(d) {
 						] })
 					})]
 				}),
-				/* @__PURE__ */ Q(i, {
+				/* @__PURE__ */ Q(r, {
 					justify: "between",
 					align: "center",
 					gap: "md",
 					wrap: !0,
 					className: "shrink-0 border-t border-border pt-4",
 					"data-testid": "prejoin-footer",
-					children: [/* @__PURE__ */ Q(i, {
+					children: [/* @__PURE__ */ Q(r, {
 						gap: "sm",
 						align: "center",
 						wrap: !1,
@@ -364,12 +364,12 @@ function kt(d) {
 							})),
 							"aria-label": "Remember and skip this check next time",
 							"data-testid": "prejoin-remember"
-						}), /* @__PURE__ */ Z(r, {
+						}), /* @__PURE__ */ Z(n, {
 							size: "xs",
 							tone: "secondary",
 							children: "Skip device setup next time"
 						})]
-					}), /* @__PURE__ */ Q(i, {
+					}), /* @__PURE__ */ Q(r, {
 						gap: "sm",
 						justify: "end",
 						className: "ml-auto",
@@ -672,12 +672,12 @@ function kt(d) {
 		let c = w((e) => e.current, yt);
 		return !!e && c === e;
 	}
-	function k({ placement: e, compact: t = !1, documents: r, className: i }) {
-		let a = K(f), o = K(m), [s, c] = X(null), l = Et(s), u = !!a?.lobby && $(a.call.phase, !0), d = e === "stage" ? u && l > 0 : e === "composer" ? l > 0 : e === "pane" || u && !!o?.open && l > 0, p = e === "composer" || e === "stage", h = p && (t || tt(l)), g = O(s, e, d, {
+	function k({ placement: e, compact: n = !1, documents: r, className: i }) {
+		let a = K(f), o = K(m), [s, c] = X(null), l = Et(s), u = !!a?.lobby && $(a.call.phase, !0), d = e === "stage" ? u && l > 0 : e === "composer" ? l > 0 : e === "pane" || u && !!o?.open && l > 0, p = e === "composer" || e === "stage", h = p && (n || tt(l)), g = O(s, e, d, {
 			compact: h,
 			...r ? { documents: r } : {}
 		});
-		return /* @__PURE__ */ Z(n, {
+		return /* @__PURE__ */ Z(t, {
 			ref: c,
 			gap: "none",
 			className: i ?? (e === "composer" ? "min-w-0" : "shrink-0 min-w-0"),
@@ -739,18 +739,18 @@ function kt(d) {
 			...c
 		};
 	}
-	function M({ id: e, onOpenPeople: t, onOpenDocument: r, overlay: i, header: a, extras: o, notice: s, recordingConsent: c, dockTestId: l }) {
+	function M({ id: e, onOpenPeople: n, onOpenDocument: r, overlay: i, header: a, extras: o, notice: s, recordingConsent: c, dockTestId: l }) {
 		let u = K(f), d = w((e) => e.current, yt), p = w((e) => e.placement, bt), m = w((e) => e.compact, xt), g = w((e) => e.documents, Ct), ee = !!u?.lobby && $(u.call.phase, !0), _ = !!d && p === "composer", v = !!d && p !== "pane", y = et(d ? p : "footer", m), b = u?.lobby ?? null, x = u?.meeting?.hands, S = J(() => {
 			if (!x || x.length === 0) return;
 			let e = new Map(x.map((e, t) => [e.userId, t + 1]));
 			return (t) => e.get(t);
-		}, [x]), C = !!d && a != null && !!u?.meeting, T = c === !1 || C ? null : u?.recordingNote ?? null, E = T && s !== void 0 ? /* @__PURE__ */ Q(n, {
+		}, [x]), C = !!d && a != null && !!u?.meeting, T = c === !1 || C ? null : u?.recordingNote ?? null, E = T && s !== void 0 ? /* @__PURE__ */ Q(t, {
 			gap: "xs",
 			children: [T, s]
 		}) : T ?? s, D = ee && b && u ? /* @__PURE__ */ Z(h, {
 			call: u.call,
 			title: b.title,
-			onOpenPeople: () => t?.(b, u.tenant),
+			onOpenPeople: () => n?.(b, u.tenant),
 			selfName: u.self?.displayName ?? "",
 			compact: !v || m,
 			...v && !m ? { tileSize: "lg" } : {},
@@ -770,7 +770,7 @@ function kt(d) {
 			...E == null ? {} : { notice: E },
 			"data-testid": l ? l(b, u.tenant) : "conversation-call-dock"
 		}) : null;
-		return D ? d ? Xe(/* @__PURE__ */ Q(n, {
+		return D ? d ? Xe(/* @__PURE__ */ Q(t, {
 			gap: "none",
 			className: p === "stage" ? "relative h-full min-h-0" : "relative",
 			"data-testid": "shell-call-media",
@@ -782,7 +782,7 @@ function kt(d) {
 				D,
 				i
 			]
-		}), d) : /* @__PURE__ */ Z(n, {
+		}), d) : /* @__PURE__ */ Z(t, {
 			id: e,
 			gap: "none",
 			className: "hidden",

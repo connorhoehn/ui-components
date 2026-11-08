@@ -85,6 +85,7 @@ export * from './TagEditor';
 export { default as Toast } from './Toast';
 export * from './Toast';
 export * from './ToastProvider';
+export * from './JobToast';
 export { default as UserPicker } from './UserPicker';
 export * from './UserPicker';
 // Panel docks (e.g. <CallSidePanel>) announce themselves to their body

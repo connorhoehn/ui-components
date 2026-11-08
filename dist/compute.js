@@ -1,21 +1,20 @@
-import { t as e } from "./cn-D4QmbyEy.js";
-import { n as t } from "./Button-C-I3BxWI.js";
-import { t as n } from "./Chip-BlpTnjWu.js";
-import { J as r, O as i, Q as a, R as o, V as s, W as c, at as l, b as u, h as d, it as f, m as p, vt as m, z as h } from "./Icons-CqVFbuiZ.js";
-import { t as g } from "./Text-k7rQu4ud.js";
-import { t as _ } from "./InlinePopover-CPu3gKSr.js";
-import { t as v } from "./SearchInput-D5AvHiLn.js";
-import { t as y } from "./DropdownMenu-LGowvfrE.js";
-import { t as b } from "./TitledFrame-B0QW93da.js";
-import { t as x } from "./DotMeter-B6ZDgLU7.js";
-import { t as S } from "./StatusDot-GwVn-q5q.js";
-import { t as C } from "./LogStream-DLqdcDhS.js";
-import { t as ee } from "./SectionLabel-Ch_rkHQZ.js";
-import { t as te } from "./InlinePlaceholder-DiPQ7hOM.js";
-import { n as w } from "./FloatingPanel-DuSS0SFV.js";
+import { d as e, n as t } from "./Button-DQoeE5dN.js";
+import { t as n } from "./Chip-5WvKIIpI.js";
+import { t as r } from "./Text-DAQCiXe4.js";
+import { J as i, O as a, Q as o, R as s, V as c, W as l, at as u, b as d, h as f, it as p, m, vt as h, z as g } from "./Icons-CqVFbuiZ.js";
+import { t as _ } from "./InlinePopover-BQTS5egk.js";
+import { t as v } from "./SearchInput-Dk3D9lhs.js";
+import { t as y } from "./DropdownMenu-DoCRgXx4.js";
+import { t as b } from "./TitledFrame-ChUBa0yq.js";
+import { t as x } from "./DotMeter-DJzl5dNX.js";
+import { t as S } from "./StatusDot-DAok6F5B.js";
+import { t as C } from "./LogStream-MdjhSR7f.js";
+import { t as ee } from "./SectionLabel-B60gea5o.js";
+import { t as te } from "./InlinePlaceholder-CKUJyqFh.js";
+import { n as w } from "./FloatingPanel-JFP5InEY.js";
 import { a as T, i as E, n as ne, r as re, t as D } from "./useComputeProjects-ZSazDRet.js";
-import { a as ie, i as O, n as ae, o as k, r as oe, s as A, t as se } from "./PaneStatusLine-C32pY0-k.js";
-import { $ as ce, A as j, B as le, C as ue, Ct as de, D as fe, E as pe, F as me, G as M, H as N, I as he, J as ge, K as _e, L as ve, M as ye, N as be, O as xe, P as Se, Q as Ce, R as P, S as F, St as I, T as we, U as Te, V as Ee, W as De, X as Oe, Y as ke, Z as Ae, _ as je, _t as Me, a as Ne, at as Pe, b as Fe, bt as Ie, c as Le, ct as Re, d as L, dt as ze, et as Be, f as R, ft as z, g as Ve, gt as He, h as Ue, ht as We, i as Ge, it as Ke, j as qe, k as Je, l as Ye, lt as B, m as V, mt as Xe, n as Ze, nt as Qe, o as $e, ot as et, p as tt, pt as nt, q as rt, r as it, rt as at, s as ot, st, t as ct, tt as lt, u as ut, ut as dt, v as ft, vt as pt, w as mt, wt as ht, x as gt, xt as _t, y as vt, yt, z as bt } from "./ComputeContext-CxKVjTAr.js";
+import { a as ie, i as O, n as ae, o as k, r as oe, s as A, t as se } from "./PaneStatusLine-tGPGc8g0.js";
+import { $ as ce, A as j, B as le, C as ue, Ct as de, D as fe, E as pe, F as me, G as M, H as N, I as he, J as ge, K as _e, L as ve, M as ye, N as be, O as xe, P as Se, Q as Ce, R as P, S as F, St as I, T as we, U as Te, V as Ee, W as De, X as Oe, Y as ke, Z as Ae, _ as je, _t as Me, a as Ne, at as Pe, b as Fe, bt as Ie, c as Le, ct as Re, d as L, dt as ze, et as Be, f as R, ft as z, g as Ve, gt as He, h as Ue, ht as We, i as Ge, it as Ke, j as qe, k as Je, l as Ye, lt as B, m as V, mt as Xe, n as Ze, nt as Qe, o as $e, ot as et, p as tt, pt as nt, q as rt, r as it, rt as at, s as ot, st, t as ct, tt as lt, u as ut, ut as dt, v as ft, vt as pt, w as mt, wt as ht, x as gt, xt as _t, y as vt, yt, z as bt } from "./ComputeContext-EPv4kAve.js";
 import { Fragment as xt, useCallback as H, useEffect as U, useMemo as W, useRef as G, useState as K, useSyncExternalStore as St } from "react";
 import { Fragment as Ct, jsx as q, jsxs as J } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts
@@ -460,9 +459,9 @@ function Zt(e, t) {
 	let n = [`${t} ${t === 1 ? "computer" : "computers"}`], r = e.spentUsd ?? e.liveSpendUsd;
 	return typeof e.budgetUsd == "number" && e.budgetUsd > 0 ? n.push(`${Xt(r, !0)} / ${Xt(e.budgetUsd, !1)}`) : r > 0 && n.push(Xt(r, !0)), e.botCount && n.push(`${e.botCount} ${e.botCount === 1 ? "bot" : "bots"}`), n.join(" · ");
 }
-function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds: o, onSelect: s, onOpenInPane: c, statusFilter: l = null, onStatusFilterChange: d, tab: f, onTabChange: m, onCreate: h, className: g }) {
+function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds: i, onSelect: s, onOpenInPane: c, statusFilter: l = null, onStatusFilterChange: u, tab: f, onTabChange: p, onCreate: h, className: g }) {
 	let [_, b] = K("computers"), x = f ?? _, S = (e) => {
-		b(e), m?.(e);
+		b(e), p?.(e);
 	}, [C, ee] = K(""), [te, w] = K(/* @__PURE__ */ new Set()), T = W(() => new Set(r), [r]), E = it(), ne = E?.projects ?? [], re = E?.projectsAbsent ?? !0, ie = W(() => {
 		let e = ne.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0);
 		if (re || e.length === 0) return [{
@@ -505,7 +504,7 @@ function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 		items: [{
 			label: "Every status",
 			checked: !l,
-			onSelect: () => d?.(null)
+			onSelect: () => u?.(null)
 		}, ...[
 			"waiting",
 			"running",
@@ -516,7 +515,7 @@ function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 		].map((e) => ({
 			label: O[e].label,
 			checked: l === e,
-			onSelect: () => d?.(l === e ? null : e)
+			onSelect: () => u?.(l === e ? null : e)
 		}))]
 	}], ce = t.length === 0, j = /* @__PURE__ */ J("div", {
 		"data-testid": "lab-fleet-empty",
@@ -551,13 +550,13 @@ function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 				children: [/* @__PURE__ */ q($t, {
 					selected: x === "computers",
 					onSelect: () => S("computers"),
-					icon: /* @__PURE__ */ q(u, { size: 14 }),
+					icon: /* @__PURE__ */ q(d, { size: 14 }),
 					label: "Computers",
 					count: t.length
 				}), /* @__PURE__ */ q($t, {
 					selected: x === "agents",
 					onSelect: () => S("agents"),
-					icon: /* @__PURE__ */ q(a, { size: 14 }),
+					icon: /* @__PURE__ */ q(o, { size: 14 }),
 					label: "Agents",
 					count: oe.length
 				})]
@@ -570,8 +569,8 @@ function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 					onClear: () => ee(""),
 					placeholder: "Find computer or agent…",
 					className: "flex-1 min-w-0"
-				}), d && /* @__PURE__ */ q(y, {
-					trigger: /* @__PURE__ */ q(i, { size: 14 }),
+				}), u && /* @__PURE__ */ q(y, {
+					trigger: /* @__PURE__ */ q(a, { size: 14 }),
 					triggerLabel: "Filter by status",
 					triggerTitle: l ? `Showing ${O[l].label}` : "Filter by status",
 					triggerClassName: e(l && "text-primary border-primary"),
@@ -586,23 +585,23 @@ function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 				children: ie.map((t) => {
 					let r = t.computers.filter(k);
 					if (r.length === 0) return null;
-					let i = te.has(t.id) && !C;
+					let a = te.has(t.id) && !C;
 					return /* @__PURE__ */ J("div", {
 						role: "presentation",
 						children: [t.name && /* @__PURE__ */ J("button", {
 							"data-ui-part": "",
 							type: "button",
 							tabIndex: -1,
-							"aria-expanded": !i,
+							"aria-expanded": !a,
 							onClick: () => w((e) => {
 								let n = new Set(e);
 								return n.has(t.id) ? n.delete(t.id) : n.add(t.id), n;
 							}),
 							"data-testid": "lab-fleet-group",
 							className: "w-full flex items-start gap-1.5 px-2 pt-2.5 pb-1 text-left bg-transparent border-none cursor-pointer hover:bg-surface-hover",
-							children: [/* @__PURE__ */ q(p, {
+							children: [/* @__PURE__ */ q(m, {
 								size: 12,
-								className: e("mt-0.5 shrink-0 text-text-tertiary transition-transform", i && "-rotate-90")
+								className: e("mt-0.5 shrink-0 text-text-tertiary transition-transform", a && "-rotate-90")
 							}), /* @__PURE__ */ J("span", {
 								className: "min-w-0 flex-1",
 								children: [/* @__PURE__ */ q("span", {
@@ -613,11 +612,11 @@ function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 									children: t.quickLine
 								})]
 							})]
-						}), !i && r.map((e) => /* @__PURE__ */ q(tn, {
+						}), !a && r.map((e) => /* @__PURE__ */ q(tn, {
 							computer: e,
 							number: ae.get(e.id) ?? 0,
 							active: e.id === n,
-							selected: o?.has(e.id) ?? !1,
+							selected: i?.has(e.id) ?? !1,
 							open: T.has(e.id),
 							onSelect: s,
 							onOpenInPane: c
@@ -630,7 +629,7 @@ function Qt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 					computer: e,
 					number: ae.get(e.id) ?? 0,
 					active: e.id === n,
-					selected: o?.has(e.id) ?? !1,
+					selected: i?.has(e.id) ?? !1,
 					open: T.has(e.id),
 					onSelect: s,
 					onOpenInPane: c,
@@ -686,7 +685,7 @@ function en({ label: e, children: t, emptyState: n }) {
 	});
 }
 function tn({ computer: t, number: n, active: r, selected: i, open: a, onSelect: o, onOpenInPane: s, showTask: c = !1 }) {
-	let u = A(t), d = O[u], f = P(t);
+	let l = A(t), d = O[l], f = P(t);
 	return /* @__PURE__ */ J("div", {
 		role: "presentation",
 		className: e("group relative flex items-stretch", r ? "bg-primary-bg" : i ? "bg-surface-hover" : "hover:bg-surface-hover"),
@@ -714,10 +713,10 @@ function tn({ computer: t, number: n, active: r, selected: i, open: a, onSelect:
 				}),
 				/* @__PURE__ */ q("span", {
 					className: "w-3.5 shrink-0 flex justify-center leading-5 pt-[5px]",
-					children: f ? /* @__PURE__ */ q(h, {
+					children: f ? /* @__PURE__ */ q(g, {
 						size: 14,
 						"aria-label": `laptop · ${d.label}`,
-						className: e("-mt-[2px]", Yt[u])
+						className: e("-mt-[2px]", Yt[l])
 					}) : /* @__PURE__ */ q(S, {
 						size: "xs",
 						color: d.color,
@@ -733,7 +732,7 @@ function tn({ computer: t, number: n, active: r, selected: i, open: a, onSelect:
 					}), c && /* @__PURE__ */ J("span", {
 						className: "block text-xs text-text-tertiary truncate",
 						children: [/* @__PURE__ */ q("span", {
-							className: e("font-semibold", Yt[u]),
+							className: e("font-semibold", Yt[l]),
 							children: d.label
 						}), t.currentTask ? ` · ${t.currentTask}` : ""]
 					})]
@@ -758,7 +757,7 @@ function tn({ computer: t, number: n, active: r, selected: i, open: a, onSelect:
 			"aria-label": `Open ${t.label} in a new pane`,
 			title: "Open in a new pane",
 			className: e("px-2 shrink-0 bg-transparent border-none cursor-pointer text-text-tertiary hover:text-primary", r ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100"),
-			children: /* @__PURE__ */ q(l, { size: 13 })
+			children: /* @__PURE__ */ q(u, { size: 13 })
 		})]
 	});
 }
@@ -796,7 +795,7 @@ var nn = [
 	provisioning: "provisioning",
 	error: "error"
 };
-function an({ title: r, summary: i, statusFilter: a, onStatusFilter: s, canCreate: c, onCreate: l, onKeys: u, keysOpen: d, keysChord: p, actions: m, leaderLabel: h }) {
+function an({ title: r, summary: i, statusFilter: a, onStatusFilter: o, canCreate: c, onCreate: l, onKeys: u, keysOpen: d, keysChord: f, actions: m, leaderLabel: h }) {
 	return /* @__PURE__ */ J("div", {
 		"data-testid": "lab-header",
 		className: "flex flex-wrap items-center gap-x-3 gap-y-1.5 px-3 py-2 shrink-0 border-b border-border bg-surface",
@@ -829,19 +828,19 @@ function an({ title: r, summary: i, statusFilter: a, onStatusFilter: s, canCreat
 				role: "group",
 				"aria-label": "Fleet status",
 				className: "flex items-center gap-1.5",
-				children: nn.map(({ status: t, word: r, tone: o, hint: c, onlyWhenPresent: l }) => {
+				children: nn.map(({ status: t, word: r, tone: s, hint: c, onlyWhenPresent: l }) => {
 					let u = i[rn[t]] ?? 0, d = a === t;
 					return l && u === 0 && !d ? null : /* @__PURE__ */ q("button", {
 						"data-ui-part": "",
 						type: "button",
 						"aria-pressed": d,
-						onClick: () => s(d ? null : t),
+						onClick: () => o(d ? null : t),
 						title: d ? "Show every computer" : c,
 						"data-testid": `lab-pill-${t}`,
 						className: e("rounded-full p-0 bg-transparent border-none cursor-pointer", "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary", u === 0 && !d && "opacity-60"),
 						children: /* @__PURE__ */ J(n, {
 							size: "md",
-							tone: o,
+							tone: s,
 							dot: "static",
 							outline: d ? void 0 : "soft",
 							solid: d,
@@ -869,16 +868,16 @@ function an({ title: r, summary: i, statusFilter: a, onStatusFilter: s, canCreat
 				variant: "primary",
 				onClick: l,
 				"data-testid": "lab-create",
-				children: [/* @__PURE__ */ q(f, { size: 14 }), " Computer"]
+				children: [/* @__PURE__ */ q(p, { size: 14 }), " Computer"]
 			}),
 			/* @__PURE__ */ J(t, {
 				size: "sm",
 				variant: "secondary",
 				onClick: u,
 				"aria-pressed": d,
-				title: `Keyboard shortcuts${p ? ` · ${p}` : ""}`,
+				title: `Keyboard shortcuts${f ? ` · ${f}` : ""}`,
 				"data-testid": "lab-keys",
-				children: [/* @__PURE__ */ q(o, { size: 14 }), " Keys"]
+				children: [/* @__PURE__ */ q(s, { size: 14 }), " Keys"]
 			}),
 			m
 		]
@@ -898,7 +897,7 @@ function on({ label: t, onClick: n, pressed: r, disabled: i, children: a, testId
 		children: a
 	});
 }
-function sn({ panes: t, onFocusPane: n, onAddPane: i, canAddPane: a, shellsOpen: o, maxShells: l, onArrange: u, zoomed: d, onToggleZoom: p, moreSections: h }) {
+function sn({ panes: t, onFocusPane: n, onAddPane: r, canAddPane: a, shellsOpen: o, maxShells: s, onArrange: u, zoomed: d, onToggleZoom: f, moreSections: m }) {
 	return /* @__PURE__ */ J("div", {
 		"data-testid": "lab-pane-toolbar",
 		className: "flex items-center gap-1.5 px-2 py-1.5 shrink-0",
@@ -927,20 +926,20 @@ function sn({ panes: t, onFocusPane: n, onAddPane: i, canAddPane: a, shellsOpen:
 			}),
 			/* @__PURE__ */ q(on, {
 				label: "Add a pane",
-				onClick: i,
+				onClick: r,
 				disabled: !a,
 				testId: "lab-add-pane",
-				children: /* @__PURE__ */ q(f, { size: 14 })
+				children: /* @__PURE__ */ q(p, { size: 14 })
 			}),
 			/* @__PURE__ */ q("span", { className: "flex-1" }),
 			/* @__PURE__ */ J("span", {
 				"data-testid": "lab-shell-count",
 				title: "Open terminals hold a real shell against the runtime's limit",
-				className: e("text-[12px] tabular-nums", o >= l ? "text-warning" : "text-text-tertiary"),
+				className: e("text-[12px] tabular-nums", o >= s ? "text-warning" : "text-text-tertiary"),
 				children: [
 					o,
 					" / ",
-					l,
+					s,
 					" shells"
 				]
 			}),
@@ -948,26 +947,26 @@ function sn({ panes: t, onFocusPane: n, onAddPane: i, canAddPane: a, shellsOpen:
 				label: "Arrange as a list",
 				onClick: () => u("rows"),
 				testId: "lab-arrange-rows",
-				children: /* @__PURE__ */ q(s, { size: 14 })
+				children: /* @__PURE__ */ q(c, { size: 14 })
 			}),
 			/* @__PURE__ */ q(on, {
 				label: "Arrange as a split",
 				onClick: () => u("main"),
 				testId: "lab-arrange-main",
-				children: /* @__PURE__ */ q(m, { size: 14 })
+				children: /* @__PURE__ */ q(h, { size: 14 })
 			}),
 			/* @__PURE__ */ q(on, {
 				label: d ? "Restore panes" : "Expand the focused pane",
-				onClick: p,
+				onClick: f,
 				pressed: d,
 				testId: "lab-zoom",
-				children: /* @__PURE__ */ q(c, { size: 14 })
+				children: /* @__PURE__ */ q(l, { size: 14 })
 			}),
 			/* @__PURE__ */ q(y, {
-				trigger: /* @__PURE__ */ q(r, { size: 14 }),
+				trigger: /* @__PURE__ */ q(i, { size: 14 }),
 				triggerLabel: "More lab commands",
 				align: "end",
-				sections: h,
+				sections: m,
 				"data-testid": "lab-more-menu"
 			})
 		]
@@ -999,11 +998,11 @@ var cn = {
 		tone: "neutral"
 	}
 };
-function ln({ computer: t, kind: i, kinds: a, onSwitchKind: o, active: s, zoomed: l, broadcasting: u, models: f, onFocus: p, onClose: m, onToggleZoom: h, moreSections: g, children: _ }) {
+function ln({ computer: t, kind: r, kinds: a, onSwitchKind: o, active: s, zoomed: c, broadcasting: u, models: d, onFocus: p, onClose: m, onToggleZoom: h, moreSections: g, children: _ }) {
 	let v = A(t), b = O[v], x = cn[v];
 	return /* @__PURE__ */ J("section", {
 		"data-ui-part": "",
-		"aria-label": `${i.title ?? i.label} · ${t.label}`,
+		"aria-label": `${r.title ?? r.label} · ${t.label}`,
 		"data-testid": "lab-pane",
 		"data-active": s || void 0,
 		onMouseDown: p,
@@ -1018,10 +1017,10 @@ function ln({ computer: t, kind: i, kinds: a, onSwitchKind: o, active: s, zoomed
 						trigger: /* @__PURE__ */ J("span", {
 							className: "inline-flex items-center gap-1 text-[12px] font-semibold text-text-primary whitespace-nowrap",
 							children: [
-								i.icon,
+								r.icon,
 								/* @__PURE__ */ q("span", {
 									className: "hidden @[18rem]:inline",
-									children: i.title ?? i.label
+									children: r.title ?? r.label
 								}),
 								" ▾"
 							]
@@ -1035,7 +1034,7 @@ function ln({ computer: t, kind: i, kinds: a, onSwitchKind: o, active: s, zoomed
 								label: e.title ?? e.label,
 								icon: e.icon,
 								description: e.description,
-								active: e.id === i.id,
+								active: e.id === r.id,
 								onSelect: () => o(e)
 							}))
 						}]
@@ -1066,7 +1065,7 @@ function ln({ computer: t, kind: i, kinds: a, onSwitchKind: o, active: s, zoomed
 							children: x.label
 						})
 					}),
-					l && /* @__PURE__ */ q("span", {
+					c && /* @__PURE__ */ q("span", {
 						className: "text-[11px] text-text-tertiary",
 						children: "expanded"
 					}),
@@ -1075,13 +1074,13 @@ function ln({ computer: t, kind: i, kinds: a, onSwitchKind: o, active: s, zoomed
 						"data-ui-part": "",
 						type: "button",
 						onClick: h,
-						"aria-label": l ? `Restore ${t.label}` : `Expand ${t.label}`,
-						title: l ? "Restore" : "Expand",
+						"aria-label": c ? `Restore ${t.label}` : `Expand ${t.label}`,
+						title: c ? "Restore" : "Expand",
 						className: "hidden @[16rem]:inline-flex p-1 rounded bg-transparent border-none cursor-pointer text-text-tertiary hover:text-text-primary hover:bg-surface-hover",
-						children: /* @__PURE__ */ q(c, { size: 13 })
+						children: /* @__PURE__ */ q(l, { size: 13 })
 					}),
 					/* @__PURE__ */ q(y, {
-						trigger: /* @__PURE__ */ q(r, { size: 13 }),
+						trigger: /* @__PURE__ */ q(i, { size: 13 }),
 						triggerLabel: `More for ${t.label}`,
 						triggerVariant: "link",
 						align: "end",
@@ -1094,15 +1093,15 @@ function ln({ computer: t, kind: i, kinds: a, onSwitchKind: o, active: s, zoomed
 						"aria-label": `Close pane ${t.label}`,
 						title: "Close pane",
 						className: "p-1 rounded bg-transparent border-none cursor-pointer text-text-tertiary hover:text-danger hover:bg-surface-hover",
-						children: /* @__PURE__ */ q(d, { size: 13 })
+						children: /* @__PURE__ */ q(f, { size: 13 })
 					})
 				]
 			}), /* @__PURE__ */ q(ae, {
 				variant: "meta",
 				computer: t,
-				models: f,
+				models: d,
 				broadcasting: u,
-				mode: i.statusMode ?? i.label,
+				mode: r.statusMode ?? r.label,
 				"data-testid": "lab-pane-meta"
 			})]
 		}), /* @__PURE__ */ q("div", {
@@ -3188,52 +3187,52 @@ function zn({ nodes: t, models: r = [], onOpenLab: i, onManage: a, className: o,
 }
 //#endregion
 //#region src/components/compute/components/CommandOutputPane.tsx
-function Bn({ command: r, lines: i, running: a = !1, exitCode: o, onOpenShell: s, id: c, className: l, "data-testid": u = c ? `command-output-${c}` : "command-output" }) {
-	let d = null;
-	a ? d = /* @__PURE__ */ q(n, {
+function Bn({ command: i, lines: a, running: o = !1, exitCode: s, onOpenShell: c, id: l, className: u, "data-testid": d = l ? `command-output-${l}` : "command-output" }) {
+	let f = null;
+	o ? f = /* @__PURE__ */ q(n, {
 		tone: "info",
 		size: "sm",
-		"data-testid": `${u}-running`,
+		"data-testid": `${d}-running`,
 		children: "running"
-	}) : o !== void 0 && (d = /* @__PURE__ */ J(n, {
-		tone: o === 0 ? "success" : "danger",
+	}) : s !== void 0 && (f = /* @__PURE__ */ J(n, {
+		tone: s === 0 ? "success" : "danger",
 		size: "sm",
-		"data-testid": `${u}-exit`,
-		children: ["exit ", o]
+		"data-testid": `${d}-exit`,
+		children: ["exit ", s]
 	}));
-	let f = /* @__PURE__ */ J("div", {
+	let p = /* @__PURE__ */ J("div", {
 		className: "flex items-center gap-2",
 		children: [
-			/* @__PURE__ */ J(g, {
+			/* @__PURE__ */ J(r, {
 				size: "xs",
 				tone: "tertiary",
 				children: [
-					i.length,
+					a.length,
 					" ",
-					i.length === 1 ? "line" : "lines"
+					a.length === 1 ? "line" : "lines"
 				]
 			}),
-			d,
-			s && /* @__PURE__ */ q(t, {
+			f,
+			c && /* @__PURE__ */ q(t, {
 				size: "sm",
 				variant: "ghost",
-				onClick: s,
-				"data-testid": `${u}-open-shell`,
+				onClick: c,
+				"data-testid": `${d}-open-shell`,
 				children: "Open shell"
 			})
 		]
 	});
 	return /* @__PURE__ */ q(C, {
-		lines: i,
-		title: `$ ${r}`,
-		headerSlot: f,
+		lines: a,
+		title: `$ ${i}`,
+		headerSlot: p,
 		showLevel: !1,
 		showSource: !1,
 		showTimestamp: !1,
-		follow: a,
-		emptyMessage: a ? "Waiting for output…" : "No output.",
-		className: e("min-h-0", l),
-		"data-testid": u
+		follow: o,
+		emptyMessage: o ? "Waiting for output…" : "No output.",
+		className: e("min-h-0", u),
+		"data-testid": d
 	});
 }
 //#endregion

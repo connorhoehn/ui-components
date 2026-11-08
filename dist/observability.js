@@ -1,17 +1,17 @@
 import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
 import { r as t } from "./IdentityContext-CQM1qwH6.js";
-import { t as n } from "./cn-D4QmbyEy.js";
-import { t as r } from "./Card-sJqvEOtP.js";
-import { t as i } from "./Chip-BlpTnjWu.js";
-import { n as a, r as o, t as s } from "./Chart-Bq0CrbVM.js";
-import { t as c } from "./Modal-Dzo5wx1N.js";
-import { t as l } from "./Input-Brvp1kPv.js";
-import { t as u } from "./Select-BCQbimV2.js";
-import { t as d } from "./EmptyState-pOG782nO.js";
-import { n as f, t as p } from "./Sparkline-B-z1C40M.js";
-import { t as m } from "./StatusDot-GwVn-q5q.js";
-import { t as h } from "./CardHeader-DzQxX5J-.js";
-import { t as g } from "./Checkbox-Bx-yW1PI.js";
+import { d as n } from "./Button-DQoeE5dN.js";
+import { t as r } from "./Chip-5WvKIIpI.js";
+import { t as i } from "./Card-D4k-Buoz.js";
+import { n as a, r as o, t as s } from "./Chart-CzvBZgl7.js";
+import { t as c } from "./Modal-C88cabjQ.js";
+import { t as l } from "./Input-DiOEvL5h.js";
+import { t as u } from "./Select-BGBx7BNi.js";
+import { t as d } from "./EmptyState-dTW3J44n.js";
+import { n as f, t as p } from "./Sparkline-JHNXgoxY.js";
+import { t as m } from "./StatusDot-DAok6F5B.js";
+import { t as h } from "./CardHeader-DDkwr0A5.js";
+import { t as g } from "./Checkbox-Ds6v0Fy6.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
 import { n as v } from "./EventStreamContext-CLzG8O5_.js";
 import { n as y, r as b } from "./ObservabilityContext-DpoDrm3T.js";
@@ -2156,7 +2156,7 @@ var ot = {
 	warning: "border-l-[var(--color-warning)]",
 	info: "border-l-[var(--color-info)]"
 };
-function lt({ severity: e, title: t, description: r, timestamp: a, resolved: o = !1, action: s, className: c, style: l, "data-testid": u = `alert-${e}` }) {
+function lt({ severity: e, title: t, description: i, timestamp: a, resolved: o = !1, action: s, className: c, style: l, "data-testid": u = `alert-${e}` }) {
 	return /* @__PURE__ */ k("div", {
 		role: "listitem",
 		"data-testid": u,
@@ -2175,7 +2175,7 @@ function lt({ severity: e, title: t, description: r, timestamp: a, resolved: o =
 					className: "text-[12px] font-semibold text-[var(--color-text-primary)]",
 					children: t
 				}),
-				o && /* @__PURE__ */ O(i, {
+				o && /* @__PURE__ */ O(r, {
 					tone: "success",
 					size: "xs",
 					className: "ml-1",
@@ -2190,9 +2190,9 @@ function lt({ severity: e, title: t, description: r, timestamp: a, resolved: o =
 					children: s
 				})
 			]
-		}), r != null && /* @__PURE__ */ O("div", {
+		}), i != null && /* @__PURE__ */ O("div", {
 			className: "mt-1 text-[11px] leading-snug text-[var(--color-text-secondary)]",
-			children: r
+			children: i
 		})]
 	});
 }
@@ -2206,13 +2206,13 @@ var ut = /* @__PURE__ */ O("div", {
 	children: "Loading alerts…"
 });
 function ft({ items: e, title: t = "Alerts", headerSlot: a, loading: o = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": d = "alert-list" }) {
-	let f = e.filter((e) => !e.resolved).length, p = f > 0 ? /* @__PURE__ */ k(i, {
+	let f = e.filter((e) => !e.resolved).length, p = f > 0 ? /* @__PURE__ */ k(r, {
 		tone: "danger",
 		size: "xs",
 		"data-testid": "alert-list-active-count",
 		children: [f, " active"]
 	}) : null;
-	return /* @__PURE__ */ k(r, {
+	return /* @__PURE__ */ k(i, {
 		"data-testid": d,
 		className: n("flex flex-col", l),
 		style: u,
@@ -2285,21 +2285,21 @@ var gt = {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "No nodes reporting."
 });
-function vt({ items: e, columns: t = 3, dense: i = !1, title: a, headerSlot: o, empty: s, className: c, style: l, "data-testid": u = "health-grid" }) {
+function vt({ items: e, columns: t = 3, dense: r = !1, title: a, headerSlot: o, empty: s, className: c, style: l, "data-testid": u = "health-grid" }) {
 	let d = e.length === 0 ? s ?? _t : /* @__PURE__ */ O("div", {
 		role: "list",
-		className: n("grid grid-cols-1", gt[t], i ? "gap-1.5" : "gap-2"),
+		className: n("grid grid-cols-1", gt[t], r ? "gap-1.5" : "gap-2"),
 		children: e.map((e) => /* @__PURE__ */ O("div", {
 			role: "listitem",
 			children: /* @__PURE__ */ O(ht, {
 				status: e.status,
 				label: e.label,
 				reason: e.reason,
-				dense: i
+				dense: r
 			})
 		}, e.id))
 	});
-	return a ? /* @__PURE__ */ k(r, {
+	return a ? /* @__PURE__ */ k(i, {
 		"data-testid": u,
 		className: n("flex flex-col", c),
 		style: l,
@@ -2310,12 +2310,12 @@ function vt({ items: e, columns: t = 3, dense: i = !1, title: a, headerSlot: o, 
 				meta: o
 			})
 		}), /* @__PURE__ */ O("div", {
-			className: n(i ? "p-2" : "p-3"),
+			className: n(r ? "p-2" : "p-3"),
 			children: d
 		})]
 	}) : /* @__PURE__ */ O("div", {
 		"data-testid": u,
-		className: n(i ? "p-2" : "p-3", c),
+		className: n(r ? "p-2" : "p-3", c),
 		style: l,
 		children: d
 	});

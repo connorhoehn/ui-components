@@ -10,6 +10,8 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState } fro
 import type { ReactNode } from 'react';
 import Toast from './Toast';
 import type { ToastType } from './Toast';
+import { JobToast } from './JobToast';
+import type { JobToastState } from './JobToast';
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -22,8 +24,37 @@ export interface ToastOptions {
   onAction?: () => void;
 }
 
+/**
+ * A background job tracked by one toast. `toastJob` with an `id` it has not
+ * seen creates the toast; later calls with the same `id` update it in place.
+ */
+export interface JobToastOptions {
+  /** Job id: the key. Same id, same toast. */
+  id: string;
+  title: string;
+  state: JobToastState;
+  detail?: string;
+  /** 0-100, drawn as a bar while queued or running. */
+  progress?: number;
+  href?: string;
+  /** Link text. Default "View". */
+  hrefLabel?: string;
+  /** How long a done or failed toast stays after it settles. Default 8000. */
+  dismissAfterMs?: number;
+  /** Fires once when the job first reaches done or failed — mirror it into a notification center. */
+  onSettled?: (job: JobToastSettled) => void;
+}
+
+export type JobToastSettled = Pick<JobToastOptions, 'id' | 'title' | 'detail' | 'href' | 'hrefLabel'> & {
+  state: 'done' | 'failed';
+};
+
+export const JOB_TOAST_DISMISS_MS = 8000;
+
 export interface ToastContextValue {
   toast: (message: string, opts?: ToastOptions) => void;
+  toastJob: (opts: JobToastOptions) => void;
+  dismissJobToast: (id: string) => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -50,7 +81,19 @@ interface ToastEntry {
   actionLabel?: string;
   onAction?: () => void;
   exiting?: boolean;
+  job?: JobToastOptions;
 }
+
+/** Per-job bookkeeping kept outside render state. */
+interface JobMeta {
+  settled: boolean;
+  hovering: boolean;
+  /** ms left on the dismiss timer when it was paused (or never started). */
+  remaining: number | null;
+  deadline: number | null;
+}
+
+const jobEntryId = (jobId: string) => `job:${jobId}`;
 
 // ---------------------------------------------------------------------------
 // Provider
@@ -85,6 +128,71 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     timers.current.set(id, t);
   }, [remove, clearTimer]);
 
+  const jobs = useRef<Map<string, JobMeta>>(new Map());
+
+  const startJobTimer = useCallback((entryId: string, ms: number) => {
+    clearTimer(entryId);
+    const meta = jobs.current.get(entryId);
+    if (meta) { meta.remaining = ms; meta.deadline = Date.now() + ms; }
+    timers.current.set(entryId, setTimeout(() => {
+      jobs.current.delete(entryId);
+      dismiss(entryId);
+    }, ms));
+  }, [clearTimer, dismiss]);
+
+  const toastJob = useCallback((opts: JobToastOptions) => {
+    const entryId = jobEntryId(opts.id);
+    let meta = jobs.current.get(entryId);
+    if (!meta) {
+      meta = { settled: false, hovering: false, remaining: null, deadline: null };
+      jobs.current.set(entryId, meta);
+    }
+    setToasts(prev => {
+      const entry: ToastEntry = { id: entryId, message: opts.title, type: 'info', job: opts };
+      return prev.some(t => t.id === entryId)
+        ? prev.map(t => t.id === entryId ? entry : t)
+        : [...prev, entry];
+    });
+    const terminal = opts.state === 'done' || opts.state === 'failed';
+    if (!terminal) {
+      // Back to active (a retry): cancel any pending dismissal.
+      meta.settled = false;
+      meta.remaining = null;
+      meta.deadline = null;
+      clearTimer(entryId);
+      return;
+    }
+    if (meta.settled) return;
+    meta.settled = true;
+    const ms = opts.dismissAfterMs ?? JOB_TOAST_DISMISS_MS;
+    if (meta.hovering) { meta.remaining = ms; meta.deadline = null; }
+    else startJobTimer(entryId, ms);
+    opts.onSettled?.({
+      id: opts.id, title: opts.title, state: opts.state as 'done' | 'failed',
+      detail: opts.detail, href: opts.href, hrefLabel: opts.hrefLabel,
+    });
+  }, [clearTimer, startJobTimer]);
+
+  const dismissJobToast = useCallback((id: string) => {
+    const entryId = jobEntryId(id);
+    jobs.current.delete(entryId);
+    dismiss(entryId);
+  }, [dismiss]);
+
+  const onJobHover = useCallback((entryId: string, hovering: boolean) => {
+    const meta = jobs.current.get(entryId);
+    if (!meta) return;
+    meta.hovering = hovering;
+    if (!meta.settled || meta.remaining === null) return;
+    if (hovering) {
+      if (meta.deadline !== null) meta.remaining = Math.max(0, meta.deadline - Date.now());
+      meta.deadline = null;
+      clearTimer(entryId);
+    } else {
+      startJobTimer(entryId, meta.remaining);
+    }
+  }, [clearTimer, startJobTimer]);
+
   const toast = useCallback((message: string, opts: ToastOptions = {}) => {
     const type: ToastType = opts.type ?? 'info';
     const durationMs = opts.durationMs ?? DEFAULT_DURATION[type];
@@ -100,7 +208,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     timers.current.set(id, t);
   }, [dismiss]);
 
-  const ctxValue = useMemo<ToastContextValue>(() => ({ toast }), [toast]);
+  // The close button: a manual close always works, and forgets the job so a
+  // later toastJob with the same id starts a fresh toast.
+  const dismissJobById = useCallback((entryId: string) => {
+    jobs.current.delete(entryId);
+    dismiss(entryId);
+  }, [dismiss]);
+
+  const ctxValue = useMemo<ToastContextValue>(
+    () => ({ toast, toastJob, dismissJobToast }),
+    [toast, toastJob, dismissJobToast],
+  );
 
   return (
     <ToastContext.Provider value={ctxValue}>
@@ -113,6 +231,20 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       >
         {toasts.map(t => (
           <div key={t.id} className="pointer-events-auto">
+            {t.job ? (
+              <JobToast
+                id={t.id}
+                title={t.job.title}
+                state={t.job.state}
+                detail={t.job.detail}
+                progress={t.job.progress}
+                href={t.job.href}
+                hrefLabel={t.job.hrefLabel}
+                exiting={t.exiting}
+                onDismiss={dismissJobById}
+                onHoverChange={h => onJobHover(t.id, h)}
+              />
+            ) : (
             <Toast
               id={t.id}
               message={t.message}
@@ -122,6 +254,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               onAction={t.onAction}
               onDismiss={dismiss}
             />
+            )}
           </div>
         ))}
       </div>

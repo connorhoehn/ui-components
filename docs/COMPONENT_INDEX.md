@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-978 components across 21 entry points; 830 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+979 components across 21 entry points; 831 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -47,7 +47,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Tables & lists](#tables--lists) (31)
 - [Forms](#forms) (30)
 - [Buttons & actions](#buttons--actions) (15)
-- [Feedback & states](#feedback--states) (25)
+- [Feedback & states](#feedback--states) (26)
 - [Chat & social](#chat--social) (107)
 - [Video](#video) (107)
 - [Docs & editor](#docs--editor) (138)
@@ -292,6 +292,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ErrorState` | `@connorhoehn/ui-components/shared` | Centered error-state card — companion to EmptyState. | `shared-errorstate` |  |
 | `FollowBanner` | `@connorhoehn/ui-components/shared` | "Following <name>", and the way out. | `shared-followbanner` |  |
 | `InlineAlert` | `@connorhoehn/ui-components/shared` | Compact contextual message (error/success/info/warning). | `shared-inlinealert` |  |
+| `JobToast` | `@connorhoehn/ui-components/shared` | The visual of a keyed job toast (ToastProvider's `toastJob`): title, a state chip, optional detail, an optional progress bar, an optional link, and the same close button as Toast. | `shared-jobtoast` |  |
 | `LoadingState` | `@connorhoehn/ui-components/shared` | Centered loading-state card — companion to EmptyState / ErrorState. | `shared-loadingstate` |  |
 | `NetworkErrorBoundary` | `@connorhoehn/ui-components/integrations/realtime-modules` | React error boundary specialised for real-time hook surfaces. | `integrations-networkerrorboundary` |  |
 | `NoAccessState` | `@connorhoehn/ui-components/shared` | — |  |  |

@@ -1,45 +1,44 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
-import { t as n } from "./cn-D4QmbyEy.js";
-import { n as r, o as i } from "./Button-C-I3BxWI.js";
-import { t as a } from "./Card-sJqvEOtP.js";
-import { t as o } from "./Chip-BlpTnjWu.js";
-import { t as s } from "./IconButton-Bf5Wy0tS.js";
-import { _t as c, dt as l, m as u } from "./Icons-CqVFbuiZ.js";
-import { i as d } from "./MediaIcons-_ai5Til2.js";
-import { i as f, n as p, r as m } from "./Text-k7rQu4ud.js";
-import { n as h, r as g } from "./ErrorBoundary-D4kT0NhC.js";
-import { t as _ } from "./Badge-BA-mtUTs.js";
-import { t as v } from "./Banner-400g6E1q.js";
-import { t as y } from "./Modal-Dzo5wx1N.js";
-import { t as b } from "./Input-Brvp1kPv.js";
-import { t as x } from "./Select-BCQbimV2.js";
-import { t as S } from "./InlinePopover-CPu3gKSr.js";
-import { t as C } from "./EmptyState-pOG782nO.js";
-import { r as w } from "./safeHref-BR1Vy6Dm.js";
-import { t as T } from "./LoadingState-ED7Di_id.js";
-import { n as ee } from "./Tabs-DyFKFsp9.js";
-import { t as te } from "./DropdownMenu-LGowvfrE.js";
-import { t as ne } from "./Textarea-CvdLeuO_.js";
-import { n as E } from "./Avatar-T3d5ukiz.js";
-import { t as D } from "./SegmentedControl-DAjnOtF4.js";
-import { t as O } from "./InlineAlert-Dzf30Lca.js";
-import { t as k } from "./CardHeader-DzQxX5J-.js";
-import { t as A } from "./Breadcrumbs-BWCgFKrK.js";
-import { t as re } from "./PresenceAvatars-Cju7Hj98.js";
-import { o as ie, s as ae, t as oe } from "./VerdictChip-D-L8se8P.js";
-import { t as j } from "./MetaLine-DFn2XXGU.js";
-import { t as M } from "./Checkbox-Bx-yW1PI.js";
-import { n as se } from "./FileKindMark-BZmXUxaT.js";
+import { d as n, n as r, o as i } from "./Button-DQoeE5dN.js";
+import { t as a } from "./Chip-5WvKIIpI.js";
+import { i as o, n as s, r as c } from "./Text-DAQCiXe4.js";
+import { t as l } from "./Card-D4k-Buoz.js";
+import { t as u } from "./IconButton-BgM9MvwA.js";
+import { _t as d, dt as f, m as p } from "./Icons-CqVFbuiZ.js";
+import { i as m } from "./MediaIcons-_ai5Til2.js";
+import { n as h, r as g } from "./ErrorBoundary-CVg9w-74.js";
+import { t as _ } from "./Badge-rfcPE9Cf.js";
+import { t as v } from "./Banner-DPR4sIxI.js";
+import { t as y } from "./Modal-C88cabjQ.js";
+import { t as b } from "./Input-DiOEvL5h.js";
+import { t as x } from "./Select-BGBx7BNi.js";
+import { t as S } from "./InlinePopover-BQTS5egk.js";
+import { t as C } from "./EmptyState-dTW3J44n.js";
+import { r as w } from "./safeHref-CvC3QRvs.js";
+import { t as T } from "./LoadingState-BQlqtSB5.js";
+import { n as ee } from "./Tabs-DMhEFUFr.js";
+import { t as te } from "./DropdownMenu-DoCRgXx4.js";
+import { t as ne } from "./Textarea-Cf4WFXAs.js";
+import { n as E } from "./Avatar-BcOAdTaX.js";
+import { t as D } from "./SegmentedControl-DMudc23g.js";
+import { t as O } from "./InlineAlert-BgM4PLN-.js";
+import { t as k } from "./CardHeader-DDkwr0A5.js";
+import { t as A } from "./Breadcrumbs-Ba-7aI6X.js";
+import { t as re } from "./PresenceAvatars-D_Dp8qkz.js";
+import { o as ie, s as ae, t as oe } from "./VerdictChip-Cs8ACEA2.js";
+import { t as j } from "./MetaLine-CXoGFWAF.js";
+import { t as M } from "./Checkbox-Ds6v0Fy6.js";
+import { n as se } from "./FileKindMark-BcwT0tiz.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
-import { A as P, k as ce } from "./renderers-D9U1Vuqp.js";
-import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-DhwX-Gda.js";
-import { t as Ze } from "./InlineEditableText-c94ETQ89.js";
-import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-BU4pt2sS.js";
-import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-D10uQ4k3.js";
-import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage--_cNkzpo.js";
-import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-veB1uWeR.js";
-import { i as In } from "./ConversationInputs-DV6ExO_8.js";
-import { r as Ln } from "./RichChatComposer-CHI6_J4B.js";
+import { A as P, k as ce } from "./renderers-DzJlG3P7.js";
+import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-CBgfLeWr.js";
+import { t as Ze } from "./InlineEditableText-CKjRokmb.js";
+import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-Blmu8WT6.js";
+import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-DbxmNCal.js";
+import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-D5PTlPov.js";
+import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-BPS-VfBJ.js";
+import { i as In } from "./ConversationInputs-CPKX3wfR.js";
+import { r as Ln } from "./RichChatComposer-Y_H0sjOY.js";
 import { forwardRef as Rn, useCallback as B, useEffect as V, useId as zn, useImperativeHandle as Bn, useMemo as H, useRef as U, useState as W } from "react";
 import { Fragment as G, jsx as K, jsxs as q } from "react/jsx-runtime";
 import * as Vn from "yjs";
@@ -1014,7 +1013,7 @@ var Jr = {
 	field: "Field change",
 	prose: "Body text"
 };
-function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: _, locationHint: v, verdict: y, verdictStatus: x = "idle", verdictError: S, revision: C, onRereview: w, onAccept: T, onReject: ee, onRedraft: te, onReattach: ne, onConfirmAttachment: D, className: O, "data-testid": k = "proposal-card" }) {
+function Yr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: _, locationHint: v, verdict: y, verdictStatus: x = "idle", verdictError: S, revision: C, onRereview: w, onAccept: T, onReject: ee, onRedraft: te, onReattach: ne, onConfirmAttachment: D, className: O, "data-testid": k = "proposal-card" }) {
 	let [A, re] = W(!1), [j, M] = W(null), [se, N] = W(!1), [P, ce] = W(""), le = i === "applied", F = i === "rejected", I = le || F;
 	async function L() {
 		re(!0), M(null);
@@ -1037,7 +1036,7 @@ function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 	return /* @__PURE__ */ q("div", {
 		"data-testid": k,
 		"data-status": i,
-		"data-confidence": a,
+		"data-confidence": o,
 		className: n("flex flex-col gap-3 rounded-lg border bg-surface p-3", le ? "border-success-border" : "border-border", F && "opacity-60", O),
 		children: [
 			/* @__PURE__ */ q("div", {
@@ -1061,36 +1060,36 @@ function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 						})]
 					}),
 					/* @__PURE__ */ K("span", { className: "flex-1" }),
-					/* @__PURE__ */ K(o, {
+					/* @__PURE__ */ K(a, {
 						tone: "info",
 						size: "sm",
 						uppercase: !0,
 						"data-testid": `${k}-author`,
 						children: "AI proposal"
 					}),
-					/* @__PURE__ */ K(o, {
-						tone: Kr[a],
+					/* @__PURE__ */ K(a, {
+						tone: Kr[o],
 						size: "sm",
-						children: Gr[a]
+						children: Gr[o]
 					}),
-					s === "healed" && /* @__PURE__ */ K(o, {
+					s === "healed" && /* @__PURE__ */ K(a, {
 						tone: "caution",
 						size: "sm",
 						"data-testid": `${k}-healed`,
 						children: "Re-found by quote — check this"
 					}),
-					s === "author_only" && /* @__PURE__ */ K(o, {
+					s === "author_only" && /* @__PURE__ */ K(a, {
 						tone: "neutral",
 						size: "sm",
 						children: "Only you can see this"
 					}),
-					le && /* @__PURE__ */ K(o, {
+					le && /* @__PURE__ */ K(a, {
 						tone: "success",
 						size: "sm",
 						"data-testid": `${k}-applied`,
 						children: "Applied"
 					}),
-					F && /* @__PURE__ */ K(o, {
+					F && /* @__PURE__ */ K(a, {
 						tone: "neutral",
 						size: "sm",
 						children: "Rejected"
@@ -1251,9 +1250,9 @@ function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 }
 //#endregion
 //#region src/components/doc-editor/WorkItemRow.tsx
-function Xr({ itemId: e, utterance: t, unplaced: i = !1, targetLabel: s, reason: c, contextSplit: l, drafting: u = !1, draftError: d, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
+function Xr({ itemId: e, utterance: t, unplaced: i = !1, targetLabel: o, reason: s, contextSplit: c, drafting: u = !1, draftError: d, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
 	let y = [...f ?? []].sort((e, t) => t.score - e.score), b = new Set(y.map((e) => e.sectionId)), S = p.filter((e) => !b.has(e.id));
-	return /* @__PURE__ */ K(a, {
+	return /* @__PURE__ */ K(l, {
 		padding: "sm",
 		className: _,
 		"data-testid": v,
@@ -1263,12 +1262,12 @@ function Xr({ itemId: e, utterance: t, unplaced: i = !1, targetLabel: s, reason:
 			children: [
 				/* @__PURE__ */ q("div", {
 					className: "flex flex-wrap items-center gap-1.5",
-					children: [/* @__PURE__ */ K(o, {
+					children: [/* @__PURE__ */ K(a, {
 						tone: i ? "neutral" : "success",
 						size: "sm",
 						uppercase: !0,
-						children: i ? "Unplaced" : s ?? "Placed"
-					}), l && /* @__PURE__ */ K(o, {
+						children: i ? "Unplaced" : o ?? "Placed"
+					}), c && /* @__PURE__ */ K(a, {
 						tone: "caution",
 						size: "sm",
 						"data-testid": `${v}-split`,
@@ -1283,9 +1282,9 @@ function Xr({ itemId: e, utterance: t, unplaced: i = !1, targetLabel: s, reason:
 						"”"
 					]
 				}),
-				c && /* @__PURE__ */ K("p", {
+				s && /* @__PURE__ */ K("p", {
 					className: "text-xs text-text-tertiary",
-					children: c
+					children: s
 				}),
 				d && /* @__PURE__ */ K("div", {
 					className: n("rounded border border-warning-border bg-warning-bg", "px-2 py-1.5 text-xs text-warning-fg"),
@@ -1358,7 +1357,7 @@ function $r(e) {
 function ei(e) {
 	return e <= 0 ? "No replies" : e === 1 ? "1 reply" : `${e} replies`;
 }
-function ti({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: s, onResolve: c, ref: l, "data-testid": u = "comment-ghost" }) {
+function ti({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: o, onOpenThread: s, onResolve: c, ref: l, "data-testid": u = "comment-ghost" }) {
 	let [d, f] = W(null), p = U(null), m = U(null), h = U(null);
 	h.current = d;
 	let g = H(() => {
@@ -1385,8 +1384,8 @@ function ti({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 	}), [b, y]);
 	let x = U(null), C = d?.id ?? null;
 	V(() => {
-		x.current !== C && (x.current = C, a?.(C));
-	}, [C, a]), V(() => v, [v]), V(() => {
+		x.current !== C && (x.current = C, o?.(C));
+	}, [C, o]), V(() => v, [v]), V(() => {
 		let e = t?.current;
 		if (!e) return;
 		let r = (e) => e instanceof Element ? e.closest(Zr) : null, a = (e) => {
@@ -1456,7 +1455,7 @@ function ti({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 							className: "text-[11px] text-text-tertiary",
 							children: Pt(w.timestamp)
 						}),
-						w.resolved && /* @__PURE__ */ K(o, {
+						w.resolved && /* @__PURE__ */ K(a, {
 							tone: "success",
 							size: "xs",
 							children: "Resolved"
@@ -1518,10 +1517,10 @@ function ni() {
 		})]
 	});
 }
-function ri({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: c, compact: l = !1, onDragOver: u, onDragLeave: d, onDrop: f, className: p, children: m, "data-testid": h = "video-dock-slot" }) {
+function ri({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: s, compact: c = !1, onDragOver: l, onDragLeave: d, onDrop: f, className: p, children: m, "data-testid": h = "video-dock-slot" }) {
 	let [g, _] = W(!1), v = B((e) => {
-		e.preventDefault(), t && _(!0), u?.(e);
-	}, [t, u]), y = B((e) => {
+		e.preventDefault(), t && _(!0), l?.(e);
+	}, [t, l]), y = B((e) => {
 		let t = e.relatedTarget;
 		t instanceof Node && e.currentTarget.contains(t) || (_(!1), d?.(e));
 	}, [d]), b = B((e) => {
@@ -1530,7 +1529,7 @@ function ri({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 	return !e && !t ? null : /* @__PURE__ */ K("div", {
 		"data-testid": h,
 		"data-docked": String(e),
-		"data-compact": l ? "true" : void 0,
+		"data-compact": c ? "true" : void 0,
 		"data-drag-over": String(g),
 		"data-call-dock-target": t && r ? r : void 0,
 		onDragOver: v,
@@ -1540,12 +1539,12 @@ function ri({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 		children: e ? /* @__PURE__ */ q("div", {
 			"data-testid": `${h}-content`,
 			className: "relative w-full",
-			children: [m, c && /* @__PURE__ */ K("div", {
+			children: [m, s && /* @__PURE__ */ K("div", {
 				className: "absolute right-1 top-1 z-10 rounded bg-black/45 backdrop-blur-sm",
-				children: /* @__PURE__ */ K(s, {
+				children: /* @__PURE__ */ K(u, {
 					"aria-label": o,
 					size: "sm",
-					onClick: c,
+					onClick: s,
 					"data-testid": `${h}-undock`,
 					icon: /* @__PURE__ */ K(ni, {}),
 					className: "text-white hover:bg-white/20"
@@ -1555,7 +1554,7 @@ function ri({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 			role: "region",
 			"aria-label": i,
 			"data-testid": `${h}-dropzone`,
-			className: n(l ? "flex h-10 w-full flex-row items-center justify-center gap-2" : "flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", g ? "border-primary bg-surface-hover" : "border-border"),
+			className: n(c ? "flex h-10 w-full flex-row items-center justify-center gap-2" : "flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", g ? "border-primary bg-surface-hover" : "border-border"),
 			children: [/* @__PURE__ */ K("span", {
 				className: "text-xs font-medium text-text-secondary",
 				children: i
@@ -2699,25 +2698,25 @@ function ja(e) {
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Ma({ count: e, children: t, onAcceptAll: s, onRejectAll: c, acceptLabel: l = "Accept all", selectedCount: u, error: d = null, headerExtra: f, emptyTitle: p = "No suggestions", emptyBody: m = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": y = "suggestion-review-list" }) {
-	let b = e > 0 && (s || c), x = b || f ? /* @__PURE__ */ q("span", {
+function Ma({ count: e, children: t, onAcceptAll: o, onRejectAll: s, acceptLabel: c = "Accept all", selectedCount: u, error: d = null, headerExtra: f, emptyTitle: p = "No suggestions", emptyBody: m = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": y = "suggestion-review-list" }) {
+	let b = e > 0 && (o || s), x = b || f ? /* @__PURE__ */ q("span", {
 		className: "flex items-center gap-1.5",
 		children: [
 			f,
-			b && c && /* @__PURE__ */ K(r, {
+			b && s && /* @__PURE__ */ K(r, {
 				variant: "ghost",
 				size: "sm",
-				onClick: c,
+				onClick: s,
 				"data-testid": `${y}-reject-all`,
 				children: "Reject all"
 			}),
-			b && s && /* @__PURE__ */ K(r, {
+			b && o && /* @__PURE__ */ K(r, {
 				variant: "secondary",
 				size: "sm",
-				onClick: s,
+				onClick: o,
 				disabled: u === 0,
 				"data-testid": `${y}-accept-all`,
-				children: u === void 0 ? l : `${l} (${u})`
+				children: u === void 0 ? c : `${c} (${u})`
 			})
 		]
 	}) : void 0, S = /* @__PURE__ */ q(G, { children: [d && /* @__PURE__ */ K("div", {
@@ -2755,13 +2754,13 @@ function Ma({ count: e, children: t, onAcceptAll: s, onRejectAll: c, acceptLabel
 			className: "min-h-0 flex-1 overflow-y-auto px-3",
 			children: S
 		})]
-	}) : /* @__PURE__ */ q(a, {
+	}) : /* @__PURE__ */ q(l, {
 		padding: "none",
 		className: n("overflow-hidden", _),
 		"data-testid": y,
 		children: [/* @__PURE__ */ K(k, {
 			title: h,
-			meta: /* @__PURE__ */ K(o, {
+			meta: /* @__PURE__ */ K(a, {
 				tone: "neutral",
 				size: "xs",
 				mono: !0,
@@ -2774,37 +2773,37 @@ function Ma({ count: e, children: t, onAcceptAll: s, onRejectAll: c, acceptLabel
 //#endregion
 //#region src/components/doc-editor/DocumentReviewPanel.tsx
 function Na({ request: e, onDecide: t, onWithdraw: n }) {
-	let [i, a] = W(""), [s, c] = W(!1), [l, u] = W(null), d = U(!1);
-	async function p(e) {
-		if (!d.current) {
-			d.current = !0, c(!0), u(null);
+	let [i, s] = W(""), [l, u] = W(!1), [d, f] = W(null), p = U(!1);
+	async function m(e) {
+		if (!p.current) {
+			p.current = !0, u(!0), f(null);
 			try {
-				await e(), a("");
+				await e(), s("");
 			} catch (e) {
-				u(e instanceof Error ? e.message : "The review could not be updated.");
+				f(e instanceof Error ? e.message : "The review could not be updated.");
 			} finally {
-				d.current = !1, c(!1);
+				p.current = !1, u(!1);
 			}
 		}
 	}
 	let h = e.reviewerName || e.reviewerId, _ = e.state.replace(/_/g, " "), v = _.charAt(0).toUpperCase() + _.slice(1);
 	return /* @__PURE__ */ K(g, {
 		"aria-label": `Review by ${h}`,
-		"aria-busy": s,
-		children: /* @__PURE__ */ q(f, {
+		"aria-busy": l,
+		children: /* @__PURE__ */ q(o, {
 			gap: "sm",
 			children: [
-				/* @__PURE__ */ q(m, {
+				/* @__PURE__ */ q(c, {
 					gap: "sm",
 					wrap: !0,
 					children: [
 						/* @__PURE__ */ K("strong", { children: h }),
-						/* @__PURE__ */ K(o, {
+						/* @__PURE__ */ K(a, {
 							size: "xs",
 							tone: e.state === "approved" ? "success" : e.state === "changes_requested" ? "warning" : "neutral",
 							children: v
 						}),
-						e.required && /* @__PURE__ */ K(o, {
+						e.required && /* @__PURE__ */ K(a, {
 							size: "xs",
 							tone: "warning",
 							children: "Required"
@@ -2820,56 +2819,56 @@ function Na({ request: e, onDecide: t, onWithdraw: n }) {
 					className: "m-0 text-sm text-text-secondary whitespace-pre-wrap",
 					children: e.comment
 				}),
-				l && /* @__PURE__ */ K(O, {
+				d && /* @__PURE__ */ K(O, {
 					tone: "error",
-					children: l
+					children: d
 				}),
 				t && e.state === "pending" && /* @__PURE__ */ q(G, { children: [/* @__PURE__ */ K(ne, {
 					value: i,
-					onChange: (e) => a(e.target.value),
+					onChange: (e) => s(e.target.value),
 					rows: 2,
-					disabled: s,
+					disabled: l,
 					"aria-label": `Review comment for ${h}`,
 					placeholder: "Add a comment (optional)"
-				}), /* @__PURE__ */ q(m, {
+				}), /* @__PURE__ */ q(c, {
 					gap: "sm",
 					wrap: !0,
 					children: [/* @__PURE__ */ K(r, {
 						size: "sm",
 						variant: "secondary",
-						disabled: s,
-						onClick: () => void p(() => t(e.requestKey, "changes_requested", i)),
+						disabled: l,
+						onClick: () => void m(() => t(e.requestKey, "changes_requested", i)),
 						children: "Request changes"
 					}), /* @__PURE__ */ K(r, {
 						size: "sm",
 						variant: "primary",
-						disabled: s,
-						onClick: () => void p(() => t(e.requestKey, "approved", i)),
+						disabled: l,
+						onClick: () => void m(() => t(e.requestKey, "approved", i)),
 						children: "Approve review"
 					})]
 				})] }),
 				n && e.state === "pending" && /* @__PURE__ */ K(r, {
 					size: "sm",
 					variant: "ghost",
-					disabled: s,
-					onClick: () => void p(() => n(e.requestKey)),
+					disabled: l,
+					onClick: () => void m(() => n(e.requestKey)),
 					children: "Withdraw review"
 				})
 			]
 		})
 	});
 }
-function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: s, onDecide: c, onWithdraw: l }) {
-	let [u, d] = W(""), [p, g] = W(""), [_, v] = W(!0), [y, b] = W(!1), [S, C] = W(null), w = U(!1);
+function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: s, onRequest: l, onDecide: u, onWithdraw: d }) {
+	let [f, p] = W(""), [m, g] = W(""), [_, v] = W(!0), [y, b] = W(!1), [S, C] = W(null), w = U(!1);
 	async function T() {
-		if (!(!s || !t.some((e) => e.id === u) || w.current)) {
+		if (!(!l || !t.some((e) => e.id === f) || w.current)) {
 			w.current = !0, b(!0), C(null);
 			try {
-				await s({
-					reviewerId: u,
-					note: p.trim(),
+				await l({
+					reviewerId: f,
+					note: m.trim(),
 					required: _
-				}), g(""), d("");
+				}), g(""), p("");
 			} catch (e) {
 				C(e instanceof Error ? e.message : "The review could not be requested.");
 			} finally {
@@ -2877,36 +2876,36 @@ function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 			}
 		}
 	}
-	return /* @__PURE__ */ q(f, {
+	return /* @__PURE__ */ q(o, {
 		gap: "md",
 		children: [
 			a && /* @__PURE__ */ K(O, {
 				tone: "error",
 				children: a
 			}),
-			s && /* @__PURE__ */ q(f, {
+			l && /* @__PURE__ */ q(o, {
 				gap: "sm",
 				children: [
 					/* @__PURE__ */ K(x, {
 						"aria-label": "Reviewer",
 						placeholder: "Choose a reviewer",
-						value: u,
+						value: f,
 						disabled: y || i,
 						options: t.map((e) => ({
 							value: e.id,
 							label: e.displayName
 						})),
-						onChange: (e) => d(e.target.value)
+						onChange: (e) => p(e.target.value)
 					}),
 					/* @__PURE__ */ K(ne, {
 						"aria-label": "Review request note",
 						placeholder: "What should they review?",
 						rows: 2,
-						value: p,
+						value: m,
 						disabled: y,
 						onChange: (e) => g(e.target.value)
 					}),
-					/* @__PURE__ */ q(m, {
+					/* @__PURE__ */ q(c, {
 						as: "label",
 						gap: "sm",
 						align: "center",
@@ -2922,7 +2921,7 @@ function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					}),
 					/* @__PURE__ */ K(r, {
 						size: "sm",
-						disabled: y || i || !t.some((e) => e.id === u),
+						disabled: y || i || !t.some((e) => e.id === f),
 						onClick: () => void T(),
 						children: y ? "Requesting…" : "Request review"
 					})
@@ -2936,14 +2935,14 @@ function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					size: "sm",
 					variant: "ghost",
 					disabled: i,
-					onClick: o,
+					onClick: s,
 					children: "Refresh reviews"
 				}),
 				empty: { title: i ? "Loading reviews…" : a ? "Reviews unavailable" : "No reviews requested" },
 				children: e.map((e) => /* @__PURE__ */ K(Na, {
 					request: e,
-					onDecide: e.reviewerId === n ? c : void 0,
-					onWithdraw: l
+					onDecide: e.reviewerId === n ? u : void 0,
+					onWithdraw: d
 				}, e.requestKey))
 			})
 		]
@@ -2982,8 +2981,8 @@ function Ia({ filled: e }) {
 		children: /* @__PURE__ */ K("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: p, subtitle: m, metaBar: h, participants: g, onParticipantClick: v, onFollowParticipant: y, followingParticipantId: b, meta: x, saveState: S, headActions: C, tabs: w, activeTab: T, onTabChange: te, toolbar: ne, children: E, footer: D, proposal: O, surface: k = "workspace", explorer: ie, workbench: ae, label: oe = "Editor", variant: j = "document", itemType: M, itemKey: N, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: F, headerInset: I = "editor", className: L, "data-testid": R = "editor-shell" }) {
-	let z = j === "work-item", ue = z && (M || N) ? /* @__PURE__ */ q(G, { children: [M && /* @__PURE__ */ K(o, {
+function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: s = !1, onStarredChange: c, statusPill: l, path: d, crumbsTrailing: f, subtitle: m, metaBar: h, participants: g, onParticipantClick: v, onFollowParticipant: y, followingParticipantId: b, meta: x, saveState: S, headActions: C, tabs: w, activeTab: T, onTabChange: te, toolbar: ne, children: E, footer: D, proposal: O, surface: k = "workspace", explorer: ie, workbench: ae, label: oe = "Editor", variant: j = "document", itemType: M, itemKey: N, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: F, headerInset: I = "editor", className: L, "data-testid": R = "editor-shell" }) {
+	let z = j === "work-item", ue = z && (M || N) ? /* @__PURE__ */ q(G, { children: [M && /* @__PURE__ */ K(a, {
 		size: "sm",
 		tone: "info",
 		"data-testid": `${R}-item-type`,
@@ -2992,7 +2991,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "font-mono text-[12px] text-text-secondary",
 		"data-testid": `${R}-item-key`,
 		children: N
-	})] }) : null, de = ue || p != null ? /* @__PURE__ */ q(G, { children: [ue, p] }) : null, fe = z && (e && e.length > 0 || de != null), pe = P === "lg" ? "text-[26px] font-semibold leading-8" : P === "sm" ? "text-sm font-semibold leading-5" : z ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", me = `${R}-${zn().replace(/:/g, "")}`, he = !!w && w.length > 0, ge = he ? w.some((e) => e.id === T) ? T : w[0].id : void 0, _e = g && g.length > 0 || x != null || !!S, ve = (e) => /* @__PURE__ */ K(ee, {
+	})] }) : null, de = ue || f != null ? /* @__PURE__ */ q(G, { children: [ue, f] }) : null, fe = z && (e && e.length > 0 || de != null), pe = P === "lg" ? "text-[26px] font-semibold leading-8" : P === "sm" ? "text-sm font-semibold leading-5" : z ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", me = `${R}-${zn().replace(/:/g, "")}`, he = !!w && w.length > 0, ge = he ? w.some((e) => e.id === T) ? T : w[0].id : void 0, _e = g && g.length > 0 || x != null || !!S, ve = (e) => /* @__PURE__ */ K(ee, {
 		items: w.map((e) => ({
 			id: e.id,
 			label: e.label,
@@ -3034,7 +3033,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${R}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ K(u, {
+							/* @__PURE__ */ K(p, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -3066,14 +3065,14 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 							})
 						]
 					}),
-					!z && e && e.length > 0 && !p && /* @__PURE__ */ K(A, {
+					!z && e && e.length > 0 && !f && /* @__PURE__ */ K(A, {
 						items: e,
 						maxItems: 4,
 						size: "sm",
 						className: "[@media(max-height:640px)]:hidden",
 						"data-testid": `${R}-crumbs`
 					}),
-					!z && p && /* @__PURE__ */ q("div", {
+					!z && f && /* @__PURE__ */ q("div", {
 						className: "flex min-w-0 items-center gap-2 text-xs [@media(max-height:640px)]:hidden",
 						"data-testid": `${R}-crumbs-row`,
 						children: [e && e.length > 0 && /* @__PURE__ */ K(A, {
@@ -3085,15 +3084,15 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						}), /* @__PURE__ */ K("span", {
 							className: "flex shrink-0 items-center gap-2",
 							"data-testid": `${R}-crumbs-trailing`,
-							children: p
+							children: f
 						})]
 					}),
 					/* @__PURE__ */ q("div", {
 						className: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1",
 						"data-testid": `${R}-head-row`,
 						children: [
-							a && !z && /* @__PURE__ */ K(se, {
-								kind: a,
+							o && !z && /* @__PURE__ */ K(se, {
+								kind: o,
 								size: "2xl",
 								variant: "outline",
 								className: "[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8",
@@ -3121,23 +3120,23 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													"data-testid": `${R}-title`,
 													"data-title-size": P,
 													children: t
-												}), l && /* @__PURE__ */ K(s, {
+												}), c && /* @__PURE__ */ K(u, {
 													size: "sm",
-													"aria-label": c ? "Remove star" : "Star this file",
-													"aria-pressed": c,
-													title: c ? "Starred" : "Star",
-													onClick: () => l(!c),
-													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
+													"aria-label": s ? "Remove star" : "Star this file",
+													"aria-pressed": s,
+													title: s ? "Starred" : "Star",
+													onClick: () => c(!s),
+													className: s ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${R}-star`,
-													children: /* @__PURE__ */ K(Ia, { filled: c })
+													children: /* @__PURE__ */ K(Ia, { filled: s })
 												})]
 											}),
-											d,
-											f && f.length > 0 && /* @__PURE__ */ K("span", {
+											l,
+											d && d.length > 0 && /* @__PURE__ */ K("span", {
 												className: "flex min-w-0 flex-1 items-center border-l border-border pl-3",
 												"data-testid": `${R}-path`,
 												children: /* @__PURE__ */ K(A, {
-													items: f,
+													items: d,
 													"aria-label": "Document location",
 													maxItems: 4,
 													lastIsCurrent: !1,
@@ -3267,9 +3266,9 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 //#endregion
 //#region src/components/doc-editor/presentation/DeckPresentationDialog.tsx
 var Ra = () => {};
-function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onClose: o, loading: s = !1, error: c, onRetry: l, onFocusConversation: u, testId: d = "deck-presentation" }) {
-	let f = In(), h = u ?? (f.present ? () => {
-		f.request({ mode: "agent" });
+function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onClose: o, loading: l = !1, error: u, onRetry: d, onFocusConversation: f, testId: p = "deck-presentation" }) {
+	let m = In(), h = f ?? (m.present ? () => {
+		m.request({ mode: "agent" });
 	} : void 0);
 	return /* @__PURE__ */ q(y, {
 		open: n,
@@ -3277,15 +3276,15 @@ function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onC
 		ariaLabel: `Present ${e}`,
 		maxWidth: 1280,
 		cardClassName: "flex h-[min(90vh,960px)] flex-col p-4",
-		children: [/* @__PURE__ */ q(m, {
+		children: [/* @__PURE__ */ q(c, {
 			gap: "sm",
 			align: "center",
 			className: "justify-between",
-			children: [/* @__PURE__ */ K(p, {
+			children: [/* @__PURE__ */ K(s, {
 				size: "sm",
 				weight: "semibold",
 				children: "Presenting"
-			}), /* @__PURE__ */ q(m, {
+			}), /* @__PURE__ */ q(c, {
 				gap: "xs",
 				align: "center",
 				children: [h && /* @__PURE__ */ K(r, {
@@ -3302,20 +3301,20 @@ function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onC
 					children: "Exit presentation"
 				})]
 			})]
-		}), c ? /* @__PURE__ */ K("div", {
+		}), u ? /* @__PURE__ */ K("div", {
 			className: "flex min-h-0 flex-1 items-center justify-center",
-			"data-testid": `${d}-error`,
+			"data-testid": `${p}-error`,
 			children: /* @__PURE__ */ K(w, {
 				title: "Couldn't prepare the presentation",
-				description: c,
-				...l ? {
+				description: u,
+				...d ? {
 					actionLabel: "Retry preview",
-					onAction: l
+					onAction: d
 				} : {}
 			})
-		}) : s ? /* @__PURE__ */ K("div", {
+		}) : l ? /* @__PURE__ */ K("div", {
 			className: "flex min-h-0 flex-1 items-center justify-center",
-			"data-testid": `${d}-loading`,
+			"data-testid": `${p}-loading`,
 			children: /* @__PURE__ */ K(T, { label: "Preparing your current slides…" })
 		}) : /* @__PURE__ */ K(we, {
 			title: e,
@@ -3342,7 +3341,7 @@ function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onC
 			onSlideChange: (e) => a(e - 1),
 			autoFocus: !0,
 			className: "min-h-0 flex-1",
-			"data-testid": d
+			"data-testid": p
 		})]
 	});
 }
@@ -3366,14 +3365,14 @@ var Ba = [
 		label: "125%"
 	}
 ], Va = () => {};
-function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previewCurrent: o = !0, onRequestPreview: s, slideViewers: c, selectSlideRequest: l, onSelectedSlideChange: u, onNavigateSlide: d, renderFrame: f, footer: h, onFocusConversation: g, "data-testid": _ = "deck-reader" }) {
+function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previewCurrent: o = !0, onRequestPreview: l, slideViewers: u, selectSlideRequest: d, onSelectedSlideChange: f, onNavigateSlide: p, renderFrame: m, footer: h, onFocusConversation: g, "data-testid": _ = "deck-reader" }) {
 	let [v, y] = W(e.slides[0]?.id ?? ""), [b, S] = W(!1), [w, ee] = W(null), E = w ?? !t, [D, O] = W("fit"), [k, A] = W(!1), re = U(null), [ie, ae] = W({
 		width: 800,
 		height: 420
-	}), oe = zn(), j = U(s);
-	j.current = s;
-	let M = U(u);
-	M.current = u;
+	}), oe = zn(), j = U(l);
+	j.current = l;
+	let M = U(f);
+	M.current = f;
 	let se = Pe(e), N = In(), P = g ?? (N.present ? () => {
 		N.request({ mode: "agent" });
 	} : void 0);
@@ -3395,13 +3394,13 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 			generated: !0
 		}))];
 	}, [e.slides, F]), L = Math.max(0, I.findIndex((e) => e.id === v)), R = I[L], z = (e) => {
-		I.some((t) => t.id === e) && (y(e), d?.(e));
+		I.some((t) => t.id === e) && (y(e), p?.(e));
 	};
 	V(() => {
 		R && M.current?.(R.id);
 	}, [R?.id]), V(() => {
-		l && I.some((e) => e.id === l.slideId) && y(l.slideId);
-	}, [l?.key, I]), V(() => {
+		d && I.some((e) => e.id === d.slideId) && y(d.slideId);
+	}, [d?.key, I]), V(() => {
 		let e = re.current;
 		if (!e || typeof ResizeObserver > "u") return;
 		let t = new ResizeObserver((e) => {
@@ -3420,7 +3419,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 		if (e.altKey || e.ctrlKey || e.metaKey || e.target.closest("input, textarea, select, [contenteditable=\"true\"]")) return;
 		let t = e.key === "ArrowRight" || e.key === "PageDown" ? L + 1 : e.key === "ArrowLeft" || e.key === "PageUp" ? L - 1 : e.key === "Home" ? 0 : e.key === "End" ? I.length - 1 : null;
 		t !== null && (e.preventDefault(), ue(t));
-	}, fe = D === "fit" ? Math.max(120, Math.min(1024, ie.width, ie.height * 16 / 9)) : 960 * Number(D) / 100, pe = /* @__PURE__ */ q(m, {
+	}, fe = D === "fit" ? Math.max(120, Math.min(1024, ie.width, ie.height * 16 / 9)) : 960 * Number(D) / 100, pe = /* @__PURE__ */ q(c, {
 		gap: "xs",
 		align: "center",
 		wrap: !0,
@@ -3457,7 +3456,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 				onClick: () => ue(L - 1),
 				children: "←"
 			}),
-			/* @__PURE__ */ q(p, {
+			/* @__PURE__ */ q(s, {
 				size: "xs",
 				tabular: !0,
 				className: "deck-reader-position whitespace-nowrap",
@@ -3596,7 +3595,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 					title: e.title,
 					thumbnailSvg: e.svg
 				})),
-				slideViewers: c,
+				slideViewers: u,
 				testIdPrefix: `${_}-filmstrip`
 			})
 		}), /* @__PURE__ */ q("main", {
@@ -3624,7 +3623,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 							children: /* @__PURE__ */ K(T, { label: "Rendering the current version…" })
 						}) : /* @__PURE__ */ q("div", {
 							className: "deck-reader-no-preview flex flex-col items-center gap-2 p-6",
-							children: [/* @__PURE__ */ K(p, {
+							children: [/* @__PURE__ */ K(s, {
 								size: "sm",
 								children: ce ?? "This slide’s preview is unavailable."
 							}), se && /* @__PURE__ */ K(r, {
@@ -3649,7 +3648,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 						htmlFor: `${oe}-text`,
 						id: oe,
 						className: "max-[1199px]:leading-4",
-						children: /* @__PURE__ */ K(p, {
+						children: /* @__PURE__ */ K(s, {
 							size: "xs",
 							weight: "semibold",
 							className: "max-[1199px]:leading-4",
@@ -3667,7 +3666,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 						"data-testid": `${_}-notes`,
 						className: n("min-h-[42px] border-transparent bg-transparent p-0 text-sm text-text-secondary", "max-[1199px]:h-10! max-[1199px]:max-h-10! max-[1199px]:min-h-10 max-[1199px]:overflow-y-auto! max-[1199px]:leading-[18px]")
 					})]
-				}) : R?.generated ? /* @__PURE__ */ K(p, {
+				}) : R?.generated ? /* @__PURE__ */ K(s, {
 					size: "xs",
 					tone: "secondary",
 					children: "This generated Sources slide has no speaker notes."
@@ -3686,7 +3685,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 		selectSlide: z,
 		markChanged: Va
 	};
-	return /* @__PURE__ */ q(G, { children: [f({
+	return /* @__PURE__ */ q(G, { children: [m({
 		toolbar: pe,
 		actions: null,
 		surface: ge,
@@ -3717,13 +3716,13 @@ function Wa(e, t, n) {
 	return n || (e === "unsupported" ? "Dictation needs a microphone and a secure page" : t ? "Listening — release to insert" : e === "transcribing" ? "Transcribing…" : e === "starting" ? "Starting the microphone…" : "Hold to dictate");
 }
 function Ga({ state: e, micActive: t, unavailableReason: r, onStart: i, onStop: a, className: o, "data-testid": s = "dictation-button" }) {
-	let c = U(null), l = Wa(e, t, r), u = e === "transcribing" || e === "starting", f = () => {
+	let c = U(null), l = Wa(e, t, r), u = e === "transcribing" || e === "starting", d = () => {
 		if (t) {
 			a(), c.current = null;
 			return;
 		}
 		c.current = Date.now(), i();
-	}, p = () => {
+	}, f = () => {
 		let e = c.current;
 		e !== null && (c.current = null, !(Date.now() - e < 250) && a());
 	};
@@ -3736,18 +3735,18 @@ function Ga({ state: e, micActive: t, unavailableReason: r, onStart: i, onStop: 
 		"data-state": t ? "listening" : e,
 		"data-testid": s,
 		onPointerDown: (e) => {
-			e.button === 0 && (e.preventDefault(), f());
+			e.button === 0 && (e.preventDefault(), d());
 		},
-		onPointerUp: p,
-		onPointerLeave: p,
+		onPointerUp: f,
+		onPointerLeave: f,
 		onKeyDown: (e) => {
-			(e.key === " " || e.key === "Enter") && !e.repeat && (e.preventDefault(), f());
+			(e.key === " " || e.key === "Enter") && !e.repeat && (e.preventDefault(), d());
 		},
 		onKeyUp: (e) => {
-			(e.key === " " || e.key === "Enter") && (e.preventDefault(), p());
+			(e.key === " " || e.key === "Enter") && (e.preventDefault(), f());
 		},
 		className: n("grid h-7 w-7 shrink-0 place-items-center rounded-md border-0 p-0 transition-colors", t ? "bg-danger text-white" : "bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary", u && "animate-pulse", (r || e === "unsupported") && "opacity-60", o),
-		children: /* @__PURE__ */ K(d, {
+		children: /* @__PURE__ */ K(m, {
 			size: 15,
 			"aria-hidden": "true"
 		})
@@ -3886,19 +3885,19 @@ var Ja = Rn(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 });
 //#endregion
 //#region src/components/doc-editor/CommentHandoffBar.tsx
-function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": u = "comment-handoff-bar" }) {
-	let d = r === "reply", f = d ? "Stop replying" : "Stop answering this comment";
+function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": c = "comment-handoff-bar" }) {
+	let l = r === "reply", u = l ? "Stop replying" : "Stop answering this comment";
 	return /* @__PURE__ */ q("div", {
 		role: "status",
-		"data-testid": u,
+		"data-testid": c,
 		"data-variant": r,
 		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
 		children: [
-			d ? /* @__PURE__ */ K(l, {
+			l ? /* @__PURE__ */ K(f, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
-			}) : /* @__PURE__ */ K(c, {
+			}) : /* @__PURE__ */ K(d, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-info-fg"
@@ -3906,12 +3905,12 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 			/* @__PURE__ */ q("span", {
 				className: "min-w-0 flex-1 truncate",
 				children: [
-					d ? "Replying to " : "Answering ",
+					l ? "Replying to " : "Answering ",
 					/* @__PURE__ */ K("span", {
 						className: "font-semibold text-text-primary",
 						children: e
 					}),
-					d ? null : "’s comment",
+					l ? null : "’s comment",
 					t ? /* @__PURE__ */ q("span", {
 						className: "text-text-tertiary",
 						children: [
@@ -3922,7 +3921,7 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 					}) : null
 				]
 			}),
-			d ? /* @__PURE__ */ K("span", {
+			l ? /* @__PURE__ */ K("span", {
 				className: "hidden shrink-0 text-text-tertiary sm:inline",
 				children: "Esc to go back"
 			}) : /* @__PURE__ */ q("label", {
@@ -3930,16 +3929,16 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				children: [/* @__PURE__ */ K(M, {
 					checked: i,
 					onChange: (e) => a?.(e),
-					"data-testid": `${u}-resolve`
+					"data-testid": `${c}-resolve`
 				}), "Resolve when applied"]
 			}),
 			/* @__PURE__ */ K("button", {
 				"data-ui-part": "",
 				type: "button",
 				onClick: o,
-				"aria-label": f,
-				title: f,
-				"data-testid": `${u}-dismiss`,
+				"aria-label": u,
+				title: u,
+				"data-testid": `${c}-dismiss`,
 				className: "grid h-6 w-6 shrink-0 place-items-center rounded border-0 bg-transparent p-0 text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
 				children: /* @__PURE__ */ K("span", {
 					"aria-hidden": "true",

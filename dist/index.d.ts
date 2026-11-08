@@ -13314,6 +13314,53 @@ export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType
 /** Italic formatting, drawn as a glyph rather than changing the control font. */
 export declare function ItalicIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare const JOB_TOAST_DISMISS_MS = 8000;
+
+export declare function JobToast({ id, title, state, detail, progress, href, hrefLabel, exiting, onDismiss, onHoverChange, }: JobToastProps): JSX.Element;
+
+/**
+ * A background job tracked by one toast. `toastJob` with an `id` it has not
+ * seen creates the toast; later calls with the same `id` update it in place.
+ */
+export declare interface JobToastOptions {
+    /** Job id: the key. Same id, same toast. */
+    id: string;
+    title: string;
+    state: JobToastState;
+    detail?: string;
+    /** 0-100, drawn as a bar while queued or running. */
+    progress?: number;
+    href?: string;
+    /** Link text. Default "View". */
+    hrefLabel?: string;
+    /** How long a done or failed toast stays after it settles. Default 8000. */
+    dismissAfterMs?: number;
+    /** Fires once when the job first reaches done or failed — mirror it into a notification center. */
+    onSettled?: (job: JobToastSettled) => void;
+}
+
+export declare interface JobToastProps {
+    /** The toast's own element id (not the job id). */
+    id: string;
+    title: string;
+    state: JobToastState;
+    detail?: string;
+    /** 0-100. Shown as a bar while the job is queued or running. */
+    progress?: number;
+    href?: string;
+    /** Link text. Default "View". */
+    hrefLabel?: string;
+    exiting?: boolean;
+    onDismiss: (id: string) => void;
+    onHoverChange?: (hovering: boolean) => void;
+}
+
+export declare type JobToastSettled = Pick<JobToastOptions, 'id' | 'title' | 'detail' | 'href' | 'hrefLabel'> & {
+    state: 'done' | 'failed';
+};
+
+export declare type JobToastState = 'queued' | 'running' | 'done' | 'failed';
+
 export declare type JoinMergeStrategy = 'deep-merge' | 'array-collect' | 'last-writer-wins';
 
 export declare type JoinMode = 'all' | 'any' | 'n_of_m';
@@ -24418,6 +24465,8 @@ export declare function Toast({ id, message, type, exiting, actionLabel, onActio
 
 export declare interface ToastContextValue {
     toast: (message: string, opts?: ToastOptions) => void;
+    toastJob: (opts: JobToastOptions) => void;
+    dismissJobToast: (id: string) => void;
 }
 
 export declare interface ToastOptions {

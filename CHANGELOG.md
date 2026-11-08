@@ -1,3 +1,7 @@
+## 2.510.3
+
+- 2.510.3 — toastJob: keyed job toast that updates in place and auto-dismisses (voice G19). `useToast().toastJob({ id, title, state: 'queued' | 'running' | 'done' | 'failed', detail?, progress?, href?, hrefLabel?, dismissAfterMs?, onSettled? })` creates one toast per `id` and updates it in place on later calls: a state chip, an optional progress bar while active, an optional link. A done or failed toast leaves after `dismissAfterMs` (default 8000; paused while hovered, resumed on leave); the close button always works; `dismissJobToast(id)` removes one; `onSettled` fires once when the job first settles so a host can mirror it into its notification center. New exports: `JobToast`, `JobToastOptions`, `JobToastSettled`, `JOB_TOAST_DISMISS_MS`. `toast()` is unchanged.
+
 ## 2.510.2
 
 - 2.510.2 — compute: openOutputTab + CommandOutputPane (voice G2); PresenceAvatars detail tooltip (G3). `openOutputTab({ id, label, command, lines, running, exitCode, onOpenShell })` opens a read-only dock tab of captured command output, returns `{ ok, id }` like `openShell`, focuses and updates the open tab for the same `id`, and counts against `MAX_SHELLS` with shells; output tabs are never persisted or reconciled away. `CommandOutputPane` is a `LogStream` titled with the command, a running chip, the exit code once finished, and an "Open shell" action. `PresenceAvatars` appends a user's `detail` to the avatar tooltip ("Ada — Away: back at 3") and sets `data-presence-detail`; unchanged without `detail`.
