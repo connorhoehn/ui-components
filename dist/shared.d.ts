@@ -102,6 +102,12 @@ export declare interface ActionRowItem {
      * target. Overrides the list's `action`. Since 2.392.0.
      */
     action?: string;
+    /**
+     * The row's own controls — quick-action buttons — after the row's button,
+     * outside it: their own tab stops (row, then these) and their presses never
+     * open the row. Wrap under the title below a 35rem row. Since 2.509.0.
+     */
+    trailing?: ReactNode;
 }
 
 export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, striped, action, size: sizeProp, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
@@ -4764,6 +4770,12 @@ export declare interface GroupedListRow {
     trailing?: ReactNode;
     /** Trailing content revealed on hover / focus / `current` — an "Open" button. */
     hoverActions?: ReactNode;
+    /**
+     * The row's own controls — quick-action buttons. Always visible, outside
+     * the row's button (tab order: row, then these), at the row's end when it
+     * is wide and wrapped under the title below a 35rem row. Since 2.509.0.
+     */
+    actions?: ReactNode;
     /** The row the reader is "at": last opened, just created. Tinted; wears its hover line. */
     current?: boolean;
     /** Muted and inert; the menu still opens so a reader can see why. */

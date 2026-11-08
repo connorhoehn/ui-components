@@ -2,7 +2,7 @@ import { n as e, r as t } from "./useFullscreen-Df7V-Z9q.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { t as r } from "./ToastProvider-D6jAeNNE.js";
 import { c as i } from "./usePromptContext-CUNhKC01.js";
-import { L as a, M as o, O as s, R as c, j as l } from "./GenerativeImagePreview-GFIyydAu.js";
+import { L as a, M as o, O as s, R as c, j as l } from "./GenerativeImagePreview-ClukNTsZ.js";
 import { c as u, l as d, n as f, o as p, s as m, u as h } from "./Button-C-I3BxWI.js";
 import { t as g } from "./Card-sJqvEOtP.js";
 import { a as _, i as v, n as y, o as b, r as x, t as S } from "./Table-CdQ9XNWU.js";
@@ -8179,22 +8179,22 @@ function Is({ items: e, onOpen: t, footer: r, emptyLabel: i, columns: a, tone: o
 			...f ? { "aria-label": f } : {},
 			...g ? { "data-tone": o } : {},
 			children: e.map((e, r) => {
-				let i = e.tone ?? o, u = e.accent ?? s, d = e.action ?? l, f = c && i === "neutral" && r % 2 == 1, p = n(Ns, _ && n(h === "sm" ? "min-h-10" : "min-h-[45px]", "py-[3px]"), _ && e.leading != null && "pl-5", i !== "neutral" && n(js[i], "rounded-r-md"), u === "bar" && Ms[i]), v = /* @__PURE__ */ X(Ps, {
+				let i = e.tone ?? o, u = e.accent ?? s, d = e.action ?? l, f = c && i === "neutral" && r % 2 == 1, p = n(Ns, _ && n(h === "sm" ? "min-h-10" : "min-h-[45px]", "py-[3px]"), _ && e.leading != null && "pl-5"), v = /* @__PURE__ */ X(Ps, {
 					item: e,
 					..._ ? { columns: a } : {},
 					...d ? { action: d } : {},
 					size: h
-				});
-				return /* @__PURE__ */ X("li", {
-					className: n(!g && "border-b border-border", f && "bg-surface-inset"),
+				}), y = e.trailing != null && e.trailing !== !1, b = i === "neutral" ? void 0 : n(js[i], "rounded-r-md"), x = y ? n(p, "min-w-0 flex-1 basis-0 hover:bg-transparent") : n(p, b, u === "bar" && Ms[i]), S = y ? n("@container flex flex-wrap items-center transition-colors duration-100", i === "neutral" && !e.disabled && "hover:bg-surface-hover", b, u === "bar" && Ms[i]) : void 0;
+				return /* @__PURE__ */ Z("li", {
+					className: n(!g && "border-b border-border", f && "bg-surface-inset", S),
 					"data-testid": `${m}-row-${e.id}`,
 					...f ? { "data-stripe": "" } : {},
 					...i === "neutral" ? {} : { "data-tone": i },
 					...u === "bar" ? { "data-accent": "bar" } : {},
-					children: e.href && !e.disabled ? /* @__PURE__ */ X("a", {
+					children: [e.href && !e.disabled ? /* @__PURE__ */ X("a", {
 						href: e.href,
 						onClick: () => t?.(e),
-						className: p,
+						className: x,
 						"data-testid": `${m}-open-${e.id}`,
 						children: v
 					}) : /* @__PURE__ */ X("button", {
@@ -8205,10 +8205,15 @@ function Is({ items: e, onOpen: t, footer: r, emptyLabel: i, columns: a, tone: o
 						onClick: () => {
 							e.disabled || t?.(e);
 						},
-						className: n(p, e.disabled ? "cursor-default opacity-60" : "cursor-pointer", e.disabled && i === "neutral" && "hover:bg-transparent"),
+						className: n(x, e.disabled ? "cursor-default opacity-60" : "cursor-pointer", e.disabled && i === "neutral" && "hover:bg-transparent"),
 						"data-testid": `${m}-open-${e.id}`,
 						children: v
-					})
+					}), y && /* @__PURE__ */ X("span", {
+						"data-action-row-trailing": "",
+						"data-testid": `${m}-trailing-${e.id}`,
+						className: n("flex shrink-0 items-center gap-1.5 pr-2.5", "@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:pb-[7px]", _ && e.leading != null ? "@max-[35rem]:pl-5" : "@max-[35rem]:pl-2.5"),
+						children: e.trailing
+					})]
 				}, e.id);
 			})
 		}), r != null && /* @__PURE__ */ X("div", {

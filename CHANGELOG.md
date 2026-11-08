@@ -1,3 +1,9 @@
+## 2.509.0
+
+- `ActionRowItem.trailing` (`ActionRowList`) and `GroupedListRow.actions` (`GroupedList`): a row's own buttons — quick actions such as Approve / Request changes — rendered as siblings after the row's button or link, never inside it. Tab order is the row, then its controls, then the next row; a press on one never reaches `onOpen` / `onOpenRow`, and `GroupedList`'s arrow keys leave them alone. Below a 35rem row (a container query on the list item) the controls wrap onto their own line under the title, aligned with it, so the title keeps the row's width instead of truncating beside a button group. On a wide row they sit at the row's end (in `GroupedList`, before `hoverActions` and `trailing`).
+- An `ActionRowList` row with `trailing` draws its tint, tone bar and hover on the list item so they span the controls; the row's type, padding and columns are unchanged. Rows without the new slots render exactly as before.
+- Before, the only places for row controls were `ActionRowItem.meta` (inside the row's button: invalid nested buttons, unreachable to some screen readers) and `GroupedListRow.trailing` (always at the row's end, squeezing the title on a narrow column). Both still work; move buttons to the new slots.
+
 ## 2.508.0
 
 - `RichChatComposer` `toolbar="prompt"` is a real preset: a box for one instruction with no formatting controls anywhere (not on the strip, not under `?`, not behind `⋯`). The strip is attach (only with `allowAttachments`), the divider, then `toolbarExtras`; extras alone get no divider. Bold/italic keyboard shortcuts still work. Below wide the `Aa` toggle reads "Show tools" and appears only when the strip has something to show. Under `modeControl="menu"` it docks like `basic` (boxed picker, input well, labelled Send). Before, an undocked `prompt` drew the `editor` strip.
