@@ -6,7 +6,7 @@ import {
   Toast,
   type BannerVariant,
   type ToastType,
-} from '@connorhoehnslalom/ui-components/shared';
+} from '@connorhoehn/ui-components/shared';
 import {
   ExampleBlock,
   PropsTable,

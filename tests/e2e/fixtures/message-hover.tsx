@@ -1,8 +1,8 @@
-import '@connorhoehnslalom/ui-components/styles.css';
+import '@connorhoehn/ui-components/styles.css';
 import '/Users/connorhoehn/Projects/aws-agentcore/portal/src/app.css';
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
+import { ChatPanel } from '@connorhoehn/ui-components/social';
 import type { ChatMessage } from '../../../src/hooks/useChat';
 
 const messages: ChatMessage[] = [

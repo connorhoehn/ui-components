@@ -3,10 +3,10 @@
 // One call that binds every hook-bound integration to the realtime-modules
 // functions the app hands over — from whatever scope it installed them under.
 //
-//   import * as client from '@connorhoehnslalom/realtime-modules/client';
-//   import * as video from '@connorhoehnslalom/realtime-modules/client/video';
-//   import * as hangoutRooms from '@connorhoehnslalom/realtime-modules/client/hangout-rooms';
-//   import * as call from '@connorhoehnslalom/realtime-modules/call';
+//   import * as client from '@connorhoehn/realtime-modules/client';
+//   import * as video from '@connorhoehn/realtime-modules/client/video';
+//   import * as hangoutRooms from '@connorhoehn/realtime-modules/client/hangout-rooms';
+//   import * as call from '@connorhoehn/realtime-modules/call';
 //   export const rt = createRealtimeIntegrations({ ...client, ...video, ...hangoutRooms, ...call });
 //
 // Call it ONCE at module scope (or use RealtimeIntegrationsProvider): each call

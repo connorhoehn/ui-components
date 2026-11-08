@@ -1,3 +1,7 @@
+## 2.509.0
+
+- Package renamed to `@connorhoehn/ui-components` (GitHub owner move); no API change; consumers change their import scope and vendor tarball name.
+
 ## 2.507.2
 
 - Security (CSP readiness): `CodeBlock` emits `<span class="tok-…">` styled from `styles.css` (`[data-code-palette]`) instead of inline `style=`; the `ImageLineageGraph` rendered `<style>` is a class variant; the document PDF export styles its print window through a constructed stylesheet and now HTML-escapes the title and markdown (it wrote them raw into a same-origin window). `injectThemeVars` documents the nonce route.

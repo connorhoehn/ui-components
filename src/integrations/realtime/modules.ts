@@ -5,7 +5,7 @@
 //
 // Why injection: `integrations/realtime-modules` imports the library by its
 // canonical name (`@connorhoehn/realtime-modules/...`). A consumer that installs
-// the same library under another scope (e.g. `@connorhoehnslalom/realtime-modules`)
+// the same library under another scope (e.g. `@connorhoehn/realtime-modules`)
 // cannot resolve that specifier, so the whole entry failed to load — even for
 // pages that only wanted a pure adapter. This entry never imports the library at
 // runtime; the app hands over the functions from whatever scope it installed.

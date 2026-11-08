@@ -28,7 +28,7 @@ import { parseGuardArgs, readAllowlist } from './guard-cli.mjs';
 const USAGE = `Usage: ui-check-node-controls [--root <dir>]... [--allowlist <file>]
 
 Fails when a .tsx/.jsx file under the roots renders a raw <input>, <select> or
-<textarea> instead of the @connorhoehnslalom/ui-components forms/ composites.
+<textarea> instead of the @connorhoehn/ui-components forms/ composites.
 Allowlist lines are "<path> [maxCount]  # why"; with a count the entry is a
 ratchet (above fails, below asks you to lower it), without one any count passes.
 
@@ -168,7 +168,7 @@ const allowlist = args.allowlistPath
 const LIMITS = allowlist ?? (args.custom ? {} : BASELINE);
 const LIMITS_FILE = args.allowlistPath ?? 'scripts/check-node-controls.mjs';
 const FIX_HINT = args.custom
-  ? 'Use Input, Select, Textarea, NumberInput, RadioGroup, Checkbox, Slider or ColorInput from @connorhoehnslalom/ui-components instead.'
+  ? 'Use Input, Select, Textarea, NumberInput, RadioGroup, Checkbox, Slider or ColorInput from @connorhoehn/ui-components instead.'
   : 'Use ConfigField + the forms/ composites (Input, Select, Textarea, NumberInput, RadioGroup) instead.';
 
 function walk(dir, prefix = '') {

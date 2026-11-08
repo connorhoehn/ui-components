@@ -5,7 +5,7 @@ App shells and pane layouts. Since 2.506.0 every layout component except
 (`package.json` `exports` has none):
 
 ```tsx
-import { AppShell, ExplorerLayout, SplitPane } from '@connorhoehnslalom/ui-components/shared';
+import { AppShell, ExplorerLayout, SplitPane } from '@connorhoehn/ui-components/shared';
 ```
 
 `AppLayout` stays root-only because it wires the pipelines providers. Avoid

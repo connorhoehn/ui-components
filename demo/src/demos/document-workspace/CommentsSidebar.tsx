@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChatComposer, EmptyState, IconButton } from '@connorhoehnslalom/ui-components/shared';
+import { ChatComposer, EmptyState, IconButton } from '@connorhoehn/ui-components/shared';
 
 interface Comment {
   id: string;

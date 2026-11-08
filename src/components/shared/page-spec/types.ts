@@ -234,7 +234,7 @@ export type BuiltinLeafKind = BuiltinLeafSpec['kind'];
 /**
  * App-defined leaf kinds. Augment it to add one, then register its component:
  *
- *   declare module '@connorhoehnslalom/ui-components/shared' {
+ *   declare module '@connorhoehn/ui-components/shared' {
  *     interface PageSpecLeafKinds { 'cost-meter': { spent: number; budget: number } }
  *   }
  *   registerLeafKind('cost-meter', CostMeter);

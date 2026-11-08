@@ -1,6 +1,6 @@
 # GraphSearchBox
 
-Root import: `import { GraphSearchBox } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { GraphSearchBox } from '@connorhoehn/ui-components'`.
 
 Find a person (name, title, department) or a skill in `people`. Up to six
 people then four skills (most-held first) appear as `SuggestionRow`s; arrows

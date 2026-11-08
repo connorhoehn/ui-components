@@ -1,6 +1,6 @@
 ---
 name: ui-dom-audit
-description: Audit rendered UI consistency across tenant frontends using deterministic DOM geometry and computed-style contracts. Run it after building or changing any page, view, route, table or form in a frontend that uses @connorhoehnslalom/ui-components, as the last step of ui-page-build; also use for recurring layout, button, typography, table, sidebar or composer defects, and for extending reusable audit rules after a reported UI regression.
+description: Audit rendered UI consistency across tenant frontends using deterministic DOM geometry and computed-style contracts. Run it after building or changing any page, view, route, table or form in a frontend that uses @connorhoehn/ui-components, as the last step of ui-page-build; also use for recurring layout, button, typography, table, sidebar or composer defects, and for extending reusable audit rules after a reported UI regression.
 ---
 
 **Building a page?** Load [`ui-page-build`](../ui-page-build/SKILL.md) first;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { AuditPage } from '@connorhoehnslalom/ui-components/identity';
+import { AuditPage } from '@connorhoehn/ui-components/identity';
 import { mockAuditRecords } from '../mock-data';
 
 export default function AuditDemo() {
@@ -11,7 +11,7 @@ export default function AuditDemo() {
       <PageHeader
         title="Audit Log"
         description="Searchable, filterable audit trail for identity operations. Displays timestamped events with actor, action type, and target details. Supports event replay."
-        importPath="import { AuditPage } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { AuditPage } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock

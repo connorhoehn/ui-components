@@ -236,7 +236,7 @@ export const pipelineRunTimeline: SimulationTimeline = {
 ```tsx
 // demo/src/pages/PipelineRunDemo.tsx
 import { SimulatedProvider } from '../engine/SimulatedProvider';
-import { PipelineCanvas } from '@connorhoehnslalom/ui-components/pipelines';
+import { PipelineCanvas } from '@connorhoehn/ui-components/pipelines';
 import { pipelineRunTimeline } from '../timelines/pipeline-run';
 
 export function PipelineRunDemo() {

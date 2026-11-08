@@ -40,7 +40,7 @@ each vision-step run as a `<VisionRunCard>`. Click expands to the full
 `<VisionResultViewer>`.
 
 ```tsx
-import { useVisionResults, VisionRunCard, VisionResultViewer } from '@connorhoehnslalom/ui-components/pipelines';
+import { useVisionResults, VisionRunCard, VisionResultViewer } from '@connorhoehn/ui-components/pipelines';
 
 function VisionActivityStream({ runId }: { runId?: string }) {
   const records = useVisionResults({ runId });

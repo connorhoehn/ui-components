@@ -1,4 +1,4 @@
-# Social — `@connorhoehnslalom/ui-components/social`
+# Social — `@connorhoehn/ui-components/social`
 
 Chat, presence, reactions, posts, and follow-graph composites for
 social surfaces. Also reachable from the root barrel, under
@@ -16,7 +16,7 @@ import {
   PresencePanel,
   ActivityPanel,
   SocialPanel,
-} from '@connorhoehnslalom/ui-components/social';
+} from '@connorhoehn/ui-components/social';
 // also reachable from the root barrel.
 ```
 

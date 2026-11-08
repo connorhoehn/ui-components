@@ -38,14 +38,14 @@ export default function ButtonsPage() {
       <PageHeader
         title="Buttons"
         description="Buttons trigger actions and events. Use different variants to communicate intent and hierarchy within a UI."
-        importPath="import { Button } from '@connorhoehnslalom/ui-components'"
+        importPath="import { Button } from '@connorhoehn/ui-components'"
       />
 
       <ExampleBlock
         id="basic"
         title="Basic usage"
         description="The simplest Button renders as a primary variant at medium size by default."
-        code={`import { Button } from '@connorhoehnslalom/ui-components';
+        code={`import { Button } from '@connorhoehn/ui-components';
 
 function App() {
   return (
@@ -186,7 +186,7 @@ function App() {
         id="icon-button"
         title="IconButton"
         description="Icon-only buttons for compact controls. Always provide an aria-label for accessibility. Available in ghost, primary, and danger variants."
-        code={`import { IconButton } from '@connorhoehnslalom/ui-components';
+        code={`import { IconButton } from '@connorhoehn/ui-components';
 
 <IconButton aria-label="Menu" icon={<MenuIcon />} variant="ghost" />
 <IconButton aria-label="Confirm" icon={<CheckIcon />} variant="primary" />

@@ -34,7 +34,7 @@ export default function VideoPage() {
       <PageHeader
         title="Video"
         description="Components for building live video streaming, conferencing, and playback interfaces. Includes player, participant grid, reactions, stream health indicators, and broadcast controls. For the floating Call Widget, see the dedicated /components/call-widget page."
-        importPath="import { VideoPlayer, VideoGrid, ... } from '@connorhoehnslalom/ui-components/video'"
+        importPath="import { VideoPlayer, VideoGrid, ... } from '@connorhoehn/ui-components/video'"
       />
 
       <VideoPlayerExample />

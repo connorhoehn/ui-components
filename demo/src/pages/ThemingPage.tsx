@@ -1,4 +1,4 @@
-import { CodeBlock } from '@connorhoehnslalom/ui-components/shared';
+import { CodeBlock } from '@connorhoehn/ui-components/shared';
 
 export default function ThemingPage() {
   return (
@@ -17,7 +17,7 @@ export default function ThemingPage() {
         className="mb-6"
         language="tsx"
         theme="dark"
-        code={`import { ThemeProvider } from '@connorhoehnslalom/ui-components';
+        code={`import { ThemeProvider } from '@connorhoehn/ui-components';
 
 function App() {
   return (
@@ -67,7 +67,7 @@ function App() {
         language="tsx"
         theme="dark"
         code={`import { useState } from 'react';
-import { ThemeProvider } from '@connorhoehnslalom/ui-components';
+import { ThemeProvider } from '@connorhoehn/ui-components';
 
 function App() {
   const [mode, setMode] = useState<'light' | 'dark'>('light');
@@ -124,7 +124,7 @@ function App() {
         language="text"
         theme="dark"
         code={`/* Plain CSS — works for any consumer, no provider needed. */
-@import "@connorhoehnslalom/ui-components/styles.css";
+@import "@connorhoehn/ui-components/styles.css";
 
 :root {
   --color-accent: #0d9488;         /* solid fill / icon / dot     */

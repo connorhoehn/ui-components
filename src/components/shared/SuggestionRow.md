@@ -1,6 +1,6 @@
 # SuggestionRow
 
-Root import: `import { SuggestionRow } from '@connorhoehnslalom/ui-components'` (also `/shared`).
+Root import: `import { SuggestionRow } from '@connorhoehn/ui-components'` (also `/shared`).
 
 One option in an inline autocomplete list — a full-width row with a bold
 primary line, a muted secondary line and an optional leading mark. Use it

@@ -1,5 +1,5 @@
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { LogoutPage } from '@connorhoehnslalom/ui-components/identity';
+import { LogoutPage } from '@connorhoehn/ui-components/identity';
 
 export default function LogoutDemo() {
   return (
@@ -7,7 +7,7 @@ export default function LogoutDemo() {
       <PageHeader
         title="Logout Page"
         description="Sign out confirmation page. Asks the user to confirm before ending their session. Supports optional cancel action and client name display."
-        importPath="import { LogoutPage } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { LogoutPage } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock

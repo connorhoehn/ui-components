@@ -1,6 +1,6 @@
 # OrgGraphLegend
 
-Root import: `import { OrgGraphLegend } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { OrgGraphLegend } from '@connorhoehn/ui-components'`.
 
 The org graph's key, absolutely positioned top-left of its container:
 departments (buttons — `onFilter(name | null)`, `filter` is the active one),

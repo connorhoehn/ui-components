@@ -10,7 +10,7 @@ The library does **not** own or manage the WebSocket connection. Your applicatio
 ## The WebSocketContextValue Interface
 
 ```tsx
-import type { ConnectionState, GatewayMessage } from '@connorhoehnslalom/ui-components/types';
+import type { ConnectionState, GatewayMessage } from '@connorhoehn/ui-components/types';
 
 interface WebSocketContextValue {
   connectionState: ConnectionState;
@@ -29,8 +29,8 @@ Where `ConnectionState` is one of: `'idle' | 'connecting' | 'connected' | 'recon
 The library ships a `useWebSocket` hook that handles connection lifecycle, exponential backoff, and session negotiation:
 
 ```tsx
-import { useWebSocket } from '@connorhoehnslalom/ui-components/hooks';
-import { WebSocketProvider } from '@connorhoehnslalom/ui-components';
+import { useWebSocket } from '@connorhoehn/ui-components/hooks';
+import { WebSocketProvider } from '@connorhoehn/ui-components';
 
 function AppShell({ children }: { children: React.ReactNode }) {
   const ws = useWebSocket({
@@ -63,7 +63,7 @@ The `onMessage` function follows a subscribe/unsubscribe pattern. Consumers regi
 
 ```tsx
 import { useEffect } from 'react';
-import { useWebSocketContext } from '@connorhoehnslalom/ui-components';
+import { useWebSocketContext } from '@connorhoehn/ui-components';
 
 function ChatListener() {
   const { onMessage } = useWebSocketContext();
@@ -91,7 +91,7 @@ This pattern allows multiple independent subscribers without interference. Each 
 `sendMessage` serializes a plain object and sends it over the WebSocket:
 
 ```tsx
-import { useWebSocketContext } from '@connorhoehnslalom/ui-components';
+import { useWebSocketContext } from '@connorhoehn/ui-components';
 
 function SendButton() {
   const { sendMessage, connectionState } = useWebSocketContext();
@@ -118,7 +118,7 @@ function SendButton() {
 Components can react to connection state changes for UI feedback:
 
 ```tsx
-import { useWebSocketContext } from '@connorhoehnslalom/ui-components';
+import { useWebSocketContext } from '@connorhoehn/ui-components';
 
 function ConnectionBanner() {
   const { connectionState } = useWebSocketContext();
@@ -146,9 +146,9 @@ If you need full control over the WebSocket (e.g., custom protocols, token refre
 
 ```tsx
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { WebSocketProvider } from '@connorhoehnslalom/ui-components';
-import type { WebSocketContextValue } from '@connorhoehnslalom/ui-components';
-import type { GatewayMessage } from '@connorhoehnslalom/ui-components/types';
+import { WebSocketProvider } from '@connorhoehn/ui-components';
+import type { WebSocketContextValue } from '@connorhoehn/ui-components';
+import type { GatewayMessage } from '@connorhoehn/ui-components/types';
 
 function CustomWebSocketShell({ children }: { children: React.ReactNode }) {
   const [connectionState, setConnectionState] = useState<ConnectionState>('idle');

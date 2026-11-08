@@ -1,8 +1,8 @@
-# @connorhoehnslalom/ui-components/integrations/realtime-modules
+# @connorhoehn/ui-components/integrations/realtime-modules
 
 Adapter helpers and wrapped components that bridge the
 `@connorhoehn/realtime-modules` hook outputs to
-`@connorhoehnslalom/ui-components` component prop shapes.
+`@connorhoehn/ui-components` component prop shapes.
 
 ## Why this exists
 
@@ -44,7 +44,7 @@ import { GatewaySocketProvider, useChat, usePresence } from '@connorhoehn/realti
 import {
   WrappedChatPanel,
   WrappedPresencePanel,
-} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+} from '@connorhoehn/ui-components/integrations/realtime-modules';
 
 function MyRoom({ channel }: { channel: string }) {
   const chat     = useChat(channel);
@@ -140,7 +140,7 @@ import {
   adaptActivityEvents,
   adaptFileUploads,
   adaptHangoutParticipants,
-} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+} from '@connorhoehn/ui-components/integrations/realtime-modules';
 
 // single message
 const uiMsg = adaptChatMessage(chatHook.messages[0]);
@@ -161,7 +161,7 @@ import {
   WrappedPresencePanel,
   WrappedActivityPanel,
   WrappedReactionsOverlay,
-} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+} from '@connorhoehn/ui-components/integrations/realtime-modules';
 
 function CollaborationRoom({ url, channel, clientId }: Props) {
   return (

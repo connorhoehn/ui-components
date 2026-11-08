@@ -1,4 +1,4 @@
-# Compute — `@connorhoehnslalom/ui-components/compute`
+# Compute — `@connorhoehn/ui-components/compute`
 
 Surface for **microVM developer boxes** and a **tmux-shaped multiplexer** for
 working across a fleet of them.
@@ -30,7 +30,7 @@ sending a prompt to five agents, and it is the reason to be in this mode.
 ## Quick start
 
 ```tsx
-import { ComputeProvider, ComputerLab } from '@connorhoehnslalom/ui-components/compute';
+import { ComputeProvider, ComputerLab } from '@connorhoehn/ui-components/compute';
 
 function Fleet() {
   const [labOpen, setLabOpen] = useState(false);
@@ -121,7 +121,7 @@ a metrics strip adds it as a first-class kind — same toggle order, same quota
 accounting, same broadcast plumbing:
 
 ```tsx
-import { DEFAULT_PANE_KINDS, type PaneKind } from '@connorhoehnslalom/ui-components/compute';
+import { DEFAULT_PANE_KINDS, type PaneKind } from '@connorhoehn/ui-components/compute';
 
 const timelineKind: PaneKind = {
   id: 'run-timeline',
@@ -202,7 +202,7 @@ lands on the first kind that applies (`defaultKindFor`), and the kind menu
 and toggle skip it.
 
 ```tsx
-import { ComputerLab } from '@connorhoehnslalom/ui-components/compute';
+import { ComputerLab } from '@connorhoehn/ui-components/compute';
 
 <ComputerLab open variant="inline" appearance="workspace" title={null} onClose={() => {}} />
 ```

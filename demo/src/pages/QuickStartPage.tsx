@@ -1,4 +1,4 @@
-import { CodeBlock } from '@connorhoehnslalom/ui-components/shared';
+import { CodeBlock } from '@connorhoehn/ui-components/shared';
 
 export default function QuickStartPage() {
   return (
@@ -20,7 +20,7 @@ export default function QuickStartPage() {
         className="mb-6"
         language="tsx"
         theme="dark"
-        code={`import { Button } from '@connorhoehnslalom/ui-components';
+        code={`import { Button } from '@connorhoehn/ui-components';
 
 function App() {
   return (
@@ -43,9 +43,9 @@ function App() {
         className="mb-6"
         language="tsx"
         theme="dark"
-        code={`import { WebSocketProvider } from '@connorhoehnslalom/ui-components';
-import { IdentityProvider } from '@connorhoehnslalom/ui-components';
-import { PresenceProvider } from '@connorhoehnslalom/ui-components';
+        code={`import { WebSocketProvider } from '@connorhoehn/ui-components';
+import { IdentityProvider } from '@connorhoehn/ui-components';
+import { PresenceProvider } from '@connorhoehn/ui-components';
 
 function App() {
   return (
@@ -67,7 +67,7 @@ function App() {
         className="mb-6"
         language="tsx"
         theme="dark"
-        code={`import { usePresence, useChat } from '@connorhoehnslalom/ui-components';
+        code={`import { usePresence, useChat } from '@connorhoehn/ui-components';
 
 function CollabPanel() {
   const { presenceUsers } = usePresence();

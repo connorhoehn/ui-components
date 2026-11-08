@@ -1,4 +1,4 @@
-// ESLint flat-config plugin for consumers of @connorhoehnslalom/ui-components.
+// ESLint flat-config plugin for consumers of @connorhoehn/ui-components.
 //
 // Write-time enforcement of the same rules the library holds itself to: no
 // hand-rolled controls, no inline styles, no arbitrary values that re-spell a
@@ -6,7 +6,7 @@
 // separators. Plain ESM, no build step and no runtime dependencies; `eslint`
 // is the consumer's (an optional peer of this package).
 //
-//   import uiComponents from '@connorhoehnslalom/ui-components/eslint-plugin';
+//   import uiComponents from '@connorhoehn/ui-components/eslint-plugin';
 //   export default [...uiComponents.configs.recommended];
 //
 // The rules only inspect standard ESTree JSX nodes, so they work with espree
@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
-const INDEX = 'docs/COMPONENT_INDEX.md in @connorhoehnslalom/ui-components';
+const INDEX = 'docs/COMPONENT_INDEX.md in @connorhoehn/ui-components';
 const LIBRARY_SOURCE_RE = /^@connorhoehn(?:slalom)?\/ui-components(?:\/|$)/;
 const DEFAULT_CLASS_CALLEES = ['cn', 'clsx', 'cx', 'classnames', 'classNames', 'twMerge', 'twJoin'];
 
@@ -27,7 +27,7 @@ const DEFAULT_CLASS_CALLEES = ['cn', 'clsx', 'cx', 'classnames', 'classNames', '
 
 /**
  * Tracks which local JSX names come from the library, for both scopes
- * (`@connorhoehnslalom/ui-components*` and the `@connorhoehn/ui-components*`
+ * (`@connorhoehn/ui-components*` and the `@connorhoehn/ui-components*`
  * alias). Returns a resolver from a JSX element name node to the imported
  * name (`'Button'`), or null when the element is not a library component.
  */
@@ -227,7 +227,7 @@ const noRawControls = {
       },
     ],
     messages: {
-      raw: 'Raw <{{element}}> hand-rolls a control the library already ships. Use {{replacement}} from @connorhoehnslalom/ui-components (see {{index}}).',
+      raw: 'Raw <{{element}}> hand-rolls a control the library already ships. Use {{replacement}} from @connorhoehn/ui-components (see {{index}}).',
     },
   },
   create(context) {
@@ -433,7 +433,7 @@ const noHandRolledSeparators = {
     ],
     messages: {
       separator:
-        '`{{found}}` on <{{element}}> hand-draws a separator. Use <Divider>, <CardHeader>/<PaneHeader>, <PageSection divided>, or a page template from @connorhoehnslalom/ui-components (see {{index}}).',
+        '`{{found}}` on <{{element}}> hand-draws a separator. Use <Divider>, <CardHeader>/<PaneHeader>, <PageSection divided>, or a page template from @connorhoehn/ui-components (see {{index}}).',
     },
   },
   create(context) {
@@ -466,7 +466,7 @@ const rules = {
 };
 
 const plugin = {
-  meta: { name: '@connorhoehnslalom/ui-components/eslint-plugin', version: pkg.version },
+  meta: { name: '@connorhoehn/ui-components/eslint-plugin', version: pkg.version },
   rules,
   configs: {},
 };

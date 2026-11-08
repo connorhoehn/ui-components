@@ -1,6 +1,6 @@
 # RecordResultList
 
-Root import: `import { RecordResultList, recordResultKey } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { RecordResultList, recordResultKey } from '@connorhoehn/ui-components'`.
 
 Use for a search workspace's Results tab: typed org records (person,
 initiative, work, decision, knowledge, asset) grouped by type, each group

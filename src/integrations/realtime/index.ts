@@ -4,7 +4,7 @@
 // SCOPE-AGNOSTIC realtime integration entry.
 //
 // Nothing in this entry imports `@connorhoehn/realtime-modules` at runtime, so
-// it loads under any install scope (e.g. `@connorhoehnslalom/realtime-modules`).
+// it loads under any install scope (e.g. `@connorhoehn/realtime-modules`).
 //   1. Pure mirror types, adapters and props-driven wrappers — exported as-is.
 //   2. Hook-bound integrations — as factories over an injected
 //      `RealtimeClientModules` bag: `createRealtimeIntegrations(rm)`, or

@@ -5,7 +5,7 @@
 // stack (`@tiptap/extension-mention`, `@tiptap/pm`) — optional peers the root
 // entry reaches only dynamically today (through the presentation editor's
 // agent box). Importing the dock statically from the root would make every
-// `import { Button } from '@connorhoehnslalom/ui-components'` need them on
+// `import { Button } from '@connorhoehn/ui-components'` need them on
 // disk. So the root gets this wrapper, and `…/social/rich-composer` — the
 // subpath whose import already declares the peers — exports the real one.
 // Same props, same behaviour; this one renders nothing until the chunk loads.

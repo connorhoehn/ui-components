@@ -1,6 +1,6 @@
 # PersonDetailCard
 
-Root import: `import { PersonDetailCard } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { PersonDetailCard } from '@connorhoehn/ui-components'`.
 
 A person's card, floating top-right over the graph by default (`className`
 overrides): title and department, skills, up to eight strongest connections as

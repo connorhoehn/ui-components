@@ -1,4 +1,4 @@
-# Shared — `@connorhoehnslalom/ui-components/shared`
+# Shared — `@connorhoehn/ui-components/shared`
 
 The shared module is the **most stable surface** in the library. Every
 consumer depends on it; breaking changes here ripple to every app.
@@ -7,9 +7,9 @@ Tokens come from `src/styles.css` via Tailwind v4 `@theme`.
 Subpath import:
 
 ```tsx
-import { Button, Card, Modal, EmptyState } from '@connorhoehnslalom/ui-components/shared';
+import { Button, Card, Modal, EmptyState } from '@connorhoehn/ui-components/shared';
 // or from the root:
-import { Button, Card, Modal, EmptyState } from '@connorhoehnslalom/ui-components';
+import { Button, Card, Modal, EmptyState } from '@connorhoehn/ui-components';
 ```
 
 ## Categories

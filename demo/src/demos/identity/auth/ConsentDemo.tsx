@@ -1,5 +1,5 @@
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { ConsentPage } from '@connorhoehnslalom/ui-components/identity';
+import { ConsentPage } from '@connorhoehn/ui-components/identity';
 
 export default function ConsentDemo() {
   return (
@@ -7,7 +7,7 @@ export default function ConsentDemo() {
       <PageHeader
         title="Consent Page"
         description="OAuth/OIDC authorization consent screen. Displays requested scopes and allows the user to authorize or deny the application. Supports optional logo and redirect URI display."
-        importPath="import { ConsentPage } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { ConsentPage } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock

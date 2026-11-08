@@ -1,6 +1,6 @@
 # Search
 
-Import these components from `@connorhoehnslalom/ui-components`.
+Import these components from `@connorhoehn/ui-components`.
 
 - [`RecordResultList`](./RecordResultList.md): the Results tab — typed records grouped by type with counts, See all, selection, highlights, status and open actions.
 - [`CitedRecordList`](./CitedRecordList.md): the records under an assistant answer — people, work to coordinate, numbered sources.

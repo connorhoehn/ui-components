@@ -22,7 +22,7 @@ const tester = new RuleTester({
   },
 });
 
-const LIB = "import { Button } from '@connorhoehnslalom/ui-components';\n";
+const LIB = "import { Button } from '@connorhoehn/ui-components';\n";
 const ALIAS = "import { Button as UIButton } from '@connorhoehn/ui-components/shared';\n";
 
 tester.run('no-raw-controls', rules['no-raw-controls'] as never, {
@@ -35,13 +35,13 @@ tester.run('no-raw-controls', rules['no-raw-controls'] as never, {
   invalid: [
     {
       code: `const A = () => <button onClick={go}>Go</button>;`,
-      errors: [{ messageId: 'raw', data: { element: 'button', replacement: 'Button (or IconButton)', index: 'docs/COMPONENT_INDEX.md in @connorhoehnslalom/ui-components' } }],
+      errors: [{ messageId: 'raw', data: { element: 'button', replacement: 'Button (or IconButton)', index: 'docs/COMPONENT_INDEX.md in @connorhoehn/ui-components' } }],
     },
     { code: `const A = () => <table><tbody /></table>;`, errors: [{ messageId: 'raw' }] },
     { code: `const A = () => <><input /><select /><textarea /></>;`, errors: 3 },
     {
       code: `const A = () => <input type="checkbox" />;`,
-      errors: [{ messageId: 'raw', data: { element: 'input', replacement: 'Checkbox', index: 'docs/COMPONENT_INDEX.md in @connorhoehnslalom/ui-components' } }],
+      errors: [{ messageId: 'raw', data: { element: 'input', replacement: 'Checkbox', index: 'docs/COMPONENT_INDEX.md in @connorhoehn/ui-components' } }],
     },
     {
       code: `const A = () => <input type="hidden" />;`,
@@ -116,11 +116,11 @@ tester.run('button-explicit-variant', rules['button-explicit-variant'] as never,
     { code: `${LIB}const A = () => <Button onClick={go}>Go</Button>;`, errors: [{ messageId: 'missing', data: { name: 'Button' } }] },
     { code: `${ALIAS}const A = () => <UIButton>Go</UIButton>;`, errors: [{ messageId: 'missing', data: { name: 'UIButton' } }] },
     {
-      code: `import * as UI from '@connorhoehnslalom/ui-components/shared';\nconst A = () => <UI.Button>Go</UI.Button>;`,
+      code: `import * as UI from '@connorhoehn/ui-components/shared';\nconst A = () => <UI.Button>Go</UI.Button>;`,
       errors: [{ messageId: 'missing', data: { name: 'UI.Button' } }],
     },
     {
-      code: `import { IconButton } from '@connorhoehnslalom/ui-components';\nconst A = () => <IconButton />;`,
+      code: `import { IconButton } from '@connorhoehn/ui-components';\nconst A = () => <IconButton />;`,
       options: [{ components: ['Button', 'IconButton'] }],
       errors: 1,
     },
@@ -138,7 +138,7 @@ tester.run('no-hand-rolled-separators', rules['no-hand-rolled-separators'] as ne
   invalid: [
     {
       code: `const A = () => <div className="flex border-b border-border pb-2" />;`,
-      errors: [{ messageId: 'separator', data: { found: 'border-b', element: 'div', index: 'docs/COMPONENT_INDEX.md in @connorhoehnslalom/ui-components' } }],
+      errors: [{ messageId: 'separator', data: { found: 'border-b', element: 'div', index: 'docs/COMPONENT_INDEX.md in @connorhoehn/ui-components' } }],
     },
     { code: `const A = () => <ul className={cn('md:divide-y', x)} />;`, errors: [{ messageId: 'separator' }] },
     { code: `const A = () => <header className="border-t-2" />;`, errors: [{ messageId: 'separator' }] },
@@ -149,7 +149,7 @@ describe('configs.recommended', () => {
   it('errors on the first four rules in component files and warns on separators in page files', () => {
     const linter = new Linter({ configType: 'flat', cwd: '/repo' });
     const code = [
-      "import { Button } from '@connorhoehnslalom/ui-components';",
+      "import { Button } from '@connorhoehn/ui-components';",
       'export const P = () => (',
       '  <div className="border-b text-[var(--color-text-muted)]" style={{ padding: 4 }}>',
       '    <button>x</button>',

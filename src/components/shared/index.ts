@@ -405,7 +405,7 @@ export type { DetailHeaderProps } from './DetailHeader';
 //
 // These have existed in `components/forms` for a long time but were exported
 // ONLY from the root entry. Every app page in the aws-agentcore portal imports
-// from `@connorhoehnslalom/ui-components/shared` (140 import sites vs 0 on the
+// from `@connorhoehn/ui-components/shared` (140 import sites vs 0 on the
 // root), so from those pages the library appeared to have no text input, no
 // select and no checkbox — and each page hand-rolled a `const inputStyle:
 // CSSProperties` instead. The controls were never missing; the door was.

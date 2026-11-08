@@ -5,12 +5,12 @@ import {
   DocsSidebar,
   DocsTopNav,
   type DocsSidebarSection,
-} from '@connorhoehnslalom/ui-components/layout';
+} from '@connorhoehn/ui-components/layout';
 import {
   CommandPalette,
   CommandPaletteHint,
   CommandPaletteProvider,
-} from '@connorhoehnslalom/ui-components/shared';
+} from '@connorhoehn/ui-components/shared';
 import { Breadcrumbs } from './Breadcrumbs';
 import { MockProviders } from '../mock/providers';
 import { TocProvider, useToc, TableOfContents, useScrollSpy } from '../shared';

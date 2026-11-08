@@ -1,6 +1,6 @@
 # WorkTableView
 
-Root import: `import { WorkTableView } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { WorkTableView } from '@connorhoehn/ui-components'`.
 
 Use for a full-width backlog inside `ExplorerLayout`'s main pane. Use
 `WorkListView` for a narrow work-selection rail. Both use `WorkListItem`,

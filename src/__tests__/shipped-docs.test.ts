@@ -7,7 +7,7 @@ import { dirname, join, relative, resolve } from 'node:path';
  * The markdown that ships in the tarball (README plus every doc in
  * package.json `files`) is what a consumer's agent reads. Two ways it lied:
  *
- *   - It told agents to import from `@connorhoehnslalom/ui-components/layout`,
+ *   - It told agents to import from `@connorhoehn/ui-components/layout`,
  *     a subpath that never existed (layout components are root-only), so
  *     every copied import failed to resolve.
  *   - The README linked `CLAUDE.md` and `docs/consumer-adoption.md`, neither

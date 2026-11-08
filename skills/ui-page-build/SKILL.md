@@ -1,6 +1,6 @@
 ---
 name: ui-page-build
-description: Build or change any page, view, route, screen, panel, table or form in a frontend that uses @connorhoehnslalom/ui-components (also aliased as @connorhoehn/ui-components). Load before writing JSX: it picks the page template (PageFrame, CollectionPage, MasterDetailPage, DetailPage, DashboardPage, SettingsPage, SectionLayout), the components, tokens and realtime-modules hooks, enforces the portal density rules (one viewport, tabs instead of stacked cards, striped tables, separated groups, explicit Button variants), and ends with lint plus the ui-dom-audit check on the changed route.
+description: Build or change any page, view, route, screen, panel, table or form in a frontend that uses @connorhoehn/ui-components (also aliased as @connorhoehn/ui-components). Load before writing JSX: it picks the page template (PageFrame, CollectionPage, MasterDetailPage, DetailPage, DashboardPage, SettingsPage, SectionLayout), the components, tokens and realtime-modules hooks, enforces the portal density rules (one viewport, tabs instead of stacked cards, striped tables, separated groups, explicit Button variants), and ends with lint plus the ui-dom-audit check on the changed route.
 ---
 
 Compose pages from the library. Never hand-roll a page, table, control or
@@ -14,7 +14,7 @@ JSX, so the page cannot hold a hand-rolled element; the template underneath
 owns header, toolbar and scroll rules.
 
 ```tsx
-import { PageFromSpec, definePage } from '@connorhoehnslalom/ui-components/shared';
+import { PageFromSpec, definePage } from '@connorhoehn/ui-components/shared';
 
 const spec = definePage({
   template: 'detail',
@@ -45,7 +45,7 @@ templates below only for what a spec cannot express (a canvas, an editor).
 
 ## 0. Read the index first
 
-Before writing JSX, read `node_modules/@connorhoehnslalom/ui-components/docs/COMPONENT_INDEX.md`
+Before writing JSX, read `node_modules/@connorhoehn/ui-components/docs/COMPONENT_INDEX.md`
 (or `llms.txt` beside it): every export, its subpath and purpose. Prop names
 here are a starting point; the index and `dist/*.d.ts` are authoritative.
 
@@ -53,7 +53,7 @@ here are a starting point; the index and `dist/*.d.ts` are authoritative.
 
 Every page starts from exactly one template (each emits
 `data-page-template="<Name>"`). Import from
-`@connorhoehnslalom/ui-components/shared`. Put it inside the
+`@connorhoehn/ui-components/shared`. Put it inside the
 app's one `AppShell` (import it from `/shared`, like everything else the index lists there; avoid root imports, which pull the whole library into the bundle; there is no `/layout` subpath); use
 `AppShell layout="fill"` (no document scroll) so the template's body owns
 scrolling.
@@ -78,7 +78,7 @@ a page.
 **Collection**
 
 ```tsx
-import { CollectionPage, DataTable, Button } from '@connorhoehnslalom/ui-components/shared';
+import { CollectionPage, DataTable, Button } from '@connorhoehn/ui-components/shared';
 
 export function RunsPage({ runs, loading, error, query, setQuery, onOpen, onNew }: RunsPageProps) {
   return (
@@ -112,7 +112,7 @@ record page (`onRowClick` navigates). A table with nothing to open declares
 **Master-detail**
 
 ```tsx
-import { MasterDetailPage, EmptyState } from '@connorhoehnslalom/ui-components/shared';
+import { MasterDetailPage, EmptyState } from '@connorhoehn/ui-components/shared';
 
 export function TeamsPage({ teams, selected, onSelect }: TeamsPageProps) {
   return (
@@ -138,7 +138,7 @@ pass the composer as `footer`), exactly as with `PageFrame body="docked"`.
 **Detail (tabs, not stacked cards)**
 
 ```tsx
-import { DetailPage, PageSection, StatusPill, Button } from '@connorhoehnslalom/ui-components/shared';
+import { DetailPage, PageSection, StatusPill, Button } from '@connorhoehn/ui-components/shared';
 
 export function RunPage({ run, tab, setTab, onRetry }: RunPageProps) {
   return (
@@ -161,7 +161,7 @@ export function RunPage({ run, tab, setTab, onRetry }: RunPageProps) {
 **Dashboard**
 
 ```tsx
-import { DashboardPage } from '@connorhoehnslalom/ui-components/shared';
+import { DashboardPage } from '@connorhoehn/ui-components/shared';
 
 export function OverviewPage({ totals, spend, failures }: OverviewProps) {
   return (
@@ -180,7 +180,7 @@ export function OverviewPage({ totals, spend, failures }: OverviewProps) {
 **Settings**
 
 ```tsx
-import { SettingsPage } from '@connorhoehnslalom/ui-components/shared';
+import { SettingsPage } from '@connorhoehn/ui-components/shared';
 
 export const AccountSettings = () => (
   <SettingsPage title="Settings" sections={[
@@ -193,7 +193,7 @@ export const AccountSettings = () => (
 **Anything else**
 
 ```tsx
-import { PageFrame, Button } from '@connorhoehnslalom/ui-components/shared';
+import { PageFrame, Button } from '@connorhoehn/ui-components/shared';
 
 export function DiagramPage({ diagram, onShare }: DiagramPageProps) {
   return (
@@ -207,7 +207,7 @@ export function DiagramPage({ diagram, onShare }: DiagramPageProps) {
 **Sectioned area**
 
 ```tsx
-import { SectionLayout, GroupedList, Select, useRailFold } from '@connorhoehnslalom/ui-components/shared';
+import { SectionLayout, GroupedList, Select, useRailFold } from '@connorhoehn/ui-components/shared';
 import { NavLink } from 'react-router';
 
 export function ObservabilityRuns({ runs, current, onOpen, env, setEnv, trail, sectionItems, composer }: RunsSectionProps) {
@@ -288,7 +288,7 @@ Without `header`, pass a page template as the child (`<PageFrame>`,
 - Compose class names with the app's `cn()`/`clsx` helper; do not concatenate
   strings with conditionals inline.
 - The ESLint plugin enforces most of this:
-  `@connorhoehnslalom/ui-components/eslint-plugin` (`no-raw-controls`,
+  `@connorhoehn/ui-components/eslint-plugin` (`no-raw-controls`,
   `no-inline-style`, `no-arbitrary-token-values`, `button-explicit-variant`,
   `no-hand-rolled-separators`). Do not disable its rules with comments.
 
@@ -298,11 +298,11 @@ Use `@connorhoehn/realtime-modules/client` hooks (`useChat`, `usePresence`,
 `useCRDT`, `useReactions`, `useActivity`, `useFileUpload`, `useVideoHangout`,
 `useNotifications`, `useCapability`, `useFeatureFlag`, `useChannel`) and pass
 their returns to the wrapped components from
-`@connorhoehnslalom/ui-components/integrations/realtime-modules`:
+`@connorhoehn/ui-components/integrations/realtime-modules`:
 
 ```tsx
 import { useChat, usePresence } from '@connorhoehn/realtime-modules/client';
-import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+import { WrappedChatPanel } from '@connorhoehn/ui-components/integrations/realtime-modules';
 
 const chat = useChat(channelId);
 const presence = usePresence(channelId);
@@ -312,16 +312,16 @@ return <WrappedChatPanel chat={chat} presence={presence} />;
 Also `WrappedPresencePanel`, `WrappedActivityPanel`, `WrappedFileUploadDrop`, `WrappedNotificationCenter`,
 `WrappedHangoutLayout`, `CapabilityBoundary`. Never map hook state into hand-made lists.
 
-**Package scope.** The library is `@connorhoehnslalom/ui-components` (some
+**Package scope.** The library is `@connorhoehn/ui-components` (some
 frontends alias it as `@connorhoehn/ui-components`). Its realtime peer is
 `@connorhoehn/realtime-modules`, a different repo that was never renamed. Do
 not "fix" either scope; there is no slalom-scoped realtime-modules package.
 
 ## 5. When you cannot find a component
 
-1. Search the index: `grep -i "<word>" node_modules/@connorhoehnslalom/ui-components/docs/COMPONENT_INDEX.md`
+1. Search the index: `grep -i "<word>" node_modules/@connorhoehn/ui-components/docs/COMPONENT_INDEX.md`
    (try synonyms: "rail", "list", "pane", "strip", "pill", "toolbar").
-2. Search the typed JSDoc: `grep -l "<word>" node_modules/@connorhoehnslalom/ui-components/dist/*.d.ts`,
+2. Search the typed JSDoc: `grep -l "<word>" node_modules/@connorhoehn/ui-components/dist/*.d.ts`,
    then read the matching interface. Many props are documented only there.
 3. Still missing: compose the closest library components, and add a row to the
    consumer's queue doc (aws-agentcore: `docs/ui-components-queue.md`) naming

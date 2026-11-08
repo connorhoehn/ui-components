@@ -1,6 +1,6 @@
 # ConnectionPathStrip
 
-Root import: `import { ConnectionPathStrip } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { ConnectionPathStrip } from '@connorhoehn/ui-components'`.
 
 Draws a `path` from `findConnectionPath(people, relationships, fromId, toId)`
 (breadth-first over every relationship type) as a band: "Directly connected" or

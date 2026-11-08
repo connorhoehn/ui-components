@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FilterChip } from '@connorhoehnslalom/ui-components/shared';
+import { FilterChip } from '@connorhoehn/ui-components/shared';
 import { entries, categories } from './catalog-data';
 import { DemoCard } from './DemoCard';
 import { AudienceHero } from './AudienceHero';
@@ -15,7 +15,7 @@ export function DemoCatalog() {
     <div className="max-w-[1200px] mx-auto px-6 py-10 flex flex-col gap-12">
       <header className="flex flex-col gap-3 max-w-3xl">
         <span className="text-xs font-semibold uppercase tracking-wider text-neutral">
-          @connorhoehnslalom/ui-components
+          @connorhoehn/ui-components
         </span>
         <h1 className="text-3xl font-bold text-text-primary m-0 leading-tight">
           Build real-time apps fast.

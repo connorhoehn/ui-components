@@ -1,6 +1,6 @@
 # DepartmentChips
 
-Root import: `import { DepartmentChips } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { DepartmentChips } from '@connorhoehn/ui-components'`.
 
 A row of `FilterChip`s, one per department with anyone in `people`, each in the
 department's own colour with its headcount. `onToggle(name | null, memberIds)`

@@ -1,4 +1,4 @@
-# @connorhoehnslalom/ui-components
+# @connorhoehn/ui-components
 
 A React component library and set of page templates used by Connor Hoehn's
 realtime apps. It is built on Tailwind v4 design tokens and ships composites for
@@ -21,7 +21,7 @@ adapters that wire those composites to the hooks in `@connorhoehn/realtime-modul
 ## Start here (for humans and agents)
 
 These files ship in the package, so they are readable from
-`node_modules/@connorhoehnslalom/ui-components/` in any consumer repo:
+`node_modules/@connorhoehn/ui-components/` in any consumer repo:
 
 - [`docs/COMPONENT_INDEX.md`](docs/COMPONENT_INDEX.md): every exported
   component grouped by job, with its import path and Storybook id, under a
@@ -44,7 +44,7 @@ root-only. There is no `/layout` subpath.
 ## Install
 
 ```bash
-npm install ./connorhoehnslalom-ui-components-<version>.tgz
+npm install ./connorhoehn-ui-components-<version>.tgz
 ```
 
 `@connorhoehn/realtime-modules` is a peer dependency, required only by the
@@ -60,17 +60,17 @@ import {
   ChannelHeader,
   PresenceAvatars,
   PageHeader,
-} from '@connorhoehnslalom/ui-components/shared';
-import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
-import { HangoutLayout, CallWidget } from '@connorhoehnslalom/ui-components/video';
+} from '@connorhoehn/ui-components/shared';
+import { ChatPanel } from '@connorhoehn/ui-components/social';
+import { HangoutLayout, CallWidget } from '@connorhoehn/ui-components/video';
 
 // Sub-paths for in-flux or specialised surfaces
-import { TiptapEditor, StandaloneTiptap } from '@connorhoehnslalom/ui-components/doc-editor';
-import { PipelineEditorPage } from '@connorhoehnslalom/ui-components/pipelines';
-import { StreamingChatPanel, AgentFlowCanvas } from '@connorhoehnslalom/ui-components/agents';
-import { DashboardPage } from '@connorhoehnslalom/ui-components/observability';
-import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
-import '@connorhoehnslalom/ui-components/styles.css';
+import { TiptapEditor, StandaloneTiptap } from '@connorhoehn/ui-components/doc-editor';
+import { PipelineEditorPage } from '@connorhoehn/ui-components/pipelines';
+import { StreamingChatPanel, AgentFlowCanvas } from '@connorhoehn/ui-components/agents';
+import { DashboardPage } from '@connorhoehn/ui-components/observability';
+import { WrappedChatPanel } from '@connorhoehn/ui-components/integrations/realtime-modules';
+import '@connorhoehn/ui-components/styles.css';
 ```
 
 Every exported component and the subpath it is on is listed in
@@ -105,19 +105,19 @@ common hand-rolled patterns onto the canonical ui-components composites.
 
 `/integrations/realtime-modules` imports `@connorhoehn/realtime-modules/...` by
 name, so an app that installed the library under a different scope (e.g.
-`@connorhoehnslalom/realtime-modules`) cannot load it. Use
+`@connorhoehn/realtime-modules`) cannot load it. Use
 `/integrations/realtime` and hand it the functions from your install:
 
 ```ts
-import * as client from '@connorhoehnslalom/realtime-modules/client';
-import * as video from '@connorhoehnslalom/realtime-modules/client/video';
-import * as hangoutRooms from '@connorhoehnslalom/realtime-modules/client/hangout-rooms';
-import * as call from '@connorhoehnslalom/realtime-modules/call';
+import * as client from '@connorhoehn/realtime-modules/client';
+import * as video from '@connorhoehn/realtime-modules/client/video';
+import * as hangoutRooms from '@connorhoehn/realtime-modules/client/hangout-rooms';
+import * as call from '@connorhoehn/realtime-modules/call';
 import {
   createRealtimeIntegrations,
   WrappedChatPanel, // pure: props-driven, no injection needed
   adaptPresenceRoster,
-} from '@connorhoehnslalom/ui-components/integrations/realtime';
+} from '@connorhoehn/ui-components/integrations/realtime';
 
 // Once, at module scope — each call mints new component identities.
 export const rt = createRealtimeIntegrations({ ...client, ...video, ...hangoutRooms, ...call });
@@ -162,23 +162,23 @@ Conventions: style with Tailwind classes composed through `cn()` and the tokens 
 ## Entry points
 
 This repo runs under an autonomous operating model. The
-[`docs/AUTONOMY_CHARTER.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/docs/AUTONOMY_CHARTER.md) governs what an
+[`docs/AUTONOMY_CHARTER.md`](https://github.com/connorhoehn/ui-components/blob/main/docs/AUTONOMY_CHARTER.md) governs what an
 agent may change without operator approval, the version-bump rules, and
 the no-touch list of cross-repo contracts. The constitution at
-[`.agent/CONSTITUTION.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/.agent/CONSTITUTION.md) sets the
+[`.agent/CONSTITUTION.md`](https://github.com/connorhoehn/ui-components/blob/main/.agent/CONSTITUTION.md) sets the
 self-driven backlog and per-task LOC cap.
 
-See [`ROADMAP.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/ROADMAP.md) for the current 5-wave plan.
+See [`ROADMAP.md`](https://github.com/connorhoehn/ui-components/blob/main/ROADMAP.md) for the current 5-wave plan.
 
 There is no `/layout` subpath; layout components come from `/shared` (`AppLayout` from the root).
 
 ## Related repositories
 
 - `connorhoehn/realtime-modules` - the peer dependency: gateway server, client hooks, video.
-- `connorhoehnslalom/aws-agentcore` - consumes the library in its portal.
+- `connorhoehn/aws-agentcore` - consumes the library in its portal.
 - `connorhoehn/realtime-examples` - example apps that consume it.
 - `connorhoehn/live-video-streaming` - another consumer.
-- `connorhoehnslalom/event-catalog` - another consumer.
+- `connorhoehn/event-catalog` - another consumer.
 
 ## Documentation
 

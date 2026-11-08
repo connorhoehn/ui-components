@@ -7,7 +7,7 @@
 //   - dist/index.d.ts imported y-protocols/awareness and lib0/observable, so
 //     every consumer's typecheck failed on the ROOT import (TS2307).
 //   - the root bundle statically imports amazon-cognito-identity-js, so
-//     `import { Button } from '@connorhoehnslalom/ui-components'` crashed at
+//     `import { Button } from '@connorhoehn/ui-components'` crashed at
 //     runtime with ERR_MODULE_NOT_FOUND.
 //   - 13 of 15 export subpaths declared only `import`, so nothing but the root
 //     could be require()d even though a .cjs shipped for each.
@@ -176,7 +176,7 @@ describe.skipIf(!distExists)('packaging contract (requires a build)', () => {
 // IVS SDK and others `optional: true`. That flag promises a consumer can skip
 // them. For STATIC imports the promise is false: the barrel re-exports a
 // component that imports the peer at module scope, so `import { Button } from
-// '@connorhoehnslalom/ui-components/shared'` dies with ERR_MODULE_NOT_FOUND
+// '@connorhoehn/ui-components/shared'` dies with ERR_MODULE_NOT_FOUND
 // unless recharts is installed — because `shared/Chart.tsx` is `export *`'d
 // from that same barrel.
 //

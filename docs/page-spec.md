@@ -7,10 +7,10 @@ renders it through the matching page template, and every leaf is one library
 component picked by `kind`. A page built this way cannot contain a raw `<div>`,
 `<button>` or `<table>`: no slot accepts JSX.
 
-Import everything from `@connorhoehnslalom/ui-components/shared`.
+Import everything from `@connorhoehn/ui-components/shared`.
 
 ```tsx
-import { PageFromSpec, definePage } from '@connorhoehnslalom/ui-components/shared';
+import { PageFromSpec, definePage } from '@connorhoehn/ui-components/shared';
 
 export function RunsPage({ runs, query, setQuery, onOpen, onNew }: RunsPageProps) {
   return (
@@ -131,7 +131,7 @@ Prefer a registered kind to `custom`. Declare its props on
 member of `LeafSpec`.
 
 ```tsx
-declare module '@connorhoehnslalom/ui-components/shared' {
+declare module '@connorhoehn/ui-components/shared' {
   interface PageSpecLeafKinds {
     'cost-meter': { spent: number; budget: number };
   }

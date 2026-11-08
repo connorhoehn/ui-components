@@ -4,7 +4,7 @@
 // (`useConversationCall`, `useIncomingConversationCalls`), narrowed to the
 // fields ConversationCallDock and IncomingCallToast read. Declared here rather
 // than imported so a consumer that installed realtime-modules under another
-// scope (`@connorhoehnslalom/realtime-modules`) still type-checks against real
+// scope (`@connorhoehn/realtime-modules`) still type-checks against real
 // shapes. `__tests__/conversationCall.test.tsx` asserts the RM types are
 // assignable to these at compile time, so a drift in RM fails `npm run lint`.
 

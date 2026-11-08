@@ -30,7 +30,7 @@ Subscribes to four signal events (declared in `event-catalog`):
 import {
   JudgmentResultViewer,
   useJudgmentResults,
-} from '@connorhoehnslalom/ui-components';
+} from '@connorhoehn/ui-components';
 
 function RunJudgments({ runId }: { runId: string }) {
   const records = useJudgmentResults({ runId });

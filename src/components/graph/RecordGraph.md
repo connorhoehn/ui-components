@@ -1,6 +1,6 @@
 # RecordGraph
 
-Root import: `import { RecordGraph } from '@connorhoehnslalom/ui-components'` (also `/graph`).
+Root import: `import { RecordGraph } from '@connorhoehn/ui-components'` (also `/graph`).
 
 A search result set as a typed record graph: people, initiatives, work,
 decisions, knowledge and agent-library assets as avatar-style nodes joined by

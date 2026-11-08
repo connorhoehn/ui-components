@@ -7,7 +7,7 @@
 // `DashboardPage`). A consumer copy-pasting the quick-start got three import
 // errors on their first try — the README lying is worse than no README.
 //
-// Checks every `import { … } from '@connorhoehnslalom/ui-components…'` in
+// Checks every `import { … } from '@connorhoehn/ui-components…'` in
 // README.md against the barrel that subpath maps to.
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -61,7 +61,7 @@ function exportedNames(relPath, depth = 0) {
 }
 
 const errors = [];
-const IMPORT_RE = /import\s+\{([^}]+)\}\s+from\s+'@connorhoehnslalom\/ui-components([^']*)'/g;
+const IMPORT_RE = /import\s+\{([^}]+)\}\s+from\s+'@connorhoehn\/ui-components([^']*)'/g;
 for (const m of readme.matchAll(IMPORT_RE)) {
   const subpath = m[2];
   const barrel = BARREL[subpath];
@@ -72,7 +72,7 @@ for (const m of readme.matchAll(IMPORT_RE)) {
     const name = raw.trim().split(/\s+as\s+/)[0].trim();
     if (!name || name === 'type') continue;
     if (!available.has(name)) {
-      errors.push(`README: '${name}' is not exported from '@connorhoehnslalom/ui-components${subpath}' (${barrel})`);
+      errors.push(`README: '${name}' is not exported from '@connorhoehn/ui-components${subpath}' (${barrel})`);
     }
   }
 }

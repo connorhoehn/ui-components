@@ -1,4 +1,4 @@
-# Video — `@connorhoehnslalom/ui-components/video`
+# Video — `@connorhoehn/ui-components/video`
 
 WebRTC + recording + hangout composites for real-time call surfaces.
 Largest domain after pipelines. The `/video-ivs` subpath ships the
@@ -14,7 +14,7 @@ import {
   HangoutLayout,
   StreamVideo,
   RecordingPlayer,
-} from '@connorhoehnslalom/ui-components/video';
+} from '@connorhoehn/ui-components/video';
 // also reachable from the root barrel.
 ```
 

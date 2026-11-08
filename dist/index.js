@@ -2,12 +2,12 @@ import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.j
 import { i as o, n as s, r as c, t as l } from "./documentType-rRZpKWbO.js";
 import { n as u, t as d } from "./fieldType-CGXsQUaC.js";
 import "./types.js";
-import { C as f, D as ee, E as p, O as te, S as m, T as h, _ as ne, a as g, b as _, c as v, d as re, f as ie, g as ae, h as oe, i as se, k as ce, l as le, m as y, n as b, o as ue, p as de, r as fe, s as pe, t as me, u as he, v as x, w as S, x as ge, y as _e } from "./hooks-l-bGrNKV.js";
+import { C as f, D as ee, E as p, O as te, S as m, T as h, _ as ne, a as g, b as _, c as v, d as re, f as ie, g as ae, h as oe, i as se, k as ce, l as le, m as y, n as b, o as ue, p as de, r as fe, s as pe, t as me, u as he, v as x, w as S, x as ge, y as _e } from "./hooks-FkT8xfkN.js";
 import { i as C, n as w, r as ve, t as ye } from "./apiBaseUrl-DLrXlmVj.js";
 import { a as be, i as xe, n as Se, r as T, t as E } from "./useFullscreen-Df7V-Z9q.js";
 import { n as D, r as Ce, t as we } from "./IdentityContext-CQM1qwH6.js";
-import { a as O, c as k, d as Te, f as Ee, h as De, i as Oe, l as ke, m as Ae, n as A, o as j, p as je, r as M, s as Me, t as Ne, u as N } from "./useVideoSessions-7Dn184BW.js";
-import { n as P, t as F } from "./useWebSocket-D4PAHlj8.js";
+import { a as O, c as k, d as Te, f as Ee, h as De, i as Oe, l as ke, m as Ae, n as A, o as j, p as je, r as M, s as Me, t as Ne, u as N } from "./useVideoSessions-RVzKQ3Go.js";
+import { n as P, t as F } from "./useWebSocket-CGc0yRhM.js";
 import { a as Pe, i as Fe, n as I, o as Ie, r as Le, t as Re } from "./useSocialProfile-5S1qyvsv.js";
 import { a as ze, c as L, i as Be, l as R, n as Ve, o as He, r as Ue, s as We, t as Ge, u as Ke } from "./useSyncConflicts-BspqjVsW.js";
 import { i as qe } from "./useDocumentTypes-DCKwxXn8.js";
@@ -98,7 +98,7 @@ import { n as Ff, t as If } from "./QuoteBlock-NVq2JJEM.js";
 import { t as Lf } from "./formatBytes-05ivRSJY.js";
 import { t as Rf } from "./ReactionsOverlay-F7inEUrm.js";
 import { B as zf, C as Bf, D as Vf, E as Hf, F as Uf, I as Wf, L as Gf, M as Kf, N as qf, O as Jf, P as Yf, R as Xf, S as Zf, T as Qf, V as $f, _ as ep, a as tp, b as np, c as rp, d as ip, f as ap, g as op, h as sp, i as cp, j as lp, l as up, m as dp, n as fp, o as pp, p as mp, r as hp, s as gp, t as _p, u as vp, v as yp, w as bp, x as xp, y as Sp, z as Cp } from "./renderers-C5HikurY.js";
-import { A as wp, B as Tp, C as Ep, F as Dp, I as Op, L as kp, M as Ap, N as jp, O as Mp, P as Np, R as Pp, h as Fp, i as Ip, j as Lp, k as Rp, n as zp, q as Bp, r as Vp, t as Hp, z as Up } from "./ProposedEditStrip-Dph2XUL0.js";
+import { A as wp, B as Tp, C as Ep, F as Dp, I as Op, L as kp, M as Ap, N as jp, O as Mp, P as Np, R as Pp, h as Fp, i as Ip, j as Lp, k as Rp, n as zp, q as Bp, r as Vp, t as Hp, z as Up } from "./ProposedEditStrip-BlaXkjvi.js";
 import { n as Wp, r as Gp, t as Kp } from "./EventStreamContext-CLzG8O5_.js";
 import { B as qp, G as Jp, I as Yp, K as Xp, L as Zp, O as Qp, a as $p, b as em, c as tm, d as nm, i as rm, l as im, n as am, o as om, p as sm, r as cm, s as lm, t as um, v as dm, z as fm } from "./JsonPathInput-DFwwaYPE.js";
 import { n as pm, t as mm } from "./ObservabilityContext-DpoDrm3T.js";
@@ -335,7 +335,7 @@ function ex() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var tx = jb(() => import("./DocumentEditorPage-friwrTbn.js").then((e) => e.n));
+var tx = jb(() => import("./DocumentEditorPage-CqtnsHvt.js").then((e) => e.n));
 function nx({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -1520,7 +1520,7 @@ async function Dx(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var Ox = jb(() => import("./AgentComposerDock-DJFJA7m-.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var Ox = jb(() => import("./AgentComposerDock-BV3OAhNh.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function kx(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,
@@ -1529,7 +1529,7 @@ function kx(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var Ax = jb(() => import("./ContextComposer-CIZ8XU8p.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var Ax = jb(() => import("./ContextComposer-Bm7UZiTG.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function jx(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,

@@ -1,6 +1,6 @@
 {
-  "name": "@connorhoehnslalom/ui-components",
-  "version": "2.507.2",
+  "name": "@connorhoehn/ui-components",
+  "version": "2.509.0",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -14,7 +14,7 @@
     "design-system",
     "tailwind"
   ],
-  "homepage": "https://github.com/connorhoehnslalom/ui-components#readme",
+  "homepage": "https://github.com/connorhoehn/ui-components#readme",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -179,7 +179,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/connorhoehnslalom/ui-components.git"
+    "url": "https://github.com/connorhoehn/ui-components.git"
   },
   "dependencies": {
     "ajv": "^8.20.0",

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { UserListPage, UserFormPage } from '@connorhoehnslalom/ui-components/identity';
+import { UserListPage, UserFormPage } from '@connorhoehn/ui-components/identity';
 import { mockUsers } from '../mock-data';
 
 export default function UsersDemo() {
@@ -12,7 +12,7 @@ export default function UsersDemo() {
       <PageHeader
         title="User Management"
         description="User list with status badges, search, and CRUD actions. Users belong to a pool and can have custom attributes. Supports inline delete confirmation and a creation/edit form."
-        importPath="import { UserListPage, UserFormPage } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { UserListPage, UserFormPage } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock

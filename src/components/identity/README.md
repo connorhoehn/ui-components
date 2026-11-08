@@ -1,4 +1,4 @@
-# Identity — `@connorhoehnslalom/ui-components/identity`
+# Identity — `@connorhoehn/ui-components/identity`
 
 Authentication flows, admin identity panels, and the `IdentityContext`
 provider. Also reachable from the root barrel.
@@ -20,7 +20,7 @@ import {
   CodeInput,
   QrCodeDisplay,
   StatusBadge,
-} from '@connorhoehnslalom/ui-components/identity';
+} from '@connorhoehn/ui-components/identity';
 // also reachable from the root barrel.
 ```
 

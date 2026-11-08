@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Card, Chip, IconButton } from '@connorhoehnslalom/ui-components/shared';
-import type { ChipTone } from '@connorhoehnslalom/ui-components/shared';
+import { Card, Chip, IconButton } from '@connorhoehn/ui-components/shared';
+import type { ChipTone } from '@connorhoehn/ui-components/shared';
 import { toolbarButtons } from './MockDocuments';
 
 interface SectionBlockProps {

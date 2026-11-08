@@ -25,7 +25,7 @@ import snapshot from './export-surface.snapshot';
  *
  * FIDELITY: every assertion here imports the ACTUAL BUILT ARTIFACT under
  * `dist/`, resolved from `package.json`'s own "exports" map — i.e. exactly
- * what `import '@connorhoehnslalom/ui-components/<entry>'` resolves to for a
+ * what `import '@connorhoehn/ui-components/<entry>'` resolves to for a
  * real consumer. This is deliberate: both defects above are invisible to a
  * test that imports a source file or a source barrel instead, because the
  * gap is specifically between "the component/barrel has it" and "the BUILT

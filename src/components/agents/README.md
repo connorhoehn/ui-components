@@ -1,4 +1,4 @@
-# Agents — `@connorhoehnslalom/ui-components/agents`
+# Agents — `@connorhoehn/ui-components/agents`
 
 The agents module provides components, hooks, and types for building AG-UI v0.1.x-compatible agent UIs. It handles streaming responses from Amazon Bedrock AgentCore runtimes (or any AG-UI-compliant backend) and renders them in React: streaming text, chain-of-thought reasoning blocks, tool calls, and session state via JSON Patch. Event types follow the open AG-UI protocol; see the full spec at https://docs.ag-ui.com/concepts/events.
 
@@ -11,7 +11,7 @@ import {
   AgentsProvider,
   StreamingChatPanel,
   useAgUiStream,
-} from '@connorhoehnslalom/ui-components/agents';
+} from '@connorhoehn/ui-components/agents';
 
 function Chat() {
   const { messages, isStreaming, streamingText, activeToolCalls, error, sendMessage, cancelStream } =

@@ -1,6 +1,6 @@
 # MeterRow
 
-Root import: `import { MeterRow } from '@connorhoehnslalom/ui-components'` (also `/shared`).
+Root import: `import { MeterRow } from '@connorhoehn/ui-components'` (also `/shared`).
 
 A dense, clickable row pairing a label (plus a muted `note`) with a trailing
 meter — "this name, this strong". The meter is any node, usually

@@ -1,4 +1,4 @@
-import { Button, Chip, SegmentedControl } from '@connorhoehnslalom/ui-components/shared';
+import { Button, Chip, SegmentedControl } from '@connorhoehn/ui-components/shared';
 
 interface DocumentHeaderProps {
   title: string;

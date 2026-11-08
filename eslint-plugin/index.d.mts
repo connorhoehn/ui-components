@@ -1,4 +1,4 @@
-// Types for `@connorhoehnslalom/ui-components/eslint-plugin`, so an
+// Types for `@connorhoehn/ui-components/eslint-plugin`, so an
 // `eslint.config.ts` can import it without an ambient declaration. Kept
 // structural on purpose: naming `eslint`'s own types would make this file fail
 // to resolve for consumers who type-check without eslint's types installed.

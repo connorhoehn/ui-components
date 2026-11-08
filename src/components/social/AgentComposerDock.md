@@ -4,7 +4,7 @@
 > `context={{ kind: 'initiative' | 'search', id, title }}`. This component is
 > now a thin preset over it with the same props, look and test ids.
 
-Import: `import { AgentComposerDock, composerDraftOf } from '@connorhoehnslalom/ui-components/social/rich-composer'`
+Import: `import { AgentComposerDock, composerDraftOf } from '@connorhoehn/ui-components/social/rich-composer'`
 (static — the subpath that already declares the tiptap peers). The root barrel
 exports the same component behind `React.lazy`, so importing the root never
 needs `@tiptap/extension-mention`/`@tiptap/pm`; it renders once its chunk loads.

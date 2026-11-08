@@ -98,7 +98,7 @@ export type { UploadedImage as PipelineUploadedImage } from './components/pipeli
 // Each line below resolves a TS2308 by picking the pre-existing canonical
 // source at root (so existing consumers see no change). New-domain
 // counterparts remain reachable via their subpath import (e.g.
-// `@connorhoehnslalom/ui-components/social`), and are also re-exported here under
+// `@connorhoehn/ui-components/social`), and are also re-exported here under
 // disambiguated aliases for root-import convenience.
 export type { CommentThread } from './types';
 export type { Participant } from './types';
@@ -157,7 +157,7 @@ export type { DisclosureProps } from './components/ui/Disclosure';
 // The `presentation` document type's editing surface, named explicitly rather
 // than by star-exporting the doc-editor barrel — that barrel carries the whole
 // document editor, and pulling it into the root entry would change what every
-// consumer of `@connorhoehnslalom/ui-components` downloads.
+// consumer of `@connorhoehn/ui-components` downloads.
 //
 // The DeckSpec types come along because a host that renders this component has
 // to hold the spec, and importing the contract from a second path would be the

@@ -11,7 +11,7 @@ import {
   MfaManagementPage,
   AuditPage,
   SetupGuidePage,
-} from '@connorhoehnslalom/ui-components/identity';
+} from '@connorhoehn/ui-components/identity';
 import {
   mockStats, mockPools, mockUsers, mockGroups, mockClients,
   mockEmailTemplates, mockMfaMetrics, mockMfaUsers, mockAuditRecords, mockSetupStatus,
@@ -124,7 +124,7 @@ export default function FullAdminDemo() {
       <PageHeader
         title="Full Admin (Live)"
         description="Complete identity admin UI with working sidebar navigation. Click through the sidebar to navigate between all admin pages with mock data. This is the full experience as it would appear in production."
-        importPath="import { IdentityAdminLayout } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { IdentityAdminLayout } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock

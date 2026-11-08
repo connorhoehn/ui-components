@@ -1,6 +1,6 @@
 # RecordGraphCard
 
-Root import: `import { RecordGraphCard } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { RecordGraphCard } from '@connorhoehn/ui-components'`.
 Since 2.405.2.
 
 Use in a chat / Answer view to show how the records behind an answer

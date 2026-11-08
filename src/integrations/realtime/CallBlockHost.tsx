@@ -1,7 +1,7 @@
 // CallBlockHost (2.439.0) — an app's ONE conversation call and its ONE media
 // sink, and the call block every surface draws from them.
 //
-//   import * as video from '@connorhoehnslalom/realtime-modules/client/video';
+//   import * as video from '@connorhoehn/realtime-modules/client/video';
 //   export const calls = createCallBlockHost(video);          // once, at module scope
 //
 //   <calls.CallHostProvider self={…} tenant={…} platformApi={…} videoUrl={…} gateway={…} …>

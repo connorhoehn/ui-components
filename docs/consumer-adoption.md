@@ -1,11 +1,11 @@
 # Consumer adoption guide
 
-> Cheatsheet for picking the right `@connorhoehnslalom/ui-components` primitive for
+> Cheatsheet for picking the right `@connorhoehn/ui-components` primitive for
 > the page you're building. Every exported component, with its import path,
 > is in [`COMPONENT_INDEX.md`](COMPONENT_INDEX.md) (generated, never stale);
 > the surfaces table is in [`README.md`](../README.md#surfaces). Both ship in
 > the package, so an agent working in a consumer repo can read them from
-> `node_modules/@connorhoehnslalom/ui-components/`.
+> `node_modules/@connorhoehn/ui-components/`.
 
 The rule of thumb: build pages from the library's shells and composites,
 the `realtime-modules/client` hooks, and the `integrations/realtime-modules`
@@ -143,7 +143,7 @@ Inside the page I need…
 ```
 
 Hook-wired components come from
-`@connorhoehnslalom/ui-components/integrations/realtime-modules`; everything
+`@connorhoehn/ui-components/integrations/realtime-modules`; everything
 else in the tree imports from the subpath the index names (usually `/shared`).
 
 ## Composite index — the 12 you'll reach for first
@@ -202,7 +202,7 @@ applies anywhere.
 **After** (ui-components composites + Tailwind tokens):
 
 ```tsx
-import { PageHeader, Button } from '@connorhoehnslalom/ui-components/shared';
+import { PageHeader, Button } from '@connorhoehn/ui-components/shared';
 
 <PageHeader
   title="Sessions"
@@ -262,7 +262,7 @@ they break when the third user has the same initial as the first.
 **After:**
 
 ```tsx
-import { PresenceAvatars } from '@connorhoehnslalom/ui-components/shared';
+import { PresenceAvatars } from '@connorhoehn/ui-components/shared';
 
 <PresenceAvatars users={users} maxVisible={5} size={24} />
 ```
@@ -310,7 +310,7 @@ ordering. The library has a single component for it.
 **After** (pure):
 
 ```tsx
-import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
+import { ChatPanel } from '@connorhoehn/ui-components/social';
 
 <ChatPanel
   messages={messages}
@@ -322,7 +322,7 @@ import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
 **After** (with realtime-modules hooks):
 
 ```tsx
-import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+import { WrappedChatPanel } from '@connorhoehn/ui-components/integrations/realtime-modules';
 import { useChat, usePresence } from '@connorhoehn/realtime-modules/client';
 
 <WrappedChatPanel
@@ -414,8 +414,8 @@ adding `<X>` to ui-components solves it forever, for every consumer.
 - `skills/ui-page-build/SKILL.md` and `skills/ui-dom-audit/SKILL.md` in the
   package — building a page from the templates, and auditing the result.
 - Maintainer docs (repo only, not in the package):
-  [`CLAUDE.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/CLAUDE.md) (exports map, no-touch list, hard
-  rules) and [`CONTRIBUTING.md`](https://github.com/connorhoehnslalom/ui-components/blob/main/CONTRIBUTING.md).
+  [`CLAUDE.md`](https://github.com/connorhoehn/ui-components/blob/main/CLAUDE.md) (exports map, no-touch list, hard
+  rules) and [`CONTRIBUTING.md`](https://github.com/connorhoehn/ui-components/blob/main/CONTRIBUTING.md).
 
 ## Collection and composer inheritance
 

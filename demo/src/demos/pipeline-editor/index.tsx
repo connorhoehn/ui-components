@@ -16,7 +16,7 @@ import { useMemo } from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router';
 import PipelineEditorPage from '@/components/pipelines/PipelineEditorPage';
 import { PipelineEditorServicesProvider } from '@/components/pipelines/services/PipelineEditorServicesContext';
-import { ToastProvider } from '@connorhoehnslalom/ui-components/shared';
+import { ToastProvider } from '@connorhoehn/ui-components/shared';
 import { EventStreamProvider } from '@/components/pipelines/context/EventStreamContext';
 import { PipelineRunsProvider } from '@/components/pipelines/context/PipelineRunsContext';
 import {

@@ -11,12 +11,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { GatewayContext, useChat, usePresence } from '@connorhoehn/realtime-modules/client';
-import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
-import type { ChatMessage as UIChatMessage } from '@connorhoehnslalom/ui-components/hooks';
+import { ChatPanel } from '@connorhoehn/ui-components/social';
+import type { ChatMessage as UIChatMessage } from '@connorhoehn/ui-components/hooks';
 import {
   WrappedChatPanel,
   WrappedPresencePanel,
-} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+} from '@connorhoehn/ui-components/integrations/realtime-modules';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
 const CHANNEL = 'demo:wrapped';
@@ -227,7 +227,7 @@ export default function WrappedComponentsDemo() {
         </code>{' '}
         from{' '}
         <code className="bg-surface-hover rounded py-[1px] px-[6px]">
-          @connorhoehnslalom/ui-components/integrations/realtime-modules
+          @connorhoehn/ui-components/integrations/realtime-modules
         </code>.
       </p>
 

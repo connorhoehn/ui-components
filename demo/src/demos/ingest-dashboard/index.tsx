@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Chip } from '@connorhoehnslalom/ui-components/shared';
-import type { ChipTone } from '@connorhoehnslalom/ui-components/shared';
+import { Chip } from '@connorhoehn/ui-components/shared';
+import type { ChipTone } from '@connorhoehn/ui-components/shared';
 import { SimulatedProvider } from '../../engine/SimulatedProvider';
 import { ingestActivityTimeline } from './simulation';
 import { IngestActivityLog } from './IngestActivityLog';

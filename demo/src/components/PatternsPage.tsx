@@ -11,7 +11,7 @@ import {
   PageHeader,
   CardHeader,
   Button,
-} from '@connorhoehnslalom/ui-components/shared';
+} from '@connorhoehn/ui-components/shared';
 
 const tocItems: TocItem[] = [
   { id: 'page-header', label: 'PageHeader', level: 2 },

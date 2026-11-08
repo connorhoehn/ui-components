@@ -24,7 +24,7 @@ Nothing changes for a consumer that does not opt in.
 | `no-hand-rolled-separators` | warn (page files only) | `border-t*`, `border-b*`, `divide-y*` in a `className` on a plain DOM element → `Divider`, `PanelHeader`, `PageSection divided`. Classes passed to library components are left alone. |
 
 Library components are recognised from imports of both
-`@connorhoehnslalom/ui-components*` and the `@connorhoehn/ui-components*`
+`@connorhoehn/ui-components*` and the `@connorhoehn/ui-components*`
 alias, including namespace imports (`<UI.Button>`).
 
 `configs.recommended` is an **array** of two config objects: the first four
@@ -43,7 +43,7 @@ default parser.
 ```js
 // eslint.config.js
 import tseslint from 'typescript-eslint';
-import uiComponents from '@connorhoehnslalom/ui-components/eslint-plugin';
+import uiComponents from '@connorhoehn/ui-components/eslint-plugin';
 
 export default [
   { files: ['**/*.{ts,tsx}'], languageOptions: { parser: tseslint.parser } },

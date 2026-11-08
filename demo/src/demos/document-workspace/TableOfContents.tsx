@@ -1,4 +1,4 @@
-import { Card } from '@connorhoehnslalom/ui-components/shared';
+import { Card } from '@connorhoehn/ui-components/shared';
 import { cn } from '@/lib/cn';
 
 interface TableOfContentsProps {

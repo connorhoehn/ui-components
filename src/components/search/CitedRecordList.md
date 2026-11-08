@@ -1,6 +1,6 @@
 # CitedRecordList
 
-Root import: `import { CitedRecordList } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { CitedRecordList } from '@connorhoehn/ui-components'`.
 
 Use under an assistant answer to show the records it was built from:
 "People in context" (avatar, name · role, one line), "Work to coordinate"

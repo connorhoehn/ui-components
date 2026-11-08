@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup } from '@connorhoehnslalom/ui-components/shared';
+import { Avatar, AvatarGroup } from '@connorhoehn/ui-components/shared';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 
@@ -33,7 +33,7 @@ export default function CollaborationPage() {
       <PageHeader
         title="Collaboration"
         description="Real-time presence, multi-mode cursors, reactions, and activity feeds. These components show who's online, where they are, and what they're doing — powered by WebSocket subscriptions."
-        importPath="import { PresencePanel, CursorCanvas, ReactionButtons } from '@connorhoehnslalom/ui-components'"
+        importPath="import { PresencePanel, CursorCanvas, ReactionButtons } from '@connorhoehn/ui-components'"
       />
 
       {/* ------------------------------------------------------------------ */}
@@ -87,7 +87,7 @@ export default function CollaborationPage() {
         id="presence-avatars"
         title="Avatar Stack"
         description="A compact horizontal stack of overlapping avatar circles — useful as a space-efficient presence indicator, similar to GitHub PR reviewer avatars."
-        code={`import { usePresence } from '@connorhoehnslalom/ui-components';
+        code={`import { usePresence } from '@connorhoehn/ui-components';
 
 const { users } = usePresence(channelId);
 const visible = users.slice(0, 5);
@@ -131,7 +131,7 @@ const overflow = users.length - visible.length;
         id="cursor-freeform"
         title="Freeform Cursors"
         description="A bounded region where mouse movement is tracked and broadcast. Remote users' cursors appear as colored circles with initials."
-        code={`import { PresenceProvider, CursorCanvas } from '@connorhoehnslalom/ui-components';
+        code={`import { PresenceProvider, CursorCanvas } from '@connorhoehn/ui-components';
 
 <PresenceProvider channelId="room-123">
   <CursorCanvas
@@ -176,7 +176,7 @@ const overflow = users.length - visible.length;
         id="cursor-text"
         title="Text Cursors"
         description="A shared document editor showing remote cursor carets and text selection highlights. Each remote user gets a vertical colored line at their character offset."
-        code={`import { TextCursorEditor } from '@connorhoehnslalom/ui-components';
+        code={`import { TextCursorEditor } from '@connorhoehn/ui-components';
 
 const cursors = new Map([
   ['client-2', { clientId: 'client-2', position: { position: 34 }, metadata: { mode: 'text', displayName: 'Alice' } }],
@@ -223,7 +223,7 @@ const cursors = new Map([
         id="cursor-table"
         title="Table Cursors"
         description="A spreadsheet-like grid showing which cell each user is focused on. Remote users get colored borders with initial badges; the local user gets a dashed blue border."
-        code={`import { TableCursorGrid } from '@connorhoehnslalom/ui-components';
+        code={`import { TableCursorGrid } from '@connorhoehn/ui-components';
 
 <TableCursorGrid
   cursors={remoteCursors}
@@ -301,7 +301,7 @@ const cursors = new Map([
         id="cursor-canvas"
         title="Canvas Cursors (Drawing)"
         description="A bounded drawing area with tool controls. Each remote user's cursor shows their selected tool. Ephemeral trail particles appear on mouse movement."
-        code={`import { CanvasCursorBoard } from '@connorhoehnslalom/ui-components';
+        code={`import { CanvasCursorBoard } from '@connorhoehn/ui-components';
 
 <CanvasCursorBoard
   cursors={remoteCursors}
@@ -389,7 +389,7 @@ const cursors = new Map([
         id="cursor-modes"
         title="Cursor Mode Selector"
         description="A row of buttons for switching between cursor tracking modes. Switching triggers an unsubscribe/resubscribe cycle to change the cursor channel."
-        code={`import { CursorModeSelector } from '@connorhoehnslalom/ui-components';
+        code={`import { CursorModeSelector } from '@connorhoehn/ui-components';
 
 const [mode, setMode] = useState<CursorMode>('freeform');
 
@@ -414,7 +414,7 @@ const [mode, setMode] = useState<CursorMode>('freeform');
         id="reactions"
         title="Reactions"
         description="Emoji reaction buttons broadcast ephemeral reactions that float up and fade out across the viewport. The overlay is fixed-position with pointer-events: none."
-        code={`import { ReactionButtons, ReactionsOverlay } from '@connorhoehnslalom/ui-components';
+        code={`import { ReactionButtons, ReactionsOverlay } from '@connorhoehn/ui-components';
 
 const [activeReactions, setActiveReactions] = useState([]);
 
@@ -486,7 +486,7 @@ function handleReact(emoji: string) {
         id="activity-feed"
         title="Activity Feed"
         description="Hydrates from REST on mount, then subscribes to live WebSocket events. Shows recent social actions with icons and relative timestamps."
-        code={`import { ActivityPanel } from '@connorhoehnslalom/ui-components';
+        code={`import { ActivityPanel } from '@connorhoehn/ui-components';
 
 <ActivityPanel
   idToken={idToken}

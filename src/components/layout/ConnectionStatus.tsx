@@ -1,7 +1,7 @@
 // src/components/layout/ConnectionStatus.tsx
 //
 // @deprecated since 2.14 — use `ConnectionPill` from
-// `@connorhoehnslalom/ui-components/shared`. This alias is scheduled for removal
+// `@connorhoehn/ui-components/shared`. This alias is scheduled for removal
 // in 2.15.
 
 import { ConnectionPill, type ConnectionPillProps } from '../shared/ConnectionPill';

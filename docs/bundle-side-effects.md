@@ -40,7 +40,7 @@ produce no error, no warning — just an empty registry at runtime.
 
 Two independent breakages under `sideEffects: false`:
 
-1. **`import '@connorhoehnslalom/ui-components/styles.css'` is deleted outright** —
+1. **`import '@connorhoehn/ui-components/styles.css'` is deleted outright** —
    the whole 164KB stylesheet vanishes. (Fixable with `"**/*.css"`.)
 2. **Renderer registration is silently erased.** `getFieldTypes()` → `[]`,
    `getRenderer('rich-text','reader')` → `null`, and even the `('*','*')`

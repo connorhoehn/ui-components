@@ -1,4 +1,4 @@
-import { Avatar } from '@connorhoehnslalom/ui-components/shared';
+import { Avatar } from '@connorhoehn/ui-components/shared';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 

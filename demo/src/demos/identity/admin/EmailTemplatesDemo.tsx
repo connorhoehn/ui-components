@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { EmailTemplateListPage } from '@connorhoehnslalom/ui-components/identity';
+import { EmailTemplateListPage } from '@connorhoehn/ui-components/identity';
 import { mockEmailTemplates } from '../mock-data';
 
 export default function EmailTemplatesDemo() {
@@ -11,7 +11,7 @@ export default function EmailTemplatesDemo() {
       <PageHeader
         title="Email Templates"
         description="Manage transactional email templates (verification, password reset, welcome, etc.). Supports editing, preview, test send, and deletion."
-        importPath="import { EmailTemplateListPage, EmailTemplateFormPage } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { EmailTemplateListPage, EmailTemplateFormPage } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock

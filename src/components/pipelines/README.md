@@ -1,4 +1,4 @@
-# Pipelines — `@connorhoehnslalom/ui-components/pipelines`
+# Pipelines — `@connorhoehn/ui-components/pipelines`
 
 Pipeline editor, runtime UI, runs/approvals, LLM nodes, DLQ inspector,
 and the canvas surface built on `@xyflow/react`. The **largest domain
@@ -16,7 +16,7 @@ import {
   PendingApprovalsPage,
   ContextInspector,
   DLQInspector,
-} from '@connorhoehnslalom/ui-components/pipelines';
+} from '@connorhoehn/ui-components/pipelines';
 ```
 
 ## Layout

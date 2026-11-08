@@ -20,7 +20,7 @@ import {
   EntityCell,
   CardHeader,
   Button,
-} from '@connorhoehnslalom/ui-components/shared';
+} from '@connorhoehn/ui-components/shared';
 
 const tocItems: TocItem[] = [
   { id: 'stat-card', label: 'StatCard', level: 2 },
@@ -63,7 +63,7 @@ export default function PrimitivesPage() {
       <PageHeader
         title="Primitives"
         description="Small atomic UI primitives: stat tiles, spinners, progress bars, status dots, filter chips, avatars, search inputs, segmented controls, inline alerts, entity cells, and card headers."
-        importPath="import { StatCard, FilterChip, Spinner, Avatar, ProgressBar } from '@connorhoehnslalom/ui-components/shared'"
+        importPath="import { StatCard, FilterChip, Spinner, Avatar, ProgressBar } from '@connorhoehn/ui-components/shared'"
       />
 
       {/* ─── StatCard ─────────────────────────────────────────────────── */}

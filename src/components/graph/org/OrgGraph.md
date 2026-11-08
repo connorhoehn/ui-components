@@ -1,6 +1,6 @@
 # OrgGraph
 
-Root import: `import { OrgGraph } from '@connorhoehnslalom/ui-components'` (also `/graph`).
+Root import: `import { OrgGraph } from '@connorhoehn/ui-components'` (also `/graph`).
 
 The organisation as a graph: `people` coloured by their `departments`,
 `relationships` drawn by type (collaborates solid, mentors dashed, reports to

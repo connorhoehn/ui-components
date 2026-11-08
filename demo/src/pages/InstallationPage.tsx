@@ -1,4 +1,4 @@
-import { CodeBlock } from '@connorhoehnslalom/ui-components/shared';
+import { CodeBlock } from '@connorhoehn/ui-components/shared';
 export default function InstallationPage() {
   return (
     <div>
@@ -19,7 +19,7 @@ export default function InstallationPage() {
         className="mb-6"
         language="text"
         theme="dark"
-        code={`@connorhoehnslalom:registry=https://npm.pkg.github.com
+        code={`@connorhoehn:registry=https://npm.pkg.github.com
 @connorhoehn:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}`}
       />
@@ -31,7 +31,7 @@ export default function InstallationPage() {
         className="mb-6"
         language="bash"
         theme="dark"
-        code={`npm install @connorhoehnslalom/ui-components`}
+        code={`npm install @connorhoehn/ui-components`}
       />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
@@ -68,7 +68,7 @@ export default function InstallationPage() {
         className="mb-6"
         language="tsx"
         theme="dark"
-        code={`import { Button } from '@connorhoehnslalom/ui-components';
+        code={`import { Button } from '@connorhoehn/ui-components';
 
 // If this compiles, you're good to go!
 console.log(Button);`}

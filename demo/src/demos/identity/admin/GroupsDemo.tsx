@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { GroupListPage, GroupFormPage } from '@connorhoehnslalom/ui-components/identity';
+import { GroupListPage, GroupFormPage } from '@connorhoehn/ui-components/identity';
 import { mockGroups } from '../mock-data';
 
 export default function GroupsDemo() {
@@ -12,7 +12,7 @@ export default function GroupsDemo() {
       <PageHeader
         title="Group Management"
         description="Group list and form for managing user groups within a pool. Groups aggregate users and can be used for role-based access control."
-        importPath="import { GroupListPage, GroupFormPage } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { GroupListPage, GroupFormPage } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock

@@ -91,7 +91,7 @@ describe('guard bins in consumer mode', () => {
   });
 
   it('require --root when installed under node_modules', () => {
-    const installed = join(dir, 'node_modules/@connorhoehnslalom/ui-components/scripts');
+    const installed = join(dir, 'node_modules/@connorhoehn/ui-components/scripts');
     mkdirSync(installed, { recursive: true });
     for (const f of [...GUARDS, 'guard-cli.mjs']) copyFileSync(join(SCRIPTS, f), join(installed, f));
     for (const script of GUARDS) {

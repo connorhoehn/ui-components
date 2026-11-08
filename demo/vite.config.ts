@@ -13,19 +13,19 @@ export default defineConfig({
   root: import.meta.dirname,
   resolve: {
     alias: {
-      '@connorhoehnslalom/ui-components/identity': resolve(import.meta.dirname, '../src/components/identity/index.ts'),
-      '@connorhoehnslalom/ui-components/pipelines': resolve(import.meta.dirname, '../src/components/pipelines/index.ts'),
-      '@connorhoehnslalom/ui-components/ingest': resolve(import.meta.dirname, '../src/components/ingest/index.ts'),
-      '@connorhoehnslalom/ui-components/observability': resolve(import.meta.dirname, '../src/components/observability/index.ts'),
-      '@connorhoehnslalom/ui-components/doc-editor': resolve(import.meta.dirname, '../src/components/doc-editor/index.ts'),
-      '@connorhoehnslalom/ui-components/social': resolve(import.meta.dirname, '../src/components/social/index.ts'),
-      '@connorhoehnslalom/ui-components/hooks': resolve(import.meta.dirname, '../src/hooks/index.ts'),
-      '@connorhoehnslalom/ui-components/types': resolve(import.meta.dirname, '../src/types/index.ts'),
-      '@connorhoehnslalom/ui-components/shared': resolve(import.meta.dirname, '../src/components/shared/index.ts'),
-      '@connorhoehnslalom/ui-components/layout': resolve(import.meta.dirname, '../src/components/layout/index.ts'),
-      '@connorhoehnslalom/ui-components/video': resolve(import.meta.dirname, '../src/video.ts'),
-      '@connorhoehnslalom/ui-components/integrations/realtime-modules': resolve(import.meta.dirname, '../src/integrations/realtime-modules/index.ts'),
-      '@connorhoehnslalom/ui-components': resolve(import.meta.dirname, '../src'),
+      '@connorhoehn/ui-components/identity': resolve(import.meta.dirname, '../src/components/identity/index.ts'),
+      '@connorhoehn/ui-components/pipelines': resolve(import.meta.dirname, '../src/components/pipelines/index.ts'),
+      '@connorhoehn/ui-components/ingest': resolve(import.meta.dirname, '../src/components/ingest/index.ts'),
+      '@connorhoehn/ui-components/observability': resolve(import.meta.dirname, '../src/components/observability/index.ts'),
+      '@connorhoehn/ui-components/doc-editor': resolve(import.meta.dirname, '../src/components/doc-editor/index.ts'),
+      '@connorhoehn/ui-components/social': resolve(import.meta.dirname, '../src/components/social/index.ts'),
+      '@connorhoehn/ui-components/hooks': resolve(import.meta.dirname, '../src/hooks/index.ts'),
+      '@connorhoehn/ui-components/types': resolve(import.meta.dirname, '../src/types/index.ts'),
+      '@connorhoehn/ui-components/shared': resolve(import.meta.dirname, '../src/components/shared/index.ts'),
+      '@connorhoehn/ui-components/layout': resolve(import.meta.dirname, '../src/components/layout/index.ts'),
+      '@connorhoehn/ui-components/video': resolve(import.meta.dirname, '../src/video.ts'),
+      '@connorhoehn/ui-components/integrations/realtime-modules': resolve(import.meta.dirname, '../src/integrations/realtime-modules/index.ts'),
+      '@connorhoehn/ui-components': resolve(import.meta.dirname, '../src'),
       // realtime-modules: alias subpaths to TS source so Vite/Rollup can process ESM.
       // The dist/ is CJS-only; pointing at src/ avoids the "not exported" Rollup error.
       // Deeper subpaths must precede the '/client' entry — Vite matches string

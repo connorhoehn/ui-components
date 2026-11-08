@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Card, Chip } from '@connorhoehnslalom/ui-components/shared';
+import { Card, Chip } from '@connorhoehn/ui-components/shared';
 import type { CatalogEntry } from './catalog-data';
 
 const CATEGORY_TONE: Record<string, 'info' | 'purple' | 'neutral' | 'success' | 'caution'> = {

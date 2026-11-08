@@ -1,6 +1,6 @@
 # DepartmentInsightStrip
 
-Root import: `import { DepartmentInsightStrip } from '@connorhoehnslalom/ui-components'`.
+Root import: `import { DepartmentInsightStrip } from '@connorhoehn/ui-components'`.
 
 A tinted band above the graph for one `department` (headcount, top skills,
 rare skills) or, with `department={null}`, the org-wide rare-skills list. A

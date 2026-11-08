@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { PoolListPage, PoolFormPage } from '@connorhoehnslalom/ui-components/identity';
+import { PoolListPage, PoolFormPage } from '@connorhoehn/ui-components/identity';
 import { mockPools } from '../mock-data';
 
 export default function PoolsDemo() {
@@ -12,7 +12,7 @@ export default function PoolsDemo() {
       <PageHeader
         title="Pool Management"
         description="CRUD interface for user pools. Each pool groups users and can be associated with OAuth applications. Supports sortable table, inline delete confirmation, and a creation form."
-        importPath="import { PoolListPage, PoolFormPage } from '@connorhoehnslalom/ui-components/identity'"
+        importPath="import { PoolListPage, PoolFormPage } from '@connorhoehn/ui-components/identity'"
       />
 
       <ExampleBlock
