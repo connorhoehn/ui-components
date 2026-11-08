@@ -4,7 +4,7 @@ import { t } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r } from "./ToastProvider-D6jAeNNE.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { A as a, B as o, C as s, D as c, E as l, F as u, I as d, L as f, M as p, O as m, P as h, R as g, S as _, T as v, V as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as O, j as k, k as ee, l as A, m as j, n as te, o as ne, p as re, r as M, s as ie, t as ae, u as oe, v as se, w as ce, x as le, y as ue } from "./GenerativeImagePreview-ClukNTsZ.js";
+import { A as a, B as o, C as s, D as c, E as l, F as u, I as d, L as f, N as p, O as m, P as h, R as g, S as _, T as v, V as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as O, j as k, k as ee, l as A, m as j, n as te, o as ne, p as re, r as M, s as ie, t as ae, u as oe, v as se, w as ce, x as le, y as ue } from "./GenerativeImagePreview-Bp2ZhQ8C.js";
 import { n as de, o as fe } from "./Button-C-I3BxWI.js";
 import { n as N, o as pe, r as me } from "./overlayStack-DxIDMUs-.js";
 import { t as he } from "./IconButton-Bf5Wy0tS.js";
@@ -19,10 +19,10 @@ import { t as Ce } from "./SearchInput-D5AvHiLn.js";
 import { t as we } from "./EmptyState-pOG782nO.js";
 import { n as Te, t as Ee } from "./StatusPill-cLjwbEQM.js";
 import { i as De, t as Oe } from "./focusTrap-D9J7npjl.js";
-import { n as ke, t as Ae } from "./FilterChip-BHmUM2tY.js";
-import { t as je } from "./SkeletonCard-D3FL0TB7.js";
-import { n as Me, t as Ne } from "./Slider-DCKY5jPg.js";
-import { t as Pe } from "./DropdownMenu-DP3rRjEd.js";
+import { t as ke } from "./DropdownMenu-DP3rRjEd.js";
+import { n as Ae, t as je } from "./Switch-CjodMIfY.js";
+import { n as Me, t as Ne } from "./FilterChip-BHmUM2tY.js";
+import { t as Pe } from "./SkeletonCard-D3FL0TB7.js";
 import { t as Fe } from "./Textarea-CvdLeuO_.js";
 import { t as Ie } from "./PageHeader-CV6Zk73L.js";
 import { t as I } from "./NumberInput-Cyc37Ssv.js";
@@ -3614,7 +3614,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 				}), /* @__PURE__ */ W("div", {
 					className: "flex flex-wrap gap-1 px-3 pb-2.5",
 					"data-testid": "palette-category-chips",
-					children: S.map((e) => /* @__PURE__ */ W(Ae, {
+					children: S.map((e) => /* @__PURE__ */ W(Ne, {
 						size: "xs",
 						active: o.has(e),
 						onClick: () => C(e),
@@ -7382,7 +7382,7 @@ function io({ label: e, checked: t, onChange: n, help: r, disabled: i, "data-tes
 		className: "flex flex-col",
 		children: [/* @__PURE__ */ G("div", {
 			className: "flex items-center gap-2",
-			children: [/* @__PURE__ */ W(Me, {
+			children: [/* @__PURE__ */ W(je, {
 				size: "sm",
 				checked: t,
 				onChange: n,
@@ -8006,7 +8006,7 @@ function Oo({ data: e, onChange: t, nodeId: n }) {
 				/* @__PURE__ */ W(X, {
 					label: "Temperature",
 					help: "0 = deterministic, 1 = creative.",
-					children: /* @__PURE__ */ W(Ne, {
+					children: /* @__PURE__ */ W(Ae, {
 						min: 0,
 						max: 1,
 						step: .1,
@@ -8106,7 +8106,7 @@ function jo({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ W("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: /* @__PURE__ */ W(h, {
+				children: /* @__PURE__ */ W(p, {
 					name: "transform-type",
 					value: e.transformType,
 					onChange: (e) => t({ transformType: e }),
@@ -8434,7 +8434,7 @@ function Ro({ data: e, onChange: t }) {
 			render: ({ labelId: e }) => /* @__PURE__ */ G("div", {
 				role: "group",
 				"aria-labelledby": e,
-				children: [/* @__PURE__ */ W(h, {
+				children: [/* @__PURE__ */ W(p, {
 					name: "action-on-error",
 					value: o,
 					onChange: c,
@@ -8487,7 +8487,7 @@ function Ho({ data: e, onChange: t }) {
 		required: !0,
 		help: `Between ${zo} and ${Bo} parallel branches.`,
 		controlId: `${n}-branch-count`,
-		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(Ne, {
+		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(Ae, {
 			min: zo,
 			max: Bo,
 			step: 1,
@@ -8574,7 +8574,7 @@ function Go({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ G("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: [/* @__PURE__ */ W(h, {
+				children: [/* @__PURE__ */ W(p, {
 					name: "join-mode",
 					value: e.mode,
 					onChange: (e) => t({ mode: e }),
@@ -8606,7 +8606,7 @@ function Go({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ W("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: /* @__PURE__ */ W(h, {
+				children: /* @__PURE__ */ W(p, {
 					name: "join-merge",
 					value: e.mergeStrategy,
 					onChange: (e) => t({ mergeStrategy: e }),
@@ -8662,7 +8662,7 @@ function Yo(e) {
 	return !e || e <= 0 ? "minutes" : e % Jo.hours === 0 ? "hours" : e % Jo.minutes === 0 ? "minutes" : "seconds";
 }
 function Xo({ data: e, onChange: t }) {
-	let r = Lt(), i = e.approvers ?? [], a = i.length === 0, [o, s] = H(() => Yo(e.timeoutMs)), c = e.timeoutMs === void 0 ? "" : Math.round(e.timeoutMs / Jo[o]), l = i.filter((e) => e.type === "user").map((e) => e.value), d = (n) => {
+	let r = Lt(), i = e.approvers ?? [], a = i.length === 0, [o, s] = H(() => Yo(e.timeoutMs)), c = e.timeoutMs === void 0 ? "" : Math.round(e.timeoutMs / Jo[o]), l = i.filter((e) => e.type === "user").map((e) => e.value), u = (n) => {
 		let r = i.filter((e) => e.type === "role"), a = [...n.map((e) => ({
 			type: "user",
 			value: e
@@ -8671,13 +8671,13 @@ function Xo({ data: e, onChange: t }) {
 			approvers: a,
 			requiredCount: Math.max(1, Math.min(e.requiredCount || 1, a.length || 1))
 		});
-	}, f = (n) => {
+	}, d = (n) => {
 		let r = i.filter((e, t) => t !== n);
 		t({
 			approvers: r,
 			requiredCount: Math.max(1, Math.min(e.requiredCount || 1, r.length || 1))
 		});
-	}, p = (e) => {
+	}, f = (e) => {
 		if (e === "") {
 			t({ timeoutMs: void 0 });
 			return;
@@ -8696,9 +8696,9 @@ function Xo({ data: e, onChange: t }) {
 				role: "group",
 				"aria-labelledby": t,
 				"aria-describedby": e,
-				children: [/* @__PURE__ */ W(u, {
+				children: [/* @__PURE__ */ W(h, {
 					value: l,
-					onChange: d,
+					onChange: u,
 					placeholder: "Add approver…"
 				}), i.length > 0 && /* @__PURE__ */ W("div", {
 					className: "flex flex-wrap gap-1.5 mt-2",
@@ -8711,7 +8711,7 @@ function Xo({ data: e, onChange: t }) {
 							/* @__PURE__ */ W("button", {
 								"data-ui-part": "",
 								type: "button",
-								onClick: () => f(t),
+								onClick: () => d(t),
 								"aria-label": `Remove ${e.value}`,
 								className: "bg-transparent border-none p-0 ml-0.5 cursor-pointer text-current font-inherit text-xs leading-none",
 								children: "×"
@@ -8756,8 +8756,8 @@ function Xo({ data: e, onChange: t }) {
 						size: "sm",
 						min: 0,
 						value: c === "" ? void 0 : Number(c),
-						onChange: (e) => p(String(e)),
-						onClear: () => p(""),
+						onChange: (e) => f(String(e)),
+						onClear: () => f(""),
 						placeholder: "24",
 						"aria-label": "Timeout value",
 						"data-testid": "approval-timeout-value"
@@ -8776,7 +8776,7 @@ function Xo({ data: e, onChange: t }) {
 						children: "If timeout"
 					}), /* @__PURE__ */ W("div", {
 						className: "mt-1",
-						children: /* @__PURE__ */ W(h, {
+						children: /* @__PURE__ */ W(p, {
 							name: "approval-timeout-action",
 							orientation: "horizontal",
 							value: e.timeoutAction ?? "reject",
@@ -10303,7 +10303,7 @@ function Zs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				"data-testid": `layer-kind-select-${t}`,
 				className: "shrink-0"
 			}),
-			/* @__PURE__ */ W(Ne, {
+			/* @__PURE__ */ W(Ae, {
 				min: a.min,
 				max: a.max,
 				step: a.step,
@@ -10827,7 +10827,7 @@ function gc({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ W(X, {
 			label: "Candidate tags",
 			help: "Restricts tagging to this vocabulary. Leave empty for open-ended tags.",
-			children: /* @__PURE__ */ W(d, {
+			children: /* @__PURE__ */ W(u, {
 				value: e.candidateTags ?? [],
 				onChange: (e) => t({ candidateTags: e }),
 				placeholder: "Add candidate tag…",
@@ -10912,7 +10912,7 @@ function vc({ data: e, onChange: t, nodeId: n }) {
 				role: "group",
 				"aria-labelledby": n,
 				"aria-describedby": e,
-				children: /* @__PURE__ */ W(d, {
+				children: /* @__PURE__ */ W(u, {
 					value: a,
 					onChange: (e) => t({ labels: e }),
 					placeholder: "Add label…",
@@ -14994,7 +14994,7 @@ function Nl() {
 	});
 }
 function Pl({ pipelineId: e }) {
-	let t = zt(), i = Tt(), a = xt(), { toast: o } = r(), { definition: s, dirty: c, selectedNodeId: l, setSelectedNodeId: u, save: f, publish: p, revert: m, undo: h, redo: g, setTags: _ } = i, v = Sa(e), [y, b] = H(!1), x = V(null), S = V(c);
+	let t = zt(), i = Tt(), a = xt(), { toast: o } = r(), { definition: s, dirty: c, selectedNodeId: l, setSelectedNodeId: d, save: f, publish: p, revert: m, undo: h, redo: g, setTags: _ } = i, v = Sa(e), [y, b] = H(!1), x = V(null), S = V(c);
 	z(() => (S.current && !c && (b(!0), x.current && clearTimeout(x.current), x.current = setTimeout(() => b(!1), 450)), S.current = c, () => {
 		x.current &&= (clearTimeout(x.current), null);
 	}), [c]);
@@ -15083,7 +15083,7 @@ function Pl({ pipelineId: e }) {
 				return;
 			}
 			if (e.key === "Escape") {
-				u(null);
+				d(null);
 				return;
 			}
 		};
@@ -15096,7 +15096,7 @@ function Pl({ pipelineId: e }) {
 		a,
 		h,
 		g,
-		u
+		d
 	]);
 	let xe = () => {
 		if (!s) return;
@@ -15160,7 +15160,7 @@ function Pl({ pipelineId: e }) {
 				children: [/* @__PURE__ */ W("span", {
 					className: "text-[11px] text-text-tertiary font-semibold",
 					children: "TAGS"
-				}), /* @__PURE__ */ W(d, {
+				}), /* @__PURE__ */ W(u, {
 					value: s.tags ?? [],
 					onChange: _,
 					placeholder: "add tag…"
@@ -15231,7 +15231,7 @@ function Pl({ pipelineId: e }) {
 				onVersionDiffClose: () => oe(!1),
 				currentDef: s,
 				publishedDef: le,
-				onJumpToNode: u,
+				onJumpToNode: d,
 				simPanelOpen: se,
 				onSimPanelClose: () => ce(!1)
 			}),
@@ -19332,7 +19332,7 @@ function hd({ attempt: e, isLast: t }) {
 function gd({ attempts: e, className: t }) {
 	if (e.length === 0 || e.length === 1 && !md(e[0])) return null;
 	let r = [...e].sort((e, t) => e.attemptNumber - t.attemptNumber), i = r[r.length - 1], a = r.filter(md).length, o = md(i) ? `${r.length} attempt${r.length === 1 ? "" : "s"}, all failed` : `succeeded on attempt ${i.attemptNumber} after ${a} failure${a === 1 ? "" : "s"}`;
-	return /* @__PURE__ */ W(p, {
+	return /* @__PURE__ */ W(k, {
 		first: !0,
 		title: "Retry history",
 		hint: o,
@@ -22136,9 +22136,9 @@ function kf() {
 				"data-testid": "approvals-loading",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
 				children: [
-					/* @__PURE__ */ W(je, { height: 140 }),
-					/* @__PURE__ */ W(je, { height: 140 }),
-					/* @__PURE__ */ W(je, { height: 140 })
+					/* @__PURE__ */ W(Pe, { height: 140 }),
+					/* @__PURE__ */ W(Pe, { height: 140 }),
+					/* @__PURE__ */ W(Pe, { height: 140 })
 				]
 			}) : g === 0 && !r ? /* @__PURE__ */ W(we, {
 				icon: "✋",
@@ -22217,7 +22217,7 @@ function jf({ result: e, className: t }) {
 			children: [/* @__PURE__ */ W("span", {
 				className: "text-[11px] font-medium uppercase text-text-tertiary",
 				children: "overall"
-			}), /* @__PURE__ */ W(ke, {
+			}), /* @__PURE__ */ W(Me, {
 				value: e.overallScore,
 				threshold: a,
 				tone: r === "warning" ? "warning" : r,
@@ -22283,7 +22283,7 @@ function Nf({ score: e, def: t }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ W(ke, {
+			/* @__PURE__ */ W(Me, {
 				value: e.score,
 				threshold: t?.failThreshold ?? .5,
 				tone: n,
@@ -22466,7 +22466,7 @@ function zf({ aggregate: e, className: t }) {
 				children: [/* @__PURE__ */ W("span", {
 					className: "text-[11px] font-medium uppercase text-text-tertiary",
 					children: "mean score"
-				}), /* @__PURE__ */ W(ke, {
+				}), /* @__PURE__ */ W(Me, {
 					value: i,
 					tone: a === "warning" ? "warning" : a,
 					size: "md",
@@ -22537,7 +22537,7 @@ function Bf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 			children: i ? "Loading trends…" : "No judgment activity in range."
 		})
 	});
-	let c = e.reduce((e, t) => e + t.numJudgments, 0), l = e.reduce((e, t) => e + t.numPassed, 0), u = e.reduce((e, t) => e + t.sumCostUsd, 0), d = c > 0 ? l / c : 0;
+	let c = e.reduce((e, t) => e + t.numJudgments, 0), l = e.reduce((e, t) => e + t.numPassed, 0), u = e.reduce((e, t) => e + t.sumCostUsd, 0), f = c > 0 ? l / c : 0;
 	return /* @__PURE__ */ G("section", {
 		"data-ui-part": "",
 		className: n("flex w-full flex-col gap-2", a),
@@ -22550,10 +22550,10 @@ function Bf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 						children: r ?? `Judgment trend — ${e.length} days`
 					}),
 					/* @__PURE__ */ G(N, {
-						tone: d >= .9 ? "success" : d >= .6 ? "warning" : "danger",
+						tone: f >= .9 ? "success" : f >= .6 ? "warning" : "danger",
 						size: "sm",
 						children: [
-							(d * 100).toFixed(0),
+							(f * 100).toFixed(0),
 							"% pass · ",
 							c,
 							" judgments"
@@ -22570,7 +22570,7 @@ function Bf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 				children: [/* @__PURE__ */ W("span", {
 					className: "text-[11px] font-medium uppercase text-text-tertiary",
 					children: "pass-rate"
-				}), /* @__PURE__ */ W(f, {
+				}), /* @__PURE__ */ W(d, {
 					points: s,
 					yMin: 0,
 					yMax: 1,
@@ -23306,35 +23306,35 @@ function hp(e, t, n = {}) {
 		})
 	};
 }
-function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a, onQueryChange: o, searchPlaceholder: s = "Search pipelines…", groupBy: l, onGroupByChange: u, filters: d, activeFilterCount: f = 0, onClearFilters: p, title: m = "Pipelines", count: h, headerMenu: g, onTemplates: _, onStartBlank: v, headerActions: y, currentId: b = null, onOpen: x, onRun: S, onViewRun: C, rowMenu: w, rowTrailing: T, storageKey: E, emptyState: O, footer: ee, now: A, frame: te = "none", className: ne, "data-testid": re = "pipelines-list" }) {
+function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a, onQueryChange: o, searchPlaceholder: s = "Search pipelines…", groupBy: l, onGroupByChange: u, filters: d, activeFilterCount: p = 0, onClearFilters: m, title: h = "Pipelines", count: g, headerMenu: _, onTemplates: v, onStartBlank: y, headerActions: b, currentId: x = null, onOpen: S, onRun: C, onViewRun: w, rowMenu: T, rowTrailing: E, storageKey: O, emptyState: k, footer: ee, now: A, frame: te = "none", className: ne, "data-testid": re = "pipelines-list" }) {
 	let M = B(() => e.filter((e) => c(e, a)), [e, a]), ie = A ?? Date.now(), { groups: ae, rows: oe } = B(() => hp(M, l, {
-		currentId: b,
+		currentId: x,
 		now: ie,
-		onOpen: x,
-		onRun: S,
-		onViewRun: C,
-		rowTrailing: T,
+		onOpen: S,
+		onRun: C,
+		onViewRun: w,
+		rowTrailing: E,
 		testId: re
 	}), [
 		M,
 		l,
-		b,
-		ie,
 		x,
+		ie,
 		S,
 		C,
-		T,
+		w,
+		E,
 		re
-	]), se = B(() => new Map(M.map((e) => [e.id, e])), [M]), ce = a.trim().length > 0 || f > 0, le = !!g?.length || !!_ || !!v || !!y, ue;
+	]), se = B(() => new Map(M.map((e) => [e.id, e])), [M]), ce = a.trim().length > 0 || p > 0, le = !!_?.length || !!v || !!y || !!b, ue;
 	return ue = t && e.length === 0 ? /* @__PURE__ */ W(Te, {
 		label: "Loading pipelines…",
 		testId: `${re}-loading`
 	}) : e.length === 0 ? /* @__PURE__ */ W(we, {
 		testId: `${re}-empty`,
-		title: O?.title ?? "No pipelines yet",
-		body: O?.body ?? "Start from a template, from blank, or ask the agent below to draft one.",
-		actionLabel: O?.actionLabel ?? (v ? "Start from blank" : void 0),
-		onAction: O?.onAction ?? v
+		title: k?.title ?? "No pipelines yet",
+		body: k?.body ?? "Start from a template, from blank, or ask the agent below to draft one.",
+		actionLabel: k?.actionLabel ?? (y ? "Start from blank" : void 0),
+		onAction: k?.onAction ?? y
 	}) : M.length === 0 ? /* @__PURE__ */ W(fe, {
 		density: "compact",
 		children: /* @__PURE__ */ W(we, {
@@ -23343,22 +23343,22 @@ function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 			body: ce ? "Try a different search, or clear the filters." : void 0,
 			actionLabel: ce ? "Clear search and filters" : void 0,
 			onAction: ce ? () => {
-				o(""), p?.();
+				o(""), m?.();
 			} : void 0
 		})
-	}) : /* @__PURE__ */ W(k, {
+	}) : /* @__PURE__ */ W(f, {
 		"data-testid": `${re}-groups`,
 		groups: ae,
 		rows: oe,
-		currentId: b,
-		storageKey: E,
+		currentId: x,
+		storageKey: O,
 		onOpenRow: (e) => {
 			let t = se.get(e.id);
-			t && x(t);
+			t && S(t);
 		},
-		rowMenu: w ? (e) => {
+		rowMenu: T ? (e) => {
 			let t = se.get(e.id);
-			return t ? w(t) : null;
+			return t ? T(t) : null;
 		} : void 0
 	}), /* @__PURE__ */ G("div", {
 		"data-testid": re,
@@ -23366,16 +23366,16 @@ function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 		className: n("flex h-full min-h-0 flex-col gap-4", ne),
 		children: [
 			/* @__PURE__ */ W(Ie, {
-				title: m,
+				title: h,
 				badge: /* @__PURE__ */ W(N, {
 					size: "sm",
 					tone: "neutral",
 					"data-testid": `${re}-count`,
-					"aria-label": `${h ?? M.length} pipelines`,
-					children: h ?? M.length
+					"aria-label": `${g ?? M.length} pipelines`,
+					children: g ?? M.length
 				}),
 				actions: le ? /* @__PURE__ */ G(U, { children: [
-					!!g?.length && /* @__PURE__ */ W(Pe, {
+					!!_?.length && /* @__PURE__ */ W(ke, {
 						trigger: /* @__PURE__ */ W("span", {
 							"aria-hidden": "true",
 							className: "text-base leading-none",
@@ -23384,24 +23384,24 @@ function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 						triggerLabel: "More actions",
 						triggerTestId: `${re}-more`,
 						align: "end",
-						sections: g,
+						sections: _,
 						triggerClassName: "h-9 w-9 px-0 py-0"
-					}),
-					_ && /* @__PURE__ */ W(de, {
-						variant: "secondary",
-						size: "md",
-						"data-testid": `${re}-templates`,
-						onClick: _,
-						children: "Templates"
 					}),
 					v && /* @__PURE__ */ W(de, {
 						variant: "secondary",
 						size: "md",
-						"data-testid": `${re}-start-blank`,
+						"data-testid": `${re}-templates`,
 						onClick: v,
+						children: "Templates"
+					}),
+					y && /* @__PURE__ */ W(de, {
+						variant: "secondary",
+						size: "md",
+						"data-testid": `${re}-start-blank`,
+						onClick: y,
 						children: "Start from blank"
 					}),
-					y
+					b
 				] }) : void 0
 			}),
 			/* @__PURE__ */ G("div", {
@@ -23433,8 +23433,8 @@ function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 							"data-testid": `${re}-search`,
 							className: "w-full max-w-[420px] flex-1"
 						}), d && /* @__PURE__ */ W(xe, {
-							activeCount: f,
-							onClear: p,
+							activeCount: p,
+							onClear: m,
 							"data-testid": `${re}-filter`,
 							children: d
 						})]

@@ -15,12 +15,12 @@ import { t as x } from "./Input-Brvp1kPv.js";
 import { t as S } from "./Select-CpZyUWay.js";
 import { t as C } from "./InlinePopover-Dx8-r-XU.js";
 import { t as w } from "./EmptyState-pOG782nO.js";
-import { r as T } from "./safeHref-BR1Vy6Dm.js";
+import { r as T } from "./safeHref-Cu7RCRee.js";
 import { n as ee } from "./StatusPill-cLjwbEQM.js";
 import { t as te } from "./DropdownMenu-DP3rRjEd.js";
+import { t as E } from "./SegmentedControl-DAjnOtF4.js";
 import { t as ne } from "./Textarea-CvdLeuO_.js";
-import { n as E } from "./Avatar-GvBbrBxQ.js";
-import { t as D } from "./SegmentedControl-DAjnOtF4.js";
+import { n as D } from "./Avatar-GvBbrBxQ.js";
 import { t as O } from "./InlineAlert-CnWUBrte.js";
 import { t as k } from "./CardHeader-DzQxX5J-.js";
 import { t as A } from "./Breadcrumbs-CirFL-yi.js";
@@ -31,11 +31,11 @@ import { t as M } from "./Checkbox-BW-hyqCM.js";
 import { n as se } from "./FileKindMark-BZmXUxaT.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { A as P, k as ce } from "./renderers-C5HikurY.js";
-import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-CRFnB39s.js";
+import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-CAEXx1ho.js";
 import { t as Ze } from "./InlineEditableText-c94ETQ89.js";
 import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-BU4pt2sS.js";
 import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-D10uQ4k3.js";
-import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-CqtnsHvt.js";
+import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-1SiL94vr.js";
 import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-Cd_KXczH.js";
 import { i as In } from "./ConversationInputs-Du5oOgKC.js";
 import { r as Ln } from "./RichChatComposer-bC-Zje3z.js";
@@ -1013,7 +1013,7 @@ var Jr = {
 	field: "Field change",
 	prose: "Body text"
 };
-function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: _, locationHint: v, verdict: y, verdictStatus: b = "idle", verdictError: S, revision: C, onRereview: w, onAccept: T, onReject: ee, onRedraft: te, onReattach: ne, onConfirmAttachment: D, className: O, "data-testid": k = "proposal-card" }) {
+function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: _, locationHint: v, verdict: y, verdictStatus: b = "idle", verdictError: S, revision: C, onRereview: w, onAccept: T, onReject: ee, onRedraft: te, onReattach: E, onConfirmAttachment: ne, className: O, "data-testid": k = "proposal-card" }) {
 	let [A, re] = W(!1), [j, M] = W(null), [se, N] = W(!1), [P, ce] = W(""), le = i === "applied", F = i === "rejected", I = le || F;
 	async function L() {
 		re(!0), M(null);
@@ -1050,7 +1050,7 @@ function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 					h && /* @__PURE__ */ q("span", {
 						className: "flex min-w-0 items-center gap-1.5",
 						"data-testid": `${k}-requester`,
-						children: [/* @__PURE__ */ K(E, {
+						children: [/* @__PURE__ */ K(D, {
 							name: h.name,
 							size: 18,
 							...h.avatarUrl ? { src: h.avatarUrl } : {}
@@ -1193,19 +1193,19 @@ function Yr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 						"data-testid": `${k}-rereview`,
 						children: "Re-run review"
 					}),
-					ne && /* @__PURE__ */ K(r, {
+					E && /* @__PURE__ */ K(r, {
 						size: "sm",
 						variant: "ghost",
 						disabled: A,
-						onClick: ne,
+						onClick: E,
 						"data-testid": `${k}-reattach`,
 						children: "Move…"
 					}),
-					D && s === "author_only" && /* @__PURE__ */ K(r, {
+					ne && s === "author_only" && /* @__PURE__ */ K(r, {
 						size: "sm",
 						variant: "secondary",
 						disabled: A,
-						onClick: D,
+						onClick: ne,
 						"data-testid": `${k}-confirm`,
 						children: "Right place"
 					})
@@ -1442,7 +1442,7 @@ function ti({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 				/* @__PURE__ */ q("div", {
 					className: "flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ K(E, {
+						/* @__PURE__ */ K(D, {
 							name: w.author,
 							size: 20,
 							color: w.color
@@ -1685,7 +1685,7 @@ function ui({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						className: "flex items-center gap-2",
 						"data-testid": `${f}-person`,
 						children: [
-							/* @__PURE__ */ K(E, {
+							/* @__PURE__ */ K(D, {
 								name: e.displayName,
 								size: 26,
 								...e.avatarUrl ? { src: e.avatarUrl } : {}
@@ -1781,7 +1781,7 @@ function fi({ mode: e, onModeChange: t, showViewing: r = !0, openCount: a = null
 		className: n("inline-flex items-center gap-2", o && "pointer-events-none opacity-50", s),
 		children: [/* @__PURE__ */ K(i, {
 			density: "compact",
-			children: /* @__PURE__ */ K(D, {
+			children: /* @__PURE__ */ K(E, {
 				options: l,
 				value: e,
 				"aria-label": "What your typing does",
@@ -1861,7 +1861,7 @@ function bi({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 						"aria-label": `Select suggestion by ${t.trim() || "unknown author"}`,
 						"data-testid": `${y}-select`
 					}),
-					/* @__PURE__ */ K(E, {
+					/* @__PURE__ */ K(D, {
 						name: b,
 						size: 20
 					}),
@@ -2981,7 +2981,7 @@ function Ia({ filled: e }) {
 		children: /* @__PURE__ */ K("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: g, participants: _, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: ee, onTabChange: te, toolbar: ne, children: E, footer: D, proposal: O, surface: k = "workspace", explorer: ie, workbench: ae, label: oe = "Editor", variant: j = "document", itemType: M, itemKey: N, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: F, headerInset: I = "editor", className: L, "data-testid": R = "editor-shell" }) {
+function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: g, participants: _, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: ee, onTabChange: te, toolbar: E, children: ne, footer: D, proposal: O, surface: k = "workspace", explorer: ie, workbench: ae, label: oe = "Editor", variant: j = "document", itemType: M, itemKey: N, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: F, headerInset: I = "editor", className: L, "data-testid": R = "editor-shell" }) {
 	let z = j === "work-item", ue = z && (M || N) ? /* @__PURE__ */ q(G, { children: [M && /* @__PURE__ */ K(o, {
 		size: "sm",
 		tone: "info",
@@ -3207,10 +3207,10 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 					})
 				]
 			}),
-			ne && /* @__PURE__ */ K("div", {
+			E && /* @__PURE__ */ K("div", {
 				className: "flex min-w-0 items-center gap-1 border-b border-border px-[var(--dock-inset,1rem)] py-1.5",
 				"data-testid": `${R}-toolbar`,
-				children: ne
+				children: E
 			}),
 			/* @__PURE__ */ q("div", {
 				className: n("relative flex min-h-0 flex-1 flex-col", k === "workspace" ? "bg-workspace" : "bg-surface"),
@@ -3224,7 +3224,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						} : {},
 						className: n("flex-1 overflow-auto", O != null || D != null ? "min-h-28" : "min-h-0"),
 						"data-testid": `${R}-scroller`,
-						children: E
+						children: ne
 					}),
 					O != null && /* @__PURE__ */ K("div", {
 						className: "relative z-20 max-h-[40%] min-h-16 shrink overflow-auto px-[var(--dock-inset,1rem)] pb-1 pt-2",

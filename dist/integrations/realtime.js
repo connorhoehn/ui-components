@@ -2,12 +2,12 @@ import { n as e } from "../Button-C-I3BxWI.js";
 import { g as t } from "../MediaIcons-_ai5Til2.js";
 import { c as n, l as r, n as i } from "../Text-BAAQrepu.js";
 import { t as a } from "../Modal-PO0F6rAp.js";
-import { n as o } from "../Slider-DCKY5jPg.js";
-import { t as s } from "../DropdownMenu-DP3rRjEd.js";
-import { C as c } from "../BreakoutRoomsPanel-DdDOzxDb.js";
-import { n as l, r as u } from "../RecordingConsentNotice-Bcz5w5On.js";
+import { t as o } from "../DropdownMenu-DP3rRjEd.js";
+import { t as s } from "../Switch-CjodMIfY.js";
+import { C as c } from "../BreakoutRoomsPanel-DukyC8hb.js";
+import { n as l, r as u } from "../RecordingConsentNotice-X3OrkZUK.js";
 import { i as d, n as f, r as p, t as m } from "../useDocumentImageUpload-Cd_KXczH.js";
-import { $ as h, A as g, B as ee, C as _, D as v, E as y, F as b, G as x, H as S, I as C, J as w, K as T, L as E, M as D, N as O, O as k, P as A, Q as j, R as M, S as N, St as P, T as F, U as I, V as te, W as ne, X as re, Y as ie, Z as L, _ as ae, _t as oe, a as se, at as R, b as ce, bt as z, c as B, ct as le, d as V, dt as ue, et as de, f as H, ft as fe, g as pe, gt as me, h as U, ht as he, i as ge, it as W, j as _e, k as ve, l as ye, lt as be, m as xe, mt as Se, n as Ce, nt as we, o as Te, ot as Ee, p as De, pt as Oe, q as ke, r as Ae, rt as je, s as Me, st as Ne, t as Pe, tt as Fe, u as Ie, ut as Le, v as Re, vt as ze, w as Be, x as Ve, xt as He, y as Ue, yt as We, z as Ge } from "../meeting-mk8DoYjW.js";
+import { $ as h, A as g, B as ee, C as _, D as v, E as y, F as b, G as x, H as S, I as C, J as w, K as T, L as E, M as D, N as O, O as k, P as A, Q as j, R as M, S as N, St as P, T as F, U as I, V as te, W as ne, X as re, Y as ie, Z as L, _ as ae, _t as oe, a as se, at as R, b as ce, bt as z, c as B, ct as le, d as V, dt as ue, et as de, f as H, ft as fe, g as pe, gt as me, h as U, ht as he, i as ge, it as W, j as _e, k as ve, l as ye, lt as be, m as xe, mt as Se, n as Ce, nt as we, o as Te, ot as Ee, p as De, pt as Oe, q as ke, r as Ae, rt as je, s as Me, st as Ne, t as Pe, tt as Fe, u as Ie, ut as Le, v as Re, vt as ze, w as Be, x as Ve, xt as He, y as Ue, yt as We, z as Ge } from "../meeting-B8zZWNhA.js";
 import { createContext as Ke, useCallback as G, useContext as K, useEffect as q, useLayoutEffect as qe, useMemo as J, useRef as Y, useState as X, useSyncExternalStore as Je } from "react";
 import { Fragment as Ye, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { createPortal as Xe } from "react-dom";
@@ -307,7 +307,7 @@ function kt(d) {
 								onClick: () => x.setBackgroundMode(x.backgroundMode === "blur" ? "none" : "blur"),
 								"data-testid": "prejoin-blur",
 								children: [/* @__PURE__ */ Z(t, { size: 16 }), "Blur"]
-							}), /* @__PURE__ */ Z(s, {
+							}), /* @__PURE__ */ Z(o, {
 								trigger: "Effects",
 								triggerLabel: "Camera effects",
 								triggerVariant: "secondary",
@@ -356,7 +356,7 @@ function kt(d) {
 						gap: "sm",
 						align: "center",
 						wrap: !1,
-						children: [/* @__PURE__ */ Z(o, {
+						children: [/* @__PURE__ */ Z(s, {
 							checked: _.remember,
 							onChange: (e) => v((t) => ({
 								...t,

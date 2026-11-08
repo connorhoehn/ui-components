@@ -436,6 +436,19 @@ declare interface ApiHealthSnapshot {
 declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
 /**
+ * Show one texture map flat on the mesh, or (`lit`) put the model back.
+ *
+ * Every material's original textures and factors are stashed once; a channel
+ * then sets `baseColorTexture` to the channel's map (an external URL through
+ * `el.createTexture`, else the material's own embedded map), base colour
+ * factor white, metallic 0, roughness 1, and clears the normal,
+ * metallic-roughness and emissive maps so nothing else shades it. A material
+ * without that map shows the channel's constant (its factor) instead. `lit`
+ * restores the stash. Safe to call repeatedly in any order.
+ */
+export declare function applyModelChannel(el: ModelViewerElementLike | null | undefined, channel: ModelChannelView, channels?: ModelChannels): Promise<void>;
+
+/**
  * AppShell wraps its children in a ToastProvider by default.
  * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
  */
@@ -2213,6 +2226,10 @@ export declare interface CollectionToolbarProps {
     children?: ReactNode;
 }
 
+declare interface ColorLike {
+    set(value: string): unknown;
+}
+
 /** Render `children` in the nearest DockedColumn's dock (in place when there is none). */
 export declare function ColumnDock({ children }: ColumnDockProps): JSX.Element | null;
 
@@ -3817,7 +3834,7 @@ export declare function ErrorDisplay({ error }: Props): JSX.Element | null;
 
 export declare function ErrorPanel({ errors }: Props_2): JSX.Element;
 
-export declare function ErrorState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: ErrorStateProps): JSX.Element;
+export declare function ErrorState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, compact, }: ErrorStateProps): JSX.Element;
 
 export declare interface ErrorStateProps {
     /** Override the default ⚠️ glyph. Pass a string emoji or a ReactNode. */
@@ -3833,6 +3850,12 @@ export declare interface ErrorStateProps {
     action?: ReactNode;
     testId?: string;
     actionTestId?: string;
+    /**
+     * Small padding and no 220px minimum height (since 2.511.0): for an error
+     * drawn over a media frame or inside a card, where the card shape would
+     * overflow the space it covers.
+     */
+    compact?: boolean;
 }
 
 export declare function EstimateRow({ label, estimate, className, 'data-testid': testId }: EstimateRowProps): JSX.Element;
@@ -4554,6 +4577,45 @@ export declare interface FramePageSpec extends SpecHeader {
     footer?: LeafList;
 }
 
+export declare function FrameStrip({ frames, label, fps, index: indexProp, defaultIndex, onIndexChange, autoPlay, loop, contactSheet, aspect, thumbnails, className, 'data-testid': testId, }: FrameStripProps): JSX.Element | null;
+
+export declare type FrameStripAspect = 'square' | 'landscape' | 'portrait' | 'wide';
+
+export declare interface FrameStripFrame {
+    src: string;
+    label?: string;
+    alt?: string;
+}
+
+export declare interface FrameStripProps {
+    frames: readonly FrameStripFrame[];
+    /** Accessible name of the strip. Default "Frames". */
+    label?: string;
+    /** Playback rate. Default 12. */
+    fps?: number;
+    /** Controlled frame index (0-based). */
+    index?: number;
+    /** Initial frame when uncontrolled. Default 0. */
+    defaultIndex?: number;
+    onIndexChange?: (index: number) => void;
+    /** Start playing on mount. Default false; never under prefers-reduced-motion. */
+    autoPlay?: boolean;
+    /** Wrap from the last frame to the first while playing. Default true. */
+    loop?: boolean;
+    /** One image of every frame; adds a "Frames | Contact sheet" switch. */
+    contactSheet?: {
+        src: string;
+        label?: string;
+        alt?: string;
+    };
+    /** The frame's aspect — same classes as ImageCompare. Default `square`. */
+    aspect?: FrameStripAspect;
+    /** A scrolling row of frame buttons under the player. Default true. */
+    thumbnails?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function FullscreenToggle({ target, label, exitLabel, onChange, size, variant, 'data-testid': testId, ...rest }: FullscreenToggleProps & {
     'data-testid'?: string;
 }): JSX.Element | null;
@@ -4924,6 +4986,14 @@ export { Highlight_2 as Highlight }
 
 /** A marker tip over a stroke: "highlight". Since 2.386.5. */
 export declare function HighlighterIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/**
+ * Highlight one part: every mesh whose name, or an ancestor's, is `node` gets a
+ * clone of its material with `emissive` set to `color`. Any earlier highlight
+ * is put back first; `node = null` only puts it back. Returns the number of
+ * meshes highlighted, or -1 when the scene is unreachable.
+ */
+export declare function highlightModelPart(el: unknown, node: string | null, color?: string): number;
 
 export declare interface HighlightProps {
     /** The text to render. */
@@ -5814,6 +5884,9 @@ export declare interface LoadingStateProps {
     testId?: string;
 }
 
+/** Loads `@google/model-viewer` (which defines `<model-viewer>`) once per page. */
+export declare function loadModelViewerElement(): Promise<unknown>;
+
 /** A padlock: "private", "restricted to specific people". */
 export declare function LockIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -6009,6 +6082,15 @@ export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
  */
 export declare function matchTokens(haystack: string, query: string): number;
 
+declare interface MaterialLike3 {
+    wireframe?: boolean;
+    emissive?: ColorLike;
+    emissiveMap?: unknown;
+    emissiveIntensity?: number;
+    needsUpdate?: boolean;
+    clone(): MaterialLike3;
+}
+
 /** Four corners pushed outward: "expand to fill". Since 2.411.0. */
 export declare function MaximizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -6182,6 +6264,163 @@ export declare interface ModalProps {
      * Since 2.442.0.
      */
     dialogKind?: string;
+}
+
+export declare const MODEL_CHANNEL_LABEL: Record<ModelChannel, string>;
+
+export declare const MODEL_CHANNEL_ORDER: readonly ModelChannel[];
+
+export declare type ModelChannel = 'baseColor' | 'normal' | 'roughness' | 'metallic' | 'emissive';
+
+export declare interface ModelChannelMap {
+    src: string;
+    label?: string;
+}
+
+/** One option of the channel toggle. */
+export declare interface ModelChannelOption {
+    value: ModelChannel;
+    label: string;
+    /** `external`: a URL from the `channels` prop. `embedded`: a map inside the model. */
+    source: 'external' | 'embedded';
+    /** The external map's URL. */
+    src?: string;
+}
+
+export declare type ModelChannels = Partial<Record<ModelChannel, string | ModelChannelMap>>;
+
+/**
+ * The channels a model can show: every key of `channels` (external URLs) plus
+ * every map embedded in the loaded model's materials (`el.model.materials`),
+ * in a fixed order. The packed metallic-roughness texture counts for both
+ * Roughness and Metallic. An external map wins over an embedded one.
+ */
+export declare function modelChannelsOf(el: ModelViewerElementLike | null | undefined, channels?: ModelChannels): ModelChannelOption[];
+
+/** What the mesh shows: the lit model, or one texture map flat on it. */
+export declare type ModelChannelView = 'lit' | ModelChannel;
+
+export declare interface ModelMaterialLike {
+    readonly name?: string;
+    readonly pbrMetallicRoughness: {
+        readonly baseColorFactor: ArrayLike<number>;
+        readonly metallicFactor: number;
+        readonly roughnessFactor: number;
+        readonly baseColorTexture: ModelTextureInfoLike | null;
+        readonly metallicRoughnessTexture: ModelTextureInfoLike | null;
+        setBaseColorFactor(rgba: [number, number, number, number]): void;
+        setMetallicFactor(value: number): void;
+        setRoughnessFactor(value: number): void;
+    };
+    readonly normalTexture: ModelTextureInfoLike | null;
+    readonly emissiveTexture: ModelTextureInfoLike | null;
+    readonly emissiveFactor: ArrayLike<number>;
+    setEmissiveFactor(rgb: [number, number, number]): void;
+}
+
+export declare interface ModelPart {
+    id: string;
+    label: string;
+    /** Swatch and highlight colour — any CSS colour three.js can parse (hex, rgb(), a name). */
+    color: string;
+    /** Mesh/node name in the GLB. Default `id`. */
+    node?: string;
+}
+
+export declare interface ModelSceneLike extends ObjectLike3 {
+    /** The loaded glTF root (model-viewer 4.x `ModelScene.model`). */
+    model?: ObjectLike3 | null;
+    queueRender?(): void;
+}
+
+/**
+ * The three.js scene inside a `<model-viewer>`: model-viewer 4.x keeps it on
+ * an own symbol property whose description is `'scene'` (`$scene` in
+ * model-viewer-base). Not public API — `null` when absent, and every caller
+ * treats that as "leave the view unchanged".
+ */
+export declare function modelSceneOf(el: unknown): ModelSceneLike | null;
+
+export declare interface ModelTextureInfoLike {
+    readonly texture: unknown;
+    setTexture(texture: unknown): void;
+}
+
+export declare interface ModelVersion {
+    id: string;
+    label: string;
+    description?: string;
+    current?: boolean;
+}
+
+export declare function ModelViewer({ src, poster, alt, label, reference, aspect, autoRotate, cameraControls, environment, channels, channel: channelProp, defaultChannel, onChannelChange, parts, selectedPart: selectedProp, onSelectPart, wireframe: wireframeProp, onWireframeChange, versions, onOpenVersion, onSnapshot, onLoad, onError, tone, frameless, className, 'data-testid': testId, }: ModelViewerProps): JSX.Element;
+
+export declare type ModelViewerAspect = 'square' | 'landscape' | 'portrait' | 'wide';
+
+export declare interface ModelViewerElementLike {
+    model?: {
+        readonly materials: readonly ModelMaterialLike[];
+    } | null;
+    createTexture?(uri: string): Promise<unknown>;
+    toBlob?(options?: {
+        mimeType?: string;
+    }): Promise<Blob>;
+}
+
+export declare interface ModelViewerProps {
+    /** GLB/glTF URL. */
+    src: string;
+    /** Shown while loading and as the fallback when the view cannot render. */
+    poster?: string;
+    /** Accessible name of the 3D view. Default "3D model". */
+    alt?: string;
+    /** Region label. Default "3D model". */
+    label?: string;
+    /**
+     * An image drawn beside the model in the same frame (the concept art): two
+     * up from a 28rem container, stacked below that. `label` default "Reference".
+     */
+    reference?: {
+        src: string;
+        label?: string;
+        alt?: string;
+    };
+    /** The frame's aspect — same classes as ImageCompare. Default `square`. */
+    aspect?: ModelViewerAspect;
+    /** Turntable. Default true; always off under prefers-reduced-motion. */
+    autoRotate?: boolean;
+    /** Orbit with the pointer. Default true. */
+    cameraControls?: boolean;
+    /** model-viewer `environment-image`. Default `neutral`. */
+    environment?: string;
+    /** External texture maps (URLs) to view on the mesh. */
+    channels?: ModelChannels;
+    /** Controlled channel. */
+    channel?: ModelChannelView;
+    /** Initial channel when uncontrolled. Default `lit`. */
+    defaultChannel?: ModelChannelView;
+    onChannelChange?: (channel: ModelChannelView) => void;
+    /** Named parts of the model, listed under the view; hover/focus highlights, click selects. */
+    parts?: readonly ModelPart[];
+    /** Controlled selected part (`null` = none). */
+    selectedPart?: string | null;
+    onSelectPart?: (id: string | null) => void;
+    /** Wireframe. Controlled when `onWireframeChange` is passed, else the initial value. */
+    wireframe?: boolean;
+    onWireframeChange?: (on: boolean) => void;
+    /** Two or more show a compact list under the view, the current one marked. */
+    versions?: readonly ModelVersion[];
+    onOpenVersion?: (id: string) => void;
+    /** Shows a "Snapshot" button; receives a PNG of the current view. */
+    onSnapshot?: (png: Blob) => void;
+    onLoad?: () => void;
+    onError?: (message: string) => void;
+    /** The frame's surface: `default` (surface), `inset` (inset surface), `dark` (the media stage). */
+    tone?: 'default' | 'inset' | 'dark';
+    /** No border or rounded frame — for use inside a card. */
+    frameless?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 /** A monitor: "present this document" / someone is presenting. */
@@ -6523,6 +6762,14 @@ export declare interface NumberInputProps {
     'aria-required'?: boolean;
     required?: boolean;
     'data-testid'?: string;
+}
+
+declare interface ObjectLike3 {
+    name?: string;
+    parent?: ObjectLike3 | null;
+    isMesh?: boolean;
+    material?: MaterialLike3 | MaterialLike3[];
+    traverse?(fn: (o: ObjectLike3) => void): void;
 }
 
 export declare function OutcomeSection({ title, value, onChange, placeholder, readOnlyReason, pending, first, as, variant, size, className, 'data-testid': testId, }: OutcomeSectionProps): JSX.Element;
@@ -8879,6 +9126,9 @@ declare type SelectVariant = 'default' | 'pill' | 'ghost';
 
 /** A paper plane: "send" — the light prompt box's Send ("✈ Send"). Since 2.390.0. */
 export declare function SendIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** Wireframe on (or off) for every mesh material of the model. Returns false when the scene is unreachable. */
+export declare function setModelWireframe(el: unknown, on: boolean): boolean;
 
 export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
