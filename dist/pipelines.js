@@ -17,7 +17,7 @@ import { t as F } from "./Select-CpZyUWay.js";
 import { a as xe, t as Se } from "./Toolbar-BKQZHGmO.js";
 import { t as Ce } from "./SearchInput-D5AvHiLn.js";
 import { t as we } from "./EmptyState-pOG782nO.js";
-import { n as Te, t as Ee } from "./StatusPill-cLjwbEQM.js";
+import { n as Te, t as Ee } from "./StatusPill-BqiEKifS.js";
 import { i as De, t as Oe } from "./focusTrap-D9J7npjl.js";
 import { t as ke } from "./DropdownMenu-DP3rRjEd.js";
 import { n as Ae, t as je } from "./Switch-CjodMIfY.js";

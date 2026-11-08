@@ -76,14 +76,14 @@ var a = {
 	sm: "w-1.5 h-1.5",
 	md: "w-2 h-2"
 };
-function u({ state: t, tone: i, label: u, icon: d, meta: f, size: p = "md", variant: m = "pill", className: h, "data-testid": g }) {
-	let _ = i ?? t ?? "neutral", v = a[_] ?? a.neutral ?? Object.values(a)[0], y = _ === "pending";
+function u({ state: t, tone: i, label: u, icon: d, meta: f, size: p = "md", variant: m = "pill", truncate: h = !0, className: g, "data-testid": _ }) {
+	let v = i ?? t ?? "neutral", y = a[v] ?? a.neutral ?? Object.values(a)[0], b = v === "pending";
 	return /* @__PURE__ */ r("span", {
 		role: "status",
-		"data-testid": g,
-		"data-state": _,
+		"data-testid": _,
+		"data-state": v,
 		"data-variant": m,
-		className: e("inline-flex max-w-full min-w-0 items-center whitespace-nowrap font-medium leading-none select-none", m === "pill" ? e("rounded-full border", v.pill, o[p]) : m === "tag" || m === "label" ? e("rounded-md border-0", v.pill, c[p]) : s[p], m === "tag" && _ === "neutral" ? "text-text-primary" : v.text, h),
+		className: e("inline-flex max-w-full min-w-0 items-center font-medium leading-none select-none", h ? "whitespace-nowrap" : "whitespace-normal", m === "pill" ? e("rounded-full border", y.pill, o[p]) : m === "tag" || m === "label" ? e("rounded-md border-0", y.pill, c[p]) : s[p], m === "tag" && v === "neutral" ? "text-text-primary" : y.text, g),
 		children: [
 			m === "tag" ? null : d ? /* @__PURE__ */ n("span", {
 				"aria-hidden": "true",
@@ -91,22 +91,22 @@ function u({ state: t, tone: i, label: u, icon: d, meta: f, size: p = "md", vari
 				children: d
 			}) : /* @__PURE__ */ r("span", {
 				className: e("relative inline-flex shrink-0", l[p]),
-				children: [y && /* @__PURE__ */ n("span", {
+				children: [b && /* @__PURE__ */ n("span", {
 					"aria-hidden": "true",
-					className: e("absolute inset-0 rounded-full animate-ping opacity-75", v.dot)
+					className: e("absolute inset-0 rounded-full animate-ping opacity-75", y.dot)
 				}), /* @__PURE__ */ n("span", {
 					"aria-hidden": "true",
-					className: e("relative rounded-full", l[p], v.dot)
+					className: e("relative rounded-full", l[p], y.dot)
 				})]
 			}),
 			/* @__PURE__ */ n("span", {
-				className: "min-w-0 truncate",
-				title: u,
+				className: h ? "min-w-0 truncate" : "min-w-0 leading-tight",
+				title: h ? u : void 0,
 				"data-status-pill-label": "",
 				children: u
 			}),
 			f && /* @__PURE__ */ r("span", {
-				"data-testid": g ? `${g}-meta` : void 0,
+				"data-testid": _ ? `${_}-meta` : void 0,
 				className: "shrink-0 font-normal text-text-tertiary",
 				children: [/* @__PURE__ */ n("span", {
 					"aria-hidden": "true",

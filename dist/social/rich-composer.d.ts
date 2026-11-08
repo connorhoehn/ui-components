@@ -1,3 +1,4 @@
+import { Context } from 'react';
 import { Editor } from '@tiptap/core';
 import { ForwardRefExoticComponent } from 'react';
 import { JSX } from 'react';
@@ -507,6 +508,10 @@ export declare interface ComposerIdentity {
 /** What the composer is for, right now. */
 export declare type ComposerMode = 'chat' | 'agent' | 'terminal';
 
+export declare type ComposerPresentation = 'card' | 'prompt';
+
+export declare const ComposerPresentationContext: Context<ComposerPresentation | null>;
+
 /**
  * Something already running that this composer's owner started.
  *
@@ -544,7 +549,7 @@ export declare interface ComposerPrompt {
     options?: readonly ComposerPromptOption[];
     /** What Enter on an empty input picks. Confirm defaults to its first option. */
     defaultOptionId?: string;
-    /** Text / number: the input's placeholder while this prompt is on screen. */
+    /** Text / number: the input's placeholder while this prompt is on screen. Choice / confirm under the quiet prompt box (2.512.0), where the input stays: its placeholder there. */
     placeholder?: string;
     /** Number: bounds a typed answer must sit inside. */
     min?: number;
@@ -579,6 +584,18 @@ export declare interface ComposerPrompt {
      * on the card like a refused answer.
      */
     back?: ComposerPromptBack;
+    /**
+     * Choice / confirm (2.512.0): words typed in the composer's input under
+     * this card are a direction, not a message — "make her taller" under a
+     * Generate confirm re-proposes. The deck hands the trimmed text here when
+     * the input is not empty and Enter is pressed (the composer's send).
+     * `{ error }` shows on the card; `{ next }` takes the card in place like an
+     * answer's follow-up; `{ receipt }` is announced; nothing keeps the card on
+     * screen — the host re-proposes by replacing this prompt in its queue (a
+     * new id). Without it the input's placeholder says what the card takes and
+     * Enter on an empty input picks the default option, as before.
+     */
+    onDirection?: (text: string) => ComposerPromptResult | Promise<ComposerPromptResult>;
     onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
 }
 
@@ -658,7 +675,7 @@ export declare interface ComposerPromptCompose {
     onCancel?: () => void;
 }
 
-export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, input, variant, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
+export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, input, variant, presentation: presentationProp, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
 
 /** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
 export declare interface ComposerPromptDeckOptions {
@@ -686,6 +703,14 @@ export declare interface ComposerPromptDeckProps {
      * under it, the input below it in the same card. Since 2.446.0.
      */
     variant?: 'card' | 'inset';
+    /**
+     * `card` (default): numbered keycaps on the answers and a key-hint row.
+     * `prompt` (2.512.0): plain Buttons and no hint row (the keys still work),
+     * facts one per line clamped to one line. Defaults to the enclosing
+     * composer's presentation (`ComposerPresentationContext`), else `card`.
+     * `data-presentation` on the deck root.
+     */
+    presentation?: ComposerPresentation;
     className?: string;
     'data-testid'?: string;
 }
@@ -713,6 +738,15 @@ export declare interface ComposerPromptDeckState {
     pick: (optionId: string) => Promise<boolean>;
     /** Answer the active text / number prompt with typed words. True when taken. */
     answerTyped: (raw: string) => Promise<boolean>;
+    /** The open card takes typed words as a direction (`ComposerPrompt.onDirection`). Since 2.512.0. */
+    direction: boolean;
+    /**
+     * Hand typed words under an open choice / confirm card to its
+     * `onDirection` (2.512.0). True when the host took them (the input
+     * clears); false — the words stay — on a refusal, an empty text, or a card
+     * without `onDirection` (which shows what the card takes as its error).
+     */
+    answerDirection: (raw: string) => Promise<boolean>;
     /**
      * Confirm the active compose prompt with its edited message (2.482.0). The
      * host's `{ error }` comes back for the flow to show; ok leaves the prompt on
@@ -1302,6 +1336,10 @@ export declare interface ConversationComposerOwnProps {
      * Human-in-the-loop prompts replace the message editor while expanded.
      * Choices use numbered buttons; text/number prompts expose a plain answer
      * field. Hide or finish restores the conversation draft and its tools.
+     * Under `presentation="prompt"` (2.512.0) the editor stays: the card is the
+     * composer's first section with plain answer buttons and no key hints, the
+     * input answers a text / number card, and words typed under a choice /
+     * confirm card go to its `onDirection` (a compose prompt still replaces).
      */
     prompts?: readonly ComposerPrompt[];
     /**
@@ -2190,6 +2228,9 @@ export declare interface StagedFile {
     id: string;
     file: File;
 }
+
+/** Whether typed words under this card are a direction for the host (`onDirection`): a choice / confirm card that takes one. */
+export declare function takesDirection(prompt: ComposerPrompt | null | undefined): boolean;
 
 /** Whether the composer's input carries a typed answer for this prompt. */
 export declare function takesTypedAnswer(prompt: ComposerPrompt | null | undefined): boolean;

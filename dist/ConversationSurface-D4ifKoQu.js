@@ -6,7 +6,7 @@ import { Dt as i, E as a, S as o, Tt as s, X as c, et as l, i as u, it as d, tt 
 import { i as p } from "./Text-BAAQrepu.js";
 import { t as m } from "./EmptyState-pOG782nO.js";
 import { a as h, d as g, i as _ } from "./railType-AsIPWdQ5.js";
-import { $ as v, Q as y, X as b, h as ee, tt as te } from "./ChatPanel-Je3UMgHr.js";
+import { $ as v, Q as y, X as b, h as ee, tt as te } from "./ChatPanel-DGo0hHlZ.js";
 import { n as x } from "./Avatar-GvBbrBxQ.js";
 import { t as S } from "./formatBytes-05ivRSJY.js";
 import { useState as ne } from "react";

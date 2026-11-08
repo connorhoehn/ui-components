@@ -11090,11 +11090,20 @@ export declare interface GalleryAsset {
     src?: string;
     subtitle?: string;
     /**
-     * Shown on the card, over the thumbnail's top-left corner: StatusPill props
-     * (rendered as a md StatusPill, 12px: the sm size is 10px, under the type floor) or any node. The card's button is
-     * described by it, so a screen reader hears "Inspect Cup, Needs review".
+     * Shown on the card: StatusPill props (rendered at md, 12px: the sm size is
+     * 10px, under the type floor) or any node. `images`: a pill over the
+     * thumbnail's top-left corner. `avatars` (2.512.0): the caption's first
+     * line under the tile — a tone dot and the full label, never truncated
+     * (an 88px tile cut "Candidate" to "C."). The card's button is described
+     * by it, so a screen reader hears "Inspect Cup, Needs review".
      */
     status?: GalleryAssetStatus | ReactNode;
+    /**
+     * With no `src` (2.512.0): the tile shows a library empty tile — the muted
+     * surface, an image glyph and this text ("No picture yet") — instead of the
+     * Avatar's initials or the "No image yet" line. Both variants.
+     */
+    placeholder?: string;
 }
 
 /**
@@ -23297,7 +23306,7 @@ export declare interface StatusLeaf extends Omit<StatusPillProps, 'className' | 
     kind: 'status';
 }
 
-export declare function StatusPill({ state: stateProp, tone, label, icon, meta, size, variant, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
+export declare function StatusPill({ state: stateProp, tone, label, icon, meta, size, variant, truncate, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
 
 export declare interface StatusPillProps {
     /** The pill's tone. Either `state` or `tone`; `tone` wins when both are given. */
@@ -23319,6 +23328,13 @@ export declare interface StatusPillProps {
     meta?: string;
     size?: StatusPillSize;
     variant?: StatusPillVariant;
+    /**
+     * Default true: the label ellipsizes when its row is narrower than it
+     * (full text in `title`). `false` (2.512.0): the label is never cut — it
+     * wraps between words instead, for a caption whose word must read whole
+     * ("Candidate" under an 88px tile).
+     */
+    truncate?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -28479,13 +28495,22 @@ declare interface UseActivityBusReturn {
       label: string;
       done: boolean;
       active: boolean;
-      /** Supporting timestamp or explanation, below the milestone label. */
+      /**
+       * Supporting timestamp or explanation, below the milestone label. In the
+       * vertical orientation this is the step's one fact ("Mina (proposed)").
+       */
       description?: ReactNode;
+      /**
+       * Vertical orientation only (2.512.0): the step's next move — a library
+       * `Button` — drawn under its label while the step is `active`. Ignored on
+       * other steps and in the horizontal strip.
+       */
+      action?: ReactNode;
       /** Terminal outcomes must not look like successful completion. */
       outcome?: 'failed' | 'cancelled';
   }
 
-  export declare function WorkflowStepper({ steps, size: sizeProp, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+  export declare function WorkflowStepper({ steps, size: sizeProp, wrap, orientation, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
 
   export declare interface WorkflowStepperProps {
       steps: WorkflowStep[];
@@ -28502,6 +28527,12 @@ declare interface UseActivityBusReturn {
        * no step is ever hidden past the track's edge. Default false (scrolls).
        */
       wrap?: boolean;
+      /**
+       * `horizontal` (default): the strip. `vertical` (2.512.0): a timeline, one
+       * row per step with its fact and, on the active step, its `action`.
+       * `data-orientation` on the root.
+       */
+      orientation?: 'horizontal' | 'vertical';
       className?: string;
       'data-testid'?: string;
   }
