@@ -52,6 +52,9 @@ export const Unavailable: Story = {
   args: { phase: 'unavailable', level: 0, lastLine: null, budget: null, unavailableReason: 'No voice grant for this tenant' },
 };
 export const Compact: Story = { args: { compact: true } };
+/** `size="footer"`: the footer's metrics (sm ring, xs labels, ghost "Voice" / "End"). */
+export const FooterOff: Story = { args: { size: 'footer', phase: 'off', level: 0, lastLine: null, budget: null } };
+export const FooterListening: Story = { args: { size: 'footer' } };
 export const Muted: Story = { args: { muted: true } };
 
 /** Every phase of the ring, side by side. */

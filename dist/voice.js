@@ -36,7 +36,7 @@ function b(e) {
 //#endregion
 //#region src/components/voice/VoiceActivityRing.tsx
 var x = {
-	sm: "size-6",
+	sm: "size-4.5",
 	md: "size-9"
 }, S = {
 	off: "text-text-tertiary opacity-50",
@@ -255,101 +255,129 @@ function k(e) {
 	return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
 var A = (e) => `$${e.toFixed(2)}`;
-function j({ phase: t, level: o, outputLevel: v, elapsedSeconds: b, budget: x = null, pending: S = null, lastLine: w = null, onStart: E, onStop: D, onMute: j, muted: M = !1, unavailableReason: N, compact: P = !1, className: F, ref: I, "data-testid": L = "voice-dock" }) {
-	let R = m(null), [z, B] = h(!1);
-	p(() => B(!0), []);
-	let V = f((e) => {
-		R.current = e, typeof I == "function" ? I(e) : I && (I.current = e);
-	}, [I]), H = t !== "off" && t !== "ended" && t !== "unavailable", U = z && !!S && t === "confirming", W = t === "unavailable" ? N : void 0, G = y[t];
+function j({ phase: o, level: v, outputLevel: b, elapsedSeconds: x, budget: S = null, pending: w = null, lastLine: E = null, onStart: D, onStop: j, onMute: M, muted: N = !1, unavailableReason: P, compact: F = !1, size: I = "panel", startLabel: L = "Voice", className: R, ref: z, "data-testid": B = "voice-dock" }) {
+	let V = m(null), [H, U] = h(!1);
+	p(() => U(!0), []);
+	let W = f((e) => {
+		V.current = e, typeof z == "function" ? z(e) : z && (z.current = e);
+	}, [z]), G = o !== "off" && o !== "ended" && o !== "unavailable", K = H && !!w && o === "confirming", q = o === "unavailable" ? P : void 0, J = y[o], Y = I === "footer";
 	return /* @__PURE__ */ _(s, {
-		ref: V,
+		ref: W,
 		wrap: !1,
 		gap: "sm",
-		className: e("min-w-0 px-2 py-1", F),
-		"data-testid": L,
-		"data-phase": t,
+		className: e("min-w-0", Y ? "px-1" : "px-2 py-1", R),
+		"data-testid": B,
+		"data-phase": o,
+		"data-size": I,
 		"data-voice-dock": "",
 		children: [
 			/* @__PURE__ */ g(C, {
-				level: o,
-				outputLevel: v,
-				phase: t,
-				size: P ? "sm" : "md",
-				"data-testid": `${L}-ring`
+				level: v,
+				outputLevel: b,
+				phase: o,
+				size: F || Y ? "sm" : "md",
+				"data-testid": `${B}-ring`
 			}),
 			/* @__PURE__ */ g(c, {
-				title: W,
-				"data-testid": `${L}-phase`,
-				children: /* @__PURE__ */ g(d, {
+				title: q,
+				"data-testid": `${B}-phase`,
+				children: Y ? /* @__PURE__ */ g(c, {
+					size: "xs",
+					tone: "secondary",
+					className: "whitespace-nowrap",
+					role: "status",
+					children: J
+				}) : /* @__PURE__ */ g(d, {
 					size: "sm",
-					tone: O[t],
-					label: G
+					tone: O[o],
+					label: J
 				})
 			}),
-			!P && w ? /* @__PURE__ */ g(c, {
-				size: "sm",
-				tone: w.role === "you" ? "secondary" : "primary",
+			!F && E ? /* @__PURE__ */ g(c, {
+				size: Y ? "xs" : "sm",
+				tone: E.role === "you" ? "secondary" : "primary",
 				className: "min-w-0 flex-1 truncate",
-				title: w.text,
-				"data-testid": `${L}-last-line`,
-				"data-role": w.role,
-				children: w.text
+				title: E.text,
+				"data-testid": `${B}-last-line`,
+				"data-role": E.role,
+				children: E.text
 			}) : /* @__PURE__ */ g(c, {
 				className: "min-w-0 flex-1",
 				"aria-hidden": "true",
 				children: ""
 			}),
-			!P && x && H ? /* @__PURE__ */ g(u, {
-				value: x.holdUsd > 0 ? x.usedUsd / x.holdUsd : 0,
+			!F && S && G ? /* @__PURE__ */ g(u, {
+				value: S.holdUsd > 0 ? S.usedUsd / S.holdUsd : 0,
 				segments: 5,
 				showPercent: !1,
-				note: `${A(x.usedUsd)} of ${A(x.holdUsd)}`,
+				note: `${A(S.usedUsd)} of ${A(S.holdUsd)}`,
 				tone: "surface",
-				"data-testid": `${L}-budget`
+				"data-testid": `${B}-budget`
 			}) : null,
-			H && b !== void 0 ? /* @__PURE__ */ g(c, {
+			G && x !== void 0 ? /* @__PURE__ */ g(c, {
 				size: "xs",
 				tone: "tertiary",
 				tabular: !0,
-				"data-testid": `${L}-elapsed`,
-				children: k(b)
+				"data-testid": `${B}-elapsed`,
+				children: k(x)
 			}) : null,
-			H && j ? /* @__PURE__ */ g(n, {
-				"aria-label": M ? "Unmute microphone" : "Mute microphone",
-				"aria-pressed": M,
+			G && M ? /* @__PURE__ */ g(n, {
+				"aria-label": N ? "Unmute microphone" : "Mute microphone",
+				"aria-pressed": N,
 				size: "sm",
 				variant: "ghost",
-				icon: g(M ? r : i, { size: 16 }),
-				onClick: j,
-				"data-testid": `${L}-mute`
+				icon: g(N ? r : i, { size: 16 }),
+				onClick: M,
+				"data-testid": `${B}-mute`
 			}) : null,
-			H ? /* @__PURE__ */ g(n, {
+			Y ? G ? /* @__PURE__ */ _(t, {
+				variant: "ghost",
+				size: "sm",
+				"aria-label": "End voice session",
+				className: "gap-1.5",
+				onClick: j,
+				"data-testid": `${B}-stop`,
+				children: [/* @__PURE__ */ g(a, {
+					size: 16,
+					className: "text-danger"
+				}), "End"]
+			}) : /* @__PURE__ */ _(t, {
+				variant: "ghost",
+				size: "sm",
+				"aria-label": "Start voice session",
+				className: "gap-1.5",
+				disabled: o === "unavailable" || !D,
+				title: q,
+				onClick: D,
+				"data-testid": `${B}-start`,
+				children: [/* @__PURE__ */ g(i, { size: 16 }), L]
+			}) : G ? /* @__PURE__ */ g(n, {
 				"aria-label": "End voice session",
 				size: "sm",
 				variant: "danger",
 				icon: /* @__PURE__ */ g(a, { size: 16 }),
-				onClick: D,
-				"data-testid": `${L}-stop`
+				onClick: j,
+				"data-testid": `${B}-stop`
 			}) : /* @__PURE__ */ g(n, {
 				"aria-label": "Start voice session",
 				size: "sm",
 				variant: "primary",
 				icon: /* @__PURE__ */ g(i, { size: 16 }),
-				disabled: t === "unavailable" || !E,
-				title: W,
-				onClick: E,
-				"data-testid": `${L}-start`
+				disabled: o === "unavailable" || !D,
+				title: q,
+				onClick: D,
+				"data-testid": `${B}-start`
 			}),
-			S ? /* @__PURE__ */ g(l, {
-				trigger: R,
-				open: U,
-				onClose: S.onCancel,
+			w ? /* @__PURE__ */ g(l, {
+				trigger: V,
+				open: K,
+				onClose: w.onCancel,
 				placement: "bottom-start",
-				"aria-label": `Confirm: ${S.title}`,
+				"aria-label": `Confirm: ${w.title}`,
 				kind: "voice-confirm",
-				"data-testid": `${L}-pending`,
+				"data-testid": `${B}-pending`,
 				children: /* @__PURE__ */ g(T, {
-					pending: S,
+					pending: w,
 					handleEscape: !1
 				})
 			}) : null

@@ -40,7 +40,7 @@ export declare interface VoiceConfirmCardProps {
     'data-testid'?: string;
 }
 
-export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
+export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, size, startLabel, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
 
 export declare interface VoiceDockProps {
     phase: VoicePhase;
@@ -60,11 +60,22 @@ export declare interface VoiceDockProps {
     unavailableReason?: string;
     /** Drops the transcript line and the budget meter. */
     compact?: boolean;
+    /**
+     * `panel` (default): the full row, as on a reference sheet or a panel.
+     * `footer`: matched to an app footer's quiet controls (HuddleBar's Huddle /
+     * Message): `sm` ring, `T` xs labels, ghost icon+label Start / End, no
+     * vertical padding. Since 2.510.1.
+     */
+    size?: VoiceDockSize;
+    /** The Start control's label in the `footer` size. Default `'Voice'`. */
+    startLabel?: string;
     className?: string;
     /** The dock's root element. */
     ref?: React.Ref<HTMLDivElement>;
     'data-testid'?: string;
 }
+
+export declare type VoiceDockSize = 'footer' | 'panel';
 
 export declare interface VoiceLine {
     role: 'you' | 'assistant';

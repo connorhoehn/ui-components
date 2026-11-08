@@ -65,6 +65,41 @@ describe('VoiceDock phases', () => {
   });
 });
 
+describe('VoiceDock size', () => {
+  it('panel (default) keeps the md ring, the pill and the filled Start square', () => {
+    render(<VoiceDock {...dockBase} phase="off" />);
+    expect(screen.getByTestId('voice-dock')).toHaveAttribute('data-size', 'panel');
+    expect(screen.getByTestId('voice-dock-ring').getAttribute('class')).toContain('size-9');
+    expect(screen.getByTestId('voice-dock-start')).not.toHaveTextContent('Voice');
+  });
+
+  it('footer matches the footer controls: sm ring, xs labels, ghost icon+label Start, no vertical padding', () => {
+    const lastLine = { role: 'you' as const, text: 'open atlas' };
+    const { rerender } = render(<VoiceDock {...dockBase} phase="off" size="footer" />);
+    const dock = screen.getByTestId('voice-dock');
+    expect(dock).toHaveAttribute('data-size', 'footer');
+    expect(dock.getAttribute('class')).not.toMatch(/\bpy-/);
+    expect(screen.getByTestId('voice-dock-ring').getAttribute('class')).toContain('size-4.5');
+    const start = screen.getByTestId('voice-dock-start');
+    expect(start).toHaveTextContent('Voice');
+    expect(start).toHaveAttribute('data-variant', 'ghost');
+    expect(start).toHaveAttribute('data-size', 'sm');
+    expect(screen.getByTestId('voice-dock-phase').querySelector('[role="status"]')!.getAttribute('class')).toContain('text-xs');
+    rerender(<VoiceDock {...dockBase} phase="listening" size="footer" lastLine={lastLine} />);
+    expect(screen.getByTestId('voice-dock-last-line').getAttribute('class')).toContain('text-xs');
+    const stop = screen.getByTestId('voice-dock-stop');
+    expect(stop).toHaveAttribute('data-variant', 'ghost');
+    expect(stop).toHaveTextContent('End');
+    expect(screen.getByTestId('voice-dock-mute')).toBeInTheDocument();
+  });
+
+  it('footer Start takes a custom label and stays disabled when unavailable', () => {
+    render(<VoiceDock {...dockBase} phase="unavailable" size="footer" startLabel="Talk" unavailableReason="No grant" />);
+    expect(screen.getByTestId('voice-dock-start')).toHaveTextContent('Talk');
+    expect(screen.getByTestId('voice-dock-start')).toBeDisabled();
+  });
+});
+
 describe('VoiceDock Escape', () => {
   it('Escape with focus in the dock popover cancels exactly once', () => {
     const onCancel = vi.fn();

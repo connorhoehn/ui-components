@@ -22,7 +22,8 @@ export interface VoiceActivityRingProps {
   'data-testid'?: string;
 }
 
-const SIZE = { sm: 'size-6', md: 'size-9' } as const;
+// sm (18px) sits beside a 28px footer control; md (36px) is the panel row.
+const SIZE = { sm: 'size-4.5', md: 'size-9' } as const;
 
 const COLOR: Record<VoicePhase, string> = {
   off: 'text-text-tertiary opacity-50',

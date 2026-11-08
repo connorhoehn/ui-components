@@ -6,11 +6,21 @@
 // `pending` is set the confirmation card opens as a popover above the row.
 // `unavailable` shows the reason as the pill's title and disables Start.
 //
+// Two sizes. `panel` (the default) is the full row: a 36px ring, the phase
+// pill, the last line at `sm`, a filled Start square. `footer` sits in an app
+// footer beside HuddleBar's idle controls and takes their metrics: an 18px
+// ring, the phase and the last line in the footer's label type (`T` xs), and
+// Start / End as quiet ghost `Button size="sm"` controls with a 16px icon and
+// a label ("Voice" / "End"), the same box as Huddle and Message. Only End
+// keeps an accent while live (its icon in the danger ink); no vertical
+// padding, so the dock is the control height.
+//
 // Spec: aws-agentcore docs/voice-navigator-spec.md §5.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
 import { Inline } from '../ui/Stack';
+import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import DotMeter from '../shared/DotMeter';
 import InlinePopover from '../shared/InlinePopover';
@@ -46,11 +56,22 @@ export interface VoiceDockProps {
   unavailableReason?: string;
   /** Drops the transcript line and the budget meter. */
   compact?: boolean;
+  /**
+   * `panel` (default): the full row, as on a reference sheet or a panel.
+   * `footer`: matched to an app footer's quiet controls (HuddleBar's Huddle /
+   * Message): `sm` ring, `T` xs labels, ghost icon+label Start / End, no
+   * vertical padding. Since 2.510.1.
+   */
+  size?: VoiceDockSize;
+  /** The Start control's label in the `footer` size. Default `'Voice'`. */
+  startLabel?: string;
   className?: string;
   /** The dock's root element. */
   ref?: React.Ref<HTMLDivElement>;
   'data-testid'?: string;
 }
+
+export type VoiceDockSize = 'footer' | 'panel';
 
 const TONE: Record<VoicePhase, StatusPillTone> = {
   off: 'neutral',
@@ -87,6 +108,8 @@ export function VoiceDock({
   muted = false,
   unavailableReason,
   compact = false,
+  size = 'panel',
+  startLabel = 'Voice',
   className,
   ref,
   'data-testid': testId = 'voice-dock',
@@ -107,33 +130,37 @@ export function VoiceDock({
   const showCard = mounted && Boolean(pending) && phase === 'confirming';
   const pillTitle = phase === 'unavailable' ? unavailableReason : undefined;
   const label = VOICE_PHASE_LABEL[phase];
+  const footer = size === 'footer';
 
   return (
     <Inline
       ref={setRefs}
       wrap={false}
       gap="sm"
-      className={cn('min-w-0 px-2 py-1', className)}
+      className={cn('min-w-0', footer ? 'px-1' : 'px-2 py-1', className)}
       data-testid={testId}
       data-phase={phase}
+      data-size={size}
       data-voice-dock=""
     >
       <VoiceActivityRing
         level={level}
         outputLevel={outputLevel}
         phase={phase}
-        size={compact ? 'sm' : 'md'}
+        size={compact || footer ? 'sm' : 'md'}
         data-testid={`${testId}-ring`}
       />
       <T
         title={pillTitle}
         data-testid={`${testId}-phase`}
       >
-        <StatusPill size="sm" tone={TONE[phase]} label={label} />
+        {footer
+          ? <T size="xs" tone="secondary" className="whitespace-nowrap" role="status">{label}</T>
+          : <StatusPill size="sm" tone={TONE[phase]} label={label} />}
       </T>
       {!compact && lastLine ? (
         <T
-          size="sm"
+          size={footer ? 'xs' : 'sm'}
           tone={lastLine.role === 'you' ? 'secondary' : 'primary'}
           className="min-w-0 flex-1 truncate"
           title={lastLine.text}
@@ -169,7 +196,35 @@ export function VoiceDock({
           data-testid={`${testId}-mute`}
         />
       ) : null}
-      {live ? (
+      {footer ? (
+        live ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label="End voice session"
+            className="gap-1.5"
+            onClick={onStop}
+            data-testid={`${testId}-stop`}
+          >
+            <PhoneOffIcon size={16} className="text-danger" />
+            End
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label="Start voice session"
+            className="gap-1.5"
+            disabled={phase === 'unavailable' || !onStart}
+            title={pillTitle}
+            onClick={onStart}
+            data-testid={`${testId}-start`}
+          >
+            <MicIcon size={16} />
+            {startLabel}
+          </Button>
+        )
+      ) : live ? (
         <IconButton
           aria-label="End voice session"
           size="sm"
