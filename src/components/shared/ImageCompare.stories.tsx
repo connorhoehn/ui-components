@@ -46,3 +46,16 @@ export const NarrowContainerStacks: Story = {
 export const NotZoomable: Story = {
   args: { ...TwoUp.args, zoomable: false, fit: 'cover' },
 };
+
+// A pane whose image does not exist yet keeps the same frame and caption,
+// with its placeholder words centred (2.513.0). It is not a button, and the
+// lightbox flips only between the panes that have a picture.
+export const PlaceholderPane: Story = {
+  args: {
+    images: [
+      { src: 'https://picsum.photos/seed/compare-ref/800/1200', label: 'Reference', description: 'Concept art' },
+      { label: 'Candidate', placeholder: 'No picture yet', description: 'Draws after the concept is approved' },
+    ],
+    aspect: 'square',
+  },
+};

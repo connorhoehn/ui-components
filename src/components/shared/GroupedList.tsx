@@ -73,6 +73,24 @@
 // line of their own under the title, aligned with it, so the title keeps the
 // row's width instead of truncating beside a button group.
 //
+// ## `trailingLayout="columns"` (shared trailing columns, since 2.513.0)
+//
+// By default (`inline`) each row lays out its own `actions` and `trailing` at
+// its end, so rows with different buttons end at different x — a ragged right
+// edge down the list. `columns` makes the whole list ONE grid: every row is a
+// subgrid line of `[leading] [main 1fr] [actions] [trailing] [hover · menu ·
+// handle]`, so each column is as wide as its widest cell across ALL rows and
+// groups. Actions and trailing are right-aligned in their columns (trailing in
+// tabular figures), and a row with no actions still leaves the column empty,
+// so every edge lines up. Buttons in the actions cell draw at `sm` (a compact
+// `DensityProvider`) and every library Button or link there takes the `sm`
+// control height. The cells carry `data-ui-part="row-actions"` /
+// `"row-trailing"` and the root `data-row-actions-layout`, which the
+// `row.actions-aligned` audit rule measures. Below a 35rem LIST (the root is
+// the container) the actions wrap under the title as in `inline`. Row
+// semantics, hover tint, the current bar and tab order (row, then its
+// actions) are unchanged.
+//
 // ## Reorder (`onReorder`)
 //
 // With `onReorder`, each row that `canReorder` allows draws a grip handle at
@@ -112,6 +130,7 @@ import { cn } from '../../lib/cn';
 import { DropdownMenu, type DropdownMenuSection } from './DropdownMenu';
 import Chip from './Chip';
 import { GripIcon } from '../ui/Icons';
+import { DensityProvider } from './Density';
 import {
   RailCaretIcon,
   RAIL_CURRENT_FILL,
@@ -252,6 +271,15 @@ export interface GroupedListProps {
    * the 3px-bar current row) at any `size`, the same scale as SubNavLayout.
    */
   rowStyle?: 'ruled' | 'plain';
+  /**
+   * Where rows put `actions` and `trailing`. `inline` (default): each row at
+   * its own end, as before. `columns`: one grid for the whole list — every
+   * row's actions and trailing sit in shared, right-aligned columns
+   * (`[leading] [main] [actions] [trailing]`), so their edges line up down the
+   * list whatever buttons each row has; action Buttons draw at `sm`. Since
+   * 2.513.0.
+   */
+  trailingLayout?: 'inline' | 'columns';
   className?: string;
   'data-testid'?: string;
 }
@@ -366,10 +394,12 @@ export function GroupedList({
   groupCountStyle = 'chip',
   groupCountAlign = 'inline',
   rowStyle = 'ruled',
+  trailingLayout = 'inline',
   className,
   'data-testid': testId = 'grouped-list',
 }: GroupedListProps) {
   const md = size === 'md';
+  const columns = trailingLayout === 'columns';
   const labelHeading = groupHeading === 'label';
   // `end`: the count takes the header's right edge (a little in from it, so
   // it lines up with a row's trailing content rather than the hover fill).
@@ -614,7 +644,14 @@ export function GroupedList({
   );
 
   const list = (
-    <div ref={rootRef} data-testid={testId} className={cn('flex flex-col', className)} onKeyDown={onKeyDown}>
+    <div
+      ref={rootRef}
+      data-testid={testId}
+      data-ui-row-list="grouped"
+      data-row-actions-layout={trailingLayout}
+      className={cn(columns ? cn('@container grid', COLUMNS_GRID) : 'flex flex-col', className)}
+      onKeyDown={onKeyDown}
+    >
       {onReorder && (
         <div role="status" aria-live="polite" className="sr-only" data-testid={`${testId}-reorder-status`}>
           {announcement}
@@ -634,12 +671,12 @@ export function GroupedList({
             data-testid={`${testId}-group-${group.id}`}
             data-group-id={group.id}
             data-open={open}
-            className="flex flex-col"
+            className={columns ? 'col-span-full grid grid-cols-subgrid' : 'flex flex-col'}
           >
             <h3
               // The heading wrapper carries its button's step (or the rail label's), so the
               // element itself never measures the document's 16px beside the rail captions.
-              className={cn('m-0 rounded-md', labelHeading ? RAIL_GROUP_LABEL : 'text-sm font-semibold', overGroup === group.id && 'bg-primary/8')}
+              className={cn('m-0 rounded-md', columns && 'col-span-full', labelHeading ? RAIL_GROUP_LABEL : 'text-sm font-semibold', overGroup === group.id && 'bg-primary/8')}
               data-drop-over={overGroup === group.id || undefined}
               ref={(el) => {
                 headerRefs.current.set(group.id, el);
@@ -697,10 +734,10 @@ export function GroupedList({
               id={listId}
               data-testid={listId}
               hidden={!open}
-              className="m-0 flex list-none flex-col p-0"
+              className={cn('m-0 list-none p-0', columns ? 'col-span-full grid grid-cols-subgrid' : 'flex flex-col')}
             >
               {open && groupRows.length === 0 && (
-                <li className="px-4 py-3 pl-12 text-xs text-text-tertiary" data-testid={`${testId}-group-empty-${group.id}`}>
+                <li className={cn('px-4 py-3 pl-12 text-xs text-text-tertiary', columns && 'col-span-full')} data-testid={`${testId}-group-empty-${group.id}`}>
                   {group.emptyLabel ?? 'Nothing here'}
                 </li>
               )}
@@ -712,6 +749,7 @@ export function GroupedList({
                     current={row.current || row.id === currentId}
                     currentStyle={currentStyle}
                     rowStyle={rowStyle}
+                    columns={columns}
                     testId={testId}
                     size={size}
                     tabbable={tabTarget === `r:${row.id}`}
@@ -769,11 +807,34 @@ function actionsIndent(row: GroupedListRow, md: boolean, hasLeading: boolean): s
   return '@max-[35rem]:pl-[30px]';
 }
 
+/**
+ * `trailingLayout="columns"`: the list's tracks, shared by every row (each a
+ * subgrid line). Leading control, the row's main button, its actions, its
+ * trailing, then the hover actions / ⋯ menu / reorder handle. Gaps are padding
+ * on the cells, so an empty column costs no gap.
+ */
+const COLUMNS_GRID = 'grid-cols-[auto_minmax(0,1fr)_max-content_max-content_auto]';
+
+/**
+ * In columns mode, every library Button (or link) in the actions cell takes
+ * the `sm` control height, so a link-styled "Open run" and a boxed "Cancel"
+ * are one height.
+ */
+const COLUMN_ACTION_CONTROLS =
+  '[&_:is(a,button)[data-variant]]:inline-flex [&_:is(a,button)[data-variant]]:items-center [&_:is(a,button)[data-variant]]:h-[var(--ui-control-sm,1.75rem)]';
+
+/** `actionsIndent` for the columns layout, where the wrapped cell spans the row from its first track. */
+function columnActionsIndent(row: GroupedListRow, md: boolean, hasLeading: boolean): string {
+  return actionsIndent(row, md, hasLeading) || '@max-[35rem]:pl-0';
+}
+
 interface RowProps {
   row: GroupedListRow;
   current: boolean;
   currentStyle: 'tint' | 'bar';
   rowStyle: 'ruled' | 'plain';
+  /** `trailingLayout="columns"`: this row is a subgrid line of the list's tracks. */
+  columns: boolean;
   testId: string;
   size: 'sm' | 'md';
   tabbable: boolean;
@@ -785,7 +846,7 @@ interface RowProps {
   reorder?: { label: string; sortable: SortableModule | null };
 }
 
-function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
+function Row({ row, current, currentStyle, rowStyle, columns, testId, size, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
   const hasMenu = !!menuSections && menuSections.some((s) => s.items.length > 0);
   const hasHoverLine = row.hoverSubline !== undefined && row.hoverSubline !== null;
   const hasMeta = row.meta !== undefined && row.meta !== null;
@@ -809,6 +870,62 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
   };
   const grip = <GripIcon size={md ? 20 : 14} />;
 
+  const hoverCell = row.hoverActions ? (
+    <span
+      data-testid={`${testId}-row-actions-${row.id}`}
+      className={cn(
+        'flex shrink-0 items-center gap-1.5 transition-opacity duration-100',
+        current
+          ? 'opacity-100'
+          : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100',
+      )}
+    >
+      {row.hoverActions}
+    </span>
+  ) : null;
+  const trailingCell = (
+    <span
+      data-ui-part="row-trailing"
+      className={cn(
+        'flex shrink-0 items-center text-xs',
+        columns ? 'gap-2' : 'gap-1.5',
+        columns && 'col-start-4 justify-end justify-self-end pl-3 text-right tabular-nums',
+      )}
+      data-testid={`${testId}-row-trailing-${row.id}`}
+    >
+      {row.trailing}
+    </span>
+  );
+  const menuCell = hasMenu ? (
+    <span
+      data-grouped-list-menu
+      data-testid={`${testId}-row-menu-${row.id}`}
+      className="flex shrink-0 items-center"
+      onContextMenu={(event) => event.stopPropagation()}
+    >
+      <DropdownMenu
+        trigger={<span aria-hidden="true" className="text-base leading-none">⋯</span>}
+        triggerLabel={menuLabel}
+        triggerTabIndex={-1}
+        triggerTestId={`${testId}-row-menu-trigger-${row.id}`}
+        align="end"
+        sections={menuSections!}
+        triggerClassName="h-7 w-7 border-transparent px-0 py-0 text-text-secondary hover:border-border"
+      />
+    </span>
+  ) : null;
+  const handle = reorder ? (
+    reorder.sortable ? (
+      <reorder.sortable.SortableHandle id={row.id} onStateChange={onDragState} {...handleProps}>
+        {grip}
+      </reorder.sortable.SortableHandle>
+    ) : (
+      <button data-ui-part="" type="button" tabIndex={-1} {...handleProps}>
+        {grip}
+      </button>
+    )
+  ) : null;
+
   return (
     <li
       data-dragging={drag.dragging || undefined}
@@ -829,11 +946,12 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
           }
         : {})}
       className={cn(
-        'group relative flex items-center px-2',
-        row.leadingSize === 'indicator' ? 'gap-2' : 'gap-3',
+        columns ? 'group relative col-span-full grid grid-cols-subgrid items-center gap-y-1 px-2' : 'group relative flex items-center px-2',
+        !columns && (row.leadingSize === 'indicator' ? 'gap-2' : 'gap-3'),
         // A row with controls is its own container: below 35rem they wrap
         // under the title (see `actions`).
-        hasActions && '@container flex-wrap gap-y-1',
+        // (In columns mode the list root is that container.)
+        !columns && hasActions && '@container flex-wrap gap-y-1',
         rowStyle === 'plain' ? 'border-t-0' : 'border-t border-border',
         // plain rows are the rail form: the shared rail pitch at any size.
         rowStyle === 'plain' ? RAIL_ROW_PAD_Y : md ? 'py-[7px]' : 'py-2.5',
@@ -851,7 +969,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
       )}
     >
       {hasLeading && (
-        <span className={cn('flex shrink-0 items-center justify-center', row.leadingSize === 'indicator' ? 'w-2' : md ? 'w-6' : 'w-5')} data-ui-rail-leading={row.leadingSize} data-testid={`${testId}-row-leading-${row.id}`}>
+        <span className={cn('flex shrink-0 items-center justify-center', row.leadingSize === 'indicator' ? 'w-2' : md ? 'w-6' : 'w-5', columns && cn('col-start-1 box-content', row.leadingSize === 'indicator' ? 'pr-2' : 'pr-3'))} data-ui-rail-leading={row.leadingSize} data-testid={`${testId}-row-leading-${row.id}`}>
           {row.leading}
         </span>
       )}
@@ -859,6 +977,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
         data-ui-part=""
         type="button"
         data-testid={`${testId}-row-open-${row.id}`}
+        data-ui-row-main=""
         data-focus-key={rKey}
         aria-label={row.ariaLabel}
         aria-disabled={row.disabled || undefined}
@@ -869,6 +988,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
         }}
         className={cn(
           'flex min-w-0 flex-1 items-center rounded-md border-0 bg-transparent p-0 text-left',
+          columns && (hasLeading ? 'col-start-2' : 'col-start-1 col-span-2'),
           !hasLeading && row.leadingSize !== 'none' ? 'gap-2.5' : 'gap-3',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           row.disabled ? 'cursor-default' : 'cursor-pointer',
@@ -928,62 +1048,43 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
       {hasActions && (
         <span
           data-grouped-list-row-actions=""
+          data-ui-part="row-actions"
           data-testid={`${testId}-row-controls-${row.id}`}
           className={cn(
-            'flex shrink-0 items-center gap-1.5',
-            '@max-[35rem]:order-last @max-[35rem]:basis-full @max-[35rem]:flex-wrap',
-            actionsIndent(row, md, hasLeading),
+            'flex shrink-0 items-center',
+            columns
+              ? cn(
+                  // Scale values only (gap 8, inset 12): the space.S1 audit scale.
+                  'col-start-3 justify-self-end gap-2 pl-3',
+                  COLUMN_ACTION_CONTROLS,
+                  '@max-[35rem]:col-span-full @max-[35rem]:row-start-2 @max-[35rem]:flex-wrap @max-[35rem]:justify-self-start',
+                  columnActionsIndent(row, md, hasLeading),
+                )
+              : cn('gap-1.5 @max-[35rem]:order-last @max-[35rem]:basis-full @max-[35rem]:flex-wrap', actionsIndent(row, md, hasLeading)),
           )}
         >
-          {row.actions}
+          {columns ? <DensityProvider density="compact">{row.actions}</DensityProvider> : row.actions}
         </span>
       )}
-      {row.hoverActions && (
-        <span
-          data-testid={`${testId}-row-actions-${row.id}`}
-          className={cn(
-            'flex shrink-0 items-center gap-1.5 transition-opacity duration-100',
-            current
-              ? 'opacity-100'
-              : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100',
+      {columns ? (
+        <>
+          {row.trailing && trailingCell}
+          {(hoverCell || menuCell || handle) && (
+            <span data-ui-part="row-end" className="col-start-5 flex items-center gap-2 justify-self-end pl-2">
+              {hoverCell}
+              {menuCell}
+              {handle}
+            </span>
           )}
-        >
-          {row.hoverActions}
-        </span>
+        </>
+      ) : (
+        <>
+          {hoverCell}
+          {row.trailing && trailingCell}
+          {menuCell}
+          {handle}
+        </>
       )}
-      {row.trailing && (
-        <span className="flex shrink-0 items-center gap-1.5 text-xs" data-testid={`${testId}-row-trailing-${row.id}`}>
-          {row.trailing}
-        </span>
-      )}
-      {hasMenu && (
-        <span
-          data-grouped-list-menu
-          data-testid={`${testId}-row-menu-${row.id}`}
-          className="flex shrink-0 items-center"
-          onContextMenu={(event) => event.stopPropagation()}
-        >
-          <DropdownMenu
-            trigger={<span aria-hidden="true" className="text-base leading-none">⋯</span>}
-            triggerLabel={menuLabel}
-            triggerTabIndex={-1}
-            triggerTestId={`${testId}-row-menu-trigger-${row.id}`}
-            align="end"
-            sections={menuSections!}
-            triggerClassName="h-7 w-7 border-transparent px-0 py-0 text-text-secondary hover:border-border"
-          />
-        </span>
-      )}
-      {reorder &&
-        (reorder.sortable ? (
-          <reorder.sortable.SortableHandle id={row.id} onStateChange={onDragState} {...handleProps}>
-            {grip}
-          </reorder.sortable.SortableHandle>
-        ) : (
-          <button data-ui-part="" type="button" tabIndex={-1} {...handleProps}>
-            {grip}
-          </button>
-        ))}
     </li>
   );
 }

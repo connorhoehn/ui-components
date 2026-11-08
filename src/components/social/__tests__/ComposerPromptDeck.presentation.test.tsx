@@ -152,3 +152,55 @@ describe('deckKeyAction with a direction', () => {
     expect(deckKeyAction({ key: '1' }, state)).toEqual({ type: 'pick', optionId: 'generate' });
   });
 });
+
+// 2.513.0 — `inputDraft` binds the composer's own text box under the prompt presentation.
+describe('ConversationComposer presentation="prompt" with inputDraft', () => {
+  const ConversationComposer = createConversationComposer({ useFileUpload: () => ({ upload: async () => ({ status: 'uploading', transferId: 't' }) }) });
+  function mount(prompts: ComposerPrompt[], presentation: 'prompt' | 'compact' = 'prompt') {
+    let handle: RichChatComposerHandle | null = null;
+    const props = (p: ComposerPrompt[]) => ({
+      channel: null, context: { kind: 'initiative' as const, id: 's', title: 'Little Shop' }, presentation, defaultMode: 'agent' as const, expanded: true, console: false,
+      capabilities: { maySend: false, agent: { allowed: true } }, identity: { userId: 'u-1', displayName: 'Local' },
+      onAgent: () => true, submitLabel: 'Plan', composerTestId: 'composer', composerRef: (h: RichChatComposerHandle | null) => { handle = h; }, prompts: p,
+    });
+    const utils = render(<ConversationComposer {...props(prompts)} />);
+    return { ...utils, handle: () => handle, update: (p: ComposerPrompt[]) => utils.rerender(<ConversationComposer {...props(p)} />) };
+  }
+
+  it('seeds the text box from inputDraft.value when the card opens, and again when the open card changes', async () => {
+    const { handle, update } = mount([confirm({ id: 'refine', inputDraft: { value: 'A little fern', onChange: () => {} } })]);
+    await screen.findByTestId('conversation-composer-prompts-card');
+    await waitFor(() => expect(handle()!.editor!.getText()).toBe('A little fern'));
+    // Same card, new value: the box is the person's, not rewritten.
+    update([confirm({ id: 'refine', inputDraft: { value: 'something else', onChange: () => {} } })]);
+    await act(async () => {});
+    expect(handle()!.editor!.getText()).toBe('A little fern');
+    // Another card: seeded from its own draft.
+    update([text({ id: 'name', inputDraft: { value: 'Pip', onChange: () => {} } })]);
+    await waitFor(() => expect(screen.getByTestId('conversation-composer-prompts-card')).toHaveAttribute('data-composer-prompt', 'name'));
+    await waitFor(() => expect(handle()!.editor!.getText()).toBe('Pip'));
+  });
+
+  it('forwards every keystroke to inputDraft.onChange; Enter still answers the card', async () => {
+    const onChange = vi.fn((_value: string) => {});
+    const onAnswer = vi.fn((_answer: unknown) => undefined);
+    const { handle } = mount([text({ inputDraft: { value: '', onChange }, onAnswer })]);
+    await screen.findByTestId('conversation-composer-prompts-card');
+    await waitFor(() => expect(handle()!.editor).toBeTruthy());
+    act(() => { handle()!.insertText('P'); });
+    act(() => { handle()!.insertText('ip'); });
+    await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('Pip'));
+    expect(onChange).toHaveBeenCalledWith('P');
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-send')); });
+    await waitFor(() => expect(onAnswer).toHaveBeenCalledWith({ kind: 'text', text: 'Pip' }));
+  });
+
+  it('under presentation="compact" the composer text box is not bound', async () => {
+    const onChange = vi.fn((_value: string) => {});
+    const { handle } = mount([confirm({ inputDraft: { value: 'A little fern', onChange } })], 'compact');
+    await screen.findByTestId('conversation-composer-prompts-card');
+    await act(async () => {});
+    expect(handle()?.editor?.getText() ?? '').not.toBe('A little fern');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});

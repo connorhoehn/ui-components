@@ -31,7 +31,7 @@ folder path "Document location" separately from the application breadcrumb.
 | Text | `Highlight` (matched-term `<mark>` for search rows) |
 | Domain | `ChannelHeader`, `PageHeader`, `Breadcrumbs`, `PresenceAvatars`, `NotificationCenter`, `CommandPalette`, `Skeleton`, `Tooltip` |
 | Visualisation | `LogStream` / `TerminalLog`, `StackDiagram` / `LayerStack`, `HealthGrid` / `HealthCell`, `AlertList` / `AlertItem`, `CodeBlock` |
-| Media | `ImageCompare`, `ImageLightbox`, `ModelViewer` (GLB turntable beside its reference; channels, parts, wireframe, versions), `FrameStrip` (scrubbable image sequence) |
+| Media | `ImageCompare` (a `placeholder` pane keeps the frame), `ImageLightbox`, `ModelViewer` (GLB turntable beside its reference; channels, parts, wireframe, versions), `FrameStrip` (scrubbable image sequence) |
 
 ## Stability
 

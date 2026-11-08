@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-976 components across 20 entry points; 827 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+977 components across 20 entry points; 829 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -34,6 +34,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | A section or panel header inside a page | `CardHeader` | `@connorhoehnslalom/ui-components/shared` | Title + actions row with the separator under it, for a card or panel section. Use `PaneHeader` when the pane has tabs. Never hand-draw `border-b` header bands. | Not a page header (use `PageHeader` or a page template) or a channel/room header (use `ChannelHeader`). |
 | A page's title row | `PageHeader` | `@connorhoehnslalom/ui-components/shared` | Title, description, back link and actions at the top of a page. Templates render it for you. | Don't hand-roll an `<h1>` + flex row of buttons. |
 | Buttons | `Button` | `@connorhoehnslalom/ui-components/shared` | Always pass an explicit `variant` (`primary`, `secondary`, `ghost`, `danger`, `danger-solid`, `success`, `info`, `link`) and `size` where it matters. `IconButton` for icon-only actions. | Don't style a raw `<button>`, and don't rely on the default variant: one primary action per region. |
+| A row's or panel's own decision | `ConfirmButton` | `@connorhoehnslalom/ui-components/shared` | A button that confirms in place: pressed, it becomes "<question?> [Confirm] [Cancel]" in the same spot (`role="group"` named by the question); Escape or Cancel restores it, Enter confirms. `tone="destructive"` for a destructive confirm; `busy` (or a promise from `onConfirm`) holds it busy. `data-confirm-state` reads `idle` / `asking` / `busy`. The replacement for `ConfirmDialog` in rows and panels: a modal is never the right place for a row's own decision. | Not for a decision that needs a body, a preview or a form: that is `ConfirmDialog`. |
+| Rows with their own buttons | `GroupedList` | `@connorhoehnslalom/ui-components/shared` | Pass `trailingLayout="columns"` when rows carry `actions` and/or `trailing`: the whole list becomes one grid whose actions and trailing columns are shared and right-aligned, so every row ends at one x (audit rule `row.actions-aligned`). Action Buttons draw at `sm`. | Don't leave a list of rows with different buttons in the default `inline` layout (a ragged right edge), and don't put buttons in `meta` (inside the row's button). |
 | Empty / error / loading | `EmptyState` | `@connorhoehnslalom/ui-components/shared` | `EmptyState`, `ErrorState` and `LoadingState` for whole-region states. | Don't write "No items" paragraphs or spinners by hand. |
 | Form controls | `Input` | `@connorhoehnslalom/ui-components/shared` | Every control comes from `forms/`: `Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`, `Switch`, wrapped in `FormField` for label/help/error. | Never a raw `<input>`/`<select>`. |
 | Chat | `ChatPanel` | `@connorhoehnslalom/ui-components/social` | Message list + composer. With realtime-modules, use `WrappedChatPanel` from `/integrations/realtime-modules`. | Don't hand-roll a message list. |
@@ -46,7 +48,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (59)
 - [Tables & lists](#tables--lists) (31)
 - [Forms](#forms) (30)
-- [Buttons & actions](#buttons--actions) (15)
+- [Buttons & actions](#buttons--actions) (16)
 - [Feedback & states](#feedback--states) (25)
 - [Chat & social](#chat--social) (108)
 - [Video](#video) (103)
@@ -131,7 +133,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ChannelHeader` | `@connorhoehnslalom/ui-components/shared` | Header bar for a channel / DM / thread view. | `shared-channelheader` |  |
 | `ChecklistSection` | `@connorhoehnslalom/ui-components/shared` | A work item's acceptance criteria: square checkbox rows with in-place edit, remove and reorder, and an "Add criterion" field at the foot. | `work-checklistsection` |  |
 | `CollapsibleSection` | `@connorhoehnslalom/ui-components/shared` | Bordered accordion section with a header button and optional badge slot. | `shared-collapsiblesection` |  |
-| `ConfirmDialog` | `@connorhoehnslalom/ui-components/shared` | — | `shared-confirmdialog` |  |
+| `ConfirmDialog` | `@connorhoehnslalom/ui-components/shared` | A modal yes/no for a decision that needs a body or a preview; a row's or panel's own decision uses `ConfirmButton` (in place) instead. | `shared-confirmdialog` |  |
 | `ConsultCard` | `@connorhoehnslalom/ui-components/shared` | An agent's question, waiting on a person. | `shared-consultcard` |  |
 | `DetailHeader` | `@connorhoehnslalom/ui-components/shared` | The top of a detail panel: what this thing is, its state, one line of prose about it, its metadata, and a slot for whatever the panel measures. |  |  |
 | `DetailSection` | `@connorhoehnslalom/ui-components/shared` | A titled block inside a detail surface, separated from what precedes it by a hairline. | `shared-detailsection` |  |
@@ -262,6 +264,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `AttachToggle` | `@connorhoehnslalom/ui-components/shared` | "⊕ Add" / "✓ Added": puts a thing into (or takes it out of) a working set, such as the documents a prompt will use. |  |  |
 | `Button` | `@connorhoehnslalom/ui-components/shared` | Shared button component with consistent variants. | `ui-button` |  |
 | `CommandPalette` | `@connorhoehnslalom/ui-components/shared` | Shared Cmd+K command palette. | `shared-commandpalette` |  |
+| `ConfirmButton` | `@connorhoehnslalom/ui-components/shared` | A button that asks before it acts — in place. | `shared-confirmbutton` |  |
 | `DropdownMenu` | `@connorhoehnslalom/ui-components/shared` | Generic trigger + dropdown menu composite. | `shared-dropdownmenu` |  |
 | `FilePickerButton` | `@connorhoehnslalom/ui-components/shared` | A button that opens the system file picker and hands the chosen files over. |  |  |
 | `FilterChip` | `@connorhoehnslalom/ui-components/shared` | — | `shared-filterchip` |  |

@@ -46,7 +46,10 @@
 // than 35rem (560px; the list root is the query container, so it must get
 // its width from its parent, not its content) the controls wrap onto a line
 // of their own under the title, aligned with it, so the title keeps its
-// width.
+// width. Since 2.513.0 the controls sit right-aligned in that column (one
+// right edge down the list), every library Button or link in it takes the
+// `sm` control height, and the cell carries `data-ui-part="row-actions"` for
+// the `row.actions-aligned` audit rule.
 //
 // None of it is required: an item with a `description` and `meta` and no
 // columns renders exactly as before, and descriptions still work beside
@@ -300,7 +303,7 @@ export function ActionRowList({
   const slotted = items.some((item) => item.trailing != null && item.trailing !== false);
   const hasColumns = !!columns && columns.length > 0;
   return (
-    <div className={cn('flex min-w-0 flex-col', slotted && '@container', className)} data-testid={testId} data-striped={striped || undefined} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
+    <div className={cn('flex min-w-0 flex-col', slotted && '@container', className)} data-testid={testId} data-ui-row-list="action" {...(slotted ? { 'data-row-actions-layout': 'columns' } : {})} data-striped={striped || undefined} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
       {items.length === 0 ? (
         emptyLabel != null && <p className="m-0 py-2 text-sm text-text-tertiary" data-testid={`${testId}-empty`}>{emptyLabel}</p>
       ) : (
@@ -336,7 +339,7 @@ export function ActionRowList({
             return (
             <li key={item.id} className={cn(!toned && 'border-b border-border', stripe && 'bg-surface-inset', itemClass)} data-testid={`${testId}-row-${item.id}`} {...(stripe ? { 'data-stripe': '' } : {})} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (
-                <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`}>
+                <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`} data-ui-row-main="">
                   {body}
                 </a>
               ) : (
@@ -350,6 +353,7 @@ export function ActionRowList({
                   }}
                   className={cn(rowClass, item.disabled ? 'cursor-default opacity-60' : 'cursor-pointer', item.disabled && rowTone === 'neutral' && 'hover:bg-transparent')}
                   data-testid={`${testId}-open-${item.id}`}
+                  data-ui-row-main=""
                 >
                   {body}
                 </button>
@@ -357,10 +361,12 @@ export function ActionRowList({
               {hasTrailing && (
                 <span
                   data-action-row-trailing=""
+                  data-ui-part="row-actions"
                   data-testid={`${testId}-trailing-${item.id}`}
                   className={cn(
-                    'col-start-2 flex shrink-0 items-center gap-1.5 pr-2.5',
-                    '@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:pb-[7px]',
+                    'col-start-2 flex shrink-0 items-center justify-end gap-2 pr-3',
+                    '[&_:is(a,button)[data-variant]]:inline-flex [&_:is(a,button)[data-variant]]:items-center [&_:is(a,button)[data-variant]]:h-[var(--ui-control-sm,1.75rem)]',
+                    '@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:justify-start @max-[35rem]:pb-[7px]',
                     hasColumns && item.leading != null ? '@max-[35rem]:pl-5' : '@max-[35rem]:pl-2.5',
                   )}
                 >

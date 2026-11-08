@@ -437,6 +437,8 @@ const CANONICAL = [
   ['A section or panel header inside a page', 'CardHeader', 'Title + actions row with the separator under it, for a card or panel section. Use `PaneHeader` when the pane has tabs. Never hand-draw `border-b` header bands.', 'Not a page header (use `PageHeader` or a page template) or a channel/room header (use `ChannelHeader`).'],
   ['A page\'s title row', 'PageHeader', 'Title, description, back link and actions at the top of a page. Templates render it for you.', 'Don\'t hand-roll an `<h1>` + flex row of buttons.'],
   ['Buttons', 'Button', 'Always pass an explicit `variant` (`primary`, `secondary`, `ghost`, `danger`, `danger-solid`, `success`, `info`, `link`) and `size` where it matters. `IconButton` for icon-only actions.', 'Don\'t style a raw `<button>`, and don\'t rely on the default variant: one primary action per region.'],
+  ['A row\'s or panel\'s own decision', 'ConfirmButton', 'A button that confirms in place: pressed, it becomes "<question?> [Confirm] [Cancel]" in the same spot (`role="group"` named by the question); Escape or Cancel restores it, Enter confirms. `tone="destructive"` for a destructive confirm; `busy` (or a promise from `onConfirm`) holds it busy. `data-confirm-state` reads `idle` / `asking` / `busy`. The replacement for `ConfirmDialog` in rows and panels: a modal is never the right place for a row\'s own decision.', 'Not for a decision that needs a body, a preview or a form: that is `ConfirmDialog`.'],
+  ['Rows with their own buttons', 'GroupedList', 'Pass `trailingLayout="columns"` when rows carry `actions` and/or `trailing`: the whole list becomes one grid whose actions and trailing columns are shared and right-aligned, so every row ends at one x (audit rule `row.actions-aligned`). Action Buttons draw at `sm`.', 'Don\'t leave a list of rows with different buttons in the default `inline` layout (a ragged right edge), and don\'t put buttons in `meta` (inside the row\'s button).'],
   ['Empty / error / loading', 'EmptyState', '`EmptyState`, `ErrorState` and `LoadingState` for whole-region states.', 'Don\'t write "No items" paragraphs or spinners by hand.'],
   ['Form controls', 'Input', 'Every control comes from `forms/`: `Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`, `Switch`, wrapped in `FormField` for label/help/error.', 'Never a raw `<input>`/`<select>`.'],
   ['Chat', 'ChatPanel', 'Message list + composer. With realtime-modules, use `WrappedChatPanel` from `/integrations/realtime-modules`.', 'Don\'t hand-roll a message list.'],
@@ -467,6 +469,7 @@ function entryRank(key, i) {
 
 /** First-sentence overrides where the source doc comment is a note, not a summary. */
 const DESCRIPTION_OVERRIDE = {
+  ConfirmDialog: 'A modal yes/no for a decision that needs a body or a preview; a row\'s or panel\'s own decision uses `ConfirmButton` (in place) instead.',
   AppShell: 'The app chrome: sidebar, header, optional subheader and the content region, with a toast region by default.',
   AppLayout: 'The room-shaped app layout: rooms sidebar, presence and nested content, wired to the pipelines run providers.',
   CollectionPage: 'A list/collection page: PageHeader, an optional CollectionToolbar, then the collection content.',

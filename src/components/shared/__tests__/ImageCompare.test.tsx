@@ -84,3 +84,41 @@ describe('ImageCompare', () => {
     expect(container.innerHTML).not.toMatch(/#[0-9a-f]{3,8}\b|bg-(red|blue|gray|slate|black|white)\b/i);
   });
 });
+
+describe('ImageCompare placeholder pane (2.513.0)', () => {
+  const panes = [
+    { src: '/ref.png', label: 'Reference' },
+    { label: 'Candidate', placeholder: 'No picture yet', description: 'Not drawn' },
+    { src: '/cand.png', label: 'Second' },
+  ];
+
+  it('draws the same frame with the words centred and marks it a placeholder', () => {
+    const { container } = render(<ImageCompare images={panes} aspect="square" />);
+    const frames = [...container.querySelectorAll('[data-image-compare-frame]')];
+    expect(frames).toHaveLength(3);
+    for (const f of frames) expect(f).toHaveClass('aspect-square', 'bg-surface-inset', 'rounded-lg');
+    expect(frames[1]).toHaveAttribute('data-gallery-status', 'placeholder');
+    expect(frames[0]).not.toHaveAttribute('data-gallery-status');
+    expect(frames[1].querySelector('img')).toBeNull();
+    expect(within(frames[1] as HTMLElement).getByText('No picture yet')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Candidate: No picture yet' })).toHaveClass('items-center', 'justify-center');
+    // The caption is the same as any pane's.
+    expect(screen.getByText('Candidate')).toHaveAttribute('data-image-compare-label');
+    expect(screen.getByText('Not drawn')).toBeInTheDocument();
+  });
+
+  it('is not zoomable; the lightbox flips only between real pictures', () => {
+    render(<ImageCompare images={panes} />);
+    expect(screen.queryByRole('button', { name: 'Enlarge Candidate' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge Second' }));
+    expect(screen.getByTestId('image-lightbox-img')).toHaveAttribute('src', '/cand.png');
+    expect(screen.getByTestId('image-lightbox-counter')).toHaveTextContent('2 / 2');
+  });
+
+  it('exposes the fit on every frame', () => {
+    const { container, rerender } = render(<ImageCompare images={panes} />);
+    for (const f of container.querySelectorAll('[data-image-compare-frame]')) expect(f).toHaveAttribute('data-image-fit', 'contain');
+    rerender(<ImageCompare images={panes} fit="cover" />);
+    for (const f of container.querySelectorAll('[data-image-compare-frame]')) expect(f).toHaveAttribute('data-image-fit', 'cover');
+  });
+});

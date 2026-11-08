@@ -7,9 +7,13 @@ description: Audit rendered UI consistency across tenant frontends using determi
 it picks the page template and components. Come back here to verify the
 changed route: `--path <exact route> --states default` is the minimum, and the
 resting gate includes the build-time density rules (`table.zebra`,
-`section.separator`, `page.vertical-budget`, `element.unmarked`). A finding
+`section.separator`, `page.vertical-budget`, `element.unmarked`, and since
+2.513.0 `row.actions-aligned` and `image.whole-visible`). A finding
 from `element.unmarked` means DOM the library did not render: replace it with
-the library component rather than adding a marker by hand.
+the library component rather than adding a marker by hand. A
+`row.actions-aligned` finding on a ragged list is fixed by GroupedList
+`trailingLayout="columns"`; an `image.whole-visible` one by ImageCompare
+`fit="contain"`.
 
 Measure the rendered app against a shared contract. Fix a component family once,
 then verify its consumers. When the user asks to fix findings or improve the UI,

@@ -27,6 +27,8 @@ export { default as CodeEditor } from './CodeEditor';
 export * from './CodeEditor';
 export { default as CommandPalette } from './CommandPalette';
 export * from './CommandPalette';
+export { default as ConfirmButton } from './ConfirmButton';
+export * from './ConfirmButton';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export * from './ConfirmDialog';
 export { default as PickerDialog } from './PickerDialog';
