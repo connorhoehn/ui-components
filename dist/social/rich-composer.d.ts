@@ -558,8 +558,18 @@ export declare interface ComposerPrompt {
      * Optional host-owned draft for the deck's text / number input (no external
      * input bridge). The host may persist it by question identity across mounts.
      * The host also clears it after an accepted answer; refused answers and late
-     * acknowledgments never clear another question's draft. Does not control the
-     * external composer input or a compose prompt's separate message flow.
+     * acknowledgments never clear another question's draft. Does not control a
+     * compose prompt's separate message flow.
+     *
+     * Under `presentation="prompt"` (`ConversationComposer`, since 2.513.0) the
+     * card's answer field IS the composer's own text box, and this binds it:
+     * whenever the open card changes (its `id`), the text box is seeded from
+     * `value` (the caret at its end; `''` empties it), and every edit there
+     * calls `onChange(text)` with the box's plain text — so a "Use as typed"
+     * option can enable once something is typed, and a "Refine" card reopens
+     * with the saved words. Enter still answers the card as before. Changing
+     * `value` while the same card stays open does not rewrite the box. Under any other
+     * composer presentation it still drives only the deck's own input.
      */
     inputDraft?: {
         value: string;

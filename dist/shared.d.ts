@@ -2424,6 +2424,32 @@ export declare function confidenceNote(sampleSize: number): string;
 /** Sample size → confidence: 0 none, 1–2 low, 3–5 medium, more than 5 high. */
 export declare function confidenceOf(sampleSize: number): RunEstimateConfidenceLevel;
 
+export declare function ConfirmButton({ label, question, confirmLabel, cancelLabel, tone, variant, size, disabled, busy, onConfirm, className, 'data-testid': testId, }: ConfirmButtonProps): JSX.Element;
+
+export declare interface ConfirmButtonProps {
+    /** The idle button's label — "Cancel run", "Delete". */
+    label: ReactNode;
+    /** What the reader is asked; short, ends with "?" — "Cancel this run?". Also the group's accessible name. */
+    question: string;
+    /** The confirming button's label. Default "Confirm". */
+    confirmLabel?: string;
+    /** The button that backs out. Default "Cancel". */
+    cancelLabel?: string;
+    /** `destructive` paints the confirming button `danger-solid`; `default` (default) paints it `primary`. */
+    tone?: 'default' | 'destructive';
+    /** The idle button's variant. Default `secondary` (`danger` when `tone="destructive"`). */
+    variant?: ButtonVariant;
+    /** Every button's size, idle and asking. Default `sm`. */
+    size?: ButtonSize;
+    disabled?: boolean;
+    /** The host's own pending state: the button shows disabled and `aria-busy`. */
+    busy?: boolean;
+    /** Fired on Confirm. A returned promise keeps the control busy until it settles. */
+    onConfirm: () => void | Promise<unknown>;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function ConfirmDialog({ open, onConfirm, onCancel, title, body, confirmLabel, cancelLabel, confirmDisabled, tone, children, }: ConfirmDialogProps): JSX.Element;
 
 export declare interface ConfirmDialogProps {
@@ -4726,7 +4752,7 @@ export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, trailingLayout, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -4821,6 +4847,15 @@ export declare interface GroupedListProps {
      * the 3px-bar current row) at any `size`, the same scale as SubNavLayout.
      */
     rowStyle?: 'ruled' | 'plain';
+    /**
+     * Where rows put `actions` and `trailing`. `inline` (default): each row at
+     * its own end, as before. `columns`: one grid for the whole list — every
+     * row's actions and trailing sit in shared, right-aligned columns
+     * (`[leading] [main] [actions] [trailing]`), so their edges line up down the
+     * list whatever buttons each row has; action Buttons draw at `sm`. Since
+     * 2.513.0.
+     */
+    trailingLayout?: 'inline' | 'columns';
     className?: string;
     'data-testid'?: string;
 }
@@ -5123,7 +5158,14 @@ export declare function ImageCompare({ images, label, aspect, fit, zoomable, cla
 export declare type ImageCompareAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
 export declare interface ImageCompareImage {
-    src: string;
+    /** The picture. Omit it (with `placeholder`) for a pane whose image does not exist yet. */
+    src?: string;
+    /**
+     * Words for a pane with no `src` — "No picture yet". The pane keeps the
+     * same frame and caption, with these centred in it; it is not zoomable.
+     * Since 2.513.0.
+     */
+    placeholder?: string;
     /** Short name shown under the pane — "Reference", "Current", "Candidate". */
     label: string;
     /** Alt text. Defaults to `label`. */
