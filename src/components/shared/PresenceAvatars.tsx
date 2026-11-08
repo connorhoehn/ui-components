@@ -51,8 +51,10 @@ export interface PresenceUser {
   /** Optional editing mode — renders a small mode badge on the
    *  upper-right of the avatar (pencil / check / eye). */
   mode?: PresenceMode;
-  /** One status line for the hover card — "editing", "away · 3m". Free text
-   *  because the library does not know the host's vocabulary. */
+  /** One status line — "editing", "away · 3m", a status message. Free text
+   *  because the library does not know the host's vocabulary. Shown in the
+   *  hover card, and appended to the avatar's own tooltip ("Ada — Away: back
+   *  at 3") when there is no card. */
   detail?: string;
   /** Where in the surface the user is — a section title, a pane name.
    *  Rendered under the detail line on the hover card. */
@@ -256,7 +258,10 @@ export function PresenceAvatars({
         const titleParts = [user.name];
         if (isIdle) titleParts.push('Away');
         else if (modeInfo) titleParts.push(modeInfo.label);
-        const title = titleParts.join(' — ');
+        // The status message rides in the same tooltip, after the name and
+        // state: "Ada — Away: back at 3". Without `detail` the title is
+        // unchanged.
+        const title = titleParts.join(' — ') + (user.detail ? `: ${user.detail}` : '');
 
         // E2E hooks shared across both rendered shapes (button + div).
         const dataAttrs = {
@@ -265,6 +270,7 @@ export function PresenceAvatars({
           'data-presence-user-id': user.id,
           ...(isIdle ? { 'data-presence-idle': 'true' } : {}),
           ...(user.mode ? { 'data-presence-mode': user.mode } : {}),
+          ...(user.detail ? { 'data-presence-detail': user.detail } : {}),
         };
 
         const inner = (

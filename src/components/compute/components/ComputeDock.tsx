@@ -26,6 +26,7 @@ import { useEffect, useMemo, useSyncExternalStore } from 'react';
 import { APP_CHROME_VARS } from '../lib/chromeTokens';
 import { FloatingPanel } from '../../shared/FloatingPanel';
 import { ShellTerminal } from './ShellTerminal';
+import { CommandOutputPane } from './CommandOutputPane';
 import { SHELL_STATUS } from '../lib/status';
 import { useComputeOptional } from '../context/ComputeContext';
 import {
@@ -133,6 +134,17 @@ function ShellPane({ shell, active, labelled }: {
         </div>
       )}
       <div className="flex-1 min-h-0">
+        {shell.kind === 'output' && shell.output ? (
+          <CommandOutputPane
+            id={shell.id}
+            command={shell.output.command}
+            lines={shell.output.lines}
+            running={shell.output.running}
+            {...(shell.output.exitCode !== undefined ? { exitCode: shell.output.exitCode } : {})}
+            {...(shell.output.onOpenShell ? { onOpenShell: shell.output.onOpenShell } : {})}
+            className="h-full"
+          />
+        ) : (
         <ShellTerminal
           sessionId={shell.sessionId}
           shellId={shell.id}
@@ -146,6 +158,7 @@ function ShellPane({ shell, active, labelled }: {
           autoConnect={active}
           onStatus={(st, sawOutput) => reportShellStatus(shell.id, st, sawOutput)}
         />
+        )}
       </div>
     </div>
   );

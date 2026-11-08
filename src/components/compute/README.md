@@ -325,9 +325,12 @@ runtime's `v5.channel.k8s.io` framing.
 
 ### Dock store
 
-`subscribeDock` · `getDock` · `openShell` · `closeShell` · `focusShell` ·
+`subscribeDock` · `getDock` · `openShell` · `openOutputTab` · `closeShell` · `focusShell` ·
 `reportShellStatus` · `reconcileDock` — a `useSyncExternalStore` store for a
-persistent terminal dock that survives navigation.
+persistent terminal dock that survives navigation. `openOutputTab({ id, label,
+command, lines, running, exitCode, onOpenShell })` adds a read-only tab of
+captured command output (a `CommandOutputPane`), same `{ ok, id }` result and the
+same tab quota as `openShell`; the same `id` updates and focuses the open tab.
 
 ---
 

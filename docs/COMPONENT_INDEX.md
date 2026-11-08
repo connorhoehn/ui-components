@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-977 components across 21 entry points; 829 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+978 components across 21 entry points; 830 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -52,7 +52,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Video](#video) (107)
 - [Docs & editor](#docs--editor) (138)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (139)
-- [Agents & compute](#agents--compute) (35)
+- [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (9)
@@ -831,6 +831,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `AgentsLayout` | `@connorhoehn/ui-components/agents` | — |  |  |
 | `AgentsProvider` | `@connorhoehn/ui-components/agents` | — |  |  |
 | `AgUiReasoningBlock` | `@connorhoehn/ui-components/agents` | — |  |  |
+| `CommandOutputPane` | `@connorhoehn/ui-components/compute` | A finished or running command's captured output. | `compute-commandoutputpane` |  |
 | `ComputeDock` | `@connorhoehn/ui-components/compute` | Shells that stay alive above the app while you work. | `compute-computedock` |  |
 | `ComputeProvider` | `@connorhoehn/ui-components/compute` | — |  |  |
 | `ComputerLab` | `@connorhoehn/ui-components/compute` | Computer Lab — a terminal multiplexer over the whole fleet. | `compute-computerlab` |  |

@@ -15,7 +15,7 @@ import { n as C } from "./Avatar-T3d5ukiz.js";
 import { t as w } from "./DotMeter-B6ZDgLU7.js";
 import { t as T } from "./StatusDot-GwVn-q5q.js";
 import { t as E } from "./RovingToolbar-B1Fai5PF.js";
-import { t as D } from "./PresenceAvatars-D_qhOIk3.js";
+import { t as D } from "./PresenceAvatars-Cju7Hj98.js";
 import { t as O } from "./StatusPill-Dh1Ary6I.js";
 import { i as ee, n as k, r as A, t as j } from "./ReactionPickerPopover-BicEjUwp.js";
 import { n as M } from "./useComputeProjects-ZSazDRet.js";

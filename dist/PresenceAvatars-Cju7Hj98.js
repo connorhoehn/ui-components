@@ -127,12 +127,13 @@ function g({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 		children: [v.map((e, r) => {
 			let i = d(e), o = e.idle === !0, _ = o ? f(e.color) : e.color, v = o && !e.color ? .6 : void 0, y = e.mode ? u[e.mode] : null, C = [e.name];
 			o ? C.push("Away") : y && C.push(y.label);
-			let w = C.join(" — "), T = {
+			let w = C.join(" — ") + (e.detail ? `: ${e.detail}` : ""), T = {
 				"data-testid": "presence-avatar",
 				"data-presence-user": e.name,
 				"data-presence-user-id": e.id,
 				...o ? { "data-presence-idle": "true" } : {},
-				...e.mode ? { "data-presence-mode": e.mode } : {}
+				...e.mode ? { "data-presence-mode": e.mode } : {},
+				...e.detail ? { "data-presence-detail": e.detail } : {}
 			}, E = /* @__PURE__ */ l(s, { children: [
 				e.avatarUrl ? /* @__PURE__ */ c("img", {
 					src: e.avatarUrl,

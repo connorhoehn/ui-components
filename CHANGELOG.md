@@ -1,3 +1,7 @@
+## 2.510.2
+
+- 2.510.2 — compute: openOutputTab + CommandOutputPane (voice G2); PresenceAvatars detail tooltip (G3). `openOutputTab({ id, label, command, lines, running, exitCode, onOpenShell })` opens a read-only dock tab of captured command output, returns `{ ok, id }` like `openShell`, focuses and updates the open tab for the same `id`, and counts against `MAX_SHELLS` with shells; output tabs are never persisted or reconciled away. `CommandOutputPane` is a `LogStream` titled with the command, a running chip, the exit code once finished, and an "Open shell" action. `PresenceAvatars` appends a user's `detail` to the avatar tooltip ("Ada — Away: back at 3") and sets `data-presence-detail`; unchanged without `detail`.
+
 ## 2.510.1
 
 - `VoiceDock` `size: 'footer' | 'panel'` (default `panel`, unchanged) and `startLabel` (default "Voice"): `footer` takes HuddleBar's footer metrics — `VoiceActivityRing` `sm`, the phase and last line in `T` xs, Start / End as ghost `Button size="sm"` with a 16px icon and a label (End's icon in the danger ink while live), no vertical padding. `VoiceActivityRing` `sm` is now 18px (`size-4.5`, was 24px). `VoiceDockSize` exported.

@@ -278,3 +278,24 @@ describe('PresenceAvatars — hover card placement', () => {
     }
   });
 });
+
+describe('PresenceAvatars detail tooltip', () => {
+  it('puts a status message in the avatar tooltip, after the name and state', () => {
+    render(<PresenceAvatars users={[
+      { id: 'a', name: 'Ada', detail: 'back at 3' },
+      { id: 'b', name: 'Bo', idle: true, detail: 'lunch' },
+    ]} />);
+    const [ada, bo] = screen.getAllByTestId('presence-avatar');
+    expect(ada).toHaveAttribute('title', 'Ada: back at 3');
+    expect(ada).toHaveAttribute('data-presence-detail', 'back at 3');
+    expect(bo).toHaveAttribute('title', 'Bo — Away: lunch');
+  });
+
+  it('leaves the tooltip unchanged without detail', () => {
+    render(<PresenceAvatars users={[{ id: 'a', name: 'Ada' }, { id: 'b', name: 'Bo', idle: true }]} />);
+    const [ada, bo] = screen.getAllByTestId('presence-avatar');
+    expect(ada).toHaveAttribute('title', 'Ada');
+    expect(ada).not.toHaveAttribute('data-presence-detail');
+    expect(bo).toHaveAttribute('title', 'Bo — Away');
+  });
+});

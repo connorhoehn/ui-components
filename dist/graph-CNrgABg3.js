@@ -3607,7 +3607,7 @@ function $n({ node: e, artifact: r, selection: i, onSelectionChange: a, onOpen: 
 }
 //#endregion
 //#region src/components/graph/work/WorkComputePane.tsx
-var er = Se(() => import("./ChatLabTerminal-or03vfAa.js")), tr = {
+var er = Se(() => import("./ChatLabTerminal-CpPl2V9B.js")), tr = {
 	planning: {
 		label: "PLANNING",
 		pill: "info",

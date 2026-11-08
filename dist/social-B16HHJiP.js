@@ -15,7 +15,7 @@ import { t as N } from "./SearchInput-D5AvHiLn.js";
 import { t as P } from "./DataTable-CJWdLEQ4.js";
 import { t as F } from "./EmptyState-pOG782nO.js";
 import { t as I } from "./SkeletonCard-D3FL0TB7.js";
-import { D as L, K as R, W as z, X as B, b as V, et as ee, w as te } from "./ChatPanel-PbdaVeEr.js";
+import { D as L, K as R, W as z, X as B, b as V, et as ee, w as te } from "./ChatPanel-kb9SKgOK.js";
 import { n as ne } from "./Tabs-DyFKFsp9.js";
 import { t as re } from "./DropdownMenu-LGowvfrE.js";
 import { t as H } from "./Textarea-CvdLeuO_.js";
@@ -35,7 +35,7 @@ import { n as Ce, t as we } from "./ReactionPickerPopover-BicEjUwp.js";
 import { n as Te } from "./useComputeProjects-ZSazDRet.js";
 import "./QuoteBlock-NVq2JJEM.js";
 import { t as Ee } from "./rovingFocus-Bj5Y6kwY.js";
-import { d as De } from "./ConversationSurface-CiczcNdi.js";
+import { d as De } from "./ConversationSurface-DYGULYV7.js";
 import { i as Oe, r as ke } from "./composerSendError-Bd50oOyt.js";
 import { r as Ae } from "./PaneStatusLine-C32pY0-k.js";
 import { Suspense as je, createContext as Me, lazy as Ne, useCallback as K, useContext as Pe, useEffect as q, useId as Fe, useMemo as J, useRef as Y, useState as X } from "react";
@@ -3142,7 +3142,7 @@ function Wt(e, t = {}) {
 }
 //#endregion
 //#region src/components/social/ChatLabShell.tsx
-var Gt = Ne(() => import("./ChatLabTerminal-or03vfAa.js")), Kt = {
+var Gt = Ne(() => import("./ChatLabTerminal-CpPl2V9B.js")), Kt = {
 	planning: {
 		label: "Planning",
 		dot: "bg-code-mauve",

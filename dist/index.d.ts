@@ -17784,8 +17784,10 @@ export declare interface PresenceAvatarUser {
     /** Optional editing mode — renders a small mode badge on the
      *  upper-right of the avatar (pencil / check / eye). */
     mode?: PresenceMode;
-    /** One status line for the hover card — "editing", "away · 3m". Free text
-     *  because the library does not know the host's vocabulary. */
+    /** One status line — "editing", "away · 3m", a status message. Free text
+     *  because the library does not know the host's vocabulary. Shown in the
+     *  hover card, and appended to the avatar's own tooltip ("Ada — Away: back
+     *  at 3") when there is no card. */
     detail?: string;
     /** Where in the surface the user is — a section title, a pane name.
      *  Rendered under the detail line on the hover card. */

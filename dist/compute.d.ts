@@ -101,6 +101,24 @@ export declare function closePane(root: PaneNode, paneId: string): PaneNode;
 
 export declare function closeShell(id: string): void;
 
+export declare function CommandOutputPane({ command, lines, running, exitCode, onOpenShell, id, className, 'data-testid': testId, }: CommandOutputPaneProps): JSX.Element;
+
+export declare interface CommandOutputPaneProps {
+    /** The command that produced the output; shown as the title. */
+    command: string;
+    lines: LogLine[];
+    /** True while the command is still running. */
+    running?: boolean;
+    /** Exit code of a finished run. Non-zero reads as a failure. */
+    exitCode?: number;
+    /** Renders an "Open shell" action when provided. */
+    onOpenShell?: () => void;
+    /** Identifies the pane in test ids: `command-output-<id>`. */
+    id?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare const COMPUTE_STATUS: Record<ComputeStatus, StatusMeta>;
 
 /**
@@ -657,9 +675,31 @@ export declare interface DockGeometry {
  */
 export declare type DockMode = 'hidden' | 'docked' | 'floating' | 'grid' | 'stack';
 
+/**
+ * Captured command output shown in a read-only dock tab (`openOutputTab`).
+ * Never persisted: the lines are a snapshot of one run, not a session.
+ */
+export declare interface DockOutput {
+    /** The command that produced the lines; the pane's title. */
+    command: string;
+    lines: LogLine[];
+    running: boolean;
+    /** Set once the run has finished. */
+    exitCode?: number;
+    /** Offered as the pane's "Open shell" action. */
+    onOpenShell?: () => void;
+}
+
 export declare interface DockShell {
     /** Stable per-tab id; also the AgentCore shellId, so reattach works. */
     id: string;
+    /**
+     * `'output'` is a read-only tab of captured text (see `output`); it holds
+     * no PTY but takes a slot in the same quota. Absent means a live shell.
+     */
+    kind?: 'shell' | 'output';
+    /** Captured output, when `kind` is `'output'`. */
+    output?: DockOutput;
     sessionId: string;
     /**
      * Directory to start in.
@@ -1148,6 +1188,18 @@ export declare function listLeaves(node: PaneNode): PaneLeaf[];
 
 declare type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
+declare interface LogLine {
+    id: string;
+    /** Pre-formatted timestamp string (e.g. "10:48:21.024"). Optional. */
+    timestamp?: string;
+    /** Severity. Drives glyph + color. */
+    level?: LogLevel;
+    /** Optional source/component prefix (e.g. "auth-svc", "pipeline-7"). */
+    source?: string;
+    /** The log message body. */
+    message: ReactNode;
+}
+
 /**
  * The box's output as timestamped log lines — follow or pause, filter by
  * source, search, live byte rate. Free: it reads the same tail stream.
@@ -1340,6 +1392,25 @@ export declare function neighborPane(root: PaneNode, paneId: string, direction: 
 
 /** The next kind in registration order — what the toggle key cycles through. */
 export declare function nextKind(registry: PaneKindRegistry, id: string, computer?: Computer | null): PaneKind | null;
+
+/**
+ * Open a read-only tab of captured command output, or update and focus the one
+ * already open under the same `id`.
+ *
+ * It counts against the same quota as shells (`MAX_SHELLS`): a tab is a tab to
+ * the person looking at the strip, and one cap is easier to explain than two.
+ * Re-running the same command with the same `id` replaces the lines in place
+ * rather than stacking a second tab.
+ */
+export declare function openOutputTab(input: {
+    id: string;
+    label: string;
+    command: string;
+    lines: LogLine[];
+    running?: boolean;
+    exitCode?: number;
+    onOpenShell?: () => void;
+}): OpenShellOutcome;
 
 /**
  * Open a shell for a computer, or focus the one already open for it.

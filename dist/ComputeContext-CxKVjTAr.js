@@ -231,7 +231,7 @@ function U() {
 		let n = JSON.parse(t);
 		return {
 			mode: "hidden",
-			shells: (Array.isArray(n.shells) ? n.shells : []).filter((e) => !!e && typeof e.sessionId == "string").map((e) => ({
+			shells: (Array.isArray(n.shells) ? n.shells : []).filter((e) => !!e && typeof e.sessionId == "string" && e.kind !== "output").map((e) => ({
 				...e,
 				status: "connecting",
 				unread: !1
@@ -250,7 +250,7 @@ var W = U(), G = /* @__PURE__ */ new Set();
 function re() {
 	try {
 		globalThis.localStorage?.setItem(N, JSON.stringify({
-			shells: W.shells,
+			shells: W.shells.filter((e) => e.kind !== "output"),
 			activeId: W.activeId,
 			geometry: W.geometry
 		}));
@@ -272,7 +272,7 @@ function ae() {
 	return W;
 }
 function oe(e) {
-	let t = new Set(e), n = W.shells.filter((e) => t.has(e.sessionId));
+	let t = new Set(e), n = W.shells.filter((e) => e.kind === "output" || t.has(e.sessionId));
 	n.length !== W.shells.length && K({
 		shells: n,
 		activeId: n.some((e) => e.id === W.activeId) ? W.activeId : n[n.length - 1]?.id ?? null,
@@ -280,7 +280,7 @@ function oe(e) {
 	});
 }
 function se(e) {
-	let t = W.shells.find((t) => t.sessionId === e.sessionId);
+	let t = W.shells.find((t) => t.kind !== "output" && t.sessionId === e.sessionId);
 	if (t) return K({
 		activeId: t.id,
 		mode: W.mode === "hidden" ? "docked" : W.mode,
@@ -314,6 +314,50 @@ function se(e) {
 	};
 }
 function ce(e) {
+	let t = {
+		command: e.command,
+		lines: e.lines,
+		running: e.running ?? !1,
+		...e.exitCode === void 0 ? {} : { exitCode: e.exitCode },
+		...e.onOpenShell ? { onOpenShell: e.onOpenShell } : {}
+	}, n = W.mode === "hidden" ? "docked" : W.mode, r = W.shells.find((t) => t.kind === "output" && t.id === e.id);
+	if (r) return K({
+		activeId: r.id,
+		mode: n,
+		shells: W.shells.map((n) => n.id === r.id ? {
+			...n,
+			label: e.label,
+			output: t,
+			status: t.running ? "busy" : "ready",
+			unread: !1
+		} : n)
+	}), {
+		ok: !0,
+		id: r.id
+	};
+	if (W.shells.length >= 8) return K({ mode: n }), {
+		ok: !1,
+		reason: "at-capacity"
+	};
+	let i = {
+		id: e.id,
+		kind: "output",
+		output: t,
+		sessionId: "",
+		label: e.label,
+		status: t.running ? "busy" : "ready",
+		unread: !1
+	};
+	return K({
+		shells: [...W.shells, i],
+		activeId: i.id,
+		mode: n
+	}), {
+		ok: !0,
+		id: i.id
+	};
+}
+function le(e) {
 	let t = W.shells.filter((t) => t.id !== e);
 	K({
 		shells: t,
@@ -321,7 +365,7 @@ function ce(e) {
 		mode: t.length === 0 ? "hidden" : W.mode
 	});
 }
-function le(e) {
+function ue(e) {
 	K({
 		activeId: e,
 		shells: W.shells.map((t) => t.id === e ? {
@@ -330,7 +374,7 @@ function le(e) {
 		} : t)
 	});
 }
-function ue(e, t, n = !1) {
+function de(e, t, n = !1) {
 	let r = !1, i = W.shells.map((i) => {
 		if (i.id !== e) return i;
 		let a = n && W.activeId !== e ? !0 : i.unread;
@@ -342,25 +386,25 @@ function ue(e, t, n = !1) {
 	});
 	r && K({ shells: i });
 }
-function de(e) {
+function fe(e) {
 	if (W.shells.length < 2) return;
 	let t = W.shells.findIndex((e) => e.id === W.activeId), n = W.shells[(t + e + W.shells.length) % W.shells.length];
-	n && le(n.id);
-}
-function fe(e) {
-	let t = W.shells[e];
-	t && le(t.id);
+	n && ue(n.id);
 }
 function pe(e) {
-	K({ mode: e });
+	let t = W.shells[e];
+	t && ue(t.id);
 }
 function me(e) {
+	K({ mode: e });
+}
+function he(e) {
 	K({ mode: e ? W.mode === "hidden" ? "docked" : W.mode : "hidden" });
 }
-function he() {
+function ge() {
 	K({ mode: W.mode === "floating" ? "docked" : "floating" });
 }
-function ge() {
+function _e() {
 	let e = [
 		"docked",
 		"grid",
@@ -369,10 +413,10 @@ function ge() {
 	];
 	K({ mode: e[(e.indexOf(W.mode) + 1) % e.length] ?? "docked" });
 }
-function _e(e) {
+function ve(e) {
 	return e === "grid" || e === "stack";
 }
-function ve(e) {
+function ye(e) {
 	K({ geometry: {
 		...W.geometry,
 		...e
@@ -380,7 +424,7 @@ function ve(e) {
 }
 //#endregion
 //#region src/components/compute/fixtures/computeFixture.ts
-var q = (e) => `demo-session-${e}-0000000000000000`.slice(0, 40), ye = [
+var q = (e) => `demo-session-${e}-0000000000000000`.slice(0, 40), be = [
 	{
 		id: "demo-1",
 		label: "demo-alpha",
@@ -441,7 +485,7 @@ var q = (e) => `demo-session-${e}-0000000000000000`.slice(0, 40), ye = [
 		createdAt: "2026-08-25T18:20:00.000Z",
 		status: "stopped"
 	}
-], be = {
+], xe = {
 	deployed: !0,
 	runtimeName: "demo-devbox",
 	runtimeArn: null,
@@ -460,7 +504,7 @@ var q = (e) => `demo-session-${e}-0000000000000000`.slice(0, 40), ye = [
 		"us.anthropic.claude-sonnet-5",
 		"us.anthropic.claude-opus-4-8"
 	]
-}, xe = [
+}, Se = [
 	{
 		id: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
 		label: "Haiku",
@@ -476,7 +520,7 @@ var q = (e) => `demo-session-${e}-0000000000000000`.slice(0, 40), ye = [
 		label: "Opus",
 		hint: "the expensive one — reach for it deliberately"
 	}
-], Se = [{
+], Ce = [{
 	id: "demo-machine-1",
 	label: "demo-macbook",
 	status: "connected",
@@ -529,7 +573,7 @@ var q = (e) => `demo-session-${e}-0000000000000000`.slice(0, 40), ye = [
 			pendingOps: 203
 		}
 	}]
-}], Ce = {
+}], we = {
 	truncated: !1,
 	git: [
 		"a1b2c3d scaffold service",
@@ -591,12 +635,12 @@ var q = (e) => `demo-session-${e}-0000000000000000`.slice(0, 40), ye = [
 			children: []
 		}
 	]
-}, we = /* @__PURE__ */ new Set([
+}, Te = /* @__PURE__ */ new Set([
 	"pending",
 	"in_progress",
 	"completed"
 ]);
-function Te(e) {
+function Ee(e) {
 	let t = e.todos;
 	if (!Array.isArray(t)) return null;
 	let n = [];
@@ -604,7 +648,7 @@ function Te(e) {
 		if (!e || typeof e != "object") continue;
 		let t = e, r = typeof t.content == "string" ? t.content.trim() : "";
 		if (!r) continue;
-		let i = we.has(t.status) ? t.status : "pending", a = typeof t.activeForm == "string" && t.activeForm.trim() ? t.activeForm.trim() : void 0;
+		let i = Te.has(t.status) ? t.status : "pending", a = typeof t.activeForm == "string" && t.activeForm.trim() ? t.activeForm.trim() : void 0;
 		n.push({
 			content: r,
 			status: i,
@@ -613,9 +657,9 @@ function Te(e) {
 	}
 	return n;
 }
-function Ee(e, t) {
+function De(e, t) {
 	if (e === "TodoWrite") {
-		let n = Te(t);
+		let n = Ee(t);
 		if (n) return {
 			kind: "tool",
 			tool: e,
@@ -626,11 +670,11 @@ function Ee(e, t) {
 	return {
 		kind: "tool",
 		tool: e,
-		text: ke(e, t)
+		text: Ae(e, t)
 	};
 }
 var J = (e) => typeof e == "string" && e.trim() ? e.trim() : void 0;
-function De(e) {
+function Oe(e) {
 	let t = {
 		gate: J(e.gate) ?? "budget",
 		error: J(e.error) ?? "the dispatch was refused",
@@ -644,7 +688,7 @@ function De(e) {
 		gate: t
 	};
 }
-function Oe(e) {
+function ke(e) {
 	let t = typeof e.prNumber == "number" && Number.isFinite(e.prNumber) ? e.prNumber : void 0, n = {
 		title: J(e.title) ?? "Change captured",
 		...J(e.workItemId) ? { workItemId: J(e.workItemId) } : {},
@@ -660,7 +704,7 @@ function Oe(e) {
 		delivery: n
 	};
 }
-function ke(e, t) {
+function Ae(e, t) {
 	let n = (...e) => {
 		for (let n of e) {
 			let e = t[n];
@@ -670,7 +714,7 @@ function ke(e, t) {
 	}, r = (n("file_path", "path", "notebook_path", "command", "pattern", "url", "query", "prompt") ?? n("description") ?? "").replace(/\s+/g, " ").trim();
 	return r ? r.length > 96 ? `${r.slice(0, 95)}…` : r : e;
 }
-function Ae({ client: e, maxSteps: t = 400, onEvent: n }) {
+function je({ client: e, maxSteps: t = 400, onEvent: n }) {
 	let [r, i] = O([]), [a, o] = O(!1), [s, c] = O(0), [l, u] = O(null), [d, f] = O(null), p = D(null), m = D(n);
 	m.current = n;
 	let h = x((e) => {
@@ -708,7 +752,7 @@ function Ae({ client: e, maxSteps: t = 400, onEvent: n }) {
 						let t = e.message?.content ?? [];
 						for (let e of t) if (e.type === "tool_use") {
 							let t = String(e.name ?? "tool");
-							h(Ee(t, e.input ?? {})), c((e) => e + 1);
+							h(De(t, e.input ?? {})), c((e) => e + 1);
 						} else if (e.type === "text") {
 							let t = String(e.text ?? "").trim();
 							t && h({
@@ -791,7 +835,7 @@ function Ae({ client: e, maxSteps: t = 400, onEvent: n }) {
 }
 //#endregion
 //#region src/components/compute/hooks/useComputeTail.ts
-function je(e) {
+function Me(e) {
 	let t = e.type;
 	if (t === "job_started") {
 		let t = String(e.title ?? "job started"), n = e.kind;
@@ -836,7 +880,7 @@ function je(e) {
 		let t = e.message?.content ?? [], n = [];
 		for (let e of t) if (e.type === "tool_use") {
 			let t = String(e.name ?? "tool");
-			n.push(Ee(t, e.input ?? {}));
+			n.push(De(t, e.input ?? {}));
 		} else if (e.type === "text") {
 			let t = String(e.text ?? "").trim();
 			t && n.push({
@@ -857,10 +901,10 @@ function je(e) {
 		}] : [] };
 	}
 	if (t === "gate_refused") return {
-		steps: [De(e)],
+		steps: [Oe(e)],
 		running: !1
 	};
-	if (t === "delivery") return { steps: [Oe(e)] };
+	if (t === "delivery") return { steps: [ke(e)] };
 	if (t === "devbox_error") {
 		let t = String(e.error ?? "the box reported an error");
 		return {
@@ -934,7 +978,7 @@ function Y({ client: e, boxId: t, maxSteps: n = 300, enabled: r = !0 }) {
 			} catch {
 				return;
 			}
-			let n = je(t);
+			let n = Me(t);
 			n.steps.length > 0 && a((e) => {
 				let r = Date.parse(String(t.ts ?? "")), i = Number.isFinite(r) ? r : Date.now(), a = [...e, ...n.steps.map((e) => ({
 					...e,
@@ -959,7 +1003,7 @@ function Y({ client: e, boxId: t, maxSteps: n = 300, enabled: r = !0 }) {
 }
 //#endregion
 //#region src/components/compute/components/TailPane.tsx
-var Me = {
+var Ne = {
 	meta: "text-code-blue",
 	text: "text-code-subtle",
 	tool: "text-code-green",
@@ -979,13 +1023,13 @@ var Me = {
 	job_end: "✓",
 	gate: "⚠",
 	delivery: "⇪"
-}, Ne = 200;
-function Pe(e) {
+}, Pe = 200;
+function Fe(e) {
 	let t = 2166136261;
 	for (let n = 0; n < e.length; n += 1) t ^= e.charCodeAt(n), t = Math.imul(t, 16777619);
 	return t >>> 0;
 }
-function Fe({ computer: t, registerPane: r, className: i }) {
+function Ie({ computer: t, registerPane: r, className: i }) {
 	let { client: a } = $(), o = Y({
 		client: a,
 		boxId: t.id
@@ -1000,11 +1044,11 @@ function Fe({ computer: t, registerPane: r, className: i }) {
 		let e = s.current, t = o.steps.length - l.current;
 		l.current = o.steps.length, e && (c.current ? (e.scrollTop = e.scrollHeight, f !== 0 && h(0)) : t > 0 && h((e) => e + t));
 	}, [o.steps]);
-	let _ = Math.max(0, o.steps.length - Ne), y = _ > 0 ? o.steps.slice(-200) : o.steps, b = v(t) === "running";
+	let _ = Math.max(0, o.steps.length - Pe), y = _ > 0 ? o.steps.slice(-200) : o.steps, b = v(t) === "running";
 	return /* @__PURE__ */ A(p, {
 		active: b,
 		intensity: "low",
-		seed: Pe(t.id),
+		seed: Fe(t.id),
 		className: e("flex flex-col h-full min-h-0 bg-code-bg", i),
 		"data-testid": "tail-pane-particles",
 		children: [/* @__PURE__ */ A("div", {
@@ -1186,7 +1230,7 @@ function Fe({ computer: t, registerPane: r, className: i }) {
 								children: [
 									/* @__PURE__ */ k("span", {
 										"aria-hidden": "true",
-										className: e("shrink-0 w-3", Me.result),
+										className: e("shrink-0 w-3", Ne.result),
 										children: X.result
 									}),
 									/* @__PURE__ */ A(n, {
@@ -1225,7 +1269,7 @@ function Fe({ computer: t, registerPane: r, className: i }) {
 							children: [
 								/* @__PURE__ */ k("span", {
 									"aria-hidden": "true",
-									className: e("shrink-0 w-3", Me[t.kind]),
+									className: e("shrink-0 w-3", Ne[t.kind]),
 									children: X[t.kind]
 								}),
 								t.tool && /* @__PURE__ */ k("span", {
@@ -1233,7 +1277,7 @@ function Fe({ computer: t, registerPane: r, className: i }) {
 									children: t.tool
 								}),
 								/* @__PURE__ */ k("span", {
-									className: e("min-w-0 break-words", Me[t.kind]),
+									className: e("min-w-0 break-words", Ne[t.kind]),
 									children: t.text
 								})
 							]
@@ -1258,19 +1302,19 @@ function Fe({ computer: t, registerPane: r, className: i }) {
 }
 //#endregion
 //#region src/components/compute/lib/fleetSummary.ts
-var Ie = [
+var Le = [
 	"running",
 	"waiting",
 	"error"
 ];
-function Le(e) {
-	return Ie.includes(v(e));
-}
 function Re(e) {
+	return Le.includes(v(e));
+}
+function ze(e) {
 	let t = 0, n = 0, r = 0, i = 0, a = 0;
 	for (let o of e) {
 		let e = v(o);
-		Le(o) && (t += 1), e === "waiting" ? n += 1 : e === "running" ? r += 1 : e === "error" ? i += 1 : e === "provisioning" && (a += 1);
+		Re(o) && (t += 1), e === "waiting" ? n += 1 : e === "running" ? r += 1 : e === "error" ? i += 1 : e === "provisioning" && (a += 1);
 	}
 	return {
 		computers: e.length,
@@ -1281,7 +1325,7 @@ function Re(e) {
 		provisioning: a
 	};
 }
-var ze = {
+var Be = {
 	waiting: 0,
 	error: 1,
 	running: 2,
@@ -1289,10 +1333,10 @@ var ze = {
 	idle: 4,
 	stopped: 5
 };
-function Be(e, t) {
-	return ze[v(e)] - ze[v(t)];
-}
 function Ve(e, t) {
+	return Be[v(e)] - Be[v(t)];
+}
+function He(e, t) {
 	let n = t.toLowerCase().split(/\s+/).filter(Boolean);
 	if (n.length === 0) return !0;
 	let r = [
@@ -1303,13 +1347,13 @@ function Ve(e, t) {
 	].filter(Boolean).join(" ").toLowerCase();
 	return n.every((e) => r.includes(e));
 }
-function He(e) {
+function Ue(e) {
 	return e.kind === "local";
 }
 //#endregion
 //#region src/components/compute/context/LabInstructContext.ts
-async function Ue(e, t, n, r = 1500) {
-	let i = n.filter((e) => !He(e)), a = n.length - i.length, o = (await Promise.all(i.map((n) => {
+async function We(e, t, n, r = 1500) {
+	let i = n.filter((e) => !Ue(e)), a = n.length - i.length, o = (await Promise.all(i.map((n) => {
 		let i = e.runTask(n.sessionId, {
 			prompt: t,
 			resume: !0
@@ -1323,27 +1367,27 @@ async function Ue(e, t, n, r = 1500) {
 		...s.length ? { detail: s.join(" · ") } : {}
 	};
 }
-var We = y(null);
-function Ge() {
-	return S(We);
+var Ge = y(null);
+function Ke() {
+	return S(Ge);
 }
 //#endregion
 //#region src/components/compute/components/WorkspacePanes.tsx
-function Ke(e) {
+function qe(e) {
 	let t = new Date(e), n = (e) => String(e).padStart(2, "0");
 	return `${n(t.getHours())}:${n(t.getMinutes())}:${n(t.getSeconds())}`;
 }
-function qe(e) {
+function Je(e) {
 	let t = Math.max(0, Math.floor(e / 1e3)), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60, a = (e) => String(e).padStart(2, "0");
 	return n > 0 ? `${n}:${a(r)}:${a(i)}` : `${r}:${a(i)}`;
 }
-function Je(e) {
+function Ye(e) {
 	return e.kind === "error" ? "error" : e.kind === "job_end" ? e.jobOk === !1 ? "error" : "info" : e.kind === "meta" ? "debug" : e.kind === "gate" || e.kind === "text" && /\b(warn|warning|retry|retrying|timed out|slow)\b/i.test(e.text) ? "warn" : "info";
 }
-function Ye(e) {
+function Xe(e) {
 	return e.kind === "tool" ? e.tool ?? "tool" : e.kind === "job" || e.kind === "job_end" ? e.jobKind ?? "dispatcher" : e.kind === "meta" ? "runtime" : e.kind === "result" ? "result" : e.kind === "error" ? "error" : e.kind === "gate" ? "gate" : e.kind === "delivery" ? "delivery" : "agent";
 }
-function Xe(e, t, n = 1e4) {
+function Ze(e, t, n = 1e4) {
 	let r = 0;
 	for (let i = e.length - 1; i >= 0; --i) {
 		let a = e[i];
@@ -1352,10 +1396,10 @@ function Xe(e, t, n = 1e4) {
 	}
 	return r / (n / 1e3);
 }
-function Ze(e) {
+function Qe(e) {
 	return e >= 1024 ? `${(e / 1024).toFixed(1)} KB/s` : `${Math.round(e)} B/s`;
 }
-function Qe(e, t = 1e3) {
+function $e(e, t = 1e3) {
 	let [n, r] = O(() => Date.now());
 	return C(() => {
 		if (!e) return;
@@ -1364,25 +1408,25 @@ function Qe(e, t = 1e3) {
 		return () => clearInterval(n);
 	}, [e, t]), n;
 }
-var $e = "";
-function et({ computer: t, registerPane: n, className: r }) {
+var et = "";
+function tt({ computer: t, registerPane: n, className: r }) {
 	let { client: i } = $(), o = Y({
 		client: i,
 		boxId: t.id
-	}), [s, d] = O(!1), [p, m] = O(null), [h, g] = O($e), [_, v] = O(""), [y, b] = O(!1), x = D(null), S = Qe(o.connected && !s);
+	}), [s, d] = O(!1), [p, m] = O(null), [h, g] = O(et), [_, v] = O(""), [y, b] = O(!1), x = D(null), S = $e(o.connected && !s);
 	C(() => {
 		if (n) return n({ focus: () => x.current?.querySelector("[role=\"log\"]")?.focus() }), () => n(null);
 	}, [n]);
-	let w = p == null ? o.steps : o.steps.slice(0, p), T = p == null ? 0 : o.steps.length - p, ee = E(() => [...new Set(o.steps.map(Ye))].sort(), [o.steps]), te = E(() => {
+	let w = p == null ? o.steps : o.steps.slice(0, p), T = p == null ? 0 : o.steps.length - p, ee = E(() => [...new Set(o.steps.map(Xe))].sort(), [o.steps]), te = E(() => {
 		let e = _.trim().toLowerCase();
 		return w.map((e, t) => ({
 			step: e,
 			index: t
-		})).filter(({ step: e }) => !h || Ye(e) === h).filter(({ step: t }) => !e || `${t.tool ?? ""} ${t.text}`.toLowerCase().includes(e)).map(({ step: e, index: t }) => ({
+		})).filter(({ step: e }) => !h || Xe(e) === h).filter(({ step: t }) => !e || `${t.tool ?? ""} ${t.text}`.toLowerCase().includes(e)).map(({ step: e, index: t }) => ({
 			id: `${t}`,
-			timestamp: Ke(e.at),
-			level: Je(e),
-			source: Ye(e),
+			timestamp: qe(e.at),
+			level: Ye(e),
+			source: Xe(e),
 			message: e.text
 		}));
 	}, [
@@ -1391,7 +1435,7 @@ function et({ computer: t, registerPane: n, className: r }) {
 		_
 	]), ne = () => {
 		s ? (d(!1), m(null)) : (d(!0), m(o.steps.length));
-	}, j = Xe(o.steps, S);
+	}, j = Ze(o.steps, S);
 	return /* @__PURE__ */ A("div", {
 		ref: x,
 		"data-testid": "logs-pane",
@@ -1410,7 +1454,7 @@ function et({ computer: t, registerPane: n, className: r }) {
 						sections: [{ items: [{
 							label: "All sources",
 							active: !h,
-							onSelect: () => g($e)
+							onSelect: () => g(et)
 						}, ...ee.map((e) => ({
 							label: e,
 							active: e === h,
@@ -1469,7 +1513,7 @@ function et({ computer: t, registerPane: n, className: r }) {
 						children: [
 							s ? "Paused" : "Following",
 							" · ",
-							Ze(j)
+							Qe(j)
 						]
 					}),
 					/* @__PURE__ */ k("span", { className: "flex-1" }),
@@ -1487,18 +1531,18 @@ function et({ computer: t, registerPane: n, className: r }) {
 		]
 	});
 }
-function tt(e) {
+function nt(e) {
 	for (let t = e.length - 1; t >= 0; --t) if (e[t].kind === "job") return e.slice(t);
 	return [...e];
 }
-function nt(e) {
+function rt(e) {
 	for (let t = e.length - 1; t >= 0; --t) {
 		let n = e[t].plan;
 		if (n) return n;
 	}
 	return null;
 }
-function rt(e) {
+function it(e) {
 	for (let t = e.length - 1; t >= 0; --t) {
 		let n = e[t];
 		if (n.kind === "result" && n.summary) return n.summary;
@@ -1507,7 +1551,7 @@ function rt(e) {
 	}
 	return null;
 }
-var it = {
+var at = {
 	tool: "✓",
 	result: "✓",
 	job_end: "✓",
@@ -1517,7 +1561,7 @@ var it = {
 	text: "·",
 	gate: "⚠",
 	delivery: "⇪"
-}, at = {
+}, ot = {
 	completed: {
 		glyph: "✓",
 		className: "text-code-green",
@@ -1534,7 +1578,7 @@ var it = {
 		word: "pending"
 	}
 };
-function ot({ plan: t }) {
+function st({ plan: t }) {
 	let n = t.filter((e) => e.status === "completed").length;
 	return /* @__PURE__ */ A("section", {
 		"data-ui-part": "",
@@ -1559,7 +1603,7 @@ function ot({ plan: t }) {
 		}), /* @__PURE__ */ k("ol", {
 			className: "m-0 mt-1 p-0 list-none flex flex-col gap-0.5",
 			children: t.map((t, n) => {
-				let r = at[t.status];
+				let r = ot[t.status];
 				return /* @__PURE__ */ A("li", {
 					"data-plan-status": t.status,
 					className: "flex gap-2 min-w-0",
@@ -1583,14 +1627,14 @@ function ot({ plan: t }) {
 		})]
 	});
 }
-function st({ computer: e, question: n }) {
-	let { client: r, notify: i } = $(), a = Ge(), [o, s] = O(""), [c, l] = O(!1), [u, f] = O(null), p = He(e), m = async (t) => {
+function ct({ computer: e, question: n }) {
+	let { client: r, notify: i } = $(), a = Ke(), [o, s] = O(""), [c, l] = O(!1), [u, f] = O(null), p = Ue(e), m = async (t) => {
 		t?.preventDefault();
 		let n = o.trim();
 		if (!(!n || c || p)) {
 			l(!0), f(null);
 			try {
-				let t = a ? await a(n, [e]) : await Ue(r, n, [e]);
+				let t = a ? await a(n, [e]) : await We(r, n, [e]);
 				(t?.delivered ?? 1) > 0 ? (s(""), i({
 					tone: "success",
 					title: `Reply sent to ${e.label}`
@@ -1658,7 +1702,7 @@ function st({ computer: e, question: n }) {
 		]
 	});
 }
-function ct({ step: e }) {
+function lt({ step: e }) {
 	let t = e.gate;
 	return /* @__PURE__ */ A("div", {
 		className: "min-w-0 flex-1 rounded border border-code-peach/50 bg-code-peach/10 px-2 py-1 text-code-peach",
@@ -1686,7 +1730,7 @@ function ct({ step: e }) {
 		]
 	});
 }
-function lt({ step: e }) {
+function ut({ step: e }) {
 	let t = e.delivery;
 	return /* @__PURE__ */ A("div", {
 		className: "min-w-0 flex-1 flex flex-wrap items-center gap-x-2 gap-y-1 rounded border border-code-green/40 bg-code-green/10 px-2 py-1",
@@ -1719,20 +1763,20 @@ function lt({ step: e }) {
 		]
 	});
 }
-function ut({ computer: t, registerPane: n, className: r }) {
+function dt({ computer: t, registerPane: n, className: r }) {
 	let { client: i } = $(), a = Y({
 		client: i,
 		boxId: t.id
-	}), o = D(null), s = v(t), c = a.running || s === "running", l = Qe(c);
+	}), o = D(null), s = v(t), c = a.running || s === "running", l = $e(c);
 	C(() => {
 		if (n) return n({ focus: () => o.current?.focus() }), () => n(null);
 	}, [n]);
-	let u = tt(a.steps), d = nt(u), f = u.filter((e) => !e.plan);
+	let u = nt(a.steps), d = rt(u), f = u.filter((e) => !e.plan);
 	C(() => {
 		let e = o.current;
 		e && (e.scrollTop = e.scrollHeight);
 	}, [f.length]);
-	let p = f.filter((e) => e.kind === "tool"), m = c ? f.map((e) => e.kind).lastIndexOf("tool") : -1, h = u[0]?.at ?? null, g = u.some((e) => e.kind === "error"), _ = u.some((e) => e.kind === "gate"), y = s === "waiting" ? rt(a.steps) ?? t.currentTask ?? null : null;
+	let p = f.filter((e) => e.kind === "tool"), m = c ? f.map((e) => e.kind).lastIndexOf("tool") : -1, h = u[0]?.at ?? null, g = u.some((e) => e.kind === "error"), _ = u.some((e) => e.kind === "gate"), y = s === "waiting" ? it(a.steps) ?? t.currentTask ?? null : null;
 	return /* @__PURE__ */ A("div", {
 		"data-testid": "agent-pane",
 		className: e("flex flex-col h-full min-h-0 bg-code-bg font-mono text-[12px]", r),
@@ -1742,7 +1786,7 @@ function ut({ computer: t, registerPane: n, className: r }) {
 				title: t.currentTask,
 				children: t.currentTask
 			}),
-			d && d.length > 0 && /* @__PURE__ */ k(ot, { plan: d }),
+			d && d.length > 0 && /* @__PURE__ */ k(st, { plan: d }),
 			/* @__PURE__ */ A("ol", {
 				ref: o,
 				tabIndex: 0,
@@ -1759,14 +1803,14 @@ function ut({ computer: t, registerPane: n, className: r }) {
 						children: [
 							/* @__PURE__ */ k("span", {
 								className: "shrink-0 text-code-muted tabular-nums",
-								children: Ke(t.at)
+								children: qe(t.at)
 							}),
 							/* @__PURE__ */ k("span", {
 								"aria-hidden": "true",
 								className: e("shrink-0 w-3", r ? "text-code-blue animate-pulse" : t.kind === "error" ? "text-code-red" : t.kind === "gate" ? "text-code-peach" : t.kind === "tool" || t.kind === "result" || t.kind === "delivery" ? "text-code-green" : "text-code-muted"),
-								children: r ? "◌" : it[t.kind] ?? "·"
+								children: r ? "◌" : at[t.kind] ?? "·"
 							}),
-							t.kind === "gate" && t.gate ? /* @__PURE__ */ k(ct, { step: t }) : t.kind === "delivery" && t.delivery ? /* @__PURE__ */ k(lt, { step: t }) : /* @__PURE__ */ A(ee, { children: [t.tool && /* @__PURE__ */ k("span", {
+							t.kind === "gate" && t.gate ? /* @__PURE__ */ k(lt, { step: t }) : t.kind === "delivery" && t.delivery ? /* @__PURE__ */ k(ut, { step: t }) : /* @__PURE__ */ A(ee, { children: [t.tool && /* @__PURE__ */ k("span", {
 								className: "shrink-0 text-code-text",
 								children: t.tool
 							}), /* @__PURE__ */ k("span", {
@@ -1777,7 +1821,7 @@ function ut({ computer: t, registerPane: n, className: r }) {
 					}, `${t.at}-${n}`);
 				})]
 			}),
-			y && /* @__PURE__ */ k(st, {
+			y && /* @__PURE__ */ k(ct, {
 				computer: t,
 				question: y
 			}),
@@ -1799,7 +1843,7 @@ function ut({ computer: t, registerPane: n, className: r }) {
 					h != null && /* @__PURE__ */ A("span", {
 						className: "tabular-nums",
 						title: "Since this run's first step",
-						children: [c ? "⟳ " : "", qe((c ? l : u[u.length - 1].at) - h)]
+						children: [c ? "⟳ " : "", Je((c ? l : u[u.length - 1].at) - h)]
 					})
 				]
 			})
@@ -1816,18 +1860,18 @@ var Z = {
 	RESIZE: 4,
 	HEARTBEAT: 5,
 	CLOSE: 255
-}, dt = 65536, ft = 29, pt = 3e4, mt = 5;
+}, ft = 65536, pt = 29, mt = 3e4, ht = 5;
 function Q(e, t) {
 	let n = t ?? /* @__PURE__ */ new Uint8Array(), r = new Uint8Array(n.length + 1);
 	return r[0] = e, r.set(n, 1), r;
 }
-function ht(e, t) {
+function gt(e, t) {
 	return Q(Z.RESIZE, new TextEncoder().encode(JSON.stringify({
 		width: e,
 		height: t
 	})));
 }
-function gt(e) {
+function _t(e) {
 	switch (e) {
 		case 1e3: return {
 			retry: !1,
@@ -1867,10 +1911,10 @@ function gt(e) {
 		};
 	}
 }
-function _t(e, t) {
+function vt(e, t) {
 	return e === 1006 && t >= 5 ? "could not connect — the runtime may already hold 10 shells; close one and retry" : null;
 }
-function vt(e) {
+function yt(e) {
 	let t = (e.details?.causes ?? []).find((e) => e.reason === "ExitCode")?.message;
 	if (t == null) return null;
 	let n = Number.parseInt(t, 10);
@@ -1878,15 +1922,15 @@ function vt(e) {
 }
 //#endregion
 //#region src/components/compute/components/ShellTerminal.tsx
-function yt(e) {
+function bt(e) {
 	let t = 2166136261;
 	for (let n = 0; n < e.length; n += 1) t ^= e.charCodeAt(n), t = Math.imul(t, 16777619);
 	return t >>> 0;
 }
-function bt(e) {
+function xt(e) {
 	e && (e.onopen = null, e.onmessage = null, e.onclose = null, e.onerror = null, e.close());
 }
-function xt(e, t) {
+function St(e, t) {
 	let n = {
 		background: "#1e1e2e",
 		foreground: "#cdd6f4",
@@ -1905,12 +1949,12 @@ function xt(e, t) {
 		selectionBackground: i("--color-terminal-selection", n.selectionBackground)
 	};
 }
-var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, height: o = 460, chrome: s = !0, fillHeight: c = !1, autoConnect: l = !1, onStatus: u, background: d, className: f }, m) {
+var Ct = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, height: o = 460, chrome: s = !0, fillHeight: c = !1, autoConnect: l = !1, onStatus: u, background: d, className: f }, m) {
 	let { client: h, computers: g } = $(), y = D(null);
 	C(() => {
 		let e = () => b.current, t = () => {
 			let t = e();
-			t && (t.options.theme = xt(d, y.current));
+			t && (t.options.theme = St(d, y.current));
 		}, n = typeof MutationObserver == "function" ? new MutationObserver(t) : null;
 		n?.observe(document.documentElement, {
 			attributes: !0,
@@ -1938,12 +1982,12 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 			return;
 		}
 		if (L.current) return;
-		bt(T.current), T.current = null;
+		xt(T.current), T.current = null;
 		let r = new WebSocket(n);
 		r.binaryType = "arraybuffer", T.current = r, r.onopen = () => {
 			P.current = 0, F.current = !1, z("live"), M.current?.("ready");
 			let t = S.current;
-			t && (t.fit(), r.send(ht(e.cols, e.rows))), i && r.send(Q(Z.STDIN, new TextEncoder().encode(`cd ${i} 2>/dev/null || true\n`))), e.focus();
+			t && (t.fit(), r.send(gt(e.cols, e.rows))), i && r.send(Q(Z.STDIN, new TextEncoder().encode(`cd ${i} 2>/dev/null || true\n`))), e.focus();
 		}, r.onmessage = (t) => {
 			let n = new Uint8Array(t.data);
 			if (n.length === 0) return;
@@ -1961,7 +2005,7 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 						V(e.metadata.reconnected ? `reattached${t ? ` · ${t} bytes lost while away` : ""}` : "new shell");
 						return;
 					}
-					j.current?.(vt(e));
+					j.current?.(yt(e));
 				} catch {}
 				return;
 			}
@@ -1971,13 +2015,13 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 				z("detached"), V("detached — shell still running"), M.current?.("detached");
 				return;
 			}
-			let t = gt(e.code);
+			let t = _t(e.code);
 			if (V(t.text), t.retry && P.current < 5 && !L.current) {
 				P.current += 1, z("connecting"), I.current = setTimeout(() => void H(), Math.min(500 * 2 ** P.current, 8e3));
 				return;
 			}
 			z(e.code === 1e3 ? "closed" : "error"), M.current?.(e.code === 1e3 ? "detached" : "error");
-			let n = _t(e.code, P.current);
+			let n = vt(e.code, P.current);
 			n && V(n);
 		}, r.onerror = () => {};
 	}, [
@@ -1993,7 +2037,7 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 			cursorBlink: !0,
 			fontSize: 12,
 			fontFamily: "\"Fira Code\", ui-monospace, SFMono-Regular, Menlo, monospace",
-			theme: xt(d, y.current),
+			theme: St(d, y.current),
 			scrollback: 5e3
 		}), t = new ne();
 		e.loadAddon(t), e.open(y.current), t.fit(), b.current = e, S.current = t;
@@ -2012,7 +2056,7 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 			n.send(Q(Z.STDIN, r));
 		}), r = e.onResize(({ cols: e, rows: t }) => {
 			let n = T.current;
-			n?.readyState === WebSocket.OPEN && n.send(ht(e, t));
+			n?.readyState === WebSocket.OPEN && n.send(gt(e, t));
 		}), i = () => t.fit();
 		globalThis.addEventListener("resize", i);
 		let a = typeof ResizeObserver == "function" ? new ResizeObserver(() => t.fit()) : null;
@@ -2020,9 +2064,9 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 		let o = setInterval(() => {
 			let e = T.current;
 			e?.readyState === WebSocket.OPEN && e.send(Q(Z.HEARTBEAT));
-		}, pt);
+		}, mt);
 		return () => {
-			L.current = !0, I.current && clearTimeout(I.current), N.current && clearTimeout(N.current), clearInterval(o), globalThis.removeEventListener("resize", i), a?.disconnect(), n.dispose(), r.dispose(), bt(T.current), T.current = null, e.dispose(), b.current = null;
+			L.current = !0, I.current && clearTimeout(I.current), N.current && clearTimeout(N.current), clearInterval(o), globalThis.removeEventListener("resize", i), a?.disconnect(), n.dispose(), r.dispose(), xt(T.current), T.current = null, e.dispose(), b.current = null;
 		};
 	}, []), C(() => {
 		l && R === "idle" && H();
@@ -2062,7 +2106,7 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 			s && /* @__PURE__ */ A(p, {
 				active: re,
 				intensity: "low",
-				seed: yt(t),
+				seed: bt(t),
 				className: "flex items-center gap-2 px-3 py-2 border-b border-code-border shrink-0",
 				"data-testid": "shell-terminal-particles",
 				children: [
@@ -2125,7 +2169,7 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 			})
 		]
 	});
-}), Ct = {
+}), wt = {
 	id: "shell",
 	label: "shell",
 	description: "A real terminal on this computer.",
@@ -2134,53 +2178,53 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 	statusMode: "pty",
 	icon: /* @__PURE__ */ k(i, { size: 14 }),
 	title: "Shell",
-	appliesTo: (e) => !He(e),
-	render: (e) => /* @__PURE__ */ k(Ot, { ...e })
-}, wt = {
+	appliesTo: (e) => !Ue(e),
+	render: (e) => /* @__PURE__ */ k(kt, { ...e })
+}, Tt = {
 	id: "tail",
 	label: "tail",
 	description: "Watch what is running here, including runs started elsewhere. Costs no shell slot.",
 	statusMode: "read-only",
 	icon: /* @__PURE__ */ k(s, { size: 14 }),
 	title: "Activity",
-	render: ({ computer: e, registerPane: t }) => /* @__PURE__ */ k(Fe, {
+	render: ({ computer: e, registerPane: t }) => /* @__PURE__ */ k(Ie, {
 		computer: e,
 		registerPane: t
 	})
-}, Tt = {
+}, Et = {
 	id: "logs",
 	label: "logs",
 	title: "Bot logs",
 	description: "Follow this computer’s output as log lines. Pause, filter and search. Costs no shell slot.",
 	statusMode: "read-only",
 	icon: /* @__PURE__ */ k(r, { size: 14 }),
-	render: ({ computer: e, registerPane: t }) => /* @__PURE__ */ k(et, {
+	render: ({ computer: e, registerPane: t }) => /* @__PURE__ */ k(tt, {
 		computer: e,
 		registerPane: t
 	})
-}, Et = {
+}, Dt = {
 	id: "agent",
 	label: "agent",
 	title: "Agent",
 	description: "Watch the agent’s current run step by step. Costs no shell slot.",
 	statusMode: "watching",
 	icon: /* @__PURE__ */ k(o, { size: 14 }),
-	render: ({ computer: e, registerPane: t }) => /* @__PURE__ */ k(ut, {
+	render: ({ computer: e, registerPane: t }) => /* @__PURE__ */ k(dt, {
 		computer: e,
 		registerPane: t
 	})
-}, Dt = [
-	Ct,
+}, Ot = [
 	wt,
 	Tt,
-	Et
+	Et,
+	Dt
 ];
-function Ot({ computer: e, paneId: t, registerPane: n }) {
+function kt({ computer: e, paneId: t, registerPane: n }) {
 	let r = D(null);
 	return C(() => (n({
 		send: (e) => r.current?.send(e) ?? !1,
 		focus: () => r.current?.focus()
-	}), () => n(null)), [n]), /* @__PURE__ */ k(St, {
+	}), () => n(null)), [n]), /* @__PURE__ */ k(Ct, {
 		ref: r,
 		sessionId: e.sessionId,
 		shellId: t,
@@ -2192,14 +2236,14 @@ function Ot({ computer: e, paneId: t, registerPane: n }) {
 }
 //#endregion
 //#region src/components/compute/context/ComputeContext.tsx
-var kt = y(null);
-function At({ children: e, client: t, clientOptions: n, computers: r, useFixtures: i = !0, pollIntervalMs: a = 5e3, canManage: o = !1, enabled: s = !0, models: c, projects: l, paneKinds: u = Dt, onNotify: d }) {
+var At = y(null);
+function jt({ children: e, client: t, clientOptions: n, computers: r, useFixtures: i = !0, pollIntervalMs: a = 5e3, canManage: o = !1, enabled: s = !0, models: c, projects: l, paneKinds: u = Ot, onNotify: d }) {
 	let f = E(() => t ?? M(n), [t, n]), p = B({
 		client: f,
 		pollIntervalMs: s ? a : 0,
 		enabled: s,
 		...r ? { computers: r } : {},
-		...i ? { fixtures: ye } : {}
+		...i ? { fixtures: be } : {}
 	}), m = h({
 		client: f,
 		enabled: s,
@@ -2214,7 +2258,7 @@ function At({ children: e, client: t, clientOptions: n, computers: r, useFixture
 		return f.getStatus().then((t) => {
 			e || (y(t), x(null));
 		}).catch((t) => {
-			e || (x(t instanceof Error ? t.message : "Runtime status unavailable"), i && y(be));
+			e || (x(t instanceof Error ? t.message : "Runtime status unavailable"), i && y(xe));
 		}), () => {
 			e = !0;
 		};
@@ -2229,7 +2273,7 @@ function At({ children: e, client: t, clientOptions: n, computers: r, useFixture
 		p.source,
 		p.isLoading
 	]);
-	let S = c ?? xe, w = E(() => {
+	let S = c ?? Se, w = E(() => {
 		let e = v?.allowedModels;
 		return !e || e.length === 0 ? S : S.filter((t) => e.includes(t.id));
 	}, [S, v?.allowedModels]), T = E(() => ({
@@ -2263,18 +2307,18 @@ function At({ children: e, client: t, clientOptions: n, computers: r, useFixture
 		u,
 		d
 	]);
-	return /* @__PURE__ */ k(kt.Provider, {
+	return /* @__PURE__ */ k(At.Provider, {
 		value: T,
 		children: e
 	});
 }
 function $() {
-	let e = S(kt);
+	let e = S(At);
 	if (!e) throw Error("useCompute must be used within a ComputeProvider");
 	return e;
 }
-function jt() {
-	return S(kt);
+function Mt() {
+	return S(At);
 }
 //#endregion
-export { be as $, Ye as A, Re as B, Ke as C, M as Ct, nt as D, Ze as E, ze as F, De as G, je as H, Be as I, Ee as J, Te as K, Le as L, Ue as M, Ge as N, rt as O, Ie as P, xe as Q, He as R, Xe as S, L as St, qe as T, Y as U, Fe as V, Oe as W, ye as X, Ae as Y, Se as Z, ht as _, B as _t, Dt as a, le as at, ut as b, P as bt, wt as c, oe as ct, pt as d, me as dt, Ce as et, dt as f, ve as ft, Q as g, he as gt, gt as h, ie as ht, Et as i, de as it, We as j, Je as k, St as l, ue as lt, Z as m, _e as mt, $ as n, ce as nt, Tt as o, ae as ot, mt as p, pe as pt, ke as q, jt as r, ge as rt, Ct as s, se as st, At as t, V as tt, ft as u, fe as ut, _t as v, I as vt, tt as w, et as x, F as xt, vt as y, N as yt, Ve as z };
+export { xe as $, Xe as A, ze as B, qe as C, L as Ct, rt as D, Qe as E, Be as F, Oe as G, Me as H, Ve as I, De as J, Ee as K, Re as L, We as M, Ke as N, it as O, Le as P, Se as Q, Ue as R, Ze as S, F as St, Je as T, Y as U, Ie as V, ke as W, be as X, je as Y, Ce as Z, gt as _, ge as _t, Ot as a, ue as at, dt as b, N as bt, Tt as c, se as ct, mt as d, pe as dt, we as et, ft as f, he as ft, Q as g, ie as gt, _t as h, ve as ht, Dt as i, fe as it, Ge as j, Ye as k, Ct as l, oe as lt, Z as m, me as mt, $ as n, le as nt, Et as o, ae as ot, ht as p, ye as pt, Ae as q, Mt as r, _e as rt, wt as s, ce as st, jt as t, V as tt, pt as u, de as ut, vt as v, B as vt, nt as w, M as wt, tt as x, P as xt, yt as y, I as yt, He as z };

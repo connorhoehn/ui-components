@@ -4,7 +4,7 @@ import { f as n } from "./Chip-BlpTnjWu.js";
 import { t as r } from "./IconButton-Bf5Wy0tS.js";
 import { Dt as i, E as a, S as o, Tt as s, X as c, et as l, i as u, it as d, tt as f } from "./Icons-CqVFbuiZ.js";
 import { t as p } from "./EmptyState-pOG782nO.js";
-import { $ as m, Q as h, X as g, h as _, tt as ee } from "./ChatPanel-PbdaVeEr.js";
+import { $ as m, Q as h, X as g, h as _, tt as ee } from "./ChatPanel-kb9SKgOK.js";
 import { n as te } from "./Tabs-DyFKFsp9.js";
 import { n as v } from "./Avatar-T3d5ukiz.js";
 import { a as ne, d as y, i as b } from "./railType-AsIPWdQ5.js";

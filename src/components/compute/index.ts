@@ -104,13 +104,16 @@ export {
   DEFAULT_PANE_KINDS, SHELL_PANE_KIND, TAIL_PANE_KIND, LOGS_PANE_KIND, AGENT_PANE_KIND,
 } from './components/defaultPaneKinds';
 
+export { CommandOutputPane } from './components/CommandOutputPane';
+export type { CommandOutputPaneProps } from './components/CommandOutputPane';
+
 // Dock store
 export {
-  subscribeDock, getDock, reconcileDock, openShell, closeShell, focusShell,
+  subscribeDock, getDock, reconcileDock, openShell, openOutputTab, closeShell, focusShell,
   reportShellStatus, cycleShell, selectShellByIndex, setMode, setDockVisible,
   toggleFloating, cycleLayout, showsAllPanes, setGeometry, MAX_SHELLS,
 } from './lib/dockStore';
-export type { DockMode, DockShell, DockGeometry, DockState, OpenShellOutcome } from './lib/dockStore';
+export type { DockMode, DockOutput, DockShell, DockGeometry, DockState, OpenShellOutcome } from './lib/dockStore';
 
 // Shell protocol
 export {

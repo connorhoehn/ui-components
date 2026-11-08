@@ -13,6 +13,7 @@
 
 import { DOCK_STORAGE_KEY } from './storage';
 import type { ShellStatus } from '../types';
+import type { LogLine } from '../../shared/LogStream';
 
 /**
  * Layouts, because "several terminals" means different things:
@@ -23,9 +24,31 @@ import type { ShellStatus } from '../types';
  */
 export type DockMode = 'hidden' | 'docked' | 'floating' | 'grid' | 'stack';
 
+/**
+ * Captured command output shown in a read-only dock tab (`openOutputTab`).
+ * Never persisted: the lines are a snapshot of one run, not a session.
+ */
+export interface DockOutput {
+  /** The command that produced the lines; the pane's title. */
+  command: string;
+  lines: LogLine[];
+  running: boolean;
+  /** Set once the run has finished. */
+  exitCode?: number;
+  /** Offered as the pane's "Open shell" action. */
+  onOpenShell?: () => void;
+}
+
 export interface DockShell {
   /** Stable per-tab id; also the AgentCore shellId, so reattach works. */
   id: string;
+  /**
+   * `'output'` is a read-only tab of captured text (see `output`); it holds
+   * no PTY but takes a slot in the same quota. Absent means a live shell.
+   */
+  kind?: 'shell' | 'output';
+  /** Captured output, when `kind` is `'output'`. */
+  output?: DockOutput;
   sessionId: string;
   /**
    * Directory to start in.
@@ -75,7 +98,7 @@ function restore(): DockState {
       // anyone asked for one, is startling and costs a shell slot.
       mode: 'hidden',
       shells: (Array.isArray(saved.shells) ? saved.shells : [])
-        .filter((s): s is DockShell => Boolean(s) && typeof s.sessionId === 'string')
+        .filter((s): s is DockShell => Boolean(s) && typeof s.sessionId === 'string' && s.kind !== 'output')
         .map((s) => ({ ...s, status: 'connecting' as ShellStatus, unread: false }))
         .slice(0, MAX_SHELLS),
       activeId: saved.activeId ?? null,
@@ -93,7 +116,7 @@ function emit(): void {
   try {
     globalThis.localStorage?.setItem(
       DOCK_STORAGE_KEY,
-      JSON.stringify({ shells: state.shells, activeId: state.activeId, geometry: state.geometry }),
+      JSON.stringify({ shells: state.shells.filter((s) => s.kind !== 'output'), activeId: state.activeId, geometry: state.geometry }),
     );
   } catch {
     /* private mode, quota — the dock still works, it just forgets */
@@ -127,7 +150,7 @@ export function getDock(): DockState {
  */
 export function reconcileDock(liveSessionIds: readonly string[]): void {
   const live = new Set(liveSessionIds);
-  const kept = state.shells.filter((s) => live.has(s.sessionId));
+  const kept = state.shells.filter((s) => s.kind === 'output' || live.has(s.sessionId));
   if (kept.length === state.shells.length) return;
   set({
     shells: kept,
@@ -146,7 +169,7 @@ export type OpenShellOutcome = { ok: true; id: string } | { ok: false; reason: '
  * fight — the second connection kicks the first with close code 4000.
  */
 export function openShell(box: { id: string; label: string; sessionId: string; cwd?: string }): OpenShellOutcome {
-  const existing = state.shells.find((s) => s.sessionId === box.sessionId);
+  const existing = state.shells.find((s) => s.kind !== 'output' && s.sessionId === box.sessionId);
   if (existing) {
     set({
       activeId: existing.id,
@@ -182,6 +205,60 @@ export function openShell(box: { id: string; label: string; sessionId: string; c
     mode: state.mode === 'hidden' ? 'docked' : state.mode,
   });
   return { ok: true, id: shell.id };
+}
+
+/**
+ * Open a read-only tab of captured command output, or update and focus the one
+ * already open under the same `id`.
+ *
+ * It counts against the same quota as shells (`MAX_SHELLS`): a tab is a tab to
+ * the person looking at the strip, and one cap is easier to explain than two.
+ * Re-running the same command with the same `id` replaces the lines in place
+ * rather than stacking a second tab.
+ */
+export function openOutputTab(input: {
+  id: string;
+  label: string;
+  command: string;
+  lines: LogLine[];
+  running?: boolean;
+  exitCode?: number;
+  onOpenShell?: () => void;
+}): OpenShellOutcome {
+  const output: DockOutput = {
+    command: input.command,
+    lines: input.lines,
+    running: input.running ?? false,
+    ...(input.exitCode !== undefined ? { exitCode: input.exitCode } : {}),
+    ...(input.onOpenShell ? { onOpenShell: input.onOpenShell } : {}),
+  };
+  const mode = state.mode === 'hidden' ? 'docked' : state.mode;
+  const existing = state.shells.find((s) => s.kind === 'output' && s.id === input.id);
+  if (existing) {
+    set({
+      activeId: existing.id,
+      mode,
+      shells: state.shells.map((s) => (s.id === existing.id
+        ? { ...s, label: input.label, output, status: output.running ? 'busy' : 'ready', unread: false }
+        : s)),
+    });
+    return { ok: true, id: existing.id };
+  }
+  if (state.shells.length >= MAX_SHELLS) {
+    set({ mode });
+    return { ok: false, reason: 'at-capacity' };
+  }
+  const tab: DockShell = {
+    id: input.id,
+    kind: 'output',
+    output,
+    sessionId: '',
+    label: input.label,
+    status: output.running ? 'busy' : 'ready',
+    unread: false,
+  };
+  set({ shells: [...state.shells, tab], activeId: tab.id, mode });
+  return { ok: true, id: tab.id };
 }
 
 export function closeShell(id: string): void {

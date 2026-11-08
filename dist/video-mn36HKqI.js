@@ -29,7 +29,7 @@ import { n as ye, r as be } from "./Avatar-T3d5ukiz.js";
 import { i as xe, r as Se, t as Ce } from "./ChoiceList-e9ggV8ZP.js";
 import { t as we } from "./SegmentedControl-DAjnOtF4.js";
 import { n as Te } from "./RovingToolbar-B1Fai5PF.js";
-import { t as Ee } from "./PresenceAvatars-D_qhOIk3.js";
+import { t as Ee } from "./PresenceAvatars-Cju7Hj98.js";
 import { t as De } from "./Checkbox-Bx-yW1PI.js";
 import { t as Oe } from "./activationKey-CjbL3LUv.js";
 import { C as ke, E as Ae, H as je, L as Me, S as Ne, V as Pe, Z as Fe } from "./BreakoutRoomsPanel-7DUp5qIh.js";

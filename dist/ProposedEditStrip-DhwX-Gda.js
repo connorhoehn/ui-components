@@ -23,7 +23,7 @@ import { t as A } from "./DotMeter-B6ZDgLU7.js";
 import { t as ne } from "./SegmentedControl-DAjnOtF4.js";
 import { n as j } from "./RovingToolbar-B1Fai5PF.js";
 import { t as M } from "./InlineAlert-Dzf30Lca.js";
-import { t as N } from "./PresenceAvatars-D_qhOIk3.js";
+import { t as N } from "./PresenceAvatars-Cju7Hj98.js";
 import { t as P } from "./useMeasuredWidth-C5XA7LDN.js";
 import { t as F } from "./SectionLabel-Ch_rkHQZ.js";
 import { t as I } from "./StatusPill-Dh1Ary6I.js";
@@ -1215,7 +1215,7 @@ function Ze(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var Qe = ce(() => import("./SortableSlideList-BGagH81B.js"));
+var Qe = ce(() => import("./SortableSlideList-CZE1mDsU.js"));
 function $e(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
