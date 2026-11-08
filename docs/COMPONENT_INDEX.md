@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-973 components across 20 entry points; 825 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+975 components across 20 entry points; 827 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -56,7 +56,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (9)
-- [Other](#other) (79)
+- [Other](#other) (81)
 - [Icons](#icons) (112)
 
 ## Page templates
@@ -945,6 +945,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ErrorDisplay` | `@connorhoehnslalom/ui-components/shared` | — |  |  |
 | `EventLog` | `@connorhoehnslalom/ui-components/shared` | Dev tool component that renders a timestamped, scrollable list of WebSocket messages sent and received. |  |  |
 | `FileKindMark` | `@connorhoehnslalom/ui-components/shared` | The small square glyph that says what KIND of file a row is: a page, a presentation, a recording, a transcript, a diagram, a folder. | `shared-filekindmark` |  |
+| `FrameStrip` | `@connorhoehnslalom/ui-components/shared` | A scrubbable image sequence — "20 frames of it moving". | `shared-framestrip` |  |
 | `GenerativeImagePreview` | `@connorhoehnslalom/ui-components/shared` | "Image synthesizing" visual for generative pipeline nodes (NODE-VISUALS-AUDIT §3.2). | `image-generativeimagepreview` |  |
 | `HeaderDescriptionInfo` | `@connorhoehnslalom/ui-components/shared` | Compact density's home for the description: an info glyph after the title opening the library `HoverCard` — hover or keyboard focus shows it, Enter pins it, Escape closes it, focus never leaves the glyph. |  |  |
 | `HeaderPeople` | `@connorhoehnslalom/ui-components/shared` | The people in a header. |  |  |
@@ -962,6 +963,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `LiveRegion` | `@connorhoehnslalom/ui-components/shared` | A screen-reader-only ARIA live region with a rate limiter. |  |  |
 | `MappingReviewPage` | `@connorhoehnslalom/ui-components/ingest` | Operator queue for ingest items the LLM mapper produced low-confidence type matches for. | `ingest-mappingreviewpage` |  |
 | `MarkdownView` | `@connorhoehnslalom/ui-components/shared` | Read-only markdown rendered on the library's own tokens. | `shared-markdownview` |  |
+| `ModelViewer` | `@connorhoehnslalom/ui-components/shared` | A generated 3D model (GLB/glTF) on a turntable, for judging it the way ImageCompare judges an image: beside its reference (the concept art) in one shared frame, so the two are exactly the same height. | `shared-modelviewer` |  |
 | `PanelsView` | `@connorhoehnslalom/ui-components/shared` | Lazy-loadable view for the "Previews" tab — Chat, Cursors, Reactions, Shared Document, and Activity panels. |  |  |
 | `ParticlesBackground` | `@connorhoehnslalom/ui-components/shared` | Renders `children` over a drifting point cloud while `active`. |  |  |
 | `ProcedureSteps` | `@connorhoehnslalom/ui-components/shared` | A procedure's ordered steps, drawn once: in a guide's body ("What to do: 1 Rerun the failing test…") and, with outcomes, in its Runs tab ("✓ 1 Keep the SAML shim / ✓ 2 Confirm sessions / ! | `work-proceduresteps` |  |

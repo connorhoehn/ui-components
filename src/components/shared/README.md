@@ -31,6 +31,7 @@ folder path "Document location" separately from the application breadcrumb.
 | Text | `Highlight` (matched-term `<mark>` for search rows) |
 | Domain | `ChannelHeader`, `PageHeader`, `Breadcrumbs`, `PresenceAvatars`, `NotificationCenter`, `CommandPalette`, `Skeleton`, `Tooltip` |
 | Visualisation | `LogStream` / `TerminalLog`, `StackDiagram` / `LayerStack`, `HealthGrid` / `HealthCell`, `AlertList` / `AlertItem`, `CodeBlock` |
+| Media | `ImageCompare`, `ImageLightbox`, `ModelViewer` (GLB turntable beside its reference; channels, parts, wireframe, versions), `FrameStrip` (scrubbable image sequence) |
 
 ## Stability
 
@@ -77,6 +78,18 @@ A row's own buttons (quick actions) go in `GroupedListRow.actions` (and
 `ActionRowItem.trailing` on `ActionRowList`): siblings of the row's button,
 never inside it, at the row's end when wide and wrapped under the title below
 a 35rem row.
+
+`ModelViewer` shows a GLB/glTF on a turntable through Google's
+`<model-viewer>`, an optional peer loaded with a dynamic `import()` only when
+one mounts: an app that renders it installs `@google/model-viewer@4.4.0` and
+`three@^0.183`. A `reference` image sits beside the model in the same aspect
+frame (two up from a 28rem container, stacked below). The channel toggle puts
+one texture map flat on the mesh (`channels` URLs plus the maps embedded in
+the model); `parts` highlight named GLB nodes and `wireframe` draws the mesh's
+edges through the three.js scene, which is not public model-viewer API: when
+it is unreachable the controls still report, the view does not change.
+`FrameStrip` scrubs an image sequence (Play/Pause, a Slider, arrow keys, a
+scrolling thumbnail row, an optional contact sheet).
 
 `DataTable rowHeight="content"` declares a document table whose prose may wrap
 into taller rows. `KeyValue responsive` allows divided labels to move above

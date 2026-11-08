@@ -293,7 +293,9 @@ describe('entry points and their transitive optional peers', () => {
       // reaches its drag chunk (`GroupedListSortable.tsx`) through a dynamic
       // `import()`, so a list without `onReorder`, or a consumer without the
       // optional peer, never loads it; the list stays keyboard-reorderable.
-      shared: { static: ['cmdk', 'react-markdown', 'recharts', 'remark-gfm'], dynamic: ['@dnd-kit/core', '@dnd-kit/sortable'] },
+      // `@google/model-viewer` is DYNAMIC (2.511.0): `ModelViewer` imports it
+      // in an effect, so only a mounted viewer loads it (and three under it).
+      shared: { static: ['cmdk', 'react-markdown', 'recharts', 'remark-gfm'], dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@google/model-viewer'] },
       observability: { static: ['react-router', 'recharts'], dynamic: [] },
       ingest: { static: ['react-router', 'recharts'], dynamic: [] },
       hooks: { static: ['amazon-cognito-identity-js', 'react-router', 'yjs'], dynamic: [] },
@@ -340,7 +342,7 @@ describe('entry points and their transitive optional peers', () => {
         // above. `@dnd-kit/core` and `@dnd-kit/sortable` are lazy the same
         // way, via `SlideList.tsx` — see the `doc-editor` note above.
         // The mention stack is lazy via the presentation editor's agent box.
-        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@tiptap/extension-mention', '@tiptap/pm', '@xterm/addon-fit', '@xterm/xterm', 'amazon-ivs-web-broadcast'],
+        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@google/model-viewer', '@tiptap/extension-mention', '@tiptap/pm', '@xterm/addon-fit', '@xterm/xterm', 'amazon-ivs-web-broadcast'],
       },
     };
 

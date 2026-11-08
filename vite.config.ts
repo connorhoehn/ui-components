@@ -129,6 +129,10 @@ export default defineConfig({
         // hls.js is dynamic-imported by RecordingPlayer; the consumer
         // app installs it. Externalized to keep this lib bundle lean.
         'hls.js',
+        // Optional peers since 2.511.0, the same shape as hls.js: ModelViewer
+        // dynamic-imports @google/model-viewer (which imports three) in an
+        // effect, so a /shared consumer that never mounts it loads neither.
+        '@google/model-viewer', 'three',
         // Excalidraw is ~1.9MB and an OPTIONAL peer. It is imported by exactly
         // one module (ExcalidrawCanvas), which sits behind a React.lazy
         // boundary, so an app that never renders a diagram never fetches it.

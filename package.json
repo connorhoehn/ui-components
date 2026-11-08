@@ -215,6 +215,8 @@
     "amazon-cognito-identity-js": "^6.3.15",
     "amazon-ivs-web-broadcast": "^1.38.1",
     "hls.js": "^1.7.0",
+    "@google/model-viewer": "4.4.0",
+    "three": "^0.183.0",
     "lib0": "^0.2.117",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -299,6 +301,12 @@
     "amazon-ivs-web-broadcast": {
       "optional": true
     },
+    "@google/model-viewer": {
+      "optional": true
+    },
+    "three": {
+      "optional": true
+    },
     "hls.js": {
       "optional": true
     },
@@ -318,6 +326,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@excalidraw/excalidraw": "^0.18.1",
+    "@google/model-viewer": "4.4.0",
     "@microsoft/api-extractor": "^7.59.2",
     "@playwright/test": "^1.59.1",
     "@storybook/react-vite": "^10.4.0",
@@ -358,6 +367,7 @@
     "recharts": "^3.8.1",
     "storybook": "^10.4.0",
     "tailwindcss": "^4.2.4",
+    "three": "0.183.2",
     "typescript": "~7.0.2",
     "vite": "^8.2.2",
     "vite-plugin-dts": "^5.1.1",
