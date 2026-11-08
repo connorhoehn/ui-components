@@ -6816,12 +6816,30 @@ export declare function ContextComposer(props: ContextComposerProps): JSX.Elemen
 export declare interface ContextComposerProps {
     /** What the composer is attached to. Decides modes, chip, and which features may render. */
     context: ComposerContext;
-    /** `document`: comfortable density, for a full-width page. Default `compact`. */
-    presentation?: 'compact' | 'document';
+    /**
+     * `document`: comfortable density, for a full-width page. Default `compact`.
+     *
+     * `prompt` (since 2.510.0): a quiet prompt box for a host whose composer
+     * takes one instruction — the record (context chip) and any references in
+     * one header row with `modeRowEnd`, the suggestion chips, the text box, and
+     * one primary button showing `submitLabel` alone. Comfortable density;
+     * `toolbar` defaults to `prompt` (attach only when allowed, then
+     * `toolbarExtras`). No mode label, pill, picker, menu or `⌥n` badge in any
+     * state, and no mode shortcuts or mode triggers: the mode stays what
+     * `mode` / `defaultMode` says, so Enter still routes there. No `/ commands`
+     * hint (typing `/` still opens the menu), and picking a command that has no
+     * `argument` from that menu sends it at once — the draft is cleared and
+     * `onSend` receives `{ text: trigger, command: { trigger } }` (in a
+     * `ConversationComposer`, the command's `run` with empty `argumentText`),
+     * so no command chip waits beside an empty box. Adding references never
+     * changes the card's height. `data-presentation="prompt"` on the composer.
+     */
+    presentation?: 'compact' | 'document' | 'prompt';
     /**
      * The strip's preset, as `RichChatComposerProps.toolbar` (since 2.508.0).
-     * Default `editor`. `prompt` drops every formatting control and keeps
-     * attach (when allowed), the divider and the host's extras.
+     * Default `editor` (`prompt` under `presentation="prompt"`). `prompt` drops
+     * every formatting control and keeps attach (when allowed), the divider
+     * and the host's extras.
      */
     toolbar?: ComposerToolbarPreset;
     /** Controlled mode. Pair with `onModeChange`. */
@@ -20002,6 +20020,16 @@ declare interface RichChatComposerProps {
      */
     onCommand?: (command: ComposerCommand, argument: ComposerArgumentItem) => void;
     /**
+     * A command with no `argument` picked from the `/` menu (click or Enter)
+     * runs at once instead of being written into the draft (since 2.510.0):
+     * the draft is cleared, then this is called. A thrown or rejected
+     * `ComposerSendError` shows in the send-error line, like a refused send.
+     * Commands that take an argument still write their trigger and open the
+     * argument menu. Absent, every pick writes its trigger (the default).
+     * `ContextComposer presentation="prompt"` wires it to `onSend`.
+     */
+    onCommandPick?: (command: ComposerCommand) => void | boolean | Promise<void | boolean>;
+    /**
      * Resolves the @ menu. A promise is supported so a host can hit a directory
      * rather than filter a preloaded array. Omit to disable mentions entirely.
      */
@@ -20156,6 +20184,19 @@ declare interface RichChatComposerProps {
      * Below wide the strip folds exactly as before, whichever preset is set.
      */
     toolbar?: ComposerToolbarPreset;
+    /**
+     * `prompt` (since 2.510.0): the docked card as a quiet prompt box — the
+     * header row holds the references (left) and `modeRowEnd` (right) and keeps
+     * one height whether or not there are references; then the suggestion
+     * chips, the input (no bordered well), and the strip with attach, the
+     * host's extras and Send showing `submitLabel` alone (no paper plane, no
+     * arrow). No mode label, pill, picker, menu or `⌥n` badge in any state
+     * (the mode is still `mode` and Enter still sends in it), and no
+     * `/ commands` hint (typing `/` still opens the menu). Sets
+     * `data-presentation="prompt"` on the root. `ContextComposer
+     * presentation="prompt"` sets it. Default `card` (unchanged).
+     */
+    presentation?: 'card' | 'prompt';
     /**
      * A `⋯` menu at the right of the toolbar row, before `submitLead` and Send —
      * for actions on the THING the composer is attached to ("Draft a
