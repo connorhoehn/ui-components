@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { VoiceDock, type VoiceDockProps } from './VoiceDock';
 import { VoiceActivityRing } from './VoiceActivityRing';
-import { VoiceTurnStrip } from './VoiceTurnStrip';
-import { VOICE_PHASES, type VoicePhase, type VoiceTurn } from './voiceTypes';
+import { VoiceTurnStrip, VoiceConfirmCard } from './VoiceTurnStrip';
+import { VoiceChoiceCard } from './VoiceChoiceCard';
+import { VOICE_PHASES, type VoiceChoiceCandidate, type VoicePhase, type VoiceTurn } from './voiceTypes';
 
 const noop = () => {};
 
@@ -92,5 +93,59 @@ export const TurnStrip: Story = {
       onClear={noop}
       pending={{ title: 'Approve request 41?', detail: 'Grants editor on Atlas to Dana Reyes.', onConfirm: noop, onCancel: noop }}
     />
+  ),
+};
+
+/** A decision: approve / reject toggle and a one-line note; Confirm carries `{ decision, note }`. */
+export const Decide: StoryObj = {
+  render: () => (
+    <VoiceConfirmCard
+      pending={{
+        title: 'Decide request 41',
+        detail: ['Grants editor on Atlas to Dana Reyes.', 'Requested by Dana Reyes on Monday.'],
+        fields: { decision: 'approve', notePlaceholder: 'Why? (optional)' },
+        onConfirm: (result) => console.log('confirm', result),
+        onCancel: noop,
+      }}
+    />
+  ),
+};
+
+const alphas: VoiceChoiceCandidate[] = [
+  { title: 'Alpha', subtitle: 'Initiative, owned by Dana Reyes', kind: 'initiative', href: '/iq/projects/alpha' },
+  { title: 'Alpha Centauri', subtitle: 'Initiative, owned by Sam Ortiz', kind: 'initiative', href: '/iq/projects/alpha-centauri' },
+  { title: 'Alpha Chen', subtitle: 'Platform team', kind: 'person', href: '/people/alpha-chen' },
+];
+const tenRows: VoiceChoiceCandidate[] = Array.from({ length: 10 }, (_, i) => ({
+  title: `Project ${String.fromCharCode(65 + i)}`,
+  subtitle: `Updated ${i + 1} day${i === 0 ? '' : 's'} ago`,
+  kind: i % 2 ? 'initiative' : 'team',
+}));
+
+/** An `ambiguous` result with three candidates; click or press 1-3. */
+export const ChoiceThreeRows: StoryObj = {
+  render: () => <VoiceChoiceCard choice={{ title: 'Which Alpha?', candidates: alphas, onChoose: noop, onCancel: noop }} />,
+};
+/** The most it shows: ten rows, digit 0 chooses the tenth. */
+export const ChoiceTenRows: StoryObj = {
+  render: () => <VoiceChoiceCard choice={{ title: 'Which project?', candidates: tenRows, onChoose: noop, onCancel: noop }} />,
+};
+/** The host set `ordinal` ("the second one"): that row is selected and chosen. */
+export const ChoiceOrdinalPreselected: StoryObj = {
+  render: () => <VoiceChoiceCard choice={{ title: 'Which Alpha?', candidates: alphas, ordinal: 2, onChoose: noop, onCancel: noop }} />,
+};
+/** In the footer dock: the choice card as a popover, compact. */
+export const FooterChoosing: Story = {
+  args: {
+    size: 'footer',
+    phase: 'confirming',
+    level: 0,
+    pendingChoice: { title: 'Which Alpha?', candidates: alphas, onChoose: noop, onCancel: noop },
+  },
+};
+/** Inside the transcript strip. */
+export const StripChoosing: StoryObj = {
+  render: () => (
+    <VoiceTurnStrip turns={turns.slice(0, 1)} pendingChoice={{ title: 'Which Alpha?', candidates: alphas, onChoose: noop, onCancel: noop }} />
   ),
 };

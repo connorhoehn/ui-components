@@ -29,12 +29,63 @@ export const VOICE_PHASE_LABEL: Record<VoicePhase, string> = {
   unavailable: 'Unavailable',
 };
 
+export type VoiceDecision = 'approve' | 'reject';
+
+/** What the confirm callback carries when the card has `fields`. */
+export interface VoiceConfirmResult {
+  decision: VoiceDecision;
+  /** Trimmed and capped at VOICE_NOTE_MAX characters; may be empty. */
+  note: string;
+}
+
+/** Longest note the confirm card passes on. */
+export const VOICE_NOTE_MAX = 200;
+
+/** Turns the confirm card into a decision: an approve / reject toggle and a one-line note. */
+export interface VoiceConfirmFields {
+  /** The toggle's starting value. Default `approve`. */
+  decision?: VoiceDecision;
+  /** Placeholder for the note input. Default "Note (optional)". */
+  notePlaceholder?: string;
+}
+
 export interface VoicePending {
   title: string;
-  detail?: string;
-  onConfirm: () => void;
+  /** One line of text, or a list of lines (an estimate, the fields a create will set). */
+  detail?: string | string[];
+  /** With `fields` set, an approve / reject toggle and a note input show. */
+  fields?: VoiceConfirmFields;
+  /** Called with `{ decision, note }` when `fields` is set, and with no argument otherwise. */
+  onConfirm: (result?: VoiceConfirmResult) => void;
   onCancel: () => void;
 }
+
+/** One candidate of an `ambiguous` result. */
+export interface VoiceChoiceCandidate {
+  title: string;
+  /** The secondary line: a role, a date, a parent. */
+  subtitle?: string;
+  /** A small chip: "person", "initiative". */
+  kind?: string;
+  /** Where choosing it goes; shown as the row's title attribute and `data-href`. The host navigates. */
+  href?: string;
+}
+
+/** The `ambiguous` payload as the dock shows it: up to ten candidates the user answers by voice or click. */
+export interface VoicePendingChoice {
+  /** The question: "Which Alpha?" */
+  title: string;
+  /** At most VOICE_CHOICE_MAX rows are shown. */
+  candidates: VoiceChoiceCandidate[];
+  /** 1-based. The host sets it when the voice says "the second one"; the card then chooses that row. */
+  ordinal?: number;
+  /** Zero-based index into `candidates`. */
+  onChoose: (index: number) => void;
+  onCancel: () => void;
+}
+
+/** Most candidates a choice card shows. */
+export const VOICE_CHOICE_MAX = 10;
 
 export interface VoiceLine {
   role: 'you' | 'assistant';

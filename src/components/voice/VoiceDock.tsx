@@ -3,7 +3,8 @@
 // A HuddleBar-shaped row: the activity ring, the phase label (a polite live
 // region), the last transcript line truncated, the budget meter (DotMeter,
 // full scale = the held amount), the elapsed minutes, mute and hang-up. While
-// `pending` is set the confirmation card opens as a popover above the row.
+// `pending` is set the confirmation card opens as a popover above the row;
+// `pendingChoice` opens the choice card the same way (compact at the footer size).
 // `unavailable` shows the reason as the pill's title and disables Start.
 //
 // Two sizes. `panel` (the default) is the full row: a 36px ring, the phase
@@ -29,12 +30,14 @@ import { T } from '../shared/Text';
 import { MicIcon, MicOffIcon, PhoneOffIcon } from '../video/MediaIcons';
 import { VoiceActivityRing } from './VoiceActivityRing';
 import { VoiceConfirmCard } from './VoiceTurnStrip';
+import { VoiceChoiceCard } from './VoiceChoiceCard';
 import {
   VOICE_PHASE_LABEL,
   clampLevel,
   type VoiceBudget,
   type VoiceLine,
   type VoicePending,
+  type VoicePendingChoice,
   type VoicePhase,
 } from './voiceTypes';
 
@@ -47,6 +50,8 @@ export interface VoiceDockProps {
   elapsedSeconds?: number;
   budget?: VoiceBudget | null;
   pending?: VoicePending | null;
+  /** An `ambiguous` result: the choice card opens as a popover above the row, like `pending`. */
+  pendingChoice?: VoicePendingChoice | null;
   lastLine?: VoiceLine | null;
   onStart?: () => void;
   onStop?: () => void;
@@ -101,6 +106,7 @@ export function VoiceDock({
   elapsedSeconds,
   budget = null,
   pending = null,
+  pendingChoice = null,
   lastLine = null,
   onStart,
   onStop,
@@ -128,6 +134,7 @@ export function VoiceDock({
   }, [ref]);
   const live = phase !== 'off' && phase !== 'ended' && phase !== 'unavailable';
   const showCard = mounted && Boolean(pending) && phase === 'confirming';
+  const showChoice = mounted && Boolean(pendingChoice) && phase === 'confirming';
   const pillTitle = phase === 'unavailable' ? unavailableReason : undefined;
   const label = VOICE_PHASE_LABEL[phase];
   const footer = size === 'footer';
@@ -256,6 +263,19 @@ export function VoiceDock({
           data-testid={`${testId}-pending`}
         >
           <VoiceConfirmCard pending={pending} handleEscape={false} />
+        </InlinePopover>
+      ) : null}
+      {pendingChoice ? (
+        <InlinePopover
+          trigger={rowRef}
+          open={showChoice}
+          onClose={pendingChoice.onCancel}
+          placement="bottom-start"
+          aria-label={`Choose: ${pendingChoice.title}`}
+          kind="voice-choice"
+          data-testid={`${testId}-pending-choice`}
+        >
+          <VoiceChoiceCard choice={pendingChoice} handleEscape={false} compact={footer} />
         </InlinePopover>
       ) : null}
     </Inline>

@@ -6,7 +6,9 @@ export { VoiceActivityRing } from './VoiceActivityRing';
 export type { VoiceActivityRingProps } from './VoiceActivityRing';
 export { VoiceTurnStrip, VoiceConfirmCard } from './VoiceTurnStrip';
 export type { VoiceTurnStripProps, VoiceConfirmCardProps } from './VoiceTurnStrip';
-export { VOICE_PHASES, VOICE_PHASE_LABEL } from './voiceTypes';
+export { VoiceChoiceCard } from './VoiceChoiceCard';
+export type { VoiceChoiceCardProps } from './VoiceChoiceCard';
+export { VOICE_PHASES, VOICE_PHASE_LABEL, VOICE_NOTE_MAX, VOICE_CHOICE_MAX } from './voiceTypes';
 export type {
-  VoicePhase, VoicePending, VoiceLine, VoiceBudget, VoiceToolCall, VoiceToolStatus, VoiceTurn,
+  VoicePhase, VoicePending, VoicePendingChoice, VoiceChoiceCandidate, VoiceConfirmFields, VoiceConfirmResult, VoiceDecision, VoiceLine, VoiceBudget, VoiceToolCall, VoiceToolStatus, VoiceTurn,
 } from './voiceTypes';

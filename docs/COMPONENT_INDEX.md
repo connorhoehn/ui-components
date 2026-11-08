@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-979 components across 21 entry points; 831 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+980 components across 21 entry points; 832 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -49,7 +49,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Buttons & actions](#buttons--actions) (15)
 - [Feedback & states](#feedback--states) (26)
 - [Chat & social](#chat--social) (107)
-- [Video](#video) (107)
+- [Video](#video) (108)
 - [Docs & editor](#docs--editor) (138)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (139)
 - [Agents & compute](#agents--compute) (36)
@@ -515,7 +515,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `VideoPlayerModal` | `@connorhoehn/ui-components/video` | Modal video player for raw MP4 / WebM segments. | `video-videoplayermodal` |  |
 | `ViewerCount` | `@connorhoehn/ui-components/video` | How many people are watching, or nothing at all. | `video-viewercount` |  |
 | `VoiceActivityRing` | `@connorhoehn/ui-components/voice` | The "it is active" visualization for a voice session. |  |  |
-| `VoiceConfirmCard` | `@connorhoehn/ui-components/voice` | The confirmation card: a title, optional detail, Confirm and Cancel. |  |  |
+| `VoiceChoiceCard` | `@connorhoehn/ui-components/voice` | The answer to an `ambiguous` result. |  |  |
+| `VoiceConfirmCard` | `@connorhoehn/ui-components/voice` | The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel. |  |  |
 | `VoiceDock` | `@connorhoehn/ui-components/voice` | The voice navigator's footer row. | `voice-voicedock` |  |
 | `VoicemailRecorder` | `@connorhoehn/ui-components/video` | The dialog a caller gets when nobody picked up. |  |  |
 | `VoiceTurnStrip` | `@connorhoehn/ui-components/voice` | What was said and what ran. |  |  |

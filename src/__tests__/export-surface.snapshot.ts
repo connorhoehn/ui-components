@@ -2677,9 +2677,12 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "UserListPage",
   ],
   "./voice": [
+    "VOICE_CHOICE_MAX",
+    "VOICE_NOTE_MAX",
     "VOICE_PHASES",
     "VOICE_PHASE_LABEL",
     "VoiceActivityRing",
+    "VoiceChoiceCard",
     "VoiceConfirmCard",
     "VoiceDock",
     "VoiceTurnStrip",

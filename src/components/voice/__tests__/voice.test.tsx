@@ -1,7 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { VoiceDock } from '../VoiceDock';
 import { VoiceActivityRing } from '../VoiceActivityRing';
-import { VoiceTurnStrip } from '../VoiceTurnStrip';
+import { VoiceTurnStrip, VoiceConfirmCard } from '../VoiceTurnStrip';
+import { VoiceChoiceCard } from '../VoiceChoiceCard';
 import { VOICE_PHASES, VOICE_PHASE_LABEL, clampLevel } from '../voiceTypes';
 
 const dockBase = { level: 0.4, outputLevel: 0.2, onStart: vi.fn(), onStop: vi.fn(), onMute: vi.fn() };
@@ -178,5 +179,113 @@ describe('VoiceTurnStrip', () => {
     render(<VoiceTurnStrip turns={[]} pending={{ title: 'x', onConfirm, onCancel: vi.fn() }} />);
     fireEvent.keyDown(screen.getByTestId('voice-confirm-card-cancel'), { key: 'Enter' });
     expect(onConfirm).not.toHaveBeenCalled();
+  });
+});
+
+describe('VoiceChoiceCard', () => {
+  const candidates = Array.from({ length: 12 }, (_, i) => ({ title: `Alpha ${i + 1}`, subtitle: `sub ${i + 1}`, kind: 'initiative' }));
+  const make = (extra: Record<string, unknown> = {}, n = 3) => {
+    const onChoose = vi.fn();
+    const onCancel = vi.fn();
+    const choice = { title: 'Which Alpha?', candidates: candidates.slice(0, n), onChoose, onCancel, ...extra };
+    return { onChoose, onCancel, ui: <VoiceChoiceCard choice={choice} /> };
+  };
+
+  it('shows ordinals, titles and secondary lines; at most ten rows', () => {
+    const { ui } = make({ candidates }, 12);
+    render(ui);
+    expect(screen.getAllByRole('listitem')).toHaveLength(10);
+    expect(screen.getByTestId('voice-choice-card-row-2')).toHaveTextContent('2Alpha 2initiativesub 2');
+  });
+
+  it('click chooses by zero-based index', () => {
+    const { ui, onChoose } = make();
+    render(ui);
+    fireEvent.click(screen.getByTestId('voice-choice-card-row-2'));
+    expect(onChoose).toHaveBeenCalledWith(1);
+  });
+
+  it('the ordinal prop chooses that row once, and preselects it', () => {
+    const { onChoose, onCancel } = make();
+    const choice = { title: 'Which?', candidates: candidates.slice(0, 3), onChoose, onCancel };
+    const { rerender } = render(<VoiceChoiceCard choice={{ ...choice, ordinal: 2 }} />);
+    expect(onChoose).toHaveBeenCalledTimes(1);
+    expect(onChoose).toHaveBeenCalledWith(1);
+    expect(screen.getByTestId('voice-choice-card-row-2')).toHaveAttribute('data-selected', 'true');
+    rerender(<VoiceChoiceCard choice={{ ...choice, ordinal: 2 }} />);
+    expect(onChoose).toHaveBeenCalledTimes(1);
+    rerender(<VoiceChoiceCard choice={{ ...choice, ordinal: 9 }} />);
+    expect(onChoose).toHaveBeenCalledTimes(1);
+  });
+
+  it('digits choose, 0 chooses the tenth, out-of-range digits do nothing', () => {
+    const { ui, onChoose } = make({}, 10);
+    render(ui);
+    const card = screen.getByTestId('voice-choice-card');
+    fireEvent.keyDown(card, { key: '3' });
+    expect(onChoose).toHaveBeenLastCalledWith(2);
+    fireEvent.keyDown(card, { key: '0' });
+    expect(onChoose).toHaveBeenLastCalledWith(9);
+    const second = make();
+    render(second.ui);
+    fireEvent.keyDown(screen.getAllByTestId('voice-choice-card')[1]!, { key: '7' });
+    expect(second.onChoose).not.toHaveBeenCalled();
+  });
+
+  it('arrows move the active row; Escape and the Cancel button cancel', () => {
+    const { ui, onChoose, onCancel } = make();
+    render(ui);
+    const card = screen.getByTestId('voice-choice-card');
+    fireEvent.keyDown(card, { key: 'ArrowDown' });
+    expect(screen.getByTestId('voice-choice-card-row-2')).toHaveAttribute('data-selected', 'true');
+    fireEvent.keyDown(card, { key: 'ArrowUp' });
+    fireEvent.keyDown(card, { key: 'ArrowUp' });
+    expect(screen.getByTestId('voice-choice-card-row-3')).toHaveAttribute('data-selected', 'true');
+    expect(onChoose).not.toHaveBeenCalled();
+    fireEvent.keyDown(card, { key: 'Escape' });
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByTestId('voice-choice-card-cancel'));
+    expect(onCancel).toHaveBeenCalledTimes(2);
+  });
+
+  it('renders inside the strip and the dock (compact at footer size)', () => {
+    const { onChoose, onCancel } = make();
+    const pendingChoice = { title: 'Which?', candidates: candidates.slice(0, 2), onChoose, onCancel };
+    const { unmount } = render(<VoiceTurnStrip turns={[]} pendingChoice={pendingChoice} />);
+    expect(screen.getByTestId('voice-choice-card')).toBeInTheDocument();
+    unmount();
+    render(<VoiceDock {...dockBase} phase="confirming" size="footer" pendingChoice={pendingChoice} />);
+    expect(screen.getByTestId('voice-choice-card')).toHaveAttribute('data-compact', 'true');
+  });
+});
+
+describe('VoiceConfirmCard fields', () => {
+  it('without fields, confirm is a bare call and detail lists render as a list', () => {
+    const onConfirm = vi.fn();
+    render(<VoiceConfirmCard pending={{ title: 'Do it?', detail: ['one', 'two'], onConfirm, onCancel: vi.fn() }} />);
+    expect(screen.queryByTestId('voice-confirm-card-note')).toBeNull();
+    expect(screen.getByTestId('voice-confirm-card-detail').querySelectorAll('li')).toHaveLength(2);
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenCalledWith();
+  });
+
+  it('with fields, confirm carries { decision, note }; the note is trimmed and capped at 200', () => {
+    const onConfirm = vi.fn();
+    render(<VoiceConfirmCard pending={{ title: 'Decide', fields: {}, onConfirm, onCancel: vi.fn() }} />);
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenLastCalledWith({ decision: 'approve', note: '' });
+    fireEvent.click(screen.getByRole('radio', { name: 'Reject' }));
+    fireEvent.change(screen.getByTestId('voice-confirm-card-note'), { target: { value: `   ${'x'.repeat(250)}   ` } });
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenLastCalledWith({ decision: 'reject', note: 'x'.repeat(200) });
+  });
+
+  it('a long note without padding is capped at exactly 200; Enter in the note confirms', () => {
+    const onConfirm = vi.fn();
+    render(<VoiceConfirmCard pending={{ title: 'Decide', fields: { decision: 'reject' }, onConfirm, onCancel: vi.fn() }} />);
+    const input = screen.getByTestId('voice-confirm-card-note');
+    fireEvent.change(input, { target: { value: 'y'.repeat(300) } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'reject', note: 'y'.repeat(200) });
   });
 });

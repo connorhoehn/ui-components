@@ -2,13 +2,15 @@ import { d as e, n as t } from "./Button-DQoeE5dN.js";
 import { i as n, r, t as i } from "./Text-DAQCiXe4.js";
 import { t as a } from "./IconButton-BgM9MvwA.js";
 import { a as o, i as s, u as c } from "./MediaIcons-_ai5Til2.js";
-import { t as l } from "./InlinePopover-BQTS5egk.js";
-import { t as u } from "./DotMeter-DJzl5dNX.js";
-import { t as d } from "./StatusPill-CoaiP2Bt.js";
-import { useCallback as f, useEffect as p, useRef as m, useState as h } from "react";
-import { jsx as g, jsxs as _ } from "react/jsx-runtime";
+import { t as l } from "./Input-DiOEvL5h.js";
+import { t as u } from "./InlinePopover-BQTS5egk.js";
+import { t as d } from "./DotMeter-DJzl5dNX.js";
+import { t as f } from "./SegmentedControl-DMudc23g.js";
+import { t as p } from "./StatusPill-CoaiP2Bt.js";
+import { useCallback as m, useEffect as h, useRef as g, useState as _ } from "react";
+import { jsx as v, jsxs as y } from "react/jsx-runtime";
 //#region src/components/voice/voiceTypes.ts
-var v = [
+var b = [
 	"off",
 	"connecting",
 	"listening",
@@ -18,7 +20,7 @@ var v = [
 	"confirming",
 	"ended",
 	"unavailable"
-], y = {
+], x = {
 	off: "Voice off",
 	connecting: "Connecting",
 	listening: "Listening",
@@ -28,16 +30,16 @@ var v = [
 	confirming: "Confirm",
 	ended: "Ended",
 	unavailable: "Unavailable"
-};
-function b(e) {
+}, S = 200, C = 10;
+function w(e) {
 	return typeof e != "number" || Number.isNaN(e) ? 0 : Math.min(1, Math.max(0, e));
 }
 //#endregion
 //#region src/components/voice/VoiceActivityRing.tsx
-var x = {
+var T = {
 	sm: "size-4.5",
 	md: "size-9"
-}, S = {
+}, E = {
 	off: "text-text-tertiary opacity-50",
 	connecting: "text-info",
 	listening: "text-success",
@@ -48,9 +50,9 @@ var x = {
 	ended: "text-text-tertiary opacity-50",
 	unavailable: "text-text-tertiary opacity-50"
 };
-function C({ level: t = 0, outputLevel: n = 0, phase: r, size: i = "md", label: a, className: o, "data-testid": s }) {
-	let c = b(t), l = b(n), u = r === "thinking" || r === "executing" || r === "connecting", d = r === "listening" ? 1.5 + c * 3.5 : 2, f = r === "speaking" ? .25 + l * .6 : 0;
-	return /* @__PURE__ */ _("svg", {
+function D({ level: t = 0, outputLevel: n = 0, phase: r, size: i = "md", label: a, className: o, "data-testid": s }) {
+	let c = w(t), l = w(n), u = r === "thinking" || r === "executing" || r === "connecting", d = r === "listening" ? 1.5 + c * 3.5 : 2, f = r === "speaking" ? .25 + l * .6 : 0;
+	return /* @__PURE__ */ y("svg", {
 		viewBox: "0 0 24 24",
 		fill: "none",
 		stroke: "currentColor",
@@ -63,9 +65,9 @@ function C({ level: t = 0, outputLevel: n = 0, phase: r, size: i = "md", label: 
 		"data-level": c.toFixed(2),
 		"data-output-level": l.toFixed(2),
 		"data-label": a,
-		className: e("shrink-0", x[i], S[r], u && "motion-safe:animate-spin", o),
+		className: e("shrink-0", T[i], E[r], u && "motion-safe:animate-spin", o),
 		children: [
-			r === "speaking" && /* @__PURE__ */ g("circle", {
+			r === "speaking" && /* @__PURE__ */ v("circle", {
 				cx: "12",
 				cy: "12",
 				r: "11",
@@ -74,7 +76,7 @@ function C({ level: t = 0, outputLevel: n = 0, phase: r, size: i = "md", label: 
 				className: "motion-safe:animate-pulse",
 				"data-part": "halo"
 			}),
-			/* @__PURE__ */ g("circle", {
+			/* @__PURE__ */ v("circle", {
 				cx: "12",
 				cy: "12",
 				r: "8",
@@ -83,7 +85,7 @@ function C({ level: t = 0, outputLevel: n = 0, phase: r, size: i = "md", label: 
 				strokeOpacity: r === "off" || r === "ended" || r === "unavailable" ? .6 : 1,
 				"data-part": "ring"
 			}),
-			r === "unavailable" && /* @__PURE__ */ g("line", {
+			r === "unavailable" && /* @__PURE__ */ v("line", {
 				x1: "6",
 				y1: "18",
 				x2: "18",
@@ -94,63 +96,220 @@ function C({ level: t = 0, outputLevel: n = 0, phase: r, size: i = "md", label: 
 	});
 }
 //#endregion
+//#region src/components/voice/VoiceChoiceCard.tsx
+function O({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1, className: l, "data-testid": u = "voice-choice-card" }) {
+	let d = g(null), f = a.candidates.slice(0, 10), m = f.length, b = (e) => typeof e == "number" && Number.isInteger(e) && e >= 1 && e <= m, [x, S] = _(b(a.ordinal) ? a.ordinal - 1 : 0);
+	h(() => {
+		s && d.current?.focus();
+	}, [s]);
+	let C = g(void 0), w = g(a.onChoose);
+	w.current = a.onChoose, h(() => {
+		if (!b(a.ordinal)) {
+			C.current = void 0;
+			return;
+		}
+		S(a.ordinal - 1), C.current !== a.ordinal && (C.current = a.ordinal, w.current(a.ordinal - 1));
+	}, [a.ordinal, m]);
+	let T = (e) => {
+		if (m === 0) return;
+		let t = (e % m + m) % m;
+		S(t), d.current?.querySelectorAll("[data-part=\"row\"]")[t]?.focus();
+	};
+	return /* @__PURE__ */ y(n, {
+		ref: d,
+		gap: c ? "xs" : "sm",
+		tabIndex: 0,
+		role: "group",
+		"aria-label": `Choose: ${a.title}`,
+		onKeyDown: (e) => {
+			if (e.key === "Escape" && o) e.stopPropagation(), a.onCancel();
+			else if (e.key === "ArrowDown" || e.key === "ArrowRight") e.preventDefault(), T(x + 1);
+			else if (e.key === "ArrowUp" || e.key === "ArrowLeft") e.preventDefault(), T(x - 1);
+			else if (/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+				let t = e.key === "0" ? 10 : Number(e.key);
+				t <= m && (e.preventDefault(), a.onChoose(t - 1));
+			}
+		},
+		"data-testid": u,
+		"data-compact": c ? "true" : void 0,
+		className: e("rounded-md border border-solid border-warning/40 bg-surface outline-none focus-visible:ring-2 focus-visible:ring-primary", c ? "p-2" : "p-3", l),
+		children: [
+			/* @__PURE__ */ v(i, {
+				size: c ? "xs" : "sm",
+				weight: "semibold",
+				tone: "primary",
+				as: "p",
+				children: a.title
+			}),
+			/* @__PURE__ */ v(n, {
+				gap: "xs",
+				role: "list",
+				children: f.map((t, o) => {
+					let s = o === x;
+					return /* @__PURE__ */ y("button", {
+						type: "button",
+						role: "listitem",
+						"data-part": "row",
+						"data-ordinal": o + 1,
+						"data-selected": s ? "true" : void 0,
+						"data-href": t.href,
+						title: t.href,
+						tabIndex: s ? 0 : -1,
+						onClick: () => a.onChoose(o),
+						onFocus: () => S(o),
+						"data-testid": `${u}-row-${o + 1}`,
+						className: e("flex w-full min-w-0 cursor-pointer items-start gap-2 rounded-md border border-solid bg-transparent text-left outline-none focus-visible:ring-2 focus-visible:ring-primary hover:bg-surface-hover", c ? "px-1.5 py-1" : "px-2 py-1.5", s ? "border-primary bg-surface-hover" : "border-transparent"),
+						children: [/* @__PURE__ */ v(i, {
+							size: "xs",
+							weight: "semibold",
+							tone: "secondary",
+							tabular: !0,
+							children: o + 1
+						}), /* @__PURE__ */ y(n, {
+							gap: "xs",
+							className: "min-w-0 flex-1",
+							children: [/* @__PURE__ */ y(r, {
+								gap: "sm",
+								wrap: !1,
+								className: "min-w-0",
+								children: [/* @__PURE__ */ v(i, {
+									size: c ? "xs" : "sm",
+									weight: "medium",
+									tone: "primary",
+									className: "min-w-0 truncate",
+									children: t.title
+								}), t.kind ? /* @__PURE__ */ v(p, {
+									size: "sm",
+									tone: "neutral",
+									label: t.kind
+								}) : null]
+							}), t.subtitle ? /* @__PURE__ */ v(i, {
+								size: "xs",
+								tone: "tertiary",
+								className: "min-w-0 truncate",
+								children: t.subtitle
+							}) : null]
+						})]
+					}, o);
+				})
+			}),
+			/* @__PURE__ */ v(r, {
+				gap: "sm",
+				justify: "end",
+				children: /* @__PURE__ */ v(t, {
+					variant: "secondary",
+					size: "sm",
+					onClick: a.onCancel,
+					"data-testid": `${u}-cancel`,
+					children: "Cancel"
+				})
+			})
+		]
+	});
+}
+//#endregion
 //#region src/components/voice/VoiceTurnStrip.tsx
-var w = {
+var k = [{
+	label: "Approve",
+	value: "approve"
+}, {
+	label: "Reject",
+	value: "reject"
+}], A = {
 	running: "info",
 	done: "success",
 	refused: "warning",
 	failed: "danger"
 };
-function T({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, "data-testid": l = "voice-confirm-card" }) {
-	let u = m(null);
-	return p(() => {
-		s && u.current?.focus();
-	}, [s]), /* @__PURE__ */ _(n, {
-		ref: u,
+function j({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, "data-testid": u = "voice-confirm-card" }) {
+	let d = g(null);
+	h(() => {
+		s && d.current?.focus();
+	}, [s]);
+	let { fields: p } = a, [m, b] = _(p?.decision ?? "approve"), [x, S] = _(""), C = () => {
+		p ? a.onConfirm({
+			decision: m,
+			note: x.trim().slice(0, 200).trim()
+		}) : a.onConfirm();
+	}, w = (e) => {
+		e.key === "Escape" && o ? (e.stopPropagation(), a.onCancel()) : e.key === "Enter" && (e.target === e.currentTarget || p && e.target instanceof HTMLInputElement) && (e.preventDefault(), C());
+	}, T = Array.isArray(a.detail) ? a.detail.filter(Boolean) : a.detail ? [a.detail] : [];
+	return /* @__PURE__ */ y(n, {
+		ref: d,
 		gap: "sm",
 		tabIndex: 0,
 		role: "group",
 		"aria-label": `Confirm: ${a.title}`,
-		onKeyDown: (e) => {
-			e.key === "Escape" && o ? (e.stopPropagation(), a.onCancel()) : e.key === "Enter" && e.target === e.currentTarget && (e.preventDefault(), a.onConfirm());
-		},
-		"data-testid": l,
+		onKeyDown: w,
+		"data-testid": u,
 		className: e("rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary", c),
 		children: [
-			/* @__PURE__ */ g(i, {
+			/* @__PURE__ */ v(i, {
 				size: "sm",
 				weight: "semibold",
 				tone: "primary",
 				as: "p",
 				children: a.title
 			}),
-			a.detail ? /* @__PURE__ */ g(i, {
+			T.length === 1 ? /* @__PURE__ */ v(i, {
 				size: "xs",
 				tone: "secondary",
 				as: "p",
-				children: a.detail
+				children: T[0]
 			}) : null,
-			/* @__PURE__ */ _(r, {
+			T.length > 1 ? /* @__PURE__ */ v(n, {
+				as: "ul",
+				gap: "xs",
+				"data-testid": `${u}-detail`,
+				className: "m-0 list-none p-0",
+				children: T.map((e, t) => /* @__PURE__ */ v(i, {
+					size: "xs",
+					tone: "secondary",
+					as: "li",
+					children: e
+				}, t))
+			}) : null,
+			p ? /* @__PURE__ */ y(n, {
+				gap: "xs",
+				children: [/* @__PURE__ */ v(f, {
+					size: "sm",
+					tone: "accent",
+					"aria-label": "Decision",
+					options: k,
+					value: m,
+					onChange: (e) => b(e),
+					"data-testid": `${u}-decision`
+				}), /* @__PURE__ */ v(l, {
+					size: "sm",
+					value: x,
+					maxLength: 200,
+					placeholder: p.notePlaceholder ?? "Note (optional)",
+					"aria-label": "Note",
+					onChange: (e) => S(e.target.value),
+					"data-testid": `${u}-note`
+				})]
+			}) : null,
+			/* @__PURE__ */ y(r, {
 				gap: "sm",
 				justify: "end",
-				children: [/* @__PURE__ */ g(t, {
+				children: [/* @__PURE__ */ v(t, {
 					variant: "secondary",
 					size: "sm",
 					onClick: a.onCancel,
-					"data-testid": `${l}-cancel`,
+					"data-testid": `${u}-cancel`,
 					children: "Cancel"
-				}), /* @__PURE__ */ g(t, {
+				}), /* @__PURE__ */ v(t, {
 					variant: "primary",
 					size: "sm",
-					onClick: a.onConfirm,
-					"data-testid": `${l}-confirm`,
+					onClick: C,
+					"data-testid": `${u}-confirm`,
 					children: "Confirm"
 				})]
 			})
 		]
 	});
 }
-function E(e) {
+function M(e) {
 	if (typeof e == "string") return e;
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleTimeString([], {
@@ -158,62 +317,62 @@ function E(e) {
 		minute: "2-digit"
 	});
 }
-function D({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, className: l, "data-testid": u = "voice-turn-strip" }) {
+function N({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, pendingChoice: l = null, className: u, "data-testid": d = "voice-turn-strip" }) {
 	let f = o > 0 ? a.slice(-o) : a;
-	return /* @__PURE__ */ _(n, {
+	return /* @__PURE__ */ y(n, {
 		gap: "sm",
-		className: e("min-w-0", l),
-		"data-testid": u,
+		className: e("min-w-0", u),
+		"data-testid": d,
 		children: [
-			f.length === 0 && !c ? /* @__PURE__ */ g(i, {
+			f.length === 0 && !c && !l ? /* @__PURE__ */ v(i, {
 				size: "xs",
 				tone: "tertiary",
-				"data-testid": `${u}-empty`,
+				"data-testid": `${d}-empty`,
 				children: "Nothing said yet."
 			}) : null,
-			f.map((e) => /* @__PURE__ */ _(n, {
+			f.map((e) => /* @__PURE__ */ y(n, {
 				gap: "xs",
-				"data-testid": `${u}-turn-${e.id}`,
+				"data-testid": `${d}-turn-${e.id}`,
 				"data-role": e.role,
 				children: [
-					/* @__PURE__ */ _(r, {
+					/* @__PURE__ */ y(r, {
 						gap: "sm",
-						children: [/* @__PURE__ */ g(i, {
+						children: [/* @__PURE__ */ v(i, {
 							size: "xs",
 							weight: "semibold",
 							tone: e.role === "you" ? "secondary" : "primary",
 							children: e.role === "you" ? "You" : "Assistant"
-						}), /* @__PURE__ */ g(i, {
+						}), /* @__PURE__ */ v(i, {
 							size: "xs",
 							tone: "tertiary",
 							tabular: !0,
-							children: E(e.at)
+							children: M(e.at)
 						})]
 					}),
-					/* @__PURE__ */ g(i, {
+					/* @__PURE__ */ v(i, {
 						size: "sm",
 						tone: "primary",
 						as: "p",
 						wrap: !0,
 						children: e.text
 					}),
-					e.toolCalls?.map((t, n) => /* @__PURE__ */ _(r, {
+					e.toolCalls?.map((t, n) => /* @__PURE__ */ y(r, {
 						gap: "sm",
-						"data-testid": `${u}-tool-${e.id}-${n}`,
+						"data-testid": `${d}-tool-${e.id}-${n}`,
 						"data-status": t.status,
 						children: [
-							/* @__PURE__ */ g(d, {
+							/* @__PURE__ */ v(p, {
 								size: "sm",
-								tone: w[t.status],
+								tone: A[t.status],
 								label: t.status
 							}),
-							/* @__PURE__ */ g(i, {
+							/* @__PURE__ */ v(i, {
 								size: "xs",
 								weight: "medium",
 								tone: "secondary",
 								children: t.name
 							}),
-							/* @__PURE__ */ g(i, {
+							/* @__PURE__ */ v(i, {
 								size: "xs",
 								tone: "tertiary",
 								children: t.summary
@@ -222,14 +381,15 @@ function D({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, classNa
 					}, `${t.name}-${n}`))
 				]
 			}, e.id)),
-			c ? /* @__PURE__ */ g(T, { pending: c }) : null,
-			s && a.length > 0 ? /* @__PURE__ */ g(r, {
+			c ? /* @__PURE__ */ v(j, { pending: c }) : null,
+			l ? /* @__PURE__ */ v(O, { choice: l }) : null,
+			s && a.length > 0 ? /* @__PURE__ */ v(r, {
 				justify: "end",
-				children: /* @__PURE__ */ g(t, {
+				children: /* @__PURE__ */ v(t, {
 					variant: "ghost",
 					size: "sm",
 					onClick: s,
-					"data-testid": `${u}-clear`,
+					"data-testid": `${d}-clear`,
 					children: "Clear"
 				})
 			}) : null
@@ -238,7 +398,7 @@ function D({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, classNa
 }
 //#endregion
 //#region src/components/voice/VoiceDock.tsx
-var O = {
+var P = {
 	off: "neutral",
 	connecting: "pending",
 	listening: "success",
@@ -249,139 +409,153 @@ var O = {
 	ended: "neutral",
 	unavailable: "neutral"
 };
-function k(e) {
+function F(e) {
 	let t = Math.max(0, Math.floor(e));
 	return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
-var A = (e) => `$${e.toFixed(2)}`;
-function j({ phase: n, level: v, outputLevel: b, elapsedSeconds: x, budget: S = null, pending: w = null, lastLine: E = null, onStart: D, onStop: j, onMute: M, muted: N = !1, unavailableReason: P, compact: F = !1, size: I = "panel", startLabel: L = "Voice", className: R, ref: z, "data-testid": B = "voice-dock" }) {
-	let V = m(null), [H, U] = h(!1);
-	p(() => U(!0), []);
-	let W = f((e) => {
-		V.current = e, typeof z == "function" ? z(e) : z && (z.current = e);
-	}, [z]), G = n !== "off" && n !== "ended" && n !== "unavailable", K = H && !!w && n === "confirming", q = n === "unavailable" ? P : void 0, J = y[n], Y = I === "footer";
-	return /* @__PURE__ */ _(r, {
-		ref: W,
+var I = (e) => `$${e.toFixed(2)}`;
+function L({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = null, pending: C = null, pendingChoice: w = null, lastLine: T = null, onStart: E, onStop: k, onMute: A, muted: M = !1, unavailableReason: N, compact: L = !1, size: R = "panel", startLabel: z = "Voice", className: B, ref: V, "data-testid": H = "voice-dock" }) {
+	let U = g(null), [W, G] = _(!1);
+	h(() => G(!0), []);
+	let K = m((e) => {
+		U.current = e, typeof V == "function" ? V(e) : V && (V.current = e);
+	}, [V]), q = n !== "off" && n !== "ended" && n !== "unavailable", J = W && !!C && n === "confirming", Y = W && !!w && n === "confirming", X = n === "unavailable" ? N : void 0, Z = x[n], Q = R === "footer";
+	return /* @__PURE__ */ y(r, {
+		ref: K,
 		wrap: !1,
 		gap: "sm",
-		className: e("min-w-0", Y ? "px-1" : "px-2 py-1", R),
-		"data-testid": B,
+		className: e("min-w-0", Q ? "px-1" : "px-2 py-1", B),
+		"data-testid": H,
 		"data-phase": n,
-		"data-size": I,
+		"data-size": R,
 		"data-voice-dock": "",
 		children: [
-			/* @__PURE__ */ g(C, {
-				level: v,
-				outputLevel: b,
+			/* @__PURE__ */ v(D, {
+				level: l,
+				outputLevel: f,
 				phase: n,
-				size: F || Y ? "sm" : "md",
-				"data-testid": `${B}-ring`
+				size: L || Q ? "sm" : "md",
+				"data-testid": `${H}-ring`
 			}),
-			/* @__PURE__ */ g(i, {
-				title: q,
-				"data-testid": `${B}-phase`,
-				children: Y ? /* @__PURE__ */ g(i, {
+			/* @__PURE__ */ v(i, {
+				title: X,
+				"data-testid": `${H}-phase`,
+				children: Q ? /* @__PURE__ */ v(i, {
 					size: "xs",
 					tone: "secondary",
 					className: "whitespace-nowrap",
 					role: "status",
-					children: J
-				}) : /* @__PURE__ */ g(d, {
+					children: Z
+				}) : /* @__PURE__ */ v(p, {
 					size: "sm",
-					tone: O[n],
-					label: J
+					tone: P[n],
+					label: Z
 				})
 			}),
-			!F && E ? /* @__PURE__ */ g(i, {
-				size: Y ? "xs" : "sm",
-				tone: E.role === "you" ? "secondary" : "primary",
+			!L && T ? /* @__PURE__ */ v(i, {
+				size: Q ? "xs" : "sm",
+				tone: T.role === "you" ? "secondary" : "primary",
 				className: "min-w-0 flex-1 truncate",
-				title: E.text,
-				"data-testid": `${B}-last-line`,
-				"data-role": E.role,
-				children: E.text
-			}) : /* @__PURE__ */ g(i, {
+				title: T.text,
+				"data-testid": `${H}-last-line`,
+				"data-role": T.role,
+				children: T.text
+			}) : /* @__PURE__ */ v(i, {
 				className: "min-w-0 flex-1",
 				"aria-hidden": "true",
 				children: ""
 			}),
-			!F && S && G ? /* @__PURE__ */ g(u, {
+			!L && S && q ? /* @__PURE__ */ v(d, {
 				value: S.holdUsd > 0 ? S.usedUsd / S.holdUsd : 0,
 				segments: 5,
 				showPercent: !1,
-				note: `${A(S.usedUsd)} of ${A(S.holdUsd)}`,
+				note: `${I(S.usedUsd)} of ${I(S.holdUsd)}`,
 				tone: "surface",
-				"data-testid": `${B}-budget`
+				"data-testid": `${H}-budget`
 			}) : null,
-			G && x !== void 0 ? /* @__PURE__ */ g(i, {
+			q && b !== void 0 ? /* @__PURE__ */ v(i, {
 				size: "xs",
 				tone: "tertiary",
 				tabular: !0,
-				"data-testid": `${B}-elapsed`,
-				children: k(x)
+				"data-testid": `${H}-elapsed`,
+				children: F(b)
 			}) : null,
-			G && M ? /* @__PURE__ */ g(a, {
-				"aria-label": N ? "Unmute microphone" : "Mute microphone",
-				"aria-pressed": N,
+			q && A ? /* @__PURE__ */ v(a, {
+				"aria-label": M ? "Unmute microphone" : "Mute microphone",
+				"aria-pressed": M,
 				size: "sm",
 				variant: "ghost",
-				icon: g(N ? o : s, { size: 16 }),
-				onClick: M,
-				"data-testid": `${B}-mute`
+				icon: v(M ? o : s, { size: 16 }),
+				onClick: A,
+				"data-testid": `${H}-mute`
 			}) : null,
-			Y ? G ? /* @__PURE__ */ _(t, {
+			Q ? q ? /* @__PURE__ */ y(t, {
 				variant: "ghost",
 				size: "sm",
 				"aria-label": "End voice session",
 				className: "gap-1.5",
-				onClick: j,
-				"data-testid": `${B}-stop`,
-				children: [/* @__PURE__ */ g(c, {
+				onClick: k,
+				"data-testid": `${H}-stop`,
+				children: [/* @__PURE__ */ v(c, {
 					size: 16,
 					className: "text-danger"
 				}), "End"]
-			}) : /* @__PURE__ */ _(t, {
+			}) : /* @__PURE__ */ y(t, {
 				variant: "ghost",
 				size: "sm",
 				"aria-label": "Start voice session",
 				className: "gap-1.5",
-				disabled: n === "unavailable" || !D,
-				title: q,
-				onClick: D,
-				"data-testid": `${B}-start`,
-				children: [/* @__PURE__ */ g(s, { size: 16 }), L]
-			}) : G ? /* @__PURE__ */ g(a, {
+				disabled: n === "unavailable" || !E,
+				title: X,
+				onClick: E,
+				"data-testid": `${H}-start`,
+				children: [/* @__PURE__ */ v(s, { size: 16 }), z]
+			}) : q ? /* @__PURE__ */ v(a, {
 				"aria-label": "End voice session",
 				size: "sm",
 				variant: "danger",
-				icon: /* @__PURE__ */ g(c, { size: 16 }),
-				onClick: j,
-				"data-testid": `${B}-stop`
-			}) : /* @__PURE__ */ g(a, {
+				icon: /* @__PURE__ */ v(c, { size: 16 }),
+				onClick: k,
+				"data-testid": `${H}-stop`
+			}) : /* @__PURE__ */ v(a, {
 				"aria-label": "Start voice session",
 				size: "sm",
 				variant: "primary",
-				icon: /* @__PURE__ */ g(s, { size: 16 }),
-				disabled: n === "unavailable" || !D,
-				title: q,
-				onClick: D,
-				"data-testid": `${B}-start`
+				icon: /* @__PURE__ */ v(s, { size: 16 }),
+				disabled: n === "unavailable" || !E,
+				title: X,
+				onClick: E,
+				"data-testid": `${H}-start`
 			}),
-			w ? /* @__PURE__ */ g(l, {
-				trigger: V,
-				open: K,
+			C ? /* @__PURE__ */ v(u, {
+				trigger: U,
+				open: J,
+				onClose: C.onCancel,
+				placement: "bottom-start",
+				"aria-label": `Confirm: ${C.title}`,
+				kind: "voice-confirm",
+				"data-testid": `${H}-pending`,
+				children: /* @__PURE__ */ v(j, {
+					pending: C,
+					handleEscape: !1
+				})
+			}) : null,
+			w ? /* @__PURE__ */ v(u, {
+				trigger: U,
+				open: Y,
 				onClose: w.onCancel,
 				placement: "bottom-start",
-				"aria-label": `Confirm: ${w.title}`,
-				kind: "voice-confirm",
-				"data-testid": `${B}-pending`,
-				children: /* @__PURE__ */ g(T, {
-					pending: w,
-					handleEscape: !1
+				"aria-label": `Choose: ${w.title}`,
+				kind: "voice-choice",
+				"data-testid": `${H}-pending-choice`,
+				children: /* @__PURE__ */ v(O, {
+					choice: w,
+					handleEscape: !1,
+					compact: Q
 				})
 			}) : null
 		]
 	});
 }
 //#endregion
-export { v as VOICE_PHASES, y as VOICE_PHASE_LABEL, C as VoiceActivityRing, T as VoiceConfirmCard, j as VoiceDock, D as VoiceTurnStrip };
+export { C as VOICE_CHOICE_MAX, S as VOICE_NOTE_MAX, b as VOICE_PHASES, x as VOICE_PHASE_LABEL, D as VoiceActivityRing, O as VoiceChoiceCard, j as VoiceConfirmCard, L as VoiceDock, N as VoiceTurnStrip };
