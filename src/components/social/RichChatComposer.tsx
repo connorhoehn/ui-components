@@ -2105,11 +2105,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       get editor() {
         return editor;
       },
+      // A focus scheduled for a later frame (unfolding, a deck hidden, Back)
+      // can land after the composer unmounted: a destroyed editor has no
+      // commands, so it is skipped instead of throwing.
       focus: () => {
-        editor?.commands.focus();
+        if (editor && !editor.isDestroyed) editor.commands.focus();
       },
       insertText: (text: string) => {
-        editor?.chain().focus().insertContent(text).run();
+        if (editor && !editor.isDestroyed) editor.chain().focus().insertContent(text).run();
       },
     }),
     [editor],
