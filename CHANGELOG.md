@@ -1,3 +1,7 @@
+## 2.510.0
+
+- voice/: VoiceDock, VoiceActivityRing, VoiceTurnStrip (voice navigator, spec in aws-agentcore docs/voice-navigator-spec.md §5)
+
 ## 2.509.0
 
 - Package renamed to `@connorhoehn/ui-components` (GitHub owner move); no API change; consumers change their import scope and vendor tarball name.

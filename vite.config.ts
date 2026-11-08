@@ -49,6 +49,7 @@ export default defineConfig({
         identity: resolve(import.meta.dirname, 'src/components/identity/index.ts'),
         agents: resolve(import.meta.dirname, 'src/components/agents/index.ts'),
         compute: resolve(import.meta.dirname, 'src/components/compute/index.ts'),
+        voice: resolve(import.meta.dirname, 'src/components/voice/index.ts'),
         video: resolve(import.meta.dirname, 'src/video.ts'),
         'video-ivs': resolve(import.meta.dirname, 'src/video-ivs.ts'),
         // Scope-agnostic twin of the entry below: no runtime import of

@@ -1,17 +1,17 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { r as t } from "../ToastProvider-D6jAeNNE.js";
 import { c as n, n as r } from "../Button-C-I3BxWI.js";
-import { c as i, l as a, n as o } from "../Text-BAAQrepu.js";
-import { t as s } from "../Select-CpZyUWay.js";
+import { i, n as a, r as o } from "../Text-k7rQu4ud.js";
+import { t as s } from "../Select-BCQbimV2.js";
 import { t as c } from "../FormField-CQ27qxWt.js";
 import { t as l } from "../Textarea-CvdLeuO_.js";
-import { t as u } from "../DecisionPath-BC9qttuI.js";
-import { a as d, c as f, i as p, l as m, n as ee, r as h, t as g } from "../composerSendError-BTSwRiUg.js";
+import { t as u } from "../DecisionPath-DyEh7vlV.js";
+import { a as d, c as f, i as p, l as m, n as ee, r as h, t as g } from "../composerSendError-Bd50oOyt.js";
 import { a as _, i as v, n as y, r as b, t as x } from "../composerContext-BLn1-Nao.js";
-import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-Du5oOgKC.js";
-import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as ae, t as M, u as N } from "../RichChatComposer-BtEA64-0.js";
-import { t as oe } from "../ContextComposer-Bm7UZiTG.js";
-import { t as P } from "../AgentComposerDock-BV3OAhNh.js";
+import { a as te, i as S, n as C, o as w, r as T, s as E, t as D } from "../ConversationInputs-DV6ExO_8.js";
+import { a as O, c as ne, i as re, l as k, n as A, o as ie, r as j, s as ae, t as M, u as N } from "../RichChatComposer-CHI6_J4B.js";
+import { t as oe } from "../ContextComposer-U2_ytdZu.js";
+import { t as P } from "../AgentComposerDock-Cc3OfpOl.js";
 import { useCallback as F, useEffect as I, useId as se, useMemo as L, useRef as R, useState as z } from "react";
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx
@@ -58,12 +58,12 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 		A,
 		te,
 		G
-	]), _e = j === "review" ? ee ?? t : j === "done" ? g : t, ve = `${W}-heading`, q = `${W}-keys`, ye = _e || n ? /* @__PURE__ */ V(i, {
+	]), _e = j === "review" ? ee ?? t : j === "done" ? g : t, ve = `${W}-heading`, q = `${W}-keys`, ye = _e || n ? /* @__PURE__ */ V(o, {
 		gap: "sm",
 		align: "baseline",
 		wrap: !0,
 		className: "min-w-0",
-		children: [_e && /* @__PURE__ */ B(o, {
+		children: [_e && /* @__PURE__ */ B(a, {
 			as: "p",
 			size: "sm",
 			weight: "semibold",
@@ -71,7 +71,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 			id: ve,
 			className: "min-w-0",
 			children: _e
-		}), n && /* @__PURE__ */ B(o, {
+		}), n && /* @__PURE__ */ B(a, {
 			as: "p",
 			size: "xs",
 			tone: "secondary",
@@ -85,12 +85,12 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 		current: T.current + ue[j],
 		"data-testid": `${O}-path`
 	}) : null;
-	return j === "done" ? /* @__PURE__ */ V(a, {
+	return j === "done" ? /* @__PURE__ */ V(i, {
 		gap: "xs",
 		className: e("min-w-0", D),
 		"data-composer-confirm-flow": "done",
 		"data-testid": O,
-		children: [J, /* @__PURE__ */ V(a, {
+		children: [J, /* @__PURE__ */ V(i, {
 			as: "section",
 			gap: "xs",
 			ref: U,
@@ -101,7 +101,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 			"data-testid": `${O}-done`,
 			children: [
 				ye,
-				/* @__PURE__ */ B(o, {
+				/* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
@@ -110,7 +110,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 					"data-testid": `${O}-done-message`,
 					children: L ?? _
 				}),
-				C && /* @__PURE__ */ B(i, {
+				C && /* @__PURE__ */ B(o, {
 					gap: "sm",
 					align: "center",
 					wrap: !0,
@@ -126,12 +126,12 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 				})
 			]
 		})]
-	}) : j === "review" ? /* @__PURE__ */ V(a, {
+	}) : j === "review" ? /* @__PURE__ */ V(i, {
 		gap: "xs",
 		className: e("min-w-0", D),
 		"data-composer-confirm-flow": "review",
 		"data-testid": O,
-		children: [J, /* @__PURE__ */ V(a, {
+		children: [J, /* @__PURE__ */ V(i, {
 			as: "section",
 			gap: "xs",
 			ref: pe,
@@ -150,7 +150,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 			},
 			children: [
 				ye,
-				/* @__PURE__ */ B(o, {
+				/* @__PURE__ */ B(a, {
 					as: "p",
 					size: "sm",
 					tone: "primary",
@@ -159,7 +159,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 					"data-testid": `${O}-message`,
 					children: A
 				}),
-				/* @__PURE__ */ V(i, {
+				/* @__PURE__ */ V(o, {
 					gap: "sm",
 					align: "center",
 					wrap: !0,
@@ -186,7 +186,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 							"data-testid": `${O}-back`,
 							children: b
 						}),
-						/* @__PURE__ */ B(o, {
+						/* @__PURE__ */ B(a, {
 							size: "xs",
 							tone: "tertiary",
 							wrap: !0,
@@ -197,7 +197,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 						})
 					]
 				}),
-				oe && /* @__PURE__ */ B(o, {
+				oe && /* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					wrap: !0,
@@ -206,7 +206,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 					"data-testid": `${O}-error`,
 					children: oe
 				}),
-				M && /* @__PURE__ */ B(o, {
+				M && /* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
@@ -214,7 +214,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 					"data-testid": `${O}-busy`,
 					children: "Working…"
 				}),
-				h && /* @__PURE__ */ B(o, {
+				h && /* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
@@ -225,12 +225,12 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 				})
 			]
 		})]
-	}) : /* @__PURE__ */ V(a, {
+	}) : /* @__PURE__ */ V(i, {
 		gap: "xs",
 		className: e("min-w-0", D),
 		"data-composer-confirm-flow": "draft",
 		"data-testid": O,
-		children: [J, /* @__PURE__ */ V(a, {
+		children: [J, /* @__PURE__ */ V(i, {
 			as: "form",
 			gap: "xs",
 			className: "min-w-0",
@@ -259,7 +259,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 						"data-testid": `${O}-editor`
 					})
 				}),
-				/* @__PURE__ */ V(i, {
+				/* @__PURE__ */ V(o, {
 					gap: "sm",
 					align: "center",
 					wrap: !0,
@@ -284,7 +284,7 @@ function de({ title: t, recipient: n, defaultMessage: s = "", message: d, onMess
 							"data-testid": `${O}-cancel`,
 							children: b
 						}),
-						/* @__PURE__ */ B(o, {
+						/* @__PURE__ */ B(a, {
 							size: "xs",
 							tone: "tertiary",
 							wrap: !0,
@@ -628,13 +628,13 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 		};
 		return document.addEventListener("keydown", e, !0), () => document.removeEventListener("keydown", e, !0);
 	}, []), !h.visible) return null;
-	let k = X(), A = te.length, ie = E ? /* @__PURE__ */ V(i, {
+	let k = X(), A = te.length, ie = E ? /* @__PURE__ */ V(o, {
 		gap: "xs",
 		align: "center",
 		wrap: !0,
 		className: e("min-w-0", m && !C && x && "px-3 pb-2"),
 		"data-testid": `${p}-receipt`,
-		children: [/* @__PURE__ */ B(o, {
+		children: [/* @__PURE__ */ B(a, {
 			as: "p",
 			size: "xs",
 			tone: "secondary",
@@ -650,20 +650,20 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 			children: "Dismiss"
 		})]
 	}) : null;
-	if (!x || C) return /* @__PURE__ */ V(a, {
+	if (!x || C) return /* @__PURE__ */ V(i, {
 		gap: "xs",
 		className: e("min-w-0", m && "border-b border-border px-3 py-1.5", f),
 		"data-composer-prompt-deck": x ? "collapsed" : "answered",
 		"data-deck-variant": d,
 		"data-testid": p,
 		ref: g,
-		children: [x && /* @__PURE__ */ V(i, {
+		children: [x && /* @__PURE__ */ V(o, {
 			gap: "sm",
 			align: "center",
 			wrap: !0,
 			className: e("min-w-0", !m && "rounded-md border border-border bg-surface-secondary px-3 py-1.5"),
 			children: [
-				/* @__PURE__ */ B(o, {
+				/* @__PURE__ */ B(a, {
 					size: "xs",
 					tone: "secondary",
 					wrap: !0,
@@ -689,7 +689,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 		A > 1 ? `${k}↓ next` : null,
 		"Esc hide"
 	].filter(Boolean).join(" · ");
-	return /* @__PURE__ */ V(a, {
+	return /* @__PURE__ */ V(i, {
 		gap: "xs",
 		className: e("min-w-0", m && "border-b border-border", f),
 		"data-composer-prompt-deck": "expanded",
@@ -713,21 +713,21 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 					current: x.path.current,
 					"data-testid": `${p}-path`
 				}),
-				/* @__PURE__ */ V(i, {
+				/* @__PURE__ */ V(o, {
 					gap: "sm",
 					align: "center",
 					wrap: !1,
 					className: "min-w-0",
 					children: [
-						/* @__PURE__ */ V(a, {
+						/* @__PURE__ */ V(i, {
 							gap: "none",
 							className: "min-w-0 flex-1",
-							children: [x.eyebrow && /* @__PURE__ */ B(o, {
+							children: [x.eyebrow && /* @__PURE__ */ B(a, {
 								size: "xs",
 								tone: "tertiary",
 								className: "truncate",
 								children: x.eyebrow
-							}), /* @__PURE__ */ B(o, {
+							}), /* @__PURE__ */ B(a, {
 								as: "p",
 								size: "sm",
 								weight: "semibold",
@@ -738,13 +738,13 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 								children: x.title
 							})]
 						}),
-						A > 1 && /* @__PURE__ */ V(i, {
+						A > 1 && /* @__PURE__ */ V(o, {
 							gap: "xs",
 							align: "center",
 							wrap: !1,
 							className: "shrink-0",
 							children: [
-								/* @__PURE__ */ B(o, {
+								/* @__PURE__ */ B(a, {
 									size: "xs",
 									tone: "secondary",
 									tabular: !0,
@@ -787,13 +787,13 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 						})
 					]
 				}),
-				A > 1 && /* @__PURE__ */ B(i, {
+				A > 1 && /* @__PURE__ */ B(o, {
 					gap: "xs",
 					wrap: !1,
 					"aria-hidden": !0,
 					className: "min-w-0",
 					"data-testid": `${p}-progress`,
-					children: te.map((t, n) => /* @__PURE__ */ B(a, {
+					children: te.map((t, n) => /* @__PURE__ */ B(i, {
 						gap: "none",
 						className: e("h-1 min-w-0 flex-1 rounded-full", n === S ? "bg-primary" : "bg-border")
 					}, t.id))
@@ -813,7 +813,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 						})]
 					}, `${t.label}-${n}`))
 				}),
-				/* @__PURE__ */ B(o, {
+				/* @__PURE__ */ B(a, {
 					as: "p",
 					size: "sm",
 					tone: "primary",
@@ -822,7 +822,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 					className: "min-w-0",
 					children: x.question
 				}),
-				x.readOnlyReason ? /* @__PURE__ */ B(o, {
+				x.readOnlyReason ? /* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
@@ -853,15 +853,15 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 						h.finish(), c?.focus();
 					},
 					"data-testid": `${p}-compose`
-				}, x.id) : j.length > 0 && /* @__PURE__ */ B(i, {
+				}, x.id) : j.length > 0 && /* @__PURE__ */ B(o, {
 					gap: "xs",
 					wrap: !0,
 					className: "min-w-0",
 					role: "list",
 					"aria-label": "Answers",
 					children: j.map((e, t) => {
-						let n = F[t], i = n ? `${ae ? "Alt+" : ""}${n}` : void 0;
-						return /* @__PURE__ */ V(a, {
+						let n = F[t], o = n ? `${ae ? "Alt+" : ""}${n}` : void 0;
+						return /* @__PURE__ */ V(i, {
 							gap: "none",
 							role: "listitem",
 							className: "min-w-0",
@@ -870,7 +870,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 								variant: e.emphasis === "primary" ? "primary" : e.emphasis === "danger" ? "danger" : "secondary",
 								disabled: w || !!e.disabledReason,
 								title: e.disabledReason ?? e.hint,
-								"aria-keyshortcuts": i,
+								"aria-keyshortcuts": o,
 								"aria-describedby": e.hint ? `${_}-hint-${t}` : void 0,
 								onClick: () => {
 									h.pick(e.id).then((e) => {
@@ -880,8 +880,8 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 								"data-composer-prompt-option": e.id,
 								"data-default": N?.id === e.id || void 0,
 								"data-testid": `${p}-option-${e.id}`,
-								children: [i && /* @__PURE__ */ B(Te, { children: i }), e.label]
-							}), e.hint && /* @__PURE__ */ B(o, {
+								children: [o && /* @__PURE__ */ B(Te, { children: o }), e.label]
+							}), e.hint && /* @__PURE__ */ B(a, {
 								size: "xs",
 								tone: "tertiary",
 								className: "hidden",
@@ -891,7 +891,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 						}, e.id);
 					})
 				}),
-				O && /* @__PURE__ */ V(a, {
+				O && /* @__PURE__ */ V(i, {
 					gap: "sm",
 					className: "min-w-0",
 					children: [/* @__PURE__ */ B(l, {
@@ -923,7 +923,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 						children: "Answer"
 					})]
 				}),
-				T && !M && /* @__PURE__ */ B(o, {
+				T && !M && /* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					wrap: !0,
@@ -932,7 +932,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 					"data-testid": `${p}-error`,
 					children: T
 				}),
-				w && !M && /* @__PURE__ */ B(o, {
+				w && !M && /* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					tone: "secondary",
@@ -940,7 +940,7 @@ function De({ deck: t, prompts: n, scope: s, input: c = null, variant: d = "card
 					"data-testid": `${p}-busy`,
 					children: "Working…"
 				}),
-				!x.readOnlyReason && !M && /* @__PURE__ */ B(o, {
+				!x.readOnlyReason && !M && /* @__PURE__ */ B(a, {
 					as: "p",
 					size: "xs",
 					tone: "tertiary",
@@ -1127,7 +1127,7 @@ function Ye(e, t, n, r = 6e4) {
 	}, [o, r]);
 	return F((e) => Promise.all(e.map(s)), [s]);
 }
-function Xe({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: a, disabled: c, "data-testid": l }) {
+function Xe({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: i, disabled: c, "data-testid": l }) {
 	let u = n.filter((e) => !e.group).map((e) => ({
 		value: e.id,
 		label: e.label,
@@ -1140,12 +1140,12 @@ function Xe({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: a, di
 			...e.disabled ? { disabled: !0 } : {}
 		}))
 	}));
-	return /* @__PURE__ */ V(i, {
+	return /* @__PURE__ */ V(o, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
 		className: "ml-1 min-w-0 shrink-0 self-start rounded-md border border-border bg-surface pl-2",
-		children: [/* @__PURE__ */ B(o, {
+		children: [/* @__PURE__ */ B(a, {
 			size: "xs",
 			tone: "secondary",
 			className: "shrink-0",
@@ -1162,7 +1162,7 @@ function Xe({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: a, di
 			groups: d,
 			chevron: "custom",
 			...l ? { "data-testid": l } : {},
-			...a ? { "data-composer-readonly-allow": a } : {},
+			...i ? { "data-composer-readonly-allow": i } : {},
 			...c ? { disabled: !0 } : {},
 			onChange: (e) => r(e.target.value)
 		})]
@@ -1414,11 +1414,11 @@ function Qe({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 		size: "md",
 		className: "min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0",
 		"data-testid": "rich-chat-composer-references"
-	}) : null, Mt = ye && J ? [...K, J] : K, Nt = X === "chat" && Mt.length > 1, Pt = X === "chat" && Ie && He && Ze && Be, Ft = X === "chat" && Mt.length > 1 && !Ot ? J?.unavailableReason ?? (J ? null : "Choose a destination.") : null, It = X === "chat" ? J?.error ?? null : null, Lt = Nt || Ft || ft || Pt || It || se != null && se !== !1 ? /* @__PURE__ */ V(a, {
+	}) : null, Mt = ye && J ? [...K, J] : K, Nt = X === "chat" && Mt.length > 1, Pt = X === "chat" && Ie && He && Ze && Be, Ft = X === "chat" && Mt.length > 1 && !Ot ? J?.unavailableReason ?? (J ? null : "Choose a destination.") : null, It = X === "chat" ? J?.error ?? null : null, Lt = Nt || Ft || ft || Pt || It || se != null && se !== !1 ? /* @__PURE__ */ V(i, {
 		gap: "xs",
 		children: [
 			se,
-			(Nt || Ft) && /* @__PURE__ */ V(i, {
+			(Nt || Ft) && /* @__PURE__ */ V(o, {
 				gap: "sm",
 				align: "center",
 				wrap: !1,
@@ -1431,7 +1431,7 @@ function Qe({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 					onChange: xt,
 					"data-testid": `${U}-recipient`,
 					...At ? be > 0 ? { readOnlyWayOut: "Choose a destination you can post to" } : { disabled: !0 } : {}
-				}), Ft && /* @__PURE__ */ B(o, {
+				}), Ft && /* @__PURE__ */ B(a, {
 					size: "xs",
 					tone: "tertiary",
 					title: Ft,
@@ -1444,20 +1444,20 @@ function Qe({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 					})
 				})]
 			}),
-			Pt && /* @__PURE__ */ B(o, {
+			Pt && /* @__PURE__ */ B(a, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
 				children: Ge
 			}),
-			ft && /* @__PURE__ */ B(o, {
+			ft && /* @__PURE__ */ B(a, {
 				size: "xs",
 				tone: "secondary",
 				wrap: !0,
 				"data-testid": `${U}-note`,
 				children: ft
 			}),
-			It && /* @__PURE__ */ B(o, {
+			It && /* @__PURE__ */ B(a, {
 				size: "xs",
 				className: "text-error",
 				wrap: !0,
@@ -1465,7 +1465,7 @@ function Qe({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity:
 				children: It
 			})
 		]
-	}) : void 0, Rt = !me, zt = Rt && jt || ce ? /* @__PURE__ */ V(i, {
+	}) : void 0, Rt = !me, zt = Rt && jt || ce ? /* @__PURE__ */ V(o, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,

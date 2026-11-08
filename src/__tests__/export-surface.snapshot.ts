@@ -2672,6 +2672,14 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "UserFormPage",
     "UserListPage",
   ],
+  "./voice": [
+    "VOICE_PHASES",
+    "VOICE_PHASE_LABEL",
+    "VoiceActivityRing",
+    "VoiceConfirmCard",
+    "VoiceDock",
+    "VoiceTurnStrip",
+  ],
   "./agents": [
     "AgUiReasoningBlock",
     "AgentCard",

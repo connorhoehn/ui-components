@@ -4,29 +4,30 @@ import { t } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r } from "./ToastProvider-D6jAeNNE.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { A as a, B as o, C as s, D as c, E as l, F as u, I as d, L as f, M as p, O as m, P as h, R as g, S as _, T as v, V as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as O, j as k, k as ee, l as A, m as j, n as te, o as ne, p as re, r as M, s as ie, t as ae, u as oe, v as se, w as ce, x as le, y as ue } from "./GenerativeImagePreview-GFIyydAu.js";
+import { A as a, B as o, C as s, D as c, E as l, F as u, I as d, L as f, M as p, O as m, P as h, R as g, S as _, T as v, V as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as O, j as k, k as ee, l as A, m as j, n as te, o as ne, p as re, r as M, s as ie, t as ae, u as oe, v as se, w as ce, x as le, y as ue } from "./GenerativeImagePreview-BTCfv_aD.js";
 import { n as de, o as fe } from "./Button-C-I3BxWI.js";
-import { n as N, o as pe, r as me } from "./overlayStack-DxIDMUs-.js";
+import { a as pe, n as me, t as N } from "./Chip-BlpTnjWu.js";
 import { t as he } from "./IconButton-Bf5Wy0tS.js";
 import { t as ge } from "./Banner-400g6E1q.js";
-import { n as _e, t as ve } from "./Chart-CHhWLl8U.js";
-import { t as ye } from "./Modal-PO0F6rAp.js";
-import { t as be } from "./ConfirmDialog-DrXzW1zj.js";
+import { n as _e, t as ve } from "./Chart-Bq0CrbVM.js";
+import { t as ye } from "./Modal-Dzo5wx1N.js";
+import { t as be } from "./ConfirmDialog-Cs7vLV__.js";
 import { t as P } from "./Input-Brvp1kPv.js";
-import { t as F } from "./Select-CpZyUWay.js";
-import { a as xe, t as Se } from "./Toolbar-BKQZHGmO.js";
+import { t as F } from "./Select-BCQbimV2.js";
+import { a as xe, t as Se } from "./Toolbar-BnJaQHN0.js";
 import { t as Ce } from "./SearchInput-D5AvHiLn.js";
 import { t as we } from "./EmptyState-pOG782nO.js";
-import { n as Te, t as Ee } from "./StatusPill-cLjwbEQM.js";
-import { i as De, t as Oe } from "./focusTrap-D9J7npjl.js";
-import { n as ke, t as Ae } from "./FilterChip-BHmUM2tY.js";
-import { t as je } from "./SkeletonCard-D3FL0TB7.js";
-import { n as Me, t as Ne } from "./Slider-DCKY5jPg.js";
-import { t as Pe } from "./DropdownMenu-DP3rRjEd.js";
-import { t as Fe } from "./Textarea-CvdLeuO_.js";
-import { t as Ie } from "./PageHeader-CV6Zk73L.js";
+import { t as Te } from "./LoadingState-ED7Di_id.js";
+import { i as Ee, t as De } from "./focusTrap-CmWJlptm.js";
+import { n as Oe, t as ke } from "./FilterChip-BHmUM2tY.js";
+import { t as Ae } from "./SkeletonCard-D3FL0TB7.js";
+import { n as je, t as Me } from "./Slider-DCKY5jPg.js";
+import { t as Ne } from "./DropdownMenu-LGowvfrE.js";
+import { t as Pe } from "./Textarea-CvdLeuO_.js";
+import { t as Fe } from "./PageHeader-C2SsGMXx.js";
+import { t as Ie } from "./StatusPill-Dh1Ary6I.js";
 import { t as I } from "./NumberInput-Cyc37Ssv.js";
-import { t as Le } from "./Checkbox-BW-hyqCM.js";
+import { t as Le } from "./Checkbox-Bx-yW1PI.js";
 import { n as Re } from "./FileKindMark-BZmXUxaT.js";
 import { t as ze } from "./activationKey-CjbL3LUv.js";
 import { n as Be, r as Ve, t as He } from "./EventStreamContext-CLzG8O5_.js";
@@ -3614,7 +3615,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 				}), /* @__PURE__ */ W("div", {
 					className: "flex flex-wrap gap-1 px-3 pb-2.5",
 					"data-testid": "palette-category-chips",
-					children: S.map((e) => /* @__PURE__ */ W(Ae, {
+					children: S.map((e) => /* @__PURE__ */ W(ke, {
 						size: "xs",
 						active: o.has(e),
 						onClick: () => C(e),
@@ -4060,7 +4061,7 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 	]), fe = R((e) => {
 		D(e);
 		for (let t of e) t.type === "remove" && f(t.id);
-	}, [D, f]), N = R((e) => {
+	}, [D, f]), pe = R((e) => {
 		if (!c || !e.source || !e.target) return;
 		let t = c.nodes.find((t) => t.id === e.source), n = c.nodes.find((t) => t.id === e.target);
 		if (!t || !n) return;
@@ -4071,11 +4072,11 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 			target: e.target,
 			targetHandle: i
 		});
-	}, [c, d]), pe = R((e) => {
+	}, [c, d]), me = R((e) => {
 		if (!c || !e.source || !e.target) return !1;
 		let t = c.nodes.find((t) => t.id === e.source), n = c.nodes.find((t) => t.id === e.target);
 		return !t || !n ? !1 : en(t.type, e.sourceHandle ?? "out", n.type, e.targetHandle ?? "in");
-	}, [c]), me = R((e, t) => {
+	}, [c]), N = R((e, t) => {
 		g(t.id);
 	}, [g]), he = R(() => {
 		g(null);
@@ -4157,9 +4158,9 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 				edgeTypes: pi,
 				onNodesChange: de,
 				onEdgesChange: fe,
-				onConnect: N,
-				isValidConnection: pe,
-				onNodeClick: me,
+				onConnect: pe,
+				isValidConnection: me,
+				onNodeClick: N,
 				onNodeContextMenu: ae,
 				onPaneClick: he,
 				onMoveStart: x,
@@ -4307,8 +4308,8 @@ function xi({ error: e, anchor: t, onDismiss: n, onRetry: r }) {
 	}, [e, u]), p = R(() => {
 		r?.();
 	}, [r]);
-	De(!0, n), z(() => {
-		Oe(i.current);
+	Ee(!0, n), z(() => {
+		De(i.current);
 	}, []);
 	let m = Math.min(t.y + 8, window.innerHeight - 440), h = Math.min(t.x + 12, window.innerWidth - 360);
 	return /* @__PURE__ */ G("div", {
@@ -5650,7 +5651,7 @@ function Sa(e) {
 		e,
 		t,
 		n
-	]), N = R(async (t) => {
+	]), pe = R(async (t) => {
 		if (D) {
 			ae(t);
 			try {
@@ -5678,7 +5679,7 @@ function Sa(e) {
 		D,
 		e,
 		n
-	]), pe = R((e) => {
+	]), me = R((e) => {
 		if ("eventType" in e || !l(e.runId)) return;
 		O({
 			runId: e.runId,
@@ -5690,11 +5691,11 @@ function Sa(e) {
 			durationMs: 6e3
 		});
 	}, [l, n]);
-	Be("pipeline.step.breakpoint", pe);
-	let me = R((e) => {
+	Be("pipeline.step.breakpoint", me);
+	let N = R((e) => {
 		"eventType" in e || D && D.runId === e.runId && O(null);
 	}, [D]);
-	Be("pipeline.run.completed", me), Be("pipeline.run.failed", me), Be("pipeline.run.cancelled", me);
+	Be("pipeline.run.completed", N), Be("pipeline.run.failed", N), Be("pipeline.run.cancelled", N);
 	let he = R(() => {
 		u?.nodeId && (t.retryFromStep(u.nodeId), m());
 	}, [
@@ -5761,7 +5762,7 @@ function Sa(e) {
 		handleBreakpointStepOver: ue,
 		handleBreakpointResumeAll: de,
 		handleApplyAndContinue: fe,
-		handleRevertPatch: N,
+		handleRevertPatch: pe,
 		applyingPatch: re,
 		revertingPatchId: ie,
 		dirtyPatch: k,
@@ -5902,10 +5903,10 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 		variant: "neutral"
 	}, [ce, le] = H(!1), ue = V(null);
 	wr(ue, () => le(!1), ce);
-	let fe = M ? [...M.errors, ...M.warnings] : [], N = (e) => {
+	let fe = M ? [...M.errors, ...M.warnings] : [], pe = (e) => {
 		e && (k(e), le(!1));
-	}, pe = t.nodes.filter((e) => e.type !== "trigger").length, me = u ? Object.values(u.steps).filter((e) => e.status === "completed" || e.status === "skipped").length : 0, ge = ((u?.startedAt ? Date.now() - new Date(u.startedAt).getTime() : 0) / 1e3).toFixed(1), _e = a && u ? {
-		text: `Running (${me}/${pe} steps) · ${ge}s`,
+	}, me = t.nodes.filter((e) => e.type !== "trigger").length, N = u ? Object.values(u.steps).filter((e) => e.status === "completed" || e.status === "skipped").length : 0, ge = ((u?.startedAt ? Date.now() - new Date(u.startedAt).getTime() : 0) / 1e3).toFixed(1), _e = a && u ? {
+		text: `Running (${N}/${me} steps) · ${ge}s`,
 		variant: "running"
 	} : u?.status === "completed" ? {
 		text: `Completed in ${u.durationMs == null ? "?" : (u.durationMs / 1e3).toFixed(1)}s`,
@@ -5979,7 +5980,7 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 					children: fe.map((e, t) => /* @__PURE__ */ G("button", {
 						"data-ui-part": "",
 						type: "button",
-						onClick: () => N(e.nodeId),
+						onClick: () => pe(e.nodeId),
 						className: n("block w-full text-left px-3.5 py-2 text-[13px]", "border-none bg-transparent font-inherit text-text-primary", "flex gap-2 items-start leading-snug", e.nodeId ? "cursor-pointer" : "cursor-default", t < fe.length - 1 && "border-b border-border"),
 						children: [/* @__PURE__ */ W("span", {
 							className: n("font-bold text-xs", e.severity === "error" ? "text-danger-fg" : "text-warning-fg"),
@@ -7382,7 +7383,7 @@ function io({ label: e, checked: t, onChange: n, help: r, disabled: i, "data-tes
 		className: "flex flex-col",
 		children: [/* @__PURE__ */ G("div", {
 			className: "flex items-center gap-2",
-			children: [/* @__PURE__ */ W(Me, {
+			children: [/* @__PURE__ */ W(je, {
 				size: "sm",
 				checked: t,
 				onChange: n,
@@ -7976,7 +7977,7 @@ function Oo({ data: e, onChange: t, nodeId: n }) {
 			error: u ? "System prompt is required." : void 0,
 			help: u ? void 0 : "Sets the model's role and constraints.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 				rows: 4,
 				invalid: u,
 				id: n,
@@ -8006,7 +8007,7 @@ function Oo({ data: e, onChange: t, nodeId: n }) {
 				/* @__PURE__ */ W(X, {
 					label: "Temperature",
 					help: "0 = deterministic, 1 = creative.",
-					children: /* @__PURE__ */ W(Ne, {
+					children: /* @__PURE__ */ W(Me, {
 						min: 0,
 						max: 1,
 						step: .1,
@@ -8378,7 +8379,7 @@ function Ro({ data: e, onChange: t }) {
 							className: "text-[11px] font-semibold text-text-secondary",
 							children: e.label
 						}),
-						e.multiline ? /* @__PURE__ */ W(Fe, {
+						e.multiline ? /* @__PURE__ */ W(Pe, {
 							rows: 2,
 							id: t,
 							"aria-describedby": r,
@@ -8487,7 +8488,7 @@ function Ho({ data: e, onChange: t }) {
 		required: !0,
 		help: `Between ${zo} and ${Bo} parallel branches.`,
 		controlId: `${n}-branch-count`,
-		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(Ne, {
+		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(Me, {
 			min: zo,
 			max: Bo,
 			step: 1,
@@ -8792,7 +8793,7 @@ function Xo({ data: e, onChange: t }) {
 			label: "Message for approver (optional)",
 			help: "Shown to the approver when the request is sent.",
 			controlId: `${r}-message`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 				rows: 4,
 				id: n,
 				"aria-describedby": r,
@@ -10303,7 +10304,7 @@ function Zs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				"data-testid": `layer-kind-select-${t}`,
 				className: "shrink-0"
 			}),
-			/* @__PURE__ */ W(Ne, {
+			/* @__PURE__ */ W(Me, {
 				min: a.min,
 				max: a.max,
 				step: a.step,
@@ -10585,7 +10586,7 @@ function lc({ data: e, onChange: t, nodeId: n }) {
 			label: "Prompt",
 			help: "Optional text guidance forwarded to the upscaler.",
 			controlId: "upscale-prompt",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Pe, {
 				id: r,
 				"aria-describedby": n,
 				rows: 3,
@@ -10712,7 +10713,7 @@ function mc({ data: e, onChange: t, nodeId: n }) {
 			error: f ? "User prompt is required." : void 0,
 			help: "Supports {{ context.* }} substitution.",
 			controlId: `${r}-user-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 				rows: 4,
 				invalid: f,
 				id: n,
@@ -10751,7 +10752,7 @@ function mc({ data: e, onChange: t, nodeId: n }) {
 			error: u ? `Invalid JSON: ${u}` : void 0,
 			help: e.outputSchema ? "Extract mode — the model must return JSON matching this schema." : "Leave blank for caption mode (freeform analysis text).",
 			controlId: `${r}-output-schema`,
-			render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(Pe, {
 				rows: 6,
 				invalid: !!u,
 				className: "font-mono text-[11px]",
@@ -10793,7 +10794,7 @@ function mc({ data: e, onChange: t, nodeId: n }) {
 				label: "System prompt override",
 				help: "Schema instructions are auto-appended when an output schema is set.",
 				controlId: `${r}-system-prompt`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 					rows: 2,
 					id: n,
 					"aria-describedby": r,
@@ -10866,7 +10867,7 @@ function gc({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ W(X, {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
-			children: /* @__PURE__ */ W(Fe, {
+			children: /* @__PURE__ */ W(Pe, {
 				rows: 3,
 				spellCheck: !1,
 				value: e.systemPrompt ?? "",
@@ -10939,7 +10940,7 @@ function vc({ data: e, onChange: t, nodeId: n }) {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 				rows: 3,
 				spellCheck: !1,
 				id: n,
@@ -10985,7 +10986,7 @@ function yc({ data: e, onChange: t, nodeId: n }) {
 			error: o ? "User prompt is required." : void 0,
 			help: "What to ask the model about the image.",
 			controlId: `${r}-user-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 				rows: 3,
 				spellCheck: !1,
 				invalid: o,
@@ -11015,7 +11016,7 @@ function yc({ data: e, onChange: t, nodeId: n }) {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 				rows: 3,
 				spellCheck: !1,
 				id: n,
@@ -11082,7 +11083,7 @@ function xc({ data: e, onChange: t, nodeId: n }) {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 				rows: 3,
 				spellCheck: !1,
 				id: n,
@@ -11128,7 +11129,7 @@ function Ec({ data: e, onChange: t }) {
 			error: i ? "Prompt is required." : void 0,
 			help: i ? void 0 : r.help("prompt", "Text description of the image to generate."),
 			controlId: "generate-prompt",
-			render: ({ describedById: n, controlId: a }) => /* @__PURE__ */ W(Fe, {
+			render: ({ describedById: n, controlId: a }) => /* @__PURE__ */ W(Pe, {
 				id: a,
 				"aria-describedby": n,
 				rows: 4,
@@ -11329,7 +11330,7 @@ function jc({ data: e, onChange: t, nodeId: n }) {
 			error: i ? "Edit prompt is required." : void 0,
 			help: "Describes what to generate in the masked region.",
 			controlId: "edit-prompt-prompt",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Fe, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Pe, {
 				id: r,
 				"aria-describedby": n,
 				rows: 4,
@@ -12709,7 +12710,7 @@ function Bc({ data: e, onChange: t, nodeId: n }) {
 				error: c ? "Query template is required." : void 0,
 				help: c ? void 0 : o.help("queryTemplate", "Text to embed and search. Supports {{ context.* }} substitution."),
 				controlId: `${r}-query-template`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 					rows: 4,
 					invalid: c,
 					spellCheck: !1,
@@ -12847,7 +12848,7 @@ function Wc({ data: e, onChange: t, nodeId: n }) {
 				error: c ? "Query is required." : void 0,
 				help: c ? void 0 : "Bind values with $parameters below rather than interpolating them.",
 				controlId: `${r}-query`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Pe, {
 					rows: 6,
 					invalid: c,
 					spellCheck: !1,
@@ -13826,7 +13827,7 @@ function ol({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 					/* @__PURE__ */ G("div", { children: [/* @__PURE__ */ W("label", {
 						className: j,
 						children: "System prompt"
-					}), /* @__PURE__ */ W(Fe, {
+					}), /* @__PURE__ */ W(Pe, {
 						value: c,
 						onChange: (e) => l(e.target.value),
 						rows: 3,
@@ -13840,7 +13841,7 @@ function ol({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 							className: "text-danger-fg",
 							children: "*"
 						})]
-					}), /* @__PURE__ */ W(Fe, {
+					}), /* @__PURE__ */ W(Pe, {
 						value: u,
 						onChange: (e) => d(e.target.value),
 						rows: 3,
@@ -13864,7 +13865,7 @@ function ol({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 							"aria-label": "Schema preset",
 							"data-testid": "bench-schema-preset"
 						})]
-					}), /* @__PURE__ */ W(Fe, {
+					}), /* @__PURE__ */ W(Pe, {
 						value: m,
 						onChange: (e) => h(e.target.value),
 						rows: 5,
@@ -14372,7 +14373,7 @@ function ml({ selectedIds: e }) {
 							/* @__PURE__ */ G("div", {
 								className: "flex items-center gap-2",
 								children: [
-									/* @__PURE__ */ W(Ee, {
+									/* @__PURE__ */ W(Ie, {
 										state: cl[_.status],
 										label: _.status,
 										size: "sm",
@@ -15013,7 +15014,7 @@ function Pl({ pipelineId: e }) {
 			} catch {}
 			return t;
 		});
-	}, []), [j, te] = H(!1), [ne, re] = H(!1), [M, ie] = H(!1), [ae, oe] = H(!1), [se, ce] = H(!1), le = B(() => s?.publishedSnapshot ? s.publishedSnapshot : null, [s]), ue = s?.status === "published", fe = !v.isRunActive && (!ue || w), N = v.isRunActive ? "Cancel the active run" : ue ? w ? "Fix validation errors to enable runs" : "Start a new run" : "Publish the pipeline to enable runs", pe = R(async () => {
+	}, []), [j, te] = H(!1), [ne, re] = H(!1), [M, ie] = H(!1), [ae, oe] = H(!1), [se, ce] = H(!1), le = B(() => s?.publishedSnapshot ? s.publishedSnapshot : null, [s]), ue = s?.status === "published", fe = !v.isRunActive && (!ue || w), pe = v.isRunActive ? "Cancel the active run" : ue ? w ? "Fix validation errors to enable runs" : "Start a new run" : "Publish the pipeline to enable runs", me = R(async () => {
 		if (v.isRunActive && v.currentRunId) {
 			a.cancelRun(v.currentRunId);
 			return;
@@ -15030,11 +15031,11 @@ function Pl({ pipelineId: e }) {
 		a,
 		fe,
 		T
-	]), { saveError: me, clearSaveError: he } = i;
+	]), { saveError: N, clearSaveError: he } = i;
 	z(() => {
-		me && (o(`Could not save: ${me}`, { type: "error" }), he());
+		N && (o(`Could not save: ${N}`, { type: "error" }), he());
 	}, [
-		me,
+		N,
 		he,
 		o
 	]);
@@ -15067,7 +15068,7 @@ function Pl({ pipelineId: e }) {
 				return;
 			}
 			if (t && e.key === "Enter") {
-				e.preventDefault(), pe();
+				e.preventDefault(), me();
 				return;
 			}
 			if (t && e.key === ".") {
@@ -15091,7 +15092,7 @@ function Pl({ pipelineId: e }) {
 	}, [
 		f,
 		o,
-		pe,
+		me,
 		v,
 		a,
 		h,
@@ -15136,10 +15137,10 @@ function Pl({ pipelineId: e }) {
 				isRunActive: v.isRunActive,
 				isTriggering: v.isTriggering,
 				runDisabled: fe,
-				runTitle: N,
+				runTitle: pe,
 				currentRun: Oe,
 				breakpoints: v.breakpoints,
-				onRunClick: pe,
+				onRunClick: me,
 				onDebugRunClick: v.handleDebugRunClick,
 				onExport: Se,
 				onPublishClick: () => te(!0),
@@ -15260,7 +15261,7 @@ function Pl({ pipelineId: e }) {
 						children: [/* @__PURE__ */ W("span", {
 							className: "font-medium text-text-primary",
 							children: e
-						}), /* @__PURE__ */ W(Fe, {
+						}), /* @__PURE__ */ W(Pe, {
 							"data-autofocus": e === T[0] || void 0,
 							rows: 3,
 							value: v.triggerInputValues[e] ?? "",
@@ -15302,7 +15303,7 @@ function Fl(e) {
 }
 function Il({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete: o, selectionMode: s, selected: c, anySelected: l, onToggleSelect: u }) {
 	let [d, f] = H(!1), [p, m] = H(!1), h = V(null);
-	wr(h, () => f(!1), d), De(d, R(() => f(!1), []));
+	wr(h, () => f(!1), d), Ee(d, R(() => f(!1), []));
 	let g = e.status === "published", _ = e.status === "archived", v = typeof e.publishedVersion == "number", y = Fl(e.triggerBinding), b, x;
 	_ ? (b = `Archived · v${e.version}`, x = "danger") : g ? (b = `Published · v${e.version}`, x = "success") : v ? (b = `Draft · v${e.version} (published v${e.publishedVersion})`, x = "warning") : (b = `Draft · v${e.version}`, x = "neutral");
 	let S = !g, C = (e) => (t) => {
@@ -17880,7 +17881,7 @@ function wu({ userId: t, idToken: i, baseUrl: a } = {}) {
 		w,
 		v,
 		b
-	]), { selectionMode: ce, selected: le, allVisibleSelected: ue, someVisibleSelected: de, selectAllRef: fe, handleToggleSelectMode: N, handleToggleSelect: pe, handleSelectAllFiltered: me, handleHeaderToggleAll: he, clearSelection: ge, setSelectionMode: _e } = Hl({
+	]), { selectionMode: ce, selected: le, allVisibleSelected: ue, someVisibleSelected: de, selectAllRef: fe, handleToggleSelectMode: pe, handleToggleSelect: me, handleSelectAllFiltered: N, handleHeaderToggleAll: he, clearSelection: ge, setSelectionMode: _e } = Hl({
 		visibleRows: se,
 		filteredIds: B(() => se.map((e) => e.id), [se])
 	}), ve = V(/* @__PURE__ */ new Set());
@@ -18040,7 +18041,7 @@ function wu({ userId: t, idToken: i, baseUrl: a } = {}) {
 				return;
 			}
 			if ((e.metaKey || e.ctrlKey) && (e.key === "a" || e.key === "A")) {
-				ce && (e.preventDefault(), me());
+				ce && (e.preventDefault(), N());
 				return;
 			}
 			(e.key === "Delete" || e.key === "Backspace") && le.size > 0 && !te && !A && !D && !k && (e.preventDefault(), ne(!0));
@@ -18056,7 +18057,7 @@ function wu({ userId: t, idToken: i, baseUrl: a } = {}) {
 		D,
 		k,
 		ge,
-		me,
+		N,
 		_e
 	]);
 	let Ie = m.length > 0, I = le.size > 0;
@@ -18154,7 +18155,7 @@ function wu({ userId: t, idToken: i, baseUrl: a } = {}) {
 						selectionMode: ce,
 						selected: le.has(e.id),
 						anySelected: I,
-						onToggleSelect: (t) => pe(e.id, t)
+						onToggleSelect: (t) => me(e.id, t)
 					}, e.id))
 				}) : /* @__PURE__ */ G("div", {
 					className: "flex flex-col h-full",
@@ -18513,7 +18514,7 @@ var Wu = {
 };
 function qu({ label: e, options: t, selected: r, onToggle: i, labels: a, testIdPrefix: o }) {
 	let [s, c] = H(!1), l = V(null);
-	wr(l, () => c(!1), s), De(s, R(() => c(!1), []));
+	wr(l, () => c(!1), s), Ee(s, R(() => c(!1), []));
 	let u = r.size === 0 ? "All" : r.size <= 2 ? Array.from(r).map((e) => a[e]).join(", ") : `${r.size} selected`;
 	return /* @__PURE__ */ G("div", {
 		ref: l,
@@ -19720,7 +19721,7 @@ function Rd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 		e && navigator.clipboard.writeText(JSON.stringify(e, null, 2)).then(() => {
 			E("Copied!"), setTimeout(() => E("Copy JSON"), 1e3);
 		});
-	}, [t.output]), k = t.output, ee = k?.response, A = t.llm, j = t.input, te = Nd[t.status] ?? "var(--color-text-tertiary)", ne = sd(t), re = !ne && !!o && (u ?? Md)(t, e), M = !ne && !!s && (d ?? Md)(t, e), ie = !!t.startedAt || !!A?.streamOpened || A?.firstTokenLatencyMs != null || !!t.completedAt && t.status === "completed" || t.status === "failed", ae = a ? Object.entries(a).filter(([e]) => e !== "type") : [], oe = !!j && Object.keys(j).length > 0, se = !!k && Object.keys(k).length > 0, ce = !!(ee || A?.response), le = bd(k), ue = !le && t.status === "running" && (!!t.agentLive || i === "agent"), de = !!k && yd(k) === "vision", fe = !ce && !le && !ue && !de && se, N = !!A || k?.tokensIn != null, pe = p !== "hidden" && (ie || ae.length > 0 || oe || !!A?.prompt || fe || N);
+	}, [t.output]), k = t.output, ee = k?.response, A = t.llm, j = t.input, te = Nd[t.status] ?? "var(--color-text-tertiary)", ne = sd(t), re = !ne && !!o && (u ?? Md)(t, e), M = !ne && !!s && (d ?? Md)(t, e), ie = !!t.startedAt || !!A?.streamOpened || A?.firstTokenLatencyMs != null || !!t.completedAt && t.status === "completed" || t.status === "failed", ae = a ? Object.entries(a).filter(([e]) => e !== "type") : [], oe = !!j && Object.keys(j).length > 0, se = !!k && Object.keys(k).length > 0, ce = !!(ee || A?.response), le = bd(k), ue = !le && t.status === "running" && (!!t.agentLive || i === "agent"), de = !!k && yd(k) === "vision", fe = !ce && !le && !ue && !de && se, pe = !!A || k?.tokensIn != null, me = p !== "hidden" && (ie || ae.length > 0 || oe || !!A?.prompt || fe || pe);
 	return /* @__PURE__ */ G("div", {
 		className: "relative pl-9 mb-1",
 		children: [
@@ -19873,7 +19874,7 @@ function Rd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 							children: cd(ne)
 						})]
 					}),
-					pe && /* @__PURE__ */ W("div", {
+					me && /* @__PURE__ */ W("div", {
 						className: "px-4 py-2 border-t border-border",
 						"data-testid": `step-technical-${e}`,
 						children: /* @__PURE__ */ G("button", {
@@ -19890,7 +19891,7 @@ function Rd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 							}), "Technical details"]
 						})
 					}),
-					pe && b && /* @__PURE__ */ G("div", {
+					me && b && /* @__PURE__ */ G("div", {
 						id: C,
 						"data-testid": `step-technical-body-${e}`,
 						children: [
@@ -20060,7 +20061,7 @@ function Rd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 									children: JSON.stringify(k, null, 2)
 								})
 							}),
-							N && /* @__PURE__ */ W(dd, {
+							pe && /* @__PURE__ */ W(dd, {
 								title: "Token Usage",
 								children: /* @__PURE__ */ G("div", {
 									className: "flex gap-5 flex-wrap text-xs text-text-secondary",
@@ -22001,7 +22002,7 @@ function Of({ row: e, onSubmit: t, onOpenPipeline: n }) {
 					}) : null
 				]
 			}),
-			/* @__PURE__ */ W(Fe, {
+			/* @__PURE__ */ W(Pe, {
 				"data-testid": `approval-comment-${e.runId}`,
 				value: r,
 				onChange: (e) => i(e.target.value),
@@ -22136,9 +22137,9 @@ function kf() {
 				"data-testid": "approvals-loading",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
 				children: [
-					/* @__PURE__ */ W(je, { height: 140 }),
-					/* @__PURE__ */ W(je, { height: 140 }),
-					/* @__PURE__ */ W(je, { height: 140 })
+					/* @__PURE__ */ W(Ae, { height: 140 }),
+					/* @__PURE__ */ W(Ae, { height: 140 }),
+					/* @__PURE__ */ W(Ae, { height: 140 })
 				]
 			}) : g === 0 && !r ? /* @__PURE__ */ W(we, {
 				icon: "✋",
@@ -22217,7 +22218,7 @@ function jf({ result: e, className: t }) {
 			children: [/* @__PURE__ */ W("span", {
 				className: "text-[11px] font-medium uppercase text-text-tertiary",
 				children: "overall"
-			}), /* @__PURE__ */ W(ke, {
+			}), /* @__PURE__ */ W(Oe, {
 				value: e.overallScore,
 				threshold: a,
 				tone: r === "warning" ? "warning" : r,
@@ -22283,7 +22284,7 @@ function Nf({ score: e, def: t }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ W(ke, {
+			/* @__PURE__ */ W(Oe, {
 				value: e.score,
 				threshold: t?.failThreshold ?? .5,
 				tone: n,
@@ -22466,7 +22467,7 @@ function zf({ aggregate: e, className: t }) {
 				children: [/* @__PURE__ */ W("span", {
 					className: "text-[11px] font-medium uppercase text-text-tertiary",
 					children: "mean score"
-				}), /* @__PURE__ */ W(ke, {
+				}), /* @__PURE__ */ W(Oe, {
 					value: i,
 					tone: a === "warning" ? "warning" : a,
 					size: "md",
@@ -23279,7 +23280,7 @@ function hp(e, t, n = {}) {
 					variant: "plain"
 				}),
 				title: e.name,
-				pill: /* @__PURE__ */ W(Ee, {
+				pill: /* @__PURE__ */ W(Ie, {
 					variant: "text",
 					...t,
 					"data-testid": `${d}-pill-${e.id}`
@@ -23365,7 +23366,7 @@ function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 		"data-frame": te,
 		className: n("flex h-full min-h-0 flex-col gap-4", ne),
 		children: [
-			/* @__PURE__ */ W(Ie, {
+			/* @__PURE__ */ W(Fe, {
 				title: m,
 				badge: /* @__PURE__ */ W(N, {
 					size: "sm",
@@ -23375,7 +23376,7 @@ function gp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 					children: h ?? M.length
 				}),
 				actions: le ? /* @__PURE__ */ G(U, { children: [
-					!!g?.length && /* @__PURE__ */ W(Pe, {
+					!!g?.length && /* @__PURE__ */ W(Ne, {
 						trigger: /* @__PURE__ */ W("span", {
 							"aria-hidden": "true",
 							className: "text-base leading-none",
