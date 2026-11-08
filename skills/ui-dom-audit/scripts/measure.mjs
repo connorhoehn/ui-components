@@ -77,8 +77,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     if (!matches(actual, wanted, rule.tolerance ?? tolerance)) add(rule, el, property, wanted, actual);
   };
   const PLACEHOLDER_REASON = /^(?:todo|tbd|n\/?a|none|null|undefined|exempt|not applicable|coming soon|[-?.…]+)[.!?]*$/i;
-  // The URL a reader would share: path and query, never a hash or the origin.
-  const urlKey = href => { try { const u = new URL(href); return u.pathname + u.search; } catch { return String(href); } };
+  // The URL a reader would share, without the origin: path, query and hash.
+  // Hash routers (`#/work?item=…`) move only the fragment, and that is still
+  // a routed record.
+  const urlKey = href => { try { const u = new URL(href); return u.pathname + u.search + u.hash; } catch { return String(href); } };
   // Ink: where a reader actually sees something — visible text runs, images,
   // icons and canvases — never a padded wrapper's box. Used by the gutter,
   // row-start and sparse-row rules so full-bleed rows and hover surfaces are

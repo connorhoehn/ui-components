@@ -815,9 +815,9 @@ table{border-collapse:collapse;margin:8px} td{width:120px;max-width:120px;paddin
 <script>
 const v = new URLSearchParams(location.search).get('v');
 const overlay = (attrs, text) => { const el = document.createElement('aside'); for (const [k, val] of Object.entries(attrs)) el.setAttribute(k, val); el.textContent = text; el.style.cssText = 'position:fixed;right:0;top:0;width:300px;height:100%;background:#fff'; document.body.append(el); };
-const open = tr => { history.pushState({}, '', '/list/' + tr.cells[1].textContent.replace(/\\s/g, '-') + location.search); document.querySelector('#record').textContent = 'Record ' + tr.cells[1].textContent; };
+const open = tr => { const id = tr.cells[1].textContent.replace(/\\s/g, '-'); if (v === 'hash-route') location.hash = '#/list/' + id; else history.pushState({}, '', '/list/' + id + location.search); document.querySelector('#record').textContent = 'Record ' + tr.cells[1].textContent; };
 document.querySelectorAll('tbody tr').forEach(tr => {
-  tr.addEventListener('keydown', e => { if (e.key === 'Enter' && v === 'route') open(tr); });
+  tr.addEventListener('keydown', e => { if (e.key === 'Enter' && (v === 'route' || v === 'hash-route')) open(tr); });
   tr.addEventListener('click', e => {
     if (e.target.closest('input,button')) return;
     if (v === 'drawer') return overlay({ role: 'dialog', 'aria-modal': 'true', 'data-ui-dialog': 'drawer' }, 'Submission');
@@ -860,6 +860,7 @@ document.querySelectorAll('tbody input[type=checkbox]').forEach(cb => cb.addEven
   const select = page => probes.toggleSelection(page, { checkbox: `${rows} input[type="checkbox"]` });
   for (const [variant, enter, rule, valid, label] of [
     ['route', activate, 'record.popout', true, 'row click routes the record into the page'],
+    ['hash-route', activate, 'record.popout', true, 'row click routes the record by changing only the URL hash (hash router)'],
     ['route', page => probes.activateRow(page, { rows, via: 'enter' }), 'record.popout', true, 'Enter on a focused row routes the record'],
     ['preselected', activate, 'record.popout', true, 'the first row is already open; the next row routes'],
     ['confirm', activate, 'record.popout', true, 'a confirmation (data-ui-dialog="confirm") beside the routed record'],

@@ -1,3 +1,7 @@
+## 2.509.2
+
+- `ui-dom-audit` `record-popout`: a row activation's URL is compared as path + query + hash, so a hash router that routes a record by changing only the fragment (`#/work` → `#/work?item=…`) counts as routed. Before, the hash was dropped and every hash-routed row activation reported "url after row activation: expected a record URL other than …". Self-test adds a hash-route case. No component changes.
+
 ## 2.509.1
 
 - `ActionRowList` with `trailing` rows keeps one column edge down the list: a list with any trailing row is a two-column grid (row | controls) whose items are subgrids, so a row without controls lines its `columns` up with the rows that have them (2.509.0 pushed those rows' cells right by the controls' width). The 35rem wrap now queries the list root (`@container` on it, applied only when a row has `trailing`), which must take its width from its parent.
