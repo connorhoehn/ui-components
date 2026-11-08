@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { useState } from 'react';
 import { act, render, screen, fireEvent, cleanup, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   GroupedList,
@@ -434,5 +435,82 @@ describe('GroupedList semantic rail typography', () => {
     expect(screen.getByText('Badge').closest('[data-ui-text="rail-item"]')).toBeNull();
     expect(screen.getByText('Alpha description').closest('[data-ui-text="rail-item"]')).toBeNull();
     expect(screen.getByRole('button', { name: 'Details' }).closest('[data-ui-text="rail-item"]')).toBeNull();
+  });
+});
+
+describe('GroupedList row actions (2.509.0)', () => {
+  const groups: GroupedListGroup[] = [{ id: 'review', title: 'Needs review' }];
+  const rowsWith = (onApprove = () => {}): GroupedListRow[] => [
+    {
+      id: 'a',
+      groupId: 'review',
+      title: 'Storyboard approval',
+      subline: 'Episode 2',
+      actions: (
+        <>
+          <button type="button" data-testid="approve-a" onClick={onApprove}>Approve</button>
+          <button type="button" data-testid="reject-a">Request changes</button>
+        </>
+      ),
+      trailing: <span>2m ago</span>,
+    },
+    { id: 'b', groupId: 'review', title: 'Voice take' },
+  ];
+
+  it('renders actions as a sibling after the row button, before trailing: no nested buttons', () => {
+    const { container } = render(<GroupedList groups={groups} rows={rowsWith()} />);
+    expect(container.querySelector('button button')).toBeNull();
+    const open = screen.getByTestId('grouped-list-row-open-a');
+    const actions = screen.getByTestId('grouped-list-row-controls-a');
+    expect(open.contains(actions)).toBe(false);
+    expect(open.nextElementSibling).toBe(actions);
+    expect(actions.nextElementSibling).toBe(screen.getByTestId('grouped-list-row-trailing-a'));
+    expect(open).not.toHaveTextContent('Approve');
+  });
+
+  it('keyboard order: the row, then its actions; arrows from an action do not move the list', async () => {
+    const user = userEvent.setup();
+    render(<GroupedList groups={groups} rows={rowsWith()} />);
+    screen.getByTestId('grouped-list-row-open-a').focus();
+    await user.tab();
+    expect(screen.getByTestId('approve-a')).toHaveFocus();
+    await user.tab();
+    expect(screen.getByTestId('reject-a')).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByTestId('reject-a')).toHaveFocus();
+    // Back on the row, ArrowDown still roves to the next row.
+    screen.getByTestId('grouped-list-row-open-a').focus();
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByTestId('grouped-list-row-open-b')).toHaveFocus();
+  });
+
+  it('a press on an action never opens the row', async () => {
+    const onOpenRow = vi.fn();
+    const onApprove = vi.fn();
+    const user = userEvent.setup();
+    render(<GroupedList groups={groups} rows={rowsWith(onApprove)} onOpenRow={onOpenRow} />);
+    fireEvent.click(screen.getByTestId('approve-a'));
+    fireEvent.click(screen.getByTestId('grouped-list-row-controls-a'));
+    screen.getByTestId('approve-a').focus();
+    await user.keyboard('{Enter}');
+    await user.keyboard(' ');
+    expect(onApprove).toHaveBeenCalledTimes(3);
+    expect(onOpenRow).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('grouped-list-row-open-a'));
+    expect(onOpenRow).toHaveBeenCalledTimes(1);
+  });
+
+  it('wraps the actions under the title below a 35rem row, aligned past the caret column', () => {
+    render(<GroupedList groups={groups} rows={rowsWith()} />);
+    const li = screen.getByTestId('grouped-list-row-a');
+    expect(li).toHaveClass('@container', 'flex-wrap');
+    expect(screen.getByTestId('grouped-list-row-controls-a')).toHaveClass(
+      '@max-[35rem]:basis-full',
+      '@max-[35rem]:order-last',
+      '@max-[35rem]:pl-[30px]',
+    );
+    // A row without actions keeps its old classes.
+    expect(screen.getByTestId('grouped-list-row-b')).not.toHaveClass('@container');
+    expect(screen.queryByTestId('grouped-list-row-controls-b')).toBeNull();
   });
 });

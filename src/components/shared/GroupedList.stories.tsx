@@ -224,3 +224,41 @@ export const DesignRecordRail: Story = {
     rows: [{ id: 'tokens', groupId: 'input', title: 'Session token rotation on tenant switch' }, { id: 'dashboards', groupId: 'ideating', title: 'RED dashboards from span metrics' }], onOpenRow: () => {} },
   decorators: [Story => <div className="w-80 bg-surface"><Story /></div>],
 };
+
+const REVIEW_GROUPS: GroupedListGroup[] = [
+  { id: 'review', title: 'Needs review', count: 2 },
+  { id: 'running', title: 'Running', count: 1 },
+];
+const REVIEW_ROWS: GroupedListRow[] = [
+  { id: 'storyboard', groupId: 'review', title: 'Episode 2 storyboard is waiting for your approval', pill: <StatusPill variant="text" state="warning" label="Review" />, subline: 'Storyboard · 12 shots' },
+  { id: 'voice', groupId: 'review', title: 'Narrator voice take', pill: <StatusPill variant="text" state="warning" label="Review" />, subline: 'Dialogue · 3 lines' },
+  { id: 'render', groupId: 'running', title: 'Render the opening sequence', pill: <StatusPill variant="text" state="info" label="Rendering" />, subline: 'Pipeline run' },
+].map((row) => ({
+  ...row,
+  actions:
+    row.groupId === 'review' ? (
+      <>
+        <Button size="sm" variant="secondary" data-testid={`approve-${row.id}`}>Approve</Button>
+        <Button size="sm" variant="secondary" data-testid={`reject-${row.id}`}>Request changes</Button>
+      </>
+    ) : undefined,
+  trailing: <span className="text-text-tertiary">2m ago</span>,
+}));
+
+/**
+ * `actions` (2.509.0): a row's own buttons, outside the row's button. Wide,
+ * they sit at the row's end; below a 35rem row they wrap under the title.
+ */
+export const RowActions: Story = {
+  args: { groups: REVIEW_GROUPS, rows: REVIEW_ROWS },
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div className="w-[960px]" data-testid="story-wide">
+        <GroupedList size="md" groups={REVIEW_GROUPS} rows={REVIEW_ROWS} onOpenRow={() => {}} data-testid="wide" />
+      </div>
+      <div className="w-[390px]" data-testid="story-narrow">
+        <GroupedList size="md" groups={REVIEW_GROUPS} rows={REVIEW_ROWS} onOpenRow={() => {}} data-testid="narrow" />
+      </div>
+    </div>
+  ),
+};

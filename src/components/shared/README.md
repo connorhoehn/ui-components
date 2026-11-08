@@ -73,6 +73,10 @@ The default card variants remain available. `GroupedList.leadingSize` reserves
 8px for a decorative indicator, keeps the normal hit area for controls, or
 omits an absent leading slot; `WorkListView layout="rail"` uses this compact
 indicator and moves item identifiers into metadata to preserve title width.
+A row's own buttons (quick actions) go in `GroupedListRow.actions` (and
+`ActionRowItem.trailing` on `ActionRowList`): siblings of the row's button,
+never inside it, at the row's end when wide and wrapped under the title below
+a 35rem row.
 
 `DataTable rowHeight="content"` declares a document table whose prose may wrap
 into taller rows. `KeyValue responsive` allows divided labels to move above

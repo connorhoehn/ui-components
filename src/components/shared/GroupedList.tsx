@@ -60,7 +60,18 @@
 // `meta` is a second line INSIDE the button, above `subline` when both are
 // given. It is therefore non-interactive by contract — avatars, points, a
 // chip, a coloured label. Anything a reader clicks goes in `leading`,
-// `trailing` or `hoverActions`, which are outside the button.
+// `trailing`, `actions` or `hoverActions`, which are outside the button.
+//
+// ## `actions` (row controls, since 2.509.0)
+//
+// A row's own buttons — "Approve", "Request changes" — rendered as a SIBLING
+// after the row's button, never inside it, so each is its own tab stop right
+// after the row (row, then its controls), a press on one never opens the row,
+// and the list's arrow keys leave them alone. On a wide row they sit at the
+// row's end before `hoverActions` and `trailing`; when the row itself is
+// narrower than 35rem (560px, a container query on the row) they wrap onto a
+// line of their own under the title, aligned with it, so the title keeps the
+// row's width instead of truncating beside a button group.
 //
 // ## Reorder (`onReorder`)
 //
@@ -141,6 +152,12 @@ export interface GroupedListRow {
   trailing?: ReactNode;
   /** Trailing content revealed on hover / focus / `current` — an "Open" button. */
   hoverActions?: ReactNode;
+  /**
+   * The row's own controls — quick-action buttons. Always visible, outside
+   * the row's button (tab order: row, then these), at the row's end when it
+   * is wide and wrapped under the title below a 35rem row. Since 2.509.0.
+   */
+  actions?: ReactNode;
   /** The row the reader is "at": last opened, just created. Tinted; wears its hover line. */
   current?: boolean;
   /** Muted and inert; the menu still opens so a reader can see why. */
@@ -738,6 +755,20 @@ export function GroupedList({
 // Row
 // ---------------------------------------------------------------------------
 
+/**
+ * Where a wrapped `actions` line starts so it lines up with the title: past
+ * the caret column (20px + the button's 10px gap), or past `leading` and the
+ * row's gap. A row `icon` has no fixed width, so its line starts under the icon.
+ */
+function actionsIndent(row: GroupedListRow, md: boolean, hasLeading: boolean): string {
+  if (hasLeading) {
+    if (row.leadingSize === 'indicator') return '@max-[35rem]:pl-4';
+    return md ? '@max-[35rem]:pl-9' : '@max-[35rem]:pl-8';
+  }
+  if (row.leadingSize === 'none') return '';
+  return '@max-[35rem]:pl-[30px]';
+}
+
 interface RowProps {
   row: GroupedListRow;
   current: boolean;
@@ -759,6 +790,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
   const hasHoverLine = row.hoverSubline !== undefined && row.hoverSubline !== null;
   const hasMeta = row.meta !== undefined && row.meta !== null;
   const hasLeading = row.leading !== undefined && row.leading !== null;
+  const hasActions = row.actions !== undefined && row.actions !== null && row.actions !== false;
   const rKey: FocusKey = `r:${row.id}`;
   const md = size === 'md';
   // A plain row is a rail row: it draws the shared rail scale (railType.tsx)
@@ -799,6 +831,9 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
       className={cn(
         'group relative flex items-center px-2',
         row.leadingSize === 'indicator' ? 'gap-2' : 'gap-3',
+        // A row with controls is its own container: below 35rem they wrap
+        // under the title (see `actions`).
+        hasActions && '@container flex-wrap gap-y-1',
         rowStyle === 'plain' ? 'border-t-0' : 'border-t border-border',
         // plain rows are the rail form: the shared rail pitch at any size.
         rowStyle === 'plain' ? RAIL_ROW_PAD_Y : md ? 'py-[7px]' : 'py-2.5',
@@ -890,6 +925,19 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
           )}
         </span>
       </button>
+      {hasActions && (
+        <span
+          data-grouped-list-row-actions=""
+          data-testid={`${testId}-row-controls-${row.id}`}
+          className={cn(
+            'flex shrink-0 items-center gap-1.5',
+            '@max-[35rem]:order-last @max-[35rem]:basis-full @max-[35rem]:flex-wrap',
+            actionsIndent(row, md, hasLeading),
+          )}
+        >
+          {row.actions}
+        </span>
+      )}
       {row.hoverActions && (
         <span
           data-testid={`${testId}-row-actions-${row.id}`}

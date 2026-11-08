@@ -31,6 +31,19 @@
 // chip), and `action` replaces the chevron with a worded target ("Open →").
 // The row stays ONE target: nothing new is separately interactive.
 //
+// ## `trailing` (row controls, since 2.509.0)
+//
+// A row can carry its own buttons — "Approve", "Request changes" — in
+// `trailing`. They are a SIBLING after the row's button (or link), never
+// inside it: a button nested in a button is invalid, and a screen reader may
+// never reach it. Tab order is the row, then its trailing controls, then the
+// next row; a press on one never reaches the row's `onOpen`. The row's tint,
+// tone bar and stripe move to the list item so they span both; the row's own
+// metrics (type, padding, columns) are unchanged. When the list item is
+// narrower than 35rem (560px, a container query) the controls wrap onto a
+// line of their own under the title, aligned with it, so the title keeps its
+// width.
+//
 // None of it is required: an item with a `description` and `meta` and no
 // columns renders exactly as before, and descriptions still work beside
 // columns — both arrangements stay reachable from the same list.
@@ -117,6 +130,12 @@ export interface ActionRowItem {
    * target. Overrides the list's `action`. Since 2.392.0.
    */
   action?: string;
+  /**
+   * The row's own controls — quick-action buttons — after the row's button,
+   * outside it: their own tab stops (row, then these) and their presses never
+   * open the row. Wrap under the title below a 35rem row. Since 2.509.0.
+   */
+  trailing?: ReactNode;
 }
 
 export interface ActionRowListProps {
@@ -283,16 +302,30 @@ export function ActionRowList({
             const rowAction = item.action ?? action;
             // Odd rows (2nd, 4th, …), as DataTable stripes them. A toned row keeps its tone.
             const stripe = striped && rowTone === 'neutral' && index % 2 === 1;
-            const rowClass = cn(
+            const baseRowClass = cn(
               ROW_CLASS,
               hasColumns && cn(size === 'sm' ? 'min-h-10' : 'min-h-[45px]', 'py-[3px]'),
               hasColumns && item.leading != null && 'pl-5',
-              rowTone !== 'neutral' && cn(TONE_ROW[rowTone], 'rounded-r-md'),
-              rowAccent === 'bar' && TONE_BAR[rowTone],
             );
             const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} size={size} />;
+            const hasTrailing = item.trailing != null && item.trailing !== false;
+            // With controls beside it the row is a flex line; its tint, bar and
+            // rounding move to the item so they span the controls too, and the
+            // row's hover keeps the tint (a tinted row never flashed grey).
+            const toneRow = rowTone !== 'neutral' ? cn(TONE_ROW[rowTone], 'rounded-r-md') : undefined;
+            const rowClass = hasTrailing
+              ? cn(baseRowClass, 'min-w-0 flex-1 basis-0 hover:bg-transparent')
+              : cn(baseRowClass, toneRow, rowAccent === 'bar' && TONE_BAR[rowTone]);
+            const itemClass = hasTrailing
+              ? cn(
+                  '@container flex flex-wrap items-center transition-colors duration-100',
+                  rowTone === 'neutral' && !item.disabled && 'hover:bg-surface-hover',
+                  toneRow,
+                  rowAccent === 'bar' && TONE_BAR[rowTone],
+                )
+              : undefined;
             return (
-            <li key={item.id} className={cn(!toned && 'border-b border-border', stripe && 'bg-surface-inset')} data-testid={`${testId}-row-${item.id}`} {...(stripe ? { 'data-stripe': '' } : {})} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
+            <li key={item.id} className={cn(!toned && 'border-b border-border', stripe && 'bg-surface-inset', itemClass)} data-testid={`${testId}-row-${item.id}`} {...(stripe ? { 'data-stripe': '' } : {})} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (
                 <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`}>
                   {body}
@@ -311,6 +344,19 @@ export function ActionRowList({
                 >
                   {body}
                 </button>
+              )}
+              {hasTrailing && (
+                <span
+                  data-action-row-trailing=""
+                  data-testid={`${testId}-trailing-${item.id}`}
+                  className={cn(
+                    'flex shrink-0 items-center gap-1.5 pr-2.5',
+                    '@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:pb-[7px]',
+                    hasColumns && item.leading != null ? '@max-[35rem]:pl-5' : '@max-[35rem]:pl-2.5',
+                  )}
+                >
+                  {item.trailing}
+                </span>
               )}
             </li>
             );
