@@ -1,3 +1,7 @@
+## 2.509.1
+
+- `ActionRowList` with `trailing` rows keeps one column edge down the list: a list with any trailing row is a two-column grid (row | controls) whose items are subgrids, so a row without controls lines its `columns` up with the rows that have them (2.509.0 pushed those rows' cells right by the controls' width). The 35rem wrap now queries the list root (`@container` on it, applied only when a row has `trailing`), which must take its width from its parent.
+
 ## 2.509.0
 
 - `ActionRowItem.trailing` (`ActionRowList`) and `GroupedListRow.actions` (`GroupedList`): a row's own buttons — quick actions such as Approve / Request changes — rendered as siblings after the row's button or link, never inside it. Tab order is the row, then its controls, then the next row; a press on one never reaches `onOpen` / `onOpenRow`, and `GroupedList`'s arrow keys leave them alone. Below a 35rem row (a container query on the list item) the controls wrap onto their own line under the title, aligned with it, so the title keeps the row's width instead of truncating beside a button group. On a wide row they sit at the row's end (in `GroupedList`, before `hoverActions` and `trailing`).

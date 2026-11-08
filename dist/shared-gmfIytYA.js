@@ -8164,9 +8164,9 @@ function Is({ items: e, onOpen: t, footer: r, emptyLabel: i, columns: a, tone: o
 		compact: "sm"
 	});
 	if (e.length === 0 && i == null && r == null) return null;
-	let g = o !== "neutral", _ = !!a && a.length > 0;
+	let g = o !== "neutral", _ = e.some((e) => e.trailing != null && e.trailing !== !1), v = !!a && a.length > 0;
 	return /* @__PURE__ */ Z("div", {
-		className: n("flex min-w-0 flex-col", p),
+		className: n("flex min-w-0 flex-col", _ && "@container", p),
 		"data-testid": m,
 		"data-striped": c || void 0,
 		...h === "sm" ? { "data-size": "sm" } : {},
@@ -8175,18 +8175,18 @@ function Is({ items: e, onOpen: t, footer: r, emptyLabel: i, columns: a, tone: o
 			"data-testid": `${m}-empty`,
 			children: i
 		}) : /* @__PURE__ */ X("ul", {
-			className: n("m-0 list-none p-0", g ? "flex flex-col gap-1" : "border-t border-border"),
+			className: n("m-0 list-none p-0", g ? "flex flex-col gap-1" : "border-t border-border", _ && "grid grid-cols-[minmax(0,1fr)_auto] gap-x-0 @max-[35rem]:flex @max-[35rem]:flex-col"),
 			...f ? { "aria-label": f } : {},
 			...g ? { "data-tone": o } : {},
 			children: e.map((e, r) => {
-				let i = e.tone ?? o, u = e.accent ?? s, d = e.action ?? l, f = c && i === "neutral" && r % 2 == 1, p = n(Ns, _ && n(h === "sm" ? "min-h-10" : "min-h-[45px]", "py-[3px]"), _ && e.leading != null && "pl-5"), v = /* @__PURE__ */ X(Ps, {
+				let i = e.tone ?? o, u = e.accent ?? s, d = e.action ?? l, f = c && i === "neutral" && r % 2 == 1, p = n(Ns, v && n(h === "sm" ? "min-h-10" : "min-h-[45px]", "py-[3px]"), v && e.leading != null && "pl-5"), y = /* @__PURE__ */ X(Ps, {
 					item: e,
-					..._ ? { columns: a } : {},
+					...v ? { columns: a } : {},
 					...d ? { action: d } : {},
 					size: h
-				}), y = e.trailing != null && e.trailing !== !1, b = i === "neutral" ? void 0 : n(js[i], "rounded-r-md"), x = y ? n(p, "min-w-0 flex-1 basis-0 hover:bg-transparent") : n(p, b, u === "bar" && Ms[i]), S = y ? n("@container flex flex-wrap items-center transition-colors duration-100", i === "neutral" && !e.disabled && "hover:bg-surface-hover", b, u === "bar" && Ms[i]) : void 0;
+				}), b = e.trailing != null && e.trailing !== !1, x = i === "neutral" ? void 0 : n(js[i], "rounded-r-md"), S = _ ? n(p, "col-start-1 min-w-0 flex-1 basis-0 hover:bg-transparent") : n(p, x, u === "bar" && Ms[i]), C = _ ? n("col-span-full grid grid-cols-subgrid items-center transition-colors duration-100 @max-[35rem]:flex @max-[35rem]:flex-wrap", i === "neutral" && !e.disabled && "hover:bg-surface-hover", x, u === "bar" && Ms[i]) : void 0;
 				return /* @__PURE__ */ Z("li", {
-					className: n(!g && "border-b border-border", f && "bg-surface-inset", S),
+					className: n(!g && "border-b border-border", f && "bg-surface-inset", C),
 					"data-testid": `${m}-row-${e.id}`,
 					...f ? { "data-stripe": "" } : {},
 					...i === "neutral" ? {} : { "data-tone": i },
@@ -8194,9 +8194,9 @@ function Is({ items: e, onOpen: t, footer: r, emptyLabel: i, columns: a, tone: o
 					children: [e.href && !e.disabled ? /* @__PURE__ */ X("a", {
 						href: e.href,
 						onClick: () => t?.(e),
-						className: x,
+						className: S,
 						"data-testid": `${m}-open-${e.id}`,
-						children: v
+						children: y
 					}) : /* @__PURE__ */ X("button", {
 						"data-ui-part": "",
 						type: "button",
@@ -8205,13 +8205,13 @@ function Is({ items: e, onOpen: t, footer: r, emptyLabel: i, columns: a, tone: o
 						onClick: () => {
 							e.disabled || t?.(e);
 						},
-						className: n(x, e.disabled ? "cursor-default opacity-60" : "cursor-pointer", e.disabled && i === "neutral" && "hover:bg-transparent"),
+						className: n(S, e.disabled ? "cursor-default opacity-60" : "cursor-pointer", e.disabled && i === "neutral" && "hover:bg-transparent"),
 						"data-testid": `${m}-open-${e.id}`,
-						children: v
-					}), y && /* @__PURE__ */ X("span", {
+						children: y
+					}), b && /* @__PURE__ */ X("span", {
 						"data-action-row-trailing": "",
 						"data-testid": `${m}-trailing-${e.id}`,
-						className: n("flex shrink-0 items-center gap-1.5 pr-2.5", "@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:pb-[7px]", _ && e.leading != null ? "@max-[35rem]:pl-5" : "@max-[35rem]:pl-2.5"),
+						className: n("col-start-2 flex shrink-0 items-center gap-1.5 pr-2.5", "@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:pb-[7px]", v && e.leading != null ? "@max-[35rem]:pl-5" : "@max-[35rem]:pl-2.5"),
 						children: e.trailing
 					})]
 				}, e.id);
