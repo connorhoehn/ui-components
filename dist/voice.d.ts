@@ -94,7 +94,7 @@ export declare interface VoiceConfirmResult {
 
 export declare type VoiceDecision = 'approve' | 'reject';
 
-export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, pendingChoice, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, size, startLabel, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
+export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, pendingChoice, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, size, startLabel, transcriptOpen, onToggleTranscript, onOpenLog, turns, keepTranscript, onKeepTranscriptChange, pulse, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
 
 export declare interface VoiceDockProps {
     phase: VoicePhase;
@@ -131,6 +131,27 @@ export declare interface VoiceDockProps {
     size?: VoiceDockSize;
     /** The Start control's label in the `footer` size. Default `'Voice'`. */
     startLabel?: string;
+    /**
+     * The CC control's state. When true the dock renders its `VoiceTurnStrip`
+     * inline in a row above its own row (never a popover or dialog), at the strip's
+     * `footer` scale in the `footer` size. Since 2.510.6.
+     */
+    transcriptOpen?: boolean;
+    /** Renders the CC control, a quiet toggle (`aria-pressed` = `transcriptOpen`). */
+    onToggleTranscript?: () => void;
+    /** Renders a quiet "history" control at the same scale (the host opens its log view). */
+    onOpenLog?: () => void;
+    /** The turns the inline strip shows. */
+    turns?: VoiceTurn[];
+    /** The strip's "Keep transcripts on this device" switch (see `VoiceTurnStrip`). */
+    keepTranscript?: boolean;
+    onKeepTranscriptChange?: (on: boolean) => void;
+    /**
+     * One 600 ms motion-safe pulse on the start / stop control each time this
+     * flips to true (e.g. when a card opens). The phase live region already
+     * announces; this is the visual cue. Since 2.510.6.
+     */
+    pulse?: boolean;
     className?: string;
     /** The dock's root element. */
     ref?: React.Ref<HTMLDivElement>;
@@ -204,7 +225,7 @@ export declare interface VoiceTurn {
     toolCalls?: VoiceToolCall[];
 }
 
-export declare function VoiceTurnStrip({ turns, maxVisible, onClear, pending, pendingChoice, className, 'data-testid': testId, }: VoiceTurnStripProps): JSX.Element;
+export declare function VoiceTurnStrip({ turns, maxVisible, onClear, pending, pendingChoice, size, keepTranscript, onKeepTranscriptChange, onOpenLog, className, 'data-testid': testId, }: VoiceTurnStripProps): JSX.Element;
 
 export declare interface VoiceTurnStripProps {
     turns: VoiceTurn[];
@@ -215,9 +236,22 @@ export declare interface VoiceTurnStripProps {
     pending?: VoicePending | null;
     /** An `ambiguous` result awaiting an answer; renders the choice card under the turns. */
     pendingChoice?: VoicePendingChoice | null;
+    /**
+     * `panel` (default): two-line turns at `sm`. `footer`: one 28px row per turn
+     * at `T` xs, all turns kept, the list showing three rows and scrolling the rest.
+     * Since 2.510.6.
+     */
+    size?: VoiceTurnStripSize;
+    /** The "Keep transcripts on this device" switch's state. The switch renders when `onKeepTranscriptChange` is set. */
+    keepTranscript?: boolean;
+    onKeepTranscriptChange?: (on: boolean) => void;
+    /** Renders a quiet "History" control (the host opens its log view). */
+    onOpenLog?: () => void;
     className?: string;
     'data-testid'?: string;
 }
+
+export declare type VoiceTurnStripSize = 'footer' | 'panel';
 
 export { }
 

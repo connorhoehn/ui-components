@@ -6,11 +6,13 @@
 // choice card for an ambiguous result). Escape cancels and Enter confirms
 // while the card has focus.
 
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { Stack, Inline } from '../ui/Stack';
 import { Input } from '../forms/Input';
+import Switch from '../shared/Switch';
+import { HistoryIcon } from '../ui/Icons';
 import { SegmentedControl } from '../shared/SegmentedControl';
 import { StatusPill, type StatusPillTone } from '../shared/StatusPill';
 import { T } from '../shared/Text';
@@ -149,9 +151,22 @@ export interface VoiceTurnStripProps {
   pending?: VoicePending | null;
   /** An `ambiguous` result awaiting an answer; renders the choice card under the turns. */
   pendingChoice?: VoicePendingChoice | null;
+  /**
+   * `panel` (default): two-line turns at `sm`. `footer`: one 28px row per turn
+   * at `T` xs, all turns kept, the list showing three rows and scrolling the rest.
+   * Since 2.510.6.
+   */
+  size?: VoiceTurnStripSize;
+  /** The "Keep transcripts on this device" switch's state. The switch renders when `onKeepTranscriptChange` is set. */
+  keepTranscript?: boolean;
+  onKeepTranscriptChange?: (on: boolean) => void;
+  /** Renders a quiet "History" control (the host opens its log view). */
+  onOpenLog?: () => void;
   className?: string;
   'data-testid'?: string;
 }
+
+export type VoiceTurnStripSize = 'footer' | 'panel';
 
 function formatAt(at: number | string): string {
   if (typeof at === 'string') return at;
@@ -165,10 +180,87 @@ export function VoiceTurnStrip({
   onClear,
   pending = null,
   pendingChoice = null,
+  size = 'panel',
+  keepTranscript = false,
+  onKeepTranscriptChange,
+  onOpenLog,
   className,
   'data-testid': testId = 'voice-turn-strip',
 }: VoiceTurnStripProps) {
-  const visible = maxVisible > 0 ? turns.slice(-maxVisible) : turns;
+  const footer = size === 'footer';
+  const keepId = useId();
+  const visible = !footer && maxVisible > 0 ? turns.slice(-maxVisible) : turns;
+  const extras = onKeepTranscriptChange || onOpenLog ? (
+    <Inline gap="sm" justify="between" className="min-h-7" data-testid={`${testId}-extras`}>
+      {onKeepTranscriptChange ? (
+        <Inline gap="sm">
+          <Switch
+            size="sm"
+            checked={keepTranscript}
+            onChange={onKeepTranscriptChange}
+            aria-labelledby={keepId}
+            data-testid={`${testId}-keep`}
+          />
+          <T id={keepId} size="xs" tone="secondary">Keep transcripts on this device</T>
+        </Inline>
+      ) : <span />}
+      {onOpenLog ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5"
+          onClick={onOpenLog}
+          data-testid={`${testId}-log`}
+        >
+          <HistoryIcon size={16} />
+          History
+        </Button>
+      ) : null}
+    </Inline>
+  ) : null;
+  if (footer) {
+    return (
+      <Stack gap="xs" className={cn('min-w-0', className)} data-testid={testId} data-size="footer">
+        {visible.length === 0 && !pending && !pendingChoice ? (
+          <T size="xs" tone="tertiary" className="min-h-7 leading-7" data-testid={`${testId}-empty`}>Nothing said yet.</T>
+        ) : null}
+        {visible.length > 0 ? (
+          <Stack gap="none" className="max-h-21 overflow-y-auto" data-testid={`${testId}-list`}>
+            {visible.map((turn) => (
+              <Inline
+                key={turn.id}
+                wrap={false}
+                gap="sm"
+                className="h-7 min-w-0 shrink-0"
+                data-testid={`${testId}-turn-${turn.id}`}
+                data-role={turn.role}
+              >
+                <T size="xs" weight="semibold" tone={turn.role === 'you' ? 'secondary' : 'primary'} className="shrink-0">
+                  {turn.role === 'you' ? 'You' : 'Assistant'}
+                </T>
+                <T size="xs" tone="primary" className="min-w-0 flex-1 truncate" title={turn.text}>{turn.text}</T>
+                {turn.toolCalls?.map((call, i) => (
+                  <Inline key={`${call.name}-${i}`} gap="xs" className="shrink-0" data-testid={`${testId}-tool-${turn.id}-${i}`} data-status={call.status}>
+                    <StatusPill size="sm" tone={TOOL_TONE[call.status]} label={call.status} />
+                    <T size="xs" tone="secondary">{call.name}</T>
+                  </Inline>
+                ))}
+                <T size="xs" tone="tertiary" tabular className="shrink-0">{formatAt(turn.at)}</T>
+              </Inline>
+            ))}
+          </Stack>
+        ) : null}
+        {pending ? <VoiceConfirmCard pending={pending} /> : null}
+        {pendingChoice ? <VoiceChoiceCard choice={pendingChoice} compact /> : null}
+        {extras}
+        {onClear && turns.length > 0 ? (
+          <Inline justify="end">
+            <Button variant="ghost" size="sm" onClick={onClear} data-testid={`${testId}-clear`}>Clear</Button>
+          </Inline>
+        ) : null}
+      </Stack>
+    );
+  }
   return (
     <Stack gap="sm" className={cn('min-w-0', className)} data-testid={testId}>
       {visible.length === 0 && !pending && !pendingChoice ? (
@@ -194,6 +286,7 @@ export function VoiceTurnStrip({
       ))}
       {pending ? <VoiceConfirmCard pending={pending} /> : null}
       {pendingChoice ? <VoiceChoiceCard choice={pendingChoice} /> : null}
+      {extras}
       {onClear && turns.length > 0 ? (
         <Inline justify="end">
           <Button variant="ghost" size="sm" onClick={onClear} data-testid={`${testId}-clear`}>Clear</Button>

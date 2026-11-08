@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { VoiceDock } from '../VoiceDock';
 import { VoiceActivityRing } from '../VoiceActivityRing';
 import { VoiceTurnStrip, VoiceConfirmCard } from '../VoiceTurnStrip';
@@ -352,5 +352,89 @@ describe('voice cards: roles, per-request reset, dock precedence', () => {
     expect(screen.queryByTestId('voice-confirm-card')).toBeNull();
     rerender(<VoiceDock {...dockBase} phase="confirming" pending={pending} pendingChoice={null} />);
     expect(screen.getByTestId('voice-confirm-card')).toBeInTheDocument();
+  });
+});
+
+describe('VoiceDock transcript, history and pulse (2.510.6)', () => {
+  const turns = Array.from({ length: 5 }, (_, i) => ({ id: `t${i}`, role: (i % 2 ? 'assistant' : 'you') as 'you' | 'assistant', text: `turn ${i}`, at: '10:00' }));
+
+  it('CC toggles the inline strip and never mounts a dialog at footer size', () => {
+    const onToggle = vi.fn();
+    const { rerender } = render(<VoiceDock {...dockBase} phase="listening" size="footer" turns={turns} onToggleTranscript={onToggle} transcriptOpen={false} />);
+    expect(screen.queryByTestId('voice-dock-strip')).toBeNull();
+    fireEvent.click(screen.getByTestId('voice-dock-cc'));
+    expect(onToggle).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('voice-dock-cc')).toHaveAttribute('aria-pressed', 'false');
+    rerender(<VoiceDock {...dockBase} phase="listening" size="footer" turns={turns} onToggleTranscript={onToggle} transcriptOpen />);
+    const dock = screen.getByTestId('voice-dock');
+    expect(screen.getByTestId('voice-dock-strip')).toBeInTheDocument();
+    expect(screen.getByTestId('voice-dock-cc')).toHaveAttribute('aria-pressed', 'true');
+    expect(dock.firstElementChild).toBe(screen.getByTestId('voice-dock-transcript'));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(dock.querySelector('[data-popover], [role="dialog"]')).toBeNull();
+  });
+
+  it('shows the history control only with onOpenLog', () => {
+    const onOpenLog = vi.fn();
+    const { rerender } = render(<VoiceDock {...dockBase} phase="off" size="footer" />);
+    expect(screen.queryByTestId('voice-dock-history')).toBeNull();
+    rerender(<VoiceDock {...dockBase} phase="off" size="footer" onOpenLog={onOpenLog} />);
+    fireEvent.click(screen.getByTestId('voice-dock-history'));
+    expect(onOpenLog).toHaveBeenCalledTimes(1);
+  });
+
+  it('pulses the control once per flip to true', () => {
+    vi.useFakeTimers();
+    try {
+      const { rerender } = render(<VoiceDock {...dockBase} phase="off" size="footer" pulse={false} />);
+      const cls = () => screen.getByTestId('voice-dock-start').getAttribute('class') ?? '';
+      expect(cls()).not.toContain('animate-');
+      rerender(<VoiceDock {...dockBase} phase="off" size="footer" pulse />);
+      expect(cls()).toContain('motion-safe:animate-[pulse_600ms_ease-out_1]');
+      act(() => { vi.advanceTimersByTime(600); });
+      expect(cls()).not.toContain('animate-');
+      rerender(<VoiceDock {...dockBase} phase="off" size="footer" pulse />);
+      expect(cls()).not.toContain('animate-');
+      rerender(<VoiceDock {...dockBase} phase="off" size="footer" pulse={false} />);
+      rerender(<VoiceDock {...dockBase} phase="off" size="footer" pulse />);
+      expect(cls()).toContain('motion-safe:animate-[pulse_600ms_ease-out_1]');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('VoiceTurnStrip size and keep switch (2.510.6)', () => {
+  const turns = Array.from({ length: 5 }, (_, i) => ({ id: `t${i}`, role: 'you' as const, text: `turn ${i}`, at: '10:00' }));
+
+  it('footer rows are 28px at xs, all turns kept, list capped at three rows', () => {
+    render(<VoiceTurnStrip size="footer" turns={turns} />);
+    for (const t of turns) {
+      const row = screen.getByTestId(`voice-turn-strip-turn-${t.id}`);
+      expect(row.getAttribute('class')).toContain('h-7');
+    }
+    const list = screen.getByTestId('voice-turn-strip-list').getAttribute('class') ?? '';
+    expect(list).toContain('max-h-21');
+    expect(list).toContain('overflow-y-auto');
+    expect(screen.getByText('turn 0').getAttribute('class')).toContain('text-xs');
+  });
+
+  it('panel size is unchanged and still slices to maxVisible', () => {
+    render(<VoiceTurnStrip turns={turns} maxVisible={2} />);
+    expect(screen.queryByTestId('voice-turn-strip-turn-t0')).toBeNull();
+    expect(screen.getByTestId('voice-turn-strip-turn-t4')).toBeInTheDocument();
+    expect(screen.queryByTestId('voice-turn-strip-keep')).toBeNull();
+  });
+
+  it('the keep switch is labelled and calls back; History calls onOpenLog', () => {
+    const onKeep = vi.fn();
+    const onOpenLog = vi.fn();
+    render(<VoiceTurnStrip size="footer" turns={turns} keepTranscript={false} onKeepTranscriptChange={onKeep} onOpenLog={onOpenLog} />);
+    const sw = screen.getByRole('switch', { name: 'Keep transcripts on this device' });
+    expect(sw).toHaveAttribute('aria-checked', 'false');
+    fireEvent.click(sw);
+    expect(onKeep).toHaveBeenCalledWith(true);
+    fireEvent.click(screen.getByTestId('voice-turn-strip-log'));
+    expect(onOpenLog).toHaveBeenCalledTimes(1);
   });
 });

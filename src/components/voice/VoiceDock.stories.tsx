@@ -149,3 +149,25 @@ export const StripChoosing: StoryObj = {
     <VoiceTurnStrip turns={turns.slice(0, 1)} pendingChoice={{ title: 'Which Alpha?', candidates: alphas, onChoose: noop, onCancel: noop }} />
   ),
 };
+
+const manyTurns: VoiceTurn[] = Array.from({ length: 6 }, (_, i) => ({
+  id: `m${i}`,
+  role: i % 2 ? 'assistant' : 'you',
+  text: i % 2 ? 'Opening the Atlas initiative.' : 'Show last week’s decisions',
+  at: '10:0' + i,
+}));
+
+/** Footer dock with the transcript open: the strip renders inline above the row, three rows tall, the rest scrolls. */
+export const FooterTranscriptOpen: Story = {
+  args: { size: 'footer', transcriptOpen: true, onToggleTranscript: noop, onOpenLog: noop, turns: manyTurns, keepTranscript: false, onKeepTranscriptChange: noop },
+};
+/** The CC and history controls with the transcript closed. */
+export const FooterTranscriptClosed: Story = {
+  args: { size: 'footer', transcriptOpen: false, onToggleTranscript: noop, onOpenLog: noop, turns: manyTurns },
+};
+/** `pulse`: one 600 ms pulse on the Start / End control each time it flips to true. */
+export const FooterPulse: Story = { args: { size: 'footer', pulse: true } };
+/** The strip alone at the footer size with the keep switch and history. */
+export const StripFooterSize: StoryObj = {
+  render: () => <VoiceTurnStrip size="footer" turns={manyTurns} keepTranscript onKeepTranscriptChange={noop} onOpenLog={noop} />,
+};

@@ -5,7 +5,7 @@ export type { VoiceDockProps, VoiceDockSize } from './VoiceDock';
 export { VoiceActivityRing } from './VoiceActivityRing';
 export type { VoiceActivityRingProps } from './VoiceActivityRing';
 export { VoiceTurnStrip, VoiceConfirmCard } from './VoiceTurnStrip';
-export type { VoiceTurnStripProps, VoiceConfirmCardProps } from './VoiceTurnStrip';
+export type { VoiceTurnStripProps, VoiceTurnStripSize, VoiceConfirmCardProps } from './VoiceTurnStrip';
 export { VoiceChoiceCard } from './VoiceChoiceCard';
 export type { VoiceChoiceCardProps } from './VoiceChoiceCard';
 export { VOICE_PHASES, VOICE_PHASE_LABEL, VOICE_NOTE_MAX, VOICE_CHOICE_MAX } from './voiceTypes';

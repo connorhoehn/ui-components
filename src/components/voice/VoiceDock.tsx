@@ -20,22 +20,24 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
-import { Inline } from '../ui/Stack';
+import { Inline, Stack } from '../ui/Stack';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import DotMeter from '../shared/DotMeter';
 import InlinePopover from '../shared/InlinePopover';
 import { StatusPill, type StatusPillTone } from '../shared/StatusPill';
 import { T } from '../shared/Text';
-import { MicIcon, MicOffIcon, PhoneOffIcon } from '../video/MediaIcons';
+import { CaptionsIcon, MicIcon, MicOffIcon, PhoneOffIcon } from '../video/MediaIcons';
+import { HistoryIcon } from '../ui/Icons';
 import { VoiceActivityRing } from './VoiceActivityRing';
-import { VoiceConfirmCard } from './VoiceTurnStrip';
+import { VoiceConfirmCard, VoiceTurnStrip } from './VoiceTurnStrip';
 import { VoiceChoiceCard } from './VoiceChoiceCard';
 import {
   VOICE_PHASE_LABEL,
   clampLevel,
   type VoiceBudget,
   type VoiceLine,
+  type VoiceTurn,
   type VoicePending,
   type VoicePendingChoice,
   type VoicePhase,
@@ -76,6 +78,27 @@ export interface VoiceDockProps {
   size?: VoiceDockSize;
   /** The Start control's label in the `footer` size. Default `'Voice'`. */
   startLabel?: string;
+  /**
+   * The CC control's state. When true the dock renders its `VoiceTurnStrip`
+   * inline in a row above its own row (never a popover or dialog), at the strip's
+   * `footer` scale in the `footer` size. Since 2.510.6.
+   */
+  transcriptOpen?: boolean;
+  /** Renders the CC control, a quiet toggle (`aria-pressed` = `transcriptOpen`). */
+  onToggleTranscript?: () => void;
+  /** Renders a quiet "history" control at the same scale (the host opens its log view). */
+  onOpenLog?: () => void;
+  /** The turns the inline strip shows. */
+  turns?: VoiceTurn[];
+  /** The strip's "Keep transcripts on this device" switch (see `VoiceTurnStrip`). */
+  keepTranscript?: boolean;
+  onKeepTranscriptChange?: (on: boolean) => void;
+  /**
+   * One 600 ms motion-safe pulse on the start / stop control each time this
+   * flips to true (e.g. when a card opens). The phase live region already
+   * announces; this is the visual cue. Since 2.510.6.
+   */
+  pulse?: boolean;
   className?: string;
   /** The dock's root element. */
   ref?: React.Ref<HTMLDivElement>;
@@ -103,6 +126,8 @@ function formatElapsed(total: number): string {
   return `${mm}:${ss}`;
 }
 
+const PULSE_MS = 600;
+
 const usd = (n: number) => `$${n.toFixed(2)}`;
 
 export function VoiceDock({
@@ -122,10 +147,25 @@ export function VoiceDock({
   compact = false,
   size = 'panel',
   startLabel = 'Voice',
+  transcriptOpen = false,
+  onToggleTranscript,
+  onOpenLog,
+  turns = [],
+  keepTranscript,
+  onKeepTranscriptChange,
+  pulse = false,
   className,
   ref,
   'data-testid': testId = 'voice-dock',
 }: VoiceDockProps) {
+  const [pulsing, setPulsing] = useState(false);
+  useEffect(() => {
+    if (!pulse) return undefined;
+    setPulsing(true);
+    const t = setTimeout(() => setPulsing(false), PULSE_MS);
+    return () => clearTimeout(t);
+  }, [pulse]);
+  const pulseClass = pulsing ? 'motion-safe:animate-[pulse_600ms_ease-out_1]' : undefined;
   const rowRef = useRef<HTMLDivElement>(null);
   // The popover measures its anchor in a layout effect that runs before this
   // row's ref attaches, so it opens only after the first commit.
@@ -134,7 +174,6 @@ export function VoiceDock({
   // Stable, so React does not detach and re-attach it (which would leave the
   // popover's anchor null at the moment it measures).
   const setRefs = useCallback((el: HTMLDivElement | null) => {
-    rowRef.current = el;
     if (typeof ref === 'function') ref(el);
     else if (ref) (ref as { current: HTMLDivElement | null }).current = el;
   }, [ref]);
@@ -148,15 +187,36 @@ export function VoiceDock({
   const footer = size === 'footer';
 
   return (
-    <Inline
+    <Stack
       ref={setRefs}
-      wrap={false}
-      gap="sm"
-      className={cn('min-w-0', footer ? 'px-1' : 'px-2 py-1', className)}
+      gap="none"
+      className={cn('min-w-0', className)}
       data-testid={testId}
       data-phase={phase}
       data-size={size}
       data-voice-dock=""
+    >
+      {transcriptOpen ? (
+        <div
+          className={cn('min-w-0 border-0 border-b border-solid border-border', footer ? 'px-1 py-1' : 'px-2 py-1')}
+          data-testid={`${testId}-transcript`}
+        >
+          <VoiceTurnStrip
+            turns={turns}
+            size={footer ? 'footer' : 'panel'}
+            keepTranscript={keepTranscript}
+            onKeepTranscriptChange={onKeepTranscriptChange}
+            onOpenLog={onOpenLog}
+            data-testid={`${testId}-strip`}
+          />
+        </div>
+      ) : null}
+    <Inline
+      ref={rowRef}
+      wrap={false}
+      gap="sm"
+      className={cn('min-w-0', footer ? 'px-1' : 'px-2 py-1')}
+      data-testid={`${testId}-row`}
     >
       <VoiceActivityRing
         level={level}
@@ -213,13 +273,35 @@ export function VoiceDock({
           data-testid={`${testId}-mute`}
         />
       ) : null}
+      {onToggleTranscript ? (
+        <IconButton
+          aria-label={transcriptOpen ? 'Hide transcript' : 'Show transcript'}
+          aria-pressed={transcriptOpen}
+          size="sm"
+          variant="ghost"
+          icon={<CaptionsIcon size={16} />}
+          onClick={onToggleTranscript}
+          data-testid={`${testId}-cc`}
+        />
+      ) : null}
+      {onOpenLog ? (
+        <IconButton
+          aria-label="Open voice history"
+          size="sm"
+          variant="ghost"
+          icon={<HistoryIcon size={16} />}
+          onClick={onOpenLog}
+          data-testid={`${testId}-history`}
+        />
+      ) : null}
       {footer ? (
         live ? (
           <Button
             variant="ghost"
             size="sm"
             aria-label="End voice session"
-            className="gap-1.5"
+            className={cn('gap-1.5', pulseClass)}
+            data-pulse={pulsing ? '' : undefined}
             onClick={onStop}
             data-testid={`${testId}-stop`}
           >
@@ -231,7 +313,8 @@ export function VoiceDock({
             variant="ghost"
             size="sm"
             aria-label="Start voice session"
-            className="gap-1.5"
+            className={cn('gap-1.5', pulseClass)}
+            data-pulse={pulsing ? '' : undefined}
             disabled={phase === 'unavailable' || !onStart}
             title={pillTitle}
             onClick={onStart}
@@ -246,6 +329,8 @@ export function VoiceDock({
           aria-label="End voice session"
           size="sm"
           variant="danger"
+          className={pulseClass}
+          data-pulse={pulsing ? '' : undefined}
           icon={<PhoneOffIcon size={16} />}
           onClick={onStop}
           data-testid={`${testId}-stop`}
@@ -255,6 +340,8 @@ export function VoiceDock({
           aria-label="Start voice session"
           size="sm"
           variant="primary"
+          className={pulseClass}
+          data-pulse={pulsing ? '' : undefined}
           icon={<MicIcon size={16} />}
           disabled={phase === 'unavailable' || !onStart}
           title={pillTitle}
@@ -289,6 +376,7 @@ export function VoiceDock({
         </InlinePopover>
       ) : null}
     </Inline>
+    </Stack>
   );
 }
 
