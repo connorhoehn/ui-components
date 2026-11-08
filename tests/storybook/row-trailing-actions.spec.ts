@@ -76,6 +76,11 @@ test('ActionRowList trailing: row end when wide, under the title at 390px', asyn
     return { size: cs.fontSize, weight: cs.fontWeight, desc: getComputedStyle(desc).fontSize };
   });
   expect(metrics).toEqual({ size: '15px', weight: '600', desc: '13px' });
+  // A row without controls keeps the same column edges as the rows with them.
+  const edges = await page.evaluate(() =>
+    ['storyboard', 'notes'].map((id) => Math.round((document.querySelector(`[data-testid="wide-open-${id}"] [data-testid="action-row-cell-state"]`) as HTMLElement).getBoundingClientRect().left)),
+  );
+  expect(edges[0]).toBe(edges[1]);
 
   await page.getByTestId('narrow-open-storyboard').focus();
   await page.keyboard.press('Tab');

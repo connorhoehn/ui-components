@@ -36,9 +36,10 @@ export const Dark: Story = { ...StripedWithStatus,
 const NEEDS_ME = [
   { id: 'storyboard', title: 'Episode 2 storyboard is waiting for your approval', description: 'Storyboard · 12 shots' },
   { id: 'voice', title: 'Narrator voice take', description: 'Dialogue · 3 lines' },
+  { id: 'notes', title: 'Director notes on the alley plate', description: 'Recorded direction' },
 ].map((item) => ({
   ...item,
-  trailing: (
+  trailing: item.id === 'notes' ? undefined : (
     <>
       <Button size="sm" variant="secondary" data-testid={`approve-${item.id}`}>Approve</Button>
       <Button size="sm" variant="secondary" data-testid={`reject-${item.id}`}>Request changes</Button>

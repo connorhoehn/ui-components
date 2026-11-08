@@ -38,10 +38,14 @@
 // inside it: a button nested in a button is invalid, and a screen reader may
 // never reach it. Tab order is the row, then its trailing controls, then the
 // next row; a press on one never reaches the row's `onOpen`. The row's tint,
-// tone bar and stripe move to the list item so they span both; the row's own
-// metrics (type, padding, columns) are unchanged. When the list item is
-// narrower than 35rem (560px, a container query) the controls wrap onto a
-// line of their own under the title, aligned with it, so the title keeps its
+// tone bar and hover move to the list item so they span both; the row's own
+// metrics (type, padding, columns) are unchanged. A list with any trailing
+// row is a two-column grid (row | controls) whose items are subgrids, so the
+// controls column takes the widest row's controls and every row's fact
+// columns keep one edge, with or without controls. When the list is narrower
+// than 35rem (560px; the list root is the query container, so it must get
+// its width from its parent, not its content) the controls wrap onto a line
+// of their own under the title, aligned with it, so the title keeps its
 // width.
 //
 // None of it is required: an item with a `description` and `meta` and no
@@ -289,13 +293,18 @@ export function ActionRowList({
   const size = useDensitySize('ActionRowList', sizeProp, { comfortable: 'md', compact: 'sm' });
   if (items.length === 0 && emptyLabel == null && footer == null) return null;
   const toned = tone !== 'neutral';
+  // Any row with controls: the list becomes a two-column grid (row | its
+  // controls) whose rows are subgrids, so the controls column is as wide as
+  // the widest row's controls and every row's columns keep one edge. The list
+  // is the container the 35rem wrap queries.
+  const slotted = items.some((item) => item.trailing != null && item.trailing !== false);
   const hasColumns = !!columns && columns.length > 0;
   return (
-    <div className={cn('flex min-w-0 flex-col', className)} data-testid={testId} data-striped={striped || undefined} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
+    <div className={cn('flex min-w-0 flex-col', slotted && '@container', className)} data-testid={testId} data-striped={striped || undefined} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
       {items.length === 0 ? (
         emptyLabel != null && <p className="m-0 py-2 text-sm text-text-tertiary" data-testid={`${testId}-empty`}>{emptyLabel}</p>
       ) : (
-        <ul className={cn('m-0 list-none p-0', toned ? 'flex flex-col gap-1' : 'border-t border-border')} {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(toned ? { 'data-tone': tone } : {})}>
+        <ul className={cn('m-0 list-none p-0', toned ? 'flex flex-col gap-1' : 'border-t border-border', slotted && 'grid grid-cols-[minmax(0,1fr)_auto] gap-x-0 @max-[35rem]:flex @max-[35rem]:flex-col')} {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(toned ? { 'data-tone': tone } : {})}>
           {items.map((item, index) => {
             const rowTone = item.tone ?? tone;
             const rowAccent = item.accent ?? accent;
@@ -309,16 +318,16 @@ export function ActionRowList({
             );
             const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} size={size} />;
             const hasTrailing = item.trailing != null && item.trailing !== false;
-            // With controls beside it the row is a flex line; its tint, bar and
-            // rounding move to the item so they span the controls too, and the
-            // row's hover keeps the tint (a tinted row never flashed grey).
+            // In a list with controls every item is a subgrid line; its tint,
+            // bar, rounding and hover move to the item so they span the
+            // controls column too (a tinted row never flashed grey).
             const toneRow = rowTone !== 'neutral' ? cn(TONE_ROW[rowTone], 'rounded-r-md') : undefined;
-            const rowClass = hasTrailing
-              ? cn(baseRowClass, 'min-w-0 flex-1 basis-0 hover:bg-transparent')
+            const rowClass = slotted
+              ? cn(baseRowClass, 'col-start-1 min-w-0 flex-1 basis-0 hover:bg-transparent')
               : cn(baseRowClass, toneRow, rowAccent === 'bar' && TONE_BAR[rowTone]);
-            const itemClass = hasTrailing
+            const itemClass = slotted
               ? cn(
-                  '@container flex flex-wrap items-center transition-colors duration-100',
+                  'col-span-full grid grid-cols-subgrid items-center transition-colors duration-100 @max-[35rem]:flex @max-[35rem]:flex-wrap',
                   rowTone === 'neutral' && !item.disabled && 'hover:bg-surface-hover',
                   toneRow,
                   rowAccent === 'bar' && TONE_BAR[rowTone],
@@ -350,7 +359,7 @@ export function ActionRowList({
                   data-action-row-trailing=""
                   data-testid={`${testId}-trailing-${item.id}`}
                   className={cn(
-                    'flex shrink-0 items-center gap-1.5 pr-2.5',
+                    'col-start-2 flex shrink-0 items-center gap-1.5 pr-2.5',
                     '@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:pb-[7px]',
                     hasColumns && item.leading != null ? '@max-[35rem]:pl-5' : '@max-[35rem]:pl-2.5',
                   )}

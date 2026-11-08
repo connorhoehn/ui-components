@@ -89,18 +89,23 @@ describe('ActionRowList trailing (2.509.0)', () => {
     expect(row).not.toHaveClass('bg-warning-callout');
   });
 
-  it('wraps the controls under the title below a 35rem row (container query on the item)', () => {
+  it('a list with controls is a row | controls grid of subgrid items; it wraps below a 35rem list', () => {
     render(<ActionRowList items={items()} />);
-    const li = screen.getByTestId('action-row-list-row-a');
-    expect(li).toHaveClass('@container', 'flex', 'flex-wrap');
-    expect(screen.getByTestId('action-row-list-open-a')).toHaveClass('flex-1', 'basis-0', 'min-w-0');
-    expect(screen.getByTestId('action-row-list-trailing-a')).toHaveClass('@max-[35rem]:basis-full', 'shrink-0');
+    expect(screen.getByTestId('action-row-list')).toHaveClass('@container');
+    const ul = screen.getByTestId('action-row-list').querySelector('ul')!;
+    expect(ul).toHaveClass('grid', 'grid-cols-[minmax(0,1fr)_auto]', '@max-[35rem]:flex');
+    // Both items are subgrid lines, the one without controls too, so columns line up.
+    for (const id of ['a', 'b']) {
+      expect(screen.getByTestId(`action-row-list-row-${id}`)).toHaveClass('col-span-full', 'grid-cols-subgrid', '@max-[35rem]:flex-wrap');
+      expect(screen.getByTestId(`action-row-list-open-${id}`)).toHaveClass('col-start-1', 'flex-1', 'basis-0', 'min-w-0');
+    }
+    expect(screen.getByTestId('action-row-list-trailing-a')).toHaveClass('col-start-2', '@max-[35rem]:basis-full', 'shrink-0');
   });
 
-  it('a row without trailing renders exactly as before', () => {
-    render(<ActionRowList tone="warning" items={items()} />);
-    const li = screen.getByTestId('action-row-list-row-b');
-    expect(li).not.toHaveClass('@container');
+  it('a list without trailing renders exactly as before', () => {
+    render(<ActionRowList tone="warning" items={items().map(({ trailing: _t, ...item }) => item)} />);
+    expect(screen.getByTestId('action-row-list')).not.toHaveClass('@container');
+    expect(screen.getByTestId('action-row-list-row-b')).not.toHaveClass('grid');
     expect(screen.getByTestId('action-row-list-open-b')).toHaveClass('bg-warning-callout');
     expect(screen.queryByTestId('action-row-list-trailing-b')).toBeNull();
   });
