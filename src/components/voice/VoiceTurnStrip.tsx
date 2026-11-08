@@ -50,8 +50,14 @@ export interface VoiceConfirmCardProps {
  * The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel.
  * With `pending.fields` it also shows an approve / reject toggle and a one-line note, and
  * Confirm calls back with `{ decision, note }` (note trimmed, capped at 200 characters).
+ * Remounts per request (`pending.requestId`, else `title`), so the note and toggle reset.
  */
-export function VoiceConfirmCard({
+export function VoiceConfirmCard(props: VoiceConfirmCardProps) {
+  const { pending } = props;
+  return <VoiceConfirmCardBody key={pending.requestId ?? pending.title} {...props} />;
+}
+
+function VoiceConfirmCardBody({
   pending,
   handleEscape = true,
   autoFocus = true,

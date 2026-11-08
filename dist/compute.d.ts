@@ -1401,6 +1401,10 @@ export declare function nextKind(registry: PaneKindRegistry, id: string, compute
  * the person looking at the strip, and one cap is easier to explain than two.
  * Re-running the same command with the same `id` replaces the lines in place
  * rather than stacking a second tab.
+ *
+ * Output tabs own their id space: the tab's id is `output:<id>` (OUTPUT_TAB_PREFIX,
+ * not doubled if already present), so it can never equal a shell id. Use the id
+ * in the returned outcome for `focusShell` / `closeShell`. Since 2.510.5.
  */
 export declare function openOutputTab(input: {
     id: string;

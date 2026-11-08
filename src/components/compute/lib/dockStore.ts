@@ -82,6 +82,9 @@ export interface DockState {
   geometry: DockGeometry;
 }
 
+/** Output tabs' ids start with this, so they never collide with a shell id. */
+export const OUTPUT_TAB_PREFIX = 'output:';
+
 /** AgentCore allows 10 concurrent shells per runtime; stop short of the wall. */
 export const MAX_SHELLS = 8;
 
@@ -175,7 +178,7 @@ export function openShell(box: { id: string; label: string; sessionId: string; c
       activeId: existing.id,
       mode: state.mode === 'hidden' ? 'docked' : state.mode,
       ...(box.cwd && box.cwd !== existing.cwd
-        ? { shells: state.shells.map((s) => (s.id === existing.id ? { ...s, cwd: box.cwd } : s)) }
+        ? { shells: state.shells.map((s) => (s.kind !== 'output' && s.id === existing.id ? { ...s, cwd: box.cwd } : s)) }
         : {}),
     });
     return { ok: true, id: existing.id };
@@ -215,6 +218,10 @@ export function openShell(box: { id: string; label: string; sessionId: string; c
  * the person looking at the strip, and one cap is easier to explain than two.
  * Re-running the same command with the same `id` replaces the lines in place
  * rather than stacking a second tab.
+ *
+ * Output tabs own their id space: the tab's id is `output:<id>` (OUTPUT_TAB_PREFIX,
+ * not doubled if already present), so it can never equal a shell id. Use the id
+ * in the returned outcome for `focusShell` / `closeShell`. Since 2.510.5.
  */
 export function openOutputTab(input: {
   id: string;
@@ -225,6 +232,7 @@ export function openOutputTab(input: {
   exitCode?: number;
   onOpenShell?: () => void;
 }): OpenShellOutcome {
+  const tabId = input.id.startsWith(OUTPUT_TAB_PREFIX) ? input.id : `${OUTPUT_TAB_PREFIX}${input.id}`;
   const output: DockOutput = {
     command: input.command,
     lines: input.lines,
@@ -233,12 +241,12 @@ export function openOutputTab(input: {
     ...(input.onOpenShell ? { onOpenShell: input.onOpenShell } : {}),
   };
   const mode = state.mode === 'hidden' ? 'docked' : state.mode;
-  const existing = state.shells.find((s) => s.kind === 'output' && s.id === input.id);
+  const existing = state.shells.find((s) => s.kind === 'output' && s.id === tabId);
   if (existing) {
     set({
       activeId: existing.id,
       mode,
-      shells: state.shells.map((s) => (s.id === existing.id
+      shells: state.shells.map((s) => (s.kind === 'output' && s.id === existing.id
         ? { ...s, label: input.label, output, status: output.running ? 'busy' : 'ready', unread: false }
         : s)),
     });
@@ -249,7 +257,7 @@ export function openOutputTab(input: {
     return { ok: false, reason: 'at-capacity' };
   }
   const tab: DockShell = {
-    id: input.id,
+    id: tabId,
     kind: 'output',
     output,
     sessionId: '',
@@ -288,7 +296,7 @@ export function focusShell(id: string): void {
 export function reportShellStatus(id: string, status: ShellStatus, sawOutput = false): void {
   let changed = false;
   const shells = state.shells.map((s) => {
-    if (s.id !== id) return s;
+    if (s.kind === 'output' || s.id !== id) return s;
     const unread = sawOutput && state.activeId !== id ? true : s.unread;
     if (s.status === status && s.unread === unread) return s;
     changed = true;

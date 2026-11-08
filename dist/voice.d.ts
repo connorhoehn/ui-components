@@ -44,7 +44,8 @@ export declare interface VoiceChoiceCandidate {
     href?: string;
 }
 
-export declare function VoiceChoiceCard({ choice, handleEscape, autoFocus, compact, className, 'data-testid': testId, }: VoiceChoiceCardProps): JSX.Element;
+/** The answer to an `ambiguous` result. Remounts when the request changes (`choice.requestId`, else `choice.title`). */
+export declare function VoiceChoiceCard(props: VoiceChoiceCardProps): JSX.Element;
 
 export declare interface VoiceChoiceCardProps {
     choice: VoicePendingChoice;
@@ -62,8 +63,9 @@ export declare interface VoiceChoiceCardProps {
  * The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel.
  * With `pending.fields` it also shows an approve / reject toggle and a one-line note, and
  * Confirm calls back with `{ decision, note }` (note trimmed, capped at 200 characters).
+ * Remounts per request (`pending.requestId`, else `title`), so the note and toggle reset.
  */
-export declare function VoiceConfirmCard({ pending, handleEscape, autoFocus, className, 'data-testid': testId, }: VoiceConfirmCardProps): JSX.Element;
+export declare function VoiceConfirmCard(props: VoiceConfirmCardProps): JSX.Element;
 
 export declare interface VoiceConfirmCardProps {
     pending: VoicePending;
@@ -102,8 +104,14 @@ export declare interface VoiceDockProps {
     outputLevel: number;
     elapsedSeconds?: number;
     budget?: VoiceBudget | null;
+    /**
+     * The action awaiting confirmation. The popover opens whenever this is set,
+     * whatever `phase` is (the host's controller moves the phase to `confirming`,
+     * but the card does not depend on it). If `pendingChoice` is also set, the
+     * choice shows first and this opens once it clears.
+     */
     pending?: VoicePending | null;
-    /** An `ambiguous` result: the choice card opens as a popover above the row, like `pending`. */
+    /** An `ambiguous` result: the choice card opens as a popover above the row, whatever `phase` is. Takes precedence over `pending`. */
     pendingChoice?: VoicePendingChoice | null;
     lastLine?: VoiceLine | null;
     onStart?: () => void;
@@ -138,6 +146,12 @@ export declare interface VoiceLine {
 
 export declare interface VoicePending {
     title: string;
+    /**
+     * Identity of this request. The card remounts when it changes, so the next
+     * confirmation starts with a clean note and its own decision. Default: `title`;
+     * set it when two consecutive requests can share a title.
+     */
+    requestId?: string | number;
     /** One line of text, or a list of lines (an estimate, the fields a create will set). */
     detail?: string | string[];
     /** With `fields` set, an approve / reject toggle and a note input show. */
@@ -153,7 +167,18 @@ export declare interface VoicePendingChoice {
     title: string;
     /** At most VOICE_CHOICE_MAX rows are shown. */
     candidates: VoiceChoiceCandidate[];
-    /** 1-based. The host sets it when the voice says "the second one"; the card then chooses that row. */
+    /**
+     * Identity of this request. The card remounts when it changes, so a second
+     * request never inherits the previous one's active row or "already chose"
+     * state. Default: `title`; set it when two consecutive requests can share a title.
+     */
+    requestId?: string | number;
+    /**
+     * 1-based. The host sets it when the voice says "the second one"; the card then
+     * chooses that row. `onChoose` fires once per ordinal value: to re-issue the same
+     * ordinal for the same request, set it back to `undefined` first. A new
+     * `requestId` (or title) starts over.
+     */
     ordinal?: number;
     /** Zero-based index into `candidates`. */
     onChoose: (index: number) => void;

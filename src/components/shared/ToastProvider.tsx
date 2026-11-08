@@ -27,6 +27,9 @@ export interface ToastOptions {
 /**
  * A background job tracked by one toast. `toastJob` with an `id` it has not
  * seen creates the toast; later calls with the same `id` update it in place.
+ * Once a settled toast auto-dismisses the id is forgotten: a later call with the
+ * same `id` creates a fresh toast and fires `onSettled` again, so stop sending
+ * updates after the job is done.
  */
 export interface JobToastOptions {
   /** Job id: the key. Same id, same toast. */

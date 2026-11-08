@@ -97,7 +97,11 @@ function D({ level: t = 0, outputLevel: n = 0, phase: r, size: i = "md", label: 
 }
 //#endregion
 //#region src/components/voice/VoiceChoiceCard.tsx
-function O({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1, className: l, "data-testid": u = "voice-choice-card" }) {
+function O(e) {
+	let { choice: t } = e;
+	return /* @__PURE__ */ v(k, { ...e }, t.requestId ?? t.title);
+}
+function k({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1, className: l, "data-testid": u = "voice-choice-card" }) {
 	let d = g(null), f = a.candidates.slice(0, 10), m = f.length, b = (e) => typeof e == "number" && Number.isInteger(e) && e >= 1 && e <= m, [x, S] = _(b(a.ordinal) ? a.ordinal - 1 : 0);
 	h(() => {
 		s && d.current?.focus();
@@ -125,6 +129,7 @@ function O({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1
 			if (e.key === "Escape" && o) e.stopPropagation(), a.onCancel();
 			else if (e.key === "ArrowDown" || e.key === "ArrowRight") e.preventDefault(), T(x + 1);
 			else if (e.key === "ArrowUp" || e.key === "ArrowLeft") e.preventDefault(), T(x - 1);
+			else if ((e.key === "Enter" || e.key === " ") && e.target instanceof HTMLElement && e.target.dataset.part === "row") e.preventDefault(), a.onChoose(Number(e.target.dataset.ordinal) - 1);
 			else if (/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
 				let t = e.key === "0" ? 10 : Number(e.key);
 				t <= m && (e.preventDefault(), a.onChoose(t - 1));
@@ -143,12 +148,13 @@ function O({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1
 			}),
 			/* @__PURE__ */ v(n, {
 				gap: "xs",
-				role: "list",
+				role: "listbox",
+				"aria-label": a.title,
 				children: f.map((t, o) => {
 					let s = o === x;
-					return /* @__PURE__ */ y("button", {
-						type: "button",
-						role: "listitem",
+					return /* @__PURE__ */ y("div", {
+						role: "option",
+						"aria-selected": s,
 						"data-part": "row",
 						"data-ordinal": o + 1,
 						"data-selected": s ? "true" : void 0,
@@ -209,19 +215,23 @@ function O({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1
 }
 //#endregion
 //#region src/components/voice/VoiceTurnStrip.tsx
-var k = [{
+var A = [{
 	label: "Approve",
 	value: "approve"
 }, {
 	label: "Reject",
 	value: "reject"
-}], A = {
+}], j = {
 	running: "info",
 	done: "success",
 	refused: "warning",
 	failed: "danger"
 };
-function j({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, "data-testid": u = "voice-confirm-card" }) {
+function M(e) {
+	let { pending: t } = e;
+	return /* @__PURE__ */ v(N, { ...e }, t.requestId ?? t.title);
+}
+function N({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, "data-testid": u = "voice-confirm-card" }) {
 	let d = g(null);
 	h(() => {
 		s && d.current?.focus();
@@ -275,7 +285,7 @@ function j({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, 
 					size: "sm",
 					tone: "accent",
 					"aria-label": "Decision",
-					options: k,
+					options: A,
 					value: m,
 					onChange: (e) => b(e),
 					"data-testid": `${u}-decision`
@@ -309,7 +319,7 @@ function j({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, 
 		]
 	});
 }
-function M(e) {
+function P(e) {
 	if (typeof e == "string") return e;
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleTimeString([], {
@@ -317,7 +327,7 @@ function M(e) {
 		minute: "2-digit"
 	});
 }
-function N({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, pendingChoice: l = null, className: u, "data-testid": d = "voice-turn-strip" }) {
+function F({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, pendingChoice: l = null, className: u, "data-testid": d = "voice-turn-strip" }) {
 	let f = o > 0 ? a.slice(-o) : a;
 	return /* @__PURE__ */ y(n, {
 		gap: "sm",
@@ -346,7 +356,7 @@ function N({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, pending
 							size: "xs",
 							tone: "tertiary",
 							tabular: !0,
-							children: M(e.at)
+							children: P(e.at)
 						})]
 					}),
 					/* @__PURE__ */ v(i, {
@@ -363,7 +373,7 @@ function N({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, pending
 						children: [
 							/* @__PURE__ */ v(p, {
 								size: "sm",
-								tone: A[t.status],
+								tone: j[t.status],
 								label: t.status
 							}),
 							/* @__PURE__ */ v(i, {
@@ -381,7 +391,7 @@ function N({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, pending
 					}, `${t.name}-${n}`))
 				]
 			}, e.id)),
-			c ? /* @__PURE__ */ v(j, { pending: c }) : null,
+			c ? /* @__PURE__ */ v(M, { pending: c }) : null,
 			l ? /* @__PURE__ */ v(O, { choice: l }) : null,
 			s && a.length > 0 ? /* @__PURE__ */ v(r, {
 				justify: "end",
@@ -398,7 +408,7 @@ function N({ turns: a, maxVisible: o = 4, onClear: s, pending: c = null, pending
 }
 //#endregion
 //#region src/components/voice/VoiceDock.tsx
-var P = {
+var I = {
 	off: "neutral",
 	connecting: "pending",
 	listening: "success",
@@ -409,17 +419,17 @@ var P = {
 	ended: "neutral",
 	unavailable: "neutral"
 };
-function F(e) {
+function L(e) {
 	let t = Math.max(0, Math.floor(e));
 	return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
-var I = (e) => `$${e.toFixed(2)}`;
-function L({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = null, pending: C = null, pendingChoice: w = null, lastLine: T = null, onStart: E, onStop: k, onMute: A, muted: M = !1, unavailableReason: N, compact: L = !1, size: R = "panel", startLabel: z = "Voice", className: B, ref: V, "data-testid": H = "voice-dock" }) {
+var R = (e) => `$${e.toFixed(2)}`;
+function z({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = null, pending: C = null, pendingChoice: w = null, lastLine: T = null, onStart: E, onStop: k, onMute: A, muted: j = !1, unavailableReason: N, compact: P = !1, size: F = "panel", startLabel: z = "Voice", className: B, ref: V, "data-testid": H = "voice-dock" }) {
 	let U = g(null), [W, G] = _(!1);
 	h(() => G(!0), []);
 	let K = m((e) => {
 		U.current = e, typeof V == "function" ? V(e) : V && (V.current = e);
-	}, [V]), q = n !== "off" && n !== "ended" && n !== "unavailable", J = W && !!C && n === "confirming", Y = W && !!w && n === "confirming", X = n === "unavailable" ? N : void 0, Z = x[n], Q = R === "footer";
+	}, [V]), q = n !== "off" && n !== "ended" && n !== "unavailable", J = W && !!w, Y = W && !!C && !w, X = n === "unavailable" ? N : void 0, Z = x[n], Q = F === "footer";
 	return /* @__PURE__ */ y(r, {
 		ref: K,
 		wrap: !1,
@@ -427,32 +437,33 @@ function L({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = 
 		className: e("min-w-0", Q ? "px-1" : "px-2 py-1", B),
 		"data-testid": H,
 		"data-phase": n,
-		"data-size": R,
+		"data-size": F,
 		"data-voice-dock": "",
 		children: [
 			/* @__PURE__ */ v(D, {
 				level: l,
 				outputLevel: f,
 				phase: n,
-				size: L || Q ? "sm" : "md",
+				size: P || Q ? "sm" : "md",
 				"data-testid": `${H}-ring`
 			}),
 			/* @__PURE__ */ v(i, {
 				title: X,
+				role: "status",
+				"aria-live": "polite",
 				"data-testid": `${H}-phase`,
 				children: Q ? /* @__PURE__ */ v(i, {
 					size: "xs",
 					tone: "secondary",
 					className: "whitespace-nowrap",
-					role: "status",
 					children: Z
 				}) : /* @__PURE__ */ v(p, {
 					size: "sm",
-					tone: P[n],
+					tone: I[n],
 					label: Z
 				})
 			}),
-			!L && T ? /* @__PURE__ */ v(i, {
+			!P && T ? /* @__PURE__ */ v(i, {
 				size: Q ? "xs" : "sm",
 				tone: T.role === "you" ? "secondary" : "primary",
 				className: "min-w-0 flex-1 truncate",
@@ -465,11 +476,11 @@ function L({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = 
 				"aria-hidden": "true",
 				children: ""
 			}),
-			!L && S && q ? /* @__PURE__ */ v(d, {
+			!P && S && q ? /* @__PURE__ */ v(d, {
 				value: S.holdUsd > 0 ? S.usedUsd / S.holdUsd : 0,
 				segments: 5,
 				showPercent: !1,
-				note: `${I(S.usedUsd)} of ${I(S.holdUsd)}`,
+				note: `${R(S.usedUsd)} of ${R(S.holdUsd)}`,
 				tone: "surface",
 				"data-testid": `${H}-budget`
 			}) : null,
@@ -478,14 +489,14 @@ function L({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = 
 				tone: "tertiary",
 				tabular: !0,
 				"data-testid": `${H}-elapsed`,
-				children: F(b)
+				children: L(b)
 			}) : null,
 			q && A ? /* @__PURE__ */ v(a, {
-				"aria-label": M ? "Unmute microphone" : "Mute microphone",
-				"aria-pressed": M,
+				"aria-label": j ? "Unmute microphone" : "Mute microphone",
+				"aria-pressed": j,
 				size: "sm",
 				variant: "ghost",
-				icon: v(M ? o : s, { size: 16 }),
+				icon: v(j ? o : s, { size: 16 }),
 				onClick: A,
 				"data-testid": `${H}-mute`
 			}) : null,
@@ -529,20 +540,20 @@ function L({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = 
 			}),
 			C ? /* @__PURE__ */ v(u, {
 				trigger: U,
-				open: J,
+				open: Y,
 				onClose: C.onCancel,
 				placement: "bottom-start",
 				"aria-label": `Confirm: ${C.title}`,
 				kind: "voice-confirm",
 				"data-testid": `${H}-pending`,
-				children: /* @__PURE__ */ v(j, {
+				children: /* @__PURE__ */ v(M, {
 					pending: C,
 					handleEscape: !1
 				})
 			}) : null,
 			w ? /* @__PURE__ */ v(u, {
 				trigger: U,
-				open: Y,
+				open: J,
 				onClose: w.onCancel,
 				placement: "bottom-start",
 				"aria-label": `Choose: ${w.title}`,
@@ -558,4 +569,4 @@ function L({ phase: n, level: l, outputLevel: f, elapsedSeconds: b, budget: S = 
 	});
 }
 //#endregion
-export { C as VOICE_CHOICE_MAX, S as VOICE_NOTE_MAX, b as VOICE_PHASES, x as VOICE_PHASE_LABEL, D as VoiceActivityRing, O as VoiceChoiceCard, j as VoiceConfirmCard, L as VoiceDock, N as VoiceTurnStrip };
+export { C as VOICE_CHOICE_MAX, S as VOICE_NOTE_MAX, b as VOICE_PHASES, x as VOICE_PHASE_LABEL, D as VoiceActivityRing, O as VoiceChoiceCard, M as VoiceConfirmCard, z as VoiceDock, F as VoiceTurnStrip };

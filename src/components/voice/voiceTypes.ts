@@ -51,6 +51,12 @@ export interface VoiceConfirmFields {
 
 export interface VoicePending {
   title: string;
+  /**
+   * Identity of this request. The card remounts when it changes, so the next
+   * confirmation starts with a clean note and its own decision. Default: `title`;
+   * set it when two consecutive requests can share a title.
+   */
+  requestId?: string | number;
   /** One line of text, or a list of lines (an estimate, the fields a create will set). */
   detail?: string | string[];
   /** With `fields` set, an approve / reject toggle and a note input show. */
@@ -77,7 +83,18 @@ export interface VoicePendingChoice {
   title: string;
   /** At most VOICE_CHOICE_MAX rows are shown. */
   candidates: VoiceChoiceCandidate[];
-  /** 1-based. The host sets it when the voice says "the second one"; the card then chooses that row. */
+  /**
+   * Identity of this request. The card remounts when it changes, so a second
+   * request never inherits the previous one's active row or "already chose"
+   * state. Default: `title`; set it when two consecutive requests can share a title.
+   */
+  requestId?: string | number;
+  /**
+   * 1-based. The host sets it when the voice says "the second one"; the card then
+   * chooses that row. `onChoose` fires once per ordinal value: to re-issue the same
+   * ordinal for the same request, set it back to `undefined` first. A new
+   * `requestId` (or title) starts over.
+   */
   ordinal?: number;
   /** Zero-based index into `candidates`. */
   onChoose: (index: number) => void;

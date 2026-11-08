@@ -49,8 +49,14 @@ export interface VoiceDockProps {
   outputLevel: number;
   elapsedSeconds?: number;
   budget?: VoiceBudget | null;
+  /**
+   * The action awaiting confirmation. The popover opens whenever this is set,
+   * whatever `phase` is (the host's controller moves the phase to `confirming`,
+   * but the card does not depend on it). If `pendingChoice` is also set, the
+   * choice shows first and this opens once it clears.
+   */
   pending?: VoicePending | null;
-  /** An `ambiguous` result: the choice card opens as a popover above the row, like `pending`. */
+  /** An `ambiguous` result: the choice card opens as a popover above the row, whatever `phase` is. Takes precedence over `pending`. */
   pendingChoice?: VoicePendingChoice | null;
   lastLine?: VoiceLine | null;
   onStart?: () => void;
@@ -133,8 +139,10 @@ export function VoiceDock({
     else if (ref) (ref as { current: HTMLDivElement | null }).current = el;
   }, [ref]);
   const live = phase !== 'off' && phase !== 'ended' && phase !== 'unavailable';
-  const showCard = mounted && Boolean(pending) && phase === 'confirming';
-  const showChoice = mounted && Boolean(pendingChoice) && phase === 'confirming';
+  // Phase-independent: a card opens whenever its request is set. With both set,
+  // the choice shows first and the confirmation after it.
+  const showChoice = mounted && Boolean(pendingChoice);
+  const showCard = mounted && Boolean(pending) && !pendingChoice;
   const pillTitle = phase === 'unavailable' ? unavailableReason : undefined;
   const label = VOICE_PHASE_LABEL[phase];
   const footer = size === 'footer';
@@ -159,10 +167,12 @@ export function VoiceDock({
       />
       <T
         title={pillTitle}
+        role="status"
+        aria-live="polite"
         data-testid={`${testId}-phase`}
       >
         {footer
-          ? <T size="xs" tone="secondary" className="whitespace-nowrap" role="status">{label}</T>
+          ? <T size="xs" tone="secondary" className="whitespace-nowrap">{label}</T>
           : <StatusPill size="sm" tone={TONE[phase]} label={label} />}
       </T>
       {!compact && lastLine ? (

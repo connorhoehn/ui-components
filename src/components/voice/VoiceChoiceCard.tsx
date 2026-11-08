@@ -5,6 +5,10 @@
 // one by click, by pressing its digit (1-9, 0 for ten), or by saying the
 // ordinal, which the host passes as `ordinal`. Arrows move the active row,
 // Enter chooses it, Escape cancels. `compact` is the footer size.
+//
+// The rows are a listbox of options (`aria-selected`), not buttons with
+// overridden roles. The card remounts per request (keyed on `choice.requestId`,
+// else its title), so a second decision starts clean.
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { cn } from '../../lib/cn';
@@ -26,7 +30,13 @@ export interface VoiceChoiceCardProps {
   'data-testid'?: string;
 }
 
-export function VoiceChoiceCard({
+/** The answer to an `ambiguous` result. Remounts when the request changes (`choice.requestId`, else `choice.title`). */
+export function VoiceChoiceCard(props: VoiceChoiceCardProps) {
+  const { choice } = props;
+  return <VoiceChoiceCardBody key={choice.requestId ?? choice.title} {...props} />;
+}
+
+function VoiceChoiceCardBody({
   choice,
   handleEscape = true,
   autoFocus = true,
@@ -66,7 +76,7 @@ export function VoiceChoiceCard({
     if (count === 0) return;
     const next = ((to % count) + count) % count;
     setActive(next);
-    ref.current?.querySelectorAll<HTMLButtonElement>('[data-part="row"]')[next]?.focus();
+    ref.current?.querySelectorAll<HTMLElement>('[data-part="row"]')[next]?.focus();
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -79,6 +89,9 @@ export function VoiceChoiceCard({
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
       e.preventDefault();
       move(active - 1);
+    } else if ((e.key === 'Enter' || e.key === ' ') && e.target instanceof HTMLElement && e.target.dataset.part === 'row') {
+      e.preventDefault();
+      choice.onChoose(Number(e.target.dataset.ordinal) - 1);
     } else if (/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
       const n = e.key === '0' ? 10 : Number(e.key);
       if (n <= count) {
@@ -105,14 +118,14 @@ export function VoiceChoiceCard({
       )}
     >
       <T size={compact ? 'xs' : 'sm'} weight="semibold" tone="primary" as="p">{choice.title}</T>
-      <Stack gap="xs" role="list">
+      <Stack gap="xs" role="listbox" aria-label={choice.title}>
         {candidates.map((c, i) => {
           const selected = i === active;
           return (
-            <button
+            <div
               key={i}
-              type="button"
-              role="listitem"
+              role="option"
+              aria-selected={selected}
               data-part="row"
               data-ordinal={i + 1}
               data-selected={selected ? 'true' : undefined}
@@ -136,7 +149,7 @@ export function VoiceChoiceCard({
                 </Inline>
                 {c.subtitle ? <T size="xs" tone="tertiary" className="min-w-0 truncate">{c.subtitle}</T> : null}
               </Stack>
-            </button>
+            </div>
           );
         })}
       </Stack>

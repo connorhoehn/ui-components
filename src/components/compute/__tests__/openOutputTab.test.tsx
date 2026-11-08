@@ -25,12 +25,12 @@ describe('openOutputTab', () => {
   it('focuses and updates the existing tab for the same id', () => {
     openOutputTab(run());
     openShell({ id: 'c1', label: 'c1', sessionId: 's'.repeat(33) });
-    expect(getDock().activeId).not.toBe('out-1');
+    expect(getDock().activeId).not.toBe('output:out-1');
     const res = openOutputTab(run({ running: false, exitCode: 2, lines: [{ id: '1', message: 'a' }, { id: '2', message: 'b' }] }));
-    expect(res).toEqual({ ok: true, id: 'out-1' });
+    expect(res).toEqual({ ok: true, id: 'output:out-1' });
     expect(getDock().shells.filter((s) => s.kind === 'output')).toHaveLength(1);
-    expect(getDock().activeId).toBe('out-1');
-    expect(getDock().shells.find((s) => s.id === 'out-1')?.output).toMatchObject({ running: false, exitCode: 2 });
+    expect(getDock().activeId).toBe('output:out-1');
+    expect(getDock().shells.find((s) => s.id === 'output:out-1')?.output).toMatchObject({ running: false, exitCode: 2 });
   });
 
   it('shares the tab quota with shells', () => {
@@ -48,8 +48,26 @@ describe('openOutputTab', () => {
   it('renders in the dock as an output pane, not a terminal', () => {
     act(() => { openOutputTab(run()); });
     render(<ComputeDock hotkeys={false} reconcile={false} />);
-    expect(screen.getByTestId('command-output-out-1')).toBeInTheDocument();
-    expect(screen.queryByTestId('term-out-1')).toBeNull();
+    expect(screen.getByTestId('command-output-output:out-1')).toBeInTheDocument();
+    expect(screen.queryByTestId('term-output:out-1')).toBeNull();
+  });
+});
+
+describe('output tab id space', () => {
+  it('never matches a shell lookup, even when ids and session ids coincide', () => {
+    const sid = 's'.repeat(33);
+    openShell({ id: 'c1', label: 'c1', sessionId: sid });
+    const shellId = getDock().shells[0]!.id;
+    openOutputTab(run({ id: shellId }));
+    expect(getDock().shells).toHaveLength(2);
+    const outId = getDock().shells.find((s) => s.kind === 'output')!.id;
+    expect(outId).not.toBe(shellId);
+    openOutputTab(run({ id: shellId, label: 'again' }));
+    expect(getDock().shells.find((s) => s.id === shellId)?.label).toBe('c1');
+    // an output tab has sessionId '' and is not found by openShell
+    openShell({ id: 'c2', label: 'c2', sessionId: '' });
+    expect(getDock().shells.filter((s) => s.kind === 'output')).toHaveLength(1);
+    expect(getDock().shells.filter((s) => s.kind !== 'output')).toHaveLength(2);
   });
 });
 

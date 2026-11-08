@@ -9,6 +9,7 @@ import { LogStream, type LogLine } from '../../shared/LogStream';
 import { Button } from '../../ui/Button';
 import Chip from '../../shared/Chip';
 import { T } from '../../shared/Text';
+import { Inline } from '../../ui/Stack';
 import { cn } from '../../../lib/cn';
 
 export interface CommandOutputPaneProps {
@@ -43,7 +44,7 @@ export function CommandOutputPane({
   }
 
   const header = (
-    <div className="flex items-center gap-2">
+    <Inline wrap={false} gap="sm">
       <T size="xs" tone="tertiary">{lines.length} {lines.length === 1 ? 'line' : 'lines'}</T>
       {status}
       {onOpenShell && (
@@ -51,7 +52,7 @@ export function CommandOutputPane({
           Open shell
         </Button>
       )}
-    </div>
+    </Inline>
   );
 
   return (

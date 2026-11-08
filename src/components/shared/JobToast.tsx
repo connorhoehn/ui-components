@@ -7,6 +7,7 @@ import { cn } from '../../lib/cn';
 import Chip from './Chip';
 import { ProgressBar } from './ProgressBar';
 import { T } from './Text';
+import { Inline, Stack } from '../ui/Stack';
 import type { ToneOrAlias } from './tones';
 
 export type JobToastState = 'queued' | 'running' | 'done' | 'failed';
@@ -60,7 +61,8 @@ export function JobToast({
   const active = state === 'queued' || state === 'running';
 
   return (
-    <div
+    <Stack
+      gap="sm"
       role={state === 'failed' ? 'alert' : 'status'}
       data-testid={`job-toast-${id}`}
       data-job-state={state}
@@ -68,17 +70,17 @@ export function JobToast({
       onMouseLeave={() => onHoverChange?.(false)}
       className={cn(
         'bg-surface border border-border border-l-[3px] rounded-lg shadow-md',
-        'px-4 py-3 flex flex-col gap-2 min-w-[260px] max-w-[360px]',
+        'px-4 py-3 min-w-[260px] max-w-[360px]',
         ACCENT_BORDER[state],
         animationClass,
         reduceMotion && exiting && 'opacity-0',
       )}
     >
-      <div className="flex items-start justify-between gap-3">
+      <Inline wrap={false} align="start" justify="between" gap="md">
         <T as="span" size="sm" weight="medium" tone="primary" className="flex-1" data-testid="job-toast-title">
           {title}
         </T>
-        <div className="flex items-center gap-2 shrink-0">
+        <Inline wrap={false} gap="sm" className="shrink-0">
           <Chip tone={STATE_TONE[state]} size="xs" data-testid="job-toast-state">{STATE_LABEL[state]}</Chip>
           <button
             data-ui-part=""
@@ -89,8 +91,8 @@ export function JobToast({
           >
             &times;
           </button>
-        </div>
-      </div>
+        </Inline>
+      </Inline>
       {detail && (
         <T as="span" size="xs" tone="secondary" data-testid="job-toast-detail">{detail}</T>
       )}
@@ -112,7 +114,7 @@ export function JobToast({
           {hrefLabel}
         </a>
       )}
-    </div>
+    </Stack>
   );
 }
 

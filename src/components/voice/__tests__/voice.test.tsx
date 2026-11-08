@@ -17,8 +17,16 @@ describe('VoiceDock phases', () => {
 
   it('phase label is a status live region', () => {
     render(<VoiceDock {...dockBase} phase="listening" />);
-    const status = screen.getByTestId('voice-dock-phase').querySelector('[role="status"]');
-    expect(status).toHaveTextContent('Listening');
+    expect(screen.getByTestId('voice-dock-phase')).toHaveAttribute('role', 'status');
+    expect(screen.getByTestId('voice-dock-phase')).toHaveTextContent('Listening');
+  });
+
+  it.each(['panel', 'footer'] as const)('the %s size has the phase live region', (size) => {
+    render(<VoiceDock {...dockBase} phase="thinking" size={size} />);
+    const status = screen.getByTestId('voice-dock-phase');
+    expect(status).toHaveAttribute('role', 'status');
+    expect(status).toHaveAttribute('aria-live', 'polite');
+    expect(status).toHaveTextContent('Thinking');
   });
 
   it('shows Start when off and calls onStart; Stop and Mute when live', () => {
@@ -85,7 +93,7 @@ describe('VoiceDock size', () => {
     expect(start).toHaveTextContent('Voice');
     expect(start).toHaveAttribute('data-variant', 'ghost');
     expect(start).toHaveAttribute('data-size', 'sm');
-    expect(screen.getByTestId('voice-dock-phase').querySelector('[role="status"]')!.getAttribute('class')).toContain('text-xs');
+    expect(screen.getByTestId('voice-dock-phase').firstElementChild!.getAttribute('class')).toContain('text-xs');
     rerender(<VoiceDock {...dockBase} phase="listening" size="footer" lastLine={lastLine} />);
     expect(screen.getByTestId('voice-dock-last-line').getAttribute('class')).toContain('text-xs');
     const stop = screen.getByTestId('voice-dock-stop');
@@ -194,7 +202,7 @@ describe('VoiceChoiceCard', () => {
   it('shows ordinals, titles and secondary lines; at most ten rows', () => {
     const { ui } = make({ candidates }, 12);
     render(ui);
-    expect(screen.getAllByRole('listitem')).toHaveLength(10);
+    expect(screen.getAllByRole('option')).toHaveLength(10);
     expect(screen.getByTestId('voice-choice-card-row-2')).toHaveTextContent('2Alpha 2initiativesub 2');
   });
 
@@ -287,5 +295,62 @@ describe('VoiceConfirmCard fields', () => {
     fireEvent.change(input, { target: { value: 'y'.repeat(300) } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onConfirm).toHaveBeenCalledWith({ decision: 'reject', note: 'y'.repeat(200) });
+  });
+});
+
+describe('voice cards: roles, per-request reset, dock precedence', () => {
+  const cands = [{ title: 'Alpha one' }, { title: 'Alpha two' }, { title: 'Alpha three' }];
+
+  it('choice rows are options in a listbox with aria-selected, not buttons', () => {
+    render(<VoiceChoiceCard choice={{ title: 'Which?', candidates: cands, onChoose: vi.fn(), onCancel: vi.fn() }} />);
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    const options = screen.getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'false');
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+  });
+
+  it('Enter on a focused option chooses it', () => {
+    const onChoose = vi.fn();
+    render(<VoiceChoiceCard choice={{ title: 'Which?', candidates: cands, onChoose, onCancel: vi.fn() }} />);
+    fireEvent.keyDown(screen.getByTestId('voice-choice-card-row-2'), { key: 'Enter' });
+    expect(onChoose).toHaveBeenCalledWith(1);
+  });
+
+  it('a second ambiguous request with the same ordinal fires onChoose again', () => {
+    const onChoose = vi.fn();
+    const base = { title: 'Which Alpha?', candidates: cands, onChoose, onCancel: vi.fn(), ordinal: 2 };
+    const { rerender } = render(<VoiceChoiceCard choice={{ ...base, requestId: 'a' }} />);
+    expect(onChoose).toHaveBeenCalledTimes(1);
+    rerender(<VoiceChoiceCard choice={{ ...base, requestId: 'b' }} />);
+    expect(onChoose).toHaveBeenCalledTimes(2);
+    expect(onChoose).toHaveBeenLastCalledWith(1);
+  });
+
+  it('a second confirmation does not inherit the previous note or toggle', () => {
+    const base = { fields: {}, onConfirm: vi.fn(), onCancel: vi.fn() };
+    const { rerender } = render(<VoiceConfirmCard pending={{ ...base, title: 'Decide', requestId: 1 }} />);
+    fireEvent.click(screen.getByText('Reject'));
+    fireEvent.change(screen.getByTestId('voice-confirm-card-note'), { target: { value: 'old note' } });
+    rerender(<VoiceConfirmCard pending={{ ...base, title: 'Decide', requestId: 2 }} />);
+    expect(screen.getByTestId('voice-confirm-card-note')).toHaveValue('');
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(base.onConfirm).toHaveBeenCalledWith({ decision: 'approve', note: '' });
+  });
+
+  it('the dock opens the confirmation on pending alone, whatever the phase', () => {
+    render(<VoiceDock {...dockBase} phase="executing" pending={{ title: 'Archive?', onConfirm: vi.fn(), onCancel: vi.fn() }} />);
+    expect(screen.getByTestId('voice-confirm-card')).toBeInTheDocument();
+  });
+
+  it('with pending and pendingChoice both set, the choice shows first', () => {
+    const choice = { title: 'Which?', candidates: cands, onChoose: vi.fn(), onCancel: vi.fn() };
+    const pending = { title: 'Archive?', onConfirm: vi.fn(), onCancel: vi.fn() };
+    const { rerender } = render(<VoiceDock {...dockBase} phase="confirming" pending={pending} pendingChoice={choice} />);
+    expect(screen.getByTestId('voice-choice-card')).toBeInTheDocument();
+    expect(screen.queryByTestId('voice-confirm-card')).toBeNull();
+    rerender(<VoiceDock {...dockBase} phase="confirming" pending={pending} pendingChoice={null} />);
+    expect(screen.getByTestId('voice-confirm-card')).toBeInTheDocument();
   });
 });

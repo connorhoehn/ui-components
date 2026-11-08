@@ -207,10 +207,10 @@ function AvatarWithCard({ user, isFollowing, onFollow, children }: {
         >
           <div className="text-[12px] font-semibold text-text-primary whitespace-nowrap">{user.name}</div>
           {user.detail && (
-            <div className="text-[11px] text-text-tertiary whitespace-nowrap">{user.detail}</div>
+            <div className="text-xs text-text-tertiary whitespace-nowrap">{user.detail}</div>
           )}
           {user.location && (
-            <div className="text-[11px] text-text-tertiary whitespace-nowrap mt-0.5">§ {user.location}</div>
+            <div className="text-xs text-text-tertiary whitespace-nowrap mt-0.5">§ {user.location}</div>
           )}
           <button
             data-ui-part=""
