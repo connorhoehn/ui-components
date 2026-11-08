@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ContextComposer, type ContextComposerProps } from './ContextComposer';
+import { ComposerPromptDeck } from './ComposerPromptDeck';
 import type { ComposerContext } from './composerContext';
 import type { ComposerMode, RichChatDraft } from './RichChatComposer';
 import { CallDock, type CallDockParticipant } from '../video/CallDock';
@@ -195,6 +196,31 @@ export const PromptPresentation: Story = {
         </Panel>
       ))}
     </div>
+  ),
+};
+
+/**
+ * Prompt presentation with an open card (2.512.0): a deck in the quiet box's
+ * `header` reads the composer's presentation — plain answer buttons, no key
+ * hints, one fact per line — and the text box stays under it. In a
+ * `ConversationComposer` with `prompts` the box answers a text card and hands
+ * words typed under a confirm card to its `onDirection`.
+ */
+export const PromptPresentationWithCard: Story = {
+  name: 'Prompt presentation with a card',
+  render: () => (
+    <Panel theme="light" caption="confirm card over the prompt box">
+      <ContextComposer context={CONTEXTS.initiative!} presentation="prompt" modes={['agent']} defaultMode="agent" expanded
+        submitLabel="Plan" onSend={() => true}
+        header={<ComposerPromptDeck variant="inset" prompts={[{
+          id: 'generate', eyebrow: 'Add a character', title: 'Generate Mina', kind: 'confirm',
+          question: 'Generate Mina with these answers?',
+          fields: [{ label: 'Name', value: 'Mina' }, { label: 'Role', value: 'Supporting' }, { label: 'Height', value: 'Short' }],
+          options: [{ id: 'generate', label: 'Generate', emphasis: 'primary' }, { id: 'change', label: 'Change answers' }],
+          onDirection: () => undefined,
+          onAnswer: () => undefined,
+        }]} />} />
+    </Panel>
   ),
 };
 

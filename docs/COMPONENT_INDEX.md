@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehnslalom/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-975 components across 20 entry points; 827 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+976 components across 20 entry points; 827 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -48,7 +48,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Forms](#forms) (30)
 - [Buttons & actions](#buttons--actions) (15)
 - [Feedback & states](#feedback--states) (25)
-- [Chat & social](#chat--social) (107)
+- [Chat & social](#chat--social) (108)
 - [Video](#video) (103)
 - [Docs & editor](#docs--editor) (138)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (139)
@@ -346,6 +346,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `CommentThread` | `@connorhoehnslalom/ui-components/social` | Inline comment thread for a single post. (also exported as `CommentThreadPanel` from `@connorhoehnslalom/ui-components`) |  |  |
 | `ComposerAttachments` | `@connorhoehnslalom/ui-components/social/rich-composer` | Files staged in the composer, before they are sent. |  |  |
 | `ComposerConfirmFlow` | `@connorhoehnslalom/ui-components/social/rich-composer` | ComposerConfirmFlow (2.482.0) — draft → review → done, all inside the one response box. | `social-composerconfirmflow` |  |
+| `ComposerPresentationContext` | `@connorhoehnslalom/ui-components/social/rich-composer` | — |  |  |
 | `ComposerPromptDeck` | `@connorhoehnslalom/ui-components/social/rich-composer` | ComposerPromptDeck (2.444.0) — human-in-the-loop prompts in the docked composer, one at a time, answered from the keyboard. | `social-composerpromptdeck` |  |
 | `ComposerReferences` | `@connorhoehnslalom/ui-components/social` | What a draft points AT, above the words. | `social-composerreferences` |  |
 | `ComposerSendError` | `@connorhoehnslalom/ui-components/social` | Reject `onSend` with this to show `message` in the composer's alert. |  |  |

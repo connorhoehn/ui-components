@@ -149,7 +149,7 @@ export interface ComposerPrompt {
   options?: readonly ComposerPromptOption[];
   /** What Enter on an empty input picks. Confirm defaults to its first option. */
   defaultOptionId?: string;
-  /** Text / number: the input's placeholder while this prompt is on screen. */
+  /** Text / number: the input's placeholder while this prompt is on screen. Choice / confirm under the quiet prompt box (2.512.0), where the input stays: its placeholder there. */
   placeholder?: string;
   /** Number: bounds a typed answer must sit inside. */
   min?: number;
@@ -181,6 +181,18 @@ export interface ComposerPrompt {
    * on the card like a refused answer.
    */
   back?: ComposerPromptBack;
+  /**
+   * Choice / confirm (2.512.0): words typed in the composer's input under
+   * this card are a direction, not a message — "make her taller" under a
+   * Generate confirm re-proposes. The deck hands the trimmed text here when
+   * the input is not empty and Enter is pressed (the composer's send).
+   * `{ error }` shows on the card; `{ next }` takes the card in place like an
+   * answer's follow-up; `{ receipt }` is announced; nothing keeps the card on
+   * screen — the host re-proposes by replacing this prompt in its queue (a
+   * new id). Without it the input's placeholder says what the card takes and
+   * Enter on an empty input picks the default option, as before.
+   */
+  onDirection?: (text: string) => ComposerPromptResult | Promise<ComposerPromptResult>;
   onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
 }
 
@@ -204,6 +216,11 @@ export function optionKey(option: ComposerPromptOption, index: number): string |
 /** Whether the composer's input carries a typed answer for this prompt. */
 export function takesTypedAnswer(prompt: ComposerPrompt | null | undefined): boolean {
   return !!prompt && !prompt.readOnlyReason && (prompt.kind === 'text' || prompt.kind === 'number');
+}
+
+/** Whether typed words under this card are a direction for the host (`onDirection`): a choice / confirm card that takes one. */
+export function takesDirection(prompt: ComposerPrompt | null | undefined): boolean {
+  return !!prompt && !prompt.readOnlyReason && !!prompt.onDirection && (prompt.kind === 'choice' || prompt.kind === 'confirm');
 }
 
 /** The option Enter picks on an empty input, if any. */
@@ -348,9 +365,10 @@ export function deckKeyAction(
   // or focus on the deck's own buttons) — never a word being typed.
   if (event.key === 'Backspace' && event.altKey && !mod && !event.shiftKey && quiet && canBack && !busy) return { type: 'back' };
   if (mod || event.shiftKey) return null;
+  // Letters typed in the input are the answer (text / number) or a direction
+  // (`onDirection`), so J / K page from the input only where they are neither.
   const typed = takesTypedAnswer(prompt);
-  // J / K page only where letters are not the answer being typed.
-  const pager = quiet && !event.altKey && (!typed || inDeck);
+  const pager = quiet && !event.altKey && ((!typed && !takesDirection(prompt)) || inDeck);
   if (pager && (event.key === 'j' || event.key === 'J')) return { type: 'page', delta: 1 };
   if (pager && (event.key === 'k' || event.key === 'K')) return { type: 'page', delta: -1 };
   if (busy || prompt.readOnlyReason) return null;

@@ -225,6 +225,7 @@ export interface RichChatDraft {
 export type { ComposerArgumentItem, ComposerCommandArgument, ComposerCommand } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
 import { composerSendErrorReason } from './composerSendError';
+import { ComposerPresentationContext } from './composerPresentation';
 import { matchComposerCommand, composerCommandArgumentText, type ComposerArgumentItem, type ComposerCommandArgument, type ComposerCommand } from './composerCommands';
 
 /** What a host can do to the composer from outside — focus it, prefill it. */
@@ -2648,7 +2649,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           data-testid={`${testId}-console`}
         />
         {header != null && header !== false && (
-          <div className="min-w-0" data-composer-header="" data-testid={`${testId}-header`}>{header}</div>
+          <div className="min-w-0" data-composer-header="" data-testid={`${testId}-header`}>
+            <ComposerPresentationContext.Provider value={presentation}>{header}</ComposerPresentationContext.Provider>
+          </div>
         )}
         {sendError && (
           <p role="alert" data-testid={`${testId}-send-error`} className="px-2 py-1 text-sm text-danger-fg">

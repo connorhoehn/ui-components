@@ -85,6 +85,21 @@ ghost Back in the card header, on a one-prompt deck too; a `{ next }`
 follow-up without one gets a Back to the question it followed. Alt+Backspace
 takes it while the input is empty.
 
+Prompt presentation (2.512.0): a deck under a composer's
+`presentation="prompt"` (it reads the composer's presentation from context;
+a host rendering the deck itself passes `presentation="prompt"`) draws its
+answers as plain Buttons with no numbered keycaps and no key-hint row — the
+number keys, Enter, Esc and Alt+Backspace still work — and its `fields` one
+per line, a long value clamped to one line with the full text in `title`.
+`data-presentation` on the deck root. In a `ConversationComposer
+presentation="prompt"` the text box stays under an open card: it answers a
+text / number card, and **typing under a confirm (or choice) card
+re-proposes** — the words go to `ComposerPrompt.onDirection(text)` (`{ error }`
+on the card, `{ next }` in place, nothing keeps the card until the host
+replaces the prompt with its new proposal). Without `onDirection` the
+placeholder says what the card takes and Enter on an empty box picks the
+default option. A compose prompt still replaces the editor.
+
 For text/number questions where the deck owns the input, `inputDraft` lets the
 host retain unsent text across remounts or conflicts. The host chooses its
 persistence scope and clears it after acceptance. It does not control an

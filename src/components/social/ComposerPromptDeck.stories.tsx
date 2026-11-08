@@ -143,6 +143,34 @@ export const WithBack: Story = {
   },
 };
 
+/**
+ * Prompt presentation (2.512.0): the deck a quiet prompt box draws — plain
+ * answer buttons with no numbered keycaps, no key-hint row (the keys still
+ * work), and facts one per line, a long one clamped with its full text on
+ * hover. `onDirection` takes words typed in the composer under the card.
+ */
+export const PromptPresentation: Story = {
+  name: 'Prompt presentation',
+  args: {
+    presentation: 'prompt',
+    prompts: [
+      {
+        id: 'generate', eyebrow: 'Add a character', title: 'Generate Mina', kind: 'confirm',
+        question: 'Generate Mina with these answers?',
+        fields: [
+          { label: 'Name', value: 'Mina' },
+          { label: 'Role', value: 'Supporting' },
+          { label: 'Design', value: 'A small, round shopkeeper with a patched green apron, a laugh that fills the shop and a habit of humming while she counts the till.' },
+        ],
+        options: [{ id: 'generate', label: 'Generate', emphasis: 'primary' }, { id: 'change', label: 'Change answers' }],
+        back: { onBack: () => undefined },
+        onDirection: () => ({ receipt: 'Re-proposing with your change' }),
+        onAnswer: () => undefined,
+      },
+    ],
+  },
+};
+
 /** A reader sees the setup and why they cannot decide. */
 export const ReadOnly: Story = {
   args: {
