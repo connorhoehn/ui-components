@@ -3074,10 +3074,10 @@ var Pa = ye(function({ onSend: o, draft: m, onDraftChange: g, onCommand: S, onCo
 			return G;
 		},
 		focus: () => {
-			G?.commands.focus();
+			G && !G.isDestroyed && G.commands.focus();
 		},
 		insertText: (e) => {
-			G?.chain().focus().insertContent(e).run();
+			G && !G.isDestroyed && G.chain().focus().insertContent(e).run();
 		}
 	}), [G]);
 	let _r = be((e) => {

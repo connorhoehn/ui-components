@@ -98,7 +98,7 @@ import { n as Ff, t as If } from "./QuoteBlock-NVq2JJEM.js";
 import { t as Lf } from "./formatBytes-05ivRSJY.js";
 import { t as Rf } from "./ReactionsOverlay-F7inEUrm.js";
 import { B as zf, C as Bf, D as Vf, E as Hf, F as Uf, I as Wf, L as Gf, M as Kf, N as qf, O as Jf, P as Yf, R as Xf, S as Zf, T as Qf, V as $f, _ as ep, a as tp, b as np, c as rp, d as ip, f as ap, g as op, h as sp, i as cp, j as lp, l as up, m as dp, n as fp, o as pp, p as mp, r as hp, s as gp, t as _p, u as vp, v as yp, w as bp, x as xp, y as Sp, z as Cp } from "./renderers-C5HikurY.js";
-import { A as wp, B as Tp, C as Ep, F as Dp, I as Op, L as kp, M as Ap, N as jp, O as Mp, P as Np, R as Pp, h as Fp, i as Ip, j as Lp, k as Rp, n as zp, q as Bp, r as Vp, t as Hp, z as Up } from "./ProposedEditStrip-BsC6JDex.js";
+import { A as wp, B as Tp, C as Ep, F as Dp, I as Op, L as kp, M as Ap, N as jp, O as Mp, P as Np, R as Pp, h as Fp, i as Ip, j as Lp, k as Rp, n as zp, q as Bp, r as Vp, t as Hp, z as Up } from "./ProposedEditStrip-CRFnB39s.js";
 import { n as Wp, r as Gp, t as Kp } from "./EventStreamContext-CLzG8O5_.js";
 import { B as qp, G as Jp, I as Yp, K as Xp, L as Zp, O as Qp, a as $p, b as em, c as tm, d as nm, i as rm, l as im, n as am, o as om, p as sm, r as cm, s as lm, t as um, v as dm, z as fm } from "./JsonPathInput-DFwwaYPE.js";
 import { n as pm, t as mm } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1520,7 +1520,7 @@ async function Dx(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var Ox = jb(() => import("./AgentComposerDock-CltjTfG1.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var Ox = jb(() => import("./AgentComposerDock-iC58eg2S.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function kx(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,
@@ -1529,7 +1529,7 @@ function kx(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var Ax = jb(() => import("./ContextComposer-D1Fc4zJd.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var Ax = jb(() => import("./ContextComposer-BSl5YhfD.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function jx(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,
