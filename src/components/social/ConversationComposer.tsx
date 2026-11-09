@@ -211,6 +211,13 @@ export interface ConversationComposerOwnProps {
    * scoped elsewhere are dropped and a change resets the deck. Since 2.504.0.
    */
   promptScope?: string | null;
+  /**
+   * The To: row folds with the idle composer (`ContextComposer`
+   * `foldingAbove`) instead of holding the full card open, when it is the
+   * only row above — no reason, note or error beside it. For a narrow
+   * window, where the open card covers the page. Since 2.515.5.
+   */
+  foldRecipients?: boolean;
 }
 
 export type ConversationComposerProps = ConversationComposerOwnProps & Omit<ContextComposerProps, Owned>;
@@ -349,6 +356,7 @@ function ConversationComposerImpl({
   defaultDraft,
   draft: draftProp,
   above: hostAbove,
+  foldRecipients = false,
   modeRowEnd: hostModeRowEnd,
   references: hostReferences,
   onRemoveReference: hostRemoveReference,
@@ -695,6 +703,8 @@ function ConversationComposerImpl({
   const noPage = mode === 'chat' && withReference && pageless && offThread && carries;
   const recipientReason = mode === 'chat' && listed.length > 1 && !pending ? recipient?.unavailableReason ?? (!recipient ? 'Choose a destination.' : null) : null;
   const recipientError = mode === 'chat' ? recipient?.error ?? null : null;
+  const recipientsFold = foldRecipients && showRecipients && !recipientReason && !note && !noPage && !recipientError
+    && (hostAbove == null || hostAbove === false);
   const notices = showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
     <Stack gap="xs">
       {hostAbove}
@@ -770,7 +780,7 @@ function ConversationComposerImpl({
       modeUnavailableReasons={modeState.reasons}
       chatAvailable={hasChat && !modeState.reasons.chat}
       contextChip={contextChip ?? (reference ? false : undefined)}
-      above={dialogueOpen ? hostAbove : notices}
+      {...(!dialogueOpen && recipientsFold ? { foldingAbove: notices } : { above: dialogueOpen ? hostAbove : notices })}
       {...(deckInHeader ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" presentation="prompt" data-testid={`${testId}-prompts`} /> }
         : dialogueOpen ? { replacement: <ComposerPromptDeck deck={deck} data-testid={`${testId}-prompts`} /> }
         : deck.visible ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" data-testid={`${testId}-prompts`} /> } : {})}

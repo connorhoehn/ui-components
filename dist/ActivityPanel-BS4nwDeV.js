@@ -55,19 +55,28 @@ function z({ items: e, storageKey: t, title: n, renderNavItem: r, railLabel: i }
 		})
 	});
 }
-function B({ title: t, items: n, compactHeader: r = !1, railContent: i, contentPadding: a = "default", titleAction: o, railHeader: s, railWidth: c = 220, storageKey: l = "subnav", secondaryTitle: u, secondaryItems: d, secondaryStorageKey: f, secondaryRailWidth: p = 200, renderNavItem: m, railLabel: h, contentAs: g = "main", contentLabel: _, collapsed: v = !1, children: y }) {
-	let b = g, x = d && d.length > 0, [S, C] = P(0), w = D((e) => e ? (C((e) => e + 1), () => C((e) => e - 1)) : () => {}, []), T = v && S > 0;
-	return /* @__PURE__ */ L("div", {
-		className: "flex h-full min-h-0",
+function B({ title: t, items: n, compactHeader: r = !1, railContent: i, contentPadding: a = "default", titleAction: o, railHeader: s, railWidth: c = 220, storageKey: l = "subnav", secondaryTitle: u, secondaryItems: d, secondaryStorageKey: f, secondaryRailWidth: p = 200, renderNavItem: m, railLabel: h, contentAs: g = "main", contentLabel: _, collapsed: v = !1, narrow: y = !1, children: b }) {
+	let x = g, S = d && d.length > 0, C = y && !i, [w, T] = P(0), E = D((e) => e ? (T((e) => e + 1), () => T((e) => e - 1)) : () => {}, []), O = v && w > 0, k = /* @__PURE__ */ L("div", {
+		className: e("flex h-full min-h-0", C && "@max-[40rem]:flex-col"),
+		...C ? { "data-subnav-narrow": "" } : {},
 		children: [
+			C && /* @__PURE__ */ I("nav", {
+				"aria-label": `${h ?? `${t} navigation`} (compact)`,
+				className: e("flex shrink-0 overflow-x-auto overflow-y-hidden border-b border-[var(--color-border)] bg-[var(--color-surface)] px-2 @min-[40rem]:hidden", "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden", "[&>*]:shrink-0 [&_a]:whitespace-nowrap [&_a]:border-l-0 [&_a]:border-b-[3px] [&_button]:whitespace-nowrap [&_button]:border-l-0"),
+				"data-subnav-strip": "",
+				children: /* @__PURE__ */ I(U, {
+					items: [...n, ...d ?? []],
+					renderNavItem: m
+				})
+			}),
 			/* @__PURE__ */ L("aside", {
 				"aria-label": h ?? `${t} navigation`,
-				className: e("flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden", v && "w-11 min-w-11"),
+				className: e("flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden", v && "w-11 min-w-11", C && "@max-[40rem]:hidden"),
 				style: v ? void 0 : { width: c },
 				"data-collapsed": v ? "true" : void 0,
 				children: [
 					/* @__PURE__ */ L("div", {
-						className: e("flex flex-none items-center border-b border-[var(--color-border)]", v ? "justify-center px-0" : "justify-between px-4", T ? "h-9 py-0" : r ? "py-2.5" : "py-[14px]"),
+						className: e("flex flex-none items-center border-b border-[var(--color-border)]", v ? "justify-center px-0" : "justify-between px-4", O ? "h-9 py-0" : r ? "py-2.5" : "py-[14px]"),
 						children: [!v && /* @__PURE__ */ I("span", {
 							className: e("font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]", r ? "text-[11px]" : "text-[12px]"),
 							children: t
@@ -90,9 +99,9 @@ function B({ title: t, items: n, compactHeader: r = !1, railContent: i, contentP
 					}))
 				]
 			}),
-			x && /* @__PURE__ */ L("aside", {
+			S && /* @__PURE__ */ L("aside", {
 				"aria-label": `${u ?? t} sections`,
-				className: "flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden",
+				className: e("flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden", C && "@max-[40rem]:hidden"),
 				style: { width: p },
 				children: [/* @__PURE__ */ I("div", {
 					className: "flex items-center justify-between px-4 py-[14px] border-b border-[var(--color-border)]",
@@ -107,17 +116,22 @@ function B({ title: t, items: n, compactHeader: r = !1, railContent: i, contentP
 					renderNavItem: m
 				})]
 			}),
-			/* @__PURE__ */ I(b, {
+			/* @__PURE__ */ I(x, {
 				"aria-label": _,
 				"data-subnav-content": !0,
 				className: e("flex-1 min-w-0 min-h-0 overflow-auto", a === "none" ? "p-0" : "p-[var(--ui-page-gutter,1.5rem)]"),
 				children: /* @__PURE__ */ I(V.Provider, {
-					value: w,
-					children: y
+					value: E,
+					children: b
 				})
 			})
 		]
 	});
+	return C ? /* @__PURE__ */ I("div", {
+		className: "@container flex h-full min-h-0 min-w-0 flex-col",
+		"data-subnav-container": "",
+		children: k
+	}) : k;
 }
 var V = E(null);
 function H(e) {

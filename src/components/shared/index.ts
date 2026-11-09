@@ -70,6 +70,8 @@ export { default as RunProgressPanel } from './RunProgressPanel';
 export * from './RunProgressPanel';
 export { default as CaptionedAvatar } from './CaptionedAvatar';
 export * from './CaptionedAvatar';
+export { default as CopyIdButton } from './CopyIdButton';
+export * from './CopyIdButton';
 export { default as ImageFilmstrip } from './ImageFilmstrip';
 export * from './ImageFilmstrip';
 export { default as Modal } from './Modal';

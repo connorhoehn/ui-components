@@ -139,6 +139,16 @@ export interface SubNavLayoutProps {
    */
   collapsed?: boolean;
   /**
+   * The narrow form (since 2.515.5): the layout is its own size container
+   * and under 40rem of its width the rails (primary and secondary) give the
+   * content the whole width. Their items become one row of links above the
+   * content that scrolls sideways (`data-subnav-strip`), the current one
+   * underlined, so a phone reaches every section without two 200px columns
+   * taking the screen. `railContent` (a tree) has no strip form and keeps its
+   * rail. Omitted: the rails sit beside the content at every width.
+   */
+  narrow?: boolean;
+  /**
    * The main content area. When used with React Router, omit this and pass an
    * `<Outlet />` as children, or leave empty if the router renders children
    * directly. Defaults to rendering children.
@@ -228,10 +238,13 @@ export function SubNavLayout({
   contentAs = 'main',
   contentLabel,
   collapsed = false,
+  narrow: narrowProp = false,
   children,
 }: SubNavLayoutProps) {
   const Content = contentAs;
   const hasSecondary = secondaryItems && secondaryItems.length > 0;
+  // A tree in the rail has no one-row form, so it keeps its rail.
+  const narrow = narrowProp && !railContent;
   // How many compact (36px-header) rails sit in the content beside this rail.
   const [compactNeighbours, setCompactNeighbours] = useState(0);
   const report = useCallback((compact: boolean) => {
@@ -241,12 +254,28 @@ export function SubNavLayout({
   }, []);
   const alignHeader = collapsed && compactNeighbours > 0;
 
-  return (
-    <div className="flex h-full min-h-0">
+  // The narrow form's classes are written out whole (`@max-[40rem]:…`) so a
+  // consumer's Tailwind scan of dist finds them.
+  const frame = (
+    <div className={cn('flex h-full min-h-0', narrow && '@max-[40rem]:flex-col')} {...(narrow ? { 'data-subnav-narrow': '' } : {})}>
+      {narrow && (
+        <nav
+          aria-label={`${railLabel ?? `${title} navigation`} (compact)`}
+          className={cn(
+            'flex shrink-0 overflow-x-auto overflow-y-hidden border-b border-[var(--color-border)] bg-[var(--color-surface)] px-2 @min-[40rem]:hidden',
+            '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+            // Each link keeps its width and reads as a tab: the rail's left bar becomes an underline.
+            '[&>*]:shrink-0 [&_a]:whitespace-nowrap [&_a]:border-l-0 [&_a]:border-b-[3px] [&_button]:whitespace-nowrap [&_button]:border-l-0',
+          )}
+          data-subnav-strip=""
+        >
+          <FlatItems items={[...items, ...(secondaryItems ?? [])]} renderNavItem={renderNavItem} />
+        </nav>
+      )}
       {/* Primary rail — width is prop-driven, keep inline (the folded strip is a fixed 44px) */}
       <aside
         aria-label={railLabel ?? `${title} navigation`}
-        className={cn('flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden', collapsed && 'w-11 min-w-11')}
+        className={cn('flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden', collapsed && 'w-11 min-w-11', narrow && '@max-[40rem]:hidden')}
         style={collapsed ? undefined : { width: railWidth }}
         data-collapsed={collapsed ? 'true' : undefined}
       >
@@ -272,7 +301,7 @@ export function SubNavLayout({
       {hasSecondary && (
         <aside
           aria-label={`${secondaryTitle ?? title} sections`}
-          className="flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden"
+          className={cn('flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden', narrow && '@max-[40rem]:hidden')}
           style={{ width: secondaryRailWidth }}
         >
           <div className="flex items-center justify-between px-4 py-[14px] border-b border-[var(--color-border)]">
@@ -294,6 +323,7 @@ export function SubNavLayout({
       </Content>
     </div>
   );
+  return narrow ? <div className="@container flex h-full min-h-0 min-w-0 flex-col" data-subnav-container="">{frame}</div> : frame;
 }
 
 // A rail in the content reports whether its header row is the compact 36px

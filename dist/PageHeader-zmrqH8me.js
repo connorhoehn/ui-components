@@ -292,36 +292,37 @@ function R({ groups: e, density: t, "data-testid": r = "header-people" }) {
 }
 //#endregion
 //#region src/components/shared/PageHeader.tsx
-function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge: u, size: f = "md", breadcrumbs: p, density: m, collapsed: h = !1, onToggleCollapsed: g, people: _, info: x, meta: S, tabs: C, activeTab: w, onTabChange: T, className: E, "data-testid": D = "page-header" }) {
-	let O = e(m), k = L(_), A = !!p && p.length > 0, j = C && C.length > 0 ? /* @__PURE__ */ y(c, {
+function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge: u, size: f = "md", breadcrumbs: p, density: m, collapsed: h = !1, onToggleCollapsed: g, people: _, info: x, meta: S, tabs: C, tabsOverflowBelow: w, activeTab: T, onTabChange: E, className: D, "data-testid": O = "page-header" }) {
+	let k = e(m), A = L(_), j = !!p && p.length > 0, M = C && C.length > 0 ? /* @__PURE__ */ y(c, {
 		items: C.map((e) => ({
 			id: e.id,
 			label: e.label,
 			...e.count == null ? {} : { badge: e.count },
 			...e.disabled ? { disabled: !0 } : {},
-			testId: `${D}-tab-${e.id}`
+			testId: `${O}-tab-${e.id}`
 		})),
-		value: w && C.some((e) => e.id === w) ? w : C[0].id,
-		onValueChange: (e) => T?.(e),
+		value: T && C.some((e) => e.id === T) ? T : C[0].id,
+		onValueChange: (e) => E?.(e),
 		variant: "underline",
 		size: "md",
 		badgeStyle: "plain",
 		indicator: "bar",
 		indicatorWeight: 3,
 		"aria-label": `${n} views`,
-		className: t("gap-0", h || O === "compact" ? "mt-0" : "mt-3"),
-		"data-testid": `${D}-tabs`
-	}) : null, M = A ? /* @__PURE__ */ y(d, {
+		className: t("gap-0", h || k === "compact" ? "mt-0" : "mt-3"),
+		...w ? { overflowBelow: w } : {},
+		"data-testid": `${O}-tabs`
+	}) : null, N = j ? /* @__PURE__ */ y(d, {
 		items: p,
 		separator: "›",
 		maxItems: 5,
 		className: "min-w-0",
-		"data-testid": `${D}-crumbs`
-	}) : null, N = g ? /* @__PURE__ */ y(P, {
+		"data-testid": `${O}-crumbs`
+	}) : null, z = g ? /* @__PURE__ */ y(P, {
 		collapsed: h,
 		onToggle: g,
-		"data-testid": `${D}-collapse-toggle`
-	}) : null, z = l ? /* @__PURE__ */ y(o, {
+		"data-testid": `${O}-collapse-toggle`
+	}) : null, B = l ? /* @__PURE__ */ y(o, {
 		content: l.label,
 		children: /* @__PURE__ */ y("a", {
 			href: l.to,
@@ -335,38 +336,38 @@ function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge:
 		})
 	}) : null;
 	return h ? /* @__PURE__ */ b("div", {
-		className: t("flex min-w-0 flex-col gap-1", A && "pt-2", E),
-		"data-testid": D,
+		className: t("flex min-w-0 flex-col gap-1", j && "pt-2", D),
+		"data-testid": O,
 		"data-page-header": "",
-		"data-density": O,
+		"data-density": k,
 		"data-collapsed": "true",
 		children: [/* @__PURE__ */ b("div", {
 			className: "flex min-w-0 items-center gap-2",
-			children: [z, /* @__PURE__ */ y("div", {
+			children: [B, /* @__PURE__ */ y("div", {
 				className: "min-w-0 flex-1",
 				children: /* @__PURE__ */ y(F, {
 					breadcrumbs: p,
 					title: n,
 					badge: u,
 					actions: s,
-					"data-testid": `${D}-fold`,
+					"data-testid": `${O}-fold`,
 					...g ? { onExpand: g } : {}
 				})
 			})]
-		}), j]
-	}) : O === "compact" ? /* @__PURE__ */ b("div", {
-		className: t("flex min-w-0 flex-col gap-1", A && "pt-2", E),
-		"data-testid": D,
+		}), M]
+	}) : k === "compact" ? /* @__PURE__ */ b("div", {
+		className: t("flex min-w-0 flex-col gap-1", j && "pt-2", D),
+		"data-testid": O,
 		"data-page-header": "",
 		"data-density": "compact",
 		"data-collapsed": "false",
 		children: [
-			M,
+			N,
 			/* @__PURE__ */ b("div", {
 				className: "flex h-7 min-w-0 items-center gap-3",
-				"data-testid": `${D}-row`,
+				"data-testid": `${O}-row`,
 				children: [
-					z,
+					B,
 					/* @__PURE__ */ b("div", {
 						className: "flex min-w-0 flex-1 items-center gap-2",
 						children: [
@@ -384,17 +385,17 @@ function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge:
 									className: "mt-2 whitespace-normal",
 									children: S
 								})] }),
-								"data-testid": `${D}-description`
+								"data-testid": `${O}-description`
 							}) : null),
-							k.length > 0 && /* @__PURE__ */ y("div", {
+							A.length > 0 && /* @__PURE__ */ y("div", {
 								className: "flex min-w-0 shrink-[8] overflow-hidden",
 								children: /* @__PURE__ */ y(R, {
-									groups: k,
+									groups: A,
 									density: "compact",
-									"data-testid": `${D}-people`
+									"data-testid": `${O}-people`
 								})
 							}),
-							N
+							z
 						]
 					}),
 					s && /* @__PURE__ */ y("div", {
@@ -403,18 +404,18 @@ function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge:
 					})
 				]
 			}),
-			j
+			M
 		]
 	}) : /* @__PURE__ */ b("div", {
-		className: t("flex flex-col gap-1.5", A && "pt-3", E),
-		"data-testid": D,
+		className: t("flex flex-col gap-1.5", j && "pt-3", D),
+		"data-testid": O,
 		"data-page-header": "",
 		"data-density": "comfortable",
 		"data-collapsed": "false",
 		children: [
-			M && /* @__PURE__ */ y("div", {
+			N && /* @__PURE__ */ y("div", {
 				className: "mb-2.5",
-				children: M
+				children: N
 			}),
 			l && /* @__PURE__ */ b("a", {
 				href: l.to,
@@ -446,7 +447,7 @@ function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge:
 						}),
 						u,
 						x,
-						N
+						z
 					]
 				}), s && /* @__PURE__ */ y("div", {
 					className: "flex max-w-full min-w-0 flex-shrink-0 flex-wrap items-center gap-2",
@@ -457,20 +458,20 @@ function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge:
 				className: "text-sm text-[var(--color-text-secondary)]",
 				children: i
 			}),
-			k.length > 0 && /* @__PURE__ */ y("div", {
+			A.length > 0 && /* @__PURE__ */ y("div", {
 				className: "mt-1",
 				children: /* @__PURE__ */ y(R, {
-					groups: k,
+					groups: A,
 					density: "comfortable",
-					"data-testid": `${D}-people`
+					"data-testid": `${O}-people`
 				})
 			}),
 			S && /* @__PURE__ */ y("div", {
 				className: "mt-2 min-w-0",
-				"data-testid": `${D}-meta`,
+				"data-testid": `${O}-meta`,
 				children: S
 			}),
-			j
+			M
 		]
 	});
 }

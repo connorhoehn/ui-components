@@ -7046,6 +7046,12 @@ export declare interface ContextComposerProps {
     dock?: ReactNode;
     /** Notices above the row (an error banner). Forces the full card. */
     above?: ReactNode;
+    /**
+     * Rows above that belong to the full card only (a To: selector the idle
+     * row already names): hidden while the card is folded to its idle row,
+     * and, unlike `above`, they never force the full card. Since 2.515.5.
+     */
+    foldingAbove?: ReactNode;
     /** Inside the card, its first section (`RichChatComposer header`): a prompt deck. Forces the full card. Since 2.446.0. */
     header?: ReactNode;
     /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
@@ -7810,6 +7816,21 @@ export declare interface ConversationSurfaceProps {
 
 /** Two stacked pages: "make a copy". Since 2.390.3. */
 export declare function CopyIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/**
+ * Use this when a record is named in words and its id must stay one action
+ * away: `<Inline>{bot.name}<CopyIdButton value={bot.id} label="Copy the bot's id" /></Inline>`.
+ */
+export declare function CopyIdButton({ value, label, className, 'data-testid': testId }: CopyIdButtonProps): JSX.Element;
+
+export declare interface CopyIdButtonProps {
+    /** The id to copy. Shown in the tooltip, never in the page's text. */
+    value: string;
+    /** What the id is, for the accessible name: "Copy the bot's id". Default "Copy id". */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /** A static-draw Float32 array buffer, the only buffer shape these backdrops use. */
 export declare function createArrayBuffer(gl: WebGLContextLike, data: Float32Array): WebGLBuffer | null;
@@ -16579,7 +16600,7 @@ export declare interface PageFromSpecProps {
 /** `page`: the template draws the `--ui-page-gutter` inset. `none`: the host already did. */
 export declare type PageGutter = 'page' | 'none';
 
-export declare function PageHeader({ title, as: Heading, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
+export declare function PageHeader({ title, as: Heading, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, tabsOverflowBelow, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -16652,6 +16673,14 @@ export declare interface PageHeaderProps {
     meta?: default_2.ReactNode;
     /** View tabs under the header, in every density and state. Since 2.437.0. */
     tabs?: PageHeaderTab[];
+    /**
+     * The tabs' fold (since 2.515.5; `Tabs overflowBelow`): while the header is
+     * narrower than this many px, the first tab and the current one stay in
+     * the row and the rest move into its `More ▾` menu, so a phone sees every
+     * view's name instead of a row cut at the screen's edge. Omitted: the row
+     * scrolls sideways (unchanged).
+     */
+    tabsOverflowBelow?: number;
     activeTab?: string;
     onTabChange?: (id: string) => void;
     className?: string;
@@ -21019,6 +21048,13 @@ declare interface RichChatComposerProps {
      */
     expanded?: boolean;
     /**
+     * With `collapseWhenIdle`: told whenever the card folds to (`true`) or
+     * leaves (`false`) its one-line idle row, so a host can hide rows that
+     * belong only to the full card (`ContextComposer` `foldingAbove`).
+     * Since 2.515.5.
+     */
+    onIdleFoldChange?: (folded: boolean) => void;
+    /**
      * Draws the `#` menu as an "Add context" card: a title, the typed query in
      * a search field with a clear button, results grouped under each
      * candidate's `group`, and the keys (↑↓ Choose · ↵ Insert · esc Close) at
@@ -22013,7 +22049,7 @@ export declare interface SectionLabelProps {
  *   <RunRecord run={run} />
  * </SectionLayout>
  */
-export declare function SectionLayout({ title, items, renderNavItem, storageKey, railWidth, titleAction, railHeader, railContent, railLabel, railFold, secondary, list, listFold, listRailWidth, aside, header, body, gutter, footer, fill, bottomGap, contentLabel, bodyClassName, children, className, 'data-testid': testId, }: SectionLayoutProps): JSX.Element;
+export declare function SectionLayout({ title, items, renderNavItem, storageKey, railWidth, titleAction, railHeader, railContent, railLabel, railFold, secondary, list, listFold, listRailWidth, narrow, aside, header, body, gutter, footer, fill, bottomGap, contentLabel, bodyClassName, children, className, 'data-testid': testId, }: SectionLayoutProps): JSX.Element;
 
 /** A rail's fold, as `useRailFold` returns it. */
 export declare interface SectionLayoutFold {
@@ -22033,6 +22069,19 @@ export declare interface SectionLayoutHeader extends PageTemplateTrailProps {
     titleAs?: 'h1' | 'h2' | 'h3';
     /** Default `compact`. */
     density?: Density;
+}
+
+/**
+ * The narrow form of a sectioned page (since 2.515.5). Under 40rem of the
+ * frame's own width the section rail gives the content the whole width and
+ * its items become one row of links over it (`SubNavLayout narrow`); with
+ * `list`, the list rail and the content column stop sitting side by side as
+ * well (`ListRailLayout narrow`): `showing: 'list'` draws the list at the
+ * full width, `showing: 'record'` the column under a back control.
+ */
+declare interface SectionLayoutNarrow {
+    /** The list rail's narrow form; only with `list`. */
+    list?: ExplorerNarrow;
 }
 
 export declare interface SectionLayoutProps {
@@ -22065,6 +22114,8 @@ export declare interface SectionLayoutProps {
     };
     /** The section page's own list, as a flush list rail beside the section rail (`ListRailLayout`). */
     list?: ListRail;
+    /** The narrow form (since 2.515.5): `{}` for the section rail's one-row form, `{ list }` for the list rail's too. Omitted: unchanged at every width. */
+    narrow?: SectionLayoutNarrow;
     /** The list rail's fold («/» on the rail). */
     listFold?: SectionLayoutFold;
     /** List rail width; default `ms` (264px). */
@@ -24264,7 +24315,7 @@ export declare interface SubNavItem {
     groupScrollAfter?: number;
 }
 
-export declare function SubNavLayout({ title, items, compactHeader, railContent, contentPadding, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
+export declare function SubNavLayout({ title, items, compactHeader, railContent, contentPadding, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, narrow: narrowProp, children, }: SubNavLayoutProps): JSX.Element;
 
 export declare interface SubNavLayoutProps {
     /** Section title shown at top of the rail. */
@@ -24344,6 +24395,16 @@ export declare interface SubNavLayoutProps {
      * section rail's header and the strip's control sit on one row.
      */
     collapsed?: boolean;
+    /**
+     * The narrow form (since 2.515.5): the layout is its own size container
+     * and under 40rem of its width the rails (primary and secondary) give the
+     * content the whole width. Their items become one row of links above the
+     * content that scrolls sideways (`data-subnav-strip`), the current one
+     * underlined, so a phone reaches every section without two 200px columns
+     * taking the screen. `railContent` (a tree) has no strip form and keeps its
+     * rail. Omitted: the rails sit beside the content at every width.
+     */
+    narrow?: boolean;
     /**
      * The main content area. When used with React Router, omit this and pass an
      * `<Outlet />` as children, or leave empty if the router renders children

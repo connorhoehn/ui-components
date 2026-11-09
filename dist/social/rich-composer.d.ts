@@ -1093,6 +1093,12 @@ export declare interface ContextComposerProps {
     dock?: ReactNode;
     /** Notices above the row (an error banner). Forces the full card. */
     above?: ReactNode;
+    /**
+     * Rows above that belong to the full card only (a To: selector the idle
+     * row already names): hidden while the card is folded to its idle row,
+     * and, unlike `above`, they never force the full card. Since 2.515.5.
+     */
+    foldingAbove?: ReactNode;
     /** Inside the card, its first section (`RichChatComposer header`): a prompt deck. Forces the full card. Since 2.446.0. */
     header?: ReactNode;
     /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
@@ -1370,6 +1376,13 @@ export declare interface ConversationComposerOwnProps {
      * scoped elsewhere are dropped and a change resets the deck. Since 2.504.0.
      */
     promptScope?: string | null;
+    /**
+     * The To: row folds with the idle composer (`ContextComposer`
+     * `foldingAbove`) instead of holding the full card open, when it is the
+     * only row above — no reason, note or error beside it. For a narrow
+     * window, where the open card covers the page. Since 2.515.5.
+     */
+    foldRecipients?: boolean;
 }
 
 export declare type ConversationComposerProps = ConversationComposerOwnProps & Omit<ContextComposerProps, Owned>;
@@ -2190,6 +2203,13 @@ export declare interface RichChatComposerProps {
      * without `collapseWhenIdle`. Since 2.407.0.
      */
     expanded?: boolean;
+    /**
+     * With `collapseWhenIdle`: told whenever the card folds to (`true`) or
+     * leaves (`false`) its one-line idle row, so a host can hide rows that
+     * belong only to the full card (`ContextComposer` `foldingAbove`).
+     * Since 2.515.5.
+     */
+    onIdleFoldChange?: (folded: boolean) => void;
     /**
      * Draws the `#` menu as an "Add context" card: a title, the typed query in
      * a search field with a clear button, results grouped under each

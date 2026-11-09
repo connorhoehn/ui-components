@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-995 components across 21 entry points; 846 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+996 components across 21 entry points; 847 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -22,7 +22,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | A list with a detail panel | `MasterDetailPage` | `@connorhoehn/ui-components/shared` | Selectable list on one side, the selected record on the other; owns selection layout; pass `narrow={{ onBack }}` for the narrow-screen form (under 40rem of its width the list, or the record under a back control, fills it; `ListRailLayout narrow` is the same for a hand-composed list rail). (`MasterDetail` is the lower-level rail + pane primitive it builds on.) | Not for a list whose rows navigate to their own route (use `CollectionPage` + `DetailPage`). |
 | One record's detail page | `DetailPage` | `@connorhoehn/ui-components/shared` | Header with the record's title/status/actions, then **tabs** for the record's facets. | Don't stack a column of `Card`s for each facet; put facets in tabs and use `DetailSection` inside a tab. |
 | A dashboard | `DashboardPage` | `@connorhoehn/ui-components/shared` | KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it. | Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath. |
-| Pages inside a sectioned area | `SectionLayout` | `@connorhoehn/ui-components/shared` | Section rail (`items`, `railFold`) + optional list rail (`list`, `listFold`) + the content column: with `header`, the trail row (`trailControls`), the title band and a body whose `footer`/`ColumnDock` composer docks at the column's bottom; fills the viewport (`fill="viewport"`). Without `header` the child page template is the column. | Not for one standalone page (use `PageFrame` or the matching template); not for a list + record with no section rail (use `MasterDetailPage`). |
+| Pages inside a sectioned area | `SectionLayout` | `@connorhoehn/ui-components/shared` | Section rail (`items`, `railFold`) + optional list rail (`list`, `listFold`) + the content column: with `header`, the trail row (`trailControls`), the title band and a body whose `footer`/`ColumnDock` composer docks at the column's bottom; fills the viewport (`fill="viewport"`). Without `header` the child page template is the column. Pass `narrow` for a phone: `{}` turns the section rail into one scrolling row of links under 40rem of its width, `{ list: { showing, onBack } }` gives the list rail its narrow form too. | Not for one standalone page (use `PageFrame` or the matching template); not for a list + record with no section rail (use `MasterDetailPage`). |
 | A settings page | `SettingsPage` | `@connorhoehn/ui-components/shared` | Section rail + settings content with consistent row spacing. (`SettingsLayout` is the lower-level shell.) | Not for a one-off form inside a modal (use the `forms/` controls in a `Modal`). |
 | App chrome | `AppShell` | `@connorhoehn/ui-components/shared` | Sidebar + top bar + content region. Pass `layout="fill"` when the content area must fill the viewport (canvases, chat, editors) rather than scroll as a document. | Not inside a page; there is exactly one per app. Import it (and `ThemeProvider`) from `/shared`; there is no `/layout` subpath. |
 | A data table | `DataTable` | `@connorhoehn/ui-components/shared` | Columns + rows with sorting, selection, empty/loading states and row striping by default. Start here for any tabular data. Pass `narrow` for the card form: under 40rem of its own width each row stacks into label/value pairs (`label` per column) instead of scrolling sideways. | Don't drop to `Table` primitives unless you need cell layouts `DataTable` cannot express. |
@@ -51,7 +51,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (61)
 - [Tables & lists](#tables--lists) (31)
 - [Forms](#forms) (30)
-- [Buttons & actions](#buttons--actions) (18)
+- [Buttons & actions](#buttons--actions) (19)
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (109)
 - [Video](#video) (108)
@@ -271,6 +271,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `Button` | `@connorhoehn/ui-components/shared` | Shared button component with consistent variants. | `ui-button` |  |
 | `CommandPalette` | `@connorhoehn/ui-components/shared` | Shared Cmd+K command palette. | `shared-commandpalette` |  |
 | `ConfirmButton` | `@connorhoehn/ui-components/shared` | A button that asks before it acts — in place. | `shared-confirmbutton` |  |
+| `CopyIdButton` | `@connorhoehn/ui-components/shared` | Use this when a record is named in words and its id must stay one action away: `<Inline>{bot.name}<CopyIdButton value={bot.id} label="Copy the bot's id" /></Inline>`. |  |  |
 | `DropdownMenu` | `@connorhoehn/ui-components/shared` | Generic trigger + dropdown menu composite. | `shared-dropdownmenu` |  |
 | `FilePickerButton` | `@connorhoehn/ui-components/shared` | A button that opens the system file picker and hands the chosen files over. |  |  |
 | `FilterChip` | `@connorhoehn/ui-components/shared` | — | `shared-filterchip` |  |

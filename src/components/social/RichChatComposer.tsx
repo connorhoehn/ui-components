@@ -691,6 +691,13 @@ export interface RichChatComposerProps {
    */
   expanded?: boolean;
   /**
+   * With `collapseWhenIdle`: told whenever the card folds to (`true`) or
+   * leaves (`false`) its one-line idle row, so a host can hide rows that
+   * belong only to the full card (`ContextComposer` `foldingAbove`).
+   * Since 2.515.5.
+   */
+  onIdleFoldChange?: (folded: boolean) => void;
+  /**
    * Draws the `#` menu as an "Add context" card: a title, the typed query in
    * a search field with a clear button, results grouped under each
    * candidate's `group`, and the keys (↑↓ Choose · ↵ Insert · esc Close) at
@@ -1122,6 +1129,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   collapseWhenIdle = false,
   responsive,
   expanded: forceExpanded = false,
+  onIdleFoldChange,
   documentMenu,
   modeRowStart,
   header,
@@ -2369,6 +2377,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const collapsed = collapseWhenIdle && !forceExpanded && !engaged && empty && !status && !processes?.length
     && !staged.length && !activeCommand && !sendError && !modeNotice && !terminalMode
     && !linkState.open && !(onPrivacyChange && privacy === 'hidden');
+  const idleFoldListener = useRef(onIdleFoldChange);
+  idleFoldListener.current = onIdleFoldChange;
+  useEffect(() => { idleFoldListener.current?.(collapsed); }, [collapsed]);
   // Rows that appear on expanding fade up in place — opacity and transform
   // only, so the one re-layout happens once, not on every animation frame.
   const reveal = collapseWhenIdle && 'motion-safe:[animation:composerReveal_140ms_ease-out]';

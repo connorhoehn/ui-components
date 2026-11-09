@@ -21,6 +21,7 @@ import { ChevronIcon } from '../ui/Icons';
 import { ScopeHeader } from '../work/ScopeHeader';
 import { ColumnDock, DockedColumn } from '../layout/DockedColumn';
 import { ListRailLayout, type ListRail, type ListRailLayoutProps } from '../layout/ListRailLayout';
+import type { ExplorerNarrow } from '../layout/ExplorerLayout';
 import { ViewportFillRegion } from '../layout/ViewportFillRegion';
 import { SubNavLayout, type SubNavItem, type SubNavLayoutProps } from './SubNavLayout';
 import { PAGE_GUTTER_B, PAGE_GUTTER_X, TrailHeader, type PageGutter, type PageTemplateTrailProps } from './pageTemplate';
@@ -31,6 +32,19 @@ import type { Density } from './Density';
 export interface SectionLayoutFold {
   folded: boolean;
   onToggle: () => void;
+}
+
+/**
+ * The narrow form of a sectioned page (since 2.515.5). Under 40rem of the
+ * frame's own width the section rail gives the content the whole width and
+ * its items become one row of links over it (`SubNavLayout narrow`); with
+ * `list`, the list rail and the content column stop sitting side by side as
+ * well (`ListRailLayout narrow`): `showing: 'list'` draws the list at the
+ * full width, `showing: 'record'` the column under a back control.
+ */
+export interface SectionLayoutNarrow {
+  /** The list rail's narrow form; only with `list`. */
+  list?: ExplorerNarrow;
 }
 
 /** The content column's header: the trail row, and the view's title band under it. */
@@ -72,6 +86,8 @@ export interface SectionLayoutProps {
   secondary?: { title?: string; items: SubNavItem[]; storageKey?: string; railWidth?: number };
   /** The section page's own list, as a flush list rail beside the section rail (`ListRailLayout`). */
   list?: ListRail;
+  /** The narrow form (since 2.515.5): `{}` for the section rail's one-row form, `{ list }` for the list rail's too. Omitted: unchanged at every width. */
+  narrow?: SectionLayoutNarrow;
   /** The list rail's fold («/» on the rail). */
   listFold?: SectionLayoutFold;
   /** List rail width; default `ms` (264px). */
@@ -123,7 +139,7 @@ function foldToggle(fold: SectionLayoutFold, label: string) {
  */
 export function SectionLayout({
   title, items, renderNavItem, storageKey, railWidth, titleAction, railHeader, railContent, railLabel, railFold, secondary,
-  list, listFold, listRailWidth, aside, header, body = 'scroll', gutter = 'page', footer, fill = 'viewport', bottomGap = 0,
+  list, listFold, listRailWidth, narrow, aside, header, body = 'scroll', gutter = 'page', footer, fill = 'viewport', bottomGap = 0,
   contentLabel, bodyClassName, children, className, 'data-testid': testId = 'section-layout',
 }: SectionLayoutProps) {
   const docked = footer != null ? <ColumnDock>{footer}</ColumnDock> : null;
@@ -164,6 +180,7 @@ export function SectionLayout({
   const content = list ? (
     <ListRailLayout list={list} {...(listFold ? { fold: { folded: listFold.folded, onToggle: listFold.onToggle } } : {})}
       {...(listRailWidth ? { railWidth: listRailWidth } : {})} {...(aside != null ? { aside } : {})}
+      {...(narrow?.list ? { narrow: narrow.list } : {})}
       data-testid={`${testId}-list`}>
       {column}
     </ListRailLayout>
@@ -187,6 +204,7 @@ export function SectionLayout({
         {...(railContent != null ? { railContent } : {})}
         {...(renderNavItem ? { renderNavItem } : {})}
         {...(railFold ? { collapsed: railFold.folded } : {})}
+        {...(narrow ? { narrow: true } : {})}
         {...(secondary?.items.length ? {
           secondaryItems: secondary.items,
           ...(secondary.title ? { secondaryTitle: secondary.title } : {}),

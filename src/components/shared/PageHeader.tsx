@@ -96,6 +96,14 @@ export interface PageHeaderProps {
   meta?: React.ReactNode;
   /** View tabs under the header, in every density and state. Since 2.437.0. */
   tabs?: PageHeaderTab[];
+  /**
+   * The tabs' fold (since 2.515.5; `Tabs overflowBelow`): while the header is
+   * narrower than this many px, the first tab and the current one stay in
+   * the row and the rest move into its `More ▾` menu, so a phone sees every
+   * view's name instead of a row cut at the screen's edge. Omitted: the row
+   * scrolls sideways (unchanged).
+   */
+  tabsOverflowBelow?: number;
   activeTab?: string;
   onTabChange?: (id: string) => void;
   className?: string;
@@ -118,6 +126,7 @@ function PageHeader({
   info,
   meta,
   tabs,
+  tabsOverflowBelow,
   activeTab,
   onTabChange,
   className,
@@ -140,6 +149,7 @@ function PageHeader({
       // Compact/collapsed: the tabs sit right under the row (the stack's 4px
       // gap) so trail + row + tabs is 96px; comfortable keeps 12px.
       className={cn('gap-0', collapsed || density === 'compact' ? 'mt-0' : 'mt-3')}
+      {...(tabsOverflowBelow ? { overflowBelow: tabsOverflowBelow } : {})}
       data-testid={`${testId}-tabs`}
     />
   ) : null;

@@ -75,6 +75,18 @@ describe('ContextComposer — collapse / expand', () => {
     expect(root()).toHaveAttribute('data-collapsed', 'false');
   });
 
+  it('foldingAbove does not force the card: hidden on the idle row, shown with the open card (2.515.5)', async () => {
+    setup({ foldingAbove: <div data-testid="to-row">To: Discussion</div> });
+    expect(root()).toHaveAttribute('data-collapsed', 'true');
+    expect(screen.queryByTestId('to-row')).toBeNull();
+    await focus();
+    expect(root()).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByTestId('to-row')).toBeInTheDocument();
+    await blur();
+    expect(root()).toHaveAttribute('data-collapsed', 'true');
+    expect(screen.queryByTestId('to-row')).toBeNull();
+  });
+
   it('a dock does not force the card, and sits above the composer', () => {
     setup({ dock: <div data-testid="shelf">Call</div> });
     expect(root()).toHaveAttribute('data-collapsed', 'true');

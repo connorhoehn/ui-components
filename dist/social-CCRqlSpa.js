@@ -27,7 +27,7 @@ import { i as ce, n as le, r as ue, t as de } from "./ChoiceList-DHsxqQ1Y.js";
 import { t as fe } from "./InlineAlert-BgM4PLN-.js";
 import { t as pe } from "./LogStream-MdjhSR7f.js";
 import { a as W, n as me, o as he, s as ge, t as _e } from "./backdropTone-DokCqPDL.js";
-import { a as G, i as ve, n as ye, o as be } from "./ActivityPanel-Cw9cTPuN.js";
+import { a as G, i as ve, n as ye, o as be } from "./ActivityPanel-BS4nwDeV.js";
 import { t as xe } from "./InlinePlaceholder-CKUJyqFh.js";
 import { t as Se } from "./MetaLine-CXoGFWAF.js";
 import { n as Ce, t as we } from "./ReactionPickerPopover-CwOJPVzU.js";
