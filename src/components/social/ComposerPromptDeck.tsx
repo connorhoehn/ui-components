@@ -62,6 +62,7 @@ import {
   followUpParent,
   livePromptIds,
   optionKey,
+  pageKeypadTarget,
   parseTypedAnswer,
   pendingPrompts,
   promptOptions,
@@ -505,12 +506,16 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
       const inDeck = !!root.current && !!target && root.current.contains(target);
       const inInput = !!i && i.contains(target);
       const inAnswer = !!target && answerRef.current?.contains(target);
-      if (!inDeck && !inInput) return;
+      // `keypad: 'page'` (2.515.2): an open card's option keys also reach it from the page body, never from a field.
+      const fromPage = !inDeck && !inInput && d.active?.keypad === 'page' && !d.collapsed && pageKeypadTarget(event.target);
+      if (!inDeck && !inInput && !fromPage) return;
       const action = deckKeyAction(
         { key: event.key, altKey: event.altKey, ctrlKey: event.ctrlKey, metaKey: event.metaKey, shiftKey: event.shiftKey, code: event.code },
-        { prompt: d.active, collapsed: d.collapsed, inputEmpty: i ? i.isEmpty() : !answerRef.current?.value.trim(), inDeck: inDeck && !inAnswer, busy: d.busy, canBack: !!d.backControl && !d.backControl.disabledReason },
+        fromPage
+          ? { prompt: d.active, collapsed: d.collapsed, inputEmpty: true, inDeck: true, busy: d.busy, canBack: false }
+          : { prompt: d.active, collapsed: d.collapsed, inputEmpty: i ? i.isEmpty() : !answerRef.current?.value.trim(), inDeck: inDeck && !inAnswer, busy: d.busy, canBack: !!d.backControl && !d.backControl.disabledReason },
       );
-      if (!action) return;
+      if (!action || (fromPage && action.type !== 'pick')) return;
       event.preventDefault();
       event.stopPropagation();
       if (action.type === 'page') d.page(action.delta);

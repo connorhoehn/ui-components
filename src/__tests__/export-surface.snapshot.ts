@@ -2038,6 +2038,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "identityDisplayName",
     "matchComposerCommand",
     "matchesModeTrigger",
+    "pageKeypadTarget",
     "parseTypedAnswer",
     "promptOptions",
     "promptsInScope",

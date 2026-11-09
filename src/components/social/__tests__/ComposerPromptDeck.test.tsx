@@ -183,6 +183,41 @@ describe('ComposerPromptDeck', () => {
     act(() => { key('1'); });
     expect(onAnswer).not.toHaveBeenCalled();
   });
+
+  it('keypad "page": an open card\'s option keys also pick from the page body, never from a field, and only picks', async () => {
+    const onAnswer = vi.fn();
+    const list = prompts(onAnswer).map((p) => ({ ...p, keypad: 'page' as const }));
+    render(<><button type="button" data-testid="elsewhere">x</button><input data-testid="field" aria-label="field" />
+      <div role="dialog" aria-label="other"><button type="button" data-testid="in-dialog">y</button></div>
+      <ComposerPromptDeck prompts={list} /></>);
+    // Typing in a field, or a key inside another dialog, stays theirs.
+    screen.getByTestId('field').focus();
+    act(() => { key('1'); });
+    screen.getByTestId('in-dialog').focus();
+    act(() => { key('1'); });
+    expect(onAnswer).not.toHaveBeenCalled();
+    // Focus on the page (a click on plain content leaves it on the body), or on a button elsewhere: 2 picks.
+    (document.activeElement as HTMLElement | null)?.blur();
+    // Enter and Esc from the page are not the card's: nothing answers, nothing collapses.
+    act(() => { fireEvent.keyDown(document.body, { key: 'Enter' }); fireEvent.keyDown(document.body, { key: 'Escape' }); });
+    expect(onAnswer).not.toHaveBeenCalled();
+    expect(screen.getByTestId('composer-prompt-deck-option-dispatch')).toBeTruthy();
+    await act(async () => { fireEvent.keyDown(document.body, { key: '2' }); });
+    expect(onAnswer).toHaveBeenCalledWith('dispatch', { kind: 'choice', optionId: 'model' });
+    screen.getByTestId('elsewhere').focus();
+    await act(async () => { key('1'); });
+    expect(onAnswer).toHaveBeenCalledWith('approve', expect.objectContaining({ kind: 'confirm', optionId: 'confirm' }));
+  });
+
+  it('keypad "page" stays quiet while the card is collapsed', () => {
+    const onAnswer = vi.fn();
+    render(<ComposerPromptDeck prompts={prompts(onAnswer).map((p) => ({ ...p, keypad: 'page' as const }))} />);
+    screen.getByTestId('composer-prompt-deck-option-dispatch').focus();
+    act(() => { key('Escape'); });
+    (document.activeElement as HTMLElement | null)?.blur();
+    act(() => { fireEvent.keyDown(document.body, { key: '1' }); });
+    expect(onAnswer).not.toHaveBeenCalled();
+  });
 });
 
 describe('ConversationComposer prompts', () => {

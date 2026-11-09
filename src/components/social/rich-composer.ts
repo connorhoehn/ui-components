@@ -142,6 +142,7 @@ export {
   answerForOption,
   deckKeyAction,
   defaultOption,
+  pageKeypadTarget,
   parseTypedAnswer,
   promptOptions,
   takesDirection,

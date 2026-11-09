@@ -175,6 +175,19 @@ export interface ComposerPrompt {
   /** Shown on the card instead of answers: the reader may look but not decide. */
   readOnlyReason?: string;
   /**
+   * Where the card's keypad listens (since 2.515.2). `deck` (default): its
+   * keys act only while focus is in the deck or the composer's input. `page`:
+   * while this card is open (shown, not collapsed), an option key (1–9, or
+   * the option's own key) pressed with focus anywhere on the page outside an
+   * editable field (input, textarea, select, contenteditable) and outside
+   * another dialog, menu or listbox also picks that option, exactly as it
+   * would in the deck — so a reader who clicked the record beside the
+   * composer still decides from the keypad. Only picks: Enter, Esc, Back and
+   * paging stay the deck's (`pageKeypadTarget`). A page holds at most one
+   * such card open at a time.
+   */
+  keypad?: 'deck' | 'page';
+  /**
    * The decision path drawn above the card's header (2.482.0): `Choose →
    * Draft request → Confirm → Done` with `current` at this question's step.
    * On a compose prompt `current` is the drafting step; the flow advances it
@@ -342,6 +355,20 @@ export interface DeckKey {
   shiftKey?: boolean;
   /** The physical key (`Digit2`): macOS Alt+2 types a symbol, so Alt reads this. */
   code?: string;
+}
+
+/**
+ * Whether a key pressed with focus on `target` may reach a `keypad: 'page'`
+ * card from outside the deck: anything but an editable field (input,
+ * textarea, select, contenteditable) or a control inside another dialog,
+ * menu or listbox — those keep their own keys. The document and body (focus
+ * after a click on plain content) qualify.
+ */
+export function pageKeypadTarget(target: EventTarget | null): boolean {
+  if (!target || typeof (target as Element).closest !== 'function') return true;
+  return !(target as Element).closest(
+    'input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="dialog"],[role="alertdialog"],[role="menu"],[role="listbox"],[role="combobox"]',
+  );
 }
 
 /**

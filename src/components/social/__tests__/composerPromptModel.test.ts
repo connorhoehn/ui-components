@@ -6,6 +6,7 @@ import {
   defaultOption,
   followUpParent,
   livePromptIds,
+  pageKeypadTarget,
   parseTypedAnswer,
   pendingPrompts,
   promptOptions,
@@ -134,5 +135,21 @@ describe('composerPromptModel — compose prompts and follow-ups (2.482.0)', () 
     expect(followUpParent('request', followUps)).toBe('dispatch');
     expect(followUpParent('saved', followUps)).toBe('request');
     expect(followUpParent('dispatch', followUps)).toBeNull();
+  });
+});
+
+describe('composerPromptModel — page keypad targets (2.515.2)', () => {
+  it('the body, plain content and buttons may reach a keypad: "page" card; fields and other dialogs keep their keys', () => {
+    document.body.innerHTML = `<p id="text">x</p><button id="b">b</button><input id="i"><textarea id="t"></textarea><select id="s"></select>
+      <div contenteditable="true"><span id="ce">e</span></div><div contenteditable="false"><span id="ro">r</span></div>
+      <div role="dialog"><button id="d">d</button></div><div role="menu"><button id="m">m</button></div>`;
+    const at = (id: string) => document.getElementById(id);
+    expect(pageKeypadTarget(document.body)).toBe(true);
+    expect(pageKeypadTarget(null)).toBe(true);
+    expect(pageKeypadTarget(at('text'))).toBe(true);
+    expect(pageKeypadTarget(at('b'))).toBe(true);
+    expect(pageKeypadTarget(at('ro'))).toBe(true);
+    for (const id of ['i', 't', 's', 'ce', 'd', 'm']) expect(pageKeypadTarget(at(id))).toBe(false);
+    document.body.innerHTML = '';
   });
 });
