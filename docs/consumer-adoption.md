@@ -469,7 +469,13 @@ row schemas, filtering and navigation; the library owns visual policy.
 `ComposerSurface` owns the full-width shelf background, insets, particle
 motion and readable composer width. Wrap the whole composer shelf, including
 any dock content; nested surfaces reuse their ancestor without doubling the
-background. `ChatPanel contentAlign="start"` aligns a conversation from the
+background. A folded composer (the `collapseWhenIdle` idle row, or
+`ContextComposer collapsible`'s explicit collapse) carries
+`data-composer-fold` (`idle` or `explicit`): select the resting composer with
+`[data-composer-fold]`, not `[data-composer-surface="collapsed"]` (the explicit
+fold only) nor `[data-collapsed="true"]` (headers and rails use it too). While
+its composer is folded a compact shelf pads 4px above and below instead of 8px.
+`ChatPanel contentAlign="start"` aligns a conversation from the
 top when a separate page composer owns the input; the default is end-aligned.
 Do not reproduce these rules with selectors targeting test IDs.
 

@@ -2163,7 +2163,10 @@ export declare interface RichChatComposerProps {
      * height (a slide stage); the dock stays pinned and grows upward. The idle
      * row is plain (`bg-surface`) even in Agent/Terminal: the console sky comes
      * with the caret, unless an enclosing console column is already painting
-     * one, in which case the row keeps that tint. Default off.
+     * one, in which case the row keeps that tint. The idle row carries
+     * `data-composer-fold="idle"` (and `data-collapsed="true"`). Escape in an
+     * empty prompt with no menu open releases the caret, so the row folds
+     * (2.515.4). Default off.
      */
     collapseWhenIdle?: boolean;
     /**

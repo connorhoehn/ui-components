@@ -460,6 +460,9 @@ describe('explicit composer collapse', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Collapse composer' }));
     const expand = screen.getByRole('button', { name: 'Expand composer' });
     expect(expand).toHaveAttribute('aria-expanded', 'false');
+    // One fold marker for both folds (2.515.4); the shelf attribute stays.
+    expect(expand).toHaveAttribute('data-composer-fold', 'explicit');
+    expect(expand).toHaveAttribute('data-composer-surface', 'collapsed');
     expect(expand).toHaveTextContent('1 attached');
     expect(screen.getByTestId('composer')).not.toBeVisible();
     expect(screen.queryByText('To: Initiative discussion')).toBeNull();

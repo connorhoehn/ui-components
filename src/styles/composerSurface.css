@@ -69,6 +69,12 @@
 }
 
 .uic-composer-surface[data-density="compact"] { padding-block: 8px; }
+/* A folded composer (2.515.4): the `collapseWhenIdle` idle row or the
+   explicit collapse, both marked `data-composer-fold`. Its row already carries
+   its own border, so the compact shelf's block padding folds to 4px: a 42px
+   idle row rests in a 50px shelf, not 58px. `--ui-composer-block-folded`
+   overrides it. The shelf opens back to 8px with the composer. */
+.uic-composer-surface[data-density="compact"]:has([data-composer-fold]) { padding-block: var(--ui-composer-block-folded,4px); }
 .uic-composer-surface [data-floating-composer-dock] {
   background: transparent;
   padding-top: 0;

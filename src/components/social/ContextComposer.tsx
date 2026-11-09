@@ -773,7 +773,7 @@ export function ContextComposerBase({
                 data-composer-readonly-allow={readOnlyOn ? 'Expand composer' : undefined}
                 aria-label="Expand composer" aria-expanded={false} aria-controls={disclosureId}
                 className="w-full justify-start gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm"
-                data-composer-surface="collapsed" data-testid={`${testId}-expand`}>
+                data-composer-surface="collapsed" data-composer-fold="explicit" data-testid={`${testId}-expand`}>
                 <span className="shrink-0 font-semibold">{mode === 'agent' ? 'Agent' : mode === 'chat' ? 'Chat' : mode === 'terminal' ? 'Terminal' : 'Search'}</span>
                 <span className="min-w-0 flex-1 truncate text-left font-normal text-text-secondary">{collapsedLabel || context.title || 'Write a message…'}</span>
                 {(draftText || draft?.files.length) ? <span className="shrink-0 text-xs text-text-secondary">Draft kept{draft?.files.length ? ` · ${draft.files.length} attached` : ''}</span> : null}

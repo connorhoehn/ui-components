@@ -29,6 +29,13 @@ describe('ComposerSurface overflow', () => {
     expect(block('.uic-composer-surface-content {')).toMatch(/box-sizing:\s*border-box/);
   });
 
+  // 2.515.4: a folded composer (idle row or explicit collapse, both
+  // `[data-composer-fold]`) rests in a 4px-padded compact shelf, not 8px.
+  it('compact folds its block padding to 4px while its composer is folded', () => {
+    expect(block('.uic-composer-surface[data-density="compact"] {')).toMatch(/padding-block:\s*8px/);
+    expect(block('.uic-composer-surface[data-density="compact"]:has([data-composer-fold]) {')).toMatch(/padding-block:\s*var\(--ui-composer-block-folded,\s*4px\)/);
+  });
+
   it('the starfield layers stay inside the box: no negative inset, no translating transform', () => {
     expect(css).not.toMatch(/inset:\s*-\d/);
     const drift = css.slice(css.indexOf('@keyframes composer-star-drift'), css.indexOf('@media (prefers-reduced-motion'));

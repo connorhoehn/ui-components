@@ -663,7 +663,10 @@ export interface RichChatComposerProps {
    * height (a slide stage); the dock stays pinned and grows upward. The idle
    * row is plain (`bg-surface`) even in Agent/Terminal: the console sky comes
    * with the caret, unless an enclosing console column is already painting
-   * one, in which case the row keeps that tint. Default off.
+   * one, in which case the row keeps that tint. The idle row carries
+   * `data-composer-fold="idle"` (and `data-collapsed="true"`). Escape in an
+   * empty prompt with no menu open releases the caret, so the row folds
+   * (2.515.4). Default off.
    */
   collapseWhenIdle?: boolean;
   /**
@@ -1590,6 +1593,31 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             // The chat convention: Shift+Enter is the newline.
             'Shift-Enter': ({ editor: e }) => e.commands.setHardBreak(),
           };
+        },
+        // Escape on an EMPTY prompt releases the caret (2.515.4): the editor
+        // blurs, so the idle rule (`collapseWhenIdle`, or a host's own) folds
+        // the composer. Escape used to do nothing here, which left a host no
+        // way to fold on it. Not taken: a menu open (its suggestion plugin
+        // consumes Escape, and an open menu means a typed trigger, so the
+        // prompt is not empty anyway), words in the prompt (Escape must never
+        // cost a draft its caret), an IME composition (Escape cancels it), or
+        // an event already handled (the prompt deck takes Escape at the
+        // document first). The key is never prevented: a dialog the composer
+        // sits in still sees it.
+        addProseMirrorPlugins() {
+          return [new Plugin({
+            key: new PluginKey('chatComposerEscape'),
+            props: {
+              handleKeyDown: (view, event) => {
+                if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return false;
+                // Empty: one block holding nothing (no text, mention or break).
+                const { doc } = view.state;
+                if (doc.childCount !== 1 || doc.firstChild!.childCount !== 0) return false;
+                (view.dom as HTMLElement).blur();
+                return false;
+              },
+            },
+          })];
         },
       }),
     ];
@@ -2526,6 +2554,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         ref={rootRef}
         data-density={density}
         data-collapsed={collapseWhenIdle ? (collapsed ? 'true' : 'false') : undefined}
+        // The fold marker hosts select (2.515.4): `idle` on this row,
+        // `explicit` on ContextComposer's collapse button. One attribute for
+        // both folds, and not `data-composer-surface`, which marks the shelf
+        // (a second one inside a shelf reads as a nested shelf).
+        data-composer-fold={collapsed ? 'idle' : undefined}
         onFocusCapture={(event: ReactFocusEvent<HTMLDivElement>) => {
           if (blurTimer.current !== null) { clearTimeout(blurTimer.current); blurTimer.current = null; }
           setFocusWithin(true);

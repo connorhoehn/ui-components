@@ -1,3 +1,9 @@
+## 2.515.4
+
+- The composer's fold marker: the `collapseWhenIdle` idle row (`RichChatComposer` root) carries `data-composer-fold="idle"` and `ContextComposer collapsible`'s explicit collapse button `data-composer-fold="explicit"`, so `[data-composer-fold]` finds the resting composer whichever fold it is. The idle row does not take `data-composer-surface="collapsed"`: that attribute marks the shelf, and a second one inside a `ComposerSurface` is what an audit's nested-shelf rule (`[data-composer-surface] [data-composer-surface]`, expected 0) counts. The explicit button keeps it for hosts that select it today; `data-collapsed` is unchanged.
+- `ComposerSurface compact` folds its block padding from 8px to 4px while its composer is folded (`:has([data-composer-fold])`; override with `--ui-composer-block-folded`), so a 42px idle row rests in a 50px shelf instead of 58px. Comfortable density is unchanged.
+- `RichChatComposer`: Escape in an empty prompt with no menu open releases the caret (the editor blurs), so the idle rule folds the composer. With words in the prompt, a menu open, an IME composition, or the key already handled (the prompt deck's Escape), nothing changes. The key is never prevented, so an enclosing dialog still sees it.
+
 ## 2.515.3
 
 - `Select` (voice lane): the popup is at least as wide as its trigger (`min-width` = trigger width, `width: max-content`, `max-width` = viewport less 8px gutters; it used to be at least 160px and left-aligned, so a narrow trigger at a card's edge opened a wider panel that hung past it) and is right-aligned inside the gutters when it would overhang. It reads the host's `--shell-collaboration-floor` (the footer bar and any call panel) as the bottom edge, so it flips above the trigger, or fits its height, rather than running under the footer. Its z-index is the token `--ui-z-popover` (default 10100).

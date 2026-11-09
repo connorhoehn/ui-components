@@ -9,7 +9,7 @@ import { t as re } from "./QuoteBlock-Dks53Idi.js";
 import { i as ie } from "./composerSendError-vB7M56RD.js";
 import { a as ae, i as oe, r as c } from "./composerContext-BLn1-Nao.js";
 import { i as se, t as ce } from "./FloatingComposerDock-DbxmNCal.js";
-import { r as le } from "./RichChatComposer-CyqVc87X.js";
+import { r as le } from "./RichChatComposer-DZL8D7JV.js";
 import { useCallback as l, useId as ue, useMemo as de, useRef as u, useState as d } from "react";
 import { Fragment as f, jsx as p, jsxs as m } from "react/jsx-runtime";
 //#region src/components/social/ContextComposer.tsx
@@ -301,6 +301,7 @@ function _({ look: e, context: c, mode: h, defaultMode: ge, onModeChange: g, mod
 					"aria-controls": V,
 					className: "w-full justify-start gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm",
 					"data-composer-surface": "collapsed",
+					"data-composer-fold": "explicit",
 					"data-testid": `${N}-expand`,
 					children: [
 						/* @__PURE__ */ p("span", {

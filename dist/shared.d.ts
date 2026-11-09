@@ -2487,7 +2487,9 @@ export declare interface ComposerSuggestion {
 }
 
 /** The full-width composer shelf. Owns backdrop, insets and readable width.
- * Nested composers reuse their containing shelf rather than painting twice. */
+ * Nested composers reuse their containing shelf rather than painting twice.
+ * `compact` pads 8px above and below, 4px while its composer is folded
+ * (`[data-composer-fold]`: the idle row or the explicit collapse). */
 export declare function ComposerSurface({ children, className, compact, ...rest }: HTMLAttributes<HTMLDivElement> & {
     compact?: boolean;
 }): JSX.Element;
