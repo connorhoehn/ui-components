@@ -5750,7 +5750,7 @@ export declare function ItalicIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare const JOB_TOAST_DISMISS_MS = 8000;
 
-export declare function JobToast({ id, title, state, detail, progress, href, hrefLabel, exiting, onDismiss, onHoverChange, }: JobToastProps): JSX.Element;
+export declare function JobToast({ id, title, state, detail, progress, href, hrefLabel, onNavigate, exiting, onDismiss, onHoverChange, }: JobToastProps): JSX.Element;
 
 /**
  * A background job tracked by one toast. `toastJob` with an `id` it has not
@@ -5770,6 +5770,8 @@ export declare interface JobToastOptions {
     href?: string;
     /** Link text. Default "View". */
     hrefLabel?: string;
+    /** Routes the link in a SPA: called with the href and the click event, which is default-prevented. Without it the link is a plain anchor. */
+    onNavigate?: JobToastProps['onNavigate'];
     /** How long a done or failed toast stays after it settles. Default 8000. */
     dismissAfterMs?: number;
     /** Fires once when the job first reaches done or failed — mirror it into a notification center. */
@@ -5787,6 +5789,12 @@ export declare interface JobToastProps {
     href?: string;
     /** Link text. Default "View". */
     hrefLabel?: string;
+    /**
+     * Called when the link is activated (click or keyboard), with the href and the event.
+     * The link then does not navigate itself (the event is default-prevented), so a SPA
+     * host can route without a page reload. Without it the link is a plain anchor.
+     */
+    onNavigate?: (href: string, event: MouseEvent_2<HTMLAnchorElement>) => void;
     exiting?: boolean;
     onDismiss: (id: string) => void;
     onHoverChange?: (hovering: boolean) => void;

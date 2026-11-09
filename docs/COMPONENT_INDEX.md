@@ -303,7 +303,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ErrorState` | `@connorhoehn/ui-components/shared` | Centered error-state card — companion to EmptyState. | `shared-errorstate` |  |
 | `FollowBanner` | `@connorhoehn/ui-components/shared` | "Following <name>", and the way out. | `shared-followbanner` |  |
 | `InlineAlert` | `@connorhoehn/ui-components/shared` | Compact contextual message (error/success/info/warning). | `shared-inlinealert` |  |
-| `JobToast` | `@connorhoehn/ui-components/shared` | The visual of a keyed job toast (ToastProvider's `toastJob`): title, a state chip, optional detail, an optional progress bar, an optional link, and the same close button as Toast. | `shared-jobtoast` |  |
+| `JobToast` | `@connorhoehn/ui-components/shared` | The visual of a keyed job toast (ToastProvider's `toastJob`): title, a state chip, optional detail, an optional progress bar, an optional link (`onNavigate` routes it in a SPA), and the same close button as Toast. | `shared-jobtoast` |  |
 | `LoadingState` | `@connorhoehn/ui-components/shared` | Centered loading-state card — companion to EmptyState / ErrorState. | `shared-loadingstate` |  |
 | `NetworkErrorBoundary` | `@connorhoehn/ui-components/integrations/realtime-modules` | React error boundary specialised for real-time hook surfaces. | `integrations-networkerrorboundary` |  |
 | `NoAccessState` | `@connorhoehn/ui-components/shared` | — |  |  |
@@ -530,7 +530,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ViewerCount` | `@connorhoehn/ui-components/video` | How many people are watching, or nothing at all. | `video-viewercount` |  |
 | `VoiceActivityRing` | `@connorhoehn/ui-components/voice` | The "it is active" visualization for a voice session. |  |  |
 | `VoiceChoiceCard` | `@connorhoehn/ui-components/voice` | The answer to an `ambiguous` result. |  |  |
-| `VoiceConfirmCard` | `@connorhoehn/ui-components/voice` | The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel. |  |  |
+| `VoiceConfirmCard` | `@connorhoehn/ui-components/voice` | The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel, and an optional muted `hint` line under them. |  |  |
 | `VoiceDock` | `@connorhoehn/ui-components/voice` | The voice navigator's footer row. | `voice-voicedock` |  |
 | `VoicemailRecorder` | `@connorhoehn/ui-components/video` | The dialog a caller gets when nobody picked up. |  |  |
 | `VoiceTurnStrip` | `@connorhoehn/ui-components/voice` | What was said and what ran. |  |  |

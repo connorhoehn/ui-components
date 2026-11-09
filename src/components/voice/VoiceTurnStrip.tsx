@@ -42,6 +42,8 @@ export interface VoiceConfirmCardProps {
   pending: VoicePending;
   /** Handle Escape on the card itself. The dock turns this off: its popover already closes on Escape. Default true. */
   handleEscape?: boolean;
+  /** A muted one-line note under Confirm / Cancel; overrides `pending.hint`. Nothing renders without one. */
+  hint?: string;
   /** Focus the card when it mounts. Default true. */
   autoFocus?: boolean;
   className?: string;
@@ -49,7 +51,7 @@ export interface VoiceConfirmCardProps {
 }
 
 /**
- * The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel.
+ * The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel, and an optional muted `hint` line under them.
  * With `pending.fields` it also shows an approve / reject toggle and a one-line note, and
  * Confirm calls back with `{ decision, note }` (note trimmed, capped at 200 characters).
  * Remounts per request (`pending.requestId`, else `title`), so the note and toggle reset.
@@ -63,9 +65,12 @@ function VoiceConfirmCardBody({
   pending,
   handleEscape = true,
   autoFocus = true,
+  hint: hintProp,
   className,
   'data-testid': testId = 'voice-confirm-card',
 }: VoiceConfirmCardProps) {
+  const hint = hintProp ?? pending.hint;
+  const hintId = useId();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (autoFocus) ref.current?.focus();
@@ -136,8 +141,9 @@ function VoiceConfirmCardBody({
       ) : null}
       <Inline gap="sm" justify="end">
         <Button variant="secondary" size="sm" onClick={pending.onCancel} data-testid={`${testId}-cancel`}>Cancel</Button>
-        <Button variant="primary" size="sm" onClick={confirm} data-testid={`${testId}-confirm`}>Confirm</Button>
+        <Button variant="primary" size="sm" onClick={confirm} aria-describedby={hint ? hintId : undefined} data-testid={`${testId}-confirm`}>Confirm</Button>
       </Inline>
+      {hint ? <T size="xs" tone="secondary" as="p" id={hintId} className="truncate" data-testid={`${testId}-hint`}>{hint}</T> : null}
     </Stack>
   );
 }

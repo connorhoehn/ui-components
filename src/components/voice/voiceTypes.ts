@@ -59,6 +59,8 @@ export interface VoicePending {
   requestId?: string | number;
   /** One line of text, or a list of lines (an estimate, the fields a create will set). */
   detail?: string | string[];
+  /** A muted one-line note under Confirm / Cancel ("Say yes to confirm"). */
+  hint?: string;
   /** With `fields` set, an approve / reject toggle and a note input show. */
   fields?: VoiceConfirmFields;
   /** Called with `{ decision, note }` when `fields` is set, and with no argument otherwise. */

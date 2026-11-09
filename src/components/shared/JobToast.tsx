@@ -1,7 +1,8 @@
 // JobToast — the visual of a keyed job toast (ToastProvider's `toastJob`):
 // title, a state chip, optional detail, an optional progress bar, an optional
-// link, and the same close button as Toast. Render through `useToast().toastJob`.
+// link (`onNavigate` routes it in a SPA), and the same close button as Toast. Render through `useToast().toastJob`.
 
+import type { MouseEvent } from 'react';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import { cn } from '../../lib/cn';
 import Chip from './Chip';
@@ -23,6 +24,12 @@ export interface JobToastProps {
   href?: string;
   /** Link text. Default "View". */
   hrefLabel?: string;
+  /**
+   * Called when the link is activated (click or keyboard), with the href and the event.
+   * The link then does not navigate itself (the event is default-prevented), so a SPA
+   * host can route without a page reload. Without it the link is a plain anchor.
+   */
+  onNavigate?: (href: string, event: MouseEvent<HTMLAnchorElement>) => void;
   exiting?: boolean;
   onDismiss: (id: string) => void;
   onHoverChange?: (hovering: boolean) => void;
@@ -50,7 +57,7 @@ const ACCENT_BORDER: Record<JobToastState, string> = {
 };
 
 export function JobToast({
-  id, title, state, detail, progress, href, hrefLabel = 'View', exiting, onDismiss, onHoverChange,
+  id, title, state, detail, progress, href, hrefLabel = 'View', onNavigate, exiting, onDismiss, onHoverChange,
 }: JobToastProps) {
   const reduceMotion = usePrefersReducedMotion();
   const animationClass = reduceMotion
@@ -108,6 +115,7 @@ export function JobToast({
       {href && (
         <a
           href={href}
+          onClick={onNavigate ? (e) => { e.preventDefault(); onNavigate(href, e); } : undefined}
           data-testid="job-toast-link"
           className="text-xs font-semibold text-primary no-underline hover:underline self-start"
         >

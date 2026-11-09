@@ -62,16 +62,16 @@ var v = {
 	done: "border-l-success",
 	failed: "border-l-danger"
 };
-function x({ id: s, title: c, state: l, detail: u, progress: d, href: f, hrefLabel: h = "View", exiting: g, onDismiss: _, onHoverChange: x }) {
-	let S = e(), C = S ? "animate-none" : g ? "animate-[toast-fade-out_160ms_ease-in_forwards]" : "animate-[toast-slide-in_200ms_ease-out]", w = l === "queued" || l === "running";
+function x({ id: s, title: c, state: l, detail: u, progress: d, href: f, hrefLabel: h = "View", onNavigate: g, exiting: _, onDismiss: x, onHoverChange: S }) {
+	let C = e(), w = C ? "animate-none" : _ ? "animate-[toast-fade-out_160ms_ease-in_forwards]" : "animate-[toast-slide-in_200ms_ease-out]", T = l === "queued" || l === "running";
 	return /* @__PURE__ */ m(i, {
 		gap: "sm",
 		role: l === "failed" ? "alert" : "status",
 		"data-testid": `job-toast-${s}`,
 		"data-job-state": l,
-		onMouseEnter: () => x?.(!0),
-		onMouseLeave: () => x?.(!1),
-		className: t("bg-surface border border-border border-l-[3px] rounded-lg shadow-md", "px-4 py-3 min-w-[260px] max-w-[360px]", b[l], C, S && g && "opacity-0"),
+		onMouseEnter: () => S?.(!0),
+		onMouseLeave: () => S?.(!1),
+		className: t("bg-surface border border-border border-l-[3px] rounded-lg shadow-md", "px-4 py-3 min-w-[260px] max-w-[360px]", b[l], w, C && _ && "opacity-0"),
 		children: [
 			/* @__PURE__ */ m(a, {
 				wrap: !1,
@@ -98,7 +98,7 @@ function x({ id: s, title: c, state: l, detail: u, progress: d, href: f, hrefLab
 					}), /* @__PURE__ */ p("button", {
 						"data-ui-part": "",
 						"data-testid": "job-toast-close",
-						onClick: () => _(s),
+						onClick: () => x(s),
 						"aria-label": "Dismiss notification",
 						className: "text-base text-text-tertiary bg-transparent border-none cursor-pointer px-1 py-0 leading-none",
 						children: "×"
@@ -112,7 +112,7 @@ function x({ id: s, title: c, state: l, detail: u, progress: d, href: f, hrefLab
 				"data-testid": "job-toast-detail",
 				children: u
 			}),
-			w && typeof d == "number" && /* @__PURE__ */ p(r, {
+			T && typeof d == "number" && /* @__PURE__ */ p(r, {
 				value: Math.max(0, Math.min(100, d)),
 				size: "sm",
 				showRatio: !1,
@@ -121,6 +121,9 @@ function x({ id: s, title: c, state: l, detail: u, progress: d, href: f, hrefLab
 			}),
 			f && /* @__PURE__ */ p("a", {
 				href: f,
+				onClick: g ? (e) => {
+					e.preventDefault(), g(f, e);
+				} : void 0,
 				"data-testid": "job-toast-link",
 				className: "text-xs font-semibold text-primary no-underline hover:underline self-start",
 				children: h
@@ -228,6 +231,7 @@ function D({ children: e }) {
 					progress: e.job.progress,
 					href: e.job.href,
 					hrefLabel: e.job.hrefLabel,
+					onNavigate: e.job.onNavigate,
 					exiting: e.exiting,
 					onDismiss: b,
 					onHoverChange: (t) => v(e.id, t)
