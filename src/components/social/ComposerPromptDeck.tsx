@@ -27,12 +27,25 @@
 // message, its review and its done state — inside the same card, owning Enter,
 // Esc and every typed key; the deck only pages.
 //
+// Back (2.510.0): a prompt's `back` ({ label, onBack, disabledReason }) draws
+// a ghost Back in the card header — on a one-prompt deck too, where there is
+// no pager — and a `{ next }` follow-up without one gets a Back to the
+// question it followed. Alt+Backspace takes it while the input is empty.
+//
+// Prompt presentation (2.512.0): under a composer's `presentation="prompt"`
+// (read from `ComposerPresentationContext`) or the deck's own
+// `presentation="prompt"`, the answers are plain library Buttons — no
+// numbered keycaps — and there is no key-hint row; the keys still work. Facts
+// sit one per line, each clamped to one line with the full text on hover.
+// A choice / confirm card with `onDirection` takes the composer's typed words
+// as a direction (`answerDirection`): typing under a confirm card re-proposes.
+//
 // Markers: `data-composer-prompt-deck` on the deck (`expanded` | `collapsed`),
 // `data-composer-prompt` (the id) and `data-composer-prompt-kind` on the card,
 // `data-composer-prompt-option` on each answer — the DOM audit counts a page's
 // decisions by these, so a page that asks in a modal form instead is findable.
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { Textarea } from '../forms/Textarea';
@@ -40,6 +53,7 @@ import { Inline, Stack } from '../ui/Stack';
 import { Text } from '../shared/Text';
 import { DecisionPath } from '../shared/DecisionPath';
 import { ComposerConfirmFlow, type ComposerConfirmResult } from './ComposerConfirmFlow';
+import { ComposerPresentationContext, type ComposerPresentation } from './composerPresentation';
 import {
   activeIndex,
   answerForOption,
@@ -52,6 +66,7 @@ import {
   pendingPrompts,
   promptOptions,
   receiptFor,
+  takesDirection,
   takesTypedAnswer,
   type ComposerPrompt,
   type ComposerPromptAnswer,
@@ -92,6 +107,15 @@ export interface ComposerPromptDeckState {
   pick: (optionId: string) => Promise<boolean>;
   /** Answer the active text / number prompt with typed words. True when taken. */
   answerTyped: (raw: string) => Promise<boolean>;
+  /** The open card takes typed words as a direction (`ComposerPrompt.onDirection`). Since 2.512.0. */
+  direction: boolean;
+  /**
+   * Hand typed words under an open choice / confirm card to its
+   * `onDirection` (2.512.0). True when the host took them (the input
+   * clears); false — the words stay — on a refusal, an empty text, or a card
+   * without `onDirection` (which shows what the card takes as its error).
+   */
+  answerDirection: (raw: string) => Promise<boolean>;
   /**
    * Confirm the active compose prompt with its edited message (2.482.0). The
    * host's `{ error }` comes back for the flow to show; ok leaves the prompt on
@@ -102,6 +126,17 @@ export interface ComposerPromptDeckState {
   isFollowUp: boolean;
   /** Return to the question the active follow-up came from. False when it is a root prompt. */
   back: () => boolean;
+  /**
+   * The card header's Back (2.510.0): the active prompt's own `back`, else a
+   * follow-up's return to its question (not a compose follow-up: its flow
+   * has that Back). Null when the card has none.
+   */
+  backControl: { label: string; disabledReason?: string } | null;
+  /**
+   * Take the Back: the prompt's `onBack` (busy while it runs; a rejection is
+   * the card's error), else `back()`. True when it ran.
+   */
+  goBack: () => Promise<boolean>;
   /** Drop the active prompt after its done state, with no receipt. */
   finish: () => void;
   dismissReceipt: () => void;
@@ -250,6 +285,31 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
     return true;
   }, [active, parentId]);
 
+  const ownBack = active?.back;
+  const backControl = ownBack
+    ? { label: ownBack.label || 'Back', ...(ownBack.disabledReason ? { disabledReason: ownBack.disabledReason } : {}) }
+    : parentId != null && active?.kind !== 'compose' ? { label: 'Back' } : null;
+  const goBack = useCallback(async () => {
+    if (!active) return false;
+    const own = active.back;
+    if (!own) return active.kind !== 'compose' && back();
+    if (own.disabledReason || busyRef.current) return false;
+    busyRef.current = true;
+    setBusyId(active.id);
+    setErrors((prev) => { if (!(active.id in prev)) return prev; const { [active.id]: _gone, ...rest } = prev; return rest; });
+    try {
+      await own.onBack();
+      return true;
+    } catch (err) {
+      const message = err instanceof Error && err.message ? err.message : 'Could not go back. Try again.';
+      setErrors((prev) => ({ ...prev, [active.id]: message }));
+      return false;
+    } finally {
+      busyRef.current = false;
+      setBusyId(null);
+    }
+  }, [active, back]);
+
   const finish = useCallback(() => {
     if (!active) return;
     setAnswered((prev) => new Set(prev).add(active.id));
@@ -273,6 +333,45 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
     return answer(active, parsed.answer);
   }, [active, answer]);
 
+  const answerDirection = useCallback(async (raw: string) => {
+    const prompt = active;
+    const text = raw.trim();
+    if (!prompt || collapsed || !text || prompt.readOnlyReason || (prompt.kind !== 'choice' && prompt.kind !== 'confirm')) return false;
+    if (!prompt.onDirection) {
+      const fallback = defaultOption(prompt);
+      const message = fallback ? `Choose an answer, or press Enter on an empty box for ${fallback.label}.` : 'Choose one of the answers.';
+      setErrors((prev) => ({ ...prev, [prompt.id]: message }));
+      return false;
+    }
+    if (busyRef.current) return false;
+    busyRef.current = true;
+    setBusyId(prompt.id);
+    setErrors((prev) => { if (!(prompt.id in prev)) return prev; const { [prompt.id]: _gone, ...rest } = prev; return rest; });
+    let result: ComposerPromptResult;
+    try {
+      result = await prompt.onDirection(text);
+    } catch (err) {
+      result = { error: err instanceof Error && err.message ? err.message : 'That direction could not be taken. Try again.' };
+    } finally {
+      busyRef.current = false;
+      setBusyId(null);
+    }
+    if (isError(result)) {
+      setErrors((prev) => ({ ...prev, [prompt.id]: result.error }));
+      return false;
+    }
+    if (isNext(result)) {
+      setFollowUps((prev) => ({ ...prev, [prompt.id]: result.next }));
+      setAnswered((prev) => new Set(prev).add(prompt.id));
+      setActiveId(null);
+      return true;
+    }
+    // Nothing (or a receipt): the card stays; the host re-proposes by
+    // replacing the prompt in its queue.
+    if (result && 'receipt' in result) setReceipt(result.receipt);
+    return true;
+  }, [active, collapsed]);
+
   const page = useCallback((delta: 1 | -1) => {
     if (!pending.length) return;
     const next = (index + delta + pending.length) % pending.length;
@@ -293,9 +392,13 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
     page,
     pick,
     answerTyped,
+    direction: !collapsed && takesDirection(active),
+    answerDirection,
     answerCompose,
     isFollowUp: parentId != null,
     back,
+    backControl,
+    goBack,
     finish,
     dismissReceipt: () => setReceipt(null),
   };
@@ -316,6 +419,14 @@ export interface ComposerPromptDeckProps {
    * under it, the input below it in the same card. Since 2.446.0.
    */
   variant?: 'card' | 'inset';
+  /**
+   * `card` (default): numbered keycaps on the answers and a key-hint row.
+   * `prompt` (2.512.0): plain Buttons and no hint row (the keys still work),
+   * facts one per line clamped to one line. Defaults to the enclosing
+   * composer's presentation (`ComposerPresentationContext`), else `card`.
+   * `data-presentation` on the deck root.
+   */
+  presentation?: ComposerPresentation;
   className?: string;
   'data-testid'?: string;
 }
@@ -345,8 +456,11 @@ function modKey(): string {
 // inside itself, and the content column above keeps the rest.
 const DECK_MAX = 'max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain';
 
-export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = null, variant = 'card', className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
+export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = null, variant = 'card', presentation: presentationProp, className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
   const inset = variant === 'inset';
+  const enclosing = useContext(ComposerPresentationContext);
+  const presentation: ComposerPresentation = presentationProp ?? enclosing ?? 'card';
+  const plain = presentation === 'prompt';
   const own = useComposerPromptDeck(deckProp ? null : prompts, { scope });
   const deck = deckProp ?? own;
   const root = useRef<HTMLElement | null>(null);
@@ -394,12 +508,13 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
       if (!inDeck && !inInput) return;
       const action = deckKeyAction(
         { key: event.key, altKey: event.altKey, ctrlKey: event.ctrlKey, metaKey: event.metaKey, shiftKey: event.shiftKey, code: event.code },
-        { prompt: d.active, collapsed: d.collapsed, inputEmpty: i ? i.isEmpty() : !answerRef.current?.value.trim(), inDeck: inDeck && !inAnswer, busy: d.busy },
+        { prompt: d.active, collapsed: d.collapsed, inputEmpty: i ? i.isEmpty() : !answerRef.current?.value.trim(), inDeck: inDeck && !inAnswer, busy: d.busy, canBack: !!d.backControl && !d.backControl.disabledReason },
       );
       if (!action) return;
       event.preventDefault();
       event.stopPropagation();
       if (action.type === 'page') d.page(action.delta);
+      else if (action.type === 'back') void d.goBack();
       else if (action.type === 'collapse') { d.setCollapsed(true); i?.focus(); }
       else if (action.type === 'expand') d.setCollapsed(false);
       else void d.pick(action.optionId).then((ok) => { if (ok) i?.focus(); });
@@ -423,7 +538,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
 
   if (!active || collapsed) {
     return (
-      <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border px-3 py-1.5', className)} data-composer-prompt-deck={active ? 'collapsed' : 'answered'} data-deck-variant={variant} data-testid={testId} ref={root}>
+      <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border px-3 py-1.5', className)} data-composer-prompt-deck={active ? 'collapsed' : 'answered'} data-deck-variant={variant} data-presentation={presentation} data-testid={testId} ref={root}>
         {active && (
           <Inline gap="sm" align="center" wrap className={cn('min-w-0', !inset && 'rounded-md border border-border bg-surface-secondary px-3 py-1.5')}>
             <Text size="xs" tone="secondary" wrap className="min-w-0 flex-1">
@@ -432,7 +547,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
             <Button variant="link" size="sm" onClick={() => deck.setCollapsed(false)} aria-keyshortcuts="Control+ArrowDown Meta+ArrowDown" data-composer-readonly-allow="Shows the prompt's existing facts without changing a record or submitting an answer" data-testid={`${testId}-show`}>
               Show
             </Button>
-            <Keycap>{`${mod}↓`}</Keycap>
+            {!plain && <Keycap>{`${mod}↓`}</Keycap>}
           </Inline>
         )}
         {receiptRow}
@@ -451,11 +566,12 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
     options.length ? `${typed ? 'Alt+' : ''}${optionKeys.filter(Boolean).length > 1 ? `${optionKeys[0]}–${optionKeys[optionKeys.length - 1]}` : optionKeys[0] ?? ''} choose` : null,
     typed ? 'type an answer · Enter answer' : fallback ? `Enter ${fallback.label}` : null,
     count > 1 ? `${mod}↓ next` : null,
+    deck.backControl && !deck.backControl.disabledReason ? `Alt+⌫ ${deck.backControl.label}` : null,
     'Esc hide',
   ].filter(Boolean).join(' · ');
 
   return (
-    <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border', className)} data-composer-prompt-deck="expanded" data-composer-dialogue={input ? undefined : active.kind} data-deck-variant={variant} data-testid={testId} ref={root}>
+    <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border', className)} data-composer-prompt-deck="expanded" data-composer-dialogue={input ? undefined : active.kind} data-deck-variant={variant} data-presentation={presentation} data-testid={testId} ref={root}>
       <section
         data-ui-part=""
         role="group"
@@ -473,6 +589,18 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
             {active.eyebrow && <Text size="xs" tone="tertiary" className="truncate">{active.eyebrow}</Text>}
             <Text as="p" size="sm" weight="semibold" tone="primary" className="min-w-0 truncate" id={titleId} title={active.title}>{active.title}</Text>
           </Stack>
+          {deck.backControl && (
+            <Button variant="ghost" size="sm" className="shrink-0"
+              aria-keyshortcuts="Alt+Backspace"
+              disabled={busy || !!deck.backControl.disabledReason}
+              title={deck.backControl.disabledReason}
+              onClick={() => { void deck.goBack(); }}
+              data-composer-prompt-back=""
+              data-composer-readonly-allow="Returns to the previous step without submitting an answer"
+              data-testid={`${testId}-back`}>
+              {deck.backControl.label}
+            </Button>
+          )}
           {count > 1 && (
             <Inline gap="xs" align="center" wrap={false} className="shrink-0">
               <Text size="xs" tone="secondary" tabular data-testid={`${testId}-position`}>{`${index + 1} of ${count}`}</Text>
@@ -491,7 +619,21 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
           </Inline>
         )}
 
-        {active.fields && active.fields.length > 0 && (
+        {active.fields && active.fields.length > 0 && plain && (
+          // Prompt presentation: one fact per line, never a paragraph — a long
+          // value is clamped to one line and keeps its full text on hover.
+          <dl className="m-0 flex min-w-0 flex-col gap-0.5" data-testid={`${testId}-fields`}>
+            {active.fields.map((field, i) => (
+              <div key={`${field.label}-${i}`} className="flex min-w-0 items-baseline gap-2" data-composer-prompt-field="">
+                <dt className="m-0 shrink-0 text-xs font-normal text-text-tertiary">{field.label}</dt>
+                <dd className={cn('m-0 min-w-0 flex-1 truncate text-xs font-normal', FIELD_TONE[field.tone ?? 'neutral'], field.mono && 'tabular-nums')}
+                  {...(typeof field.value === 'string' || typeof field.value === 'number' ? { title: String(field.value) } : {})}>{field.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        {active.fields && active.fields.length > 0 && !plain && (
           // Facts flow in a wrapping row, each as wide as its value (a repo, a
           // forecast range) up to the card: nothing is clipped, a long value wraps.
           <dl className="m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5" data-testid={`${testId}-fields`}>
@@ -552,7 +694,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
                     data-default={fallback?.id === option.id || undefined}
                     data-testid={`${testId}-option-${option.id}`}
                   >
-                    {shortcut && <Keycap>{shortcut}</Keycap>}
+                    {shortcut && !plain && <Keycap>{shortcut}</Keycap>}
                     {option.label}
                   </Button>
                   {option.hint && <Text size="xs" tone="tertiary" className="hidden" id={`${baseId}-hint-${i}`}>{option.hint}</Text>}
@@ -580,7 +722,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
 
         {error && !compose && <Text as="p" size="xs" wrap role="alert" className="text-danger-fg" data-testid={`${testId}-error`}>{error}</Text>}
         {busy && !compose && <Text as="p" size="xs" tone="secondary" role="status" data-testid={`${testId}-busy`}>Working…</Text>}
-        {!active.readOnlyReason && !compose && <Text as="p" size="xs" tone="tertiary" wrap className="min-w-0" data-testid={`${testId}-keys`}>{keyHint}</Text>}
+        {!plain && !active.readOnlyReason && !compose && <Text as="p" size="xs" tone="tertiary" wrap className="min-w-0" data-testid={`${testId}-keys`}>{keyHint}</Text>}
       </section>
       {receiptRow}
     </Stack>

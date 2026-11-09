@@ -4,6 +4,7 @@ import { StatusPill, type StatusPillProps, type StatusPillTone } from './StatusP
 import { InlinePopover } from './InlinePopover';
 import { MessageActionBar, type MessageAction } from '../social/MessageActionBar';
 import { Button } from '../ui/Button';
+import { ImageIcon } from '../ui/Icons';
 import type { ToneOrAlias } from './tones';
 import { cn } from '../../lib/cn';
 
@@ -23,11 +24,20 @@ export interface GalleryAsset {
   src?: string;
   subtitle?: string;
   /**
-   * Shown on the card, over the thumbnail's top-left corner: StatusPill props
-   * (rendered as a md StatusPill, 12px: the sm size is 10px, under the type floor) or any node. The card's button is
-   * described by it, so a screen reader hears "Inspect Cup, Needs review".
+   * Shown on the card: StatusPill props (rendered at md, 12px: the sm size is
+   * 10px, under the type floor) or any node. `images`: a pill over the
+   * thumbnail's top-left corner. `avatars` (2.512.0): the caption's first
+   * line under the tile — a tone dot and the full label, never truncated
+   * (an 88px tile cut "Candidate" to "C."). The card's button is described
+   * by it, so a screen reader hears "Inspect Cup, Needs review".
    */
   status?: GalleryAssetStatus | ReactNode;
+  /**
+   * With no `src` (2.512.0): the tile shows a library empty tile — the muted
+   * surface, an image glyph and this text ("No picture yet") — instead of the
+   * Avatar's initials or the "No image yet" line. Both variants.
+   */
+  placeholder?: string;
 }
 
 /** One icon action on a tile — the chat hover toolbar's action shape. Since 2.504.0. */
@@ -79,10 +89,21 @@ function isStatusProps(status: unknown): status is GalleryAssetStatus {
 /** Library tones StatusPill has no spelling for, folded onto the nearest pill tone. */
 const PILL_TONE: Partial<Record<string, StatusPillTone>> = { caution: 'warning', accent: 'info', purple: 'info' };
 
-function StatusPillFor({ status }: { status: GalleryAssetStatus }) {
+function StatusPillFor({ status, caption = false }: { status: GalleryAssetStatus; caption?: boolean }) {
   const { tone, ...rest } = status as { tone?: string; state?: StatusPillTone; label: string; meta?: string };
   const pillTone = tone == null ? undefined : (PILL_TONE[tone] ?? (tone as StatusPillTone));
-  return <StatusPill size="md" {...rest} {...(pillTone ? { tone: pillTone } : {})} />;
+  // Under an avatar tile the status is a caption line: dot + the whole label.
+  return <StatusPill size="md" {...rest} {...(pillTone ? { tone: pillTone } : {})} {...(caption ? { variant: 'text' as const, truncate: false } : {})} />;
+}
+
+/** A tile with no picture yet: the muted surface, an image glyph and the host's words. */
+function EmptyTile({ text, variant }: { text: string; variant: 'avatars' | 'images' }) {
+  return (
+    <span data-gallery-placeholder="" className="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-center text-xs text-text-tertiary">
+      <ImageIcon size={variant === 'avatars' ? 20 : 24} aria-hidden />
+      <span className="leading-tight">{text}</span>
+    </span>
+  );
 }
 
 interface AssetCardProps extends Omit<AssetGalleryProps, 'items' | 'label' | 'className' | 'tileActions'> {
@@ -99,6 +120,9 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
   const status = item.status;
   const hasStatus = status != null && status !== false && status !== '';
   const hasActions = !!tileActions && tileActions.length > 0;
+  const captionStatus = hasStatus && variant === 'avatars';
+  const statusNode = hasStatus ? (isStatusProps(status) ? <StatusPillFor status={status} caption={captionStatus} /> : status) : null;
+  const empty = !item.src && item.placeholder ? <EmptyTile text={item.placeholder} variant={variant} /> : null;
   const menu = hasActions && !!menuOnSelect;
   const openMenu = () => { if (hasActions) setMenuOpen(true); };
   const run = (action: GalleryTileAction) => { setMenuOpen(false); action.onClick(tile.current ?? document.body); tile.current?.focus(); };
@@ -123,16 +147,22 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
         className="block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         <span data-gallery-thumbnail className={cn('flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover', variant === 'images' && 'aspect-[4/3]')}>
-          {variant === 'avatars' ? <Avatar name={item.title} src={item.src} size={88} /> : item.src ? <img draggable={false} src={item.src} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <span className="text-xs text-text-secondary">{hasStatus ? 'No image yet' : 'Image unavailable'}</span>}
+          {empty ?? (variant === 'avatars' ? <Avatar name={item.title} src={item.src} size={88} /> : item.src ? <img draggable={false} src={item.src} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <span className="text-xs text-text-secondary">{hasStatus ? 'No image yet' : 'Image unavailable'}</span>)}
         </span>
+        {/* Avatars: the status is the caption's first line, whole. Inside the
+            button only so it sits between the tile and the title; the button's
+            aria-label still names it and aria-describedby reads the status. */}
+        {captionStatus && (
+          <span id={statusId} data-gallery-status="caption" className="mt-1 flex min-w-0">{statusNode}</span>
+        )}
         <span className="mt-1 block truncate text-sm font-medium text-text-primary" title={item.title}>{item.title}</span>
         {item.subtitle && <span className="block truncate text-xs text-text-secondary" title={item.subtitle}>{item.subtitle}</span>}
       </button>
       {/* Outside the button: its aria-label would otherwise swallow the
           status text. Pointer events pass through to the card. */}
-      {hasStatus && (
-        <span id={statusId} data-gallery-status className="pointer-events-none absolute left-2 top-2 max-w-[calc(100%-1rem)]">
-          {isStatusProps(status) ? <StatusPillFor status={status} /> : status}
+      {hasStatus && !captionStatus && (
+        <span id={statusId} data-gallery-status="" className="pointer-events-none absolute left-2 top-2 max-w-[calc(100%-1rem)]">
+          {statusNode}
         </span>
       )}
       {hasActions && (

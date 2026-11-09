@@ -77,8 +77,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     if (!matches(actual, wanted, rule.tolerance ?? tolerance)) add(rule, el, property, wanted, actual);
   };
   const PLACEHOLDER_REASON = /^(?:todo|tbd|n\/?a|none|null|undefined|exempt|not applicable|coming soon|[-?.…]+)[.!?]*$/i;
-  // The URL a reader would share: path and query, never a hash or the origin.
-  const urlKey = href => { try { const u = new URL(href); return u.pathname + u.search; } catch { return String(href); } };
+  // The URL a reader would share, without the origin: path, query and hash.
+  // Hash routers (`#/work?item=…`) move only the fragment, and that is still
+  // a routed record.
+  const urlKey = href => { try { const u = new URL(href); return u.pathname + u.search + u.hash; } catch { return String(href); } };
   // Ink: where a reader actually sees something — visible text runs, images,
   // icons and canvases — never a padded wrapper's box. Used by the gutter,
   // row-start and sparse-row rules so full-bleed rows and hover surfaces are
@@ -1806,6 +1808,92 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           const ratio = Math.round(length / innerHeight * 100) / 100;
           samples.push({ rule: rule.id, selector: selectorOf(column), property: 'content height / viewport', actual: ratio, expected: { max: maxRatio } });
           if (ratio > maxRatio + 0.01) add(rule, column, 'content height / viewport', `<= ${maxRatio} viewports at rest (move secondary groups behind tabs or a master-detail split)`, `${ratio} (${Math.round(length)}px in a ${innerHeight}px viewport)`);
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'row-actions-aligned') {
+        // Row actions in one column (row.actions-aligned): within one row list
+        // (GroupedList, ActionRowList), every row's own buttons end at one x
+        // and every button there is one height. A list in the shared-columns
+        // layout (`columnsLayout`, GroupedList trailingLayout="columns") must
+        // keep its actions (and trailing) cells' right edges within tolerance;
+        // a list without it whose rows' actions differ in width or end at
+        // different x fails with the fix named. Cells wrapped under their
+        // row's title (a narrow list) are not judged for edges.
+        const tol = rule.tolerance ?? tolerance;
+        const cellSel = css(rule.cells ?? '[data-ui-part="row-actions"]'), trailSel = rule.trailing ? css(rule.trailing) : null;
+        const mainSel = css(rule.main ?? '[data-ui-row-main]'), controlSel = css(rule.controls ?? 'button, a[href], [role="button"]');
+        const columnsSel = css(rule.columnsLayout ?? '[data-row-actions-layout="columns"]');
+        const listSel = css(rule.selector);
+        let measured = 0;
+        const ownCells = (list, sel) => [...list.querySelectorAll(sel)].filter(c => visible(c) && c.closest(listSel) === list);
+        const wrapped = cell => {
+          const row = cell.closest('li') ?? cell.parentElement;
+          const main = row?.querySelector(mainSel);
+          return !!main && visible(main) && cell.getBoundingClientRect().top >= main.getBoundingClientRect().bottom - tol;
+        };
+        const controlsOf = cell => [...cell.querySelectorAll(controlSel)].filter(c => { if (!visible(c)) return false; const outer = c.parentElement?.closest(controlSel); return !outer || !cell.contains(outer); });
+        const inkOf = cell => {
+          const parts = controlsOf(cell);
+          const boxes = (parts.length ? parts : [...cell.children].filter(visible)).map(el => el.getBoundingClientRect());
+          if (!boxes.length) return null;
+          return { left: Math.min(...boxes.map(b => b.left)), right: Math.max(...boxes.map(b => b.right)) };
+        };
+        const spread = values => values.length ? Math.max(...values) - Math.min(...values) : 0;
+        for (const list of nodes) {
+          const cells = ownCells(list, cellSel);
+          if (!cells.length) continue;
+          measured++;
+          const columnsMode = list.matches(columnsSel);
+          // One height: every control in every actions cell of the list.
+          const controls = cells.flatMap(controlsOf);
+          const heights = controls.map(c => round(c.getBoundingClientRect().height));
+          samples.push({ rule: rule.id, selector: selectorOf(list), property: 'row action heights', actual: [...new Set(heights)], expected: 'one height' });
+          if (spread(heights) > tol) {
+            const odd = controls[heights.findIndex(h => h !== heights[0])] ?? controls[0];
+            add(rule, odd, 'row action height', `one height for every row action (Button size="sm"${columnsMode ? '' : '; the columns layout sets it'})`, `${[...new Set(heights)].join(' / ')}px across ${controls.length} controls`);
+          }
+          const flat = cells.filter(c => !wrapped(c));
+          if (flat.length < 2) continue;
+          const ink = flat.map(inkOf);
+          const rights = ink.filter(Boolean).map(b => round(b.right)), widths = ink.filter(Boolean).map(b => round(b.right - b.left));
+          samples.push({ rule: rule.id, selector: selectorOf(list), property: 'row actions right edges', actual: [...new Set(rights)], expected: `within ${tol}px`, layout: columnsMode ? 'columns' : 'inline' });
+          if (columnsMode) {
+            if (spread(rights) > tol) {
+              const far = flat[rights.indexOf(Math.min(...rights))];
+              add(rule, far, 'row actions right edge', `within ${tol}px of the list's other rows (right-aligned in the shared actions column)`, `right edges ${Math.min(...rights)}–${Math.max(...rights)}px across ${flat.length} rows`);
+            }
+            if (trailSel) {
+              const trail = ownCells(list, trailSel).map(c => round(c.getBoundingClientRect().right));
+              if (trail.length >= 2 && spread(trail) > tol) add(rule, list, 'row trailing right edge', `within ${tol}px down the list (right-aligned trailing column)`, `right edges ${Math.min(...trail)}–${Math.max(...trail)}px`);
+            }
+          }
+          else if (spread(widths) > tol || spread(rights) > tol) {
+            add(rule, list, 'row actions layout', 'one actions column down the list: use the columns layout (GroupedList trailingLayout="columns")', `${flat.length} rows' actions are ${Math.min(...widths)}–${Math.max(...widths)}px wide and end ${Math.min(...rights)}–${Math.max(...rights)}px (a ragged right edge)`);
+          }
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'image-whole-visible') {
+        // A review subject shown whole (image.whole-visible): an image a reader
+        // judges (an ImageCompare frame, any `data-review-subject`) whose box
+        // aspect differs from the picture's own by more than `maxAspectDelta`
+        // must letterbox (`object-fit: contain`), never crop (`cover`), stretch
+        // (`fill`) or overflow (`none`). Images not loaded yet are skipped.
+        const maxDelta = rule.maxAspectDelta ?? 0.02, whole = rule.fits ?? ['contain', 'scale-down'];
+        let measured = 0;
+        for (const frame of nodes) {
+          const imgs = (frame.matches('img') ? [frame] : [...frame.querySelectorAll('img')]).filter(img => visible(img) && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0);
+          for (const img of imgs) {
+            measured++;
+            const b = img.getBoundingClientRect(), s = cs(img);
+            const boxW = b.width - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight) - parseFloat(s.borderLeftWidth) - parseFloat(s.borderRightWidth);
+            const boxH = b.height - parseFloat(s.paddingTop) - parseFloat(s.paddingBottom) - parseFloat(s.borderTopWidth) - parseFloat(s.borderBottomWidth);
+            if (boxW <= 0 || boxH <= 0) continue;
+            const delta = Math.abs((boxW / boxH) / (img.naturalWidth / img.naturalHeight) - 1);
+            samples.push({ rule: rule.id, selector: selectorOf(img), property: 'object-fit / aspect delta', actual: `${s.objectFit} / ${Math.round(delta * 1000) / 1000}`, expected: `contain when delta > ${maxDelta}` });
+            if (delta > maxDelta && !whole.includes(s.objectFit)) add(rule, img, 'object-fit', `contain (a review subject is shown whole: ImageCompare fit="contain")`, `${s.objectFit}: a ${img.naturalWidth}×${img.naturalHeight} picture in a ${Math.round(boxW)}×${Math.round(boxH)} box (aspect off by ${Math.round(delta * 100)}%)`);
+          }
         }
         coverage.at(-1).matched = measured;
       }

@@ -5,10 +5,10 @@ import { P as o } from "./Icons-CqVFbuiZ.js";
 import { a as s, i as c, t as l, u } from "./MediaIcons-_ai5Til2.js";
 import { t as d } from "./Input-DiOEvL5h.js";
 import { t as f } from "./InlinePopover-BQTS5egk.js";
-import { t as p } from "./Switch-CRiY_kzy.js";
-import { t as m } from "./DotMeter-DJzl5dNX.js";
-import { t as h } from "./SegmentedControl-DMudc23g.js";
-import { t as g } from "./StatusPill-CoaiP2Bt.js";
+import { t as p } from "./SegmentedControl-DMudc23g.js";
+import { t as m } from "./StatusPill-CiOnb5N4.js";
+import { t as h } from "./Switch-CRiY_kzy.js";
+import { t as g } from "./DotMeter-DJzl5dNX.js";
 import { useCallback as _, useEffect as v, useId as y, useRef as b, useState as x } from "react";
 import { jsx as S, jsxs as C } from "react/jsx-runtime";
 //#region src/components/voice/voiceTypes.ts
@@ -104,13 +104,13 @@ function M(e) {
 	return /* @__PURE__ */ S(N, { ...e }, t.requestId ?? t.title);
 }
 function N({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1, className: l, "data-testid": u = "voice-choice-card" }) {
-	let d = b(null), f = a.candidates.slice(0, 10), p = f.length, m = (e) => typeof e == "number" && Number.isInteger(e) && e >= 1 && e <= p, [h, _] = x(m(a.ordinal) ? a.ordinal - 1 : 0);
+	let d = b(null), f = a.candidates.slice(0, 10), p = f.length, h = (e) => typeof e == "number" && Number.isInteger(e) && e >= 1 && e <= p, [g, _] = x(h(a.ordinal) ? a.ordinal - 1 : 0);
 	v(() => {
 		s && d.current?.focus();
 	}, [s]);
 	let y = b(void 0), w = b(a.onChoose);
 	w.current = a.onChoose, v(() => {
-		if (!m(a.ordinal)) {
+		if (!h(a.ordinal)) {
 			y.current = void 0;
 			return;
 		}
@@ -129,8 +129,8 @@ function N({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1
 		"aria-label": `Choose: ${a.title}`,
 		onKeyDown: (e) => {
 			if (e.key === "Escape" && o) e.stopPropagation(), a.onCancel();
-			else if (e.key === "ArrowDown" || e.key === "ArrowRight") e.preventDefault(), T(h + 1);
-			else if (e.key === "ArrowUp" || e.key === "ArrowLeft") e.preventDefault(), T(h - 1);
+			else if (e.key === "ArrowDown" || e.key === "ArrowRight") e.preventDefault(), T(g + 1);
+			else if (e.key === "ArrowUp" || e.key === "ArrowLeft") e.preventDefault(), T(g - 1);
 			else if ((e.key === "Enter" || e.key === " ") && e.target instanceof HTMLElement && e.target.dataset.part === "row") e.preventDefault(), a.onChoose(Number(e.target.dataset.ordinal) - 1);
 			else if (/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
 				let t = e.key === "0" ? 10 : Number(e.key);
@@ -153,7 +153,7 @@ function N({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1
 				role: "listbox",
 				"aria-label": a.title,
 				children: f.map((t, o) => {
-					let s = o === h;
+					let s = o === g;
 					return /* @__PURE__ */ C("div", {
 						role: "option",
 						"aria-selected": s,
@@ -186,7 +186,7 @@ function N({ choice: a, handleEscape: o = !0, autoFocus: s = !0, compact: c = !1
 									tone: "primary",
 									className: "min-w-0 truncate",
 									children: t.title
-								}), t.kind ? /* @__PURE__ */ S(g, {
+								}), t.kind ? /* @__PURE__ */ S(m, {
 									size: "sm",
 									tone: "neutral",
 									label: t.kind
@@ -238,9 +238,9 @@ function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, 
 	v(() => {
 		s && u.current?.focus();
 	}, [s]);
-	let { fields: f } = a, [p, m] = x(f?.decision ?? "approve"), [g, _] = x(""), y = () => {
+	let { fields: f } = a, [m, h] = x(f?.decision ?? "approve"), [g, _] = x(""), y = () => {
 		f ? a.onConfirm({
-			decision: p,
+			decision: m,
 			note: g.trim().slice(0, 200).trim()
 		}) : a.onConfirm();
 	}, w = (e) => {
@@ -283,13 +283,13 @@ function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, 
 			}) : null,
 			f ? /* @__PURE__ */ C(n, {
 				gap: "xs",
-				children: [/* @__PURE__ */ S(h, {
+				children: [/* @__PURE__ */ S(p, {
 					size: "sm",
 					tone: "accent",
 					"aria-label": "Decision",
 					options: P,
-					value: p,
-					onChange: (e) => m(e),
+					value: m,
+					onChange: (e) => h(e),
 					"data-testid": `${l}-decision`
 				}), /* @__PURE__ */ S(d, {
 					size: "sm",
@@ -329,18 +329,18 @@ function R(e) {
 		minute: "2-digit"
 	});
 }
-function z({ turns: a, maxVisible: s = 4, onClear: c, pending: l = null, pendingChoice: u = null, size: d = "panel", keepTranscript: f = !1, onKeepTranscriptChange: m, onOpenLog: h, className: _, "data-testid": v = "voice-turn-strip" }) {
-	let b = d === "footer", x = y(), w = !b && s > 0 ? a.slice(-s) : a, T = m || h ? /* @__PURE__ */ C(r, {
+function z({ turns: a, maxVisible: s = 4, onClear: c, pending: l = null, pendingChoice: u = null, size: d = "panel", keepTranscript: f = !1, onKeepTranscriptChange: p, onOpenLog: g, className: _, "data-testid": v = "voice-turn-strip" }) {
+	let b = d === "footer", x = y(), w = !b && s > 0 ? a.slice(-s) : a, T = p || g ? /* @__PURE__ */ C(r, {
 		gap: "sm",
 		justify: "between",
 		className: "min-h-7",
 		"data-testid": `${v}-extras`,
-		children: [m ? /* @__PURE__ */ C(r, {
+		children: [p ? /* @__PURE__ */ C(r, {
 			gap: "sm",
-			children: [/* @__PURE__ */ S(p, {
+			children: [/* @__PURE__ */ S(h, {
 				size: "sm",
 				checked: f,
-				onChange: m,
+				onChange: p,
 				"aria-labelledby": x,
 				"data-testid": `${v}-keep`
 			}), /* @__PURE__ */ S(i, {
@@ -349,11 +349,11 @@ function z({ turns: a, maxVisible: s = 4, onClear: c, pending: l = null, pending
 				tone: "secondary",
 				children: "Keep transcripts on this device"
 			})]
-		}) : /* @__PURE__ */ S("span", {}), h ? /* @__PURE__ */ C(t, {
+		}) : /* @__PURE__ */ S("span", {}), g ? /* @__PURE__ */ C(t, {
 			variant: "ghost",
 			size: "sm",
 			className: "gap-1.5",
-			onClick: h,
+			onClick: g,
 			"data-testid": `${v}-log`,
 			children: [/* @__PURE__ */ S(o, { size: 16 }), "History"]
 		}) : null]
@@ -401,7 +401,7 @@ function z({ turns: a, maxVisible: s = 4, onClear: c, pending: l = null, pending
 							className: "shrink-0",
 							"data-testid": `${v}-tool-${e.id}-${n}`,
 							"data-status": t.status,
-							children: [/* @__PURE__ */ S(g, {
+							children: [/* @__PURE__ */ S(m, {
 								size: "sm",
 								tone: F[t.status],
 								label: t.status
@@ -480,7 +480,7 @@ function z({ turns: a, maxVisible: s = 4, onClear: c, pending: l = null, pending
 						"data-testid": `${v}-tool-${e.id}-${n}`,
 						"data-status": t.status,
 						children: [
-							/* @__PURE__ */ S(g, {
+							/* @__PURE__ */ S(m, {
 								size: "sm",
 								tone: F[t.status],
 								label: t.status
@@ -590,7 +590,7 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 						tone: "secondary",
 						className: "whitespace-nowrap",
 						children: pe
-					}) : /* @__PURE__ */ S(g, {
+					}) : /* @__PURE__ */ S(m, {
 						size: "sm",
 						tone: ee[d],
 						label: pe
@@ -609,7 +609,7 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 					"aria-hidden": "true",
 					children: ""
 				}),
-				!L && w && Z ? /* @__PURE__ */ S(m, {
+				!L && w && Z ? /* @__PURE__ */ S(g, {
 					value: w.holdUsd > 0 ? w.usedUsd / w.holdUsd : 0,
 					segments: 5,
 					showPercent: !1,

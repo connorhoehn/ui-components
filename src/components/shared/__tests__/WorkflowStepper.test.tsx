@@ -72,3 +72,51 @@ it('spaces compact connectors on the 4px scale', () => {
     expect(c.className).not.toContain('mx-1.5');
   }
 });
+
+describe('WorkflowStepper orientation="vertical" (2.512.0)', () => {
+  const LADDER: WorkflowStep[] = [
+    { step: 1, label: 'Show', done: true, active: false, description: 'The Little Shop' },
+    { step: 2, label: 'Lead', done: true, active: false, description: 'Mina (proposed)', action: <button type="button">Keep</button> },
+    { step: 3, label: 'Artwork', done: false, active: true, description: 'No approved concept yet', action: <button type="button">Draw Mina</button> },
+    { step: 4, label: 'Episodes', done: false, active: false },
+  ];
+
+  it('marks the root and keeps the horizontal strip the default', () => {
+    const { getByTestId, rerender } = render(<WorkflowStepper steps={LADDER} />);
+    expect(getByTestId('workflow-stepper')).toHaveAttribute('data-orientation', 'horizontal');
+    rerender(<WorkflowStepper steps={LADDER} orientation="vertical" />);
+    expect(getByTestId('workflow-stepper')).toHaveAttribute('data-orientation', 'vertical');
+    expect(screen.getByRole('list').tagName).toBe('OL');
+  });
+
+  it('draws done / active / todo markers', () => {
+    const { container } = render(<WorkflowStepper steps={LADDER} orientation="vertical" />);
+    const markers = [...container.querySelectorAll('[data-workflow-marker]')].map((m) => m.getAttribute('data-workflow-marker'));
+    expect(markers).toEqual(['done', 'done', 'active', 'todo']);
+    expect(container.querySelectorAll('[data-workflow-marker="done"] svg')).toHaveLength(2);
+  });
+
+  it('fills the connectors as the workflow advances, none after the last step', () => {
+    const { container } = render(<WorkflowStepper steps={LADDER} orientation="vertical" />);
+    const fills = [...container.querySelectorAll('[data-workflow-connector]')].map((c) => c.getAttribute('data-workflow-connector'));
+    expect(fills).toEqual(['full', 'partial', 'none']);
+    expect(container.querySelector('[data-workflow-connector="full"]')!.className).toContain('bg-success');
+    expect(container.querySelector('[data-workflow-connector="none"]')!.className).toContain('bg-border');
+  });
+
+  it('shows each step\'s fact and the action on the active step only', () => {
+    render(<WorkflowStepper steps={LADDER} orientation="vertical" />);
+    const rows = screen.getAllByRole('listitem');
+    expect(rows[1]).toHaveTextContent('LeadMina (proposed)');
+    expect(screen.queryByRole('button', { name: 'Keep' })).toBeNull();
+    const action = screen.getByRole('button', { name: 'Draw Mina' });
+    expect(rows[2]).toContainElement(action);
+    expect(rows[2]).toHaveAttribute('aria-current', 'step');
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('never draws an action in the horizontal strip', () => {
+    render(<WorkflowStepper steps={LADDER} />);
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+});

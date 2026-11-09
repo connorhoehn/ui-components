@@ -225,6 +225,7 @@ export interface RichChatDraft {
 export type { ComposerArgumentItem, ComposerCommandArgument, ComposerCommand } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
 import { composerSendErrorReason } from './composerSendError';
+import { ComposerPresentationContext } from './composerPresentation';
 import { matchComposerCommand, composerCommandArgumentText, type ComposerArgumentItem, type ComposerCommandArgument, type ComposerCommand } from './composerCommands';
 
 /** What a host can do to the composer from outside — focus it, prefill it. */
@@ -256,6 +257,16 @@ export interface RichChatComposerProps {
    * draft has already been cleared; nothing goes through `onSend`.
    */
   onCommand?: (command: ComposerCommand, argument: ComposerArgumentItem) => void;
+  /**
+   * A command with no `argument` picked from the `/` menu (click or Enter)
+   * runs at once instead of being written into the draft (since 2.510.0):
+   * the draft is cleared, then this is called. A thrown or rejected
+   * `ComposerSendError` shows in the send-error line, like a refused send.
+   * Commands that take an argument still write their trigger and open the
+   * argument menu. Absent, every pick writes its trigger (the default).
+   * `ContextComposer presentation="prompt"` wires it to `onSend`.
+   */
+  onCommandPick?: (command: ComposerCommand) => void | boolean | Promise<void | boolean>;
   /**
    * Resolves the @ menu. A promise is supported so a host can hit a directory
    * rather than filter a preloaded array. Omit to disable mentions entirely.
@@ -387,12 +398,40 @@ export interface RichChatComposerProps {
    *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
    *   bordered well and no rule over the strip — the Initiatives mockup.
    *
+   * - `prompt` (2.508.0): a box for one instruction, not a document — no
+   *   formatting controls at all. The strip is attach (only when
+   *   `allowAttachments`), then the divider, then `toolbarExtras`; with
+   *   neither there is no strip, only Send. Bold and italic keyboard
+   *   shortcuts still work in the input. The `?` menu holds keyboard hints
+   *   only (no "Formatting" section), and below wide the `Aa` toggle becomes
+   *   "Show tools" and appears only when the strip has something to show.
+   *   Docks like `basic` under `modeControl="menu"`: boxed mode picker,
+   *   bordered input well, labelled Send.
+   *
+   * - `prompt-card` (2.389.11, named `prompt` until 2.508.0): the docked
+   *   mockup card with `/ Commands`, `# Context`, the host's extras,
+   *   "Return to send" and a round icon Send. Under any other `modeControl`
+   *   it falls back to `prompt`.
+   *
    * In docked mode, the mode menu contains modes, host actions and keyboard
    * hints only; formatting belongs on the editor's toolbar.
    * Sizes are unchanged in all of them: every control is the same 28px box.
    * Below wide the strip folds exactly as before, whichever preset is set.
    */
   toolbar?: ComposerToolbarPreset;
+  /**
+   * `prompt` (since 2.510.0): the docked card as a quiet prompt box — the
+   * header row holds the references (left) and `modeRowEnd` (right) and keeps
+   * one height whether or not there are references; then the suggestion
+   * chips, the input (no bordered well), and the strip with attach, the
+   * host's extras and Send showing `submitLabel` alone (no paper plane, no
+   * arrow). No mode label, pill, picker, menu or `⌥n` badge in any state
+   * (the mode is still `mode` and Enter still sends in it), and no
+   * `/ commands` hint (typing `/` still opens the menu). Sets
+   * `data-presentation="prompt"` on the root. `ContextComposer
+   * presentation="prompt"` sets it. Default `card` (unchanged).
+   */
+  presentation?: 'card' | 'prompt';
   /**
    * A `⋯` menu at the right of the toolbar row, before `submitLead` and Send —
    * for actions on the THING the composer is attached to ("Draft a
@@ -571,6 +610,14 @@ export interface RichChatComposerProps {
    */
   suggestions?: readonly string[];
   onSuggestion?: (suggestion: string) => void;
+  /**
+   * When the wide chip row shows (2.508.0). `focused` (default): while the
+   * input is empty and focused, as described at `suggestions`. `empty`: while
+   * the input is empty, focused or not — the page's quick actions visible at
+   * rest. Either way never on the one-row idle composer (`collapseWhenIdle`
+   * folded), and below wide they stay in the `?` menu.
+   */
+  suggestionsVisible?: 'focused' | 'empty';
   /** At the end of the compact mode row — a scope switch, a count. */
   modeRowEnd?: ReactNode;
   /**
@@ -685,7 +732,7 @@ export interface RichChatComposerProps {
 /** How much room the composer has, from its own width. */
 export type ComposerSize = 'wide' | 'medium' | 'narrow';
 /** See `RichChatComposerProps.toolbar`. */
-export type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'basic';
+export type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'prompt-card' | 'basic';
 export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
@@ -963,14 +1010,17 @@ type SuggestionMenuRef = { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } 
  * for a debounced argument search it would blank the menu on every keystroke,
  * so the last list stays up until the new one lands.
  */
-function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, sendWhenExact = false) {
+function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, sendWhenExact: boolean | (() => boolean) = false) {
   let renderer: ReactRenderer | null = null;
   let lastItems: CommandSuggestionItem[] = [];
   const menu = mountSuggestionMenu();
   const withItems = (props: SuggestionProps<CommandSuggestionItem>) => {
     // The command menu also gets the draft: a fully typed trigger plus Enter
     // sends rather than re-inserting the trigger (see CommandSuggestions).
-    const draft = sendWhenExact ? { draft: props.editor.getText() } : {};
+    // A getter: `onCommandPick` (read live) turns it off, so Enter on a fully
+    // typed trigger is a pick there too, and the pick runs the command.
+    const exact = typeof sendWhenExact === 'function' ? sendWhenExact() : sendWhenExact;
+    const draft = exact ? { draft: props.editor.getText() } : {};
     // A compact composer (a margin card's reply box) gets a menu sized to its rows.
     const compact = props.editor.view.dom.closest('[data-suggestion-boundary]')?.getAttribute('data-suggestion-boundary') === 'compact';
     const width = compact ? { width: 'fit' as const } : {};
@@ -1009,6 +1059,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   draft,
   onDraftChange,
   onCommand,
+  onCommandPick,
   onSearchPeople,
   mentionMembers,
   onMentionNonMember,
@@ -1058,6 +1109,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   status,
   suggestions,
   onSuggestion,
+  suggestionsVisible = 'focused',
   modeRowEnd,
   hideModeMenu = false,
   singleModeLabel = false,
@@ -1073,6 +1125,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   sendWithReferencesOnly = false,
   sendShortcut = 'enter',
   defaultCommand,
+  presentation = 'card',
   className,
   'data-testid': testId = 'rich-chat-composer',
 }, ref) {
@@ -1217,6 +1270,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const hasSearchDocuments = !!onSearchDocuments;
   const onCommandRef = useRef(onCommand);
   onCommandRef.current = onCommand;
+  // Read inside the `/` menu's Suggestion plugin (built once): a ref, so a
+  // host that passes a new function each render does not rebuild the editor.
+  const commandPickRef = useRef<((command: ComposerCommand) => void) | null>(null);
   // Whether the docked card (modeControl="menu") is naming the command as a
   // chip, in which case the command line it names is hidden in the input.
   // Assigned once `menuModeRow` is known, below; read by a ProseMirror plugin.
@@ -1371,9 +1427,20 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               // The trigger plus its separator, so the argument menu (below)
               // can open on the very next keystroke.
               command: ({ editor: e, range, props }) => {
+                // `onCommandPick`: a command with nothing to ask runs on the
+                // pick — no trigger left waiting beside an empty box.
+                const picked = !props.takesArgument && commandPickRef.current
+                  ? (commandsRef.current ?? []).find((c) => c.trigger === props.id)
+                  : undefined;
+                if (picked && commandPickRef.current) {
+                  argPickRef.current = null;
+                  e.commands.clearContent(true);
+                  commandPickRef.current(picked);
+                  return;
+                }
                 e.chain().focus().deleteRange(range).insertContent(`${props.id} `).run();
               },
-              render: () => commandMenuRenderer('Commands', false, true),
+              render: () => commandMenuRenderer('Commands', false, () => !commandPickRef.current),
             }),
           ];
         },
@@ -1999,6 +2066,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   }, [editor, canSend, onSend, staged, privacy, terminalMode, activeMode, modesEnabled, fixedMode]);
 
   sendRef.current = send;
+  commandPickRef.current = onCommandPick ? (command: ComposerCommand) => {
+    setSendError(false);
+    const fail = (error: unknown) => { if (mountedRef.current) setSendError(composerSendErrorReason(error) ?? true); };
+    try {
+      const result = onCommandPick(command);
+      if (result && typeof result === 'object' && 'then' in result) void result.then(undefined, fail);
+    } catch (error) { fail(error); }
+  } : null;
 
   // The prompt card's command switch (`/adjust ▾` → `/crop`): rewrites the
   // leading trigger in place, or puts one in front of the words already
@@ -2031,11 +2106,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       get editor() {
         return editor;
       },
+      // A focus scheduled for a later frame (unfolding, a deck hidden, Back)
+      // can land after the composer unmounted: a destroyed editor has no
+      // commands, so it is skipped instead of throwing.
       focus: () => {
-        editor?.commands.focus();
+        if (editor && !editor.isDestroyed) editor.commands.focus();
       },
       insertText: (text: string) => {
-        editor?.chain().focus().insertContent(text).run();
+        if (editor && !editor.isDestroyed) editor.chain().focus().insertContent(text).run();
       },
     }),
     [editor],
@@ -2196,15 +2274,21 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // (2.386.0): `✦ Agent ⌄` whose menu also holds what `?` and `⋯` held, the
   // picked command as a chip at the START of the instruction line, a
   // larger strip and Send. Every other composer keeps its own layout.
-  const docked = menuModeRow && (toolbar === 'editor' || toolbar === 'prompt' || toolbar === 'basic');
-  // The prompt card (2.390.0): the docked card with no formatting strip — its
-  // foot is `/ Commands`, `# Context`, the host's extras (a mic), the send
-  // key and a round Send — and the command chip switches commands.
-  const promptCard = docked && toolbar === 'prompt';
+  const docked = menuModeRow && (toolbar === 'editor' || toolbar === 'prompt' || toolbar === 'prompt-card' || toolbar === 'basic');
+  // The prompt card (2.390.0; `prompt-card` since 2.508.0): the docked card
+  // with no formatting strip — its foot is `/ Commands`, `# Context`, the
+  // host's extras (a mic), the send key and a round Send — and the command
+  // chip switches commands.
+  const promptCard = docked && toolbar === 'prompt-card';
   // The basic box (2.390.0): the docked card with its mode as a boxed
   // picker ("Agent ⌄", no glyph), the input in its own bordered well, and the
-  // strip under it with no rule — the Initiatives mockup's composer.
-  const basicBox = docked && toolbar === 'basic';
+  // strip under it with no rule — the Initiatives mockup's composer. The
+  // `prompt` preset docks the same way (2.508.0), minus the formatting.
+  // The quiet prompt box (`presentation="prompt"`, 2.510.0): the docked card
+  // with no mode chrome at all, the editor dock's plain input (no well) and
+  // a Send that is its label alone — the record, its chips, the box, one verb.
+  const quiet = presentation === 'prompt';
+  const basicBox = docked && (toolbar === 'basic' || (toolbar === 'prompt' && !quiet));
   // Send's size and content, shared by the plain Send and the split one's
   // primary half. Before 2.407.8 the split stayed `text-xs` whatever `docked`
   // said while the plain docked Send was `h-9` (idle rows 42px vs 50px).
@@ -2214,7 +2298,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const sendSize = docked ? 'inline-flex items-center gap-1 px-2.5 py-1 text-xs' : menuModeRow ? 'px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs';
   // The basic box leads with a paper plane ("✈ Send"), as the Initiatives
   // mockup draws it; the editor dock keeps its arrow.
-  const sendContent = (
+  const sendContent = quiet ? <>{sendLabel}</> : (
     <>
       {basicBox && <SendIcon size={12} aria-hidden="true" />}
       {sendLabel}
@@ -2233,7 +2317,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     setPrefixHidden(readPrefixHidden(editor));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, menuModeRow, docked]);
-  const referencesInModeRow = compactModeRow && (compact || menuModeRow);
+  // The quiet box keeps its references in its header row at every width, so
+  // adding one never adds a row (2.510.0).
+  const referencesInModeRow = (compactModeRow && (compact || menuModeRow)) || (quiet && !pane);
+  // The header row: the mode row, or — in the quiet box — the row that holds
+  // the references and the host's row content even with no modes to show.
+  const headerRow = compactModeRow || quiet;
   // Compact folds the hints row into `?` at every width.
   // The docked card (`menu`) keeps its hints in the `?` menu: the row of
   // Enter/`>`/⌥n chips under the input is chat-column furniture.
@@ -2241,7 +2330,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const hasSuggestions = !!suggestions?.length && !!onSuggestion;
   // Never on the one-row idle composer: the chips there would sit where the
   // next click lands (a chip click STARTS a run) and grow the idle dock.
-  const showSuggestionRow = hasSuggestions && wide && empty && focusWithin && !(collapseWhenIdle && !engaged);
+  // `suggestionsVisible="empty"` keeps them at rest, still never on the folded idle row.
+  const showSuggestionRow = hasSuggestions && wide && empty && (suggestionsVisible === 'empty'
+    ? !(collapseWhenIdle && !engaged && !forceExpanded)
+    : focusWithin && !(collapseWhenIdle && !engaged));
   const suggestionsInMenu = hasSuggestions && !wide;
   // Idle: one row (pill · input · Send). Anything worth reading — a status,
   // a running process, a staged file, a command, a notice, words in the box —
@@ -2262,6 +2354,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // menu (and tooltip) carries what the draft is about.
   const foldedChip = collapsed && (narrow || (!!references?.length && rootWidth !== null && rootWidth > 0 && rootWidth < 640));
   const chipRow = pane || foldedChip;
+  // The leading chip names the mode, except in the quiet box (no mode chrome).
+  const chipModes = modesEnabled && !quiet;
   // The pane's Aa / ? / ⋯ / row end: while focus is inside OR the draft holds
   // something. Keyed on focus alone, pressing Send on an unfocused draft
   // brought them in on mousedown, wrapped Send to the next row and the
@@ -2274,20 +2368,27 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // strikethrough and numbered list fold under `?` with `compact`'s.
   const compactToolbar = toolbar === 'compact';
   const basicToolbar = toolbar === 'basic';
+  // `prompt` (2.508.0): no formatting controls anywhere — not on the strip,
+  // not under `?`, not behind `⋯`. `prompt-card` off the docked card is the same.
+  const promptToolbar = toolbar === 'prompt' || toolbar === 'prompt-card';
   // `basic` is `editor` without the bulleted list and quote on the strip.
-  const editorToolbar = toolbar === 'editor' || toolbar === 'prompt' || basicToolbar;
+  const editorToolbar = toolbar === 'editor' || promptToolbar || basicToolbar;
   const fullToolbar = !compactToolbar && !editorToolbar;
   const showSecondaryMarks = wide && fullToolbar;
   const showCode = wide && !compactToolbar;
   const showListControls = wide && fullToolbar;
   const showQuote = wide && !compactToolbar && !basicToolbar;
   const showBulletedList = wide && !basicToolbar;
-  const formatInHints = wide && !fullToolbar;
+  const formatInHints = wide && !fullToolbar && !promptToolbar;
+  // What the prompt strip holds besides extras; the divider before
+  // `toolbarExtras` only separates it from something.
+  const promptStripLead = attachmentsEnabled || (allowEmoji && !!editor) || !!onPrivacyChange;
+  const promptStrip = promptStripLead || toolbarExtras != null;
   // The editor dock has no `?` and no `⋯` on its strip (the mockup's strip
   // ends in `/ commands` and Send). Its mode menu carries host actions and
   // keyboard hints only; formatting belongs to the editor toolbar.
   // A single-mode label has no menu to hold them: they go back to the `⋯`.
-  const showMoreActions = !!moreActions?.length && (!docked || singleMode);
+  const showMoreActions = !!moreActions?.length && (!docked || singleMode || quiet);
   const inlineCommand = docked && !!activeCommand && !collapsed && !terminalMode;
   // The prompt card's chip: the typed command, else the host's default.
   const chipCommand = promptCard && !collapsed && !terminalMode
@@ -2421,6 +2522,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         data-console-sky={consoleSurface ? (skyInherited ? 'inherited' : 'own') : undefined}
         data-working={working ? 'true' : undefined}
         data-composer-readonly={readOnlyOn ? '' : undefined}
+        data-presentation={quiet ? 'prompt' : undefined}
         ref={rootRef}
         data-density={density}
         data-collapsed={collapseWhenIdle ? (collapsed ? 'true' : 'false') : undefined}
@@ -2547,7 +2649,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           data-testid={`${testId}-console`}
         />
         {header != null && header !== false && (
-          <div className="min-w-0" data-composer-header="" data-testid={`${testId}-header`}>{header}</div>
+          <div className="min-w-0" data-composer-header="" data-testid={`${testId}-header`}>
+            <ComposerPresentationContext.Provider value={presentation}>{header}</ComposerPresentationContext.Provider>
+          </div>
         )}
         {sendError && (
           <p role="alert" data-testid={`${testId}-send-error`} className="px-2 py-1 text-sm text-danger-fg">
@@ -2666,12 +2770,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             it changes what Enter DOES, which is not a formatting choice. */}
         {/* Narrow always takes the compact pill: three segmented tabs with
             labels do not fit beside anything at that width. */}
-        {compactModeRow && !collapsed && !pane && (
-          <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'} data-ui-composer-modes={docked ? 'docked' : 'compact'}>
-            {docked && modeRowStart != null && (
+        {headerRow && !collapsed && !pane && (
+          <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && !quiet && 'flex-wrap', quiet && 'min-h-8 flex-nowrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={quiet ? 'none' : menuModeRow ? 'menu' : 'compact'} data-ui-composer-modes={docked ? 'docked' : 'compact'}>
+            {(docked || quiet) && modeRowStart != null && (
               <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
             )}
-            {singleMode ? (
+            {quiet ? null : singleMode ? (
               // One mode: its name, not a one-item switch.
               <span
                 className={cn('flex items-center gap-1.5 px-1.5 py-0.5 text-text-primary', basicBox ? 'gap-2 font-medium' : 'font-semibold', docked ? 'text-xs' : 'text-sm')}
@@ -2737,7 +2841,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               {MODE_NAMES[activeMode]}
             </span>
             )}
-            {!menuModeRow && !singleMode && (
+            {!menuModeRow && !singleMode && !quiet && (
             <span role="group" aria-label="Composer mode" className="flex items-center gap-0.5">
               {offeredModes.map((m, i) => {
                 const unavailable = isModeDisabled(m);
@@ -2765,7 +2869,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               })}
             </span>
             )}
-            {modeShortcuts && !narrow && !singleMode && !menuModeRow && (
+            {modeShortcuts && !narrow && !singleMode && !menuModeRow && !quiet && (
               <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary" data-testid={`${testId}-mode-kbd`}>
                 ⌥{offeredModes.indexOf(activeMode) + 1}
               </kbd>
@@ -2775,15 +2879,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 references={references}
                 {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
                 removeLabel={(reference) => `Remove ${reference.label} from this draft`}
-                className={cn('min-w-0 p-0', docked && hideModeMenu ? 'flex-wrap gap-2' : 'flex-nowrap', menuModeRow && !(docked && hideModeMenu) && referencesPlacement !== 'start' && 'ml-auto justify-end', referencesPlacement === 'start' && menuModeRow && 'ml-1')}
-                {...(menuModeRow ? { size: docked ? 'md' as const : 'sm' as const } : {})}
+                className={cn('min-w-0 p-0', quiet ? 'flex-nowrap overflow-hidden' : docked && hideModeMenu ? 'flex-wrap gap-2' : 'flex-nowrap', !quiet && menuModeRow && !(docked && hideModeMenu) && referencesPlacement !== 'start' && 'ml-auto justify-end', !quiet && referencesPlacement === 'start' && menuModeRow && 'ml-1')}
+                {...(menuModeRow || quiet ? { size: docked ? 'md' as const : 'sm' as const } : {})}
                 data-testid={`${testId}-references`}
               />
             )}
-            {docked && referencesAction != null && (
+            {(docked || quiet) && referencesAction != null && (
               <span className="flex shrink-0 items-center" data-testid={`${testId}-references-action`}>{referencesAction}</span>
             )}
-            {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', menuModeRow && references?.length && !(docked && hideModeMenu) ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
+            {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', !quiet && menuModeRow && references?.length && !(docked && hideModeMenu) ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
           </div>
         )}
         {activeCommand && menuModeRow && !docked && !collapsed && (
@@ -2903,7 +3007,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // is drawn on the idle row too, not only once the card expands.
           <span className="ml-1.5 flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
         )}
-        {collapsed && !chipRow && singleMode && (
+        {collapsed && !chipRow && singleMode && !quiet && (
           // One mode: the same pill, as a label — nothing to switch to.
           <span
             title={MODE_NAMES[activeMode]}
@@ -2915,7 +3019,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {MODE_NAMES[activeMode]}
           </span>
         )}
-        {collapsed && !chipRow && modesEnabled && !fixedMode && !singleMode && (
+        {collapsed && !chipRow && modesEnabled && !fixedMode && !singleMode && !quiet && (
           // The idle row's mode pill: which mode Enter is in, at a glance.
           // Pressing it puts the caret in the input (the full composer, mode
           // switch included, comes back) — on click, after the pointer is up.
@@ -2931,7 +3035,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {MODE_NAMES[activeMode]}
           </button>
         )}
-        {chipRow && (modesEnabled || !!references?.length) && (
+        {chipRow && (chipModes || !!references?.length) && (
           // The pane's context chip: mode · subject on ONE line. The subject
           // keeps both ends ("Org › Initi…on Platform") so the leaf survives.
           // Its width leaves the input ~10em and Send (2.447.0). Folded (the
@@ -2940,10 +3044,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           <span
             data-testid={`${testId}-context-chip`}
             data-folded={foldedChip || undefined}
-            title={[modesEnabled ? MODE_NAMES[activeMode] : null, ...(references ?? []).map((r) => r.title ?? r.label)].filter(Boolean).join(' · ')}
+            title={[chipModes ? MODE_NAMES[activeMode] : null, ...(references ?? []).map((r) => r.title ?? r.label)].filter(Boolean).join(' · ')}
             className="group/chip ml-1.5 flex min-w-0 max-w-[min(45%,calc(100%-14rem))] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
           >
-            {modesEnabled && (switchable && offeredModes.length > 1 ? (
+            {chipModes && (switchable && offeredModes.length > 1 ? (
               <DropdownMenu
                 trigger={<span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}><span aria-hidden="true" className="flex w-3.5 justify-center">{MODE_ICON[activeMode]}</span>{MODE_NAMES[activeMode]}</span>}
                 triggerLabel={`Composer mode: ${MODE_NAMES[activeMode]}`}
@@ -2973,12 +3077,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 <span aria-hidden="true" className="flex w-3.5 justify-center">{MODE_ICON[activeMode]}</span>{MODE_NAMES[activeMode]}
               </span>
             ))}
-            {!!references?.length && !(foldedChip && modesEnabled) && (() => {
+            {!!references?.length && !(foldedChip && chipModes) && (() => {
               const label = references[0]!.label;
               const tail = label.length > 18 ? label.slice(-12) : '';
               return (
                 <>
-                  {modesEnabled && <span aria-hidden="true" className="shrink-0 text-text-tertiary">·</span>}
+                  {chipModes && <span aria-hidden="true" className="shrink-0 text-text-tertiary">·</span>}
                   <span className="flex min-w-0 items-center" data-testid={`${testId}-context-label`}>
                     <span className="min-w-0 truncate">{tail ? label.slice(0, -12) : label}</span>
                     {tail && <span className="shrink-0">{tail}</span>}
@@ -3164,7 +3268,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           className={cn(
             'flex min-w-0 items-center',
             docked ? 'px-2 py-1.5' : 'px-1.5 py-1',
-            singleRow ? 'shrink-0' : basicBox ? 'pt-1' : 'border-t border-border',
+            // The quiet box draws no rule over a strip that holds only Send.
+            singleRow ? 'shrink-0' : basicBox || (quiet && promptToolbar && !promptStrip) ? 'pt-1' : 'border-t border-border',
             // Wrapped under the input (focus brought Aa / ? back), the cluster stays at the right.
             pane && 'ml-auto',
             narrow && !singleRow && 'flex-wrap gap-y-1',
@@ -3173,8 +3278,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           data-ui-composer-tools={docked ? 'docked' : 'compact'}
           data-testid={`${testId}-toolbar`}
         >
-          {(narrow || pane) && !collapsed && (!pane || paneTools) && toolbarButton(
-            formatOpen ? 'Hide formatting' : 'Show formatting',
+          {(narrow || pane) && !collapsed && (!pane || paneTools) && (!promptToolbar || promptStrip) && toolbarButton(
+            promptToolbar
+              ? (formatOpen ? 'Hide tools' : 'Show tools')
+              : (formatOpen ? 'Hide formatting' : 'Show formatting'),
             formatOpen,
             () => setFormatOpen((v) => !v),
             <span className="text-xs font-semibold">Aa</span>,
@@ -3238,7 +3345,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
           {!singleRow && !promptCard && (
           <RovingToolbar label="Message formatting" className={cn('min-w-0 gap-0.5', narrow && 'flex-wrap')} data-testid={`${testId}-format-toolbar`}>
-          {editor && [
+          {editor && !promptToolbar && [
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
             showSecondaryMarks && toolbarButton('Strikethrough', editor.isActive('strike'), () => editor.chain().focus().toggleStrike().run(), <s>S</s>),
@@ -3326,7 +3433,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             );
           })()}
 
-          {editorToolbar && toolbarExtras != null && (
+          {editorToolbar && toolbarExtras != null && (!promptToolbar || promptStripLead) && (
             <span aria-hidden className={cn('shrink-0 bg-border', docked ? 'mx-2.5 h-6 w-px' : 'mx-1 h-4 w-px')} data-testid={`${testId}-extras-divider`} />
           )}
           {toolbarExtras}
@@ -3336,7 +3443,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           {/* A host with slash commands says so where the toolbar ends: a
               muted `/ commands`, the way a code editor's status line names
               its palette. Wide only — narrow has no room and the `?` menu. */}
-          {!collapsed && wide && !!commands?.length && !promptCard && (
+          {!collapsed && wide && !!commands?.length && !promptCard && !quiet && (
             <span
               className={cn('shrink-0 select-none', inert ? 'text-text-disabled' : 'text-text-tertiary', docked ? 'ml-3 text-xs' : 'ml-1 border-l border-border pl-2 text-xs')}
               aria-disabled={inert ? 'true' : undefined}

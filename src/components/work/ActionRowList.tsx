@@ -31,6 +31,26 @@
 // chip), and `action` replaces the chevron with a worded target ("Open →").
 // The row stays ONE target: nothing new is separately interactive.
 //
+// ## `trailing` (row controls, since 2.509.0)
+//
+// A row can carry its own buttons — "Approve", "Request changes" — in
+// `trailing`. They are a SIBLING after the row's button (or link), never
+// inside it: a button nested in a button is invalid, and a screen reader may
+// never reach it. Tab order is the row, then its trailing controls, then the
+// next row; a press on one never reaches the row's `onOpen`. The row's tint,
+// tone bar and hover move to the list item so they span both; the row's own
+// metrics (type, padding, columns) are unchanged. A list with any trailing
+// row is a two-column grid (row | controls) whose items are subgrids, so the
+// controls column takes the widest row's controls and every row's fact
+// columns keep one edge, with or without controls. When the list is narrower
+// than 35rem (560px; the list root is the query container, so it must get
+// its width from its parent, not its content) the controls wrap onto a line
+// of their own under the title, aligned with it, so the title keeps its
+// width. Since 2.513.0 the controls sit right-aligned in that column (one
+// right edge down the list), every library Button or link in it takes the
+// `sm` control height, and the cell carries `data-ui-part="row-actions"` for
+// the `row.actions-aligned` audit rule.
+//
 // None of it is required: an item with a `description` and `meta` and no
 // columns renders exactly as before, and descriptions still work beside
 // columns — both arrangements stay reachable from the same list.
@@ -117,6 +137,12 @@ export interface ActionRowItem {
    * target. Overrides the list's `action`. Since 2.392.0.
    */
   action?: string;
+  /**
+   * The row's own controls — quick-action buttons — after the row's button,
+   * outside it: their own tab stops (row, then these) and their presses never
+   * open the row. Wrap under the title below a 35rem row. Since 2.509.0.
+   */
+  trailing?: ReactNode;
 }
 
 export interface ActionRowListProps {
@@ -270,31 +296,50 @@ export function ActionRowList({
   const size = useDensitySize('ActionRowList', sizeProp, { comfortable: 'md', compact: 'sm' });
   if (items.length === 0 && emptyLabel == null && footer == null) return null;
   const toned = tone !== 'neutral';
+  // Any row with controls: the list becomes a two-column grid (row | its
+  // controls) whose rows are subgrids, so the controls column is as wide as
+  // the widest row's controls and every row's columns keep one edge. The list
+  // is the container the 35rem wrap queries.
+  const slotted = items.some((item) => item.trailing != null && item.trailing !== false);
   const hasColumns = !!columns && columns.length > 0;
   return (
-    <div className={cn('flex min-w-0 flex-col', className)} data-testid={testId} data-striped={striped || undefined} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
+    <div className={cn('flex min-w-0 flex-col', slotted && '@container', className)} data-testid={testId} data-ui-row-list="action" {...(slotted ? { 'data-row-actions-layout': 'columns' } : {})} data-striped={striped || undefined} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
       {items.length === 0 ? (
         emptyLabel != null && <p className="m-0 py-2 text-sm text-text-tertiary" data-testid={`${testId}-empty`}>{emptyLabel}</p>
       ) : (
-        <ul className={cn('m-0 list-none p-0', toned ? 'flex flex-col gap-1' : 'border-t border-border')} {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(toned ? { 'data-tone': tone } : {})}>
+        <ul className={cn('m-0 list-none p-0', toned ? 'flex flex-col gap-1' : 'border-t border-border', slotted && 'grid grid-cols-[minmax(0,1fr)_auto] gap-x-0 @max-[35rem]:flex @max-[35rem]:flex-col')} {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(toned ? { 'data-tone': tone } : {})}>
           {items.map((item, index) => {
             const rowTone = item.tone ?? tone;
             const rowAccent = item.accent ?? accent;
             const rowAction = item.action ?? action;
             // Odd rows (2nd, 4th, …), as DataTable stripes them. A toned row keeps its tone.
             const stripe = striped && rowTone === 'neutral' && index % 2 === 1;
-            const rowClass = cn(
+            const baseRowClass = cn(
               ROW_CLASS,
               hasColumns && cn(size === 'sm' ? 'min-h-10' : 'min-h-[45px]', 'py-[3px]'),
               hasColumns && item.leading != null && 'pl-5',
-              rowTone !== 'neutral' && cn(TONE_ROW[rowTone], 'rounded-r-md'),
-              rowAccent === 'bar' && TONE_BAR[rowTone],
             );
             const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} size={size} />;
+            const hasTrailing = item.trailing != null && item.trailing !== false;
+            // In a list with controls every item is a subgrid line; its tint,
+            // bar, rounding and hover move to the item so they span the
+            // controls column too (a tinted row never flashed grey).
+            const toneRow = rowTone !== 'neutral' ? cn(TONE_ROW[rowTone], 'rounded-r-md') : undefined;
+            const rowClass = slotted
+              ? cn(baseRowClass, 'col-start-1 min-w-0 flex-1 basis-0 hover:bg-transparent')
+              : cn(baseRowClass, toneRow, rowAccent === 'bar' && TONE_BAR[rowTone]);
+            const itemClass = slotted
+              ? cn(
+                  'col-span-full grid grid-cols-subgrid items-center transition-colors duration-100 @max-[35rem]:flex @max-[35rem]:flex-wrap',
+                  rowTone === 'neutral' && !item.disabled && 'hover:bg-surface-hover',
+                  toneRow,
+                  rowAccent === 'bar' && TONE_BAR[rowTone],
+                )
+              : undefined;
             return (
-            <li key={item.id} className={cn(!toned && 'border-b border-border', stripe && 'bg-surface-inset')} data-testid={`${testId}-row-${item.id}`} {...(stripe ? { 'data-stripe': '' } : {})} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
+            <li key={item.id} className={cn(!toned && 'border-b border-border', stripe && 'bg-surface-inset', itemClass)} data-testid={`${testId}-row-${item.id}`} {...(stripe ? { 'data-stripe': '' } : {})} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (
-                <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`}>
+                <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`} data-ui-row-main="">
                   {body}
                 </a>
               ) : (
@@ -308,9 +353,25 @@ export function ActionRowList({
                   }}
                   className={cn(rowClass, item.disabled ? 'cursor-default opacity-60' : 'cursor-pointer', item.disabled && rowTone === 'neutral' && 'hover:bg-transparent')}
                   data-testid={`${testId}-open-${item.id}`}
+                  data-ui-row-main=""
                 >
                   {body}
                 </button>
+              )}
+              {hasTrailing && (
+                <span
+                  data-action-row-trailing=""
+                  data-ui-part="row-actions"
+                  data-testid={`${testId}-trailing-${item.id}`}
+                  className={cn(
+                    'col-start-2 flex shrink-0 items-center justify-end gap-2 pr-3',
+                    '[&_:is(a,button)[data-variant]]:inline-flex [&_:is(a,button)[data-variant]]:items-center [&_:is(a,button)[data-variant]]:h-[var(--ui-control-sm,1.75rem)]',
+                    '@max-[35rem]:basis-full @max-[35rem]:flex-wrap @max-[35rem]:justify-start @max-[35rem]:pb-[7px]',
+                    hasColumns && item.leading != null ? '@max-[35rem]:pl-5' : '@max-[35rem]:pl-2.5',
+                  )}
+                >
+                  {item.trailing}
+                </span>
               )}
             </li>
             );

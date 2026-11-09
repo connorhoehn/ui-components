@@ -135,6 +135,8 @@ export type { ComposerFocusTarget, ComposerFocusRequest, ThreadInputOwner } from
 // (`ConversationComposer prompts`, or the deck in any composer's `above`).
 export { ComposerPromptDeck, useComposerPromptDeck, promptsInScope } from './ComposerPromptDeck';
 export type { ComposerPromptDeckProps, ComposerPromptDeckState, ComposerPromptInput, ComposerPromptDeckOptions } from './ComposerPromptDeck';
+export { ComposerPresentationContext } from './composerPresentation';
+export type { ComposerPresentation } from './composerPresentation';
 export {
   CONFIRM_OPTIONS,
   answerForOption,
@@ -142,11 +144,13 @@ export {
   defaultOption,
   parseTypedAnswer,
   promptOptions,
+  takesDirection,
   takesTypedAnswer,
 } from './composerPromptModel';
 export type {
   ComposerPrompt,
   ComposerPromptAnswer,
+  ComposerPromptBack,
   ComposerPromptCompose,
   ComposerPromptField,
   ComposerPromptFollowUps,

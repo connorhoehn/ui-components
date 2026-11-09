@@ -143,6 +143,12 @@ export declare interface ActionRowItem {
      * target. Overrides the list's `action`. Since 2.392.0.
      */
     action?: string;
+    /**
+     * The row's own controls — quick-action buttons — after the row's button,
+     * outside it: their own tab stops (row, then these) and their presses never
+     * open the row. Wrap under the title below a 35rem row. Since 2.509.0.
+     */
+    trailing?: ReactNode;
 }
 
 export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, striped, action, size: sizeProp, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
@@ -1443,6 +1449,19 @@ export declare interface ApplicationPoolFormPageProps {
     onCancel: () => void;
     error?: string | null;
 }
+
+/**
+ * Show one texture map flat on the mesh, or (`lit`) put the model back.
+ *
+ * Every material's original textures and factors are stashed once; a channel
+ * then sets `baseColorTexture` to the channel's map (an external URL through
+ * `el.createTexture`, else the material's own embedded map), base colour
+ * factor white, metallic 0, roughness 1, and clears the normal,
+ * metallic-roughness and emissive maps so nothing else shades it. A material
+ * without that map shows the channel's constant (its factor) instead. `lit`
+ * restores the stash. Safe to call repeatedly in any order.
+ */
+export declare function applyModelChannel(el: ModelViewerElementLike | null | undefined, channel: ModelChannelView, channels?: ModelChannels): Promise<void>;
 
 /**
  * Apply a paused-context patch. Resolves the executor's `PatchResult` on a
@@ -5833,6 +5852,10 @@ export declare interface ColorInputProps {
     'data-testid'?: string;
 }
 
+declare interface ColorLike {
+    set(value: string): unknown;
+}
+
 export declare const colors: {
     readonly primary: string;
     readonly primaryDark: string;
@@ -6455,7 +6478,7 @@ export declare interface ComposerTaskReport {
 }
 
 /** See `RichChatComposerProps.toolbar`. */
-declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'basic';
+declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'prompt-card' | 'basic';
 
 /** One row of the `Workflow ⌄` menu. A disabled row shows its reason and cannot be picked. */
 export declare interface ComposerWorkflow {
@@ -6482,6 +6505,32 @@ export declare function confidenceNote(sampleSize: number): string;
 
 /** Sample size → confidence: 0 none, 1–2 low, 3–5 medium, more than 5 high. */
 export declare function confidenceOf(sampleSize: number): RunEstimateConfidenceLevel;
+
+export declare function ConfirmButton({ label, question, confirmLabel, cancelLabel, tone, variant, size, disabled, busy, onConfirm, className, 'data-testid': testId, }: ConfirmButtonProps): JSX.Element;
+
+export declare interface ConfirmButtonProps {
+    /** The idle button's label — "Cancel run", "Delete". */
+    label: ReactNode;
+    /** What the reader is asked; short, ends with "?" — "Cancel this run?". Also the group's accessible name. */
+    question: string;
+    /** The confirming button's label. Default "Confirm". */
+    confirmLabel?: string;
+    /** The button that backs out. Default "Cancel". */
+    cancelLabel?: string;
+    /** `destructive` paints the confirming button `danger-solid`; `default` (default) paints it `primary`. */
+    tone?: 'default' | 'destructive';
+    /** The idle button's variant. Default `secondary` (`danger` when `tone="destructive"`). */
+    variant?: ButtonVariant;
+    /** Every button's size, idle and asking. Default `sm`. */
+    size?: ButtonSize;
+    disabled?: boolean;
+    /** The host's own pending state: the button shows disabled and `aria-busy`. */
+    busy?: boolean;
+    /** Fired on Confirm. A returned promise keeps the control busy until it settles. */
+    onConfirm: () => void | Promise<unknown>;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare function ConfirmDialog({ open, onConfirm, onCancel, title, body, confirmLabel, cancelLabel, confirmDisabled, tone, children, }: ConfirmDialogProps): JSX.Element;
 
@@ -6810,8 +6859,32 @@ export declare function ContextComposer(props: ContextComposerProps): JSX.Elemen
 export declare interface ContextComposerProps {
     /** What the composer is attached to. Decides modes, chip, and which features may render. */
     context: ComposerContext;
-    /** `document`: comfortable density, for a full-width page. Default `compact`. */
-    presentation?: 'compact' | 'document';
+    /**
+     * `document`: comfortable density, for a full-width page. Default `compact`.
+     *
+     * `prompt` (since 2.510.0): a quiet prompt box for a host whose composer
+     * takes one instruction — the record (context chip) and any references in
+     * one header row with `modeRowEnd`, the suggestion chips, the text box, and
+     * one primary button showing `submitLabel` alone. Comfortable density;
+     * `toolbar` defaults to `prompt` (attach only when allowed, then
+     * `toolbarExtras`). No mode label, pill, picker, menu or `⌥n` badge in any
+     * state, and no mode shortcuts or mode triggers: the mode stays what
+     * `mode` / `defaultMode` says, so Enter still routes there. No `/ commands`
+     * hint (typing `/` still opens the menu), and picking a command that has no
+     * `argument` from that menu sends it at once — the draft is cleared and
+     * `onSend` receives `{ text: trigger, command: { trigger } }` (in a
+     * `ConversationComposer`, the command's `run` with empty `argumentText`),
+     * so no command chip waits beside an empty box. Adding references never
+     * changes the card's height. `data-presentation="prompt"` on the composer.
+     */
+    presentation?: 'compact' | 'document' | 'prompt';
+    /**
+     * The strip's preset, as `RichChatComposerProps.toolbar` (since 2.508.0).
+     * Default `editor` (`prompt` under `presentation="prompt"`). `prompt` drops
+     * every formatting control and keeps attach (when allowed), the divider
+     * and the host's extras.
+     */
+    toolbar?: ComposerToolbarPreset;
     /** Controlled mode. Pair with `onModeChange`. */
     mode?: ComposerMode;
     /** Uncontrolled starting mode. Default: the context's. */
@@ -6965,6 +7038,8 @@ export declare interface ContextComposerProps {
     status?: ComposerStatus | null;
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
+    /** `RichChatComposerProps.suggestionsVisible` (since 2.508.0). Default `focused`. */
+    suggestionsVisible?: 'focused' | 'empty';
     maxInputHeight?: number | string;
     composerRef?: Ref<RichChatComposerHandle>;
     /** Accessible name of the region. Default: the context's. */
@@ -9807,7 +9882,7 @@ export declare function ErrorPanel({ errors }: Props_2): JSX.Element;
 /** Whether the platform would retry this failure on its own; a `Refused` run is `terminal`. */
 export declare type ErrorRetryability = 'retryable' | 'terminal' | 'unknown';
 
-export declare function ErrorState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: ErrorStateProps): JSX.Element;
+export declare function ErrorState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, compact, }: ErrorStateProps): JSX.Element;
 
 export declare interface ErrorStateProps {
     /** Override the default ⚠️ glyph. Pass a string emoji or a ReactNode. */
@@ -9823,6 +9898,12 @@ export declare interface ErrorStateProps {
     action?: ReactNode;
     testId?: string;
     actionTestId?: string;
+    /**
+     * Small padding and no 220px minimum height (since 2.511.0): for an error
+     * drawn over a media frame or inside a card, where the card shape would
+     * overflow the space it covers.
+     */
+    compact?: boolean;
 }
 
 export declare function EstimateRow({ label, estimate, className, 'data-testid': testId }: EstimateRowProps): JSX.Element;
@@ -10960,6 +11041,45 @@ export declare interface FramePageSpec extends SpecHeader {
     footer?: LeafList;
 }
 
+export declare function FrameStrip({ frames, label, fps, index: indexProp, defaultIndex, onIndexChange, autoPlay, loop, contactSheet, aspect, thumbnails, className, 'data-testid': testId, }: FrameStripProps): JSX.Element | null;
+
+export declare type FrameStripAspect = 'square' | 'landscape' | 'portrait' | 'wide';
+
+export declare interface FrameStripFrame {
+    src: string;
+    label?: string;
+    alt?: string;
+}
+
+export declare interface FrameStripProps {
+    frames: readonly FrameStripFrame[];
+    /** Accessible name of the strip. Default "Frames". */
+    label?: string;
+    /** Playback rate. Default 12. */
+    fps?: number;
+    /** Controlled frame index (0-based). */
+    index?: number;
+    /** Initial frame when uncontrolled. Default 0. */
+    defaultIndex?: number;
+    onIndexChange?: (index: number) => void;
+    /** Start playing on mount. Default false; never under prefers-reduced-motion. */
+    autoPlay?: boolean;
+    /** Wrap from the last frame to the first while playing. Default true. */
+    loop?: boolean;
+    /** One image of every frame; adds a "Frames | Contact sheet" switch. */
+    contactSheet?: {
+        src: string;
+        label?: string;
+        alt?: string;
+    };
+    /** The frame's aspect — same classes as ImageCompare. Default `square`. */
+    aspect?: FrameStripAspect;
+    /** A scrolling row of frame buttons under the player. Default true. */
+    thumbnails?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * The unabbreviated date, for the separator's accessible name and for the
  * `title` on a row's HH:MM.
@@ -10996,11 +11116,20 @@ export declare interface GalleryAsset {
     src?: string;
     subtitle?: string;
     /**
-     * Shown on the card, over the thumbnail's top-left corner: StatusPill props
-     * (rendered as a md StatusPill, 12px: the sm size is 10px, under the type floor) or any node. The card's button is
-     * described by it, so a screen reader hears "Inspect Cup, Needs review".
+     * Shown on the card: StatusPill props (rendered at md, 12px: the sm size is
+     * 10px, under the type floor) or any node. `images`: a pill over the
+     * thumbnail's top-left corner. `avatars` (2.512.0): the caption's first
+     * line under the tile — a tone dot and the full label, never truncated
+     * (an 88px tile cut "Candidate" to "C."). The card's button is described
+     * by it, so a screen reader hears "Inspect Cup, Needs review".
      */
     status?: GalleryAssetStatus | ReactNode;
+    /**
+     * With no `src` (2.512.0): the tile shows a library empty tile — the muted
+     * surface, an image glyph and this text ("No picture yet") — instead of the
+     * Avatar's initials or the "No image yet" line. Both variants.
+     */
+    placeholder?: string;
 }
 
 /**
@@ -11439,7 +11568,7 @@ export declare function gridCols(count: number): number;
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, trailingLayout, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -11534,6 +11663,15 @@ export declare interface GroupedListProps {
      * the 3px-bar current row) at any `size`, the same scale as SubNavLayout.
      */
     rowStyle?: 'ruled' | 'plain';
+    /**
+     * Where rows put `actions` and `trailing`. `inline` (default): each row at
+     * its own end, as before. `columns`: one grid for the whole list — every
+     * row's actions and trailing sit in shared, right-aligned columns
+     * (`[leading] [main] [actions] [trailing]`), so their edges line up down the
+     * list whatever buttons each row has; action Buttons draw at `sm`. Since
+     * 2.513.0.
+     */
+    trailingLayout?: 'inline' | 'columns';
     className?: string;
     'data-testid'?: string;
 }
@@ -11554,6 +11692,12 @@ export declare interface GroupedListRow {
     trailing?: ReactNode;
     /** Trailing content revealed on hover / focus / `current` — an "Open" button. */
     hoverActions?: ReactNode;
+    /**
+     * The row's own controls — quick-action buttons. Always visible, outside
+     * the row's button (tab order: row, then these), at the row's end when it
+     * is wide and wrapped under the title below a 35rem row. Since 2.509.0.
+     */
+    actions?: ReactNode;
     /** The row the reader is "at": last opened, just created. Tinted; wears its hover line. */
     current?: boolean;
     /** Muted and inert; the menu still opens so a reader can see why. */
@@ -12004,6 +12148,14 @@ export { Highlight_2 as Highlight }
 /** A marker tip over a stroke: "highlight". Since 2.386.5. */
 export declare function HighlighterIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/**
+ * Highlight one part: every mesh whose name, or an ancestor's, is `node` gets a
+ * clone of its material with `emissive` set to `color`. Any earlier highlight
+ * is put back first; `node = null` only puts it back. Returns the number of
+ * meshes highlighted, or -1 when the scene is unreachable.
+ */
+export declare function highlightModelPart(el: unknown, node: string | null, color?: string): number;
+
 export declare interface HighlightProps {
     /** The text to render. */
     text: string;
@@ -12430,7 +12582,14 @@ export declare function ImageCompare({ images, label, aspect, fit, zoomable, cla
 export declare type ImageCompareAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
 export declare interface ImageCompareImage {
-    src: string;
+    /** The picture. Omit it (with `placeholder`) for a pane whose image does not exist yet. */
+    src?: string;
+    /**
+     * Words for a pane with no `src` — "No picture yet". The pane keeps the
+     * same frame and caption, with these centred in it; it is not zoomable.
+     * Since 2.513.0.
+     */
+    placeholder?: string;
     /** Short name shown under the pane — "Reference", "Current", "Candidate". */
     label: string;
     /** Alt text. Defaults to `label`. */
@@ -13928,6 +14087,9 @@ export declare interface LoadingStateProps {
     testId?: string;
 }
 
+/** Loads `@google/model-viewer` (which defines `<model-viewer>`) once per page. */
+export declare function loadModelViewerElement(): Promise<unknown>;
+
 /**
  * A message that exists only in THIS viewer's thread — never sent, never
  * stored, gone on reload. The shape a `visibility: 'private'` command outcome
@@ -14233,6 +14395,15 @@ export declare function matchingTag(person: GraphPerson, query: string | undefin
  * short fuzzy habits ("cp" for "command palette") keep working.
  */
 export declare function matchTokens(haystack: string, query: string): number;
+
+declare interface MaterialLike3 {
+    wireframe?: boolean;
+    emissive?: ColorLike;
+    emissiveMap?: unknown;
+    emissiveIntensity?: number;
+    needsUpdate?: boolean;
+    clone(): MaterialLike3;
+}
 
 export declare const MAX_DECK_SLIDES = 40;
 
@@ -15208,10 +15379,90 @@ export declare interface ModalProps {
  */
 export declare function modeFromMinimized(minimized: boolean): CallWidgetMode;
 
+export declare const MODEL_CHANNEL_LABEL: Record<ModelChannel, string>;
+
+export declare const MODEL_CHANNEL_ORDER: readonly ModelChannel[];
+
+export declare type ModelChannel = 'baseColor' | 'normal' | 'roughness' | 'metallic' | 'emissive';
+
+export declare interface ModelChannelMap {
+    src: string;
+    label?: string;
+}
+
+/** One option of the channel toggle. */
+export declare interface ModelChannelOption {
+    value: ModelChannel;
+    label: string;
+    /** `external`: a URL from the `channels` prop. `embedded`: a map inside the model. */
+    source: 'external' | 'embedded';
+    /** The external map's URL. */
+    src?: string;
+}
+
+export declare type ModelChannels = Partial<Record<ModelChannel, string | ModelChannelMap>>;
+
+/**
+ * The channels a model can show: every key of `channels` (external URLs) plus
+ * every map embedded in the loaded model's materials (`el.model.materials`),
+ * in a fixed order. The packed metallic-roughness texture counts for both
+ * Roughness and Metallic. An external map wins over an embedded one.
+ */
+export declare function modelChannelsOf(el: ModelViewerElementLike | null | undefined, channels?: ModelChannels): ModelChannelOption[];
+
+/** What the mesh shows: the lit model, or one texture map flat on it. */
+export declare type ModelChannelView = 'lit' | ModelChannel;
+
+export declare interface ModelMaterialLike {
+    readonly name?: string;
+    readonly pbrMetallicRoughness: {
+        readonly baseColorFactor: ArrayLike<number>;
+        readonly metallicFactor: number;
+        readonly roughnessFactor: number;
+        readonly baseColorTexture: ModelTextureInfoLike | null;
+        readonly metallicRoughnessTexture: ModelTextureInfoLike | null;
+        setBaseColorFactor(rgba: [number, number, number, number]): void;
+        setMetallicFactor(value: number): void;
+        setRoughnessFactor(value: number): void;
+    };
+    readonly normalTexture: ModelTextureInfoLike | null;
+    readonly emissiveTexture: ModelTextureInfoLike | null;
+    readonly emissiveFactor: ArrayLike<number>;
+    setEmissiveFactor(rgb: [number, number, number]): void;
+}
+
 /** One selectable model. `value` is what gets written to the node's data. */
 declare interface ModelOption {
     value: string;
     label?: string;
+}
+
+export declare interface ModelPart {
+    id: string;
+    label: string;
+    /** Swatch and highlight colour — any CSS colour three.js can parse (hex, rgb(), a name). */
+    color: string;
+    /** Mesh/node name in the GLB. Default `id`. */
+    node?: string;
+}
+
+export declare interface ModelSceneLike extends ObjectLike3 {
+    /** The loaded glTF root (model-viewer 4.x `ModelScene.model`). */
+    model?: ObjectLike3 | null;
+    queueRender?(): void;
+}
+
+/**
+ * The three.js scene inside a `<model-viewer>`: model-viewer 4.x keeps it on
+ * an own symbol property whose description is `'scene'` (`$scene` in
+ * model-viewer-base). Not public API — `null` when absent, and every caller
+ * treats that as "leave the view unchanged".
+ */
+export declare function modelSceneOf(el: unknown): ModelSceneLike | null;
+
+export declare interface ModelTextureInfoLike {
+    readonly texture: unknown;
+    setTexture(texture: unknown): void;
 }
 
 /**
@@ -15221,6 +15472,83 @@ declare interface ModelOption {
  * offline draft or wait out a timeout.
  */
 export declare function modelUnavailableMessage(health: ApiHealthSnapshot): string | null;
+
+export declare interface ModelVersion {
+    id: string;
+    label: string;
+    description?: string;
+    current?: boolean;
+}
+
+export declare function ModelViewer({ src, poster, alt, label, reference, aspect, autoRotate, cameraControls, environment, channels, channel: channelProp, defaultChannel, onChannelChange, parts, selectedPart: selectedProp, onSelectPart, wireframe: wireframeProp, onWireframeChange, versions, onOpenVersion, onSnapshot, onLoad, onError, tone, frameless, className, 'data-testid': testId, }: ModelViewerProps): JSX.Element;
+
+export declare type ModelViewerAspect = 'square' | 'landscape' | 'portrait' | 'wide';
+
+export declare interface ModelViewerElementLike {
+    model?: {
+        readonly materials: readonly ModelMaterialLike[];
+    } | null;
+    createTexture?(uri: string): Promise<unknown>;
+    toBlob?(options?: {
+        mimeType?: string;
+    }): Promise<Blob>;
+}
+
+export declare interface ModelViewerProps {
+    /** GLB/glTF URL. */
+    src: string;
+    /** Shown while loading and as the fallback when the view cannot render. */
+    poster?: string;
+    /** Accessible name of the 3D view. Default "3D model". */
+    alt?: string;
+    /** Region label. Default "3D model". */
+    label?: string;
+    /**
+     * An image drawn beside the model in the same frame (the concept art): two
+     * up from a 28rem container, stacked below that. `label` default "Reference".
+     */
+    reference?: {
+        src: string;
+        label?: string;
+        alt?: string;
+    };
+    /** The frame's aspect — same classes as ImageCompare. Default `square`. */
+    aspect?: ModelViewerAspect;
+    /** Turntable. Default true; always off under prefers-reduced-motion. */
+    autoRotate?: boolean;
+    /** Orbit with the pointer. Default true. */
+    cameraControls?: boolean;
+    /** model-viewer `environment-image`. Default `neutral`. */
+    environment?: string;
+    /** External texture maps (URLs) to view on the mesh. */
+    channels?: ModelChannels;
+    /** Controlled channel. */
+    channel?: ModelChannelView;
+    /** Initial channel when uncontrolled. Default `lit`. */
+    defaultChannel?: ModelChannelView;
+    onChannelChange?: (channel: ModelChannelView) => void;
+    /** Named parts of the model, listed under the view; hover/focus highlights, click selects. */
+    parts?: readonly ModelPart[];
+    /** Controlled selected part (`null` = none). */
+    selectedPart?: string | null;
+    onSelectPart?: (id: string | null) => void;
+    /** Wireframe. Controlled when `onWireframeChange` is passed, else the initial value. */
+    wireframe?: boolean;
+    onWireframeChange?: (on: boolean) => void;
+    /** Two or more show a compact list under the view, the current one marked. */
+    versions?: readonly ModelVersion[];
+    onOpenVersion?: (id: string) => void;
+    /** Shows a "Snapshot" button; receives a PNG of the current view. */
+    onSnapshot?: (png: Blob) => void;
+    onLoad?: () => void;
+    onError?: (message: string) => void;
+    /** The frame's surface: `default` (surface), `inset` (inset surface), `dark` (the media stage). */
+    tone?: 'default' | 'inset' | 'dark';
+    /** No border or rounded frame — for use inside a card. */
+    frameless?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /** A monitor: "present this document" / someone is presenting. */
 export declare function MonitorIcon({ size, ...rest }: IconProps): JSX.Element;
@@ -15721,6 +16049,14 @@ export declare interface NumberInputProps {
 }
 
 export declare function NumberReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
+
+declare interface ObjectLike3 {
+    name?: string;
+    parent?: ObjectLike3 | null;
+    isMesh?: boolean;
+    material?: MaterialLike3 | MaterialLike3[];
+    traverse?(fn: (o: ObjectLike3) => void): void;
+}
 
 /** A page of revisions is not the whole history: how many more exist, and how to ask for them. */
 declare interface OlderRevisions {
@@ -20034,6 +20370,16 @@ declare interface RichChatComposerProps {
      */
     onCommand?: (command: ComposerCommand, argument: ComposerArgumentItem) => void;
     /**
+     * A command with no `argument` picked from the `/` menu (click or Enter)
+     * runs at once instead of being written into the draft (since 2.510.0):
+     * the draft is cleared, then this is called. A thrown or rejected
+     * `ComposerSendError` shows in the send-error line, like a refused send.
+     * Commands that take an argument still write their trigger and open the
+     * argument menu. Absent, every pick writes its trigger (the default).
+     * `ContextComposer presentation="prompt"` wires it to `onSend`.
+     */
+    onCommandPick?: (command: ComposerCommand) => void | boolean | Promise<void | boolean>;
+    /**
      * Resolves the @ menu. A promise is supported so a host can hit a directory
      * rather than filter a preloaded array. Omit to disable mentions entirely.
      */
@@ -20167,12 +20513,40 @@ declare interface RichChatComposerProps {
      *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
      *   bordered well and no rule over the strip — the Initiatives mockup.
      *
+     * - `prompt` (2.508.0): a box for one instruction, not a document — no
+     *   formatting controls at all. The strip is attach (only when
+     *   `allowAttachments`), then the divider, then `toolbarExtras`; with
+     *   neither there is no strip, only Send. Bold and italic keyboard
+     *   shortcuts still work in the input. The `?` menu holds keyboard hints
+     *   only (no "Formatting" section), and below wide the `Aa` toggle becomes
+     *   "Show tools" and appears only when the strip has something to show.
+     *   Docks like `basic` under `modeControl="menu"`: boxed mode picker,
+     *   bordered input well, labelled Send.
+     *
+     * - `prompt-card` (2.389.11, named `prompt` until 2.508.0): the docked
+     *   mockup card with `/ Commands`, `# Context`, the host's extras,
+     *   "Return to send" and a round icon Send. Under any other `modeControl`
+     *   it falls back to `prompt`.
+     *
      * In docked mode, the mode menu contains modes, host actions and keyboard
      * hints only; formatting belongs on the editor's toolbar.
      * Sizes are unchanged in all of them: every control is the same 28px box.
      * Below wide the strip folds exactly as before, whichever preset is set.
      */
     toolbar?: ComposerToolbarPreset;
+    /**
+     * `prompt` (since 2.510.0): the docked card as a quiet prompt box — the
+     * header row holds the references (left) and `modeRowEnd` (right) and keeps
+     * one height whether or not there are references; then the suggestion
+     * chips, the input (no bordered well), and the strip with attach, the
+     * host's extras and Send showing `submitLabel` alone (no paper plane, no
+     * arrow). No mode label, pill, picker, menu or `⌥n` badge in any state
+     * (the mode is still `mode` and Enter still sends in it), and no
+     * `/ commands` hint (typing `/` still opens the menu). Sets
+     * `data-presentation="prompt"` on the root. `ContextComposer
+     * presentation="prompt"` sets it. Default `card` (unchanged).
+     */
+    presentation?: 'card' | 'prompt';
     /**
      * A `⋯` menu at the right of the toolbar row, before `submitLead` and Send —
      * for actions on the THING the composer is attached to ("Draft a
@@ -20354,6 +20728,14 @@ declare interface RichChatComposerProps {
      */
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
+    /**
+     * When the wide chip row shows (2.508.0). `focused` (default): while the
+     * input is empty and focused, as described at `suggestions`. `empty`: while
+     * the input is empty, focused or not — the page's quick actions visible at
+     * rest. Either way never on the one-row idle composer (`collapseWhenIdle`
+     * folded), and below wide they stay in the `?` menu.
+     */
+    suggestionsVisible?: 'focused' | 'empty';
     /** At the end of the compact mode row — a scope switch, a count. */
     modeRowEnd?: ReactNode;
     /**
@@ -21749,6 +22131,9 @@ export declare function setApprovalApiBase(base: ApprovalApiBase | null): void;
  */
 export declare const setDocumentTypeApiBaseUrl: typeof setApiBaseUrl;
 
+/** Wireframe on (or off) for every mesh material of the model. Returns false when the scene is unreachable. */
+export declare function setModelWireframe(el: unknown, on: boolean): boolean;
+
 /** A cog: "device settings" — which microphone, speaker and camera this call uses. */
 export declare function SettingsGearIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -23015,7 +23400,7 @@ export declare interface StatusLeaf extends Omit<StatusPillProps, 'className' | 
     kind: 'status';
 }
 
-export declare function StatusPill({ state: stateProp, tone, label, icon, meta, size, variant, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
+export declare function StatusPill({ state: stateProp, tone, label, icon, meta, size, variant, truncate, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
 
 export declare interface StatusPillProps {
     /** The pill's tone. Either `state` or `tone`; `tone` wins when both are given. */
@@ -23037,6 +23422,13 @@ export declare interface StatusPillProps {
     meta?: string;
     size?: StatusPillSize;
     variant?: StatusPillVariant;
+    /**
+     * Default true: the label ellipsizes when its row is narrower than it
+     * (full text in `title`). `false` (2.512.0): the label is never cut — it
+     * wraps between words instead, for a caption whose word must read whole
+     * ("Candidate" under an 88px tile).
+     */
+    truncate?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -28199,13 +28591,22 @@ declare interface UseActivityBusReturn {
       label: string;
       done: boolean;
       active: boolean;
-      /** Supporting timestamp or explanation, below the milestone label. */
+      /**
+       * Supporting timestamp or explanation, below the milestone label. In the
+       * vertical orientation this is the step's one fact ("Mina (proposed)").
+       */
       description?: ReactNode;
+      /**
+       * Vertical orientation only (2.512.0): the step's next move — a library
+       * `Button` — drawn under its label while the step is `active`. Ignored on
+       * other steps and in the horizontal strip.
+       */
+      action?: ReactNode;
       /** Terminal outcomes must not look like successful completion. */
       outcome?: 'failed' | 'cancelled';
   }
 
-  export declare function WorkflowStepper({ steps, size: sizeProp, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+  export declare function WorkflowStepper({ steps, size: sizeProp, wrap, orientation, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
 
   export declare interface WorkflowStepperProps {
       steps: WorkflowStep[];
@@ -28222,6 +28623,12 @@ declare interface UseActivityBusReturn {
        * no step is ever hidden past the track's edge. Default false (scrolls).
        */
       wrap?: boolean;
+      /**
+       * `horizontal` (default): the strip. `vertical` (2.512.0): a timeline, one
+       * row per step with its fact and, on the active step, its `action`.
+       * `data-orientation` on the root.
+       */
+      orientation?: 'horizontal' | 'vertical';
       className?: string;
       'data-testid'?: string;
   }

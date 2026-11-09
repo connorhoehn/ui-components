@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-980 components across 21 entry points; 832 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+984 components across 21 entry points; 836 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -34,6 +34,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | A section or panel header inside a page | `CardHeader` | `@connorhoehn/ui-components/shared` | Title + actions row with the separator under it, for a card or panel section. Use `PaneHeader` when the pane has tabs. Never hand-draw `border-b` header bands. | Not a page header (use `PageHeader` or a page template) or a channel/room header (use `ChannelHeader`). |
 | A page's title row | `PageHeader` | `@connorhoehn/ui-components/shared` | Title, description, back link and actions at the top of a page. Templates render it for you. | Don't hand-roll an `<h1>` + flex row of buttons. |
 | Buttons | `Button` | `@connorhoehn/ui-components/shared` | Always pass an explicit `variant` (`primary`, `secondary`, `ghost`, `danger`, `danger-solid`, `success`, `info`, `link`) and `size` where it matters. `IconButton` for icon-only actions. | Don't style a raw `<button>`, and don't rely on the default variant: one primary action per region. |
+| A row's or panel's own decision | `ConfirmButton` | `@connorhoehn/ui-components/shared` | A button that confirms in place: pressed, it becomes "<question?> [Confirm] [Cancel]" in the same spot (`role="group"` named by the question); Escape or Cancel restores it, Enter confirms. `tone="destructive"` for a destructive confirm; `busy` (or a promise from `onConfirm`) holds it busy. `data-confirm-state` reads `idle` / `asking` / `busy`. The replacement for `ConfirmDialog` in rows and panels: a modal is never the right place for a row's own decision. | Not for a decision that needs a body, a preview or a form: that is `ConfirmDialog`. |
+| Rows with their own buttons | `GroupedList` | `@connorhoehn/ui-components/shared` | Pass `trailingLayout="columns"` when rows carry `actions` and/or `trailing`: the whole list becomes one grid whose actions and trailing columns are shared and right-aligned, so every row ends at one x (audit rule `row.actions-aligned`). Action Buttons draw at `sm`. | Don't leave a list of rows with different buttons in the default `inline` layout (a ragged right edge), and don't put buttons in `meta` (inside the row's button). |
 | Empty / error / loading | `EmptyState` | `@connorhoehn/ui-components/shared` | `EmptyState`, `ErrorState` and `LoadingState` for whole-region states. | Don't write "No items" paragraphs or spinners by hand. |
 | Form controls | `Input` | `@connorhoehn/ui-components/shared` | Every control comes from `forms/`: `Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`, `Switch`, wrapped in `FormField` for label/help/error. | Never a raw `<input>`/`<select>`. |
 | Chat | `ChatPanel` | `@connorhoehn/ui-components/social` | Message list + composer. With realtime-modules, use `WrappedChatPanel` from `/integrations/realtime-modules`. | Don't hand-roll a message list. |
@@ -46,9 +48,9 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (59)
 - [Tables & lists](#tables--lists) (31)
 - [Forms](#forms) (30)
-- [Buttons & actions](#buttons--actions) (15)
+- [Buttons & actions](#buttons--actions) (16)
 - [Feedback & states](#feedback--states) (26)
-- [Chat & social](#chat--social) (107)
+- [Chat & social](#chat--social) (108)
 - [Video](#video) (108)
 - [Docs & editor](#docs--editor) (138)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (139)
@@ -56,7 +58,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (9)
-- [Other](#other) (79)
+- [Other](#other) (81)
 - [Icons](#icons) (112)
 
 ## Page templates
@@ -131,7 +133,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ChannelHeader` | `@connorhoehn/ui-components/shared` | Header bar for a channel / DM / thread view. | `shared-channelheader` |  |
 | `ChecklistSection` | `@connorhoehn/ui-components/shared` | A work item's acceptance criteria: square checkbox rows with in-place edit, remove and reorder, and an "Add criterion" field at the foot. | `work-checklistsection` |  |
 | `CollapsibleSection` | `@connorhoehn/ui-components/shared` | Bordered accordion section with a header button and optional badge slot. | `shared-collapsiblesection` |  |
-| `ConfirmDialog` | `@connorhoehn/ui-components/shared` | — | `shared-confirmdialog` |  |
+| `ConfirmDialog` | `@connorhoehn/ui-components/shared` | A modal yes/no for a decision that needs a body or a preview; a row's or panel's own decision uses `ConfirmButton` (in place) instead. | `shared-confirmdialog` |  |
 | `ConsultCard` | `@connorhoehn/ui-components/shared` | An agent's question, waiting on a person. | `shared-consultcard` |  |
 | `DetailHeader` | `@connorhoehn/ui-components/shared` | The top of a detail panel: what this thing is, its state, one line of prose about it, its metadata, and a slot for whatever the panel measures. |  |  |
 | `DetailSection` | `@connorhoehn/ui-components/shared` | A titled block inside a detail surface, separated from what precedes it by a hairline. | `shared-detailsection` |  |
@@ -262,6 +264,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `AttachToggle` | `@connorhoehn/ui-components/shared` | "⊕ Add" / "✓ Added": puts a thing into (or takes it out of) a working set, such as the documents a prompt will use. |  |  |
 | `Button` | `@connorhoehn/ui-components/shared` | Shared button component with consistent variants. | `ui-button` |  |
 | `CommandPalette` | `@connorhoehn/ui-components/shared` | Shared Cmd+K command palette. | `shared-commandpalette` |  |
+| `ConfirmButton` | `@connorhoehn/ui-components/shared` | A button that asks before it acts — in place. | `shared-confirmbutton` |  |
 | `DropdownMenu` | `@connorhoehn/ui-components/shared` | Generic trigger + dropdown menu composite. | `shared-dropdownmenu` |  |
 | `FilePickerButton` | `@connorhoehn/ui-components/shared` | A button that opens the system file picker and hands the chosen files over. |  |  |
 | `FilterChip` | `@connorhoehn/ui-components/shared` | — | `shared-filterchip` |  |
@@ -347,6 +350,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `CommentThread` | `@connorhoehn/ui-components/social` | Inline comment thread for a single post. (also exported as `CommentThreadPanel` from `@connorhoehn/ui-components`) |  |  |
 | `ComposerAttachments` | `@connorhoehn/ui-components/social/rich-composer` | Files staged in the composer, before they are sent. |  |  |
 | `ComposerConfirmFlow` | `@connorhoehn/ui-components/social/rich-composer` | ComposerConfirmFlow (2.482.0) — draft → review → done, all inside the one response box. | `social-composerconfirmflow` |  |
+| `ComposerPresentationContext` | `@connorhoehn/ui-components/social/rich-composer` | — |  |  |
 | `ComposerPromptDeck` | `@connorhoehn/ui-components/social/rich-composer` | ComposerPromptDeck (2.444.0) — human-in-the-loop prompts in the docked composer, one at a time, answered from the keyboard. | `social-composerpromptdeck` |  |
 | `ComposerReferences` | `@connorhoehn/ui-components/social` | What a draft points AT, above the words. | `social-composerreferences` |  |
 | `ComposerSendError` | `@connorhoehn/ui-components/social` | Reject `onSend` with this to show `message` in the composer's alert. |  |  |
@@ -952,6 +956,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ErrorDisplay` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `EventLog` | `@connorhoehn/ui-components/shared` | Dev tool component that renders a timestamped, scrollable list of WebSocket messages sent and received. |  |  |
 | `FileKindMark` | `@connorhoehn/ui-components/shared` | The small square glyph that says what KIND of file a row is: a page, a presentation, a recording, a transcript, a diagram, a folder. | `shared-filekindmark` |  |
+| `FrameStrip` | `@connorhoehn/ui-components/shared` | A scrubbable image sequence — "20 frames of it moving". | `shared-framestrip` |  |
 | `GenerativeImagePreview` | `@connorhoehn/ui-components/shared` | "Image synthesizing" visual for generative pipeline nodes (NODE-VISUALS-AUDIT §3.2). | `image-generativeimagepreview` |  |
 | `HeaderDescriptionInfo` | `@connorhoehn/ui-components/shared` | Compact density's home for the description: an info glyph after the title opening the library `HoverCard` — hover or keyboard focus shows it, Enter pins it, Escape closes it, focus never leaves the glyph. |  |  |
 | `HeaderPeople` | `@connorhoehn/ui-components/shared` | The people in a header. |  |  |
@@ -969,6 +974,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `LiveRegion` | `@connorhoehn/ui-components/shared` | A screen-reader-only ARIA live region with a rate limiter. |  |  |
 | `MappingReviewPage` | `@connorhoehn/ui-components/ingest` | Operator queue for ingest items the LLM mapper produced low-confidence type matches for. | `ingest-mappingreviewpage` |  |
 | `MarkdownView` | `@connorhoehn/ui-components/shared` | Read-only markdown rendered on the library's own tokens. | `shared-markdownview` |  |
+| `ModelViewer` | `@connorhoehn/ui-components/shared` | A generated 3D model (GLB/glTF) on a turntable, for judging it the way ImageCompare judges an image: beside its reference (the concept art) in one shared frame, so the two are exactly the same height. | `shared-modelviewer` |  |
 | `PanelsView` | `@connorhoehn/ui-components/shared` | Lazy-loadable view for the "Previews" tab — Chat, Cursors, Reactions, Shared Document, and Activity panels. |  |  |
 | `ParticlesBackground` | `@connorhoehn/ui-components/shared` | Renders `children` over a drifting point cloud while `active`. |  |  |
 | `ProcedureSteps` | `@connorhoehn/ui-components/shared` | A procedure's ordered steps, drawn once: in a guide's body ("What to do: 1 Rerun the failing test…") and, with outcomes, in its Runs tab ("✓ 1 Keep the SAML shim / ✓ 2 Confirm sessions / ! | `work-proceduresteps` |  |

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { createConversationComposer } from './ConversationComposer';
 import type { ComposerPrompt } from './composerPromptModel';
 
@@ -48,3 +49,33 @@ export const ConfirmOnly: Story = { args: { prompts: [{
   id: 'confirm', title: 'Save this estimate?', kind: 'confirm', question: 'Keep these settings for later?',
   onAnswer: () => ({ receipt: 'Estimate saved in this preview' }),
 }] } };
+
+/**
+ * `inputDraft` under `presentation="prompt"` (2.513.0): the composer's own
+ * text box is the card's answer field. "Refine" opens with the saved words
+ * ("A little fern"); typing reaches `onChange`, so "Use as typed" enables once
+ * there is something to use. Enter still answers the card.
+ */
+export const PromptInputDraft: Story = {
+  render: function PromptInputDraftStory(args) {
+    const [saved, setSaved] = useState('A little fern');
+    const [card, setCard] = useState<'refine' | 'name'>('refine');
+    const [name, setName] = useState('');
+    const prompts: ComposerPrompt[] = card === 'refine'
+      ? [{
+        id: 'refine', title: 'Refine the prop', kind: 'confirm', question: 'Change the words, then generate again?',
+        inputDraft: { value: saved, onChange: setSaved },
+        options: [{ id: 'generate', label: 'Generate', emphasis: 'primary' }, { id: 'next', label: 'Name the sprite' }],
+        onDirection: () => undefined,
+        onAnswer: (answer) => { if ((answer as { optionId?: string }).optionId === 'next') setCard('name'); return undefined; },
+      }]
+      : [{
+        id: 'name', title: 'Name the sprite', kind: 'choice', question: 'Type a name, then use it as typed.',
+        inputDraft: { value: name, onChange: setName },
+        options: [{ id: 'typed', label: 'Use as typed', ...(name.trim() ? {} : { disabledReason: 'Type a name first' }) }, { id: 'back', label: 'Back to the prop' }],
+        onDirection: () => undefined,
+        onAnswer: (answer) => { if ((answer as { optionId?: string }).optionId === 'back') setCard('refine'); return { receipt: `Named ${name}` }; },
+      }];
+    return <ConversationComposer {...args} presentation="prompt" expanded console={false} defaultDraft={undefined} prompts={prompts} />;
+  },
+};

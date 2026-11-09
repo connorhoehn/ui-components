@@ -1,3 +1,4 @@
+import { Context } from 'react';
 import { Editor } from '@tiptap/core';
 import { ForwardRefExoticComponent } from 'react';
 import { JSX } from 'react';
@@ -507,6 +508,10 @@ export declare interface ComposerIdentity {
 /** What the composer is for, right now. */
 export declare type ComposerMode = 'chat' | 'agent' | 'terminal';
 
+export declare type ComposerPresentation = 'card' | 'prompt';
+
+export declare const ComposerPresentationContext: Context<ComposerPresentation | null>;
+
 /**
  * Something already running that this composer's owner started.
  *
@@ -544,7 +549,7 @@ export declare interface ComposerPrompt {
     options?: readonly ComposerPromptOption[];
     /** What Enter on an empty input picks. Confirm defaults to its first option. */
     defaultOptionId?: string;
-    /** Text / number: the input's placeholder while this prompt is on screen. */
+    /** Text / number: the input's placeholder while this prompt is on screen. Choice / confirm under the quiet prompt box (2.512.0), where the input stays: its placeholder there. */
     placeholder?: string;
     /** Number: bounds a typed answer must sit inside. */
     min?: number;
@@ -553,8 +558,18 @@ export declare interface ComposerPrompt {
      * Optional host-owned draft for the deck's text / number input (no external
      * input bridge). The host may persist it by question identity across mounts.
      * The host also clears it after an accepted answer; refused answers and late
-     * acknowledgments never clear another question's draft. Does not control the
-     * external composer input or a compose prompt's separate message flow.
+     * acknowledgments never clear another question's draft. Does not control a
+     * compose prompt's separate message flow.
+     *
+     * Under `presentation="prompt"` (`ConversationComposer`, since 2.513.0) the
+     * card's answer field IS the composer's own text box, and this binds it:
+     * whenever the open card changes (its `id`), the text box is seeded from
+     * `value` (the caret at its end; `''` empties it), and every edit there
+     * calls `onChange(text)` with the box's plain text — so a "Use as typed"
+     * option can enable once something is typed, and a "Refine" card reopens
+     * with the saved words. Enter still answers the card as before. Changing
+     * `value` while the same card stays open does not rewrite the box. Under any other
+     * composer presentation it still drives only the deck's own input.
      */
     inputDraft?: {
         value: string;
@@ -571,6 +586,26 @@ export declare interface ComposerPrompt {
     path?: DecisionPathState;
     /** Compose: the message flow's wording and prefilled text. */
     compose?: ComposerPromptCompose;
+    /**
+     * Back in the card header (2.510.0), on a one-prompt deck too. A follow-up
+     * reached through `{ next }` without its own `back` gets one that returns
+     * to the question it followed (`deck.back()`) — except a compose follow-up,
+     * whose flow already draws that Back. A rejected `onBack` shows its message
+     * on the card like a refused answer.
+     */
+    back?: ComposerPromptBack;
+    /**
+     * Choice / confirm (2.512.0): words typed in the composer's input under
+     * this card are a direction, not a message — "make her taller" under a
+     * Generate confirm re-proposes. The deck hands the trimmed text here when
+     * the input is not empty and Enter is pressed (the composer's send).
+     * `{ error }` shows on the card; `{ next }` takes the card in place like an
+     * answer's follow-up; `{ receipt }` is announced; nothing keeps the card on
+     * screen — the host re-proposes by replacing this prompt in its queue (a
+     * new id). Without it the input's placeholder says what the card takes and
+     * Enter on an empty input picks the default option, as before.
+     */
+    onDirection?: (text: string) => ComposerPromptResult | Promise<ComposerPromptResult>;
     onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
 }
 
@@ -601,6 +636,20 @@ export declare type ComposerPromptAnswer = {
     message: string;
     optionId?: undefined;
 };
+
+/**
+ * A Back control on a prompt's card (since 2.510.0): the step before this
+ * question in the host's own flow (a wizard's previous question, the choice
+ * that opened a plan). Rendered in the card header whenever present, single
+ * prompt or not. Answers nothing: `onBack` decides what comes back.
+ */
+export declare interface ComposerPromptBack {
+    /** Default "Back". */
+    label?: string;
+    onBack: () => void | Promise<void>;
+    /** Off, with why (the button's title). */
+    disabledReason?: string;
+}
 
 /**
  * A compose prompt's message flow (2.482.0): a prefilled, editable message
@@ -636,7 +685,7 @@ export declare interface ComposerPromptCompose {
     onCancel?: () => void;
 }
 
-export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, input, variant, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
+export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, input, variant, presentation: presentationProp, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
 
 /** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
 export declare interface ComposerPromptDeckOptions {
@@ -664,6 +713,14 @@ export declare interface ComposerPromptDeckProps {
      * under it, the input below it in the same card. Since 2.446.0.
      */
     variant?: 'card' | 'inset';
+    /**
+     * `card` (default): numbered keycaps on the answers and a key-hint row.
+     * `prompt` (2.512.0): plain Buttons and no hint row (the keys still work),
+     * facts one per line clamped to one line. Defaults to the enclosing
+     * composer's presentation (`ComposerPresentationContext`), else `card`.
+     * `data-presentation` on the deck root.
+     */
+    presentation?: ComposerPresentation;
     className?: string;
     'data-testid'?: string;
 }
@@ -691,6 +748,15 @@ export declare interface ComposerPromptDeckState {
     pick: (optionId: string) => Promise<boolean>;
     /** Answer the active text / number prompt with typed words. True when taken. */
     answerTyped: (raw: string) => Promise<boolean>;
+    /** The open card takes typed words as a direction (`ComposerPrompt.onDirection`). Since 2.512.0. */
+    direction: boolean;
+    /**
+     * Hand typed words under an open choice / confirm card to its
+     * `onDirection` (2.512.0). True when the host took them (the input
+     * clears); false — the words stay — on a refusal, an empty text, or a card
+     * without `onDirection` (which shows what the card takes as its error).
+     */
+    answerDirection: (raw: string) => Promise<boolean>;
     /**
      * Confirm the active compose prompt with its edited message (2.482.0). The
      * host's `{ error }` comes back for the flow to show; ok leaves the prompt on
@@ -701,6 +767,20 @@ export declare interface ComposerPromptDeckState {
     isFollowUp: boolean;
     /** Return to the question the active follow-up came from. False when it is a root prompt. */
     back: () => boolean;
+    /**
+     * The card header's Back (2.510.0): the active prompt's own `back`, else a
+     * follow-up's return to its question (not a compose follow-up: its flow
+     * has that Back). Null when the card has none.
+     */
+    backControl: {
+        label: string;
+        disabledReason?: string;
+    } | null;
+    /**
+     * Take the Back: the prompt's `onBack` (busy while it runs; a rejection is
+     * the card's error), else `back()`. True when it ran.
+     */
+    goBack: () => Promise<boolean>;
     /** Drop the active prompt after its done state, with no receipt. */
     finish: () => void;
     dismissReceipt: () => void;
@@ -877,7 +957,7 @@ export declare interface ComposerTaskReport {
 }
 
 /** See `RichChatComposerProps.toolbar`. */
-export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'basic';
+export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'prompt-card' | 'basic';
 
 /** One row of the `Workflow ⌄` menu. A disabled row shows its reason and cannot be picked. */
 export declare interface ComposerWorkflow {
@@ -898,8 +978,32 @@ export declare function ContextComposer(props: ContextComposerProps): JSX.Elemen
 export declare interface ContextComposerProps {
     /** What the composer is attached to. Decides modes, chip, and which features may render. */
     context: ComposerContext;
-    /** `document`: comfortable density, for a full-width page. Default `compact`. */
-    presentation?: 'compact' | 'document';
+    /**
+     * `document`: comfortable density, for a full-width page. Default `compact`.
+     *
+     * `prompt` (since 2.510.0): a quiet prompt box for a host whose composer
+     * takes one instruction — the record (context chip) and any references in
+     * one header row with `modeRowEnd`, the suggestion chips, the text box, and
+     * one primary button showing `submitLabel` alone. Comfortable density;
+     * `toolbar` defaults to `prompt` (attach only when allowed, then
+     * `toolbarExtras`). No mode label, pill, picker, menu or `⌥n` badge in any
+     * state, and no mode shortcuts or mode triggers: the mode stays what
+     * `mode` / `defaultMode` says, so Enter still routes there. No `/ commands`
+     * hint (typing `/` still opens the menu), and picking a command that has no
+     * `argument` from that menu sends it at once — the draft is cleared and
+     * `onSend` receives `{ text: trigger, command: { trigger } }` (in a
+     * `ConversationComposer`, the command's `run` with empty `argumentText`),
+     * so no command chip waits beside an empty box. Adding references never
+     * changes the card's height. `data-presentation="prompt"` on the composer.
+     */
+    presentation?: 'compact' | 'document' | 'prompt';
+    /**
+     * The strip's preset, as `RichChatComposerProps.toolbar` (since 2.508.0).
+     * Default `editor` (`prompt` under `presentation="prompt"`). `prompt` drops
+     * every formatting control and keeps attach (when allowed), the divider
+     * and the host's extras.
+     */
+    toolbar?: ComposerToolbarPreset;
     /** Controlled mode. Pair with `onModeChange`. */
     mode?: ComposerMode;
     /** Uncontrolled starting mode. Default: the context's. */
@@ -1053,6 +1157,8 @@ export declare interface ContextComposerProps {
     status?: ComposerStatus | null;
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
+    /** `RichChatComposerProps.suggestionsVisible` (since 2.508.0). Default `focused`. */
+    suggestionsVisible?: 'focused' | 'empty';
     maxInputHeight?: number | string;
     composerRef?: Ref<RichChatComposerHandle>;
     /** Accessible name of the region. Default: the context's. */
@@ -1240,6 +1346,10 @@ export declare interface ConversationComposerOwnProps {
      * Human-in-the-loop prompts replace the message editor while expanded.
      * Choices use numbered buttons; text/number prompts expose a plain answer
      * field. Hide or finish restores the conversation draft and its tools.
+     * Under `presentation="prompt"` (2.512.0) the editor stays: the card is the
+     * composer's first section with plain answer buttons and no key hints, the
+     * input answers a text / number card, and words typed under a choice /
+     * confirm card go to its `onDirection` (a compose prompt still replaces).
      */
     prompts?: readonly ComposerPrompt[];
     /**
@@ -1358,6 +1468,8 @@ declare type DeckKeyAction = {
     type: 'page';
     delta: 1 | -1;
 } | {
+    type: 'back';
+} | {
     type: 'collapse';
 } | {
     type: 'expand';
@@ -1374,6 +1486,8 @@ export declare function deckKeyAction(event: DeckKey, state: {
     inputEmpty: boolean;
     inDeck: boolean;
     busy: boolean;
+    /** The card shows an enabled Back (2.510.0). */
+    canBack?: boolean;
 }): DeckKeyAction;
 
 /** The option Enter picks on an empty input, if any. */
@@ -1612,6 +1726,16 @@ export declare interface RichChatComposerProps {
      */
     onCommand?: (command: ComposerCommand, argument: ComposerArgumentItem) => void;
     /**
+     * A command with no `argument` picked from the `/` menu (click or Enter)
+     * runs at once instead of being written into the draft (since 2.510.0):
+     * the draft is cleared, then this is called. A thrown or rejected
+     * `ComposerSendError` shows in the send-error line, like a refused send.
+     * Commands that take an argument still write their trigger and open the
+     * argument menu. Absent, every pick writes its trigger (the default).
+     * `ContextComposer presentation="prompt"` wires it to `onSend`.
+     */
+    onCommandPick?: (command: ComposerCommand) => void | boolean | Promise<void | boolean>;
+    /**
      * Resolves the @ menu. A promise is supported so a host can hit a directory
      * rather than filter a preloaded array. Omit to disable mentions entirely.
      */
@@ -1745,12 +1869,40 @@ export declare interface RichChatComposerProps {
      *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
      *   bordered well and no rule over the strip — the Initiatives mockup.
      *
+     * - `prompt` (2.508.0): a box for one instruction, not a document — no
+     *   formatting controls at all. The strip is attach (only when
+     *   `allowAttachments`), then the divider, then `toolbarExtras`; with
+     *   neither there is no strip, only Send. Bold and italic keyboard
+     *   shortcuts still work in the input. The `?` menu holds keyboard hints
+     *   only (no "Formatting" section), and below wide the `Aa` toggle becomes
+     *   "Show tools" and appears only when the strip has something to show.
+     *   Docks like `basic` under `modeControl="menu"`: boxed mode picker,
+     *   bordered input well, labelled Send.
+     *
+     * - `prompt-card` (2.389.11, named `prompt` until 2.508.0): the docked
+     *   mockup card with `/ Commands`, `# Context`, the host's extras,
+     *   "Return to send" and a round icon Send. Under any other `modeControl`
+     *   it falls back to `prompt`.
+     *
      * In docked mode, the mode menu contains modes, host actions and keyboard
      * hints only; formatting belongs on the editor's toolbar.
      * Sizes are unchanged in all of them: every control is the same 28px box.
      * Below wide the strip folds exactly as before, whichever preset is set.
      */
     toolbar?: ComposerToolbarPreset;
+    /**
+     * `prompt` (since 2.510.0): the docked card as a quiet prompt box — the
+     * header row holds the references (left) and `modeRowEnd` (right) and keeps
+     * one height whether or not there are references; then the suggestion
+     * chips, the input (no bordered well), and the strip with attach, the
+     * host's extras and Send showing `submitLabel` alone (no paper plane, no
+     * arrow). No mode label, pill, picker, menu or `⌥n` badge in any state
+     * (the mode is still `mode` and Enter still sends in it), and no
+     * `/ commands` hint (typing `/` still opens the menu). Sets
+     * `data-presentation="prompt"` on the root. `ContextComposer
+     * presentation="prompt"` sets it. Default `card` (unchanged).
+     */
+    presentation?: 'card' | 'prompt';
     /**
      * A `⋯` menu at the right of the toolbar row, before `submitLead` and Send —
      * for actions on the THING the composer is attached to ("Draft a
@@ -1932,6 +2084,14 @@ export declare interface RichChatComposerProps {
      */
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
+    /**
+     * When the wide chip row shows (2.508.0). `focused` (default): while the
+     * input is empty and focused, as described at `suggestions`. `empty`: while
+     * the input is empty, focused or not — the page's quick actions visible at
+     * rest. Either way never on the one-row idle composer (`collapseWhenIdle`
+     * folded), and below wide they stay in the `?` menu.
+     */
+    suggestionsVisible?: 'focused' | 'empty';
     /** At the end of the compact mode row — a scope switch, a count. */
     modeRowEnd?: ReactNode;
     /**
@@ -2078,6 +2238,9 @@ export declare interface StagedFile {
     id: string;
     file: File;
 }
+
+/** Whether typed words under this card are a direction for the host (`onDirection`): a choice / confirm card that takes one. */
+export declare function takesDirection(prompt: ComposerPrompt | null | undefined): boolean;
 
 /** Whether the composer's input carries a typed answer for this prompt. */
 export declare function takesTypedAnswer(prompt: ComposerPrompt | null | undefined): boolean;

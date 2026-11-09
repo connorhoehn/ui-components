@@ -1,7 +1,9 @@
+import { Button } from '../../ui/Button';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { useState } from 'react';
 import { act, render, screen, fireEvent, cleanup, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   GroupedList,
@@ -434,5 +436,159 @@ describe('GroupedList semantic rail typography', () => {
     expect(screen.getByText('Badge').closest('[data-ui-text="rail-item"]')).toBeNull();
     expect(screen.getByText('Alpha description').closest('[data-ui-text="rail-item"]')).toBeNull();
     expect(screen.getByRole('button', { name: 'Details' }).closest('[data-ui-text="rail-item"]')).toBeNull();
+  });
+});
+
+describe('GroupedList row actions (2.509.0)', () => {
+  const groups: GroupedListGroup[] = [{ id: 'review', title: 'Needs review' }];
+  const rowsWith = (onApprove = () => {}): GroupedListRow[] => [
+    {
+      id: 'a',
+      groupId: 'review',
+      title: 'Storyboard approval',
+      subline: 'Episode 2',
+      actions: (
+        <>
+          <button type="button" data-testid="approve-a" onClick={onApprove}>Approve</button>
+          <button type="button" data-testid="reject-a">Request changes</button>
+        </>
+      ),
+      trailing: <span>2m ago</span>,
+    },
+    { id: 'b', groupId: 'review', title: 'Voice take' },
+  ];
+
+  it('renders actions as a sibling after the row button, before trailing: no nested buttons', () => {
+    const { container } = render(<GroupedList groups={groups} rows={rowsWith()} />);
+    expect(container.querySelector('button button')).toBeNull();
+    const open = screen.getByTestId('grouped-list-row-open-a');
+    const actions = screen.getByTestId('grouped-list-row-controls-a');
+    expect(open.contains(actions)).toBe(false);
+    expect(open.nextElementSibling).toBe(actions);
+    expect(actions.nextElementSibling).toBe(screen.getByTestId('grouped-list-row-trailing-a'));
+    expect(open).not.toHaveTextContent('Approve');
+  });
+
+  it('keyboard order: the row, then its actions; arrows from an action do not move the list', async () => {
+    const user = userEvent.setup();
+    render(<GroupedList groups={groups} rows={rowsWith()} />);
+    screen.getByTestId('grouped-list-row-open-a').focus();
+    await user.tab();
+    expect(screen.getByTestId('approve-a')).toHaveFocus();
+    await user.tab();
+    expect(screen.getByTestId('reject-a')).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByTestId('reject-a')).toHaveFocus();
+    // Back on the row, ArrowDown still roves to the next row.
+    screen.getByTestId('grouped-list-row-open-a').focus();
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByTestId('grouped-list-row-open-b')).toHaveFocus();
+  });
+
+  it('a press on an action never opens the row', async () => {
+    const onOpenRow = vi.fn();
+    const onApprove = vi.fn();
+    const user = userEvent.setup();
+    render(<GroupedList groups={groups} rows={rowsWith(onApprove)} onOpenRow={onOpenRow} />);
+    fireEvent.click(screen.getByTestId('approve-a'));
+    fireEvent.click(screen.getByTestId('grouped-list-row-controls-a'));
+    screen.getByTestId('approve-a').focus();
+    await user.keyboard('{Enter}');
+    await user.keyboard(' ');
+    expect(onApprove).toHaveBeenCalledTimes(3);
+    expect(onOpenRow).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('grouped-list-row-open-a'));
+    expect(onOpenRow).toHaveBeenCalledTimes(1);
+  });
+
+  it('wraps the actions under the title below a 35rem row, aligned past the caret column', () => {
+    render(<GroupedList groups={groups} rows={rowsWith()} />);
+    const li = screen.getByTestId('grouped-list-row-a');
+    expect(li).toHaveClass('@container', 'flex-wrap');
+    expect(screen.getByTestId('grouped-list-row-controls-a')).toHaveClass(
+      '@max-[35rem]:basis-full',
+      '@max-[35rem]:order-last',
+      '@max-[35rem]:pl-[30px]',
+    );
+    // A row without actions keeps its old classes.
+    expect(screen.getByTestId('grouped-list-row-b')).not.toHaveClass('@container');
+    expect(screen.queryByTestId('grouped-list-row-controls-b')).toBeNull();
+  });
+});
+
+describe('GroupedList trailingLayout="columns" (2.513.0)', () => {
+  const groups: GroupedListGroup[] = [
+    { id: 'review', title: 'Needs you' },
+    { id: 'running', title: 'Running' },
+  ];
+  const rows: GroupedListRow[] = [
+    {
+      id: 'a',
+      groupId: 'review',
+      title: 'Draw Toby',
+      actions: (
+        <>
+          <Button variant="primary" data-testid="draw-a">Draw Toby</Button>
+          <Button variant="secondary">More</Button>
+        </>
+      ),
+      trailing: <span>2m ago</span>,
+    },
+    { id: 'b', groupId: 'review', title: 'No actions here', trailing: <span>1h ago</span> },
+    { id: 'c', groupId: 'running', title: 'Render', actions: <Button variant="link">Open run</Button>, leading: <input type="checkbox" aria-label="Pick" /> },
+  ];
+
+  it('is one grid whose groups, lists and rows are subgrid lines of its tracks', () => {
+    render(<GroupedList groups={groups} rows={rows} trailingLayout="columns" />);
+    const root = screen.getByTestId('grouped-list');
+    expect(root).toHaveAttribute('data-row-actions-layout', 'columns');
+    expect(root).toHaveAttribute('data-ui-row-list', 'grouped');
+    expect(root).toHaveClass('grid', '@container', 'grid-cols-[auto_minmax(0,1fr)_max-content_max-content_auto]');
+    expect(screen.getByTestId('grouped-list-group-review')).toHaveClass('col-span-full', 'grid-cols-subgrid');
+    expect(screen.getByTestId('grouped-list-group-rows-review')).toHaveClass('col-span-full', 'grid-cols-subgrid');
+    for (const id of ['a', 'b', 'c']) expect(screen.getByTestId(`grouped-list-row-${id}`)).toHaveClass('col-span-full', 'grid-cols-subgrid');
+  });
+
+  it('places cells in shared, right-aligned columns; a row without actions leaves its column empty', () => {
+    render(<GroupedList groups={groups} rows={rows} trailingLayout="columns" />);
+    const actions = screen.getByTestId('grouped-list-row-controls-a');
+    expect(actions).toHaveAttribute('data-ui-part', 'row-actions');
+    expect(actions).toHaveClass('col-start-3', 'justify-self-end');
+    const trailing = screen.getByTestId('grouped-list-row-trailing-b');
+    expect(trailing).toHaveAttribute('data-ui-part', 'row-trailing');
+    expect(trailing).toHaveClass('col-start-4', 'justify-self-end', 'tabular-nums', 'text-right');
+    expect(screen.queryByTestId('grouped-list-row-controls-b')).toBeNull();
+    // Main spans the leading track when a row has no leading control.
+    expect(screen.getByTestId('grouped-list-row-open-b')).toHaveClass('col-start-1', 'col-span-2');
+    expect(screen.getByTestId('grouped-list-row-open-c')).toHaveClass('col-start-2');
+    expect(screen.getByTestId('grouped-list-row-leading-c')).toHaveClass('col-start-1');
+  });
+
+  it('draws action Buttons at sm, one control height, and wraps them under the title below 35rem', () => {
+    render(<GroupedList groups={groups} rows={rows} trailingLayout="columns" />);
+    expect(screen.getByTestId('draw-a')).toHaveAttribute('data-size', 'sm');
+    const actions = screen.getByTestId('grouped-list-row-controls-a');
+    expect(actions.className).toContain('[&_:is(a,button)[data-variant]]:h-[var(--ui-control-sm,1.75rem)]');
+    expect(actions).toHaveClass('@max-[35rem]:col-span-full', '@max-[35rem]:row-start-2', '@max-[35rem]:pl-[30px]');
+  });
+
+  it('keeps tab order (row, then its actions) and keeps actions out of the row button', async () => {
+    const user = userEvent.setup();
+    const onOpenRow = vi.fn();
+    const { container } = render(<GroupedList groups={groups} rows={rows} trailingLayout="columns" onOpenRow={onOpenRow} />);
+    expect(container.querySelector('button button')).toBeNull();
+    screen.getByTestId('grouped-list-row-open-a').focus();
+    await user.tab();
+    expect(screen.getByTestId('draw-a')).toHaveFocus();
+    fireEvent.click(screen.getByTestId('draw-a'));
+    expect(onOpenRow).not.toHaveBeenCalled();
+  });
+
+  it('inline (default) marks the cells too, so an audit can measure them', () => {
+    render(<GroupedList groups={groups} rows={rows} />);
+    expect(screen.getByTestId('grouped-list')).toHaveAttribute('data-row-actions-layout', 'inline');
+    expect(screen.getByTestId('grouped-list')).toHaveClass('flex', 'flex-col');
+    expect(screen.getByTestId('grouped-list-row-controls-a')).toHaveAttribute('data-ui-part', 'row-actions');
+    expect(screen.getByTestId('grouped-list-row-a')).not.toHaveClass('grid-cols-subgrid');
   });
 });

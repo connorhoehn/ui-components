@@ -12,15 +12,31 @@
 // panes: the layout keys off the component's own width (container queries),
 // not the viewport, because it usually sits in an inspector or a drawer.
 //
+// A pane with no picture yet (`src` omitted, `placeholder` given — "No
+// picture yet") draws the SAME frame (aspect, surface, rounding, caption)
+// with the words centred, so a comparison keeps its shape before every image
+// exists. It is not a button and the lightbox skips it. The frame says which
+// it is: `data-gallery-status="placeholder"` (the 2.512.0 gallery
+// convention), and every frame carries `data-image-fit="contain|cover"` so an
+// audit can tell a review subject is shown whole (`image.whole-visible`).
+//
 // Tokens only: frames are `surface-inset`, captions use the text tokens, and
 // the focus ring is the library's `ring-primary`.
 
 import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { ImageLightbox } from './ImageLightbox';
+import { ImageIcon } from '../ui/Icons';
 
 export interface ImageCompareImage {
-  src: string;
+  /** The picture. Omit it (with `placeholder`) for a pane whose image does not exist yet. */
+  src?: string;
+  /**
+   * Words for a pane with no `src` — "No picture yet". The pane keeps the
+   * same frame and caption, with these centred in it; it is not zoomable.
+   * Since 2.513.0.
+   */
+  placeholder?: string;
   /** Short name shown under the pane — "Reference", "Current", "Candidate". */
   label: string;
   /** Alt text. Defaults to `label`. */
@@ -72,6 +88,8 @@ export function ImageCompare({
   if (panes.length === 0) return null;
 
   const imgClass = cn('block h-full w-full', fit === 'cover' ? 'object-cover' : 'object-contain');
+  // Only panes with a picture open in the lightbox; map a pane to its slot there.
+  const shown = panes.flatMap((p, i) => (p.src ? [i] : []));
 
   return (
     <div className={cn('@container', className)} data-testid={testId}>
@@ -85,22 +103,37 @@ export function ImageCompare({
         )}
       >
         {panes.map((image, i) => {
+          const hasPicture = !!image.src;
           const frame = (
             <span
               data-image-compare-frame
+              data-image-fit={fit}
+              {...(hasPicture ? {} : { 'data-gallery-status': 'placeholder' })}
               className={cn('block w-full overflow-hidden rounded-lg bg-surface-inset', ASPECT[aspect])}
             >
-              <img src={image.src} alt={image.alt ?? image.label} loading="lazy" draggable={false} className={imgClass} />
+              {hasPicture ? (
+                <img src={image.src} alt={image.alt ?? image.label} loading="lazy" draggable={false} className={imgClass} />
+              ) : (
+                <span
+                  data-image-compare-placeholder=""
+                  role="img"
+                  aria-label={`${image.label}: ${image.placeholder ?? 'No image'}`}
+                  className="flex h-full w-full flex-col items-center justify-center gap-1 px-3 text-center text-xs text-text-tertiary"
+                >
+                  <ImageIcon size={24} aria-hidden />
+                  <span className="leading-tight">{image.placeholder ?? 'No image'}</span>
+                </span>
+              )}
             </span>
           );
           return (
-            <li key={`${i}-${image.src}`} data-image-compare-pane={i} className="min-w-0">
+            <li key={`${i}-${image.src ?? 'placeholder'}`} data-image-compare-pane={i} className="min-w-0">
               <figure className="m-0 flex flex-col gap-1.5">
-                {zoomable ? (
+                {zoomable && hasPicture ? (
                   <button
                     type="button"
                     aria-label={`Enlarge ${image.label}`}
-                    onClick={() => setOpenIndex(i)}
+                    onClick={() => setOpenIndex(shown.indexOf(i))}
                     className="block w-full cursor-zoom-in rounded-lg border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     {frame}
@@ -126,9 +159,9 @@ export function ImageCompare({
           );
         })}
       </ul>
-      {zoomable && (
+      {zoomable && shown.length > 0 && (
         <ImageLightbox
-          images={panes.map((p) => ({ src: p.src, alt: p.alt ?? p.label, caption: p.description ? `${p.label} · ${p.description}` : p.label }))}
+          images={shown.map((i) => panes[i]).map((p) => ({ src: p.src!, alt: p.alt ?? p.label, caption: p.description ? `${p.label} · ${p.description}` : p.label }))}
           openIndex={openIndex}
           onNavigate={setOpenIndex}
           onClose={() => setOpenIndex(null)}

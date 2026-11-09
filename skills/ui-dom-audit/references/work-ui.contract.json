@@ -1833,6 +1833,24 @@
         }
       ],
       "owner": "the page: render Button/Table/DataTable/forms controls/PageSection from ui-components instead of raw elements"
+    },
+    {
+      "id": "row.actions-aligned",
+      "kind": "row-actions-aligned",
+      "selector": "$rowLists|[data-ui-row-list]",
+      "cells": "[data-ui-part=\"row-actions\"]",
+      "trailing": "[data-ui-part=\"row-trailing\"]",
+      "main": "[data-ui-row-main]",
+      "controls": "button, a[href], [role=\"button\"]",
+      "columnsLayout": "[data-row-actions-layout=\"columns\"]",
+      "owner": "GroupedList trailingLayout=\"columns\" / ActionRowList trailing: one right-aligned actions column, Buttons at sm"
+    },
+    {
+      "id": "image.whole-visible",
+      "kind": "image-whole-visible",
+      "selector": "[data-image-compare-frame], [data-review-subject]",
+      "maxAspectDelta": 0.02,
+      "owner": "ImageCompare fit=\"contain\" (or the review subject's own frame): a picture under review is never cropped"
     }
   ]
 }

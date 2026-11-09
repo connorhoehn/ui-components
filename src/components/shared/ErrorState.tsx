@@ -21,6 +21,12 @@ export interface ErrorStateProps {
   action?: ReactNode;
   testId?: string;
   actionTestId?: string;
+  /**
+   * Small padding and no 220px minimum height (since 2.511.0): for an error
+   * drawn over a media frame or inside a card, where the card shape would
+   * overflow the space it covers.
+   */
+  compact?: boolean;
 }
 
 function ErrorState({
@@ -33,6 +39,7 @@ function ErrorState({
   action,
   testId = 'error-state',
   actionTestId = 'error-state-action',
+  compact = false,
 }: ErrorStateProps) {
   const resolvedDescription = description ?? body;
   return (
@@ -40,8 +47,9 @@ function ErrorState({
       role="alert"
       data-testid={testId}
       className={cn(
-        'flex flex-col items-center justify-center min-h-[220px]',
-        'text-text-secondary gap-2 p-8 font-[inherit]',
+        'flex flex-col items-center justify-center',
+        compact ? 'gap-1 p-3' : 'min-h-[220px] gap-2 p-8',
+        'text-text-secondary font-[inherit]',
       )}
     >
       {icon && (
