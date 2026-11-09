@@ -152,3 +152,22 @@ export function useViewportWidth(): number {
   }, []);
   return width;
 }
+
+/**
+ * The primary rail's fold as the shell hands it down (2.515.0): `AppShell
+ * sidebarFold` provides it, and a `NavRail` in the shell's sidebar reads it,
+ * so the rail draws its 44px strip and its fold toggle without the host
+ * threading `collapsed` through by hand. Null outside a folding shell.
+ */
+export type ShellRailFold = Pick<RailFold, 'folded' | 'toggle'>;
+
+const ShellRailFoldContext = createContext<ShellRailFold | null>(null);
+
+export function ShellRailFoldProvider({ fold, children }: { fold: ShellRailFold | null; children: ReactNode }) {
+  return <ShellRailFoldContext.Provider value={fold}>{children}</ShellRailFoldContext.Provider>;
+}
+
+/** The enclosing `AppShell sidebarFold`, or null. */
+export function useShellRailFold(): ShellRailFold | null {
+  return useContext(ShellRailFoldContext);
+}

@@ -3,6 +3,7 @@
   "name": "Work shared UI compact layout",
   "tolerance": 1,
   "librarySelectors": {
+    "shellColumns": "[data-testid=\"app-shell-body\"]:has(> [data-sidebar-flow=\"in-flow\"])",
     "contentColumns": "[data-page-column]:not([data-page-column] *, [data-docked-column-body] *)",
     "trail": "[data-page-trail], [data-page-column] > [data-page-header]",
     "sectionTitles": "[data-page-title]",
@@ -94,7 +95,7 @@
       "id": "shell.columns",
       "kind": "columns",
       "selector": "$shellColumns",
-      "children": ":scope > aside, :scope > main",
+      "children": ":scope > aside, :scope > nav[data-sidebar-flow=\"in-flow\"], :scope > main",
       "min": 2,
       "max": 3,
       "maxGap": 1,
@@ -1851,6 +1852,62 @@
       "selector": "[data-image-compare-frame], [data-review-subject]",
       "maxAspectDelta": 0.02,
       "owner": "ImageCompare fit=\"contain\" (or the review subject's own frame): a picture under review is never cropped"
+    },
+    {
+      "id": "page.template",
+      "kind": "page-template",
+      "selector": "[data-page-template]",
+      "containers": [
+        "section-layout"
+      ],
+      "expected": null,
+      "routes": {},
+      "owner": "the page: one ui-components page template per route (DashboardPage, CollectionPage, DetailPage, PageFrame, SettingsPage, MasterDetailPage), the one the route manifest names"
+    },
+    {
+      "id": "subject.frame",
+      "kind": "subject-frame",
+      "selector": "[data-subject-part=\"hero\"], [data-subject-frame]:not(:has([data-subject-part=\"hero\"]))",
+      "empty": "[data-ui-empty], [data-empty-state]",
+      "cover": "[data-gallery-fit=\"cover\"]",
+      "maxAspectDelta": 0.02,
+      "owner": "SubjectFrame: the subject shown whole, its placeholder frame or its running state, never an EmptyState or a cropped tile"
+    },
+    {
+      "id": "confirm.inline",
+      "kind": "confirm-inline",
+      "selector": "[data-action-kind~=\"approve\"], [data-action-kind~=\"reject\"], [data-action-kind~=\"spend\"]",
+      "dialogs": "[role=\"dialog\"], [role=\"alertdialog\"], dialog[open], [data-ui-dialog]",
+      "owner": "ConfirmButton: approve, reject and spend confirm in place, never through ConfirmDialog"
+    },
+    {
+      "id": "inspector.shape",
+      "kind": "inspector-shape",
+      "selector": "[data-subject-frame]",
+      "order": [
+        "title",
+        "tabs",
+        "hero",
+        "facts",
+        "disclosures"
+      ],
+      "maxFacts": 8,
+      "owner": "SubjectFrame: title and subtitle, tabs, hero, one facts table of at most eight rows, disclosures"
+    },
+    {
+      "id": "nav.rail-groups",
+      "kind": "nav-rail-groups",
+      "selector": "[data-nav-rail]",
+      "groups": [],
+      "owner": "NavRail items from the route manifest: the rail, the router and the palette read one list"
+    },
+    {
+      "id": "tile.actions-inside",
+      "kind": "tile-actions-inside",
+      "selector": "[data-gallery-tile]",
+      "actions": "[data-ui-part=\"tile-actions\"], [data-gallery-actions]",
+      "controls": "button, a[href], [role=\"button\"]",
+      "owner": "AssetGallery minTileWidth and its wrapping tile action row: a tile's actions never leave the tile"
     }
   ]
 }

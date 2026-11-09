@@ -62,6 +62,16 @@ export { default as ModelViewer } from './ModelViewer';
 export * from './ModelViewer';
 export { default as FrameStrip } from './FrameStrip';
 export * from './FrameStrip';
+export { default as SubjectFrame } from './SubjectFrame';
+export * from './SubjectFrame';
+export { default as SelectionBar } from './SelectionBar';
+export * from './SelectionBar';
+export { default as RunProgressPanel } from './RunProgressPanel';
+export * from './RunProgressPanel';
+export { default as CaptionedAvatar } from './CaptionedAvatar';
+export * from './CaptionedAvatar';
+export { default as ImageFilmstrip } from './ImageFilmstrip';
+export * from './ImageFilmstrip';
 export { default as Modal } from './Modal';
 export * from './Modal';
 export { default as ShortcutsHelp } from './ShortcutsHelp';
@@ -262,9 +272,10 @@ export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
 // The rail model's fold (2.438.0): depth → band, each rail's fold remembered per band.
 export {
   railDepth, railBand, railFoldKey, readRailFold, RailBandProvider, useRailBand, useRailFold, useViewportWidth,
+  ShellRailFoldProvider, useShellRailFold,
   RAIL_FOLD_PRIMARY_BELOW, RAIL_FOLD_SECTION_BELOW,
 } from './railFold';
-export type { RailBand, RailDepthSpec, UseRailFoldOptions, RailFold } from './railFold';
+export type { RailBand, RailDepthSpec, UseRailFoldOptions, RailFold, ShellRailFold } from './railFold';
 // The width of an element's own box (H10 of the 2026-10-07 audit): one measuring hook, not one per consumer.
 export { useMeasuredWidth } from '../doc-editor/useMeasuredWidth';
 export type { MeasuredWidth } from '../doc-editor/useMeasuredWidth';
@@ -573,7 +584,7 @@ export type { MediaCollectionCardProps, MediaCollectionPreview } from './MediaCo
 // App chrome on the /shared subpath (since 2.504.1), so a consumer importing
 // only from subpaths never pulls the root barrel (which reaches every peer;
 // see docs/bundle-side-effects.md for why `sideEffects` stays undeclared).
-export { AppShell } from '../layout/AppShell';
+export { AppShell, APP_SHELL_FOLDED_RAIL_WIDTH } from '../layout/AppShell';
 export type { AppShellProps } from '../layout/AppShell';
 export { ThemeProvider, useThemeContext, useTheme } from '../../theme';
 export type { ThemeTokens, ThemeProviderProps, ToneOverride } from '../../theme';
@@ -646,3 +657,8 @@ export * from '../change-review';
 // to /shared's static peers. RecordGraphCard is on /graph.
 export * from '../image';
 export * from '../misc';
+// App header chrome (2.515.0, UX audit L3): the brand and the colour-mode switch.
+export { default as AppBrand } from './AppBrand';
+export * from './AppBrand';
+export { default as ThemeModeToggle } from './ThemeModeToggle';
+export * from './ThemeModeToggle';

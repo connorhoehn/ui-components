@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Card } from '../ui/Card';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon, PlayCircleIcon } from '../ui/Icons';
+import EmptyState from './EmptyState';
 export interface MediaCollectionPreview { id: string; image?: string; label: string; duration?: string; }
 export interface MediaCollectionCardProps {
   title: string;
@@ -11,11 +12,23 @@ export interface MediaCollectionCardProps {
   previews: readonly MediaCollectionPreview[];
   onOpen: () => void;
   onPlay: (preview: MediaCollectionPreview) => void;
+  /**
+   * With no previews, draw nothing (2.515.0). The card's 16:9 frame with
+   * nothing to play was a 285px placeholder for a movie that does not exist.
+   */
+  hideWhenEmpty?: boolean;
+  /**
+   * With no previews, one quiet `EmptyState` line with this text instead of
+   * the card ("No review movie yet"). `hideWhenEmpty` wins when both are set.
+   */
+  emptyLabel?: string;
 }
 /** One episode/collection, with its real preview versions inside a bounded
  * carousel. Hosts supply duration/provenance, never inferred by the card. */
-export function MediaCollectionCard({title,headingAs:Heading='h3',status,previews,onOpen,onPlay}:MediaCollectionCardProps) {
+export function MediaCollectionCard({title,headingAs:Heading='h3',status,previews,onOpen,onPlay,hideWhenEmpty=false,emptyLabel}:MediaCollectionCardProps) {
  const [selected,setSelected]=useState(0);
+ if (previews.length===0 && hideWhenEmpty) return null;
+ if (previews.length===0 && emptyLabel!=null) return <EmptyState layout="line" title={emptyLabel} testId="media-collection-empty"/>;
  const index=Math.min(selected,Math.max(0,previews.length-1)), preview=previews[index];
  return <Card padding="none" className="min-w-0 overflow-hidden" data-media-collection>
   <Heading className="m-0 px-3 py-2 text-sm font-semibold"><button data-ui-part="" type="button" onClick={onOpen} className="block w-full truncate text-left text-text-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" title={title}>{title}</button></Heading>

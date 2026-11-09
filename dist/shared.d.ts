@@ -155,7 +155,7 @@ export declare interface ActionRowListProps {
     /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
     action?: string;
     /**
-     * Type step. `md` (default): the Initiatives v2 mockup's 15px rows. `sm`
+     * Type step. `md` (default): the Initiatives v2 mockup's 15px rows; with `columns`, the house 14/12 scale (14px title and cells, 12px description and meta; 2.515.0, was 15/13). `sm`
      * (since 2.429.0): the app's body step — 14px medium titles and cells,
      * 12px descriptions and meta, a 14px semibold action (`T size="sm"` /
      * `T size="xs"`) — so a list in a tabbed pane reads like the rails and
@@ -435,6 +435,32 @@ declare interface ApiHealthSnapshot {
 
 declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
+/** The folded primary rail's width: the 44px strip every folding rail draws. */
+export declare const APP_SHELL_FOLDED_RAIL_WIDTH = 44;
+
+/** The product mark and name at the left of the app header; a link home when `href` is given. */
+export declare function AppBrand({ mark, name, secondary, href, onClick, size, 'aria-label': ariaLabel, className, 'data-testid': testId, }: AppBrandProps): JSX.Element;
+
+export declare interface AppBrandProps {
+    /** The mark: an `<img>`, an svg, or a glyph. Drawn in a fixed square (28px at md, 24px at sm). */
+    mark?: ReactNode;
+    /** Product name. */
+    name: ReactNode;
+    /** A second, quieter label after the name ("Studio", a workspace). */
+    secondary?: ReactNode;
+    /** Link home. Without it the brand is not interactive. */
+    href?: string;
+    onClick?: MouseEventHandler<HTMLAnchorElement>;
+    /** `md` (default) matches the 53px app header; `sm` a compact header. */
+    size?: AppBrandSize;
+    /** Accessible name of the home link. Default: "<name> home" when name is a string. */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type AppBrandSize = 'sm' | 'md';
+
 /**
  * Show one texture map flat on the mesh, or (`lit`) put the model back.
  *
@@ -452,7 +478,7 @@ export declare function applyModelChannel(el: ModelViewerElementLike | null | un
  * AppShell wraps its children in a ToastProvider by default.
  * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
  */
-export declare function AppShell({ sidebar, header, subheader, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, headerHeight, subheaderHeight, subheaderInset, contentPadding, sidebarClassName, sidebarLabel, sidebarTestId, subheaderTestId, sidebarFullHeight, layout, }: AppShellProps): JSX.Element;
+export declare function AppShell({ sidebar, header, subheader, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, headerHeight, subheaderHeight, subheaderInset, contentPadding, sidebarClassName, sidebarLabel, sidebarTestId, subheaderTestId, sidebarFullHeight, layout, sidebarFold, }: AppShellProps): JSX.Element;
 
 export declare interface AppShellProps {
     /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
@@ -528,6 +554,16 @@ export declare interface AppShellProps {
      *   (the layouts above already do).
      */
     layout?: 'document' | 'fill';
+    /**
+     * The primary rail folds (2.515.0). Pass `useRailFold(...)` (or any
+     * `{ folded, toggle }`): the sidebar then sits IN FLOW as the body's first
+     * column instead of `fixed` — `sidebarWidth` wide when open, a 44px strip
+     * when folded — and the main column takes the rest, so the shell measures
+     * as two in-flow columns. A `NavRail` in `sidebar` reads the fold from the
+     * shell (it draws its icon strip and the fold toggle itself). Omitted: the
+     * fixed sidebar, unchanged.
+     */
+    sidebarFold?: ShellRailFold;
 }
 
 /** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
@@ -544,7 +580,7 @@ export declare function ArtifactTile({ name, type, url }: {
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -574,6 +610,22 @@ export declare interface AssetGalleryProps {
      * directly. Since 2.504.0.
      */
     menuOnSelect?: boolean;
+    /**
+     * Minimum tile width in px (2.515.0). Given, the grid is `auto-fill`
+     * columns of at least this width (never wider than the gallery) instead
+     * of the fixed 2/4/8 (avatars) or 2/3/4 (images) columns, and an avatar
+     * is drawn at 80% of it, so the tile and its picture scale together. Use
+     * it whenever tiles carry `actions`: eight fixed columns left a 120px tile
+     * for "Approve for mesh · uses credits".
+     */
+    minTileWidth?: number;
+    /**
+     * How an image tile fits its picture (2.515.0). `cover` (default,
+     * unchanged) fills the tile and may crop; `contain` letterboxes so the
+     * subject is shown whole, as a record's picture must be (audit
+     * `subject.frame`). The thumbnail carries `data-gallery-fit`.
+     */
+    fit?: 'cover' | 'contain';
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
@@ -1152,6 +1204,28 @@ export declare interface CapabilityDeniedFallbackProps {
     icon?: ReactNode | null;
     /** Test id (defaults to `capability-denied-fallback`). */
     testId?: string;
+}
+
+export declare function CaptionedAvatar({ name, role, src, size, meta, onClick, href, selected, className, 'data-testid': testId, }: CaptionedAvatarProps): JSX.Element;
+
+export declare interface CaptionedAvatarProps {
+    name: string;
+    /** The caption under the name: "Lead", "Candidate". */
+    role?: ReactNode;
+    /** The picture. Falls back to initials. */
+    src?: string;
+    /** The avatar's diameter in px. Default 56. The card is a little wider than it so names wrap once at most. */
+    size?: number;
+    /** Something next to the caption, usually a small `StatusPill` ("Approved"). */
+    meta?: ReactNode;
+    /** Opens the subject. The card becomes one button. */
+    onClick?: () => void;
+    /** Opens the subject by link. Wins over `onClick`. */
+    href?: string;
+    /** Draw it as the chosen one. */
+    selected?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function Card({ children, padding, className, ref, ...rest }: CardProps): JSX.Element;
@@ -2424,7 +2498,10 @@ export declare function confidenceNote(sampleSize: number): string;
 /** Sample size → confidence: 0 none, 1–2 low, 3–5 medium, more than 5 high. */
 export declare function confidenceOf(sampleSize: number): RunEstimateConfidenceLevel;
 
-export declare function ConfirmButton({ label, question, confirmLabel, cancelLabel, tone, variant, size, disabled, busy, onConfirm, className, 'data-testid': testId, }: ConfirmButtonProps): JSX.Element;
+/** The kinds of decision the `confirm.inline` audit rule watches. */
+export declare type ConfirmActionKind = 'approve' | 'reject' | 'spend' | 'delete' | 'cancel';
+
+export declare function ConfirmButton({ label, question, confirmLabel, cancelLabel, tone, variant, size, disabled, busy, onConfirm, actionKind, className, 'data-testid': testId, }: ConfirmButtonProps): JSX.Element;
 
 export declare interface ConfirmButtonProps {
     /** The idle button's label — "Cancel run", "Delete". */
@@ -2446,6 +2523,12 @@ export declare interface ConfirmButtonProps {
     busy?: boolean;
     /** Fired on Confirm. A returned promise keeps the control busy until it settles. */
     onConfirm: () => void | Promise<unknown>;
+    /**
+     * What the decision is, for the audit (`confirm.inline`): emitted as
+     * `data-action-kind` on the button and on the question group, so an approve,
+     * a reject or a credit spend is known to confirm in place. Since 2.515.0.
+     */
+    actionKind?: ConfirmActionKind;
     className?: string;
     'data-testid'?: string;
 }
@@ -4377,6 +4460,9 @@ export declare function formatCompactAge(value: string | number | Date | null | 
  */
 export declare function formatEstimate(estimate: RunEstimate): string;
 
+/** "42s", "3m 42s", "1h 05m": the run-length format the progress panel and run cards use. */
+export declare function formatRunDuration(ms: number | undefined): string;
+
 /** "9h ago", "just now", "Sep 3" — `formatCompactAge` read as a sentence. */
 export declare function formatSourceAge(value: string | number | Date | null | undefined, now?: number): string | undefined;
 
@@ -5190,6 +5276,39 @@ export declare interface ImageCompareProps {
     fit?: 'contain' | 'cover';
     /** Open the lightbox on click/Enter. Default true. */
     zoomable?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function ImageFilmstrip({ items, value, defaultValue, onValueChange, caption, aspect, maxThumbs, onMore, label, className, 'data-testid': testId, }: ImageFilmstripProps): JSX.Element | null;
+
+export declare interface ImageFilmstripItem {
+    id: string;
+    src: string;
+    /** "Full", "Front", "Side". The thumbnail's name and the large frame's caption. */
+    label: string;
+    alt?: string;
+    /** A quieter caption line in the large frame ("v2 · approved 9:05"). */
+    description?: string;
+}
+
+export declare interface ImageFilmstripProps {
+    items: readonly ImageFilmstripItem[];
+    /** The view in the large frame (controlled). */
+    value?: string;
+    /** The first view shown (uncontrolled). Default: the first item. */
+    defaultValue?: string;
+    onValueChange?: (id: string) => void;
+    /** A chip over the strip naming what this is: "Approved concept · v2". */
+    caption?: ReactNode;
+    /** The large frame's aspect. Default `landscape`. */
+    aspect?: ImageCompareAspect;
+    /** Thumbnails shown before "+N more". Default 6. */
+    maxThumbs?: number;
+    /** "+N more": open the full set (a versions tab, a lightbox). Without it the extra views are not reachable from the strip. */
+    onMore?: () => void;
+    /** Names the thumbnail group. Default "Views". */
+    label?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -6204,7 +6323,7 @@ export declare interface MeasuredWidth<T extends HTMLElement> {
 
 /** One episode/collection, with its real preview versions inside a bounded
  * carousel. Hosts supply duration/provenance, never inferred by the card. */
-export declare function MediaCollectionCard({ title, headingAs: Heading, status, previews, onOpen, onPlay }: MediaCollectionCardProps): JSX.Element;
+export declare function MediaCollectionCard({ title, headingAs: Heading, status, previews, onOpen, onPlay, hideWhenEmpty, emptyLabel }: MediaCollectionCardProps): JSX.Element | null;
 
 export declare interface MediaCollectionCardProps {
     title: string;
@@ -6214,6 +6333,16 @@ export declare interface MediaCollectionCardProps {
     previews: readonly MediaCollectionPreview[];
     onOpen: () => void;
     onPlay: (preview: MediaCollectionPreview) => void;
+    /**
+     * With no previews, draw nothing (2.515.0). The card's 16:9 frame with
+     * nothing to play was a 285px placeholder for a movie that does not exist.
+     */
+    hideWhenEmpty?: boolean;
+    /**
+     * With no previews, one quiet `EmptyState` line with this text instead of
+     * the card ("No review movie yet"). `hideWhenEmpty` wins when both are set.
+     */
+    emptyLabel?: string;
 }
 
 export declare interface MediaCollectionPreview {
@@ -6567,7 +6696,7 @@ export declare function nameToColor(name: string): string;
 
 export declare function nameToInitials(name: string): string;
 
-export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, size, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
+export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, size, collapsed: collapsedProp, onToggleCollapsed, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
 
 export declare interface NavRailItem {
     /** Target path. Also the React key unless `id` is given. */
@@ -6635,6 +6764,19 @@ export declare interface NavRailProps {
      * rail and `md` 15px/400 on 36px rows.)
      */
     size?: 'sm' | 'md';
+    /**
+     * The folded strip (2.515.0): a 44px column of icons, each item's label in
+     * a `Tooltip` and its accessible name, group labels hidden (a hairline
+     * between groups), the badge as a dot-sized count on the icon's corner.
+     * Inside `AppShell sidebarFold` the rail reads the shell's fold when this
+     * is omitted. Items without an `icon` show their label's first letter.
+     */
+    collapsed?: boolean;
+    /**
+     * Draw the fold toggle («/») in the title row, calling this. Inside
+     * `AppShell sidebarFold` the shell's own toggle is used when omitted.
+     */
+    onToggleCollapsed?: () => void;
     /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
     'aria-label'?: string;
     className?: string;
@@ -8564,6 +8706,49 @@ export declare type RunEstimateConfidenceLevel = 'none' | 'low' | 'medium' | 'hi
 
 export declare type RunEstimateUnit = 'usd' | 'ms';
 
+export declare function RunProgressPanel({ title, description, state, progress, elapsedMs, startedAt, remainingMs, onRefresh, refreshLabel, onCancel, cancelLabel, cancelQuestion, nonBlocking, nonBlockingHint, facts, framed, now, className, 'data-testid': testId, }: RunProgressPanelProps): JSX.Element;
+
+export declare interface RunProgressPanelProps {
+    /** What is running, as a heading: "Generating 3D mesh". */
+    title: ReactNode;
+    /** One sentence: "Meshy is generating a stylized mesh from the approved concept. You can continue working while this runs." */
+    description?: ReactNode;
+    /** Default `running`. Cancel shows only while `queued` or `running`. */
+    state?: RunProgressState;
+    /** 0–100. Omit while the provider reports no percentage: the bar is then left out, not faked. */
+    progress?: number;
+    /** Elapsed time, when the host already knows it. Wins over `startedAt`. */
+    elapsedMs?: number;
+    /** When the job started (ISO string or epoch ms): elapsed is counted live from it while the job runs. */
+    startedAt?: string | number;
+    /** The host's estimate of the time left. Shown as "~1m 45s". */
+    remainingMs?: number;
+    /** "Refresh status": re-read the provider. Omit to leave the button out. */
+    onRefresh?: () => void;
+    /** Default "Refresh status". */
+    refreshLabel?: string;
+    /** "Cancel job": confirmed in place. A returned promise keeps it busy. Omit to leave it out. */
+    onCancel?: () => void | Promise<unknown>;
+    /** Default "Cancel job". */
+    cancelLabel?: string;
+    /** Default "Cancel this job?". */
+    cancelQuestion?: string;
+    /** Show the "Non-blocking" chip. Default true. */
+    nonBlocking?: boolean;
+    /** The chip's tooltip. Default "You can keep working while this runs." */
+    nonBlockingHint?: string;
+    /** More facts beside Elapsed and Est. remaining ("Attempt 2 of 3"). */
+    facts?: KeyValueItem[];
+    /** Draw the panel on its own card surface. Default true; false when it sits inside a card already. */
+    framed?: boolean;
+    /** Clock source for the live elapsed count; for tests. Default `Date.now`. */
+    now?: () => number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type RunProgressState = 'queued' | 'running' | 'done' | 'failed' | 'cancelled';
+
 export declare function ScopeHeader(props: ScopeHeaderProps): JSX.Element;
 
 export declare interface ScopeHeaderPeopleGroup {
@@ -9154,6 +9339,51 @@ export declare interface SelectableCardProps extends Omit<ButtonHTMLAttributes<H
     padding?: SelectableCardPadding;
 }
 
+export declare function SelectionBar({ count, label, description, thumbnail, controls, onClear, clearLabel, reject, secondary, primary, 'aria-label': ariaLabel, className, 'data-testid': testId, }: SelectionBarProps): JSX.Element;
+
+export declare interface SelectionBarAction {
+    label: string;
+    /** Fired on press, or on Confirm when `question` is given. A returned promise keeps it busy. */
+    onAction: () => void | Promise<unknown>;
+    /** Ask in place before acting ("Approve concept 03?"). Omit for an immediate action. */
+    question?: string;
+    /** The confirming button's label. Default: `label`. */
+    confirmLabel?: string;
+    /** What the decision is, for the audit: `approve` (default for the primary), `spend`, `reject`. */
+    actionKind?: ConfirmActionKind;
+    disabled?: boolean;
+    busy?: boolean;
+}
+
+export declare interface SelectionBarProps {
+    /** How many candidates are chosen. 0 shows "Nothing selected" and disables the primary. */
+    count: number;
+    /** The chosen candidate's name, for one pick: "Concept 03". The bar reads "Selected: Concept 03". */
+    label?: ReactNode;
+    /** A quieter line under it: "Toby · Main character · v1.0". */
+    description?: ReactNode;
+    /** The chosen candidate's picture (one pick). */
+    thumbnail?: {
+        src: string;
+        alt?: string;
+    };
+    /** Controls that shape the pick: a slicing `Select`, `Switch`es. Library form controls only. */
+    controls?: ReactNode;
+    /** "Clear": drops the selection. Omit to leave it out. */
+    onClear?: () => void;
+    clearLabel?: string;
+    /** "Reject": a destructive decision on the chosen candidates, confirmed in place when it has a `question`. */
+    reject?: SelectionBarAction;
+    /** One secondary ("Select character": keep the pick as a draft). */
+    secondary?: SelectionBarAction;
+    /** The one primary ("Approve"). */
+    primary?: SelectionBarAction;
+    /** The region's accessible name. Default "Selection". */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** The platform `<select>`, opt-in, with the reason it is needed (the DOM audit reads it). */
 declare interface SelectNative {
     reason: string;
@@ -9332,6 +9562,19 @@ export declare interface SettingsSection {
 
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/**
+ * The primary rail's fold as the shell hands it down (2.515.0): `AppShell
+ * sidebarFold` provides it, and a `NavRail` in the shell's sidebar reads it,
+ * so the rail draws its 44px strip and its fold toggle without the host
+ * threading `collapsed` through by hand. Null outside a folding shell.
+ */
+export declare type ShellRailFold = Pick<RailFold, 'folded' | 'toggle'>;
+
+export declare function ShellRailFoldProvider({ fold, children }: {
+    fold: ShellRailFold | null;
+    children: ReactNode;
+}): JSX.Element;
 
 export declare function ShortcutsHelp({ open, onClose, sections }: ShortcutsHelpProps): JSX.Element;
 
@@ -10284,6 +10527,98 @@ export declare type StatusPillTone = StatusPillState | 'danger';
  */
 export declare type StatusPillVariant = 'pill' | 'text' | 'tag' | 'label';
 
+/** The most facts the frame draws (concepts §5 draws eight). */
+export declare const SUBJECT_FRAME_MAX_FACTS = 8;
+
+export declare function SubjectFrame({ title, subtitle, badges, headerActions, tabs, hero, heroAspect, heroActions, facts, disclosures, children, className, 'data-testid': testId, }: SubjectFrameProps): JSX.Element;
+
+export declare interface SubjectFrameDisclosure {
+    id: string;
+    /** "Description", "Links", "Request details". */
+    title: string;
+    /** Shown after the title: "Links (3)". */
+    count?: number;
+    /** A control in the summary row ("+ Add"). */
+    action?: ReactNode;
+    defaultOpen?: boolean;
+    children: ReactNode;
+}
+
+export declare interface SubjectFrameProps {
+    /** "Toby", "Asset · Generated sheet". */
+    title: ReactNode;
+    /** "Character · Lead", "Episode 01". */
+    subtitle?: ReactNode;
+    /** Chips beside the title (state, version). */
+    badges?: ReactNode;
+    /** The header's own buttons, at its right edge: open in new, next, close (`IconButton`s). */
+    headerActions?: ReactNode;
+    /** The record's tabs (Details · Versions · Activity). Omit for a frame without tabs. */
+    tabs?: {
+        items: readonly TabItem[];
+        value: string;
+        onValueChange: (id: string) => void;
+        label?: string;
+    };
+    /** The subject's picture. Omit only for a subject that has none (a text record). */
+    hero?: SubjectHeroContent;
+    heroAspect?: ImageCompareAspect;
+    /** The hero's trailing actions. */
+    heroActions?: ReactNode;
+    /** The facts table: at most eight rows; more are dropped (and named in the console in development). */
+    facts?: KeyValueItem[];
+    /** The disclosures, in order. Put Request details last, collapsed. */
+    disclosures?: SubjectFrameDisclosure[];
+    /** The body of a tab other than the details: replaces the hero, facts and disclosures. */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** The hero part on its own: a subject's picture shown whole, the placeholder frame, or the running state. */
+export declare function SubjectHero({ content, aspect, actions, className, 'data-testid': testId }: SubjectHeroProps): JSX.Element;
+
+export declare type SubjectHeroContent = 
+/** The picture, shown whole in an `ImageCompare` frame (`fit="contain"`). */
+    {
+    kind: 'image';
+    src: string;
+    alt?: string;
+    label?: string;
+    description?: string;
+    meta?: ReactNode;
+}
+/** Nothing to show yet: the same frame with words in it ("No picture yet"). Never an EmptyState. */
+| {
+    kind: 'placeholder';
+    text: string;
+    label?: string;
+}
+/**
+* A job is drawing it: the run's own content (a `RunProgressPanel`, or in a
+* narrow inspector one line such as "Drawing Mina · step 2 of 3" with Cancel
+* and Open run).
+*/
+| {
+    kind: 'running';
+    content: ReactNode;
+}
+/** A host node that shows the subject whole by itself, such as a `ModelViewer`. */
+| {
+    kind: 'custom';
+    content: ReactNode;
+};
+
+export declare interface SubjectHeroProps {
+    content: SubjectHeroContent;
+    /** The frame's aspect. Default `landscape` (4:3). */
+    aspect?: ImageCompareAspect;
+    /** The hero's trailing actions, under the picture (Approve, Open run, Vary this one). */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface SubNavItem {
     /** Path relative to the section root, e.g. "summary" or "crawl". For action
      *  items (onClick set), this is just used as a React key — provide something
@@ -10881,6 +11216,23 @@ declare type TextSize = 'xs' | 'sm' | 'base' | 'lg';
 declare type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inherit';
 
 declare type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
+
+export declare type ThemeMode = 'light' | 'dark';
+
+/** The light/dark switch: an IconButton showing the current mode, aria-pressed when dark. */
+export declare function ThemeModeToggle({ mode, onModeChange, size, disabled, className, 'data-testid': testId, }: ThemeModeToggleProps): JSX.Element;
+
+export declare interface ThemeModeToggleProps {
+    /** The current mode (controlled). */
+    mode: ThemeMode;
+    /** Called with the other mode when pressed. */
+    onModeChange: (mode: ThemeMode) => void;
+    /** Default `sm`, the header's control size. */
+    size?: 'sm' | 'md';
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Injects the theme as CSS custom properties on the document root.
@@ -11734,6 +12086,9 @@ export declare interface UserPickerProps {
      */
     baseUrl?: string;
 }
+
+/** The enclosing `AppShell sidebarFold`, or null. */
+export declare function useShellRailFold(): ShellRailFold | null;
 
 /** The page's view of its pane: on screen (focus waits for it), how to bring it back, and whether it is attached. */
 export declare function useSidePane(): {

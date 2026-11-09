@@ -51,3 +51,36 @@ export const CastWithStatusAndPlaceholder: Story = {
     onOpen: () => {},
   },
 };
+/**
+ * Long action labels (2.515.0): `minTileWidth` gives auto-fill columns of at
+ * least that width, and the tile's action row wraps — a label longer than the
+ * tile wraps inside its button — so nothing runs into the neighbouring tile.
+ * The Storymaker cast grid ("Approve for mesh · uses credits", "Cut it out
+ * (no credits)") at a 390px phone column and a 1440px desktop column.
+ */
+const castWithLongActions = {
+  label: 'Cast',
+  variant: 'avatars' as const,
+  actionsVisibility: 'always' as const,
+  minTileWidth: 160,
+  items: ['Toby', 'Mina', 'Ledger', 'Pip', 'Grandpa Ott', 'The Shopkeeper', 'Rook', 'Bea'].map((title, i) => ({
+    id: String(i), title, subtitle: i === 0 ? 'Lead' : 'Candidate', status: { state: i % 2 ? 'warning' : 'success', label: i % 2 ? 'Needs review' : 'Approved' } as const,
+  })),
+  onOpen: () => {},
+  actions: () => (
+    <>
+      <Button size="sm" variant="primary">Approve for mesh · uses credits</Button>
+      <Button size="sm" variant="secondary">Cut it out (no credits)</Button>
+    </>
+  ),
+};
+export const LongActionsAt390: Story = {
+  name: 'Long tile actions at 390px',
+  args: castWithLongActions,
+  render: (args) => <div className="w-[390px] max-w-full"><AssetGallery {...args} /></div>,
+};
+export const LongActionsAt1440: Story = {
+  name: 'Long tile actions at 1440px',
+  args: castWithLongActions,
+  render: (args) => <div className="w-[1440px] max-w-full"><AssetGallery {...args} /></div>,
+};

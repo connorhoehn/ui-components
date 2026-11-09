@@ -7,3 +7,5 @@ export const Episode:Story={args:{title:'1. A new backyard',status:<Chip tone="w
 export const NoMovie:Story={...Episode,args:{...Episode.args,previews:[]}};
 
 export const ProjectSection:Story={...Episode,args:{...Episode.args,title:'Production previews',headingAs:'h2'}};
+/** Nothing to play: one quiet line instead of the 16:9 card (`emptyLabel`, 2.515.0). `hideWhenEmpty` draws nothing. */
+export const EmptyLine:Story={...Episode,args:{...Episode.args,previews:[],emptyLabel:'No review movie yet'}};

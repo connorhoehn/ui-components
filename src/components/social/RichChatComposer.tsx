@@ -2744,7 +2744,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 type="button"
                 onClick={status.action.onSelect}
                 data-testid={status.action['data-testid'] ?? `${testId}-status-action`}
-                className="-my-1 inline-flex min-h-6 shrink-0 cursor-pointer items-center rounded border-none bg-transparent px-1.5 text-[11px] font-semibold text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="-my-1 inline-flex min-h-6 shrink-0 cursor-pointer items-center rounded border-none bg-transparent px-1.5 text-xs font-semibold text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {status.action.label}
               </button>
@@ -2973,7 +2973,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 // input would hide this row before the click landed.
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => onSuggestion?.(suggestion)}
-                className="cursor-pointer rounded-full border border-border bg-surface px-2 py-0.5 text-[11px] text-text-secondary hover:border-border-emphasis hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                data-ui-chip="suggestion"
+                className="cursor-pointer rounded-full border border-border bg-surface px-2 py-0.5 text-xs leading-4 text-text-secondary hover:border-border-emphasis hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {suggestion}
               </button>

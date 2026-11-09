@@ -357,3 +357,87 @@ export interface RMUseHangoutRoomsReturn {
 export interface RMUseRoomOccupancyReturn {
   occupancy: RMRoomOccupancy | null;
 }
+
+// ── Work graph (useWorkGraph, realtime-modules client/work-graph) ──────────
+// Since 2.515.0. Mirrors ViewerWorkNode / ViewerWorkEdge / WorkSourceStatus
+// and UseWorkGraphResult; the kinds and statuses are kept as strings the
+// presentation types (graph/work/types.ts) already name.
+
+export interface RMWorkGraphNode {
+  id: string;
+  kind: 'project' | 'terminal' | 'agent' | 'run' | 'document' | 'change' | 'conversation' | 'meeting' | 'transcript' | 'task';
+  title: string;
+  description?: string;
+  status: 'idle' | 'running' | 'waiting' | 'completed' | 'error' | 'stopped' | 'stale';
+  disclosure: 'existence' | 'summary' | 'details';
+  startedAt?: string;
+  updatedAt: string;
+  endedAt?: string;
+  capabilities: Array<'message' | 'view-document' | 'edit-document' | 'join-conversation' | 'join-meeting' | 'observe-terminal' | 'control-terminal' | 'view-transcript' | 'view-run' | 'dispatch-run'>;
+  locked?: boolean;
+}
+
+export interface RMWorkGraphEdge {
+  id: string;
+  fromId: string;
+  toId: string;
+  relation: 'works-on' | 'runs-in' | 'operates-on' | 'produced' | 'edited' | 'attended' | 'discussed' | 'derived-from';
+  label?: string;
+  status: RMWorkGraphNode['status'];
+  disclosure: RMWorkGraphNode['disclosure'];
+  startedAt?: string;
+  updatedAt: string;
+  endedAt?: string;
+  capabilities: RMWorkGraphNode['capabilities'];
+}
+
+export interface RMWorkGraphSourceStatus {
+  source: 'cloud-compute' | 'local-compute' | 'document' | 'pipeline' | 'conversation' | 'meeting';
+  health: 'available' | 'delayed' | 'disconnected' | 'authorization-unavailable';
+  checkedAt: string;
+  message?: string;
+}
+
+export interface RMWorkGraphState {
+  nodes: Record<string, RMWorkGraphNode>;
+  edges: Record<string, RMWorkGraphEdge>;
+  sources: Record<string, RMWorkGraphSourceStatus>;
+  status: 'loading' | 'ready' | 'partial' | 'invalidated' | 'refetch-required';
+  scope?: { personId: string; day: string; timezone: string };
+}
+
+/** Mirror of realtime-modules' UseWorkGraphResult (`useWorkGraph({ scope, transport })`). */
+export interface RMUseWorkGraphReturn {
+  graph: RMWorkGraphState;
+  status: RMWorkGraphState['status'] | 'idle' | 'error';
+  error: 'snapshot-unavailable' | 'invalid-snapshot' | 'invalid-query' | 'stream-unavailable' | null;
+  retry(): void;
+}
+
+// ── Pipeline run status (usePipelineRunStatus, realtime-modules client/pipelines) ──
+// Since 2.515.0. Mirrors PipelineRunStatus; `usePipelineRunStatus(runs, opts)`
+// returns a lookup `(runId) => PipelineRunStatus | undefined`.
+
+export type RMPipelineRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'failed' | 'rejected';
+export type RMPipelineRunStepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'awaiting';
+
+export interface RMPipelineRunStepDetail {
+  id: string;
+  label: string;
+  status: RMPipelineRunStepStatus;
+}
+
+export interface RMPipelineRunStatus {
+  phase: RMPipelineRunPhase;
+  stepLabel?: string;
+  detail?: string;
+  approvalStepId?: string;
+  result?: unknown;
+  noop?: boolean;
+  details?: {
+    steps?: RMPipelineRunStepDetail[];
+    startedAt?: string;
+    completedAt?: string;
+    error?: string;
+  };
+}

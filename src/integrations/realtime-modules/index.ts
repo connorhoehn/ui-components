@@ -47,6 +47,16 @@ export type {
   RMJoinRoomResult,
   RMUseHangoutRoomsReturn,
   RMUseRoomOccupancyReturn,
+  // Work graph and pipeline runs (2.515.0)
+  RMWorkGraphNode,
+  RMWorkGraphEdge,
+  RMWorkGraphSourceStatus,
+  RMWorkGraphState,
+  RMUseWorkGraphReturn,
+  RMPipelineRunPhase,
+  RMPipelineRunStepStatus,
+  RMPipelineRunStepDetail,
+  RMPipelineRunStatus,
 } from './types';
 
 // Adapters
@@ -77,6 +87,10 @@ export { WrappedPresencePanel } from './WrappedPresencePanel';
 export type { WrappedPresencePanelProps } from './WrappedPresencePanel';
 
 export { WrappedActivityPanel } from './WrappedActivityPanel';
+export { WrappedWorkGraph, adaptWorkGraphState } from './WrappedWorkGraph';
+export type { WrappedWorkGraphProps, WrappedWorkGraphCanvasProps } from './WrappedWorkGraph';
+export { WrappedPipelineRun, pipelineRunSteps } from './WrappedPipelineRun';
+export type { WrappedPipelineRunProps, WrappedPipelineRunStepTime } from './WrappedPipelineRun';
 export type { WrappedActivityPanelProps } from './WrappedActivityPanel';
 
 export { WrappedCursorOverlay } from './WrappedCursorOverlay';

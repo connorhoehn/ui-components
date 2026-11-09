@@ -295,7 +295,7 @@ export function Tabs({
             {item.badge !== undefined && item.badge !== null && (
               <span
                 className={badgeStyle === 'plain' ? 'ml-2.5 inline-flex items-center text-[14px] font-medium tabular-nums text-[var(--color-text-tertiary)]' : cn(
-                  'ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-[10px] font-semibold',
+                  'ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-xs leading-4 font-semibold',
                   active && variant === 'pill'
                     ? 'bg-white/20 text-white'
                     : 'bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)]',
@@ -309,7 +309,7 @@ export function Tabs({
       })}
       {foldedItems.length > 0 && (
         <DropdownMenu
-          trigger={<span className={cn('inline-flex items-center gap-1 font-medium', size === 'sm' ? 'text-xs' : 'text-sm')}>More<span aria-hidden="true" className="text-[10px] leading-none">▾</span></span>}
+          trigger={<span className={cn('inline-flex items-center gap-1 font-medium', size === 'sm' ? 'text-xs' : 'text-sm')}>More<span aria-hidden="true" className="text-xs leading-none">▾</span></span>}
           triggerLabel={`More views: ${foldedItems.map((item) => (typeof item.label === 'string' ? item.label : item.id)).join(', ')}`}
           triggerTestId={`${testId ?? 'tabs'}-more`}
           triggerClassName={cn('border-0 bg-transparent', SIZE[size], 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]')}
