@@ -5,7 +5,7 @@ import { d as n, n as r, o as i } from "./Button-DQoeE5dN.js";
 import { r as a } from "./ToastProvider-Ccas83Xu.js";
 import { a as o, n as s, t as c } from "./Chip-5WvKIIpI.js";
 import { t as l } from "./useEventCallback-Cwx9QVSi.js";
-import { A as u, B as d, C as f, D as p, E as m, F as h, I as g, L as _, M as v, O as y, P as b, R as x, S, T as C, V as w, _ as T, a as E, b as D, c as ee, d as O, f as te, g as k, h as ne, i as A, j, k as re, l as ie, m as ae, n as M, o as oe, p as se, r as ce, s as N, t as le, u as ue, v as de, w as fe, x as pe, y as me } from "./GenerativeImagePreview-maDFjD7c.js";
+import { A as u, B as d, C as f, D as p, E as m, F as h, I as g, L as _, N as v, O as y, P as b, R as x, S, T as C, V as w, _ as T, a as E, b as D, c as ee, d as O, f as te, g as k, h as ne, i as A, j, k as re, l as ie, m as ae, n as M, o as oe, p as se, r as ce, s as N, t as le, u as ue, v as de, w as fe, x as pe, y as me } from "./GenerativeImagePreview-C5APyaO3.js";
 import { t as he } from "./IconButton-BgM9MvwA.js";
 import { t as ge } from "./Banner-DPR4sIxI.js";
 import { n as _e, t as ve } from "./Chart-CzvBZgl7.js";
@@ -18,15 +18,15 @@ import { t as Ce } from "./SearchInput-Dk3D9lhs.js";
 import { t as we } from "./EmptyState-dTW3J44n.js";
 import { t as Te } from "./LoadingState-BQlqtSB5.js";
 import { i as Ee, t as De } from "./focusTrap-CmWJlptm.js";
-import { n as Oe, t as ke } from "./FilterChip-B_C799Tq.js";
-import { t as Ae } from "./SkeletonCard-BryltcC7.js";
-import { t as je } from "./Switch-CRiY_kzy.js";
-import { t as Me } from "./DropdownMenu-DoCRgXx4.js";
-import { t as Ne } from "./Textarea-Cf4WFXAs.js";
-import { t as Pe } from "./PageHeader-BXqh9uwS.js";
-import { t as Fe } from "./StatusPill-CoaiP2Bt.js";
+import { t as Oe } from "./DropdownMenu-DoCRgXx4.js";
+import { t as ke } from "./StatusPill-CiOnb5N4.js";
+import { t as Ae } from "./Slider-DuMQEWA1.js";
+import { n as je, t as Me } from "./FilterChip-B_C799Tq.js";
+import { t as Ne } from "./SkeletonCard-BryltcC7.js";
+import { t as Pe } from "./Switch-CRiY_kzy.js";
+import { t as Fe } from "./Textarea-Cf4WFXAs.js";
+import { t as Ie } from "./PageHeader-BXqh9uwS.js";
 import { t as I } from "./NumberInput-pHxC7Spt.js";
-import { t as Ie } from "./Slider-DuMQEWA1.js";
 import { t as Le } from "./Checkbox-Ds6v0Fy6.js";
 import { n as Re } from "./FileKindMark-BcwT0tiz.js";
 import { t as ze } from "./activationKey-CjbL3LUv.js";
@@ -3615,7 +3615,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 				}), /* @__PURE__ */ W("div", {
 					className: "flex flex-wrap gap-1 px-3 pb-2.5",
 					"data-testid": "palette-category-chips",
-					children: S.map((e) => /* @__PURE__ */ W(ke, {
+					children: S.map((e) => /* @__PURE__ */ W(Me, {
 						size: "xs",
 						active: o.has(e),
 						onClick: () => C(e),
@@ -7383,7 +7383,7 @@ function io({ label: e, checked: t, onChange: n, help: r, disabled: i, "data-tes
 		className: "flex flex-col",
 		children: [/* @__PURE__ */ G("div", {
 			className: "flex items-center gap-2",
-			children: [/* @__PURE__ */ W(je, {
+			children: [/* @__PURE__ */ W(Pe, {
 				size: "sm",
 				checked: t,
 				onChange: n,
@@ -7977,7 +7977,7 @@ function Oo({ data: e, onChange: t, nodeId: n }) {
 			error: u ? "System prompt is required." : void 0,
 			help: u ? void 0 : "Sets the model's role and constraints.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 				rows: 4,
 				invalid: u,
 				id: n,
@@ -8007,7 +8007,7 @@ function Oo({ data: e, onChange: t, nodeId: n }) {
 				/* @__PURE__ */ W(X, {
 					label: "Temperature",
 					help: "0 = deterministic, 1 = creative.",
-					children: /* @__PURE__ */ W(Ie, {
+					children: /* @__PURE__ */ W(Ae, {
 						min: 0,
 						max: 1,
 						step: .1,
@@ -8107,7 +8107,7 @@ function jo({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ W("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: /* @__PURE__ */ W(b, {
+				children: /* @__PURE__ */ W(v, {
 					name: "transform-type",
 					value: e.transformType,
 					onChange: (e) => t({ transformType: e }),
@@ -8379,7 +8379,7 @@ function Ro({ data: e, onChange: t }) {
 							className: "text-[11px] font-semibold text-text-secondary",
 							children: e.label
 						}),
-						e.multiline ? /* @__PURE__ */ W(Ne, {
+						e.multiline ? /* @__PURE__ */ W(Fe, {
 							rows: 2,
 							id: t,
 							"aria-describedby": r,
@@ -8435,7 +8435,7 @@ function Ro({ data: e, onChange: t }) {
 			render: ({ labelId: e }) => /* @__PURE__ */ G("div", {
 				role: "group",
 				"aria-labelledby": e,
-				children: [/* @__PURE__ */ W(b, {
+				children: [/* @__PURE__ */ W(v, {
 					name: "action-on-error",
 					value: o,
 					onChange: c,
@@ -8488,7 +8488,7 @@ function Ho({ data: e, onChange: t }) {
 		required: !0,
 		help: `Between ${zo} and ${Bo} parallel branches.`,
 		controlId: `${n}-branch-count`,
-		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(Ie, {
+		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(Ae, {
 			min: zo,
 			max: Bo,
 			step: 1,
@@ -8575,7 +8575,7 @@ function Go({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ G("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: [/* @__PURE__ */ W(b, {
+				children: [/* @__PURE__ */ W(v, {
 					name: "join-mode",
 					value: e.mode,
 					onChange: (e) => t({ mode: e }),
@@ -8607,7 +8607,7 @@ function Go({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ W("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: /* @__PURE__ */ W(b, {
+				children: /* @__PURE__ */ W(v, {
 					name: "join-merge",
 					value: e.mergeStrategy,
 					onChange: (e) => t({ mergeStrategy: e }),
@@ -8697,7 +8697,7 @@ function Xo({ data: e, onChange: t }) {
 				role: "group",
 				"aria-labelledby": t,
 				"aria-describedby": e,
-				children: [/* @__PURE__ */ W(h, {
+				children: [/* @__PURE__ */ W(b, {
 					value: l,
 					onChange: u,
 					placeholder: "Add approver…"
@@ -8777,7 +8777,7 @@ function Xo({ data: e, onChange: t }) {
 						children: "If timeout"
 					}), /* @__PURE__ */ W("div", {
 						className: "mt-1",
-						children: /* @__PURE__ */ W(b, {
+						children: /* @__PURE__ */ W(v, {
 							name: "approval-timeout-action",
 							orientation: "horizontal",
 							value: e.timeoutAction ?? "reject",
@@ -8793,7 +8793,7 @@ function Xo({ data: e, onChange: t }) {
 			label: "Message for approver (optional)",
 			help: "Shown to the approver when the request is sent.",
 			controlId: `${r}-message`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 				rows: 4,
 				id: n,
 				"aria-describedby": r,
@@ -10304,7 +10304,7 @@ function Zs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				"data-testid": `layer-kind-select-${t}`,
 				className: "shrink-0"
 			}),
-			/* @__PURE__ */ W(Ie, {
+			/* @__PURE__ */ W(Ae, {
 				min: a.min,
 				max: a.max,
 				step: a.step,
@@ -10586,7 +10586,7 @@ function lc({ data: e, onChange: t, nodeId: n }) {
 			label: "Prompt",
 			help: "Optional text guidance forwarded to the upscaler.",
 			controlId: "upscale-prompt",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Fe, {
 				id: r,
 				"aria-describedby": n,
 				rows: 3,
@@ -10713,7 +10713,7 @@ function mc({ data: e, onChange: t, nodeId: n }) {
 			error: f ? "User prompt is required." : void 0,
 			help: "Supports {{ context.* }} substitution.",
 			controlId: `${r}-user-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 				rows: 4,
 				invalid: f,
 				id: n,
@@ -10752,7 +10752,7 @@ function mc({ data: e, onChange: t, nodeId: n }) {
 			error: u ? `Invalid JSON: ${u}` : void 0,
 			help: e.outputSchema ? "Extract mode — the model must return JSON matching this schema." : "Leave blank for caption mode (freeform analysis text).",
 			controlId: `${r}-output-schema`,
-			render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(Fe, {
 				rows: 6,
 				invalid: !!u,
 				className: "font-mono text-[11px]",
@@ -10794,7 +10794,7 @@ function mc({ data: e, onChange: t, nodeId: n }) {
 				label: "System prompt override",
 				help: "Schema instructions are auto-appended when an output schema is set.",
 				controlId: `${r}-system-prompt`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 					rows: 2,
 					id: n,
 					"aria-describedby": r,
@@ -10828,7 +10828,7 @@ function gc({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ W(X, {
 			label: "Candidate tags",
 			help: "Restricts tagging to this vocabulary. Leave empty for open-ended tags.",
-			children: /* @__PURE__ */ W(g, {
+			children: /* @__PURE__ */ W(h, {
 				value: e.candidateTags ?? [],
 				onChange: (e) => t({ candidateTags: e }),
 				placeholder: "Add candidate tag…",
@@ -10867,7 +10867,7 @@ function gc({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ W(X, {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
-			children: /* @__PURE__ */ W(Ne, {
+			children: /* @__PURE__ */ W(Fe, {
 				rows: 3,
 				spellCheck: !1,
 				value: e.systemPrompt ?? "",
@@ -10913,7 +10913,7 @@ function vc({ data: e, onChange: t, nodeId: n }) {
 				role: "group",
 				"aria-labelledby": n,
 				"aria-describedby": e,
-				children: /* @__PURE__ */ W(g, {
+				children: /* @__PURE__ */ W(h, {
 					value: a,
 					onChange: (e) => t({ labels: e }),
 					placeholder: "Add label…",
@@ -10940,7 +10940,7 @@ function vc({ data: e, onChange: t, nodeId: n }) {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 				rows: 3,
 				spellCheck: !1,
 				id: n,
@@ -10986,7 +10986,7 @@ function yc({ data: e, onChange: t, nodeId: n }) {
 			error: o ? "User prompt is required." : void 0,
 			help: "What to ask the model about the image.",
 			controlId: `${r}-user-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 				rows: 3,
 				spellCheck: !1,
 				invalid: o,
@@ -11016,7 +11016,7 @@ function yc({ data: e, onChange: t, nodeId: n }) {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 				rows: 3,
 				spellCheck: !1,
 				id: n,
@@ -11083,7 +11083,7 @@ function xc({ data: e, onChange: t, nodeId: n }) {
 			label: "System prompt override",
 			help: "Optional. Sent verbatim — {{context.*}} is NOT substituted here.",
 			controlId: `${r}-system-prompt`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 				rows: 3,
 				spellCheck: !1,
 				id: n,
@@ -11129,7 +11129,7 @@ function Ec({ data: e, onChange: t }) {
 			error: i ? "Prompt is required." : void 0,
 			help: i ? void 0 : r.help("prompt", "Text description of the image to generate."),
 			controlId: "generate-prompt",
-			render: ({ describedById: n, controlId: a }) => /* @__PURE__ */ W(Ne, {
+			render: ({ describedById: n, controlId: a }) => /* @__PURE__ */ W(Fe, {
 				id: a,
 				"aria-describedby": n,
 				rows: 4,
@@ -11330,7 +11330,7 @@ function jc({ data: e, onChange: t, nodeId: n }) {
 			error: i ? "Edit prompt is required." : void 0,
 			help: "Describes what to generate in the masked region.",
 			controlId: "edit-prompt-prompt",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Ne, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(Fe, {
 				id: r,
 				"aria-describedby": n,
 				rows: 4,
@@ -12710,7 +12710,7 @@ function Bc({ data: e, onChange: t, nodeId: n }) {
 				error: c ? "Query template is required." : void 0,
 				help: c ? void 0 : o.help("queryTemplate", "Text to embed and search. Supports {{ context.* }} substitution."),
 				controlId: `${r}-query-template`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 					rows: 4,
 					invalid: c,
 					spellCheck: !1,
@@ -12848,7 +12848,7 @@ function Wc({ data: e, onChange: t, nodeId: n }) {
 				error: l ? "Query is required." : void 0,
 				help: l ? void 0 : "Bind values with $parameters below rather than interpolating them.",
 				controlId: `${i}-query`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Ne, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(Fe, {
 					rows: 6,
 					invalid: l,
 					spellCheck: !1,
@@ -13827,7 +13827,7 @@ function ol({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 					/* @__PURE__ */ G("div", { children: [/* @__PURE__ */ W("label", {
 						className: ne,
 						children: "System prompt"
-					}), /* @__PURE__ */ W(Ne, {
+					}), /* @__PURE__ */ W(Fe, {
 						value: c,
 						onChange: (e) => l(e.target.value),
 						rows: 3,
@@ -13841,7 +13841,7 @@ function ol({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 							className: "text-danger-fg",
 							children: "*"
 						})]
-					}), /* @__PURE__ */ W(Ne, {
+					}), /* @__PURE__ */ W(Fe, {
 						value: u,
 						onChange: (e) => d(e.target.value),
 						rows: 3,
@@ -13865,7 +13865,7 @@ function ol({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 							"aria-label": "Schema preset",
 							"data-testid": "bench-schema-preset"
 						})]
-					}), /* @__PURE__ */ W(Ne, {
+					}), /* @__PURE__ */ W(Fe, {
 						value: m,
 						onChange: (e) => h(e.target.value),
 						rows: 5,
@@ -14373,7 +14373,7 @@ function ml({ selectedIds: e }) {
 							/* @__PURE__ */ G("div", {
 								className: "flex items-center gap-2",
 								children: [
-									/* @__PURE__ */ W(Fe, {
+									/* @__PURE__ */ W(ke, {
 										state: cl[_.status],
 										label: _.status,
 										size: "sm",
@@ -14995,7 +14995,7 @@ function Nl() {
 	});
 }
 function Pl({ pipelineId: e }) {
-	let t = zt(), i = Tt(), o = xt(), { toast: s } = a(), { definition: c, dirty: l, selectedNodeId: u, setSelectedNodeId: d, save: f, publish: p, revert: m, undo: h, redo: _, setTags: v } = i, y = Sa(e), [b, x] = H(!1), S = V(null), C = V(l);
+	let t = zt(), i = Tt(), o = xt(), { toast: s } = a(), { definition: c, dirty: l, selectedNodeId: u, setSelectedNodeId: d, save: f, publish: p, revert: m, undo: g, redo: _, setTags: v } = i, y = Sa(e), [b, x] = H(!1), S = V(null), C = V(l);
 	z(() => (C.current && !l && (x(!0), S.current && clearTimeout(S.current), S.current = setTimeout(() => x(!1), 450)), C.current = l, () => {
 		S.current &&= (clearTimeout(S.current), null);
 	}), [l]);
@@ -15080,7 +15080,7 @@ function Pl({ pipelineId: e }) {
 				return;
 			}
 			if (t && e.key.toLowerCase() === "z") {
-				e.preventDefault(), h();
+				e.preventDefault(), g();
 				return;
 			}
 			if (e.key === "Escape") {
@@ -15095,7 +15095,7 @@ function Pl({ pipelineId: e }) {
 		pe,
 		y,
 		o,
-		h,
+		g,
 		_,
 		d
 	]);
@@ -15161,7 +15161,7 @@ function Pl({ pipelineId: e }) {
 				children: [/* @__PURE__ */ W("span", {
 					className: "text-[11px] text-text-tertiary font-semibold",
 					children: "TAGS"
-				}), /* @__PURE__ */ W(g, {
+				}), /* @__PURE__ */ W(h, {
 					value: c.tags ?? [],
 					onChange: v,
 					placeholder: "add tag…"
@@ -15261,7 +15261,7 @@ function Pl({ pipelineId: e }) {
 						children: [/* @__PURE__ */ W("span", {
 							className: "font-medium text-text-primary",
 							children: e
-						}), /* @__PURE__ */ W(Ne, {
+						}), /* @__PURE__ */ W(Fe, {
 							"data-autofocus": e === E[0] || void 0,
 							rows: 3,
 							value: y.triggerInputValues[e] ?? "",
@@ -18060,7 +18060,7 @@ function wu({ userId: t, idToken: r, baseUrl: i } = {}) {
 		me,
 		_e
 	]);
-	let I = m.length > 0, Ie = N.size > 0;
+	let Ie = m.length > 0, I = N.size > 0;
 	return /* @__PURE__ */ G("div", {
 		"data-testid": "pipelines-page",
 		className: "flex flex-col h-full overflow-hidden bg-surface-inset font-inherit",
@@ -18097,7 +18097,7 @@ function wu({ userId: t, idToken: r, baseUrl: i } = {}) {
 					]
 				})]
 			}),
-			I && /* @__PURE__ */ W(zl, {
+			Ie && /* @__PURE__ */ W(zl, {
 				search: g,
 				onSearchChange: _,
 				statusFilter: C,
@@ -18111,7 +18111,7 @@ function wu({ userId: t, idToken: r, baseUrl: i } = {}) {
 				someVisibleSelected: ue,
 				onHeaderToggleAll: he
 			}),
-			Ie && /* @__PURE__ */ W(Vl, {
+			I && /* @__PURE__ */ W(Vl, {
 				count: N.size,
 				onClear: ge,
 				onExport: ke,
@@ -18135,8 +18135,8 @@ function wu({ userId: t, idToken: r, baseUrl: i } = {}) {
 				unionTags: be
 			}),
 			/* @__PURE__ */ W("div", {
-				className: n("flex-1 overflow-y-auto overflow-x-hidden min-w-0", I ? "p-6" : "p-0"),
-				children: I ? se.length === 0 ? /* @__PURE__ */ W("div", {
+				className: n("flex-1 overflow-y-auto overflow-x-hidden min-w-0", Ie ? "p-6" : "p-0"),
+				children: Ie ? se.length === 0 ? /* @__PURE__ */ W("div", {
 					"data-testid": "filtered-empty",
 					className: "text-center p-12 text-[13px] text-text-tertiary",
 					children: "No pipelines match the current filters."
@@ -18154,7 +18154,7 @@ function wu({ userId: t, idToken: r, baseUrl: i } = {}) {
 						onDelete: () => ne(e.id),
 						selectionMode: ce,
 						selected: N.has(e.id),
-						anySelected: Ie,
+						anySelected: I,
 						onToggleSelect: (t) => pe(e.id, t)
 					}, e.id))
 				}) : /* @__PURE__ */ G("div", {
@@ -19333,7 +19333,7 @@ function hd({ attempt: e, isLast: t }) {
 function gd({ attempts: e, className: t }) {
 	if (e.length === 0 || e.length === 1 && !md(e[0])) return null;
 	let r = [...e].sort((e, t) => e.attemptNumber - t.attemptNumber), i = r[r.length - 1], a = r.filter(md).length, o = md(i) ? `${r.length} attempt${r.length === 1 ? "" : "s"}, all failed` : `succeeded on attempt ${i.attemptNumber} after ${a} failure${a === 1 ? "" : "s"}`;
-	return /* @__PURE__ */ W(v, {
+	return /* @__PURE__ */ W(j, {
 		first: !0,
 		title: "Retry history",
 		hint: o,
@@ -22002,7 +22002,7 @@ function Of({ row: e, onSubmit: t, onOpenPipeline: n }) {
 					}) : null
 				]
 			}),
-			/* @__PURE__ */ W(Ne, {
+			/* @__PURE__ */ W(Fe, {
 				"data-testid": `approval-comment-${e.runId}`,
 				value: r,
 				onChange: (e) => i(e.target.value),
@@ -22137,9 +22137,9 @@ function kf() {
 				"data-testid": "approvals-loading",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
 				children: [
-					/* @__PURE__ */ W(Ae, { height: 140 }),
-					/* @__PURE__ */ W(Ae, { height: 140 }),
-					/* @__PURE__ */ W(Ae, { height: 140 })
+					/* @__PURE__ */ W(Ne, { height: 140 }),
+					/* @__PURE__ */ W(Ne, { height: 140 }),
+					/* @__PURE__ */ W(Ne, { height: 140 })
 				]
 			}) : _ === 0 && !r ? /* @__PURE__ */ W(we, {
 				icon: "✋",
@@ -22218,7 +22218,7 @@ function jf({ result: e, className: t }) {
 			children: [/* @__PURE__ */ W("span", {
 				className: "text-[11px] font-medium uppercase text-text-tertiary",
 				children: "overall"
-			}), /* @__PURE__ */ W(Oe, {
+			}), /* @__PURE__ */ W(je, {
 				value: e.overallScore,
 				threshold: a,
 				tone: r === "warning" ? "warning" : r,
@@ -22284,7 +22284,7 @@ function Nf({ score: e, def: t }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ W(Oe, {
+			/* @__PURE__ */ W(je, {
 				value: e.score,
 				threshold: t?.failThreshold ?? .5,
 				tone: n,
@@ -22467,7 +22467,7 @@ function zf({ aggregate: e, className: t }) {
 				children: [/* @__PURE__ */ W("span", {
 					className: "text-[11px] font-medium uppercase text-text-tertiary",
 					children: "mean score"
-				}), /* @__PURE__ */ W(Oe, {
+				}), /* @__PURE__ */ W(je, {
 					value: i,
 					tone: a === "warning" ? "warning" : a,
 					size: "md",
@@ -22571,7 +22571,7 @@ function Bf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 				children: [/* @__PURE__ */ W("span", {
 					className: "text-[11px] font-medium uppercase text-text-tertiary",
 					children: "pass-rate"
-				}), /* @__PURE__ */ W(_, {
+				}), /* @__PURE__ */ W(g, {
 					points: s,
 					yMin: 0,
 					yMax: 1,
@@ -23280,7 +23280,7 @@ function hp(e, t, n = {}) {
 					variant: "plain"
 				}),
 				title: e.name,
-				pill: /* @__PURE__ */ W(Fe, {
+				pill: /* @__PURE__ */ W(ke, {
 					variant: "text",
 					...t,
 					"data-testid": `${d}-pill-${e.id}`
@@ -23307,35 +23307,35 @@ function hp(e, t, n = {}) {
 		})
 	};
 }
-function gp({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s, onQueryChange: l, searchPlaceholder: u = "Search pipelines…", groupBy: d, onGroupByChange: f, filters: m, activeFilterCount: h = 0, onClearFilters: g, title: _ = "Pipelines", count: v, headerMenu: y, onTemplates: b, onStartBlank: x, headerActions: S, currentId: C = null, onOpen: w, onRun: T, onViewRun: E, rowMenu: D, rowTrailing: ee, storageKey: O, emptyState: te, footer: k, now: A, frame: re = "none", className: ie, "data-testid": M = "pipelines-list" }) {
-	let oe = B(() => e.filter((e) => p(e, s)), [e, s]), se = A ?? Date.now(), { groups: ce, rows: N } = B(() => hp(oe, d, {
-		currentId: C,
+function gp({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s, onQueryChange: l, searchPlaceholder: u = "Search pipelines…", groupBy: d, onGroupByChange: f, filters: m, activeFilterCount: h = 0, onClearFilters: g, title: v = "Pipelines", count: y, headerMenu: b, onTemplates: x, onStartBlank: S, headerActions: C, currentId: w = null, onOpen: T, onRun: E, onViewRun: D, rowMenu: ee, rowTrailing: O, storageKey: te, emptyState: k, footer: A, now: j, frame: re = "none", className: ie, "data-testid": M = "pipelines-list" }) {
+	let oe = B(() => e.filter((e) => p(e, s)), [e, s]), se = j ?? Date.now(), { groups: ce, rows: N } = B(() => hp(oe, d, {
+		currentId: w,
 		now: se,
-		onOpen: w,
-		onRun: T,
-		onViewRun: E,
-		rowTrailing: ee,
+		onOpen: T,
+		onRun: E,
+		onViewRun: D,
+		rowTrailing: O,
 		testId: M
 	}), [
 		oe,
 		d,
-		C,
-		se,
 		w,
+		se,
 		T,
 		E,
-		ee,
+		D,
+		O,
 		M
-	]), le = B(() => new Map(oe.map((e) => [e.id, e])), [oe]), ue = s.trim().length > 0 || h > 0, de = !!y?.length || !!b || !!x || !!S, fe;
+	]), le = B(() => new Map(oe.map((e) => [e.id, e])), [oe]), ue = s.trim().length > 0 || h > 0, de = !!b?.length || !!x || !!S || !!C, fe;
 	return fe = t && e.length === 0 ? /* @__PURE__ */ W(Te, {
 		label: "Loading pipelines…",
 		testId: `${M}-loading`
 	}) : e.length === 0 ? /* @__PURE__ */ W(we, {
 		testId: `${M}-empty`,
-		title: te?.title ?? "No pipelines yet",
-		body: te?.body ?? "Start from a template, from blank, or ask the agent below to draft one.",
-		actionLabel: te?.actionLabel ?? (x ? "Start from blank" : void 0),
-		onAction: te?.onAction ?? x
+		title: k?.title ?? "No pipelines yet",
+		body: k?.body ?? "Start from a template, from blank, or ask the agent below to draft one.",
+		actionLabel: k?.actionLabel ?? (S ? "Start from blank" : void 0),
+		onAction: k?.onAction ?? S
 	}) : oe.length === 0 ? /* @__PURE__ */ W(i, {
 		density: "compact",
 		children: /* @__PURE__ */ W(we, {
@@ -23347,36 +23347,36 @@ function gp({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s
 				l(""), g?.();
 			} : void 0
 		})
-	}) : /* @__PURE__ */ W(j, {
+	}) : /* @__PURE__ */ W(_, {
 		"data-testid": `${M}-groups`,
 		groups: ce,
 		rows: N,
-		currentId: C,
-		storageKey: O,
+		currentId: w,
+		storageKey: te,
 		onOpenRow: (e) => {
 			let t = le.get(e.id);
-			t && w(t);
+			t && T(t);
 		},
-		rowMenu: D ? (e) => {
+		rowMenu: ee ? (e) => {
 			let t = le.get(e.id);
-			return t ? D(t) : null;
+			return t ? ee(t) : null;
 		} : void 0
 	}), /* @__PURE__ */ G("div", {
 		"data-testid": M,
 		"data-frame": re,
 		className: n("flex h-full min-h-0 flex-col gap-4", ie),
 		children: [
-			/* @__PURE__ */ W(Pe, {
-				title: _,
+			/* @__PURE__ */ W(Ie, {
+				title: v,
 				badge: /* @__PURE__ */ W(c, {
 					size: "sm",
 					tone: "neutral",
 					"data-testid": `${M}-count`,
-					"aria-label": `${v ?? oe.length} pipelines`,
-					children: v ?? oe.length
+					"aria-label": `${y ?? oe.length} pipelines`,
+					children: y ?? oe.length
 				}),
 				actions: de ? /* @__PURE__ */ G(U, { children: [
-					!!y?.length && /* @__PURE__ */ W(Me, {
+					!!b?.length && /* @__PURE__ */ W(Oe, {
 						trigger: /* @__PURE__ */ W("span", {
 							"aria-hidden": "true",
 							className: "text-base leading-none",
@@ -23385,24 +23385,24 @@ function gp({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s
 						triggerLabel: "More actions",
 						triggerTestId: `${M}-more`,
 						align: "end",
-						sections: y,
+						sections: b,
 						triggerClassName: "h-9 w-9 px-0 py-0"
-					}),
-					b && /* @__PURE__ */ W(r, {
-						variant: "secondary",
-						size: "md",
-						"data-testid": `${M}-templates`,
-						onClick: b,
-						children: "Templates"
 					}),
 					x && /* @__PURE__ */ W(r, {
 						variant: "secondary",
 						size: "md",
-						"data-testid": `${M}-start-blank`,
+						"data-testid": `${M}-templates`,
 						onClick: x,
+						children: "Templates"
+					}),
+					S && /* @__PURE__ */ W(r, {
+						variant: "secondary",
+						size: "md",
+						"data-testid": `${M}-start-blank`,
+						onClick: S,
 						children: "Start from blank"
 					}),
-					S
+					C
 				] }) : void 0
 			}),
 			/* @__PURE__ */ G("div", {
@@ -23458,12 +23458,12 @@ function gp({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s
 					})
 				]
 			}),
-			k && /* @__PURE__ */ W(jt.Provider, {
+			A && /* @__PURE__ */ W(jt.Provider, {
 				value: "pinned",
 				children: /* @__PURE__ */ W("div", {
 					"data-testid": `${M}-footer`,
 					className: "w-full shrink-0 [--dock-inset:0px]",
-					children: k
+					children: A
 				})
 			})
 		]

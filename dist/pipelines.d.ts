@@ -877,6 +877,12 @@ declare interface GroupedListRow {
     trailing?: ReactNode;
     /** Trailing content revealed on hover / focus / `current` — an "Open" button. */
     hoverActions?: ReactNode;
+    /**
+     * The row's own controls — quick-action buttons. Always visible, outside
+     * the row's button (tab order: row, then these), at the row's end when it
+     * is wide and wrapped under the title below a 35rem row. Since 2.509.0.
+     */
+    actions?: ReactNode;
     /** The row the reader is "at": last opened, just created. Tinted; wears its hover line. */
     current?: boolean;
     /** Muted and inert; the menu still opens so a reader can see why. */

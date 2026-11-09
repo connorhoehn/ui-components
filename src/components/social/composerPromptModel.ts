@@ -15,6 +15,9 @@
 //   ⌘/Ctrl+↓ / ↑   next / previous prompt (J / K when the input is empty and
 //                  the prompt is not a typed one: there, letters are the answer)
 //   Esc            collapse the deck to the plain composer, answering nothing
+//   Alt+Backspace  Back (2.510.0), when the prompt has one (its own `back`,
+//                  or a follow-up's return to its question) and the input is
+//                  empty or focus is in the deck
 //
 // A `compose` prompt (2.482.0) owns its keys: it draws `ComposerConfirmFlow`
 // (draft → review → done) in the card, so Enter, digits and Esc are the
@@ -36,6 +39,20 @@ export interface ComposerPromptField {
   tone?: ComposerPromptTone;
   /** An identifier value (ids, repos): tabular figures in the body face, never monospace. */
   mono?: boolean;
+}
+
+/**
+ * A Back control on a prompt's card (since 2.510.0): the step before this
+ * question in the host's own flow (a wizard's previous question, the choice
+ * that opened a plan). Rendered in the card header whenever present, single
+ * prompt or not. Answers nothing: `onBack` decides what comes back.
+ */
+export interface ComposerPromptBack {
+  /** Default "Back". */
+  label?: string;
+  onBack: () => void | Promise<void>;
+  /** Off, with why (the button's title). */
+  disabledReason?: string;
 }
 
 /** One answer a prompt offers. Its position (1–9) is its default shortcut. */
@@ -132,7 +149,7 @@ export interface ComposerPrompt {
   options?: readonly ComposerPromptOption[];
   /** What Enter on an empty input picks. Confirm defaults to its first option. */
   defaultOptionId?: string;
-  /** Text / number: the input's placeholder while this prompt is on screen. */
+  /** Text / number: the input's placeholder while this prompt is on screen. Choice / confirm under the quiet prompt box (2.512.0), where the input stays: its placeholder there. */
   placeholder?: string;
   /** Number: bounds a typed answer must sit inside. */
   min?: number;
@@ -141,8 +158,18 @@ export interface ComposerPrompt {
    * Optional host-owned draft for the deck's text / number input (no external
    * input bridge). The host may persist it by question identity across mounts.
    * The host also clears it after an accepted answer; refused answers and late
-   * acknowledgments never clear another question's draft. Does not control the
-   * external composer input or a compose prompt's separate message flow.
+   * acknowledgments never clear another question's draft. Does not control a
+   * compose prompt's separate message flow.
+   *
+   * Under `presentation="prompt"` (`ConversationComposer`, since 2.513.0) the
+   * card's answer field IS the composer's own text box, and this binds it:
+   * whenever the open card changes (its `id`), the text box is seeded from
+   * `value` (the caret at its end; `''` empties it), and every edit there
+   * calls `onChange(text)` with the box's plain text — so a "Use as typed"
+   * option can enable once something is typed, and a "Refine" card reopens
+   * with the saved words. Enter still answers the card as before. Changing
+   * `value` while the same card stays open does not rewrite the box. Under any other
+   * composer presentation it still drives only the deck's own input.
    */
   inputDraft?: { value: string; onChange: (value: string) => void };
   /** Shown on the card instead of answers: the reader may look but not decide. */
@@ -156,6 +183,26 @@ export interface ComposerPrompt {
   path?: DecisionPathState;
   /** Compose: the message flow's wording and prefilled text. */
   compose?: ComposerPromptCompose;
+  /**
+   * Back in the card header (2.510.0), on a one-prompt deck too. A follow-up
+   * reached through `{ next }` without its own `back` gets one that returns
+   * to the question it followed (`deck.back()`) — except a compose follow-up,
+   * whose flow already draws that Back. A rejected `onBack` shows its message
+   * on the card like a refused answer.
+   */
+  back?: ComposerPromptBack;
+  /**
+   * Choice / confirm (2.512.0): words typed in the composer's input under
+   * this card are a direction, not a message — "make her taller" under a
+   * Generate confirm re-proposes. The deck hands the trimmed text here when
+   * the input is not empty and Enter is pressed (the composer's send).
+   * `{ error }` shows on the card; `{ next }` takes the card in place like an
+   * answer's follow-up; `{ receipt }` is announced; nothing keeps the card on
+   * screen — the host re-proposes by replacing this prompt in its queue (a
+   * new id). Without it the input's placeholder says what the card takes and
+   * Enter on an empty input picks the default option, as before.
+   */
+  onDirection?: (text: string) => ComposerPromptResult | Promise<ComposerPromptResult>;
   onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
 }
 
@@ -179,6 +226,11 @@ export function optionKey(option: ComposerPromptOption, index: number): string |
 /** Whether the composer's input carries a typed answer for this prompt. */
 export function takesTypedAnswer(prompt: ComposerPrompt | null | undefined): boolean {
   return !!prompt && !prompt.readOnlyReason && (prompt.kind === 'text' || prompt.kind === 'number');
+}
+
+/** Whether typed words under this card are a direction for the host (`onDirection`): a choice / confirm card that takes one. */
+export function takesDirection(prompt: ComposerPrompt | null | undefined): boolean {
+  return !!prompt && !prompt.readOnlyReason && !!prompt.onDirection && (prompt.kind === 'choice' || prompt.kind === 'confirm');
 }
 
 /** The option Enter picks on an empty input, if any. */
@@ -277,6 +329,7 @@ export type DeckKeyAction =
   | { type: 'pick'; optionId: string }
   | { type: 'default'; optionId: string }
   | { type: 'page'; delta: 1 | -1 }
+  | { type: 'back' }
   | { type: 'collapse' }
   | { type: 'expand' }
   | null;
@@ -298,9 +351,13 @@ export interface DeckKey {
  */
 export function deckKeyAction(
   event: DeckKey,
-  state: { prompt: ComposerPrompt | null; collapsed: boolean; inputEmpty: boolean; inDeck: boolean; busy: boolean },
+  state: {
+    prompt: ComposerPrompt | null; collapsed: boolean; inputEmpty: boolean; inDeck: boolean; busy: boolean;
+    /** The card shows an enabled Back (2.510.0). */
+    canBack?: boolean;
+  },
 ): DeckKeyAction {
-  const { prompt, collapsed, inputEmpty, inDeck, busy } = state;
+  const { prompt, collapsed, inputEmpty, inDeck, busy, canBack } = state;
   if (!prompt) return null;
   const mod = !!(event.metaKey || event.ctrlKey);
   const quiet = inputEmpty || inDeck;
@@ -314,10 +371,14 @@ export function deckKeyAction(
   // draft) and every typed key; the deck only pages.
   if (prompt.kind === 'compose') return null;
   if (event.key === 'Escape' && quiet) return { type: 'collapse' };
+  // Back: Alt+Backspace where Backspace would delete nothing (an empty input,
+  // or focus on the deck's own buttons) — never a word being typed.
+  if (event.key === 'Backspace' && event.altKey && !mod && !event.shiftKey && quiet && canBack && !busy) return { type: 'back' };
   if (mod || event.shiftKey) return null;
+  // Letters typed in the input are the answer (text / number) or a direction
+  // (`onDirection`), so J / K page from the input only where they are neither.
   const typed = takesTypedAnswer(prompt);
-  // J / K page only where letters are not the answer being typed.
-  const pager = quiet && !event.altKey && (!typed || inDeck);
+  const pager = quiet && !event.altKey && ((!typed && !takesDirection(prompt)) || inDeck);
   if (pager && (event.key === 'j' || event.key === 'J')) return { type: 'page', delta: 1 };
   if (pager && (event.key === 'k' || event.key === 'K')) return { type: 'page', delta: -1 };
   if (busy || prompt.readOnlyReason) return null;

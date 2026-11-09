@@ -815,9 +815,9 @@ table{border-collapse:collapse;margin:8px} td{width:120px;max-width:120px;paddin
 <script>
 const v = new URLSearchParams(location.search).get('v');
 const overlay = (attrs, text) => { const el = document.createElement('aside'); for (const [k, val] of Object.entries(attrs)) el.setAttribute(k, val); el.textContent = text; el.style.cssText = 'position:fixed;right:0;top:0;width:300px;height:100%;background:#fff'; document.body.append(el); };
-const open = tr => { history.pushState({}, '', '/list/' + tr.cells[1].textContent.replace(/\\s/g, '-') + location.search); document.querySelector('#record').textContent = 'Record ' + tr.cells[1].textContent; };
+const open = tr => { const id = tr.cells[1].textContent.replace(/\\s/g, '-'); if (v === 'hash-route') location.hash = '#/list/' + id; else history.pushState({}, '', '/list/' + id + location.search); document.querySelector('#record').textContent = 'Record ' + tr.cells[1].textContent; };
 document.querySelectorAll('tbody tr').forEach(tr => {
-  tr.addEventListener('keydown', e => { if (e.key === 'Enter' && v === 'route') open(tr); });
+  tr.addEventListener('keydown', e => { if (e.key === 'Enter' && (v === 'route' || v === 'hash-route')) open(tr); });
   tr.addEventListener('click', e => {
     if (e.target.closest('input,button')) return;
     if (v === 'drawer') return overlay({ role: 'dialog', 'aria-modal': 'true', 'data-ui-dialog': 'drawer' }, 'Submission');
@@ -860,6 +860,7 @@ document.querySelectorAll('tbody input[type=checkbox]').forEach(cb => cb.addEven
   const select = page => probes.toggleSelection(page, { checkbox: `${rows} input[type="checkbox"]` });
   for (const [variant, enter, rule, valid, label] of [
     ['route', activate, 'record.popout', true, 'row click routes the record into the page'],
+    ['hash-route', activate, 'record.popout', true, 'row click routes the record by changing only the URL hash (hash router)'],
     ['route', page => probes.activateRow(page, { rows, via: 'enter' }), 'record.popout', true, 'Enter on a focused row routes the record'],
     ['preselected', activate, 'record.popout', true, 'the first row is already open; the next row routes'],
     ['confirm', activate, 'record.popout', true, 'a confirmation (data-ui-dialog="confirm") beside the routed record'],
@@ -1687,6 +1688,67 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     }
     await page.close();
     console.log('PASS table.zebra, section.separator, page.vertical-budget and element.unmarked catch hand-rolled density defects and accept library pages (layout primitives and template columns included)');
+  }
+  {
+    // row.actions-aligned and image.whole-visible (2.513.0): a list's row
+    // actions share one right edge and one button height; a review subject is
+    // never cropped. Both are resting-gate rules keyed on library markers.
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    for (const id of ['row.actions-aligned', 'image.whole-visible']) {
+      const rule = fullContract.rules.find(r => r.id === id);
+      assert.ok(rule && !rule.deep && !isDeepRule(fullContract, id), `${id} is shipped in the resting (non-deep) gate`);
+    }
+    const judge = ids => page.evaluate(measureDOM, { contract: { ...fullContract, rules: fullContract.rules.filter(r => ids.includes(r.id)) }, selectors: {} });
+    const fails = async (ids, rule, why) => { const r = await judge(ids); assert.ok(r.issues.some(i => i.rule === rule && i.category === 'violation'), `${rule} must fail: ${why} ${JSON.stringify(r.issues)}`); return r; };
+    const passes = async (ids, why) => { const r = await judge(ids); assert.deepEqual(r.issues, [], `${why}`); return r; };
+    const rowsCss = '<style>*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}.list{width:900px;display:grid;grid-template-columns:minmax(0,1fr) max-content max-content}.list li{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;padding:6px 8px}.main{text-align:left;border:0;background:none}.acts{grid-column:2;justify-self:end;display:flex;gap:6px;padding-left:12px}.trail{grid-column:3;justify-self:end;padding-left:12px}.acts button{height:28px}.inline li{display:flex;align-items:center;padding:6px 8px}.inline .main{flex:1}.inline .acts{display:flex;gap:6px}ul{margin:0;padding:0;list-style:none}</style>';
+    const row = (acts, trail = '2m') => `<li><button class="main" data-ui-row-main>Row title</button>${acts == null ? '' : `<span class="acts" data-ui-part="row-actions">${acts}</span>`}<span class="trail" data-ui-part="row-trailing">${trail}</span></li>`;
+    const columnsList = `${rowsCss}<ul class="list" data-ui-row-list="grouped" data-row-actions-layout="columns">${row('<button data-variant="link">Open run</button>')}${row('<button data-variant="secondary">Cancel</button>')}${row('<button data-variant="primary">Draw Toby</button><button data-variant="ghost">More</button>', '1h')}${row(null, '3d')}</ul>`;
+    const aligned = ['row.actions-aligned'];
+    await page.setContent(columnsList);
+    const ok = await passes(aligned, 'a columns list: different buttons, one right edge, one height; a row without actions reserves the column');
+    assert.ok(ok.samples.some(x => x.rule === 'row.actions-aligned' && x.property === 'row actions right edges'), 'the list is measured');
+    await page.evaluate(() => { document.querySelector('.acts').style.justifySelf = 'start'; });
+    await fails(aligned, 'row.actions-aligned', 'one actions cell left-aligned in a columns list');
+    await page.setContent(columnsList);
+    await page.evaluate(() => { document.querySelectorAll('.trail')[1].style.justifySelf = 'start'; document.querySelectorAll('.trail')[1].textContent = '1'; });
+    await fails(aligned, 'row.actions-aligned', 'a trailing cell left-aligned in a columns list');
+    await page.setContent(columnsList);
+    await page.evaluate(() => { document.querySelector('.acts button').style.height = '36px'; });
+    const tall = await fails(aligned, 'row.actions-aligned', 'a md button among sm buttons');
+    assert.ok(tall.issues.some(i => i.property === 'row action height'), 'the height finding is named');
+    const inlineList = acts => `${rowsCss}<ul class="inline" data-ui-row-list="grouped" data-row-actions-layout="inline">${acts.map(a => row(a)).join('')}</ul>`;
+    await page.setContent(inlineList(['<button>Open run</button>', '<button>Cancel</button>', '<button>Draw Toby</button><button>More</button>']));
+    const ragged = await fails(aligned, 'row.actions-aligned', 'an inline list whose rows have different buttons');
+    assert.ok(ragged.issues.some(i => /use the columns layout/.test(i.expected)), 'the fix is named');
+    await page.setContent(inlineList(['<button style="width:80px">Approve</button>', '<button style="width:80px">Approve</button>']));
+    await passes(aligned, 'an inline list whose rows have identical actions is already aligned');
+    await page.setContent(`${rowsCss}<ul class="list" data-ui-row-list="action" data-row-actions-layout="columns" style="width:380px">${['<button>Open run</button>', '<button>Draw Toby</button><button>More</button>'].map(a => `<li><button class="main" data-ui-row-main style="grid-column:1/-1">Row title</button><span class="acts" data-ui-part="row-actions" style="grid-column:1/-1;grid-row:2;justify-self:start;padding-left:30px">${a}</span></li>`).join('')}</ul>`);
+    await passes(aligned, 'actions wrapped under their titles (a narrow list) are not judged for edges');
+    await page.setContent(`${rowsCss}<div>${row('<button>Lonely</button>')}</div>`);
+    const unlisted = await passes(aligned, 'actions outside a row list are not this rule\'s concern');
+    assert.equal(unlisted.coverage.find(c => c.rule === 'row.actions-aligned').matched, 0);
+
+    // image.whole-visible
+    const whole = ['image.whole-visible'];
+    const wide = `data:image/svg+xml,${encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100'><rect width='200' height='100' fill='teal'/></svg>")}`;
+    const frame = (fit, box = 'width:160px;height:160px', attr = 'data-image-compare-frame data-image-fit="' + fit + '"') => `<span ${attr} style="display:block;${box};overflow:hidden"><img src="${wide}" alt="" style="display:block;width:100%;height:100%;object-fit:${fit}"></span>`;
+    await page.setContent(`<main>${frame('contain')}${frame('cover', 'width:200px;height:100px')}</main>`);
+    const shown = await passes(whole, 'a contained picture, and a cover picture whose box has its own aspect');
+    assert.equal(shown.coverage.find(c => c.rule === 'image.whole-visible').matched, 2);
+    await page.setContent(`<main>${frame('cover')}</main>`);
+    const cropped = await fails(whole, 'image.whole-visible', 'a 2:1 picture cropped into a square frame');
+    assert.ok(cropped.issues.some(i => i.expected.startsWith('contain')), 'the fix is named');
+    await page.setContent(`<main>${frame('cover', 'width:200px;height:96px')}</main>`);
+    await fails(whole, 'image.whole-visible', 'a 4% aspect difference is past the 2% budget');
+    await page.setContent(`<main>${frame('cover', 'width:200px;height:99px')}</main>`);
+    await passes(whole, 'a 1% aspect difference is within budget');
+    await page.setContent(`<main><img data-review-subject src="${wide}" alt="" style="width:120px;height:120px;object-fit:fill"></main>`);
+    await fails(whole, 'image.whole-visible', 'a review subject stretched (fill) out of its aspect');
+    await page.setContent(`<main><img src="${wide}" alt="" style="width:120px;height:120px;object-fit:cover"></main>`);
+    await passes(whole, 'an unmarked decorative image is not a review subject');
+    await page.close();
+    console.log('PASS row.actions-aligned and image.whole-visible catch ragged row actions, mixed heights and cropped review subjects, and accept the columns layout and contained frames');
   }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

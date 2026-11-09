@@ -60,7 +60,7 @@ import { ContextComposer, type ContextComposerProps } from './ContextComposer';
 import { ComposerReferences } from './ComposerReferences';
 import { ComposerSendError } from './composerSendError';
 import { ComposerPromptDeck, useComposerPromptDeck, type ComposerPromptInput } from './ComposerPromptDeck';
-import type { ComposerPrompt } from './composerPromptModel';
+import { defaultOption, type ComposerPrompt } from './composerPromptModel';
 import type { ComposedMessage, ComposerCommand, ComposerMode, RichChatComposerHandle, RichChatDraft } from './RichChatComposer';
 import type { ComposerContext } from './composerContext';
 import { composerDraftOf } from './agentComposerDraft';
@@ -200,6 +200,10 @@ export interface ConversationComposerOwnProps {
    * Human-in-the-loop prompts replace the message editor while expanded.
    * Choices use numbered buttons; text/number prompts expose a plain answer
    * field. Hide or finish restores the conversation draft and its tools.
+   * Under `presentation="prompt"` (2.512.0) the editor stays: the card is the
+   * composer's first section with plain answer buttons and no key hints, the
+   * input answers a text / number card, and words typed under a choice /
+   * confirm card go to its `onDirection` (a compose prompt still replaces).
    */
   prompts?: readonly ComposerPrompt[];
   /**
@@ -438,8 +442,20 @@ function ConversationComposerImpl({
     lastHtml.current = next.html;
     if (persistDraft && !controlled && storedDraftKey) writeStoredDraft(storage(), storedDraftKey, next.html);
     chat?.setTyping?.(typingFor({ html: next.html, mode, recipientChannel: recipient?.channel, channel }));
+    // The quiet prompt box's open card owns its draft (`inputDraft`, 2.513.0):
+    // every keystroke reaches the host, so an option can follow what is typed.
+    const bound = boundDraftRef.current;
+    if (bound && bound.value !== undefined) {
+      const text = handle.current?.editor?.getText() ?? textOfHtml(next.html);
+      if (text !== bound.lastSent) {
+        bound.lastSent = text;
+        bound.onChange(text);
+      }
+    }
     onDraftChange?.(next, previous);
   }, [persistDraft, controlled, storedDraftKey, chat, mode, recipient?.channel, channel, onDraftChange]);
+  /** The open card's `inputDraft` under `presentation="prompt"`, read by the draft handler above. */
+  const boundDraftRef = useRef<{ value: string; onChange: (value: string) => void; lastSent: string } | null>(null);
   // Leaving Chat, or this channel, ends the typing announcement.
   useEffect(() => {
     if (!typingFor({ html: lastHtml.current, mode, recipientChannel: recipient?.channel, channel })) chat?.setTyping?.(false);
@@ -472,6 +488,37 @@ function ConversationComposerImpl({
   // ── prompts ── the deck reads the input's emptiness and hands the caret back.
   const deck = useComposerPromptDeck(prompts, { scope: promptScope });
   const dialogueOpen = !!deck.active && !deck.collapsed;
+  // The quiet prompt box (2.512.0) keeps its text box under an open card: the
+  // deck is the card's first section (the header, wired to the input), the
+  // input answers a text card or gives a choice / confirm card a direction.
+  // A compose prompt keeps the replacement — its flow has its own editor.
+  const quietPrompt = rest.presentation === 'prompt';
+  const deckInHeader = quietPrompt && dialogueOpen && deck.active?.kind !== 'compose';
+  const cardTakesInput = deckInHeader && !deck.active?.readOnlyReason;
+  // `inputDraft` under the quiet box (2.513.0): the composer's own text box is
+  // the card's answer field, so it is seeded from `inputDraft.value` whenever
+  // the open card changes and forwards every keystroke to `inputDraft.onChange`.
+  const activeDraft = deckInHeader ? deck.active?.inputDraft : undefined;
+  boundDraftRef.current = activeDraft
+    ? { value: activeDraft.value, onChange: activeDraft.onChange, lastSent: boundDraftRef.current?.lastSent ?? activeDraft.value }
+    : null;
+  const seededCard = useRef<string | null>(null);
+  const seedKey = activeDraft && deck.active ? deck.active.id : null;
+  useEffect(() => {
+    if (seedKey === seededCard.current) return;
+    seededCard.current = seedKey;
+    if (!seedKey || !activeDraft) return;
+    const value = activeDraft.value;
+    let frames = 20;
+    const seed = () => {
+      const editor = handle.current?.editor;
+      if (!editor) { if (frames-- > 0) requestAnimationFrame(seed); return; }
+      if (boundDraftRef.current) boundDraftRef.current.lastSent = value;
+      if (editor.getText() !== value) editor.commands.setContent(composerDraftOf(value).html, { emitUpdate: true });
+      editor.commands.focus('end');
+    };
+    seed();
+  }, [seedKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const wasDialogueOpen = useRef(false);
   useEffect(() => {
     if (dialogueOpen) chat?.setTyping?.(false);
@@ -552,6 +599,13 @@ function ConversationComposerImpl({
       if (taken && persistDraft && !controlled && storedDraftKey) writeStoredDraft(storage(), storedDraftKey, '');
       return taken;
     }
+    if (cardTakesInput) {
+      // Under a choice / confirm card in the quiet box the words are a
+      // direction for the card (`onDirection`), never a message.
+      const taken = await deck.answerDirection(message.text);
+      if (taken && persistDraft && !controlled && storedDraftKey) writeStoredDraft(storage(), storedDraftKey, '');
+      return taken;
+    }
     const input = (text: string, trigger: string, argumentText: string): ConversationCommandInput => ({
       trigger, text, argumentText, mode: sentMode, reference: sentReference ?? (withReference ? reference : null),
       recipientId: recipient?.id ?? null, message,
@@ -625,7 +679,7 @@ function ConversationComposerImpl({
   // Read-only (2.450.0): Chat is off for the chosen destination by a verdict —
   // not offline, not the host's own pause, not a server answer still pending.
   // The whole composer then says so, and the draft's chips stay put.
-  const readOnlyOn = chatBlocked && !deck.typed && !hostDisabled && !offline && !pending;
+  const readOnlyOn = chatBlocked && !deck.typed && !cardTakesInput && !hostDisabled && !offline && !pending;
   const referenceChip = showReference && reference ? (
     <ComposerReferences
       references={[{ id: reference.id, label: compact ? reference.label.split(' › ').pop() ?? reference.label : reference.label, title: reference.label }]}
@@ -685,7 +739,9 @@ function ConversationComposerImpl({
     ...hostPlaceholders,
     ...(mode === 'chat' && recipient?.placeholder ? { chat: recipient.placeholder } : {}),
     ...(!deck.collapsed && deck.active && !deck.active.readOnlyReason && deck.active.kind !== 'compose'
-      ? { [mode]: deck.typed ? deck.active.placeholder ?? 'Type your answer and press Enter' : 'Choose an answer above, or press its number' }
+      ? { [mode]: deck.typed ? deck.active.placeholder ?? 'Type your answer and press Enter'
+        : quietPrompt ? deck.active.placeholder ?? promptCardPlaceholder(deck.direction, defaultOption(deck.active)?.label)
+        : 'Choose an answer above, or press its number' }
       : {}),
   };
   // ONE note: when the To: row already carries the reason, the input says
@@ -715,7 +771,8 @@ function ConversationComposerImpl({
       chatAvailable={hasChat && !modeState.reasons.chat}
       contextChip={contextChip ?? (reference ? false : undefined)}
       above={dialogueOpen ? hostAbove : notices}
-      {...(dialogueOpen ? { replacement: <ComposerPromptDeck deck={deck} data-testid={`${testId}-prompts`} /> }
+      {...(deckInHeader ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" presentation="prompt" data-testid={`${testId}-prompts`} /> }
+        : dialogueOpen ? { replacement: <ComposerPromptDeck deck={deck} data-testid={`${testId}-prompts`} /> }
         : deck.visible ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" data-testid={`${testId}-prompts`} /> } : {})}
       {...(modeRowEnd ? { modeRowEnd } : {})}
       {...(references ? { references, onRemoveReference: removeReference } : {})}
@@ -728,7 +785,7 @@ function ConversationComposerImpl({
       allowAttachments={!!uploadChannel}
       {...(sendWithReferencesOnly !== undefined ? { sendWithReferencesOnly } : {})}
       {...(readOnlyNote ? { readOnly: readOnlyNote } : {})}
-      disabled={!!hostDisabled || (!deck.typed && (!!offline || chatBlocked || (mode === 'agent' && !capabilities.agent?.allowed)))}
+      disabled={!!hostDisabled || (!deck.typed && !cardTakesInput && (!!offline || chatBlocked || (mode === 'agent' && !capabilities.agent?.allowed)))}
       draftKey={editorDraftKey}
       {...(controlled ? { draft: draftProp } : {})}
       {...(initialDraft !== undefined ? { defaultDraft: initialDraft } : {})}
@@ -737,6 +794,18 @@ function ConversationComposerImpl({
       className={cn(rest.className)}
     />
   );
+}
+
+/** Plain text of a draft's HTML (paragraphs and `<br>` as newlines), where no editor is at hand. */
+function textOfHtml(html: string): string {
+  return html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>\s*<p[^>]*>/gi, '\n').replace(/<[^>]+>/g, '')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+}
+
+/** What the quiet box's input says under an open choice / confirm card (2.512.0). */
+function promptCardPlaceholder(direction: boolean, defaultLabel: string | undefined): string {
+  if (direction) return defaultLabel ? `Type a change, or press Enter to ${defaultLabel}` : 'Type a change, or choose an answer above';
+  return defaultLabel ? `Press Enter to ${defaultLabel}, or choose an answer above` : 'Choose an answer above';
 }
 
 export { composerDraftOf };

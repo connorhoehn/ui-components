@@ -46,6 +46,8 @@ export function FilePickerButton({
         aria-label={ariaLabel}
         data-testid={testId}
         data-size={size === 'sm' ? 'sm' : undefined}
+        // As `Button` does (2.508.0): a primary picker audits as primary.
+        data-variant={variant}
         onClick={() => input.current?.click()}
         className={cn(
           'inline-flex cursor-pointer items-center gap-2 rounded-lg text-sm font-medium transition-colors duration-100',

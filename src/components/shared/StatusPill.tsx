@@ -64,6 +64,13 @@ export interface StatusPillProps {
   meta?: string;
   size?: StatusPillSize;
   variant?: StatusPillVariant;
+  /**
+   * Default true: the label ellipsizes when its row is narrower than it
+   * (full text in `title`). `false` (2.512.0): the label is never cut — it
+   * wraps between words instead, for a caption whose word must read whole
+   * ("Candidate" under an 88px tile).
+   */
+  truncate?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -141,6 +148,7 @@ export function StatusPill({
   meta,
   size = 'md',
   variant = 'pill',
+  truncate = true,
   className,
   'data-testid': testId,
 }: StatusPillProps) {
@@ -163,7 +171,8 @@ export function StatusPill({
         // One line, always: in a narrow pane "Completed" broke into
         // "Compl / eted". The pill may shrink with its row, ellipsizing the
         // label (full text in `title`), but never wraps.
-        'inline-flex max-w-full min-w-0 items-center whitespace-nowrap font-medium leading-none select-none',
+        'inline-flex max-w-full min-w-0 items-center font-medium leading-none select-none',
+        truncate ? 'whitespace-nowrap' : 'whitespace-normal',
         variant === 'pill' ? cn('rounded-full border', tokens.pill, SIZE_CLASSES[size])
           : variant === 'tag' || variant === 'label' ? cn('rounded-md border-0', tokens.pill, TAG_SIZE_CLASSES[size])
           : TEXT_SIZE_CLASSES[size],
@@ -191,7 +200,7 @@ export function StatusPill({
           />
         </span>
       )}
-      <span className="min-w-0 truncate" title={label} data-status-pill-label="">{label}</span>
+      <span className={truncate ? 'min-w-0 truncate' : 'min-w-0 leading-tight'} title={truncate ? label : undefined} data-status-pill-label="">{label}</span>
       {meta && (
         <span data-testid={testId ? `${testId}-meta` : undefined} className="shrink-0 font-normal text-text-tertiary">
           <span aria-hidden="true">· </span>

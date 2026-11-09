@@ -32,3 +32,22 @@ export const StatusAndVisibleActions: Story = {
     actions: () => <Button size="sm" variant="secondary">Use in scene</Button>,
   },
 };
+/**
+ * Cast cards (2.512.0): in `avatars` the status is the caption's first line —
+ * a tone dot and the whole word, never "C." — and a member with no picture
+ * shows the library's empty tile with the host's `placeholder`.
+ */
+export const CastWithStatusAndPlaceholder: Story = {
+  name: 'Cast: status under the tile, "No picture yet"',
+  args: {
+    label: 'Cast',
+    variant: 'avatars',
+    items: [
+      { id: 'tatter', title: 'Tatter', subtitle: 'Lead', status: { label: 'Approved', tone: 'success' }, placeholder: 'No picture yet' },
+      { id: 'mina', title: 'Mina', subtitle: 'Supporting', status: { label: 'Candidate', tone: 'warning' }, placeholder: 'No picture yet' },
+      { id: 'otto', title: 'Otto', subtitle: 'Supporting', status: { label: 'Needs review', tone: 'info' }, placeholder: 'No picture yet' },
+      { id: 'pip', title: 'Pip', placeholder: 'No picture yet' },
+    ],
+    onOpen: () => {},
+  },
+};
