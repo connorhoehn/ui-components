@@ -1,3 +1,9 @@
+## 2.515.1
+
+- `ListRailLayout` / `ExplorerLayout` `narrow?: { showing: 'list' | 'record'; onBack: () => void; backLabel?: string }` and `MasterDetailPage` `narrow?: { onBack; backLabel? }` (voice lane): the narrow form. Given, the frame is its own size container (`@container`) and under 40rem of its own width the rail and the pane stop sitting side by side. `showing: 'list'` (MasterDetailPage: nothing selected) draws the pane header (trail, title, actions) and then the rail at the full width as the page's list; the pane body, its footer and the aside are hidden. `showing: 'record'` (a record selected) hides the rail and draws the record at the full width under a back control (the rail's "‹" back-link style at 14px, default "Back to the list") that calls `onBack`; the back row is hidden from 40rem up. Pure container queries: no measurement, the first paint is right. Markers: `data-narrow="list|record"` on the frame, `data-narrow-part="pane"`, testids `<id>-container`, `<id>-narrow-back-row`, `<id>-narrow-back`. Omitted, nothing changes; ignored with `railResize`. New type `ExplorerNarrow`.
+- `T` / `Text` `tone` adds `success`, `warning` and `danger` (voice lane): a status line's outcome through the tone prop (`text-success` / `text-warning` / `text-danger`) instead of raw colour classes on the text.
+- `DetailSection` `variant="label"` (the default) draws its caption as `SectionLabel` (12px bold caps, 0.06em tracking; was 12px semibold, `tracking-wide`) (voice lane), so a record's section captions and a settings card's captions are one weight. The heading element (`as`, default `h3`) is unchanged.
+
 ## 2.515.0
 
 Minor: new components, additive optional props, six audit rules. No consumer change is required.

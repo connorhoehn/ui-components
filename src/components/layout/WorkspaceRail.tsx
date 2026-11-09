@@ -66,7 +66,8 @@ export interface WorkspaceRailProps {
   'data-testid'?: string;
 }
 
-const BACK_CLASS = cn(
+/** The rail's back link ("‹ Initiatives"); `ExplorerLayout`'s narrow back control wears it too. */
+export const WORKSPACE_RAIL_BACK_CLASS = cn(
   'inline-flex items-center gap-1 rounded border-0 bg-transparent p-0 text-[13px] font-medium text-primary no-underline',
   'cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
 );
@@ -89,12 +90,12 @@ export function WorkspaceRail({
       {back && !collapsed && (
         <div className={cn('flex shrink-0 items-center pt-4', heading !== 'compact' ? 'px-5' : 'px-3.5')} data-testid={`${testId}-back-row`}>
           {back.href ? (
-            <a href={back.href} onClick={back.onClick} className={BACK_CLASS} data-testid={`${testId}-back`}>
+            <a href={back.href} onClick={back.onClick} className={WORKSPACE_RAIL_BACK_CLASS} data-testid={`${testId}-back`}>
               <ChevronIcon dir="left" size={14} />
               {back.label}
             </a>
           ) : (
-            <button data-ui-part="" type="button" onClick={back.onClick} className={BACK_CLASS} data-testid={`${testId}-back`}>
+            <button data-ui-part="" type="button" onClick={back.onClick} className={WORKSPACE_RAIL_BACK_CLASS} data-testid={`${testId}-back`}>
               <ChevronIcon dir="left" size={14} />
               {back.label}
             </button>

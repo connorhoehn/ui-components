@@ -26,10 +26,22 @@
 // not 320: with the rail's 300px that is 556px of fixed overhead against a
 // content column that only grows, so the pane clears the 0.55 floor at the
 // breakpoint's own minimum (732/1288 = 0.568) and improves from there.
+//
+// ## Narrow width (since 2.515.1)
+//
+// With `narrow`, the frame is its own size container and under 40rem (640px)
+// of its own width the rail and the pane stop sitting side by side: one of
+// them fills the width. `showing: 'list'` draws the pane header (the trail,
+// the title) over the rail, which becomes the list; `showing: 'record'` hides
+// the rail and draws a back control over the pane header. A container query,
+// not a measurement: the first paint is already right, and a phone, a split
+// window and a narrow side-pane layout all read the same width. Not with
+// `railResize` (a split pane keeps its divider).
 
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { WorkspaceRail, type WorkspaceRailBack } from './WorkspaceRail';
+import { WorkspaceRail, WORKSPACE_RAIL_BACK_CLASS, type WorkspaceRailBack } from './WorkspaceRail';
+import { ChevronIcon } from '../ui/Icons';
 import { SplitPane } from './SplitPane';
 import { IconButton } from '../ui/IconButton';
 import { MaximizeIcon } from '../ui/Icons';
@@ -127,9 +139,34 @@ export interface ExplorerLayoutProps {
   asidePlacement?: 'stack' | 'beside';
   /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
   panePadding?: 'none' | 'md';
+  /**
+   * The narrow form (since 2.515.1): under 40rem of the frame's own width one
+   * of rail and pane fills it. See `ExplorerNarrow`. Omitted, the rail and the
+   * pane sit side by side at every width (unchanged). Ignored with `railResize`.
+   */
+  narrow?: ExplorerNarrow;
   className?: string;
   'data-testid'?: string;
 }
+
+/** What `ExplorerLayout` (and `ListRailLayout`, `MasterDetailPage`) show under 40rem of their own width. Since 2.515.1. */
+export interface ExplorerNarrow {
+  /**
+   * `list`: the pane header, then the rail at the full width (the pane body,
+   * its footer and the aside are hidden). `record`: the rail is hidden; the
+   * pane fills the width under a back control (the aside stacks under it).
+   * The host derives it from its selection: a record open → `record`.
+   */
+  showing: 'list' | 'record';
+  /** The back control's action in `record` (open the list: clear the selection, route to the list). */
+  onBack: () => void;
+  /** The back control's words. Default "Back to the list". */
+  backLabel?: string;
+}
+
+// The narrow form's classes are written out whole (`@max-[40rem]:…`, the
+// library's narrow-pane step): a consumer's Tailwind scan reads literal class
+// names in dist, never a prefix joined at run time.
 
 export function ExplorerLayout({
   rail,
@@ -153,9 +190,13 @@ export function ExplorerLayout({
   railFooter,
   panePadding = 'md',
   asidePlacement = 'stack',
+  narrow: narrowProp,
   className,
   'data-testid': testId = 'explorer-layout',
 }: ExplorerLayoutProps) {
+  const narrow = railResize ? undefined : narrowProp;
+  const list = narrow?.showing === 'list';
+  const record = narrow?.showing === 'record';
   const frameRef = useRef<HTMLDivElement>(null);
   const [frameWidth, setFrameWidth] = useState(0);
   const baseWidth = { xs: 220, sm: 240, ms: 264, md: 300, ml: 320, lg: 368 }[railWidth];
@@ -196,22 +237,34 @@ export function ExplorerLayout({
         'flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-surface',
         // Same page gutter token as AppShell / WorkArea / SubNavLayout.
         panePadding === 'md' && 'p-[var(--ui-page-gutter,1.5rem)]',
+        list && '@max-[40rem]:hidden',
       )}
     >
       {children}
     </div>
   );
 
+  const backRow = record ? (
+    <div className={cn('flex shrink-0 items-center bg-surface px-[var(--ui-page-gutter,1.5rem)] pt-3', '@min-[40rem]:hidden')} data-testid={`${testId}-narrow-back-row`}>
+      <button data-ui-part="" type="button" onClick={narrow!.onBack} className={cn(WORKSPACE_RAIL_BACK_CLASS, 'text-sm')} data-testid={`${testId}-narrow-back`}>
+        <ChevronIcon dir="left" size={14} />
+        {narrow!.backLabel ?? 'Back to the list'}
+      </button>
+    </div>
+  ) : null;
   const columns = (
-      <div className={cn('flex min-h-0 min-w-0 flex-1', asidePlacement === 'beside' ? 'flex-row' : 'flex-col 2xl:flex-row')}>
-        {paneHeader != null || paneFooter != null ? (
+      <div className={cn('flex min-h-0 min-w-0 flex-1', asidePlacement === 'beside' ? 'flex-row' : 'flex-col 2xl:flex-row',
+        list && '@max-[40rem]:order-first @max-[40rem]:flex-none', record && '@max-[40rem]:flex-col')}
+        {...(narrow ? { 'data-narrow-part': 'pane' } : {})}>
+        {paneHeader != null || paneFooter != null || backRow ? (
           // The band sits over the pane alone. Its right-hand controls may
           // hang into the top of the pane's own content (the record head's
           // top padding) — that is the pane's space, never the aside's.
           <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-testid={`${testId}-pane-column`}>
+            {backRow}
             {paneHeader != null && <div data-testid={`${testId}-pane-header`} className="shrink-0 bg-surface">{paneHeader}</div>}
             {pane}
-            {paneFooter != null && <div data-testid={`${testId}-pane-footer`} className="shrink-0 bg-surface">{paneFooter}</div>}
+            {paneFooter != null && <div data-testid={`${testId}-pane-footer`} className={cn('shrink-0 bg-surface', list && '@max-[40rem]:hidden')}>{paneFooter}</div>}
           </div>
         ) : pane}
         {aside ? (
@@ -223,6 +276,7 @@ export function ExplorerLayout({
             className={cn(
               'flex min-h-0',
               asidePlacement === 'beside' ? 'flex-shrink-0' : 'border-t border-border 2xl:flex-shrink-0 2xl:border-t-0',
+              list && '@max-[40rem]:hidden',
             )}
           >
             {aside}
@@ -233,13 +287,14 @@ export function ExplorerLayout({
 
   const railNode = <WorkspaceRail title={railTitle} label="Explorer" actions={railResize ? <>{railActions}{resizeAction}</> : railActions} header={railHeader} footer={railFooter}
         width={railWidth} {...(typeof railCount === 'number' ? { count: railCount } : {})} heading={railHeading}
-        className={railResize ? 'w-full' : undefined}
+        className={railResize ? 'w-full' : list ? '@max-[40rem]:h-auto @max-[40rem]:w-full @max-[40rem]:flex-1 @max-[40rem]:border-r-0' : record ? '@max-[40rem]:hidden' : undefined}
         {...(railCountStyle ? { countStyle: railCountStyle } : {})} {...(railBack ? { back: railBack } : {})} collapsed={railCollapsed} onToggle={onToggleRail}
         toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
         {rail}
       </WorkspaceRail>;
   const frame = (
-    <div ref={frameRef} data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
+    <div ref={frameRef} data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className, narrow && '@max-[40rem]:flex-col')}
+      {...(narrow ? { 'data-narrow': narrow.showing } : {})}>
       {railResize ? <SplitPane primary={railNode} secondary={columns} className="min-w-0 flex-1"
         ratio={frameWidth > 0 ? drawnWidth / frameWidth : 0.25} onRatioChange={ratio => resize(ratio * frameWidth)}
         minPrimaryPx={minWidth} minSecondaryPx={480} resizable={!railCollapsed}
@@ -247,7 +302,11 @@ export function ExplorerLayout({
     </div>
   );
 
-  if (!header) return frame;
+  // The narrow form's size container: the frame's own classes query it, so it wraps the frame.
+  const contain = (node: ReactNode) => narrow
+    ? <div className="@container flex h-full min-h-0 min-w-0 flex-1 flex-col" data-testid={`${testId}-container`}>{node}</div>
+    : node;
+  if (!header) return <>{contain(frame)}</>;
   // The header spans every column; the frame below it takes what is left and
   // keeps its own height chain (`min-h-0` so its columns, not the page, scroll).
   return (
@@ -255,7 +314,7 @@ export function ExplorerLayout({
       <div data-testid={`${testId}-header`} className="shrink-0 border-b border-border bg-surface-panel">
         {header}
       </div>
-      <div className="flex min-h-0 flex-1">{frame}</div>
+      <div className="flex min-h-0 flex-1">{contain(frame)}</div>
     </div>
   );
 }

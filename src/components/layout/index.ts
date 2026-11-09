@@ -24,7 +24,7 @@ export type { DocsTopNavProps } from './DocsTopNav';
 export { ViewportFillRegion, fillHeight } from './ViewportFillRegion';
 export type { ViewportFillRegionProps } from './ViewportFillRegion';
 export { ExplorerLayout } from './ExplorerLayout';
-export type { ExplorerLayoutProps } from './ExplorerLayout';
+export type { ExplorerLayoutProps, ExplorerNarrow } from './ExplorerLayout';
 export { SplitPane } from './SplitPane';
 export type { SplitPaneProps } from './SplitPane';
 // The pane model (2.438.0): one right pane per page, one URL contract for its tabs.

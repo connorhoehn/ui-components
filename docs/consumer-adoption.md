@@ -36,7 +36,7 @@ the index has the "don't use for" notes for each.
 |---|---|---|
 | any page at all | `PageFrame` | The outer frame; every template below is built on it. Use it directly only when no archetype fits. |
 | a list / collection of things | `CollectionPage` | Title + `CollectionToolbar` (search, filters, summary, refresh) + your `DataTable` or card grid. |
-| a list with a detail panel beside it | `MasterDetailPage` | Selection on the left, the selected record on the right, narrow-screen fallback included. If each row opens its own route instead, use `CollectionPage` + `DetailPage`. |
+| a list with a detail panel beside it | `MasterDetailPage` | Selection on the left, the selected record on the right, narrow-screen form with `narrow={{ onBack }}`. If each row opens its own route instead, use `CollectionPage` + `DetailPage`. |
 | one record's detail | `DetailPage` | Title/status/actions header, then **tabs** for the record's facets. Use `DetailSection` inside a tab; don't stack a column of `Card`s. |
 | a dashboard | `DashboardPage` (`/shared`) | KPI row (`KPIGrid` / `StatCard`) + panel grid. The `/observability` `DashboardPage` is the cluster dashboard, a different component. |
 | settings | `SettingsPage` | Section rail + settings rows; `SettingsLayout` is the lower-level shell. |

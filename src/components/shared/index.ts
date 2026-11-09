@@ -615,7 +615,7 @@ export type { DocsTopNavProps } from '../layout/DocsTopNav';
 export { ViewportFillRegion, fillHeight } from '../layout/ViewportFillRegion';
 export type { ViewportFillRegionProps } from '../layout/ViewportFillRegion';
 export { ExplorerLayout } from '../layout/ExplorerLayout';
-export type { ExplorerLayoutProps } from '../layout/ExplorerLayout';
+export type { ExplorerLayoutProps, ExplorerNarrow } from '../layout/ExplorerLayout';
 export { SplitPane } from '../layout/SplitPane';
 export type { SplitPaneProps } from '../layout/SplitPane';
 export {

@@ -12,7 +12,7 @@
 // The rail never floats: no border radius, no gutter box of its own; it is
 // flush against whatever is on its left from the content top to the bottom.
 import type { ReactNode } from 'react';
-import { ExplorerLayout, type ExplorerLayoutProps } from './ExplorerLayout';
+import { ExplorerLayout, type ExplorerLayoutProps, type ExplorerNarrow } from './ExplorerLayout';
 import type { WorkspaceRailBack } from './WorkspaceRail';
 
 /** A list rail, as data: what `ListRailLayout` (and an `ExplorerLayout`) draws in its rail. */
@@ -61,12 +61,20 @@ export interface ListRailLayoutProps {
   railWidth?: ExplorerLayoutProps['railWidth'];
   /** How the count reads; default `chip`. */
   countStyle?: ExplorerLayoutProps['railCountStyle'];
+  /**
+   * The narrow form (since 2.515.1): under 40rem of the layout's own width the
+   * list rail and the record stop sitting side by side. `showing: 'list'`: the
+   * header (trail, title), then the rail as the page's list at the full width.
+   * `showing: 'record'`: the record at the full width under a back control
+   * that calls `onBack`. Omitted: side by side at every width (unchanged).
+   */
+  narrow?: ExplorerNarrow;
   className?: string;
   'data-testid'?: string;
 }
 
 export function ListRailLayout({
-  list, header, children, aside, footer, fold, railWidth = 'ms', countStyle = 'chip', className, 'data-testid': testId,
+  list, header, children, aside, footer, fold, railWidth = 'ms', countStyle = 'chip', narrow, className, 'data-testid': testId,
 }: ListRailLayoutProps) {
   return (
     // `data-list-rail` names the composite for layout checks (a page's list rail, not a third navigation column).
@@ -85,6 +93,7 @@ export function ListRailLayout({
       railLabel={list.label}
       rail={list.body}
       {...(fold ? { railCollapsed: fold.folded, onToggleRail: fold.onToggle } : {})}
+      {...(narrow ? { narrow } : {})}
       panePadding="none"
       asidePlacement="beside"
       aside={aside}

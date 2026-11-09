@@ -10166,7 +10166,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, railResize, header, paneHeader, paneFooter, railCount, railCountStyle, railBack, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railResize, header, paneHeader, paneFooter, railCount, railCountStyle, railBack, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, narrow: narrowProp, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -10264,8 +10264,29 @@ export declare interface ExplorerLayoutProps {
     asidePlacement?: 'stack' | 'beside';
     /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
     panePadding?: 'none' | 'md';
+    /**
+     * The narrow form (since 2.515.1): under 40rem of the frame's own width one
+     * of rail and pane fills it. See `ExplorerNarrow`. Omitted, the rail and the
+     * pane sit side by side at every width (unchanged). Ignored with `railResize`.
+     */
+    narrow?: ExplorerNarrow;
     className?: string;
     'data-testid'?: string;
+}
+
+/** What `ExplorerLayout` (and `ListRailLayout`, `MasterDetailPage`) show under 40rem of their own width. Since 2.515.1. */
+export declare interface ExplorerNarrow {
+    /**
+     * `list`: the pane header, then the rail at the full width (the pane body,
+     * its footer and the aside are hidden). `record`: the rail is hidden; the
+     * pane fills the width under a back control (the aside stacks under it).
+     * The host derives it from its selection: a record open → `record`.
+     */
+    showing: 'list' | 'record';
+    /** The back control's action in `record` (open the list: clear the selection, route to the list). */
+    onBack: () => void;
+    /** The back control's words. Default "Back to the list". */
+    backLabel?: string;
 }
 
 /**
@@ -14100,7 +14121,7 @@ export declare interface ListRail {
     back?: WorkspaceRailBack | null;
 }
 
-export declare function ListRailLayout({ list, header, children, aside, footer, fold, railWidth, countStyle, className, 'data-testid': testId, }: ListRailLayoutProps): JSX.Element;
+export declare function ListRailLayout({ list, header, children, aside, footer, fold, railWidth, countStyle, narrow, className, 'data-testid': testId, }: ListRailLayoutProps): JSX.Element;
 
 export declare interface ListRailLayoutProps {
     list: ListRail;
@@ -14124,6 +14145,14 @@ export declare interface ListRailLayoutProps {
     railWidth?: ExplorerLayoutProps['railWidth'];
     /** How the count reads; default `chip`. */
     countStyle?: ExplorerLayoutProps['railCountStyle'];
+    /**
+     * The narrow form (since 2.515.1): under 40rem of the layout's own width the
+     * list rail and the record stop sitting side by side. `showing: 'list'`: the
+     * header (trail, title), then the rail as the page's list at the full width.
+     * `showing: 'record'`: the record at the full width under a back control
+     * that calls `onBack`. Omitted: side by side at every width (unchanged).
+     */
+    narrow?: ExplorerNarrow;
     className?: string;
     'data-testid'?: string;
 }
@@ -14419,7 +14448,7 @@ export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, r
  *   {selected && <DesignRecord design={selected} />}
  * </MasterDetailPage>
  */
-export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, body, dockedBody, fold, railWidth, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: MasterDetailPageProps): JSX.Element;
+export declare function MasterDetailPage({ title, description, breadcrumbs, actions, badge, back, density, titleAs, list, children, emptyDetail, aside, footer, body, dockedBody, fold, railWidth, narrow, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: MasterDetailPageProps): JSX.Element;
 
 export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     /** The rail, as data (`ListRail`): title, count, search header, rows body, footer, label. */
@@ -14444,6 +14473,17 @@ export declare interface MasterDetailPageProps extends PageTemplateHeaderProps {
     fold?: ListRailLayoutProps['fold'];
     /** Rail width; default `ms` (264px). */
     railWidth?: ListRailLayoutProps['railWidth'];
+    /**
+     * The narrow form (since 2.515.1): under 40rem of the page's own width the
+     * rail and the record stop sitting side by side. Nothing selected, the
+     * header and the rail fill the width (the rail is the list); a record
+     * selected, the record fills it under a back control that calls `onBack`
+     * (`backLabel`, default "Back to the list"). Omitted: side by side at every width.
+     */
+    narrow?: {
+        onBack: () => void;
+        backLabel?: string;
+    };
     /** Default `page` — the record and header at `--ui-page-gutter`. */
     gutter?: PageGutter;
     className?: string;
@@ -24975,7 +25015,8 @@ declare interface TextSelectionData {
 
 declare type TextSize = 'xs' | 'sm' | 'base' | 'lg';
 
-declare type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inherit';
+/** `success` / `warning` / `danger` (since 2.515.1): a status line's outcome ("Saved.", "Could not save"). */
+declare type TextTone = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'inherit';
 
 declare type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
 

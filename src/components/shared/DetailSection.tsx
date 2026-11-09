@@ -16,6 +16,7 @@ import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { useDensitySize } from './Density';
 import { Divider } from './Divider';
+import { SectionLabel } from './SectionLabel';
 
 export interface DetailSectionProps {
   title: string;
@@ -95,9 +96,10 @@ export function DetailSection({
     <section data-ui-part="" className={cn(className)} {...(testId ? { 'data-testid': testId } : {})}>
       {!first && <Divider spacing="md" />}
       <div className="mb-2 flex items-baseline gap-2">
-        <Heading className="m-0 text-xs font-semibold uppercase tracking-wide text-text-tertiary">
-          {title}
-        </Heading>
+        {/* The panel caption is `SectionLabel` (12px bold caps, 0.06em), so a
+            record's sections and a settings card's captions are one weight
+            (since 2.515.1; was 12px semibold, tracking-wide). */}
+        <SectionLabel as={Heading} className="m-0">{title}</SectionLabel>
         {hint != null && <span className="min-w-0 truncate text-xs text-text-tertiary">{hint}</span>}
         {actions != null && (
           <>

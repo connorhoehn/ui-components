@@ -16,12 +16,14 @@ import { Inline } from '../ui/Stack';
 
 export type TextSize = 'xs' | 'sm' | 'base' | 'lg';
 export type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
-export type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inherit';
+/** `success` / `warning` / `danger` (since 2.515.1): a status line's outcome ("Saved.", "Could not save"). */
+export type TextTone = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'inherit';
 
 const SIZE: Record<TextSize, string> = { xs: 'text-xs', sm: 'text-sm', base: 'text-base', lg: 'text-lg' };
 const WEIGHT: Record<TextWeight, string> = { normal: 'font-normal', medium: 'font-medium', semibold: 'font-semibold', bold: 'font-bold' };
 const TONE: Record<TextTone, string> = {
-  primary: 'text-text-primary', secondary: 'text-text-secondary', tertiary: 'text-text-tertiary', inherit: '',
+  primary: 'text-text-primary', secondary: 'text-text-secondary', tertiary: 'text-text-tertiary',
+  success: 'text-success', warning: 'text-warning', danger: 'text-danger', inherit: '',
 };
 
 export interface TextProps {

@@ -45,6 +45,14 @@ export interface MasterDetailPageProps extends PageTemplateHeaderProps {
   fold?: ListRailLayoutProps['fold'];
   /** Rail width; default `ms` (264px). */
   railWidth?: ListRailLayoutProps['railWidth'];
+  /**
+   * The narrow form (since 2.515.1): under 40rem of the page's own width the
+   * rail and the record stop sitting side by side. Nothing selected, the
+   * header and the rail fill the width (the rail is the list); a record
+   * selected, the record fills it under a back control that calls `onBack`
+   * (`backLabel`, default "Back to the list"). Omitted: side by side at every width.
+   */
+  narrow?: { onBack: () => void; backLabel?: string };
   /** Default `page` — the record and header at `--ui-page-gutter`. */
   gutter?: PageGutter;
   className?: string;
@@ -74,7 +82,7 @@ export interface MasterDetailPageProps extends PageTemplateHeaderProps {
  */
 export function MasterDetailPage({
   title, description, breadcrumbs, actions, badge, back, density, titleAs,
-  list, children, emptyDetail, aside, footer, body = 'scroll', dockedBody = 'scroll', fold, railWidth, gutter = 'page', className, 'data-testid': testId, 'data-page-spec': spec,
+  list, children, emptyDetail, aside, footer, body = 'scroll', dockedBody = 'scroll', fold, railWidth, narrow, gutter = 'page', className, 'data-testid': testId, 'data-page-spec': spec,
 }: MasterDetailPageProps) {
   const selected = children != null && children !== false;
   const docked = body === 'docked';
@@ -89,6 +97,7 @@ export function MasterDetailPage({
         {...(footer != null && !docked ? { footer } : {})}
         {...(fold ? { fold } : {})}
         {...(railWidth ? { railWidth } : {})}
+        {...(narrow ? { narrow: { showing: selected ? 'record' as const : 'list' as const, ...narrow } } : {})}
       >
         {docked ? (
           <DockedColumn
