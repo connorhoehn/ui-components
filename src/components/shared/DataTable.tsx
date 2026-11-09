@@ -47,6 +47,8 @@ export interface DataTableColumn<T> {
   align?: 'left' | 'right' | 'center';
   /** A number column: right-aligned header and cells, tabular figures. Since 2.434.0. */
   numeric?: boolean;
+  /** The label a stacked card (`narrow`) puts before this column's value. Default: `header` when it is a string, else `key`. Since 2.515.3. */
+  label?: string;
   className?: string;
 }
 
@@ -104,8 +106,31 @@ export interface DataTableProps<T> {
    * other collection's rows to be activatable. Since 2.442.0.
    */
   staticRows?: string;
+  /**
+   * The narrow form (since 2.515.3): under 40rem of the table's own width
+   * (a container query, like `ListRailLayout narrow`) each row becomes a
+   * stacked card of label/value pairs, the label being the column's `label`
+   * (else its string `header`, else `key`). Chosen over a sticky-column
+   * scroller because a table's first column rarely identifies a row by
+   * itself, and a card reads at 390px without a horizontal gesture. The header
+   * row is visually hidden there (sorting is unavailable in the card form);
+   * the DOM is the same table, so tests, row clicks and keyboard are unchanged.
+   * Default `false`: the table keeps scrolling inside its own box.
+   */
+  narrow?: boolean;
   className?: string;
   'data-testid'?: string;
+}
+
+// The narrow form's classes are written out whole (Tailwind scans source text).
+const NARROW_TABLE = '@max-[40rem]:block';
+const NARROW_HEAD = '@max-[40rem]:sr-only';
+const NARROW_BODY = '@max-[40rem]:block';
+const NARROW_ROW = '@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2';
+const NARROW_CELL = '@max-[40rem]:flex @max-[40rem]:h-auto @max-[40rem]:items-baseline @max-[40rem]:justify-between @max-[40rem]:gap-4 @max-[40rem]:whitespace-normal @max-[40rem]:px-0 @max-[40rem]:py-1 @max-[40rem]:text-right @max-[40rem]:before:shrink-0 @max-[40rem]:before:text-left @max-[40rem]:before:text-xs @max-[40rem]:before:font-semibold @max-[40rem]:before:uppercase @max-[40rem]:before:tracking-wide @max-[40rem]:before:text-text-secondary @max-[40rem]:before:content-[attr(data-label)]';
+
+function columnLabel<T>(col: DataTableColumn<T>): string {
+  return col.label ?? (typeof col.header === 'string' ? col.header : col.key);
 }
 
 const NESTED_CONTROL = 'a[href], button, input, select, textarea, label, summary, [role="button"], [role="checkbox"], [role="link"], [role="menuitem"], [role="switch"], [contenteditable="true"]';
@@ -224,6 +249,7 @@ export function DataTable<T>({
   frameless = false,
   size,
   striped = true,
+  narrow = false,
   className,
   'data-testid': testId,
   staticRows,
@@ -287,7 +313,7 @@ export function DataTable<T>({
 
   return (
     <div
-      className={cn('flex min-w-0 flex-col gap-3', className)}
+      className={cn('flex min-w-0 flex-col gap-3', narrow && '@container', className)}
       data-testid={testId}
       // The collection composite: an audit reads these to require activatable
       // rows unless the table says, with a reason, that its rows open nothing.
@@ -298,8 +324,8 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
-        <TableHead>
+        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE)}>
+        <TableHead className={narrow ? NARROW_HEAD : undefined}>
           <tr>
             {columns.map((col) => {
               const isSorted = col.sortable && sortKey === col.key;
@@ -323,7 +349,7 @@ export function DataTable<T>({
         </TableHead>
         {/* DataTable stripes its data rows itself (odd index), so skeleton and
             empty-state rows never band; the body-level stripe stays off. */}
-        <TableBody striped={false} data-ui-table-striped={striped ? '' : undefined}>
+        <TableBody striped={false} className={narrow ? NARROW_BODY : undefined} data-ui-table-striped={striped ? '' : undefined}>
           {loading
             ? Array.from({ length: loadingRows }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">
@@ -358,6 +384,7 @@ export function DataTable<T>({
                     // surface, so the table starts flush with the page rather
                     // than opening on a band.
                     className={cn(
+                      narrow && NARROW_ROW,
                       striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined,
                       // Only a clickable row joins the tab order — a plain
                       // display table has nothing to activate, and adding a
@@ -390,7 +417,8 @@ export function DataTable<T>({
                       <TableTd
                         key={col.key}
                         numeric={col.numeric}
-                        className={cn(alignClass(col.align), col.className)}
+                        className={cn(alignClass(col.align), narrow && NARROW_CELL, col.className)}
+                        {...(narrow ? { 'data-label': columnLabel(col) } : {})}
                       >
                         {col.render
                           ? col.render(row, rowIndex)

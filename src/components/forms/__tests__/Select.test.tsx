@@ -180,7 +180,7 @@ describe('Select — a custom listbox, never the platform menu', () => {
     const top = parseFloat(list.style.top);
     expect(top).toBeLessThan(740);
     expect(top).toBeGreaterThanOrEqual(0);
-    expect(parseFloat(list.style.left) + parseFloat(list.style.width)).toBeLessThanOrEqual(window.innerWidth);
+    expect(parseFloat(list.style.left) + parseFloat(list.style.minWidth)).toBeLessThanOrEqual(window.innerWidth);
   });
 });
 

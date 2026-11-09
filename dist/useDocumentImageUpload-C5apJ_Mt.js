@@ -4,7 +4,7 @@ import { t as r } from "./IconButton-BgM9MvwA.js";
 import { B as i, Ct as a, F as o, H as s, J as c, L as l, N as u, Y as d, _ as f, l as p, lt as m, m as h, p as g } from "./Icons-CqVFbuiZ.js";
 import { t as _ } from "./Banner-DPR4sIxI.js";
 import { t as v } from "./Input-DiOEvL5h.js";
-import { t as ee } from "./Select-BGBx7BNi.js";
+import { t as ee } from "./Select-SZWRrONZ.js";
 import { t as y } from "./InlinePopover-BQTS5egk.js";
 import { t as b } from "./EmptyState-dTW3J44n.js";
 import { n as te } from "./RovingToolbar-C8vF753M.js";

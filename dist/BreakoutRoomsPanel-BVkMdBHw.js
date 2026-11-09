@@ -5,7 +5,7 @@ import { J as a, S as o, h as s, it as c, m as l } from "./Icons-CqVFbuiZ.js";
 import { _ as u, a as d, b as f, h as p, i as m, p as h, r as g, s as _, u as v, x as y, y as b } from "./MediaIcons-_ai5Til2.js";
 import { n as x, t as S } from "./Badge-rfcPE9Cf.js";
 import { t as C } from "./Banner-DPR4sIxI.js";
-import { t as w } from "./Select-BGBx7BNi.js";
+import { t as w } from "./Select-SZWRrONZ.js";
 import { t as T } from "./InlinePopover-BQTS5egk.js";
 import { t as E } from "./DropdownMenu-DoCRgXx4.js";
 import { t as D } from "./SegmentedControl-DMudc23g.js";

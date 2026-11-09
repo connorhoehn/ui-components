@@ -9,7 +9,7 @@ import { c as _, o as v } from "./ErrorBoundary-CVg9w-74.js";
 import { n as y } from "./Badge-rfcPE9Cf.js";
 import { t as b } from "./Modal-C88cabjQ.js";
 import { t as x } from "./Input-DiOEvL5h.js";
-import { t as S } from "./Select-BGBx7BNi.js";
+import { t as S } from "./Select-SZWRrONZ.js";
 import { t as C } from "./FormField-BDZIVA7n.js";
 import { t as w } from "./SearchInput-Dk3D9lhs.js";
 import { t as T } from "./EmptyState-dTW3J44n.js";
@@ -26,7 +26,7 @@ import { t as N } from "./InlineAlert-BgM4PLN-.js";
 import { t as P } from "./PresenceAvatars-e3LJnWl0.js";
 import { t as F } from "./useMeasuredWidth-tBwput5w.js";
 import { t as I } from "./SectionLabel-B60gea5o.js";
-import { G as L, U as R } from "./renderers-DzJlG3P7.js";
+import { G as L, U as R } from "./renderers-Cn-r5smL.js";
 import { a as re } from "./composerSendError-vB7M56RD.js";
 import { t as ie } from "./InlineEditableText-CKjRokmb.js";
 import { i as ae, t as oe } from "./FloatingComposerDock-DbxmNCal.js";
@@ -1214,7 +1214,7 @@ function Ze(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var Qe = se(() => import("./SortableSlideList-DG2d9xgP.js"));
+var Qe = se(() => import("./SortableSlideList-DtUnNh8d.js"));
 function $e(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }

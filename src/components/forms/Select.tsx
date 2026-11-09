@@ -215,7 +215,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   useImperativeHandle(ref, () => triggerRef.current as HTMLButtonElement);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
-  const [position, setPosition] = useState<{ top: number; left: number; width: number; maxHeight: number } | null>(null);
+  const [position, setPosition] = useState<{ top: number; left: number; minWidth: number; maxWidth: number; maxHeight: number } | null>(null);
   const typed = useRef({ text: '', at: 0 });
   const isTopLayer = useOverlayLayer(open);
 
@@ -256,17 +256,24 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     if (!trigger) return;
     const r = trigger.getBoundingClientRect();
     const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    // The host may name a floor (`--shell-collaboration-floor`: the height of
+    // the footer bar and any open call panel) the popup must not run under.
+    const floor = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--shell-collaboration-floor')) || 0;
+    const vh = window.innerHeight - Math.max(0, floor);
     const panelHeight = panelRef.current?.scrollHeight ?? 240;
     const below = vh - r.bottom - PANEL_GAP - VIEWPORT_MARGIN;
     const above = r.top - PANEL_GAP - VIEWPORT_MARGIN;
     const flip = below < Math.min(panelHeight, 240) && above > below;
     const maxHeight = Math.max(96, Math.min(320, flip ? above : below));
     const height = Math.min(panelHeight, maxHeight);
-    const width = Math.min(Math.max(r.width, 160), vw - 2 * VIEWPORT_MARGIN);
+    // At least the trigger's width (longer options may widen it), never wider
+    // than the viewport less its gutters; right-aligned when it would overhang.
+    const maxWidth = vw - 2 * VIEWPORT_MARGIN;
+    const minWidth = Math.min(r.width, maxWidth);
+    const width = Math.min(Math.max(minWidth, panelRef.current?.offsetWidth ?? 0), maxWidth);
     const left = Math.min(Math.max(VIEWPORT_MARGIN, r.left), vw - width - VIEWPORT_MARGIN);
     const top = flip ? r.top - PANEL_GAP - height : r.bottom + PANEL_GAP;
-    setPosition({ top, left, width, maxHeight });
+    setPosition({ top, left, minWidth, maxWidth, maxHeight });
   }, []);
 
   useLayoutEffect(() => { if (open) place(); }, [open, place, flat.length]);
@@ -488,8 +495,8 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       tabIndex={-1}
       // Runtime-derived position (fixed to the viewport, flipped and clamped
       // so the panel never leaves it): allowlisted in check-static-styles.
-      style={position ? { position: 'fixed', top: position.top, left: position.left, width: position.width, maxHeight: position.maxHeight } : { position: 'fixed', visibility: 'hidden' }}
-      className="z-[10100] m-0 list-none overflow-y-auto rounded-lg border border-border bg-surface p-1 shadow-lg"
+      style={position ? { position: 'fixed', top: position.top, left: position.left, width: 'max-content', minWidth: position.minWidth, maxWidth: position.maxWidth, maxHeight: position.maxHeight } : { position: 'fixed', top: 0, left: 0, width: 'max-content', visibility: 'hidden' }}
+      className="z-[var(--ui-z-popover,10100)] m-0 list-none overflow-y-auto rounded-lg border border-border bg-surface p-1 shadow-lg"
     >
       {flat.map((o) => {
         const header = o.group !== undefined && o.group !== lastGroup ? o.group : null;

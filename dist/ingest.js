@@ -6,7 +6,7 @@ import { d as p, n as m } from "./Button-DQoeE5dN.js";
 import { t as h } from "./Chip-5WvKIIpI.js";
 import { t as g } from "./overlayStack-BFH9XXvN.js";
 import { t as _ } from "./Input-DiOEvL5h.js";
-import { t as v } from "./Select-BGBx7BNi.js";
+import { t as v } from "./Select-SZWRrONZ.js";
 import { t as y } from "./EmptyState-dTW3J44n.js";
 import { n as b, r as x, t as S } from "./focusTrap-CmWJlptm.js";
 import { t as C } from "./SkeletonCard-BryltcC7.js";

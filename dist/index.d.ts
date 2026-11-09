@@ -8101,7 +8101,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8127,6 +8127,8 @@ export declare interface DataTableColumn<T> {
     align?: 'left' | 'right' | 'center';
     /** A number column: right-aligned header and cells, tabular figures. Since 2.434.0. */
     numeric?: boolean;
+    /** The label a stacked card (`narrow`) puts before this column's value. Default: `header` when it is a string, else `key`. Since 2.515.3. */
+    label?: string;
     className?: string;
 }
 
@@ -8184,6 +8186,18 @@ export declare interface DataTableProps<T> {
      * other collection's rows to be activatable. Since 2.442.0.
      */
     staticRows?: string;
+    /**
+     * The narrow form (since 2.515.3): under 40rem of the table's own width
+     * (a container query, like `ListRailLayout narrow`) each row becomes a
+     * stacked card of label/value pairs, the label being the column's `label`
+     * (else its string `header`, else `key`). Chosen over a sticky-column
+     * scroller because a table's first column rarely identifies a row by
+     * itself, and a card reads at 390px without a horizontal gesture. The header
+     * row is visually hidden there (sorting is unavailable in the card form);
+     * the DOM is the same table, so tests, row clicks and keyboard are unchanged.
+     * Default `false`: the table keeps scrolling inside its own box.
+     */
+    narrow?: boolean;
     className?: string;
     'data-testid'?: string;
 }

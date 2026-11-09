@@ -12,7 +12,7 @@ import { n as _e, t as ve } from "./Chart-CzvBZgl7.js";
 import { t as ye } from "./Modal-C88cabjQ.js";
 import { t as be } from "./ConfirmDialog-DaIkb8ho.js";
 import { t as P } from "./Input-DiOEvL5h.js";
-import { t as F } from "./Select-BGBx7BNi.js";
+import { t as F } from "./Select-SZWRrONZ.js";
 import { a as xe, t as Se } from "./Toolbar-nZ-EjSGl.js";
 import { t as Ce } from "./SearchInput-Dk3D9lhs.js";
 import { t as we } from "./EmptyState-dTW3J44n.js";

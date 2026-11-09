@@ -2,7 +2,7 @@ import { n as e, t } from "./useWebSocket-D4PAHlj8.js";
 import { d as n, n as r } from "./Button-DQoeE5dN.js";
 import { t as i } from "./Chip-5WvKIIpI.js";
 import { t as a } from "./Input-DiOEvL5h.js";
-import { t as o } from "./Select-BGBx7BNi.js";
+import { t as o } from "./Select-SZWRrONZ.js";
 import { t as s } from "./Textarea-Cf4WFXAs.js";
 import { t as c } from "./Checkbox-Ds6v0Fy6.js";
 import { t as l } from "./formatBytes-05ivRSJY.js";

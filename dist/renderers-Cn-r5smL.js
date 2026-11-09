@@ -3,7 +3,7 @@ import { n, r } from "./userDirectory-CyWbVxFq.js";
 import { d as i } from "./Button-DQoeE5dN.js";
 import { t as a } from "./useEventCallback-Cwx9QVSi.js";
 import { t as o } from "./Input-DiOEvL5h.js";
-import { t as s } from "./Select-BGBx7BNi.js";
+import { t as s } from "./Select-SZWRrONZ.js";
 import { t as c } from "./NumberInput-pHxC7Spt.js";
 import { t as l } from "./Checkbox-Ds6v0Fy6.js";
 import { t as u } from "./TiptapEditor-Blmu8WT6.js";
