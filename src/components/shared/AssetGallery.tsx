@@ -1,4 +1,4 @@
-import { isValidElement, useId, useRef, useState, type ReactNode, type DragEvent, type KeyboardEvent } from 'react';
+import { isValidElement, useId, useRef, useState, type CSSProperties, type ReactNode, type DragEvent, type KeyboardEvent } from 'react';
 import { Avatar } from './Avatar';
 import { StatusPill, type StatusPillProps, type StatusPillTone } from './StatusPill';
 import { InlinePopover } from './InlinePopover';
@@ -71,6 +71,22 @@ export interface AssetGalleryProps {
    * directly. Since 2.504.0.
    */
   menuOnSelect?: boolean;
+  /**
+   * Minimum tile width in px (2.515.0). Given, the grid is `auto-fill`
+   * columns of at least this width (never wider than the gallery) instead
+   * of the fixed 2/4/8 (avatars) or 2/3/4 (images) columns, and an avatar
+   * is drawn at 80% of it, so the tile and its picture scale together. Use
+   * it whenever tiles carry `actions`: eight fixed columns left a 120px tile
+   * for "Approve for mesh · uses credits".
+   */
+  minTileWidth?: number;
+  /**
+   * How an image tile fits its picture (2.515.0). `cover` (default,
+   * unchanged) fills the tile and may crop; `contain` letterboxes so the
+   * subject is shown whole, as a record's picture must be (audit
+   * `subject.frame`). The thumbnail carries `data-gallery-fit`.
+   */
+  fit?: 'cover' | 'contain';
   /** Host-owned typed drag payload; never infer identity from an image URL. */
   onDragStart?: (item: GalleryAsset, event: DragEvent<HTMLButtonElement>) => void;
   className?: string;
@@ -113,7 +129,8 @@ interface AssetCardProps extends Omit<AssetGalleryProps, 'items' | 'label' | 'cl
   tileActions?: readonly GalleryTileAction[];
 }
 
-function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart }: AssetCardProps) {
+function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit = 'cover' }: AssetCardProps) {
+  const avatarSize = minTileWidth ? Math.round(minTileWidth * 0.8) : 88;
   const statusId = useId();
   const tile = useRef<HTMLButtonElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -146,8 +163,8 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
         onContextMenu={hasActions ? (event) => { event.preventDefault(); openMenu(); } : undefined}
         className="block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
-        <span data-gallery-thumbnail className={cn('flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover', variant === 'images' && 'aspect-[4/3]')}>
-          {empty ?? (variant === 'avatars' ? <Avatar name={item.title} src={item.src} size={88} /> : item.src ? <img draggable={false} src={item.src} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <span className="text-xs text-text-secondary">{hasStatus ? 'No image yet' : 'Image unavailable'}</span>)}
+        <span data-gallery-thumbnail data-gallery-fit={variant === 'images' ? fit : undefined} className={cn('flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover', variant === 'images' && 'aspect-[4/3]')}>
+          {empty ?? (variant === 'avatars' ? <Avatar name={item.title} src={item.src} size={avatarSize} className="max-h-full max-w-full" /> : item.src ? <img draggable={false} src={item.src} alt={item.title} loading="lazy" className={cn('h-full w-full transition-transform', fit === 'contain' ? 'object-contain' : 'object-cover group-hover:scale-105')} /> : <span className="text-xs text-text-secondary">{hasStatus ? 'No image yet' : 'Image unavailable'}</span>)}
         </span>
         {/* Avatars: the status is the caption's first line, whole. Inside the
             button only so it sits between the tile and the title; the button's
@@ -184,10 +201,18 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
         </InlinePopover>
       )}
       {actions && (
+        // The tile's own actions stay inside the tile (2.515.0): the row
+        // wraps, each action is at most the tile's width, and a label longer
+        // than that wraps onto a second line inside its button (which grows
+        // from the sm control height) instead of running into the next tile
+        // or being cut (the 8-column cast grid's "Approve for mesh · uses
+        // credits"). One row at the control height when the labels fit.
         <div
           data-gallery-actions={actionsVisibility}
+          data-ui-part="tile-actions"
           className={cn(
-            'flex h-8 items-center justify-end',
+            'mt-1 flex min-h-8 min-w-0 max-w-full flex-wrap items-center justify-end gap-1',
+            '[&>*]:min-w-0 [&>*]:max-w-full [&_button]:h-auto [&_button]:min-h-[var(--ui-control-sm,1.75rem)] [&_button]:min-w-0 [&_button]:max-w-full [&_button]:shrink [&_button]:whitespace-normal [&_button]:break-words [&_button]:py-1 [&_button]:text-center [&_button]:leading-4',
             actionsVisibility === 'hover' && 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100',
           )}
         >
@@ -200,9 +225,15 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export function AssetGallery({ items, variant = 'images', label, onOpen, actions, actionsVisibility = 'hover', tileActions, menuOnSelect = false, onDragStart, className }: AssetGalleryProps) {
+export function AssetGallery({ items, variant = 'images', label, onOpen, actions, actionsVisibility = 'hover', tileActions, menuOnSelect = false, onDragStart, minTileWidth, fit = 'cover', className }: AssetGalleryProps) {
+  // The one dynamic value (the host's minimum) goes in as a custom property;
+  // the column rule itself is a class.
+  const fluid = minTileWidth != null && minTileWidth > 0;
+  const vars = fluid ? ({ '--gallery-min-tile': `${minTileWidth}px` } as CSSProperties) : undefined;
   return (
-    <div role="list" aria-label={label} data-asset-gallery={variant} className={cn('grid gap-3', variant === 'avatars' ? 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8' : 'grid-cols-2 md:grid-cols-3 xl:grid-cols-4', className)}>
+    <div role="list" aria-label={label} data-asset-gallery={variant} data-gallery-columns={fluid ? 'auto-fill' : 'fixed'}
+      className={cn('grid gap-3', fluid ? 'grid-cols-[repeat(auto-fill,minmax(min(var(--gallery-min-tile),100%),1fr))]' : variant === 'avatars' ? 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8' : 'grid-cols-2 md:grid-cols-3 xl:grid-cols-4', className)}
+      style={vars}>
       {items.map((item) => (
         <AssetCard
           key={item.id}
@@ -214,6 +245,8 @@ export function AssetGallery({ items, variant = 'images', label, onOpen, actions
           tileActions={tileActions?.(item)}
           menuOnSelect={menuOnSelect}
           onDragStart={onDragStart}
+          fit={fit}
+          {...(fluid ? { minTileWidth } : {})}
         />
       ))}
     </div>

@@ -13,7 +13,17 @@ from `element.unmarked` means DOM the library did not render: replace it with
 the library component rather than adding a marker by hand. A
 `row.actions-aligned` finding on a ragged list is fixed by GroupedList
 `trailingLayout="columns"`; an `image.whole-visible` one by ImageCompare
-`fit="contain"`.
+`fit="contain"`. Since 2.515.0 the page contract has six more resting-gate
+rules: `page.template` (one `[data-page-template]`, the one the route manifest
+names when the consumer sets `routes`), `subject.frame` (no EmptyState or
+cropped tile where SubjectFrame's hero goes), `confirm.inline` (approve,
+reject and spend confirm in place: ConfirmButton; the `pressAction` probe
+presses one with writes blocked), `inspector.shape` (SubjectFrame's title →
+tabs → hero → facts ≤ 8 rows → disclosures), `nav.rail-groups` (the NavRail
+equals the manifest's `groups`) and `tile.actions-inside` (an AssetGallery
+tile's actions never leave the tile: `minTileWidth` and the wrapping action
+row). `page.template` and `nav.rail-groups` judge only what the consumer
+declares through `ruleOptions` (`routes`, `expected`, `groups`).
 
 Measure the rendered app against a shared contract. Fix a component family once,
 then verify its consumers. When the user asks to fix findings or improve the UI,

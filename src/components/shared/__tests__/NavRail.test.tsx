@@ -228,3 +228,34 @@ describe('NavRailStack', () => {
     expect(badge.className).not.toContain('text-text-tertiary');
   });
 });
+
+describe('NavRail audit markers (2.515.0, nav.rail-groups)', () => {
+  const items = [
+    { to: '/overview', label: 'Overview', group: 'WORKSPACE' },
+    { to: '/episodes', label: 'Episodes', group: 'PRODUCTION' },
+    { id: 'halt', onClick: () => {}, label: 'Halt', group: 'PRODUCTION' },
+    { to: '/help', label: 'Help' },
+  ];
+  it('marks the nav, each group section by its label and each item by its label', () => {
+    render(<NavRail title="Studio" items={items} storageKey="t.markers" />);
+    const nav = screen.getByRole('navigation', { name: 'Studio' });
+    expect(nav).toHaveAttribute('data-nav-rail', '');
+    expect(nav).toHaveAttribute('data-rail-folded', 'false');
+    const groups = Array.from(nav.querySelectorAll('section[data-rail-group]')).map((g) => g.getAttribute('data-rail-group'));
+    expect(groups).toEqual(['WORKSPACE', 'PRODUCTION']);
+    const production = nav.querySelector('section[data-rail-group="PRODUCTION"]')!;
+    expect(Array.from(production.querySelectorAll('[data-rail-item]')).map((e) => e.getAttribute('data-rail-item'))).toEqual(['Episodes', 'Halt']);
+    expect(screen.getByRole('link', { name: 'Help' })).toHaveAttribute('data-rail-item', 'Help');
+    expect(production).not.toHaveAttribute('data-rail-group-collapsed');
+    fireEvent.click(screen.getByRole('button', { name: 'PRODUCTION' }));
+    expect(production).toHaveAttribute('data-rail-group-collapsed', '');
+    expect(production.querySelectorAll('[data-rail-item]')).toHaveLength(0);
+  });
+  it('the folded strip keeps the item and group markers', () => {
+    render(<NavRail title="Studio" items={items} collapsed />);
+    const nav = screen.getByRole('navigation', { name: 'Studio' });
+    expect(nav).toHaveAttribute('data-rail-folded', 'true');
+    expect(Array.from(nav.querySelectorAll('[data-rail-item]')).map((e) => e.getAttribute('data-rail-item'))).toEqual(['Help', 'Overview', 'Episodes', 'Halt']);
+    expect(nav.querySelector('[data-rail-group="PRODUCTION"]')?.querySelectorAll('[data-rail-item]')).toHaveLength(2);
+  });
+});

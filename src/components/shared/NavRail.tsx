@@ -46,6 +46,10 @@ import {
   RAIL_ROW_PAD_Y,
 } from './railType';
 import type { SurfaceTone } from './tones';
+import { Tooltip } from './Tooltip';
+import { IconButton } from '../ui/IconButton';
+import { ChevronIcon } from '../ui/Icons';
+import { useShellRailFold } from './railFold';
 
 /** @see SurfaceTone — which colour family the rail paints in. */
 export type NavRailTone = SurfaceTone;
@@ -119,6 +123,19 @@ export interface NavRailProps {
    * rail and `md` 15px/400 on 36px rows.)
    */
   size?: 'sm' | 'md';
+  /**
+   * The folded strip (2.515.0): a 44px column of icons, each item's label in
+   * a `Tooltip` and its accessible name, group labels hidden (a hairline
+   * between groups), the badge as a dot-sized count on the icon's corner.
+   * Inside `AppShell sidebarFold` the rail reads the shell's fold when this
+   * is omitted. Items without an `icon` show their label's first letter.
+   */
+  collapsed?: boolean;
+  /**
+   * Draw the fold toggle («/») in the title row, calling this. Inside
+   * `AppShell sidebarFold` the shell's own toggle is used when omitted.
+   */
+  onToggleCollapsed?: () => void;
   /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
   'aria-label'?: string;
   className?: string;
@@ -201,13 +218,16 @@ function RailItem({
   palette,
   renderLink,
   size = 'sm',
+  collapsed = false,
 }: {
   item: NavRailItem;
   active: boolean;
   palette: Palette;
   renderLink?: NavRailProps['renderLink'];
   size?: 'sm' | 'md';
+  collapsed?: boolean;
 }) {
+  if (collapsed) return <StripItem item={item} active={active} palette={palette} renderLink={renderLink} />;
   const body = (
     <>
       <span className="flex items-center gap-2 min-w-0">
@@ -249,6 +269,7 @@ function RailItem({
     return (
       <button
         data-ui-part=""
+        data-rail-item={labelText(item)}
         type="button"
         onClick={item.onClick}
         disabled={item.disabled}
@@ -260,15 +281,74 @@ function RailItem({
     );
   }
 
-  const linkProps: AnchorHTMLAttributes<HTMLAnchorElement> = {
+  const linkProps: AnchorHTMLAttributes<HTMLAnchorElement> & { 'data-rail-item': string } = {
     href: item.to,
     className: shell,
     'aria-current': active ? 'page' : undefined,
     'aria-disabled': item.disabled || undefined,
+    'data-rail-item': labelText(item),
     children: body,
   };
   if (renderLink) return <>{renderLink(item, linkProps)}</>;
   return <a {...linkProps} />;
+}
+
+/** The label as a plain string, for the strip item's accessible name. */
+function labelText(item: NavRailItem): string {
+  if (typeof item.label === 'string' || typeof item.label === 'number') return String(item.label);
+  return item.id ?? item.to ?? 'Item';
+}
+
+/**
+ * One item of the folded strip: a 44px-wide square holding the icon (or the
+ * label's first letter), its label in a Tooltip to the right and in
+ * `aria-label`, the active accent on the left edge as in the open rail.
+ */
+function StripItem({ item, active, palette, renderLink }: {
+  item: NavRailItem;
+  active: boolean;
+  palette: Palette;
+  renderLink?: NavRailProps['renderLink'];
+}) {
+  const name = labelText(item);
+  const glyph = item.icon ?? <span className={cn(RAIL_ITEM_TEXT, 'uppercase')}>{name.slice(0, 1)}</span>;
+  const body = (
+    <span className="relative grid h-5 w-5 place-items-center" aria-hidden="true">
+      {glyph}
+      {item.badge != null && (
+        <span className={cn('absolute -right-2 -top-1.5 rounded-full border px-1 text-[11px] leading-[14px]', palette.badge)} data-testid="nav-rail-badge">
+          {item.badge}
+        </span>
+      )}
+    </span>
+  );
+  const shell = cn(
+    'flex h-9 w-full items-center justify-center border-l-[3px] border-transparent no-underline',
+    active ? palette.labelActive : palette.label,
+    palette.hover,
+    active && palette.active,
+    item.disabled && 'pointer-events-none opacity-50',
+  );
+  let control: ReactNode;
+  if (item.onClick || !item.to) {
+    control = (
+      <button data-ui-part="" data-rail-item={name} type="button" onClick={item.onClick} disabled={item.disabled} aria-label={name}
+        aria-current={active ? 'page' : undefined} className={cn(shell, 'cursor-pointer bg-transparent font-[inherit]')}>
+        {body}
+      </button>
+    );
+  } else {
+    const linkProps: AnchorHTMLAttributes<HTMLAnchorElement> & { 'data-rail-item': string } = {
+      href: item.to, className: shell, 'aria-label': name, 'data-rail-item': name,
+      'aria-current': active ? 'page' : undefined, 'aria-disabled': item.disabled || undefined, children: body,
+    };
+    control = renderLink ? renderLink(item, linkProps) : <a {...linkProps} />;
+  }
+  return (
+    <Tooltip content={item.label} placement="right" data-testid="nav-rail-strip-tooltip">
+      <span className="block" data-nav-rail-strip-item="">{control}</span>
+    </Tooltip>
+  );
 }
 
 function RailGroup({
@@ -330,7 +410,7 @@ function RailGroup({
   }, [collapsed]);
 
   return (
-    <section data-ui-part="" className={cn(size === 'md' && 'pb-1')}>
+    <section data-ui-part="" data-rail-group={name} {...(collapsed ? { 'data-rail-group-collapsed': '' } : {})} className={cn(size === 'md' && 'pb-1')}>
       {divided && <div aria-hidden="true" className={cn('mx-5 mb-2 mt-1 border-t', palette.divider)} />}
       <button
         data-ui-part=""
@@ -383,10 +463,16 @@ export function NavRail({
   renderLink,
   tone = 'surface',
   size = 'sm',
+  collapsed: collapsedProp,
+  onToggleCollapsed,
   'aria-label': ariaLabel,
   className,
   'data-testid': testId,
 }: NavRailProps) {
+  const shellFold = useShellRailFold();
+  const collapsed = collapsedProp ?? shellFold?.folded ?? false;
+  const onToggle = onToggleCollapsed ?? shellFold?.toggle;
+  const inShell = !!shellFold;
   const palette = TONE[tone];
   const groups = useMemo(() => buildGroups(items), [items]);
   const label = ariaLabel ?? (typeof title === 'string' ? title : undefined) ?? 'Navigation';
@@ -395,14 +481,38 @@ export function NavRail({
     <nav
       aria-label={label}
       data-testid={testId}
+      data-nav-rail=""
+      data-rail-folded={collapsed ? 'true' : 'false'}
       className={cn(
-        'flex flex-none flex-col overflow-hidden border-r',
-        WIDTH[width],
+        'flex flex-none flex-col overflow-hidden',
+        // In a folding shell the shell's column owns the width and the edge.
+        inShell ? 'h-full w-full' : 'border-r',
+        collapsed ? 'w-11 min-w-11' : !inShell && WIDTH[width],
         palette.rail,
         className,
       )}
     >
-      {(title != null || titleAction) && (
+      {collapsed ? (
+        <>
+          {onToggle && (
+            <div className={cn('flex flex-none justify-center border-b py-2', palette.divider)}>
+              {foldToggle(true, label, onToggle)}
+            </div>
+          )}
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-1" data-nav-rail-strip="">
+            {groups.map((g, gi) => (
+              <div key={g.name ?? '__ungrouped'} role="group" aria-label={g.name ?? undefined} {...(g.name ? { 'data-rail-group': g.name } : {})}>
+                {gi > 0 && <div aria-hidden="true" className={cn('mx-2 my-1 border-t', palette.divider)} />}
+                {g.items.map((item, idx) => (
+                  <RailItem key={itemKey(item, idx)} item={item} active={isActive(item, activeHref, match)} palette={palette} renderLink={renderLink} collapsed />
+                ))}
+              </div>
+            ))}
+          </div>
+          {footer && <div className={cn('flex-none border-t py-2', palette.divider)}>{footer}</div>}
+        </>
+      ) : (<>
+      {(title != null || titleAction || onToggle) && (
         <div className={cn(
             'flex flex-none items-center justify-between gap-2',
             size === 'md' ? 'h-12 pl-5 pr-3' : 'border-b px-3 py-2.5',
@@ -416,7 +526,10 @@ export function NavRail({
           >
             {title}
           </span>
-          {titleAction}
+          <span className="flex flex-none items-center gap-1">
+            {titleAction}
+            {onToggle && foldToggle(false, label, onToggle)}
+          </span>
         </div>
       )}
       {header && (
@@ -425,7 +538,7 @@ export function NavRail({
       <div className="min-h-0 flex-1 overflow-y-auto py-1">
         {groups.map((g, gi) =>
           g.name === null ? (
-            <div key="__ungrouped">
+            <div key="__ungrouped" data-rail-group="">
               {g.items.map((item, idx) => (
                 <RailItem
                   key={itemKey(item, idx)}
@@ -456,7 +569,17 @@ export function NavRail({
       {footer && (
         <div className={cn('flex-none border-t px-2 py-2', palette.divider)}>{footer}</div>
       )}
+      </>)}
     </nav>
+  );
+}
+
+/** The rail's fold toggle: « when open, » when folded. */
+function foldToggle(folded: boolean, label: string, onToggle: () => void) {
+  const name = `${folded ? 'Show' : 'Hide'} ${label}`;
+  return (
+    <IconButton size="sm" variant="ghost" aria-label={name} title={name} aria-expanded={!folded} onClick={onToggle}
+      icon={<ChevronIcon dir={folded ? 'right' : 'left'} size={14} />} data-testid="nav-rail-fold" />
   );
 }
 

@@ -188,7 +188,7 @@ export interface ActionRowListProps {
   /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
   action?: string;
   /**
-   * Type step. `md` (default): the Initiatives v2 mockup's 15px rows. `sm`
+   * Type step. `md` (default): the Initiatives v2 mockup's 15px rows; with `columns`, the house 14/12 scale (14px title and cells, 12px description and meta; 2.515.0, was 15/13). `sm`
    * (since 2.429.0): the app's body step — 14px medium titles and cells,
    * 12px descriptions and meta, a 14px semibold action (`T size="sm"` /
    * `T size="xs"`) — so a list in a tabbed pane reads like the rails and
@@ -216,13 +216,13 @@ function RowBody({ item, columns, action, size = 'md' }: { item: ActionRowItem; 
         <span className="flex shrink-0 items-center" data-testid="action-row-leading">{item.leading}</span>
       )}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className={cn('truncate text-text-primary', sm ? 'text-sm font-medium leading-5' : cn('text-[15px] leading-6', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium'))} title={hasColumns ? item.title : undefined}>{item.title}</span>
+        <span className={cn('truncate text-text-primary', sm ? 'text-sm font-medium leading-5' : cn(hasColumns ? 'text-sm leading-6' : 'text-[15px] leading-6', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium'))} title={hasColumns ? item.title : undefined}>{item.title}</span>
         {hasDescription && (
-          <span className={cn('truncate text-text-secondary', sm ? 'text-xs leading-4' : hasColumns ? 'text-[13px] leading-[18px]' : 'text-sm leading-5')} data-testid="action-row-description">{item.description}</span>
+          <span className={cn('truncate text-text-secondary', sm ? 'text-xs leading-4' : hasColumns ? 'text-xs leading-[18px]' : 'text-sm leading-5')} data-testid="action-row-description">{item.description}</span>
         )}
       </span>
       {item.meta != null && item.meta !== false && (
-        <span className={cn('shrink-0 whitespace-nowrap text-text-secondary', sm ? 'text-xs' : 'text-[13px]')} data-testid="action-row-meta">{item.meta}</span>
+        <span className={cn('shrink-0 whitespace-nowrap text-text-secondary', sm || hasColumns ? 'text-xs' : 'text-[13px]')} data-testid="action-row-meta">{item.meta}</span>
       )}
       {hasColumns && (
         <span className="flex shrink-0 items-center" data-testid="action-row-cells">
@@ -233,7 +233,7 @@ function RowBody({ item, columns, action, size = 'md' }: { item: ActionRowItem; 
               <span key={col.id} className="flex shrink-0 items-center">
                 {divider && <span aria-hidden="true" className="h-6 w-px shrink-0 bg-border" data-testid="action-row-divider" />}
                 <span
-                  className={cn('flex min-w-0 items-center truncate whitespace-nowrap text-text-secondary', sm ? 'text-sm leading-5' : 'text-[15px] leading-6', COLUMN_WIDTH[col.width], divider && 'pl-5', col.align === 'end' && 'justify-end')}
+                  className={cn('flex min-w-0 items-center truncate whitespace-nowrap text-text-secondary', sm ? 'text-sm leading-5' : 'text-sm leading-6', COLUMN_WIDTH[col.width], divider && 'pl-5', col.align === 'end' && 'justify-end')}
                   data-testid={`action-row-cell-${col.id}`}
                   data-width={col.width}
                 >
@@ -246,7 +246,7 @@ function RowBody({ item, columns, action, size = 'md' }: { item: ActionRowItem; 
         </span>
       )}
       {action ? (
-        <span className={cn('ml-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-primary', sm ? 'text-sm font-semibold leading-5' : 'text-[15px] font-medium leading-6')} data-testid="action-row-action">
+        <span className={cn('ml-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-primary', sm ? 'text-sm font-semibold leading-5' : hasColumns ? 'text-sm font-medium leading-6' : 'text-[15px] font-medium leading-6')} data-testid="action-row-action">
           {action}
           <ArrowRightIcon size={16} aria-hidden="true" />
         </span>

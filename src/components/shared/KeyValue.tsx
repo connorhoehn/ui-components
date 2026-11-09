@@ -97,6 +97,7 @@ export function KeyValue({
             ruled ? 'flex min-h-[38px] items-center gap-3 border-b border-border px-2.5 py-1.5' : row ? 'flex items-baseline gap-3' : 'flex flex-col gap-0.5',
           )}
           data-testid={`${testId}-item`}
+          data-key-value-row=""
         >
           <dt
             className={cn(

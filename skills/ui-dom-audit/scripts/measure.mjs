@@ -1897,6 +1897,167 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         }
         coverage.at(-1).matched = measured;
       }
+      else if (rule.kind === 'page-template') {
+        // One page template per route (page.template): the page renders one
+        // `[data-page-template]` (a `containers` value such as SectionLayout's
+        // `section-layout` frames the page template, it is not one, and a
+        // template nested in another template is a part of it). When the route
+        // manifest names the route's template (`expected`, or `routes` keyed by
+        // the URL's path + hash, path or hash, a trailing `*` matching a
+        // prefix), the page must render exactly that one; with no expectation a
+        // page with no template is not judged, two side by side still fail.
+        const containers = rule.containers ?? ['section-layout'];
+        const value = el => el.getAttribute('data-page-template') ?? '';
+        const own = nodes.filter(el => !containers.includes(value(el)));
+        const pages = own.filter(el => !own.some(other => other !== el && other.contains(el)));
+        const here = [location.pathname + location.hash, location.hash, location.pathname, location.pathname + location.search + location.hash];
+        const routes = rule.routes ?? {};
+        const key = Object.keys(routes).find(k => here.includes(k)) ?? Object.keys(routes).filter(k => k.endsWith('*') && here.some(h => h.startsWith(k.slice(0, -1)))).sort((a, b) => b.length - a.length)[0];
+        const expected = key != null ? routes[key] : rule.expected ?? null;
+        coverage.at(-1).matched = pages.length;
+        samples.push({ rule: rule.id, selector: 'document', property: 'page templates', actual: pages.map(value), expected: expected ?? 'one template' });
+        if (pages.length > 1) add(rule, pages[1], 'page template count', `one page template${expected ? ` (${expected})` : ''}`, `${pages.length}: ${pages.map(value).join(', ')}`);
+        else if (expected != null && pages.length === 0) add(rule, null, 'page template', `${expected} (the route manifest's template)`, 'none: the page is not built from a template');
+        else if (expected != null && value(pages[0]) !== expected) add(rule, pages[0], 'page template', `${expected} (the route manifest's template)`, value(pages[0]));
+      }
+      else if (rule.kind === 'subject-frame') {
+        // A record's picture shown whole (subject.frame): inside a subject's
+        // hero (`[data-subject-part="hero"]`, or a `[data-subject-frame]` that
+        // has no hero part) there is no empty state (the placeholder frame or
+        // the running state takes its place), no gallery tile that crops
+        // (`data-gallery-fit="cover"`), and no picture cover-cropped out of
+        // its own aspect by more than `maxAspectDelta`.
+        const emptySel = css(rule.empty ?? '[data-ui-empty], [data-empty-state]'), coverSel = css(rule.cover ?? '[data-gallery-fit="cover"]');
+        const maxDelta = rule.maxAspectDelta ?? 0.02;
+        for (const hero of nodes) {
+          for (const empty of [...hero.querySelectorAll(emptySel)].filter(visible)) add(rule, empty, 'empty state in a subject frame', 'the placeholder frame or the running state (SubjectFrame), never an EmptyState', 'an EmptyState where the subject\'s picture goes');
+          for (const tile of [...hero.querySelectorAll(coverSel)].filter(visible)) add(rule, tile, 'data-gallery-fit', 'contain: the subject shown whole', 'cover: a cropped gallery tile as the subject');
+          for (const img of [...hero.querySelectorAll('img')].filter(i => visible(i) && i.complete && i.naturalWidth > 0 && i.naturalHeight > 0)) {
+            const s = cs(img);
+            if (s.objectFit !== 'cover') continue;
+            const b = img.getBoundingClientRect();
+            const delta = Math.abs((b.width / b.height) / (img.naturalWidth / img.naturalHeight) - 1);
+            samples.push({ rule: rule.id, selector: selectorOf(img), property: 'object-fit / aspect delta', actual: `cover / ${Math.round(delta * 1000) / 1000}`, expected: `contain when delta > ${maxDelta}` });
+            if (delta > maxDelta) add(rule, img, 'object-fit', 'contain (the subject is shown whole)', `cover: a ${img.naturalWidth}×${img.naturalHeight} picture cropped into ${Math.round(b.width)}×${Math.round(b.height)}`);
+          }
+        }
+      }
+      else if (rule.kind === 'confirm-inline') {
+        // Approve, reject and spend confirm in place (confirm.inline). At rest:
+        // a control marked `data-action-kind` approve|reject|spend does not
+        // announce a dialog (`aria-haspopup="dialog"`/`true`). After the
+        // `pressAction` probe pressed one (writes blocked): no dialog-like
+        // surface opened, and the press wrote nothing (a decision that writes
+        // on its first press did not confirm at all).
+        for (const el of nodes) {
+          const popup = (el.getAttribute('aria-haspopup') ?? '').toLowerCase();
+          samples.push({ rule: rule.id, selector: selectorOf(el), property: 'aria-haspopup', actual: popup || null, expected: 'not dialog' });
+          if (popup === 'dialog' || popup === 'true') add(rule, el, 'aria-haspopup', 'none: the decision confirms in place (ConfirmButton)', popup);
+        }
+        const press = probe?.kind === 'action-press' ? probe : null;
+        if (press) {
+          const dialogs = [...document.querySelectorAll(css(rule.dialogs ?? '[role="dialog"], [role="alertdialog"], dialog[open], [data-ui-dialog]'))].filter(visible);
+          const outer = dialogs.filter(d => !dialogs.some(o => o !== d && o.contains(d)));
+          samples.push({ rule: rule.id, selector: 'probe', property: `dialogs after pressing ${press.label}`, actual: outer.length, expected: 0 });
+          for (const d of outer) add(rule, d, 'dialog after a decision', `none: "${press.label}" (${press.actionKind}) confirms in place (ConfirmButton)`, `${d.getAttribute('role') ?? d.tagName.toLowerCase()} opened`);
+          if (press.blockedWrites?.length) add(rule, null, 'writes on the first press', `none: "${press.label}" asks in place before it acts`, press.blockedWrites.join(', '));
+        }
+      }
+      else if (rule.kind === 'inspector-shape') {
+        // One inspector shape (inspector.shape): a record frame's parts
+        // (`[data-subject-part]`, emitted by SubjectFrame) run title → tabs →
+        // hero → facts → disclosures (any may be absent; order is document
+        // order), with one facts table of at most `maxFacts` rows (KeyValue
+        // rows, `[data-key-value-row]`, else its `dt` terms). A frame with no
+        // parts at all was not built from SubjectFrame.
+        const order = rule.order ?? ['title', 'tabs', 'hero', 'facts', 'disclosures'];
+        const frameSel = css(rule.selector), maxFacts = rule.maxFacts ?? 8;
+        for (const frame of nodes) {
+          const parts = [...frame.querySelectorAll('[data-subject-part]')].filter(p => p.parentElement?.closest(frameSel) === frame && visible(p));
+          const names = parts.map(p => p.getAttribute('data-subject-part'));
+          samples.push({ rule: rule.id, selector: selectorOf(frame), property: 'inspector parts', actual: names, expected: order });
+          if (!parts.length) { add(rule, frame, 'inspector parts', `${order.join(' → ')} (SubjectFrame)`, 'none: a hand-built inspector'); continue; }
+          let last = -1, lastName = null;
+          for (const [i, name] of names.entries()) {
+            const at = order.indexOf(name);
+            if (at < 0) continue;
+            if (at < last) { add(rule, parts[i], 'inspector part order', order.join(' → '), `${name} after ${lastName}`); break; }
+            last = at; lastName = name;
+          }
+          const facts = parts.filter(p => p.getAttribute('data-subject-part') === 'facts');
+          if (facts.length > 1) add(rule, facts[1], 'facts tables', 'one facts table', facts.length);
+          for (const f of facts) {
+            const marked = f.querySelectorAll('[data-key-value-row]');
+            const rows = marked.length ? marked.length : f.querySelectorAll('dt').length;
+            samples.push({ rule: rule.id, selector: selectorOf(f), property: 'facts rows', actual: rows, expected: `<= ${maxFacts}` });
+            if (rows > maxFacts) add(rule, f, 'facts rows', `at most ${maxFacts} (the rest go in a disclosure)`, rows);
+          }
+        }
+      }
+      else if (rule.kind === 'nav-rail-groups') {
+        // The rail is the route manifest (nav.rail-groups): the primary rail's
+        // groups (`[data-rail-group]`, NavRail) and their items
+        // (`[data-rail-item]`), in order, equal `groups` [{label, items}]
+        // (label "" for the ungrouped items above the first group), compared
+        // without case. A folded group's items are not rendered, so only its
+        // label is judged. With no `groups` declared the rule only counts rails.
+        const want = rule.groups ?? [];
+        const norm = s => String(s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+        const itemLabel = el => el.getAttribute('data-rail-item') || el.querySelector('[data-ui-text="rail-item"]')?.textContent || el.getAttribute('aria-label') || el.textContent;
+        const railSel = css(rule.selector);
+        for (const rail of nodes) {
+          if (!want.length) continue;
+          const mine = sel => [...rail.querySelectorAll(sel)].filter(el => el.closest(railSel) === rail && el.getClientRects().length > 0);
+          const groups = mine('[data-rail-group]'), items = mine('[data-rail-item]');
+          const actual = [];
+          const loose = items.filter(i => !i.closest('[data-rail-group]'));
+          if (loose.length) actual.push({ label: '', items: loose.map(itemLabel), folded: false });
+          for (const g of groups) actual.push({ label: g.getAttribute('data-rail-group'), items: items.filter(i => i.closest('[data-rail-group]') === g).map(itemLabel), folded: g.getAttribute('data-rail-group-collapsed') != null || g.querySelector('[aria-expanded="false"]')?.closest('[data-rail-group]') === g });
+          samples.push({ rule: rule.id, selector: selectorOf(rail), property: 'rail groups', actual: actual.map(g => `${g.label}: ${g.items.join(', ')}`), expected: want.map(g => `${g.label ?? ''}: ${(g.items ?? []).join(', ')}`) });
+          const got = actual.map(g => norm(g.label)), exp = want.map(g => norm(g.label));
+          const missing = exp.filter(l => !got.includes(l)), extra = got.filter(l => !exp.includes(l));
+          if (missing.length) add(rule, rail, 'rail groups missing', exp.join(' / '), `missing ${missing.map(l => l || '(ungrouped)').join(', ')}`);
+          if (extra.length) add(rule, rail, 'rail groups extra', exp.join(' / '), `not in the manifest: ${extra.map(l => l || '(ungrouped)').join(', ')}`);
+          const common = got.filter(l => exp.includes(l));
+          if (common.join('|') !== exp.filter(l => got.includes(l)).join('|')) add(rule, rail, 'rail group order', exp.join(' / '), got.join(' / '));
+          for (const w of want) {
+            const a = actual.find(g => norm(g.label) === norm(w.label));
+            if (!a || a.folded || !w.items) continue;
+            const gi = a.items.map(norm), wi = w.items.map(norm);
+            if (gi.join('|') === wi.join('|')) continue;
+            const lack = wi.filter(l => !gi.includes(l)), more = gi.filter(l => !wi.includes(l));
+            add(rule, rail, `rail items in ${w.label || '(ungrouped)'}`, w.items.join(', '), lack.length || more.length ? [lack.length ? `missing ${lack.join(', ')}` : '', more.length ? `extra ${more.join(', ')}` : ''].filter(Boolean).join('; ') : `out of order: ${a.items.join(', ')}`);
+          }
+        }
+      }
+      else if (rule.kind === 'tile-actions-inside') {
+        // A tile's actions stay inside the tile (tile.actions-inside): every
+        // visible control in a gallery tile's action row
+        // (`[data-ui-part="tile-actions"]`, AssetGallery) lies within the
+        // tile's box (tolerance aside) so it never covers a neighbour, and
+        // neither the row nor a control clips its own content (a label cut by
+        // overflow, scrollWidth past clientWidth).
+        const tol = rule.tolerance ?? tolerance;
+        const areaSel = css(rule.actions ?? '[data-ui-part="tile-actions"], [data-gallery-actions]'), controlSel = css(rule.controls ?? 'button, a[href], [role="button"]');
+        let measured = 0;
+        const clips = el => { const s = cs(el); return s.overflowX !== 'visible' && el.scrollWidth > el.clientWidth + 1; };
+        for (const tile of nodes) {
+          const t = tile.getBoundingClientRect();
+          for (const area of [...tile.querySelectorAll(areaSel)].filter(a => visible(a) && a.closest(css(rule.selector)) === tile)) {
+            measured++;
+            if (clips(area)) add(rule, area, 'tile actions clipped', 'the action row wraps (or folds into More) inside the tile', `${area.scrollWidth}px of actions in a ${area.clientWidth}px row`);
+            for (const c of [...area.querySelectorAll(controlSel)].filter(visible)) {
+              const b = c.getBoundingClientRect();
+              const out = Math.max(t.left - b.left, b.right - t.right, t.top - b.top, b.bottom - t.bottom);
+              samples.push({ rule: rule.id, selector: selectorOf(c), property: 'outside the tile', actual: round(Math.max(0, out)), expected: `<= ${tol}` });
+              if (out > tol) add(rule, c, 'tile action outside the tile', 'inside its tile (minTileWidth, a wrapping action row)', `${round(out)}px past the tile's edge (over the neighbouring tile)`);
+              const cut = [c, ...c.querySelectorAll('*')].find(clips);
+              if (cut) add(rule, cut, 'tile action label clipped', 'the whole label (the row wraps instead)', `${cut.scrollWidth}px of label in ${cut.clientWidth}px`);
+            }
+          }
+        }
+        coverage.at(-1).matched = measured;
+      }
       else if (rule.kind === 'unmarked') {
         // Hand-rolled DOM (element.unmarked): an interactive element or page
         // section in the content column was not rendered by the component

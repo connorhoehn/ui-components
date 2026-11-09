@@ -374,6 +374,11 @@ const CANONICAL_GROUP = {
   Chip: 'Feedback & states', TreeView: 'Tables & lists', KeyValue: 'Page structure, sections & dividers',
   SectionLabel: 'Page structure, sections & dividers', TitledFrame: 'Page structure, sections & dividers',
   Inline: 'Page structure, sections & dividers', MetaLine: 'Page structure, sections & dividers',
+  // 2.515.0
+  SubjectFrame: 'Page structure, sections & dividers', SubjectHero: 'Page structure, sections & dividers',
+  SelectionBar: 'Buttons & actions', RunProgressPanel: 'Feedback & states',
+  ImageFilmstrip: 'Charts & data display', AppBrand: 'Shells & layouts', ThemeModeToggle: 'Buttons & actions',
+  WrappedWorkGraph: 'Diagram, graph & pipelines', WrappedPipelineRun: 'Diagram, graph & pipelines',
 };
 
 const DIR_GROUP = [
@@ -439,6 +444,9 @@ const CANONICAL = [
   ['Buttons', 'Button', 'Always pass an explicit `variant` (`primary`, `secondary`, `ghost`, `danger`, `danger-solid`, `success`, `info`, `link`) and `size` where it matters. `IconButton` for icon-only actions.', 'Don\'t style a raw `<button>`, and don\'t rely on the default variant: one primary action per region.'],
   ['A row\'s or panel\'s own decision', 'ConfirmButton', 'A button that confirms in place: pressed, it becomes "<question?> [Confirm] [Cancel]" in the same spot (`role="group"` named by the question); Escape or Cancel restores it, Enter confirms. `tone="destructive"` for a destructive confirm; `busy` (or a promise from `onConfirm`) holds it busy. `data-confirm-state` reads `idle` / `asking` / `busy`. The replacement for `ConfirmDialog` in rows and panels: a modal is never the right place for a row\'s own decision.', 'Not for a decision that needs a body, a preview or a form: that is `ConfirmDialog`.'],
   ['Rows with their own buttons', 'GroupedList', 'Pass `trailingLayout="columns"` when rows carry `actions` and/or `trailing`: the whole list becomes one grid whose actions and trailing columns are shared and right-aligned, so every row ends at one x (audit rule `row.actions-aligned`). Action Buttons draw at `sm`.', 'Don\'t leave a list of rows with different buttons in the default `inline` layout (a ragged right edge), and don\'t put buttons in `meta` (inside the row\'s button).'],
+  ['A record\'s inspector (the right pane)', 'SubjectFrame', 'One shape for every record: title + subtitle, `PaneHeader` tabs, a hero shown whole (`SubjectHero`: an `ImageCompare` frame with `fit="contain"`, the same frame with words when there is nothing yet, the running state while a job draws it, or a host `ModelViewer`), one `KeyValue` facts table of at most eight rows, then `Disclosure`s (Request details last, collapsed). Audit rules `inspector.shape` and `subject.frame`.', 'Not an `EmptyState` in the hero and never a cover-cropped picture; don\'t stack facts under the subject by hand.'],
+  ['A pick from a grid of candidates', 'SelectionBar', 'Docked under the grid: the chosen thumbnail and "Selected: Concept 03", the controls that shape the pick, Clear, an optional Reject, one secondary and the one primary; Reject and Approve confirm in place (`question`, `data-action-kind`).', 'Don\'t open a dialog to approve a pick (`confirm.inline`).'],
+  ['A job that is running', 'RunProgressPanel', 'One sentence, Elapsed (live from `startedAt`), Est. remaining, a `ProgressBar` when the provider reports one, Refresh status and Cancel job confirmed in place, a Non-blocking chip. With realtime-modules, `WrappedPipelineRun` draws it inside the run card.', 'Not a centred spinner or an `EmptyState` saying "Drawing…".'],
   ['Empty / error / loading', 'EmptyState', '`EmptyState`, `ErrorState` and `LoadingState` for whole-region states.', 'Don\'t write "No items" paragraphs or spinners by hand.'],
   ['Form controls', 'Input', 'Every control comes from `forms/`: `Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`, `Switch`, wrapped in `FormField` for label/help/error.', 'Never a raw `<input>`/`<select>`.'],
   ['Chat', 'ChatPanel', 'Message list + composer. With realtime-modules, use `WrappedChatPanel` from `/integrations/realtime-modules`.', 'Don\'t hand-roll a message list.'],

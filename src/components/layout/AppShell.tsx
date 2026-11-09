@@ -6,6 +6,7 @@
 
 import type { CSSProperties, ReactNode } from 'react';
 import { ToastProvider } from '../shared/ToastProvider';
+import { ShellRailFoldProvider, type ShellRailFold } from '../shared/railFold';
 import { cn } from '../../lib/cn';
 
 export interface AppShellProps {
@@ -82,7 +83,20 @@ export interface AppShellProps {
    *   (the layouts above already do).
    */
   layout?: 'document' | 'fill';
+  /**
+   * The primary rail folds (2.515.0). Pass `useRailFold(...)` (or any
+   * `{ folded, toggle }`): the sidebar then sits IN FLOW as the body's first
+   * column instead of `fixed` — `sidebarWidth` wide when open, a 44px strip
+   * when folded — and the main column takes the rest, so the shell measures
+   * as two in-flow columns. A `NavRail` in `sidebar` reads the fold from the
+   * shell (it draws its icon strip and the fold toggle itself). Omitted: the
+   * fixed sidebar, unchanged.
+   */
+  sidebarFold?: ShellRailFold;
 }
+
+/** The folded primary rail's width: the 44px strip every folding rail draws. */
+export const APP_SHELL_FOLDED_RAIL_WIDTH = 44;
 
 function LoadingOverlay({ children }: { children?: ReactNode }) {
   return (
@@ -126,8 +140,12 @@ export function AppShell({
   subheaderTestId = 'app-subheader',
   sidebarFullHeight = false,
   layout = 'document',
+  sidebarFold,
 }: AppShellProps) {
   const fill = layout === 'fill';
+  // In flow when the rail folds: the sidebar is the body row's first column.
+  const inFlow = !!sidebar && !!sidebarFold;
+  const folded = inFlow && sidebarFold!.folded;
   // The one derivation. The sidebar's top and the body's minimum height both
   // read `--app-shell-chrome-h`; nothing below hard-codes a pixel of chrome.
   const chromeHeight = headerHeight + (subheader ? subheaderHeight : 0);
@@ -145,7 +163,7 @@ export function AppShell({
       {/* Chrome — sticky, full-width: the header row, the section band, the
           degraded banner. One block, so the two nav rows read as one piece of
           chrome sitting on the page. */}
-      <div className={cn('sticky top-0 z-50', fill && 'shrink-0')} {...(sidebar && sidebarFullHeight ? { style: { marginLeft: sidebarWidth }, 'data-beside-sidebar': 'true' } : {})}>
+      <div className={cn('sticky top-0 z-50', fill && 'shrink-0')} {...(sidebar && sidebarFullHeight && !inFlow ? { style: { marginLeft: sidebarWidth }, 'data-beside-sidebar': 'true' } : {})}>
         <div
           className="flex items-center gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6"
           style={{ height: headerHeight }}
@@ -176,7 +194,29 @@ export function AppShell({
       {/* Fill: the body takes the rest of the 100dvh column and never grows
           past it; document: at least the window below the chrome. */}
       <div className={cn('flex', fill ? 'min-h-0 flex-1 overflow-hidden' : 'min-h-[calc(100vh-var(--app-shell-chrome-h))]')} data-testid="app-shell-body">
-        {sidebar && (
+        {inFlow && (
+          // In flow (sidebarFold): a column of the body row, sticky under the
+          // chrome in document layout, the full body height in fill layout.
+          // Width is the one dynamic value (the host's sidebarWidth); the
+          // folded strip is the fixed 44px class.
+          <nav
+            role="navigation"
+            aria-label={sidebarLabel}
+            data-testid={sidebarTestId}
+            data-rail-folded={folded ? 'true' : 'false'}
+            data-sidebar-flow="in-flow"
+            className={cn(
+              'box-border flex shrink-0 flex-col overflow-y-auto overflow-x-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-[width] duration-200',
+              fill ? 'min-h-0 self-stretch' : 'sticky top-[var(--app-shell-chrome-h)] h-[calc(100vh-var(--app-shell-chrome-h))] self-start',
+              folded && 'w-11 min-w-11',
+              sidebarClassName,
+            )}
+            style={folded ? undefined : { width: sidebarWidth }}
+          >
+            {sidebar}
+          </nav>
+        )}
+        {sidebar && !inFlow && (
           <nav
             role="navigation"
             aria-label={sidebarLabel}
@@ -204,7 +244,7 @@ export function AppShell({
             not fit wraps, folds or scrolls inside its own pane. */}
         <main
           className={cn('relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col bg-[var(--color-surface-panel)]', fill && 'overflow-hidden')}
-          style={sidebar ? { marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` } : undefined}
+          style={sidebar && !inFlow ? { marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` } : undefined}
         >
           <div
             // The gutter reads `--ui-page-gutter`, the same token WorkArea,
@@ -236,19 +276,20 @@ export function AppShell({
     </div>
   );
 
+  const shell = inFlow ? <ShellRailFoldProvider fold={sidebarFold!}>{inner}</ShellRailFoldProvider> : inner;
   // toastRegion === null → caller manages toasts
-  if (toastRegion === null) return inner;
+  if (toastRegion === null) return shell;
   // toastRegion provided → render it alongside the shell (caller supplies <ToastProvider>)
   if (toastRegion !== undefined) {
     return (
       <>
-        {inner}
+        {shell}
         {toastRegion}
       </>
     );
   }
   // default → wrap in ToastProvider
-  return <ToastProvider>{inner}</ToastProvider>;
+  return <ToastProvider>{shell}</ToastProvider>;
 }
 
 export default AppShell;

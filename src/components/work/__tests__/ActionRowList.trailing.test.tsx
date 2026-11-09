@@ -69,7 +69,7 @@ describe('ActionRowList trailing (2.509.0)', () => {
     expect(open.mock.calls[0][0].id).toBe('a');
   });
 
-  it('keeps the row metrics: 15px title, 13px description with columns, 7px row padding', () => {
+  it('keeps the row metrics: 14px title, 12px description with columns (the house 14/12 scale since 2.515.0), 7px row padding', () => {
     render(
       <ActionRowList
         tone="warning"
@@ -80,8 +80,9 @@ describe('ActionRowList trailing (2.509.0)', () => {
     );
     const row = screen.getByTestId('action-row-list-open-a');
     const title = row.querySelector('span.truncate') as HTMLElement;
-    expect(title).toHaveClass('text-[15px]', 'font-semibold');
-    expect(screen.getByTestId('action-row-description')).toHaveClass('text-[13px]');
+    expect(title).toHaveClass('text-sm', 'font-semibold');
+    expect(title).not.toHaveClass('text-[15px]');
+    expect(screen.getByTestId('action-row-description')).toHaveClass('text-xs');
     expect(row).toHaveClass('px-2.5', 'py-[3px]', 'min-h-[45px]');
     // The tint and the tone bar move to the item so they span the controls.
     const li = screen.getByTestId('action-row-list-row-a');
@@ -108,5 +109,16 @@ describe('ActionRowList trailing (2.509.0)', () => {
     expect(screen.getByTestId('action-row-list-row-b')).not.toHaveClass('grid');
     expect(screen.getByTestId('action-row-list-open-b')).toHaveClass('bg-warning-callout');
     expect(screen.queryByTestId('action-row-list-trailing-b')).toBeNull();
+  });
+});
+
+describe('ActionRowList type scale (2.515.0)', () => {
+  it('without columns keeps the 15px md rows; with columns every cell is 14px and meta 12px', () => {
+    const { rerender } = render(<ActionRowList items={[{ id: 'a', title: 'T', meta: 'm' }]} />);
+    expect(screen.getByTestId('action-row-meta')).toHaveClass('text-[13px]');
+    rerender(<ActionRowList columns={[{ id: 'c', width: 'md' }]} items={[{ id: 'a', title: 'T', meta: 'm', cells: { c: 'Cell' } }]} />);
+    expect(screen.getByTestId('action-row-meta')).toHaveClass('text-xs');
+    expect(screen.getByText('Cell').className).toMatch(/\btext-sm\b/);
+    expect(screen.getByText('Cell').className).not.toContain('text-[15px]');
   });
 });

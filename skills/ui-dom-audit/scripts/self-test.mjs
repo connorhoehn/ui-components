@@ -1750,5 +1750,157 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS row.actions-aligned and image.whole-visible catch ragged row actions, mixed heights and cropped review subjects, and accept the columns layout and contained frames');
   }
+  {
+    // page.template, subject.frame, confirm.inline, inspector.shape,
+    // nav.rail-groups and tile.actions-inside (2.515.0): the page contract's
+    // composition rules, keyed on library markers, all in the resting gate.
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const ids = ['page.template', 'subject.frame', 'confirm.inline', 'inspector.shape', 'nav.rail-groups', 'tile.actions-inside'];
+    for (const id of ids) {
+      const rule = fullContract.rules.find(r => r.id === id);
+      assert.ok(rule && !rule.deep && !isDeepRule(fullContract, id), `${id} is shipped in the resting (non-deep) gate`);
+    }
+    const ruleWith = (id, over = {}) => ({ ...fullContract.rules.find(r => r.id === id), ...over });
+    const judge = (rules, probe) => page.evaluate(measureDOM, { contract: { ...fullContract, rules }, selectors: {}, ...(probe ? { probe } : {}) });
+    const fails = async (rules, rule, why, probe) => { const r = await judge(rules, probe); assert.ok(r.issues.some(i => i.rule === rule && i.category === 'violation'), `${rule} must fail: ${why} ${JSON.stringify(r.issues)}`); return r; };
+    const passes = async (rules, why, probe) => { const r = await judge(rules, probe); assert.deepEqual(r.issues, [], `${why}`); return r; };
+    const base = '<style>*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}</style>';
+
+    // page.template
+    const tpl = [ruleWith('page.template')];
+    await page.setContent(`${base}<main><div data-page-template="collection"><div data-page-template="page-frame">nested part</div></div></main>`);
+    const one = await passes(tpl, 'one template (a nested one is a part of it), no manifest');
+    assert.equal(one.coverage.find(c => c.rule === 'page.template').matched, 1);
+    await page.setContent(`${base}<main><div data-page-template="section-layout"><div data-page-template="page-frame">column</div></div></main>`);
+    await passes(tpl, 'SectionLayout frames one page template');
+    await page.setContent(`${base}<main><div data-page-template="collection">a</div><div data-page-template="detail">b</div></main>`);
+    await fails(tpl, 'page.template', 'two templates side by side');
+    await page.setContent(`${base}<main><div>hand-built page</div></main>`);
+    await passes(tpl, 'no manifest: a page without a template is not judged');
+    await fails([ruleWith('page.template', { expected: 'collection' })], 'page.template', 'the manifest names a template and the page has none');
+    await page.setContent(`${base}<main><div data-page-template="page-frame">x</div></main>`);
+    const here = await page.evaluate(() => location.pathname);
+    await fails([ruleWith('page.template', { routes: { [here]: 'collection' } })], 'page.template', 'the route manifest says collection, the page is a page-frame');
+    await passes([ruleWith('page.template', { routes: { [here]: 'page-frame' } })], 'the route manifest matches');
+    await passes([ruleWith('page.template', { routes: { [`${here.slice(0, 2)}*`]: 'page-frame', '/x': 'detail' } })], 'a prefix key matches the route');
+
+    // subject.frame
+    const subject = [ruleWith('subject.frame')];
+    const wide = `data:image/svg+xml,${encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100'><rect width='200' height='100' fill='teal'/></svg>")}`;
+    const hero = inner => `${base}<main><section data-subject-frame><h2 data-subject-part="title">Toby</h2><div data-subject-part="hero" style="width:240px;height:240px">${inner}</div></section></main>`;
+    await page.setContent(hero(`<img src="${wide}" alt="Toby" style="width:100%;height:100%;object-fit:contain">`));
+    await passes(subject, 'a contained hero picture');
+    await page.setContent(hero('<div data-gallery-status="placeholder" style="width:100%;height:100%;background:#eee">No picture yet</div>'));
+    await passes(subject, 'the placeholder frame');
+    await page.setContent(hero('<div data-ui-empty="" style="padding:24px">Nothing here yet</div>'));
+    await fails(subject, 'subject.frame', 'an EmptyState in the hero');
+    await page.setContent(hero(`<span data-gallery-fit="cover" style="display:block;width:100%;height:100%"><img src="${wide}" alt="" style="width:100%;height:100%;object-fit:cover"></span>`));
+    await fails(subject, 'subject.frame', 'a cover gallery tile as the subject');
+    await page.setContent(hero(`<img src="${wide}" alt="Toby" style="width:100%;height:100%;object-fit:cover">`));
+    await fails(subject, 'subject.frame', 'a 2:1 picture cover-cropped into a square hero');
+    await page.setContent(`${base}<main><section data-subject-frame><div data-subject-part="title">t</div><div data-subject-part="hero" data-gallery-status="placeholder" style="height:40px">placeholder</div><div data-ui-empty="">a tab body may be empty</div></section></main>`);
+    await passes(subject, 'an empty state outside the hero part is not this rule\'s concern');
+    await page.setContent(`${base}<main><div data-subject-frame style="width:200px;height:200px"><div data-ui-empty="">empty</div></div></main>`);
+    await fails(subject, 'subject.frame', 'a bare subject frame (no parts) holding an EmptyState');
+
+    // confirm.inline
+    const confirm = [ruleWith('confirm.inline')];
+    await page.setContent(`${base}<main><button data-action-kind="approve">Approve</button><button data-action-kind="spend" aria-haspopup="menu">Draw</button></main>`);
+    await passes(confirm, 'decisions that do not announce a dialog');
+    await page.setContent(`${base}<main><button data-action-kind="approve" aria-haspopup="dialog">Approve</button></main>`);
+    await fails(confirm, 'confirm.inline', 'an approve that announces a dialog');
+    const inPlace = `${base}<main><span id="host"><button data-action-kind="approve" onclick="this.parentElement.innerHTML='<span role=group data-confirm-state=asking data-action-kind=approve>Approve Toby? <button>Confirm</button><button>Cancel</button></span>'">Approve</button></span></main>`;
+    await page.setContent(inPlace);
+    const asked = await probes.pressAction(page);
+    assert.equal(asked.kind, 'action-press'); assert.equal(asked.inPlace, true); assert.equal(asked.actionKind, 'approve');
+    await passes(confirm, 'an approve that asks in place', asked);
+    await page.setContent(`${base}<main><button data-action-kind="reject" onclick="const d=document.createElement('div');d.setAttribute('role','dialog');d.textContent='Reject? OK Cancel';d.style.cssText='position:fixed;inset:40px;background:#fff';document.body.append(d)">Reject</button></main>`);
+    const modal = await probes.pressAction(page);
+    await fails(confirm, 'confirm.inline', 'a reject that opens a dialog', modal);
+    await page.setContent(`${base}<main><button data-action-kind="spend" onclick="fetch('http://127.0.0.1:9/api/spend',{method:'POST'}).catch(()=>{})">Draw (uses credits)</button></main>`);
+    const spent = await probes.pressAction(page);
+    assert.ok(spent.blockedWrites.length >= 1, 'the probe blocks the write');
+    const wrote = await fails(confirm, 'confirm.inline', 'a spend that writes on its first press', spent);
+    assert.ok(wrote.issues.some(i => i.property === 'writes on the first press'), 'the write is named');
+
+    // inspector.shape
+    const shape = [ruleWith('inspector.shape')];
+    const facts = n => `<dl data-subject-part="facts">${Array.from({ length: n }, (_, i) => `<div data-key-value-row><dt>F${i}</dt><dd>v</dd></div>`).join('')}</dl>`;
+    const inspector = parts => `${base}<main><aside data-subject-frame>${parts.join('')}</aside></main>`;
+    const P = { title: '<div data-subject-part="title">Toby<br>Character · Lead</div>', tabs: '<div data-subject-part="tabs" role="tablist"><button role="tab">Details</button></div>', hero: '<div data-subject-part="hero" style="height:40px">pic</div>', disclosures: '<div data-subject-part="disclosures"><details><summary>Description</summary>x</details></div>' };
+    await page.setContent(inspector([P.title, P.tabs, P.hero, facts(8), P.disclosures]));
+    await passes(shape, 'title, tabs, hero, eight facts, disclosures');
+    await page.setContent(inspector([P.title, P.hero, facts(3)]));
+    await passes(shape, 'parts may be absent');
+    await page.setContent(inspector([P.title, P.tabs, facts(4), P.hero, P.disclosures]));
+    await fails(shape, 'inspector.shape', 'facts above the hero');
+    await page.setContent(inspector([P.title, P.tabs, P.hero, facts(9), P.disclosures]));
+    await fails(shape, 'inspector.shape', 'nine facts');
+    await page.setContent(inspector([P.title, P.hero, facts(2), facts(2)]));
+    await fails(shape, 'inspector.shape', 'two facts tables');
+    await page.setContent(inspector([P.title, P.hero, '<dl data-subject-part="facts"><dt>a</dt><dd>1</dd><dt>b</dt><dd>2</dd></dl>']));
+    await passes(shape, 'unmarked KeyValue terms are counted as rows');
+    await page.setContent(`${base}<main><aside data-subject-frame><h2>Toby</h2><p>hand-built</p></aside></main>`);
+    await fails(shape, 'inspector.shape', 'a frame with no parts');
+
+    // nav.rail-groups
+    const manifest = [{ label: 'Workspace', items: ['Overview'] }, { label: 'Production', items: ['Episodes', 'Cast & assets', 'Work'] }, { label: 'Admin', items: ['Settings'] }];
+    const railRule = [ruleWith('nav.rail-groups', { groups: manifest })];
+    const tuned = withRuleOptions(fullContract, { 'page.template': { routes: { '#/episodes': 'collection' } }, 'nav.rail-groups': { groups: manifest } });
+    assert.equal(tuned.rules.find(r => r.id === 'nav.rail-groups').groups.length, 3, 'a consumer declares its manifest through ruleOptions');
+    const item = l => `<a href="#" data-rail-item="${l}"><span data-ui-text="rail-item">${l}</span></a>`;
+    const group = (l, items, folded = false) => `<section data-rail-group="${l}"><button aria-expanded="${!folded}">${l.toUpperCase()}</button>${folded ? '' : items.map(item).join('')}</section>`;
+    const rail = groups => `${base}<nav data-nav-rail style="width:220px;display:flex;flex-direction:column">${groups.join('')}</nav>`;
+    await page.setContent(rail([group('Workspace', ['Overview']), group('Production', ['Episodes', 'Cast & assets', 'Work']), group('Admin', ['Settings'])]));
+    await passes(railRule, 'the rail equals the manifest (caption case aside)');
+    await passes([ruleWith('nav.rail-groups')], 'no manifest declared: not judged');
+    await page.setContent(rail([group('Workspace', ['Overview']), group('Production', ['Episodes', 'Cast & assets', 'Work'], true), group('Admin', ['Settings'])]));
+    await passes(railRule, 'a folded group is judged by its label only');
+    await page.setContent(rail([group('Production', ['Episodes', 'Cast & assets', 'Work']), group('Workspace', ['Overview']), group('Admin', ['Settings'])]));
+    await fails(railRule, 'nav.rail-groups', 'groups out of order');
+    await page.setContent(rail([group('Workspace', ['Overview']), group('Production', ['Episodes', 'Work', 'Cast & assets']), group('Admin', ['Settings'])]));
+    await fails(railRule, 'nav.rail-groups', 'items out of order');
+    await page.setContent(rail([group('Workspace', ['Overview']), group('Production', ['Episodes', 'Cast & assets', 'Work', 'Jobs'])]));
+    const drift = await fails(railRule, 'nav.rail-groups', 'a missing group and an extra item');
+    assert.ok(drift.issues.some(i => /missing admin/.test(i.actual)) && drift.issues.some(i => /extra jobs/.test(i.actual)), 'missing and extra are named');
+    // The folded in-flow AppShell rail (UX audit L2): a 44px strip that is the
+    // body's first in-flow column. shell.columns measures it and the content
+    // as two columns; nav.rail-groups reads the strip's icon items by
+    // `data-rail-item` (their labels are not painted).
+    const icon = l => `<button type="button" aria-label="${l}" data-rail-item="${l}" style="display:block;width:44px;height:36px;border:0;background:none"><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg></button>`;
+    const strip = groups => `${base}<style>html,body{height:100%}</style><div data-testid="app-shell-body" style="display:flex;height:600px"><nav role="navigation" aria-label="Primary" data-rail-folded="true" data-sidebar-flow="in-flow" style="box-sizing:border-box;width:44px;min-width:44px;flex-shrink:0;align-self:stretch;overflow:hidden;border-right:1px solid #ddd"><nav data-nav-rail aria-label="Studio" style="display:flex;flex-direction:column">${groups.map(([l, items]) => `<section data-rail-group="${l}">${items.map(icon).join('')}</section>`).join('')}</nav></nav><main style="flex:1;min-width:0">content</main></div>`;
+    const shellRule = fullContract.rules.find(r => r.id === 'shell.columns');
+    await page.setContent(strip([['Workspace', ['Overview']], ['Production', ['Episodes', 'Cast & assets', 'Work']], ['Admin', ['Settings']]]));
+    const folded = await passes([shellRule, ...railRule], 'the folded in-flow strip: two columns, the rail equals the manifest');
+    assert.equal(folded.coverage.find(c => c.rule === 'shell.columns').matched, 2, 'shell.columns measures the strip and the content as two in-flow columns');
+    assert.equal(await page.evaluate(() => Math.round(document.querySelector('[data-sidebar-flow="in-flow"]').getBoundingClientRect().width)), 44, 'the folded rail is 44px');
+    await page.setContent(strip([['Production', ['Episodes', 'Cast & assets', 'Work']], ['Workspace', ['Overview']], ['Admin', ['Settings']]]));
+    await fails(railRule, 'nav.rail-groups', 'a reordered folded strip');
+    await page.setContent(strip([['Workspace', ['Overview']], ['Production', ['Episodes', 'Cast & assets', 'Work']], ['Admin', ['Settings']]]));
+    await page.evaluate(() => { document.querySelector('[data-sidebar-flow]').style.cssText += ';position:fixed;left:0;top:0;height:600px'; });
+    const fixed = await judge([shellRule]);
+    assert.equal(fixed.coverage.find(c => c.rule === 'shell.columns').matched, 2, 'a fixed sidebar is still matched');
+    assert.ok(fixed.issues.some(i => i.rule === 'shell.columns'), `a fixed rail over the content is not two in-flow columns ${JSON.stringify(fixed.issues)}`);
+
+    // tile.actions-inside
+    const tiles = [ruleWith('tile.actions-inside')];
+    const gallery = (actionsCss, labels) => `${base}<style>.g{display:grid;grid-template-columns:repeat(4,120px);gap:12px}.t{position:relative;min-width:0}.pic{display:block;aspect-ratio:1;background:#ddd}.a{${actionsCss}}</style><div role="list" class="g">${[0, 1, 2, 3].map(i => `<div role="listitem" class="t" data-gallery-tile="t${i}"><span class="pic"></span><div class="a" data-ui-part="tile-actions">${labels.map(l => `<button>${l}</button>`).join('')}</div></div>`).join('')}</div>`;
+    const long = ['Approve for mesh · uses credits', 'Cut it out (no credits)'];
+    await page.setContent(gallery('display:flex;flex-wrap:wrap;gap:4px', long.map(l => l)));
+    await page.addStyleTag({ content: '.a button{max-width:100%;white-space:normal}' });
+    const wrapped = await passes(tiles, 'long labels wrap inside the tile');
+    assert.ok(wrapped.coverage.find(c => c.rule === 'tile.actions-inside').matched === 4);
+    await page.setContent(gallery('display:flex;height:32px;align-items:center;justify-content:flex-end;white-space:nowrap', long));
+    const spill = await fails(tiles, 'tile.actions-inside', 'a one-line right-aligned action row spills over the neighbour');
+    assert.ok(spill.issues.some(i => i.property === 'tile action outside the tile'));
+    await page.setContent(gallery('display:flex;overflow:hidden;white-space:nowrap', long));
+    await fails(tiles, 'tile.actions-inside', 'an action row that clips its buttons');
+    await page.setContent(gallery('display:flex;flex-wrap:wrap', ['<span style="display:block;overflow:hidden;white-space:nowrap;max-width:60px">Approve for mesh · uses credits</span>']));
+    await fails(tiles, 'tile.actions-inside', 'a truncated action label');
+    await page.setContent(gallery('display:flex;justify-content:flex-end', ['Open']));
+    await passes(tiles, 'a short action inside the tile');
+    await page.close();
+    console.log('PASS page.template, subject.frame, confirm.inline, inspector.shape, nav.rail-groups and tile.actions-inside catch a second template, an empty or cropped subject, a decision behind a dialog, an inspector out of shape, a rail off its manifest and tile actions leaving their tile, and accept the library shapes');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

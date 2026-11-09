@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-984 components across 21 entry points; 836 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+995 components across 21 entry points; 846 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -36,6 +36,9 @@ One component per common job. Reach for these first; the "don't use for" column 
 | Buttons | `Button` | `@connorhoehn/ui-components/shared` | Always pass an explicit `variant` (`primary`, `secondary`, `ghost`, `danger`, `danger-solid`, `success`, `info`, `link`) and `size` where it matters. `IconButton` for icon-only actions. | Don't style a raw `<button>`, and don't rely on the default variant: one primary action per region. |
 | A row's or panel's own decision | `ConfirmButton` | `@connorhoehn/ui-components/shared` | A button that confirms in place: pressed, it becomes "<question?> [Confirm] [Cancel]" in the same spot (`role="group"` named by the question); Escape or Cancel restores it, Enter confirms. `tone="destructive"` for a destructive confirm; `busy` (or a promise from `onConfirm`) holds it busy. `data-confirm-state` reads `idle` / `asking` / `busy`. The replacement for `ConfirmDialog` in rows and panels: a modal is never the right place for a row's own decision. | Not for a decision that needs a body, a preview or a form: that is `ConfirmDialog`. |
 | Rows with their own buttons | `GroupedList` | `@connorhoehn/ui-components/shared` | Pass `trailingLayout="columns"` when rows carry `actions` and/or `trailing`: the whole list becomes one grid whose actions and trailing columns are shared and right-aligned, so every row ends at one x (audit rule `row.actions-aligned`). Action Buttons draw at `sm`. | Don't leave a list of rows with different buttons in the default `inline` layout (a ragged right edge), and don't put buttons in `meta` (inside the row's button). |
+| A record's inspector (the right pane) | `SubjectFrame` | `@connorhoehn/ui-components/shared` | One shape for every record: title + subtitle, `PaneHeader` tabs, a hero shown whole (`SubjectHero`: an `ImageCompare` frame with `fit="contain"`, the same frame with words when there is nothing yet, the running state while a job draws it, or a host `ModelViewer`), one `KeyValue` facts table of at most eight rows, then `Disclosure`s (Request details last, collapsed). Audit rules `inspector.shape` and `subject.frame`. | Not an `EmptyState` in the hero and never a cover-cropped picture; don't stack facts under the subject by hand. |
+| A pick from a grid of candidates | `SelectionBar` | `@connorhoehn/ui-components/shared` | Docked under the grid: the chosen thumbnail and "Selected: Concept 03", the controls that shape the pick, Clear, an optional Reject, one secondary and the one primary; Reject and Approve confirm in place (`question`, `data-action-kind`). | Don't open a dialog to approve a pick (`confirm.inline`). |
+| A job that is running | `RunProgressPanel` | `@connorhoehn/ui-components/shared` | One sentence, Elapsed (live from `startedAt`), Est. remaining, a `ProgressBar` when the provider reports one, Refresh status and Cancel job confirmed in place, a Non-blocking chip. With realtime-modules, `WrappedPipelineRun` draws it inside the run card. | Not a centred spinner or an `EmptyState` saying "Drawing…". |
 | Empty / error / loading | `EmptyState` | `@connorhoehn/ui-components/shared` | `EmptyState`, `ErrorState` and `LoadingState` for whole-region states. | Don't write "No items" paragraphs or spinners by hand. |
 | Form controls | `Input` | `@connorhoehn/ui-components/shared` | Every control comes from `forms/`: `Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`, `Switch`, wrapped in `FormField` for label/help/error. | Never a raw `<input>`/`<select>`. |
 | Chat | `ChatPanel` | `@connorhoehn/ui-components/social` | Message list + composer. With realtime-modules, use `WrappedChatPanel` from `/integrations/realtime-modules`. | Don't hand-roll a message list. |
@@ -44,21 +47,21 @@ One component per common job. Reach for these first; the "don't use for" column 
 ## Contents
 
 - [Page templates](#page-templates) (10)
-- [Shells & layouts](#shells--layouts) (41)
-- [Page structure, sections & dividers](#page-structure-sections--dividers) (59)
+- [Shells & layouts](#shells--layouts) (42)
+- [Page structure, sections & dividers](#page-structure-sections--dividers) (61)
 - [Tables & lists](#tables--lists) (31)
 - [Forms](#forms) (30)
-- [Buttons & actions](#buttons--actions) (16)
-- [Feedback & states](#feedback--states) (26)
-- [Chat & social](#chat--social) (108)
+- [Buttons & actions](#buttons--actions) (18)
+- [Feedback & states](#feedback--states) (27)
+- [Chat & social](#chat--social) (109)
 - [Video](#video) (108)
 - [Docs & editor](#docs--editor) (138)
-- [Diagram, graph & pipelines](#diagram-graph--pipelines) (139)
+- [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
-- [Charts & data display](#charts--data-display) (9)
-- [Other](#other) (81)
+- [Charts & data display](#charts--data-display) (10)
+- [Other](#other) (82)
 - [Icons](#icons) (112)
 
 ## Page templates
@@ -82,8 +85,9 @@ One component per common job. Reach for these first; the "don't use for" column 
 |---|---|---|---|---|
 | `AgentTaskCard` | `@connorhoehn/ui-components/shared` | The "Current task" card at the top of a Workbench: what the agent was asked to do, where it is, and when it started. |  |  |
 | `ApiDegradedBanner` | `@connorhoehn/ui-components/shared` | Top-of-content banner shown when the social-api /health rollup reports a degraded state. |  |  |
+| `AppBrand` | `@connorhoehn/ui-components/shared` | The product mark and name at the left of the app header; a link home when `href` is given. | `shared-appbrand` |  |
 | `AppLayout` | `@connorhoehn/ui-components` | The room-shaped app layout: rooms sidebar, presence and nested content, wired to the pipelines run providers. |  | deprecated |
-| `AppShell` | `@connorhoehn/ui-components/shared` | The app chrome: sidebar, header, optional subheader and the content region, with a toast region by default. | `layout-appshell` |  |
+| `AppShell` | `@connorhoehn/ui-components/shared` | The app chrome: sidebar, header, optional subheader and the content region, with a toast region by default. | `layout-appshell-folding-rail` |  |
 | `CanvasPaneInsetContext` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `CanvasPaneLayout` | `@connorhoehn/ui-components/shared` | A canvas (a graph, a map, a board) with a details pane on its right, that keeps the canvas usable at every width. |  |  |
 | `CollapsedIconStrip` | `@connorhoehn/ui-components/shared` | The narrow icon-only sidebar shown while the main sidebar is collapsed: - the expand button (a menu glyph), in the header row when the strip runs the full window height (`headerHeight`, AppShell `sidebarFullHeight`) -… |  |  |
@@ -175,6 +179,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `SourceSloPanel` | `@connorhoehn/ui-components/ingest` | Per-source SLO panel — three sparklines (p95 latency, error rate %, queue depth) over a configurable window. | `ingest-sourceslopanel` |  |
 | `Stack` | `@connorhoehn/ui-components/shared` | Vertical flex column with a scale gap. |  |  |
 | `StatCard` | `@connorhoehn/ui-components/shared` | Metric display card. | `shared-statcard` |  |
+| `SubjectFrame` | `@connorhoehn/ui-components/shared` | The one record frame: every inspector the Storymaker concepts draw (§1–§5) has this shape, and only the tab names and the facts change. | `shared-subjectframe` |  |
+| `SubjectHero` | `@connorhoehn/ui-components/shared` | The hero part on its own: a subject's picture shown whole, the placeholder frame, or the running state. |  |  |
 | `SuggestionCard` | `@connorhoehn/ui-components/shared` | A proposed next action, offered rather than demanded. |  |  |
 | `T` | `@connorhoehn/ui-components/shared` | Short alias — `<T>` reads better inline in dense JSX than `<Text>`. |  |  |
 | `TabPanel` | `@connorhoehn/ui-components/shared` | — |  |  |
@@ -275,7 +281,9 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `InlineMenu` | `@connorhoehn/ui-components/shared` | Lightweight anchored popover that renders IN PLACE: no portal, no focus trap. | `shared-inlinemenu` |  |
 | `Link` | `@connorhoehn/ui-components/shared` | A styled hyperlink — the primitive the library never had. |  |  |
 | `SegmentedControl` | `@connorhoehn/ui-components/shared` | — | `shared-segmentedcontrol` |  |
+| `SelectionBar` | `@connorhoehn/ui-components/shared` | The bar docked under a grid of candidates (Storymaker concepts §3, "Select character concept"): what is chosen (its thumbnail, "Selected: Concept 03", a quieter line "Toby · Main character · v1.0", or "3 selected"), t… | `shared-selectionbar` |  |
 | `SkipLink` | `@connorhoehn/ui-components/shared` | The first focusable thing on a page: a link that jumps past the navigation to the main content. |  |  |
+| `ThemeModeToggle` | `@connorhoehn/ui-components/shared` | The light/dark switch: an IconButton showing the current mode, aria-pressed when dark. | `shared-thememodetoggle` |  |
 | `UserMenu` | `@connorhoehn/ui-components/shared` | Avatar button + dropdown menu for the signed-in user. | `shared-usermenu` |  |
 
 ## Feedback & states
@@ -303,6 +311,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `PatchValidationRejectedError` | `@connorhoehn/ui-components` | Thrown when the executor's `ContextValidator` rejected a paused-context patch. |  |  |
 | `ProgressBar` | `@connorhoehn/ui-components/shared` | Generic horizontal progress indicator. | `shared-progressbar` |  |
 | `RecordStatus` | `@connorhoehn/ui-components` | Status dot + label, toned by `recordStatusTone`. |  |  |
+| `RunProgressPanel` | `@connorhoehn/ui-components/shared` | A running job's progress, in place: what is happening in one sentence, how long it has run and roughly how long is left, a progress bar, and the two things a reader can do about it while it runs (Refresh status, Cance… | `shared-runprogresspanel` |  |
 | `Spinner` | `@connorhoehn/ui-components/shared` | Rotating loading indicator. | `shared-spinner` |  |
 | `StatusDot` | `@connorhoehn/ui-components/shared` | Colored status indicator dot, optionally with a label. | `shared-statusdot` |  |
 | `StatusPill` | `@connorhoehn/ui-components/shared` | Generic semantic-state pill. | `shared-statuspill` |  |
@@ -328,6 +337,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `AvatarGroup` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `CallActivityCard` | `@connorhoehn/ui-components/social` | A call, as it appears inside a conversation. | `social-callactivitycard` |  |
 | `CallLogList` | `@connorhoehn/ui-components/social` | A person's call history: who, direction, outcome, when, length and a call-back action, with an All / Missed filter. |  |  |
+| `CaptionedAvatar` | `@connorhoehn/ui-components/shared` | One person or character as the Storymaker concepts' Cast cards draw them: the avatar (picture or initials), the name under it, and a quieter role caption under that ("Mina · Lead", "Toby · Candidate"). | `shared-captionedavatar` |  |
 | `ChannelBindingStrip` | `@connorhoehn/ui-components/social` | One compact row binding a context to a chat channel: "Discussion · #channel · latest line · Open in Social", plus Bind / Unbind for a manager. |  |  |
 | `ChannelDocumentsPanel` | `@connorhoehn/ui-components/social` | — |  |  |
 | `ChannelFilesPanel` | `@connorhoehn/ui-components/social` | — |  |  |
@@ -821,6 +831,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `WorkSharingControls` | `@connorhoehn/ui-components/graph` | — |  |  |
 | `WorkStatus` | `@connorhoehn/ui-components/graph` | Compact, text-labelled status indicator for work graph nodes and edges. |  |  |
 | `WorkTranscriptPanel` | `@connorhoehn/ui-components/graph` | Transcript rows and the host-owned Ask exchange. |  |  |
+| `WrappedPipelineRun` | `@connorhoehn/ui-components/integrations/realtime-modules` | A pipeline run as a card, wired to usePipelineRunStatus() from realtime-modules (`client/pipelines`): the hook returns a lookup, and the host passes `status={statusOf(runId)}`. | `integrations-wrappedpipelinerun` |  |
+| `WrappedWorkGraph` | `@connorhoehn/ui-components/integrations/realtime-modules` | The work graph wired to a useWorkGraph() return from realtime-modules (`client/work-graph`). | `integrations-wrappedworkgraph` |  |
 
 ## Agents & compute
 
@@ -919,6 +931,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 |---|---|---|---|---|
 | `BarChart` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `Histogram` | `@connorhoehn/ui-components/shared` | A bare bucket distribution: N bars scaled to the largest bucket, opacity following each bucket's share, no axes and no legend. |  |  |
+| `ImageFilmstrip` | `@connorhoehn/ui-components/shared` | One image shown whole and large, with a strip of its sibling views under it (Storymaker concepts §4/§5: the approved concept beside "Full · front · side · back · ¾ · +2"). | `shared-imagefilmstrip` |  |
 | `LineChart` | `@connorhoehn/ui-components/shared` | — | `shared-chart` |  |
 | `ScoreBarGauge` | `@connorhoehn/ui-components/shared` | Horizontal progress-bar gauge for 0..1 scores. | `shared-scorebargauge` |  |
 | `Sparkline` | `@connorhoehn/ui-components/shared` | Minimal inline-SVG sparkline. | `shared-sparkline` |  |
@@ -986,6 +999,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `RecordMark` | `@connorhoehn/ui-components` | The row's leading mark. |  |  |
 | `RippleGridBackground` | `@connorhoehn/ui-components/shared` | A grid that breathes, for a canvas that should not look like graph paper. |  |  |
 | `RisingParticles` | `@connorhoehn/ui-components/shared` | Renders `children` over a rising star field while `active`, and over nothing at all when not. |  |  |
+| `ShellRailFoldProvider` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `ShortcutsHelp` | `@connorhoehn/ui-components/shared` | Global keyboard-shortcut help overlay. | `shared-shortcutshelp` |  |
 | `SourceDetailPage` | `@connorhoehn/ui-components/ingest` | Detail page for a single ingest source. | `ingest-sourcedetailpage` |  |
 | `SourcesPage` | `@connorhoehn/ui-components/ingest` | Table of all ingest sources with columns for name, type, status, last sync, files synced, and row actions (Sync Now, Pause/Resume, Delete). | `ingest-sourcespage` |  |

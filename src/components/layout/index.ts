@@ -4,7 +4,7 @@ export { default as CollapsedIconStrip } from './CollapsedIconStrip';
 export type { CollapsedIconStripProps, CollapsedIconStripSection } from './CollapsedIconStrip';
 export { ConnectionStatus } from './ConnectionStatus';
 export { ApiDegradedBanner } from './ApiDegradedBanner';
-export { AppShell } from './AppShell';
+export { AppShell, APP_SHELL_FOLDED_RAIL_WIDTH } from './AppShell';
 export type { AppShellProps } from './AppShell';
 export { TopNav, NavTabs } from './TopNav';
 export type { TopNavProps, TopNavItem, NavTabsProps, NavTabsVariant } from './TopNav';

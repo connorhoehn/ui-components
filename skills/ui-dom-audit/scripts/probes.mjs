@@ -1,7 +1,7 @@
 /**
  * Read-only interaction probes. A state's `enter(page, { probes })` calls one
  * and returns its result; the runner hands that result to `measureDOM` as
- * `probe`, where the `record-popout` and `selection-shift` rules judge it.
+ * `probe`, where the `record-popout`, `selection-shift` and `confirm-inline` rules judge it.
  *
  * Every probe blocks each non-GET/HEAD/OPTIONS request while it runs and
  * reports what it stopped (`blockedWrites`): activating a row or toggling a
@@ -114,6 +114,27 @@ export async function toggleSelection(page, { checkbox, timeout = 4000 }) {
     await box.click(); await frames();
     const after = await geometry();
     return { kind: 'selection', before, during, after, toggled: during.checked !== before.checked && after.checked === before.checked };
+  });
+}
+
+/**
+ * Press the first visible decision control (`data-action-kind` approve,
+ * reject or spend) with writes blocked, and report it for `confirm.inline`:
+ * a decision confirms in place, so the press opens no dialog and writes
+ * nothing. `index` picks a later control. Escape is pressed afterwards so an
+ * in-place confirm (ConfirmButton) returns to rest.
+ */
+export async function pressAction(page, { controls = '[data-action-kind~="approve"], [data-action-kind~="reject"], [data-action-kind~="spend"]', index = 0, timeout = 3000 } = {}) {
+  return readOnly(page, async () => {
+    const control = page.locator(controls).filter({ visible: true }).nth(index);
+    await control.waitFor({ state: 'visible', timeout });
+    const label = ((await control.getAttribute('aria-label')) ?? (await control.innerText())).replace(/\s+/g, ' ').trim().slice(0, 80);
+    const actionKind = await control.getAttribute('data-action-kind');
+    const beforeUrl = page.url();
+    await control.click();
+    await settle(page, beforeUrl, Math.min(timeout, 1500));
+    const inPlace = await page.evaluate(() => !!document.querySelector('[data-confirm-state="asking"]'));
+    return { kind: 'action-press', label, actionKind, inPlace, beforeUrl, afterUrl: page.url() };
   });
 }
 
@@ -375,4 +396,4 @@ export async function interceptData(page, { mode, include = '/api/', exclude = [
   };
 }
 
-export const probes = { activateRow, recordAction, toggleSelection, openLayer, hoverTooltip, focusWalk, tabCycle, interceptData, discoverDeep };
+export const probes = { activateRow, recordAction, toggleSelection, pressAction, openLayer, hoverTooltip, focusWalk, tabCycle, interceptData, discoverDeep };

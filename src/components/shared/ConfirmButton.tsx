@@ -39,9 +39,18 @@ export interface ConfirmButtonProps {
   busy?: boolean;
   /** Fired on Confirm. A returned promise keeps the control busy until it settles. */
   onConfirm: () => void | Promise<unknown>;
+  /**
+   * What the decision is, for the audit (`confirm.inline`): emitted as
+   * `data-action-kind` on the button and on the question group, so an approve,
+   * a reject or a credit spend is known to confirm in place. Since 2.515.0.
+   */
+  actionKind?: ConfirmActionKind;
   className?: string;
   'data-testid'?: string;
 }
+
+/** The kinds of decision the `confirm.inline` audit rule watches. */
+export type ConfirmActionKind = 'approve' | 'reject' | 'spend' | 'delete' | 'cancel';
 
 type Phase = 'idle' | 'asking';
 
@@ -56,6 +65,7 @@ export function ConfirmButton({
   disabled = false,
   busy = false,
   onConfirm,
+  actionKind,
   className,
   'data-testid': testId = 'confirm-button',
 }: ConfirmButtonProps) {
@@ -115,6 +125,7 @@ export function ConfirmButton({
         aria-label={question}
         data-ui-confirm-button=""
         data-confirm-state="asking"
+        data-action-kind={actionKind}
         data-testid={testId}
         onKeyDown={onKeyDown}
         onBlur={onBlur}
@@ -148,6 +159,7 @@ export function ConfirmButton({
       aria-busy={isBusy || undefined}
       data-ui-confirm-button=""
       data-confirm-state={state}
+      data-action-kind={actionKind}
       data-testid={testId}
       className={className}
       onClick={() => {

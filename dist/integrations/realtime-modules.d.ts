@@ -1,6 +1,7 @@
 import { AnyExtension } from '@tiptap/core';
 import { Awareness } from 'y-protocols/awareness';
 import { Component } from 'react';
+import { ComponentType } from 'react';
 import { Editor } from '@tiptap/react';
 import { ErrorInfo } from 'react';
 import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
@@ -110,6 +111,15 @@ export declare function adaptPresenceRoster(roster: RMPresenceEntry[]): Presence
 export declare function adaptReaction(reaction: RMReaction, index: number): EphemeralReaction;
 
 export declare function adaptReactions(reactions: RMReaction[]): EphemeralReaction[];
+
+/** The hook's records as the graph components' arrays and state. */
+export declare function adaptWorkGraphState(result: RMUseWorkGraphReturn): {
+    nodes: WorkGraphNodeData[];
+    edges: WorkGraphEdgeData[];
+    sources: WorkGraphSourceState[];
+    state: NonNullable<WorkGraphProps['state']>;
+    errorMessage?: string;
+};
 
 declare type AgentRunDecision = 'approve' | 'reject';
 
@@ -2407,6 +2417,28 @@ export declare interface IncomingCallToastProps {
 
 declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
+declare interface KeyValueItem {
+    label: string;
+    value: ReactNode;
+    /** Monospace value — ids, shas, model ids. */
+    mono?: boolean;
+    /**
+     * Native tooltip on the value — the full text of a value the layout
+     * truncates (a long id, a path).
+     */
+    title?: string;
+    /**
+     * The value in tertiary ink — a fact that is really an absence ("Not
+     * defined yet", "No links added"). Since 2.390.0.
+     */
+    muted?: boolean;
+    /**
+     * A control at the row's end, after the value — "Draft with agent", "Add a
+     * note". Row layout only. Since 2.390.0.
+     */
+    action?: ReactNode;
+}
+
 /** Where a loop is. Mirrors the run status platform-api reports. */
 declare type LabStatus = 'planning' | 'starting' | 'running' | 'waiting' | 'done' | 'failed' | 'stopped' | 'budget';
 
@@ -2889,6 +2921,9 @@ declare interface PinnedMessageItem {
     /** Display name of whoever pinned it. */
     pinnedBy?: string;
 }
+
+/** The run's steps as `WorkflowStepper` steps, with times as descriptions. */
+export declare function pipelineRunSteps(steps: readonly RMPipelineRunStepDetail[], times?: WrappedPipelineRunStepTime): WorkflowStep[];
 
 declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
 
@@ -3522,6 +3557,31 @@ export declare interface RMNotificationEntry {
     };
 }
 
+export declare type RMPipelineRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'failed' | 'rejected';
+
+export declare interface RMPipelineRunStatus {
+    phase: RMPipelineRunPhase;
+    stepLabel?: string;
+    detail?: string;
+    approvalStepId?: string;
+    result?: unknown;
+    noop?: boolean;
+    details?: {
+        steps?: RMPipelineRunStepDetail[];
+        startedAt?: string;
+        completedAt?: string;
+        error?: string;
+    };
+}
+
+export declare interface RMPipelineRunStepDetail {
+    id: string;
+    label: string;
+    status: RMPipelineRunStepStatus;
+}
+
+export declare type RMPipelineRunStepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'awaiting';
+
 /** Mirror of realtime-modules/src/client/types.ts PresenceEntry */
 export declare interface RMPresenceEntry {
     clientId: string;
@@ -3792,6 +3852,61 @@ export declare interface RMUseVideoHangoutReturn {
     end(): Promise<void>;
     toggleVideo(): void;
     toggleAudio(): void;
+}
+
+/** Mirror of realtime-modules' UseWorkGraphResult (`useWorkGraph({ scope, transport })`). */
+export declare interface RMUseWorkGraphReturn {
+    graph: RMWorkGraphState;
+    status: RMWorkGraphState['status'] | 'idle' | 'error';
+    error: 'snapshot-unavailable' | 'invalid-snapshot' | 'invalid-query' | 'stream-unavailable' | null;
+    retry(): void;
+}
+
+export declare interface RMWorkGraphEdge {
+    id: string;
+    fromId: string;
+    toId: string;
+    relation: 'works-on' | 'runs-in' | 'operates-on' | 'produced' | 'edited' | 'attended' | 'discussed' | 'derived-from';
+    label?: string;
+    status: RMWorkGraphNode['status'];
+    disclosure: RMWorkGraphNode['disclosure'];
+    startedAt?: string;
+    updatedAt: string;
+    endedAt?: string;
+    capabilities: RMWorkGraphNode['capabilities'];
+}
+
+export declare interface RMWorkGraphNode {
+    id: string;
+    kind: 'project' | 'terminal' | 'agent' | 'run' | 'document' | 'change' | 'conversation' | 'meeting' | 'transcript' | 'task';
+    title: string;
+    description?: string;
+    status: 'idle' | 'running' | 'waiting' | 'completed' | 'error' | 'stopped' | 'stale';
+    disclosure: 'existence' | 'summary' | 'details';
+    startedAt?: string;
+    updatedAt: string;
+    endedAt?: string;
+    capabilities: Array<'message' | 'view-document' | 'edit-document' | 'join-conversation' | 'join-meeting' | 'observe-terminal' | 'control-terminal' | 'view-transcript' | 'view-run' | 'dispatch-run'>;
+    locked?: boolean;
+}
+
+export declare interface RMWorkGraphSourceStatus {
+    source: 'cloud-compute' | 'local-compute' | 'document' | 'pipeline' | 'conversation' | 'meeting';
+    health: 'available' | 'delayed' | 'disconnected' | 'authorization-unavailable';
+    checkedAt: string;
+    message?: string;
+}
+
+export declare interface RMWorkGraphState {
+    nodes: Record<string, RMWorkGraphNode>;
+    edges: Record<string, RMWorkGraphEdge>;
+    sources: Record<string, RMWorkGraphSourceStatus>;
+    status: 'loading' | 'ready' | 'partial' | 'invalidated' | 'refetch-required';
+    scope?: {
+        personId: string;
+        day: string;
+        timezone: string;
+    };
 }
 
 declare type RoomsIndexSubscriber_2 = NonNullable<HangoutRoomsSectionProps['occupancyAdapter']>;
@@ -4087,6 +4202,582 @@ export declare function withMeetingHands<P extends {
     id: string;
     handRaised?: boolean | number;
 }>(participants: readonly P[], meeting: Pick<RMMeetingSource, 'hands'>): P[];
+
+/**
+ * Asking a transcript a question. The graph renders the exchange and nothing
+ * else: the host owns the model call, the grounding and the refusal.
+ */
+declare interface WorkActivityAsk {
+    enabled: boolean;
+    placeholder?: string;
+    /** Rendered when `enabled` is false. Never invent an answer in its place. */
+    unavailableLabel?: string;
+    /** Host-owned. Resolve with a grounded answer or reject to show the error. */
+    onAsk: (question: string) => Promise<WorkActivityAskAnswer> | WorkActivityAskAnswer;
+}
+
+declare interface WorkActivityAskAnswer {
+    text: string;
+    citations?: WorkActivityAskCitation[];
+    /** Provenance footnote. Say where the answer came from; never imply more. */
+    note?: string;
+}
+
+declare interface WorkActivityAskCitation {
+    id: string;
+    label: string;
+    selection?: Exclude<WorkGraphSelection, null>;
+}
+
+/** The one-line state a detail pane opens with. Host-authored, viewer-safe. */
+declare interface WorkActivityBanner {
+    tone: WorkActivityBannerTone;
+    title: string;
+    description?: string;
+}
+
+declare type WorkActivityBannerTone = 'info' | 'success' | 'error';
+
+/**
+ * What the activity canvas paints UNDER the graph.
+ *
+ * `ripple-grid` is the default and the intended look: a pale grey lattice on
+ * the near-white surface, rippling slowly outward from the centre and bending
+ * toward the pointer. It REPLACES React Flow's dot background rather than
+ * layering over it — two grids at once is noise, and the dots were only ever
+ * standing in for a surface texture.
+ *
+ * `plain` is the escape hatch: no canvas, no WebGL context, React Flow's own
+ * dots. For a host embedding several graphs on one page, or a test that would
+ * rather not stub a GL context.
+ */
+declare type WorkActivityCanvasBackground = 'ripple-grid' | 'plain';
+
+/** Source-backed membership, already filtered for this viewer by the host. */
+declare interface WorkActivityEffort {
+    id: string;
+    title: string;
+    /** A second clause under the frame title — "v3 generating · v2 available". */
+    subtitle?: string;
+    nodeIds: string[];
+    edgeIds: string[];
+    /** Older context that may be folded. Never a count of inaccessible sources. */
+    contextNodeIds?: string[];
+}
+
+declare interface WorkActivityNodeDetail {
+    emphasis?: 'earlier' | 'input' | 'current';
+    /** Fresh process evidence, independent from presence and lifecycle. */
+    fresh?: boolean;
+    tools?: string[];
+    attentionLabel?: string;
+    feedbackCount?: number;
+    /**
+     * Secondary lines under the node title — "Planning sync · 08:30–09:00",
+     * "2 speakers · 1 action item". Host-authored and already viewer-safe; when
+     * omitted the card falls back to the node's own status wording.
+     */
+    lines?: string[];
+    /** Short state word beside the first secondary line — "Ready", "Tests running". */
+    badge?: string;
+    /**
+     * Why a `waiting` run is waiting — realtime-modules `detail.pause` passed
+     * through. The card says "Needs approval" / "Paused at write" instead of a
+     * bare "Waiting" (see `workPauseLabel`); ignored unless the node is waiting.
+     */
+    pause?: WorkActivityPause;
+    /** A short verbatim quotation from the source, already viewer-authorized. */
+    excerpt?: string;
+    /** Who was there. Shown as an avatar row; the host resolves the images. */
+    participants?: Array<{
+        id: string;
+        label: string;
+        avatarUrl?: string;
+    }>;
+    /** Trailing line: what this is on the left, its sharing clause on the right. */
+    footer?: {
+        label: string;
+        note?: string;
+    };
+    /** Detail-pane subtitle — "Meeting transcript · Shared with you". */
+    subtitle?: string;
+    /** The state line every detail pane opens with. */
+    banner?: WorkActivityBanner;
+    sections?: WorkActivityPaneSections;
+    /** Transcript rows and the host-owned Ask exchange. */
+    transcript?: {
+        segments: WorkActivityTranscriptSegment[];
+        ask?: WorkActivityAsk;
+    };
+    /**
+     * A closing caveat — what this pane does NOT show, and why. Use it to be
+     * honest about a capability the viewer does not hold.
+     */
+    note?: string;
+    /** Buttons under the body — "Inspect available v2", "Inspect run". */
+    actions?: WorkActivityPaneAction[];
+    /**
+     * The compute session this node IS — an agent loop in a cloud box.
+     *
+     * Present, the pane's body becomes the session: gauges, live tail, shell and
+     * plan, in place of the per-kind bodies above. The chrome, the banner and the
+     * "Reference in chat" footer are unchanged, and every other field on this
+     * detail still renders around it, so a run node that also has sources keeps
+     * them.
+     */
+    compute?: WorkComputeDetail;
+    artifact?: {
+        revisions: WorkArtifactRevision[];
+        pending?: {
+            id: string;
+            label: string;
+            status: 'generating' | 'failed';
+            message?: string;
+        };
+        /** Opens the revision (optionally at one page) at full size. Host-owned. */
+        onOpenPreview?: (revisionId: string, anchorId?: string) => void;
+    };
+}
+
+/** The held-back group's state. The host owns the paged fetch. */
+declare interface WorkActivityOmitted {
+    /** How many nodes the snapshot held back. */
+    count: number;
+    expanded: boolean;
+    /** Paged in so far, newest first. */
+    items: WorkGraphNodeData[];
+    loading?: boolean;
+    error?: string;
+    /** Another page exists. */
+    hasMore: boolean;
+    /** The size of one page, for the "Load N more" label. Defaults to 25. */
+    pageSize?: number;
+    onExpand: () => void;
+    onCollapse: () => void;
+    onLoadMore: () => void;
+}
+
+declare interface WorkActivityPaneAction {
+    id: string;
+    label: string;
+    /** Selecting this action moves the graph selection; the host owns navigation. */
+    selection?: Exclude<WorkGraphSelection, null>;
+    onSelect?: () => void;
+}
+
+declare interface WorkActivityPaneSections {
+    /**
+     * What the run was given — "Planning sync transcript", "Release plan · rev 6".
+     * Pass references rather than bare strings when two inputs can share a label:
+     * the id is what keeps them apart, and what lets the row open its source.
+     */
+    inputs?: Array<string | WorkActivityReference>;
+    /** Tools the run is authorized to use in this attempt. */
+    tools?: string[];
+    sources?: WorkActivityReference[];
+    workItem?: WorkActivityReference;
+    /** A prose paragraph under the banner. */
+    description?: string;
+}
+
+/** Why a waiting run waits: an approval gate, or a breakpoint on `step`. */
+declare interface WorkActivityPause {
+    reason: 'awaiting_approval' | 'paused_at_breakpoint';
+    /** The step's display label ("write"), when the source named one. */
+    step?: string;
+}
+
+declare interface WorkActivityPresentation {
+    efforts: WorkActivityEffort[];
+    details?: Record<string, WorkActivityNodeDetail>;
+    /** Only fresh, running operations in a live query; never inferred from a neighbor. */
+    activeEdgeIds: string[];
+    /** Operations whose latest attempt failed. Drawn in the danger tone with a label. */
+    failedEdgeIds?: string[];
+    /** Pill wording per canonical edge id — "generating", "failed". Overrides `label`. */
+    edgeLabels?: Record<string, string>;
+    /** Canonical edges retain identity even when their visual input arrow reverses. */
+    reversedEdgeIds?: string[];
+    mode: 'split' | 'full';
+    window: WorkActivityWindow;
+    bounds: {
+        start: number;
+        end: number;
+    };
+    /** v1 latest-state data must be described as recent work, not historical replay. */
+    temporalMode: 'recent' | 'as-of';
+    events?: Array<{
+        at: number;
+        count: number;
+    }>;
+    /**
+     * The wall clock, in UTC epoch milliseconds. The ruler stops here rather
+     * than at the day's end, so "Now" lands where now actually is. Omit and the
+     * strip follows the live window, or the browser clock when it is not.
+     */
+    now?: number;
+    view: WorkActivityView;
+    /**
+     * Where the selected node's detail pane goes.
+     * `column` (the default) makes it a sibling column of the canvas — the host's
+     * fourth pane, laid out by this component so the activity header spans both.
+     * `overlay` lays it over the canvas, which is right only when the pane is too
+     * narrow to split. `auto` picks between them from the measured width.
+     * `none` renders no pane here: the host places `WorkNodePane` in its own grid.
+     */
+    detailsPlacement?: 'auto' | 'column' | 'overlay' | 'none';
+    /** Panel title. When supplied the renderer draws its own header row. */
+    title?: string;
+    /** A second clause under the title — "Working now · Sharing with you". */
+    subtitle?: string;
+    /** Whether the panel currently occupies the conversation area. */
+    expanded?: boolean;
+    /** Offers the expand/restore control. The host owns the layout change. */
+    onExpand?: () => void;
+    /** Offers the pop-out control. The host owns the standalone route. */
+    onPopOut?: () => void;
+    /** Offers the close control. The host owns dismissal. */
+    onClose?: () => void;
+    /**
+     * Extra controls in the renderer's header row, before expand / pop-out /
+     * close — `WorkActivityHeader`'s `actions`. Drawn only with `title`.
+     */
+    headerActions?: ReactNode;
+    /**
+     * The header's quiet clause beside the activities control —
+     * `WorkActivityHeader`'s `viewNote`. Drawn only with `title`.
+     */
+    viewNote?: ReactNode;
+    /**
+     * Puts `WorkKindLegend` in the header row (after `headerActions`): every
+     * kind of work in `nodes` with its card chip and count, and the
+     * "N items · M links" count. Drawn only with `title`.
+     */
+    kindLegend?: boolean;
+    /**
+     * "← Earlier work". The host shifts the window earlier; without it the
+     * renderer steps the current window back by its own duration.
+     */
+    onEarlier?: () => void;
+    /**
+     * Work the snapshot held back under its node cap (realtime-examples NFR
+     * #221). Drawn as a collapsed "N more earlier" group on the canvas; the host
+     * pages the items in when the viewer expands it.
+     */
+    omitted?: WorkActivityOmitted;
+    onWindowChange: (window: WorkActivityWindow) => void;
+    onViewChange: (view: WorkActivityView) => void;
+    onFeedback?: (selection: Exclude<WorkGraphSelection, null>) => void;
+}
+
+/** A row that points at another authorized item — a source, a work item. */
+declare interface WorkActivityReference {
+    id: string;
+    title: string;
+    meta?: string;
+    /** Canonical target. Omitted when the viewer may see the row but not open it. */
+    selection?: Exclude<WorkGraphSelection, null>;
+}
+
+declare interface WorkActivityTranscriptSegment {
+    id: string;
+    /** Already formatted in the host's timezone — the pane does no clock maths. */
+    at: string;
+    speaker: string;
+    text: string;
+    anchorId?: string;
+}
+
+declare interface WorkActivityView {
+    focusedEffortId: string | null;
+    expandedSourceEfforts: string[];
+    overviewViewport?: WorkGraphViewport;
+    canvasInitialized?: boolean;
+}
+
+declare interface WorkActivityWindow {
+    start: number;
+    end: number;
+    following: boolean;
+}
+
+declare interface WorkArtifactRevision {
+    id: string;
+    label: string;
+    createdAt: string;
+    /** The host resolves protected preview content; the graph does not fetch URLs. */
+    preview?: ReactNode;
+    anchorId?: string;
+    anchorLabel?: string;
+    /** Navigable pages of this revision. Omit when the artifact has no pages. */
+    slides?: WorkArtifactSlide[];
+}
+
+declare interface WorkArtifactSlide {
+    id: string;
+    /** 1-based position the host prints as "Slide 4 of 12". */
+    index: number;
+    title: string;
+    /** The host resolves protected preview content; the graph does not fetch URLs. */
+    preview?: ReactNode;
+}
+
+/** A file the session produced, already authorized for this viewer. */
+declare interface WorkComputeArtifact {
+    id: string;
+    name: string;
+    sizeBytes?: number;
+    /** Already formatted by the host — the pane does no clock maths. */
+    updatedAt?: string;
+    /** Host-owned download through its own authorized route. */
+    onDownload?: () => void;
+}
+
+/**
+ * The compute session behind a work-graph node — an agent loop in a cloud box.
+ *
+ * Every field is host-resolved from `GET /api/agent-loops/:runId`. Nothing here
+ * is fetched, polled or inferred by the pane: it renders the gauges, the tail
+ * and the plan it is given, and says so honestly when a field is absent.
+ */
+declare interface WorkComputeDetail {
+    /** The box's operator-facing name — `auth-migration-3`. */
+    label: string;
+    runtime: 'agentcore-microvm' | 'local';
+    /** The initiative this box is charged to. Shown in the breadcrumb. */
+    project?: string;
+    status: WorkComputeStatus;
+    owner: {
+        id: string;
+        name: string;
+        avatarUrl?: string;
+    };
+    /** True when the viewer is not the owner — "Shared with you" vs "Yours". */
+    shared: boolean;
+    task: {
+        title: string;
+        description?: string;
+        /** Already formatted in the host's timezone — "09:15". */
+        startedAt?: string;
+        elapsedMs?: number;
+        /** What the work runs as — `devbox:task`. */
+        environment: string;
+    };
+    metrics: {
+        model: string;
+        costUsd?: number;
+        contextTokens: number;
+        contextBudgetTokens?: number;
+    };
+    /** The last few tail lines, for the pre-shell digest. */
+    terminalPreview: {
+        lines: WorkComputeTerminalLine[];
+        running: boolean;
+    };
+    /** The plan, as the planner produced it. */
+    progress: WorkComputeStep[];
+    artifacts: WorkComputeArtifact[];
+    workItem?: {
+        key: string;
+        status: string;
+        title: string;
+        tags: string[];
+        onOpen?: () => void;
+    };
+    events: WorkComputeEvent[];
+    /**
+     * The box behind the loop. Present = a Shell tab exists. `shellUrl` is minted
+     * on demand by the host, so its absence is a button, not an error.
+     */
+    shell?: {
+        sessionId: string;
+        shellUrl?: string;
+    };
+    /** Milliseconds until the reaper stops this box, when the host knows. */
+    stopsInMs?: number;
+    /** Denominator for the expiry meter. Defaults to the compute surface's hour. */
+    idleWindowMs?: number;
+    /** Honest state — "Mock runtime", "Planner unavailable · single step". */
+    notice?: string;
+    /** Primary action. Mints the shell URL; the pane switches to the Shell tab. */
+    onOpenShell?: () => void;
+    /** Pops the live tail out of the pane. */
+    onOpenInNew?: () => void;
+    /** Hands the whole session to the Computer Lab surface. */
+    onOpenLab?: () => void;
+    /** Rows of the `…` overflow menu beside the primary action. */
+    moreActions?: WorkActivityPaneAction[];
+}
+
+/** One frame off the session tail. Twin of `LabEvent`. */
+declare interface WorkComputeEvent {
+    id: string;
+    at: string;
+    kind: 'command' | 'text' | 'tool' | 'result' | 'error' | 'status' | 'iteration';
+    text: string;
+    /** Long form — a tool's arguments and output. Collapsed behind a disclosure. */
+    detail?: string;
+    /** True when the runtime that produced this frame was a mock. Always shown. */
+    mock?: boolean;
+}
+
+/**
+ * Where a compute session is.
+ *
+ * Deliberately a structural TWIN of `LabStatus` in `social/ChatLabShell`
+ * rather than an import of it: the same host value must satisfy both, but the
+ * graph entry taking a type dependency on the chat entry would drag the chat
+ * module graph into `dist/graph.d.ts` for a union of eight strings. Identical
+ * unions are mutually assignable, so a host passes one value to both with no
+ * cast; keep the two lists in step.
+ */
+declare type WorkComputeStatus = 'planning' | 'starting' | 'running' | 'waiting' | 'done' | 'failed' | 'stopped' | 'budget';
+
+/** One planned step of the loop. Twin of `LabStep`, plus a duration. */
+declare interface WorkComputeStep {
+    id: string;
+    title: string;
+    kind: string;
+    status: 'pending' | 'running' | 'done' | 'failed' | 'skipped';
+    iterations?: number;
+    contextTokens?: number;
+    /** Wall clock this step has taken, or took. Rendered as "2m 14s". */
+    elapsedMs?: number;
+}
+
+/**
+ * One line of the terminal digest.
+ *
+ * The glyph is a KIND, not a character, so the pane owns the alphabet: a host
+ * that sent `▶` directly would be drawing the terminal rather than describing
+ * what is in it, and could not be restyled.
+ */
+declare interface WorkComputeTerminalLine {
+    glyph: 'prompt' | 'step' | 'done' | 'pending' | 'text';
+    text: string;
+}
+
+declare interface WorkflowStep {
+    step: number;
+    label: string;
+    done: boolean;
+    active: boolean;
+    /**
+     * Supporting timestamp or explanation, below the milestone label. In the
+     * vertical orientation this is the step's one fact ("Mina (proposed)").
+     */
+    description?: ReactNode;
+    /**
+     * Vertical orientation only (2.512.0): the step's next move — a library
+     * `Button` — drawn under its label while the step is `active`. Ignored on
+     * other steps and in the horizontal strip.
+     */
+    action?: ReactNode;
+    /** Terminal outcomes must not look like successful completion. */
+    outcome?: 'failed' | 'cancelled';
+}
+
+declare type WorkGraphCapability = 'message' | 'view-document' | 'edit-document' | 'join-conversation' | 'join-meeting' | 'observe-terminal' | 'control-terminal' | 'view-transcript' | 'view-run' | 'dispatch-run';
+
+declare type WorkGraphDisclosure = 'existence' | 'summary' | 'details';
+
+declare interface WorkGraphEdgeData {
+    id: string;
+    fromId: string;
+    toId: string;
+    relation: WorkGraphRelation;
+    label?: string;
+    status: WorkGraphStatus;
+    disclosure: WorkGraphDisclosure;
+    startedAt?: string;
+    updatedAt: string;
+    endedAt?: string;
+    capabilities: WorkGraphCapability[];
+}
+
+declare interface WorkGraphNodeData {
+    id: string;
+    kind: WorkGraphNodeKind;
+    title: string;
+    description?: string;
+    status: WorkGraphStatus;
+    disclosure: WorkGraphDisclosure;
+    startedAt?: string;
+    updatedAt: string;
+    endedAt?: string;
+    capabilities: WorkGraphCapability[];
+    avatarUrl?: string;
+    locked?: boolean;
+}
+
+/** Presentation-only work graph contracts. Hosts pass viewer-sanitized data. */
+declare type WorkGraphNodeKind = 'project' | 'terminal' | 'agent' | 'run' | 'document' | 'change' | 'conversation' | 'meeting' | 'transcript' | 'task';
+
+declare interface WorkGraphProps {
+    nodes: WorkGraphNodeData[];
+    edges: WorkGraphEdgeData[];
+    selection: WorkGraphSelection;
+    viewport: WorkGraphViewport;
+    /** Calendar day shown by the host, in YYYY-MM-DD form. */
+    day?: string;
+    /** IANA timezone used to place activity within that day. */
+    timezone?: string;
+    sources?: WorkGraphSourceState[];
+    state?: 'loading' | 'ready' | 'empty' | 'partial' | 'error';
+    errorMessage?: string;
+    className?: string;
+    /** Authorized effort/revision presentation. Omit for the existing v1 view. */
+    activity?: WorkActivityPresentation;
+    /** Activity-canvas backdrop. Defaults to `'ripple-grid'`. */
+    background?: WorkActivityCanvasBackground;
+    /**
+     * How many activity graphs the canvas may draw at once. Defaults to
+     * `WORK_ACTIVITY_DEFAULT_MAX_EFFORTS` (2); `WORK_ACTIVITY_ALL_EFFORTS` (0) or
+     * a non-finite value means no cap. The newest efforts win, the effort holding
+     * the current selection is never dropped, and the ones that are dropped are
+     * still counted in the header and footer.
+     */
+    maxEfforts?: number;
+    /**
+     * Makes the cap the host's to own. Without it the panel keeps the value in
+     * its own state and `maxEfforts` is only the starting point, so a host gets
+     * the control working by passing nothing at all.
+     */
+    onMaxEffortsChange?: (maxEfforts: number) => void;
+    onSelectionChange: (selection: WorkGraphSelection) => void;
+    onViewportChange: (viewport: WorkGraphViewport) => void;
+    onRetry?: () => void;
+    onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+    onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+    onRequestCollaboration?: (selection: Exclude<WorkGraphSelection, null>, capability: WorkGraphCapability) => void;
+}
+
+declare type WorkGraphRelation = 'works-on' | 'runs-in' | 'operates-on' | 'produced' | 'edited' | 'attended' | 'discussed' | 'derived-from';
+
+declare type WorkGraphSelection = {
+    kind: 'node';
+    id: string;
+    revisionId?: string;
+    anchorId?: string;
+} | {
+    kind: 'edge';
+    id: string;
+} | null;
+
+declare interface WorkGraphSourceState {
+    source: 'cloud-compute' | 'local-compute' | 'document' | 'pipeline' | 'conversation' | 'meeting';
+    health: 'available' | 'delayed' | 'disconnected' | 'authorization-unavailable';
+    checkedAt: string;
+    message?: string;
+}
+
+declare type WorkGraphStatus = 'idle' | 'running' | 'waiting' | 'completed' | 'error' | 'stopped' | 'stale';
+
+declare interface WorkGraphViewport {
+    x: number;
+    y: number;
+    zoom: number;
+}
 
 export declare function WrappedActivityPanel({ activity, visibleCount, rotateMs, staggerMs, kindColors, className, }: WrappedActivityPanelProps): JSX.Element;
 
@@ -4641,6 +5332,51 @@ export declare interface WrappedNotificationCenterProps extends Omit<Notificatio
     onItemClick?: (item: NotificationItem, entry: RMNotificationEntry | undefined) => void;
 }
 
+export declare function WrappedPipelineRun({ status, title, subtitle, facts, stepTimes, steps: givenSteps, progressTitle, progressDescription, progress, remainingMs, onRefresh, onCancel, headerAction, onOpenRun, picture, log, compact, subject, className, 'data-testid': testId, }: WrappedPipelineRunProps): JSX.Element;
+
+export declare interface WrappedPipelineRunProps {
+    /** `usePipelineRunStatus(runs, opts)(runId)`. Undefined while the first snapshot loads. */
+    status: RMPipelineRunStatus | undefined;
+    /** The stage: "Mesh generation (Meshy)". */
+    title: string;
+    /** A quieter line under the title ("Toby · v1.2"). */
+    subtitle?: string;
+    /** The facts row: Job ID, Model, Preset, Topology, Created. */
+    facts?: KeyValueItem[];
+    /** Times beside the steps, by step id ("9:02"). */
+    stepTimes?: WrappedPipelineRunStepTime;
+    /** The step list when the status carries none (a provider job with fixed stages). */
+    steps?: RMPipelineRunStepDetail[];
+    /** The progress panel's heading. Default: the status's `stepLabel`, else the title. */
+    progressTitle?: string;
+    /** The progress panel's sentence: "Meshy is generating a stylized mesh … You can continue working while this runs." */
+    progressDescription?: ReactNode;
+    /** 0–100 when the provider reports it. */
+    progress?: number;
+    /** The provider's estimate of the time left. */
+    remainingMs?: number;
+    onRefresh?: () => void;
+    /** Cancel job, confirmed in place. A returned promise keeps it busy. */
+    onCancel?: () => void | Promise<unknown>;
+    /** The header's one action: "Open in Meshy ↗" (a link Button) or "Open run". */
+    headerAction?: ReactNode;
+    /** The compact form's "Open run". */
+    onOpenRun?: () => void;
+    /** The picture the run is drawing or has drawn (`SubjectHero`, `ImageCompare`). */
+    picture?: ReactNode;
+    /** The run's log (`ExecutorLog` from `@connorhoehn/ui-components/pipelines`). */
+    log?: ReactNode;
+    /** One line, for a narrow inspector: "<subject> · step 2 of 3" with Cancel and Open run. */
+    compact?: boolean;
+    /** The compact line's lead: "Drawing Mina". Default: the title. */
+    subject?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** A step's time beside its label ("9:02"), keyed by step id. */
+export declare type WrappedPipelineRunStepTime = Record<string, string>;
+
 export declare function WrappedPresencePanel({ presence, currentClientId, perConnection, wrapWithNetworkShim, }: WrappedPresencePanelProps): JSX.Element;
 
 export declare interface WrappedPresencePanelProps {
@@ -4717,6 +5453,30 @@ export declare interface WrappedStreamStageProps extends Omit<StreamStageProps, 
         live: boolean;
         error: string | null;
     }) => void;
+}
+
+export declare function WrappedWorkGraph({ workGraph, canvas: Canvas, selection: controlled, onSelectionChange, onOpen, onReference, onRequestCollaboration, heading, statusLabelOf, className, 'data-testid': testId, }: WrappedWorkGraphProps): JSX.Element;
+
+/** What an injected canvas receives: the `/graph` `WorkGraph`'s own props. */
+export declare type WrappedWorkGraphCanvasProps = WorkGraphProps;
+
+export declare interface WrappedWorkGraphProps {
+    /** Return value of `useWorkGraph({ scope, transport })` from realtime-modules. */
+    workGraph: RMUseWorkGraphReturn;
+    /** The canvas: pass `WorkGraph` from `@connorhoehn/ui-components/graph`. Omitted: the list and the inspector. */
+    canvas?: ComponentType<WrappedWorkGraphCanvasProps>;
+    /** Controlled selection. Omit to let the component own it. */
+    selection?: WorkGraphSelection;
+    onSelectionChange?: (selection: WorkGraphSelection) => void;
+    onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+    onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+    onRequestCollaboration?: (selection: Exclude<WorkGraphSelection, null>, capability: WorkGraphCapability) => void;
+    /** The list's heading. Default "Work". */
+    heading?: string;
+    /** A status word for a node in place of its raw status. */
+    statusLabelOf?: (node: WorkGraphNodeData) => string | undefined;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export { }

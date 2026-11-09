@@ -83,3 +83,13 @@ describe('ConfirmButton', () => {
     expect(screen.getByRole('button', { name: 'Elsewhere' })).toHaveFocus();
   });
 });
+
+describe('ConfirmButton actionKind', () => {
+  it('emits data-action-kind on the button and on the question group', async () => {
+    const user = userEvent.setup();
+    render(<ConfirmButton label="Approve" question="Approve it?" actionKind="approve" onConfirm={() => {}} />);
+    expect(screen.getByRole('button', { name: 'Approve' })).toHaveAttribute('data-action-kind', 'approve');
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+    expect(screen.getByRole('group', { name: 'Approve it?' })).toHaveAttribute('data-action-kind', 'approve');
+  });
+});

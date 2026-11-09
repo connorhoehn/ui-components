@@ -104,6 +104,14 @@ describe('suggestionsVisible', () => {
     expect(onSuggestion).toHaveBeenCalledWith('Set up voices');
   });
 
+  it('chips are on the 12px control step (2.515.0, was 11px)', () => {
+    render(<RichChatComposer {...base} layout="wide" suggestions={suggestions} onSuggestion={() => {}} suggestionsVisible="empty" />);
+    const chip = within(screen.getByTestId('composer-suggestions')).getByText('Approve');
+    expect(chip).toHaveClass('text-xs');
+    expect(chip.className).not.toContain('text-[11px]');
+    expect(chip).toHaveAttribute('data-ui-chip', 'suggestion');
+  });
+
   it('empty: still never on the folded idle row', () => {
     render(<RichChatComposer {...base} layout="wide" collapseWhenIdle suggestions={suggestions} onSuggestion={() => {}} suggestionsVisible="empty" />);
     expect(screen.queryByTestId('composer-suggestions')).toBeNull();

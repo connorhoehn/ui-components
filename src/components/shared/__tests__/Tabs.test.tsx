@@ -95,6 +95,13 @@ describe('Tabs', () => {
     expect(beta.textContent).toContain('3');
   });
 
+  it('the count badge is on the 12px step (2.515.0, was 10px)', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} />);
+    const badge = Array.from(screen.getByRole('tab', { name: /Beta/ }).querySelectorAll('span')).find((s) => s.textContent === '3')!;
+    expect(badge).toHaveClass('text-xs');
+    expect(badge.className).not.toContain('text-[10px]');
+  });
+
   it('sets tabIndex 0 on active tab and -1 on inactive', () => {
     render(<Tabs items={ITEMS} value="b" onValueChange={() => {}} />);
     const tabs = screen.getAllByRole('tab');
