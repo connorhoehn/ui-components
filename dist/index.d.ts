@@ -6535,7 +6535,9 @@ export declare interface ComposerSuggestion {
 }
 
 /** The full-width composer shelf. Owns backdrop, insets and readable width.
- * Nested composers reuse their containing shelf rather than painting twice. */
+ * Nested composers reuse their containing shelf rather than painting twice.
+ * `compact` pads 8px above and below, 4px while its composer is folded
+ * (`[data-composer-fold]`: the idle row or the explicit collapse). */
 export declare function ComposerSurface({ children, className, compact, ...rest }: HTMLAttributes<HTMLDivElement> & {
     compact?: boolean;
 }): JSX.Element;
@@ -20989,7 +20991,10 @@ declare interface RichChatComposerProps {
      * height (a slide stage); the dock stays pinned and grows upward. The idle
      * row is plain (`bg-surface`) even in Agent/Terminal: the console sky comes
      * with the caret, unless an enclosing console column is already painting
-     * one, in which case the row keeps that tint. Default off.
+     * one, in which case the row keeps that tint. The idle row carries
+     * `data-composer-fold="idle"` (and `data-collapsed="true"`). Escape in an
+     * empty prompt with no menu open releases the caret, so the row folds
+     * (2.515.4). Default off.
      */
     collapseWhenIdle?: boolean;
     /**

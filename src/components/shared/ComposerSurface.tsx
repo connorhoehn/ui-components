@@ -3,7 +3,9 @@ import { cn } from '../../lib/cn';
 import { useDensity } from './Density';
 const SurfaceContext = createContext(false);
 /** The full-width composer shelf. Owns backdrop, insets and readable width.
- * Nested composers reuse their containing shelf rather than painting twice. */
+ * Nested composers reuse their containing shelf rather than painting twice.
+ * `compact` pads 8px above and below, 4px while its composer is folded
+ * (`[data-composer-fold]`: the idle row or the explicit collapse). */
 export function ComposerSurface({ children, className, compact, ...rest }: HTMLAttributes<HTMLDivElement> & { compact?: boolean }) {
   const nested = useContext(SurfaceContext);
   const density = useDensity();
