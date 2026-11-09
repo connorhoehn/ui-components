@@ -6992,6 +6992,8 @@ export declare interface ContextComposerProps {
     modeHints?: RichChatComposerProps['modeHints'];
     hints?: readonly ComposerHint[];
     submitLabel?: RichChatComposerProps['submitLabel'];
+    /** Why Send is off, said on Send and under the input (`RichChatComposerProps.submitDisabledReason`, 2.515.6). */
+    submitDisabledReason?: RichChatComposerProps['submitDisabledReason'];
     /** The context chip. `false` hides it; a string relabels it. Default: the context's. */
     contextChip?: boolean | string;
     /** Makes the context chip removable. */
@@ -20911,6 +20913,15 @@ declare interface RichChatComposerProps {
      * in Terminal.
      */
     submitLabel?: string | Partial<Record<ComposerMode, string>>;
+    /**
+     * Why Send is off (2.515.6): a host-known block — a read-only destination,
+     * no destination chosen, the socket down, a page with no commands. Present,
+     * Send is disabled whatever the draft holds; the reason is Send's tooltip
+     * and accessible description (`aria-describedby`) and a one-line hint under
+     * the input, drawn at every density and in the idle row too. An empty draft
+     * is not a reason: leave this unset and Send stays quietly off until typed.
+     */
+    submitDisabledReason?: string | null;
     /**
      * Corner radius. Unset, the composer is rounded by its OWN default (12px),
      * never by the host's `--radius-*` tokens — a host with square corners still

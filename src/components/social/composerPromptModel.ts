@@ -175,6 +175,15 @@ export interface ComposerPrompt {
   /** Shown on the card instead of answers: the reader may look but not decide. */
   readOnlyReason?: string;
   /**
+   * Why this prompt cannot be answered right now (2.515.6), when the reader
+   * still should see how it would be answered: its answer field, its options
+   * and Answer stay drawn but off, each carrying this as its tooltip and
+   * accessible description, with one visible line under the card. Keys and
+   * the composer's Send refuse it like `readOnlyReason`. An empty answer box
+   * is not a reason; Answer stays quietly off until something is typed.
+   */
+  disabledReason?: string;
+  /**
    * Where the card's keypad listens (since 2.515.2). `deck` (default): its
    * keys act only while focus is in the deck or the composer's input. `page`:
    * while this card is open (shown, not collapsed), an option key (1–9, or
@@ -408,7 +417,7 @@ export function deckKeyAction(
   const pager = quiet && !event.altKey && ((!typed && !takesDirection(prompt)) || inDeck);
   if (pager && (event.key === 'j' || event.key === 'J')) return { type: 'page', delta: 1 };
   if (pager && (event.key === 'k' || event.key === 'K')) return { type: 'page', delta: -1 };
-  if (busy || prompt.readOnlyReason) return null;
+  if (busy || prompt.readOnlyReason || prompt.disabledReason) return null;
   const options = promptOptions(prompt);
   if (event.key === 'Enter' && quiet && !inDeck) {
     const fallback = defaultOption(prompt);

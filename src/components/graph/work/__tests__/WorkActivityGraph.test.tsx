@@ -116,6 +116,16 @@ describe('Active Now composition', () => {
     expect(screen.getByTestId('work-activity-footer')).toHaveTextContent('2 parallel activities · Newest work first');
     fireEvent.click(screen.getByRole('button', { name: '← Earlier work' }));
     expect(onEarlier).toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '← Earlier work' })).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('"Earlier work" at the start of its window is off and says why (2.515.6)', () => {
+    const initial = props();
+    render(<WorkGraph {...initial} activity={{ ...initial.activity!, window: { start, end, following: true } }} />);
+    const earlier = screen.getByRole('button', { name: '← Earlier work' });
+    expect(earlier).toBeDisabled();
+    expect(earlier).toHaveAttribute('title', 'No earlier work in this window');
+    expect(document.getElementById(earlier.getAttribute('aria-describedby')!)).toHaveTextContent('No earlier work in this window');
   });
 
   it('labels only the operations the host named, and marks a failed one', () => {

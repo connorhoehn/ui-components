@@ -182,6 +182,8 @@ export interface ContextComposerProps {
   modeHints?: RichChatComposerProps['modeHints'];
   hints?: readonly ComposerHint[];
   submitLabel?: RichChatComposerProps['submitLabel'];
+  /** Why Send is off, said on Send and under the input (`RichChatComposerProps.submitDisabledReason`, 2.515.6). */
+  submitDisabledReason?: RichChatComposerProps['submitDisabledReason'];
 
   // ── context chip & references ──
   /** The context chip. `false` hides it; a string relabels it. Default: the context's. */
@@ -432,6 +434,7 @@ export function ContextComposerBase({
   modeHints,
   hints,
   submitLabel,
+  submitDisabledReason,
   contextChip = true,
   onRemoveContext,
   references,
@@ -849,6 +852,7 @@ export function ContextComposerBase({
                 moreActions={actionSections.length ? actionSections : undefined}
                 moreActionsLabel={moreActionsLabel}
                 submitLabel={workflowInDraft ? workflowSubmitLabel : submitLabel}
+                {...(submitDisabledReason ? { submitDisabledReason } : {})}
                 maxInputHeight={maxInputHeight}
                 toolbarExtras={extras}
                 submitLead={submitLead}

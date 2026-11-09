@@ -225,7 +225,7 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
   }, [firstId, pending]);
 
   const answer = useCallback(async (prompt: ComposerPrompt, value: ComposerPromptAnswer): Promise<boolean> => {
-    if (busyRef.current || prompt.readOnlyReason) return false;
+    if (busyRef.current || prompt.readOnlyReason || prompt.disabledReason) return false;
     busyRef.current = true;
     setBusyId(prompt.id);
     setErrors((prev) => { if (!(prompt.id in prev)) return prev; const { [prompt.id]: _gone, ...rest } = prev; return rest; });
@@ -337,7 +337,7 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
   const answerDirection = useCallback(async (raw: string) => {
     const prompt = active;
     const text = raw.trim();
-    if (!prompt || collapsed || !text || prompt.readOnlyReason || (prompt.kind !== 'choice' && prompt.kind !== 'confirm')) return false;
+    if (!prompt || collapsed || !text || prompt.readOnlyReason || prompt.disabledReason || (prompt.kind !== 'choice' && prompt.kind !== 'confirm')) return false;
     if (!prompt.onDirection) {
       const fallback = defaultOption(prompt);
       const message = fallback ? `Choose an answer, or press Enter on an empty box for ${fallback.label}.` : 'Choose one of the answers.';
@@ -414,6 +414,13 @@ export interface ComposerPromptDeckProps {
   /** External answer input, when embedded above an existing editor. Without one, text/number prompts own a plain answer field; choices own focus. */
   input?: ComposerPromptInput | null;
   /**
+   * Why no prompt in this deck can be answered right now (2.515.6), over each
+   * prompt's own `disabledReason`: the answers and Answer stay drawn but off,
+   * with the reason as their tooltip, their `aria-describedby` and one line
+   * under the card. Paging, Hide and Back still work.
+   */
+  submitDisabledReason?: string | null;
+  /**
    * `card` (default): a bordered card of its own, for a composer's `above`.
    * `inset`: the composer card's first section (`ConversationComposer
    * prompts`, `RichChatComposer header`) — no border of its own, a hairline
@@ -457,7 +464,7 @@ function modKey(): string {
 // inside itself, and the content column above keeps the rest.
 const DECK_MAX = 'max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain';
 
-export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = null, variant = 'card', presentation: presentationProp, className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
+export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = null, submitDisabledReason, variant = 'card', presentation: presentationProp, className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
   const inset = variant === 'inset';
   const enclosing = useContext(ComposerPresentationContext);
   const presentation: ComposerPresentation = presentationProp ?? enclosing ?? 'card';
@@ -472,7 +479,11 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
 
   const answerText = active?.inputDraft?.value ?? (draft.id === active?.id ? draft.text : '');
   const inlineAnswer = !input && deck.typed && !active?.readOnlyReason;
+  // Why the answers are off (2.515.6): the deck's reason, else the prompt's.
+  const blockedBy = active && !active.readOnlyReason ? (submitDisabledReason?.trim() || active.disabledReason?.trim() || null) : null;
+  const reasonId = `${baseId}-disabled-reason`;
   const submitAnswer = async () => {
+    if (blockedBy) return;
     const answeredId = active?.id;
     if (await deck.answerTyped(answerText)) {
       setDraft(current => current.id === answeredId ? { id: '', text: '' } : current);
@@ -481,8 +492,8 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
 
   // ── keys ── captured at the document so they reach the deck before the
   // editor's own Enter / Escape, but only from the deck or its composer input.
-  const state = useRef({ deck, input });
-  state.current = { deck, input };
+  const state = useRef({ deck, input, blockedBy });
+  state.current = { deck, input, blockedBy };
   // A new question puts the caret where its keyboard hints apply. Do not
   // interrupt another editor or take focus from a compose prompt's own flow.
   useEffect(() => {
@@ -501,7 +512,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing || event.repeat) return;
-      const { deck: d, input: i } = state.current;
+      const { deck: d, input: i, blockedBy: blocked } = state.current;
       const target = event.target as Node | null;
       const inDeck = !!root.current && !!target && root.current.contains(target);
       const inInput = !!i && i.contains(target);
@@ -515,7 +526,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
           ? { prompt: d.active, collapsed: d.collapsed, inputEmpty: true, inDeck: true, busy: d.busy, canBack: false }
           : { prompt: d.active, collapsed: d.collapsed, inputEmpty: i ? i.isEmpty() : !answerRef.current?.value.trim(), inDeck: inDeck && !inAnswer, busy: d.busy, canBack: !!d.backControl && !d.backControl.disabledReason },
       );
-      if (!action || (fromPage && action.type !== 'pick')) return;
+      if (!action || (fromPage && action.type !== 'pick') || (blocked && action.type === 'pick')) return;
       event.preventDefault();
       event.stopPropagation();
       if (action.type === 'page') d.page(action.delta);
@@ -690,10 +701,10 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
                   <Button
                     size="sm"
                     variant={option.emphasis === 'primary' ? 'primary' : option.emphasis === 'danger' ? 'danger' : 'secondary'}
-                    disabled={busy || !!option.disabledReason}
-                    title={option.disabledReason ?? option.hint}
+                    disabled={busy || !!option.disabledReason || !!blockedBy}
+                    title={option.disabledReason ?? blockedBy ?? option.hint}
                     aria-keyshortcuts={shortcut}
-                    aria-describedby={option.hint ? `${baseId}-hint-${i}` : undefined}
+                    aria-describedby={[option.hint && `${baseId}-hint-${i}`, blockedBy && reasonId].filter(Boolean).join(' ') || undefined}
                     onClick={() => { void deck.pick(option.id).then((ok) => { if (ok) input?.focus(); }); }}
                     data-composer-prompt-option={option.id}
                     data-default={fallback?.id === option.id || undefined}
@@ -712,19 +723,25 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
         {inlineAnswer && (
           <Stack gap="sm" className="min-w-0">
             <Textarea ref={answerRef} aria-label={active.title} placeholder={active.placeholder ?? 'Your answer'}
-              value={answerText} disabled={busy} autoResize minRows={active.kind === 'number' ? 1 : 2}
+              value={answerText} disabled={busy || !!blockedBy} autoResize minRows={active.kind === 'number' ? 1 : 2}
               inputMode={active.kind === 'number' ? 'decimal' : undefined}
               onChange={(event) => active.inputDraft ? active.inputDraft.onChange(event.target.value) : setDraft({ id: active.id, text: event.target.value })}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !event.repeat) {
-                  event.preventDefault(); if (!busy) void submitAnswer();
+                  event.preventDefault(); if (!busy && !blockedBy) void submitAnswer();
                 }
               }} data-testid={`${testId}-answer`} />
-            <Button variant="primary" size="sm" className="self-end" disabled={busy || !answerText.trim()}
-              onClick={() => { void submitAnswer(); }} data-testid={`${testId}-submit`}>Answer</Button>
+            {/* The reason rides Answer's own row, so a docked card grows no taller. */}
+            <Inline gap="sm" align="center" justify={blockedBy ? 'between' : 'end'} wrap={false} className="min-w-0">
+              {blockedBy && <Text as="p" size="xs" tone="secondary" id={reasonId} title={blockedBy} className="min-w-0" data-testid={`${testId}-disabled-reason`}><span className="truncate">{blockedBy}</span></Text>}
+              <Button variant="primary" size="sm" className="shrink-0" disabled={busy || !!blockedBy || !answerText.trim()}
+                {...(blockedBy ? { title: blockedBy, 'aria-describedby': reasonId } : {})}
+                onClick={() => { void submitAnswer(); }} data-testid={`${testId}-submit`}>Answer</Button>
+            </Inline>
           </Stack>
         )}
 
+        {blockedBy && !compose && !inlineAnswer && <Text as="p" size="xs" tone="secondary" wrap id={reasonId} className="min-w-0" data-testid={`${testId}-disabled-reason`}>{blockedBy}</Text>}
         {error && !compose && <Text as="p" size="xs" wrap role="alert" className="text-danger-fg" data-testid={`${testId}-error`}>{error}</Text>}
         {busy && !compose && <Text as="p" size="xs" tone="secondary" role="status" data-testid={`${testId}-busy`}>Working…</Text>}
         {!plain && !active.readOnlyReason && !compose && <Text as="p" size="xs" tone="tertiary" wrap className="min-w-0" data-testid={`${testId}-keys`}>{keyHint}</Text>}

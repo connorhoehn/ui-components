@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../../lib/cn';
 import { ChatSidePanelFrame } from '../../social/ChatSidePanelRegistry';
 import { Button } from '../../ui/Button';
@@ -9,7 +9,8 @@ import { WorkEntityList } from './WorkEntityList';
 import { WorkInspector } from './WorkInspector';
 import { WorkKindLegend } from './WorkKindLegend';
 import { WorkNodePane } from './WorkNodePane';
-import { WorkTimeWindow } from './WorkTimeWindow';
+import { WorkTimeWindow, WORK_WINDOW_REASONS, disabledReasonProps } from './WorkTimeWindow';
+import { Text } from '../../shared/Text';
 import { useCanvasPaneInset } from '../../layout/canvasPaneInset';
 import { workPauseLabel } from './WorkStatus';
 import type { WorkActivityPresentation, WorkEntityListGroup, WorkGraphNodeData, WorkGraphProps } from './types';
@@ -137,6 +138,9 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
   // "Now" end and the footer's "Earlier work"). The canvas already pans the
   // selection clear of it; the timeline and the footer stop short of it.
   const paneInset = useCanvasPaneInset().right;
+  // "Earlier work" says why it is off, from the range it steps (2.515.6).
+  const earlierReason = range.start <= bounds.start ? WORK_WINDOW_REASONS.earliest : null;
+  const earlierReasonId = `${useId()}-earlier-reason`;
   const clearOfPane = paneInset > 0 ? { paddingRight: paneInset } : undefined;
   const paneClass = overlay ? 'absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg' : 'w-[340px] max-w-[45%] shrink-0';
   return <section data-ui-part="" ref={root} aria-label="Shared work graph" className={cn('flex h-full min-h-0 min-w-0 flex-col bg-surface', props.className)} onKeyDown={(event) => { if (event.key === 'Escape' && selection) { event.stopPropagation(); close(); } }}>
@@ -159,7 +163,8 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
             : <span>{shownEffortCount < activity.efforts.length ? `Showing ${shownEffortCount} of ${activity.efforts.length} parallel activities` : `${activity.efforts.length} parallel activities`} · Newest work first</span>}
           <span className="ml-auto flex items-center gap-3">
             {!listInRegion && <WorkActivityLegend live={activity.window.following} />}
-            <Button size="sm" variant="ghost" disabled={range.start <= bounds.start} onClick={earlier}>← Earlier work</Button>
+            <Button size="sm" variant="ghost" disabled={!!earlierReason} {...disabledReasonProps(earlierReason, earlierReasonId)} onClick={earlier}>← Earlier work</Button>
+            {earlierReason && <Text id={earlierReasonId} className="sr-only" data-testid="work-activity-earlier-reason">{earlierReason}</Text>}
           </span>
         </div>
       </div>

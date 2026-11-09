@@ -102,7 +102,7 @@ import { n as cp, t as lp } from "./QuoteBlock-Dks53Idi.js";
 import { t as up } from "./formatBytes-05ivRSJY.js";
 import { t as dp } from "./ReactionsOverlay-XR_TNH6f.js";
 import { B as fp, C as pp, D as mp, E as hp, F as gp, I as _p, L as vp, M as yp, N as bp, O as xp, P as Sp, R as Cp, S as wp, T as Tp, V as Ep, _ as Dp, a as Op, b as kp, c as Ap, d as jp, f as Mp, g as Np, h as Pp, i as Fp, j as Ip, l as Lp, m as Rp, n as zp, o as Bp, p as Vp, r as Hp, s as Up, t as Wp, u as Gp, v as Kp, w as qp, x as Jp, y as Yp, z as Xp } from "./renderers-Cn-r5smL.js";
-import { A as Zp, B as Qp, C as $p, F as em, I as tm, L as nm, M as rm, N as im, O as am, P as om, R as sm, h as cm, i as lm, j as um, k as dm, n as fm, q as pm, r as mm, t as hm, z as gm } from "./ProposedEditStrip-B0cSnsVR.js";
+import { A as Zp, B as Qp, C as $p, F as em, I as tm, L as nm, M as rm, N as im, O as am, P as om, R as sm, h as cm, i as lm, j as um, k as dm, n as fm, q as pm, r as mm, t as hm, z as gm } from "./ProposedEditStrip-DG4zCzMC.js";
 import { n as _m, r as vm, t as ym } from "./EventStreamContext-CLzG8O5_.js";
 import { B as bm, G as xm, I as Sm, K as Cm, L as wm, O as Tm, a as Em, b as Dm, c as Om, d as km, i as Am, l as jm, n as Mm, o as Nm, p as Pm, r as Fm, s as Im, t as Lm, v as Rm, z as zm } from "./JsonPathInput-B7l3Ihg9.js";
 import { n as Bm, t as Vm } from "./ObservabilityContext-DpoDrm3T.js";
@@ -114,7 +114,7 @@ import { A as N_, B as P_, C as F_, D as I_, E as L_, F as R_, G as z_, H as B_,
 import { n as jv, r as Mv, t as Nv } from "./RecordingConsentNotice-_3W1tuuu.js";
 import { t as Pv } from "./InlineEditableText-CKjRokmb.js";
 import { A as Fv, C as Iv, D as Lv, E as Rv, O as zv, S as Bv, T as Vv, _ as Hv, a as Uv, b as Wv, c as Gv, d as Kv, f as qv, g as Jv, h as Yv, i as Xv, k as Zv, l as Qv, m as $v, n as ey, o as ty, p as ny, r as ry, s as iy, t as ay, u as oy, v as sy, w as cy, x as ly, y as uy } from "./identity-DQNkyEWt.js";
-import { $ as dy, A as fy, At as py, B as my, Bt as hy, C as gy, Ct as _y, D as vy, Dt as yy, E as by, Et as xy, F as Sy, Ft as Cy, G as wy, H as Ty, I as Ey, It as Dy, J as Oy, K as ky, L as Ay, Lt as jy, M as My, Mt as Ny, N as Py, Nt as Fy, O as Iy, Ot as Ly, P as Ry, Pt as zy, Q as By, R as Vy, Rt as Hy, S as Uy, St as Wy, T as Gy, Tt as Ky, U as qy, V as Jy, W as Yy, X as Xy, Y as Zy, Z as Qy, _ as $y, _t as eb, a as tb, at as nb, b as rb, bt as ib, c as ab, ct as ob, d as sb, dt as cb, et as lb, f as ub, ft as db, g as fb, gt as pb, h as mb, ht as hb, i as gb, it as _b, j as vb, jt as yb, k as bb, kt as xb, l as Sb, lt as Cb, m as wb, mt as Tb, n as Eb, nt as Db, o as K, ot as Ob, p as kb, pt as Ab, q as jb, r as Mb, rt as Nb, s as Pb, st as Fb, t as Ib, tt as Lb, u as Rb, ut as zb, v as Bb, vt as Vb, w as Hb, wt as Ub, x as Wb, xt as Gb, y as Kb, yt as qb, z as Jb, zt as Yb } from "./graph-DH4pLbY-.js";
+import { $ as dy, A as fy, At as py, B as my, Bt as hy, C as gy, Ct as _y, D as vy, Dt as yy, E as by, Et as xy, F as Sy, Ft as Cy, G as wy, H as Ty, I as Ey, It as Dy, J as Oy, K as ky, L as Ay, Lt as jy, M as My, Mt as Ny, N as Py, Nt as Fy, O as Iy, Ot as Ly, P as Ry, Pt as zy, Q as By, R as Vy, Rt as Hy, S as Uy, St as Wy, T as Gy, Tt as Ky, U as qy, V as Jy, W as Yy, X as Xy, Y as Zy, Z as Qy, _ as $y, _t as eb, a as tb, at as nb, b as rb, bt as ib, c as ab, ct as ob, d as sb, dt as cb, et as lb, f as ub, ft as db, g as fb, gt as pb, h as mb, ht as hb, i as gb, it as _b, j as vb, jt as yb, k as bb, kt as xb, l as Sb, lt as Cb, m as wb, mt as Tb, n as Eb, nt as Db, o as K, ot as Ob, p as kb, pt as Ab, q as jb, r as Mb, rt as Nb, s as Pb, st as Fb, t as Ib, tt as Lb, u as Rb, ut as zb, v as Bb, vt as Vb, w as Hb, wt as Ub, x as Wb, xt as Gb, y as Kb, yt as qb, z as Jb, zt as Yb } from "./graph-BDDLSNCk.js";
 import { n as Xb, t as Zb } from "./WorkInspector-BT4Mx_Ul.js";
 import { a as Qb, i as $b, n as ex, r as tx, t as nx } from "./composerContext-BLn1-Nao.js";
 import { Suspense as q, createContext as rx, lazy as ix, useCallback as J, useContext as ax, useEffect as Y, useMemo as ox, useRef as X, useState as Z } from "react";
@@ -1525,7 +1525,7 @@ async function eS(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var tS = ix(() => import("./AgentComposerDock-qUH9Z6_8.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var tS = ix(() => import("./AgentComposerDock-DQd6KjcL.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function nS(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,
@@ -1534,7 +1534,7 @@ function nS(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var rS = ix(() => import("./ContextComposer-1Q84zeyb.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var rS = ix(() => import("./ContextComposer-C8XM2U1t.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function iS(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,

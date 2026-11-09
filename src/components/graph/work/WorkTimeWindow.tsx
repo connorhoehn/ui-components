@@ -5,6 +5,8 @@ import { IconButton } from '../../ui/IconButton';
 import { cn } from '../../../lib/cn';
 import type { WorkActivityPresentation } from './types';
 import { useMeasuredWidth } from '../../doc-editor/useMeasuredWidth';
+import { Text } from '../../shared/Text';
+import { useId } from 'react';
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -22,6 +24,33 @@ const TICK_STEPS: Array<[number, number]> = [
 const NOW_LABEL_CLEARANCE_PX = 80;
 /** The least room between two tick labels' centres. */
 const TICK_SPACING_PX = 44;
+
+/** What the window's stepping controls say when they are off (2.515.6). */
+export const WORK_WINDOW_REASONS = {
+  earliest: 'No earlier work in this window',
+  newest: 'Already at the newest work',
+  following: 'Already following the newest work',
+} as const;
+
+/**
+ * Why each of the window's stepping controls is off, from the window's own
+ * state (2.515.6): `null` for a control that is on. `previous` is the ‹ step
+ * and the footer's "Earlier work"; `next` the › step; `follow` "Following now".
+ */
+export function workWindowDisabledReasons(input: { start: number; end: number; following: boolean; boundsStart: number; liveEnd: number }): {
+  previous: string | null; next: string | null; follow: string | null;
+} {
+  return {
+    previous: input.start <= input.boundsStart ? WORK_WINDOW_REASONS.earliest : null,
+    next: input.end >= input.liveEnd ? WORK_WINDOW_REASONS.newest : null,
+    follow: input.following ? WORK_WINDOW_REASONS.following : null,
+  };
+}
+
+/** A control's reason as its tooltip and accessible description (the id names a hidden line beside it). */
+export function disabledReasonProps(reason: string | null, id: string): { title?: string; 'aria-describedby'?: string } {
+  return reason ? { title: reason, 'aria-describedby': id } : {};
+}
 
 export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkActivityPresentation; timezone?: string }) {
   const { bounds, window, onWindowChange } = activity;
@@ -52,6 +81,8 @@ export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkA
   const preset = [15, 30, 60].find((minutes) => duration === minutes * MINUTE);
   const fullDay = window.start === bounds.start && window.end >= end;
   const atNow = window.end >= end;
+  const reasons = workWindowDisabledReasons({ start: window.start, end: window.end, following: window.following, boundsStart: bounds.start, liveEnd: end });
+  const reasonBase = useId();
   // Never render the selection outside the extent, however stale it is.
   const selection: [number, number] = [
     Math.min(Math.max(window.start, bounds.start), end),
@@ -82,12 +113,15 @@ export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkA
       <div className="flex flex-wrap items-center gap-1.5 text-xs text-text-secondary">
         <strong aria-live="polite" title={timezone} className="tabular-nums font-semibold text-text-primary">{clock(selection[0])} – {atNow ? 'Now' : clock(selection[1])}</strong>
         <span className="flex-1" />
-        <IconButton size="sm" aria-label="Previous interval" disabled={window.start <= bounds.start} onClick={() => move(window.end - duration, false)}>‹</IconButton>
-        <IconButton size="sm" aria-label="Next interval" disabled={atNow} onClick={() => move(window.end + duration, false)}>›</IconButton>
-        <Button size="sm" variant="secondary" disabled={window.following} onClick={() => move(end, true)}>
+        <IconButton size="sm" aria-label="Previous interval" disabled={!!reasons.previous} {...disabledReasonProps(reasons.previous, `${reasonBase}-previous`)} onClick={() => move(window.end - duration, false)}>‹</IconButton>
+        <IconButton size="sm" aria-label="Next interval" disabled={!!reasons.next} {...disabledReasonProps(reasons.next, `${reasonBase}-next`)} onClick={() => move(window.end + duration, false)}>›</IconButton>
+        <Button size="sm" variant="secondary" disabled={!!reasons.follow} {...disabledReasonProps(reasons.follow, `${reasonBase}-follow`)} onClick={() => move(end, true)}>
           <span aria-hidden="true" className={cn('mr-1 inline-block h-1.5 w-1.5 rounded-full align-middle', window.following ? 'bg-success' : 'bg-border-emphasis')} />
           {window.following ? 'Following now' : 'Back to now'}
         </Button>
+        {(['previous', 'next', 'follow'] as const).map((control) => reasons[control] && (
+          <Text key={control} id={`${reasonBase}-${control}`} className="sr-only" data-testid={`work-time-window-${control}-reason`}>{reasons[control]}</Text>
+        ))}
         <Select
           aria-label="Interval duration"
           value={fullDay ? 'day' : preset ? String(preset) : 'custom'}

@@ -578,6 +578,15 @@ export declare interface ComposerPrompt {
     /** Shown on the card instead of answers: the reader may look but not decide. */
     readOnlyReason?: string;
     /**
+     * Why this prompt cannot be answered right now (2.515.6), when the reader
+     * still should see how it would be answered: its answer field, its options
+     * and Answer stay drawn but off, each carrying this as its tooltip and
+     * accessible description, with one visible line under the card. Keys and
+     * the composer's Send refuse it like `readOnlyReason`. An empty answer box
+     * is not a reason; Answer stays quietly off until something is typed.
+     */
+    disabledReason?: string;
+    /**
      * Where the card's keypad listens (since 2.515.2). `deck` (default): its
      * keys act only while focus is in the deck or the composer's input. `page`:
      * while this card is open (shown, not collapsed), an option key (1–9, or
@@ -698,7 +707,7 @@ export declare interface ComposerPromptCompose {
     onCancel?: () => void;
 }
 
-export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, input, variant, presentation: presentationProp, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
+export declare function ComposerPromptDeck({ deck: deckProp, prompts, scope, input, submitDisabledReason, variant, presentation: presentationProp, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
 
 /** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
 export declare interface ComposerPromptDeckOptions {
@@ -719,6 +728,13 @@ export declare interface ComposerPromptDeckProps {
     scope?: string | null;
     /** External answer input, when embedded above an existing editor. Without one, text/number prompts own a plain answer field; choices own focus. */
     input?: ComposerPromptInput | null;
+    /**
+     * Why no prompt in this deck can be answered right now (2.515.6), over each
+     * prompt's own `disabledReason`: the answers and Answer stay drawn but off,
+     * with the reason as their tooltip, their `aria-describedby` and one line
+     * under the card. Paging, Hide and Back still work.
+     */
+    submitDisabledReason?: string | null;
     /**
      * `card` (default): a bordered card of its own, for a composer's `above`.
      * `inset`: the composer card's first section (`ConversationComposer
@@ -1039,6 +1055,8 @@ export declare interface ContextComposerProps {
     modeHints?: RichChatComposerProps['modeHints'];
     hints?: readonly ComposerHint[];
     submitLabel?: RichChatComposerProps['submitLabel'];
+    /** Why Send is off, said on Send and under the input (`RichChatComposerProps.submitDisabledReason`, 2.515.6). */
+    submitDisabledReason?: RichChatComposerProps['submitDisabledReason'];
     /** The context chip. `false` hides it; a string relabels it. Default: the context's. */
     contextChip?: boolean | string;
     /** Makes the context chip removable. */
@@ -2067,6 +2085,15 @@ export declare interface RichChatComposerProps {
      * in Terminal.
      */
     submitLabel?: string | Partial<Record<ComposerMode, string>>;
+    /**
+     * Why Send is off (2.515.6): a host-known block — a read-only destination,
+     * no destination chosen, the socket down, a page with no commands. Present,
+     * Send is disabled whatever the draft holds; the reason is Send's tooltip
+     * and accessible description (`aria-describedby`) and a one-line hint under
+     * the input, drawn at every density and in the idle row too. An empty draft
+     * is not a reason: leave this unset and Send stays quietly off until typed.
+     */
+    submitDisabledReason?: string | null;
     /**
      * Corner radius. Unset, the composer is rounded by its OWN default (12px),
      * never by the host's `--radius-*` tokens — a host with square corners still

@@ -364,6 +364,7 @@ function ConversationComposerImpl({
   contextChip,
   sendWithReferencesOnly,
   console: consoleProp,
+  submitDisabledReason,
   'data-testid': testId = 'conversation-composer',
   ...rest
 }: ConversationComposerProps & { rm: ConversationComposerModules }) {
@@ -762,6 +763,11 @@ function ConversationComposerImpl({
       : recipient?.unavailableReason ?? (recipient ? readOnly : 'Choose a destination.'))
     : null;
 
+  // Send's reason (2.515.6): while the input answers an open prompt the
+  // prompt's own `disabledReason` speaks; otherwise the host's.
+  const answeringPrompt = deck.typed || cardTakesInput;
+  const composerReason = answeringPrompt ? deck.active?.disabledReason ?? null : submitDisabledReason ?? null;
+
   return (
     <ContextComposer
       collapsible
@@ -795,6 +801,9 @@ function ConversationComposerImpl({
       allowAttachments={!!uploadChannel}
       {...(sendWithReferencesOnly !== undefined ? { sendWithReferencesOnly } : {})}
       {...(readOnlyNote ? { readOnly: readOnlyNote } : {})}
+      // The host's reason is about its own Send; while the input answers an
+      // open prompt (typed answer, quiet card) the prompt owns Send (2.515.6).
+      {...(composerReason ? { submitDisabledReason: composerReason } : {})}
       disabled={!!hostDisabled || (!deck.typed && !cardTakesInput && (!!offline || chatBlocked || (mode === 'agent' && !capabilities.agent?.allowed)))}
       draftKey={editorDraftKey}
       {...(controlled ? { draft: draftProp } : {})}

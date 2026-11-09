@@ -77,6 +77,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useId,
   type CSSProperties,
   type FocusEvent as ReactFocusEvent,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -108,6 +109,7 @@ import {
   type BackdropTone,
 } from '../shared/backdropTone';
 import { RovingToolbar } from '../shared/RovingToolbar';
+import { Text } from '../shared/Text';
 import { Tabs } from '../shared/Tabs';
 import { IconButton } from '../ui/IconButton';
 import { ChatDropZone } from './ChatDropZone';
@@ -558,6 +560,15 @@ export interface RichChatComposerProps {
    * in Terminal.
    */
   submitLabel?: string | Partial<Record<ComposerMode, string>>;
+  /**
+   * Why Send is off (2.515.6): a host-known block — a read-only destination,
+   * no destination chosen, the socket down, a page with no commands. Present,
+   * Send is disabled whatever the draft holds; the reason is Send's tooltip
+   * and accessible description (`aria-describedby`) and a one-line hint under
+   * the input, drawn at every density and in the idle row too. An empty draft
+   * is not a reason: leave this unset and Send stays quietly off until typed.
+   */
+  submitDisabledReason?: string | null;
   /**
    * Corner radius. Unset, the composer is rounded by its OWN default (12px),
    * never by the host's `--radius-*` tokens — a host with square corners still
@@ -1110,6 +1121,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   modeHints,
   submitLead,
   submitLabel,
+  submitDisabledReason,
   radius,
   backdropTone = 'auto',
   working: workingProp,
@@ -1867,12 +1879,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
   const submitShell = useCallback(() => {
     const command = shellDraft.trim();
-    if (!command || blocked || !onShellCommand) return;
+    if (!command || blocked || !onShellCommand || submitDisabledReason?.trim()) return;
     setShellHistory((prev) => (prev[prev.length - 1] === command ? prev : [...prev, command]));
     setShellDraft('');
     setHistoryIndex(-1);
     onShellCommand(command);
-  }, [shellDraft, blocked, onShellCommand]);
+  }, [shellDraft, blocked, onShellCommand, submitDisabledReason]);
 
   const recallHistory = useCallback(
     (delta: number) => {
@@ -1913,9 +1925,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const sendLabel = (typeof submitLabel === 'string' ? submitLabel : submitLabel?.[activeMode])
     ?? (terminalMode ? 'Run' : 'Send');
 
-  const canSend = terminalMode
+  const submitBlockedBy = submitDisabledReason?.trim() || null;
+  const canSend = !submitBlockedBy && (terminalMode
     ? !blocked && !!onShellCommand && shellDraft.trim().length > 0
-    : !blocked && (!empty || staged.length > 0 || (sendWithReferencesOnly && !!references?.length));
+    : !blocked && (!empty || staged.length > 0 || (sendWithReferencesOnly && !!references?.length)));
+  // Send's described-by target: the visible hint line below (2.515.6).
+  const submitReasonId = `${useId()}-submit-reason`;
+  const submitReasonProps = submitBlockedBy ? { 'aria-describedby': submitReasonId, title: submitBlockedBy } : {};
 
   // Publish synchronously so a conversation switch in the same event never
   // unmounts the editor before its latest text or file selection is retained.
@@ -3280,6 +3296,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           </div>
         )}
 
+        {/* Why Send is off (2.515.6): the hint row's one line that every
+            density draws, the idle single row included (it wraps under the
+            row there), because a dead Send with no word is the defect. */}
+        {submitBlockedBy && (
+          <Text as="p" size="xs" tone="tertiary" id={submitReasonId} title={submitBlockedBy}
+            className={cn('min-w-0 px-2 pb-1', singleRow && 'order-last basis-full')}
+            data-testid={`${testId}-submit-reason`}>
+            <span className="truncate">{submitBlockedBy}</span>
+          </Text>
+        )}
         {/* Wide only. Narrower, the same hints are the `?` menu in the toolbar row. */}
         {hintsInRow && !!resolvedHints.length && !collapsed && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pb-1 text-[11px] text-text-tertiary" data-testid={`${testId}-hints`}>
@@ -3570,6 +3596,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 type="button"
                 onClick={terminalMode ? submitShell : send}
                 disabled={!canSend}
+                {...submitReasonProps}
                 data-testid={`${testId}-send`}
                 className={cn(`shrink-0 rounded-l-md rounded-r-none bg-primary ${BUTTON_WEIGHT} text-on-primary disabled:opacity-40`, sendSize)}
               >
@@ -3607,6 +3634,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               disabled={!canSend}
               aria-label={sendLabel}
               title={sendShortcut === 'mod-enter' ? `${sendLabel} (⌘ Return)` : sendLabel}
+              {...submitReasonProps}
               data-testid={`${testId}-send`}
               className={cn(
                 submitLead == null && !singleRow && 'ml-0',
@@ -3624,6 +3652,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               disabled={!canSend}
               data-testid={`${testId}-send`}
               {...(pane ? { title: sendShortcut === 'mod-enter' ? `${sendLabel} (⌘ Return)` : sendLabel, 'data-icon-only': 'true' } : {})}
+              {...submitReasonProps}
               className={cn(
                 (submitLead == null || collapsed) && !(showMoreActions && !collapsed && (!pane || paneTools)) && 'ml-auto',
                 `shrink-0 rounded bg-primary ${BUTTON_WEIGHT} text-on-primary disabled:opacity-40`,
