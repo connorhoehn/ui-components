@@ -11,7 +11,7 @@ import type { ReactNode } from 'react';
 import Toast from './Toast';
 import type { ToastType } from './Toast';
 import { JobToast } from './JobToast';
-import type { JobToastState } from './JobToast';
+import type { JobToastProps, JobToastState } from './JobToast';
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -42,6 +42,8 @@ export interface JobToastOptions {
   href?: string;
   /** Link text. Default "View". */
   hrefLabel?: string;
+  /** Routes the link in a SPA: called with the href and the click event, which is default-prevented. Without it the link is a plain anchor. */
+  onNavigate?: JobToastProps['onNavigate'];
   /** How long a done or failed toast stays after it settles. Default 8000. */
   dismissAfterMs?: number;
   /** Fires once when the job first reaches done or failed — mirror it into a notification center. */
@@ -243,6 +245,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 progress={t.job.progress}
                 href={t.job.href}
                 hrefLabel={t.job.hrefLabel}
+                onNavigate={t.job.onNavigate}
                 exiting={t.exiting}
                 onDismiss={dismissJobById}
                 onHoverChange={h => onJobHover(t.id, h)}

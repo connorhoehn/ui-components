@@ -233,28 +233,28 @@ function I(e) {
 	let { pending: t } = e;
 	return /* @__PURE__ */ S(L, { ...e }, t.requestId ?? t.title);
 }
-function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, "data-testid": l = "voice-confirm-card" }) {
-	let u = b(null);
+function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, hint: c, className: l, "data-testid": u = "voice-confirm-card" }) {
+	let f = c ?? a.hint, m = y(), h = b(null);
 	v(() => {
-		s && u.current?.focus();
+		s && h.current?.focus();
 	}, [s]);
-	let { fields: f } = a, [m, h] = x(f?.decision ?? "approve"), [g, _] = x(""), y = () => {
-		f ? a.onConfirm({
-			decision: m,
-			note: g.trim().slice(0, 200).trim()
+	let { fields: g } = a, [_, w] = x(g?.decision ?? "approve"), [T, E] = x(""), D = () => {
+		g ? a.onConfirm({
+			decision: _,
+			note: T.trim().slice(0, 200).trim()
 		}) : a.onConfirm();
-	}, w = (e) => {
-		e.key === "Escape" && o ? (e.stopPropagation(), a.onCancel()) : e.key === "Enter" && (e.target === e.currentTarget || f && e.target instanceof HTMLInputElement) && (e.preventDefault(), y());
-	}, T = Array.isArray(a.detail) ? a.detail.filter(Boolean) : a.detail ? [a.detail] : [];
+	}, O = (e) => {
+		e.key === "Escape" && o ? (e.stopPropagation(), a.onCancel()) : e.key === "Enter" && (e.target === e.currentTarget || g && e.target instanceof HTMLInputElement) && (e.preventDefault(), D());
+	}, k = Array.isArray(a.detail) ? a.detail.filter(Boolean) : a.detail ? [a.detail] : [];
 	return /* @__PURE__ */ C(n, {
-		ref: u,
+		ref: h,
 		gap: "sm",
 		tabIndex: 0,
 		role: "group",
 		"aria-label": `Confirm: ${a.title}`,
-		onKeyDown: w,
-		"data-testid": l,
-		className: e("rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary", c),
+		onKeyDown: O,
+		"data-testid": u,
+		className: e("rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary", l),
 		children: [
 			/* @__PURE__ */ S(i, {
 				size: "sm",
@@ -263,42 +263,42 @@ function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, 
 				as: "p",
 				children: a.title
 			}),
-			T.length === 1 ? /* @__PURE__ */ S(i, {
+			k.length === 1 ? /* @__PURE__ */ S(i, {
 				size: "xs",
 				tone: "secondary",
 				as: "p",
-				children: T[0]
+				children: k[0]
 			}) : null,
-			T.length > 1 ? /* @__PURE__ */ S(n, {
+			k.length > 1 ? /* @__PURE__ */ S(n, {
 				as: "ul",
 				gap: "xs",
-				"data-testid": `${l}-detail`,
+				"data-testid": `${u}-detail`,
 				className: "m-0 list-none p-0",
-				children: T.map((e, t) => /* @__PURE__ */ S(i, {
+				children: k.map((e, t) => /* @__PURE__ */ S(i, {
 					size: "xs",
 					tone: "secondary",
 					as: "li",
 					children: e
 				}, t))
 			}) : null,
-			f ? /* @__PURE__ */ C(n, {
+			g ? /* @__PURE__ */ C(n, {
 				gap: "xs",
 				children: [/* @__PURE__ */ S(p, {
 					size: "sm",
 					tone: "accent",
 					"aria-label": "Decision",
 					options: P,
-					value: m,
-					onChange: (e) => h(e),
-					"data-testid": `${l}-decision`
+					value: _,
+					onChange: (e) => w(e),
+					"data-testid": `${u}-decision`
 				}), /* @__PURE__ */ S(d, {
 					size: "sm",
-					value: g,
+					value: T,
 					maxLength: 200,
-					placeholder: f.notePlaceholder ?? "Note (optional)",
+					placeholder: g.notePlaceholder ?? "Note (optional)",
 					"aria-label": "Note",
-					onChange: (e) => _(e.target.value),
-					"data-testid": `${l}-note`
+					onChange: (e) => E(e.target.value),
+					"data-testid": `${u}-note`
 				})]
 			}) : null,
 			/* @__PURE__ */ C(r, {
@@ -308,16 +308,26 @@ function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, className: c, 
 					variant: "secondary",
 					size: "sm",
 					onClick: a.onCancel,
-					"data-testid": `${l}-cancel`,
+					"data-testid": `${u}-cancel`,
 					children: "Cancel"
 				}), /* @__PURE__ */ S(t, {
 					variant: "primary",
 					size: "sm",
-					onClick: y,
-					"data-testid": `${l}-confirm`,
+					onClick: D,
+					"aria-describedby": f ? m : void 0,
+					"data-testid": `${u}-confirm`,
 					children: "Confirm"
 				})]
-			})
+			}),
+			f ? /* @__PURE__ */ S(i, {
+				size: "xs",
+				tone: "secondary",
+				as: "p",
+				id: m,
+				className: "truncate",
+				"data-testid": `${u}-hint`,
+				children: f
+			}) : null
 		]
 	});
 }

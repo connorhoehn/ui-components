@@ -1,3 +1,8 @@
+## 2.514.1
+
+- `JobToast` / `toastJob` `onNavigate?: (href, event) => void` (voice lane): when set, activating the job link (click or Enter) calls it with the href and the click event, default-prevented, so a SPA host routes without a page reload. Without it the link is a plain anchor, unchanged.
+- `VoiceConfirmCard` `hint?: string` and `VoicePending.hint` (voice lane): a muted single line (`T` xs secondary, like the detail lines) under Confirm / Cancel; the Confirm button is `aria-describedby` it. The prop overrides `pending.hint`; nothing renders without one.
+
 ## 2.514.0
 
 - One release line: the feature-branch stack (`feat/row-trailing-actions` → `feat/prompt-presentation` → `feat/model-viewer` → `feat/t20-prompt-plain` → `feat/rows-and-frames`, released there as 2.509.1–2.513.0) is merged onto `main` (the voice line, 2.510.0–2.510.6). Everything in both lines ships together: `ModelViewer`, `FrameStrip`, `ConfirmButton`, `ComposerPresentationContext`, `GroupedList trailingLayout="columns"` and the `VoiceDock` family. Versions 2.509.0–2.510.1 were released on both lines with different contents; the feature-branch entries are marked "(feature-branch line)" below. From here on one version number names one commit on `main`. Package name stays `@connorhoehn/ui-components` (main's 2.509.0 rename); consumers that still install it under `@connorhoehnslalom/ui-components` can keep that key as an alias of the tarball.

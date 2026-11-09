@@ -438,3 +438,22 @@ describe('VoiceTurnStrip size and keep switch (2.510.6)', () => {
     expect(onOpenLog).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('VoiceConfirmCard hint', () => {
+  const base = { title: 'Do it?', onConfirm: vi.fn(), onCancel: vi.fn() };
+  it('renders a muted line described by the confirm button', () => {
+    render(<VoiceConfirmCard pending={{ ...base, hint: 'Say yes to confirm' }} />);
+    const hint = screen.getByTestId('voice-confirm-card-hint');
+    expect(hint).toHaveTextContent('Say yes to confirm');
+    expect(screen.getByTestId('voice-confirm-card-confirm')).toHaveAttribute('aria-describedby', hint.id);
+  });
+  it('the hint prop overrides pending.hint', () => {
+    render(<VoiceConfirmCard pending={{ ...base, hint: 'a' }} hint="b" />);
+    expect(screen.getByTestId('voice-confirm-card-hint')).toHaveTextContent('b');
+  });
+  it('renders nothing without a hint', () => {
+    render(<VoiceConfirmCard pending={base} />);
+    expect(screen.queryByTestId('voice-confirm-card-hint')).toBeNull();
+    expect(screen.getByTestId('voice-confirm-card-confirm')).not.toHaveAttribute('aria-describedby');
+  });
+});

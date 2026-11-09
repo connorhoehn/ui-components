@@ -1,5 +1,5 @@
 import { d as e } from "./Button-DQoeE5dN.js";
-import { H as t } from "./ProposedEditStrip-kf8W_M9l.js";
+import { H as t } from "./ProposedEditStrip-1rygFzPw.js";
 import { jsx as n } from "react/jsx-runtime";
 import { DndContext as r, KeyboardSensor as i, PointerSensor as a, closestCenter as o, useSensor as s, useSensors as c } from "@dnd-kit/core";
 import { SortableContext as l, sortableKeyboardCoordinates as u, useSortable as d, verticalListSortingStrategy as f } from "@dnd-kit/sortable";

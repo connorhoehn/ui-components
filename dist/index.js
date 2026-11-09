@@ -2,12 +2,12 @@ import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.j
 import { i as o, n as s, r as c, t as l } from "./documentType-rRZpKWbO.js";
 import { n as u, t as d } from "./fieldType-CGXsQUaC.js";
 import "./types.js";
-import { C as f, D as ee, E as p, O as te, S as m, T as h, _ as ne, a as g, b as _, c as v, d as re, f as ie, g as ae, h as oe, i as se, k as ce, l as le, m as y, n as b, o as ue, p as de, r as fe, s as pe, t as me, u as he, v as x, w as S, x as ge, y as _e } from "./hooks-Bks_35eq.js";
+import { C as f, D as ee, E as p, O as te, S as m, T as h, _ as ne, a as g, b as _, c as v, d as re, f as ie, g as ae, h as oe, i as se, k as ce, l as le, m as y, n as b, o as ue, p as de, r as fe, s as pe, t as me, u as he, v as x, w as S, x as ge, y as _e } from "./hooks-Cy--31as.js";
 import { i as C, n as w, r as ve, t as T } from "./apiBaseUrl-DLrXlmVj.js";
 import { a as ye, i as be, n as xe, r as E, t as D } from "./useFullscreen-Df7V-Z9q.js";
 import { n as O, r as Se, t as Ce } from "./IdentityContext-CQM1qwH6.js";
-import { a as k, c as A, d as we, f as Te, h as Ee, i as De, l as Oe, m as ke, n as j, o as M, p as Ae, r as je, s as Me, t as Ne, u as N } from "./useVideoSessions-RVzKQ3Go.js";
-import { n as P, t as F } from "./useWebSocket-CGc0yRhM.js";
+import { a as k, c as A, d as we, f as Te, h as Ee, i as De, l as Oe, m as ke, n as j, o as M, p as Ae, r as je, s as Me, t as Ne, u as N } from "./useVideoSessions-7Dn184BW.js";
+import { n as P, t as F } from "./useWebSocket-D4PAHlj8.js";
 import { a as Pe, i as Fe, n as I, o as Ie, r as Le, t as Re } from "./useSocialProfile-5S1qyvsv.js";
 import { a as ze, c as L, i as Be, l as R, n as Ve, o as He, r as Ue, s as We, t as Ge, u as Ke } from "./useSyncConflicts-BspqjVsW.js";
 import { i as qe } from "./useDocumentTypes-DCKwxXn8.js";
@@ -15,14 +15,14 @@ import { n as Je, t as Ye } from "./WebSocketContext-DUvjGLFq.js";
 import { t as Xe } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { i as Ze, n as Qe, r as $e, t as et } from "./useWebGLCanvas-CjaNVKO9.js";
 import { a as tt, c as nt, d as z, l as rt, n as B, o as it, s as at, t as ot } from "./Button-DQoeE5dN.js";
-import { a as st, i as ct, n as lt, o as ut, r as dt, s as ft, t as pt } from "./ToastProvider-Ccas83Xu.js";
+import { a as st, i as ct, n as lt, o as ut, r as dt, s as ft, t as pt } from "./ToastProvider-DWf7aLVm.js";
 import { a as mt, c as ht, d as gt, f as _t, i as vt, l as yt, m as bt, n as xt, o as St, p as Ct, r as wt, s as Tt, t as Et, u as Dt } from "./Chip-5WvKIIpI.js";
 import { i as V, n as Ot, r as H, t as kt } from "./Text-DAQCiXe4.js";
 import { t as At } from "./useEventCallback-Cwx9QVSi.js";
 import { n as jt, r as Mt, t as Nt } from "./useAudioRecorder-BhPxnLmg.js";
 import { a as Pt, c as Ft, i as It, n as Lt, o as Rt, r as zt, s as Bt, t as Vt } from "./usePromptContext-CUNhKC01.js";
 import { B as Ht, F as Ut, H as Wt, I as Gt, L as Kt, M as qt, N as Jt, P as Yt, R as Xt, U as Zt, V as Qt, W as $t, f as en, i as tn, j as nn, n as rn, r as an, t as on, u as sn, z as cn } from "./GenerativeImagePreview-C5APyaO3.js";
-import { $ as ln, $n as un, $r as dn, $t as fn, A as pn, An as mn, Ar as hn, At as gn, B as _n, Bn as vn, Br as yn, Bt as bn, C as xn, Cn as Sn, Cr as Cn, Ct as wn, D as Tn, Dn as En, Dr as Dn, Dt as On, E as kn, En as An, Er as jn, Et as Mn, F as Nn, Fn as Pn, Fr as Fn, Ft as In, G as Ln, Gn as Rn, Gr as zn, Gt as Bn, H as Vn, Hn, Hr as Un, Ht as Wn, I as Gn, In as Kn, Ir as qn, It as Jn, J as Yn, Jn as Xn, Jr as Zn, Jt as Qn, K as $n, Kn as er, Kr as tr, Kt as nr, L as rr, Ln as ir, Lr as ar, Lt as or, M as sr, Mn as cr, Mr as lr, Mt as ur, N as dr, Nn as fr, Nr as pr, Nt as mr, O as hr, On as gr, Or as _r, Ot as vr, P as yr, Pn as br, Pr as xr, Pt as Sr, Q as Cr, Qn as wr, Qr as Tr, Qt as Er, R as Dr, Rn as Or, Rr as kr, Rt as Ar, S as jr, Sn as Mr, Sr as Nr, St as Pr, T as Fr, Tn as Ir, Tr as Lr, Tt as Rr, U as zr, Un as Br, Ur as Vr, Ut as Hr, V as Ur, Vn as Wr, Vr as Gr, Vt as Kr, W as qr, Wn as Jr, Wr as Yr, Wt as Xr, X as Zr, Xn as Qr, Xr as $r, Xt as ei, Y as ti, Yn as ni, Yr as ri, Yt as ii, Z as ai, Zn as oi, Zr as si, Zt as ci, _ as li, _n as ui, _r as di, _t as fi, a as pi, ai as mi, an as hi, ar as gi, at as _i, b as vi, bn as yi, br as bi, bt as xi, c as Si, ci as Ci, cn as wi, cr as Ti, ct as Ei, d as Di, dn as Oi, dr as ki, dt as Ai, ei as ji, en as Mi, er as Ni, et as Pi, f as Fi, fn as Ii, fr as Li, ft as U, g as Ri, gn as zi, gr as Bi, gt as Vi, h as Hi, hn as Ui, hr as Wi, ht as Gi, i as Ki, ii as qi, in as Ji, ir as Yi, it as Xi, j as Zi, jn as Qi, jr as $i, jt as ea, k as ta, kn as na, kr as ra, kt as ia, l as aa, li as oa, ln as sa, lr as ca, lt as la, m as ua, mn as da, mr as fa, mt as pa, n as ma, ni as ha, nn as ga, nr as _a, nt as va, o as ya, oi as ba, on as xa, or as Sa, ot as Ca, p as wa, pn as Ta, pr as Ea, pt as Da, q as Oa, qn as ka, qr as Aa, qt as ja, r as Ma, ri as Na, rn as Pa, rr as Fa, rt as Ia, s as La, si as Ra, sn as za, sr as Ba, st as Va, t as Ha, ti as Ua, tn as Wa, tr as Ga, tt as Ka, u as qa, un as Ja, ur as Ya, ut as Xa, v as Za, vn as Qa, vr as $a, vt as eo, w as to, wn as no, wr as ro, wt as io, x as ao, xn as oo, xr as so, xt as co, y as lo, yn as uo, yr as fo, yt as po, z as mo, zn as ho, zr as go, zt as _o } from "./shared-CODOIxD2.js";
+import { $ as ln, $n as un, $r as dn, $t as fn, A as pn, An as mn, Ar as hn, At as gn, B as _n, Bn as vn, Br as yn, Bt as bn, C as xn, Cn as Sn, Cr as Cn, Ct as wn, D as Tn, Dn as En, Dr as Dn, Dt as On, E as kn, En as An, Er as jn, Et as Mn, F as Nn, Fn as Pn, Fr as Fn, Ft as In, G as Ln, Gn as Rn, Gr as zn, Gt as Bn, H as Vn, Hn, Hr as Un, Ht as Wn, I as Gn, In as Kn, Ir as qn, It as Jn, J as Yn, Jn as Xn, Jr as Zn, Jt as Qn, K as $n, Kn as er, Kr as tr, Kt as nr, L as rr, Ln as ir, Lr as ar, Lt as or, M as sr, Mn as cr, Mr as lr, Mt as ur, N as dr, Nn as fr, Nr as pr, Nt as mr, O as hr, On as gr, Or as _r, Ot as vr, P as yr, Pn as br, Pr as xr, Pt as Sr, Q as Cr, Qn as wr, Qr as Tr, Qt as Er, R as Dr, Rn as Or, Rr as kr, Rt as Ar, S as jr, Sn as Mr, Sr as Nr, St as Pr, T as Fr, Tn as Ir, Tr as Lr, Tt as Rr, U as zr, Un as Br, Ur as Vr, Ut as Hr, V as Ur, Vn as Wr, Vr as Gr, Vt as Kr, W as qr, Wn as Jr, Wr as Yr, Wt as Xr, X as Zr, Xn as Qr, Xr as $r, Xt as ei, Y as ti, Yn as ni, Yr as ri, Yt as ii, Z as ai, Zn as oi, Zr as si, Zt as ci, _ as li, _n as ui, _r as di, _t as fi, a as pi, ai as mi, an as hi, ar as gi, at as _i, b as vi, bn as yi, br as bi, bt as xi, c as Si, ci as Ci, cn as wi, cr as Ti, ct as Ei, d as Di, dn as Oi, dr as ki, dt as Ai, ei as ji, en as Mi, er as Ni, et as Pi, f as Fi, fn as Ii, fr as Li, ft as U, g as Ri, gn as zi, gr as Bi, gt as Vi, h as Hi, hn as Ui, hr as Wi, ht as Gi, i as Ki, ii as qi, in as Ji, ir as Yi, it as Xi, j as Zi, jn as Qi, jr as $i, jt as ea, k as ta, kn as na, kr as ra, kt as ia, l as aa, li as oa, ln as sa, lr as ca, lt as la, m as ua, mn as da, mr as fa, mt as pa, n as ma, ni as ha, nn as ga, nr as _a, nt as va, o as ya, oi as ba, on as xa, or as Sa, ot as Ca, p as wa, pn as Ta, pr as Ea, pt as Da, q as Oa, qn as ka, qr as Aa, qt as ja, r as Ma, ri as Na, rn as Pa, rr as Fa, rt as Ia, s as La, si as Ra, sn as za, sr as Ba, st as Va, t as Ha, ti as Ua, tn as Wa, tr as Ga, tt as Ka, u as qa, un as Ja, ur as Ya, ut as Xa, v as Za, vn as Qa, vr as $a, vt as eo, w as to, wn as no, wr as ro, wt as io, x as ao, xn as oo, xr as so, xt as co, y as lo, yn as uo, yr as fo, yt as po, z as mo, zn as ho, zr as go, zt as _o } from "./shared-XepbgVtP.js";
 import { t as vo } from "./Card-D4k-Buoz.js";
 import { a as yo, i as bo, n as xo, o as So, r as Co, t as wo } from "./Table-BdYa6mv8.js";
 import { t as To } from "./PageSection-B55Mz4YI.js";
@@ -80,7 +80,7 @@ import { t as Zd } from "./FollowUpChips-DiWiWsSm.js";
 import { t as Qd } from "./PresenceAvatars-e3LJnWl0.js";
 import { t as $d } from "./FileUploadDrop-Da3teuhw.js";
 import { t as ef } from "./ActivityFeed-DOvDGcoT.js";
-import { a as tf, c as nf, i as rf, l as af, n as of, o as sf, r as cf, s as lf, t as uf } from "./ActivityPanel-CeVXJJSn.js";
+import { a as tf, c as nf, i as rf, l as af, n as of, o as sf, r as cf, s as lf, t as uf } from "./ActivityPanel-B4ZI-NJm.js";
 import { t as df } from "./useMeasuredWidth-CEBII0Jt.js";
 import { t as ff } from "./SectionLabel-B60gea5o.js";
 import { t as pf } from "./InlinePlaceholder-CKUJyqFh.js";
@@ -91,7 +91,7 @@ import { t as Tf } from "./MetaLine-CXoGFWAF.js";
 import { t as Ef } from "./NumberInput-pHxC7Spt.js";
 import { t as Df } from "./Checkbox-Ds6v0Fy6.js";
 import { n as Of, t as kf } from "./FileKindMark-BcwT0tiz.js";
-import { a as Af, i as jf, n as Mf, r as Nf, t as Pf } from "./DecisionPath-DA5CcxLC.js";
+import { a as Af, i as jf, n as Mf, r as Nf, t as Pf } from "./DecisionPath-DIWtr1gN.js";
 import { a as Ff, i as If, n as Lf, o as Rf, r as zf, t as Bf } from "./ChatSidePanelRegistry-BoAWxk8A.js";
 import { n as Vf, t as Hf } from "./ChangeReviewCard-yE6ASbGX.js";
 import { i as Uf, n as Wf, r as Gf, t as Kf } from "./ReactionPickerPopover-CwOJPVzU.js";
@@ -100,11 +100,11 @@ import { n as Jf, t as Yf } from "./QuoteBlock-Dks53Idi.js";
 import { t as Xf } from "./formatBytes-05ivRSJY.js";
 import { t as Zf } from "./ReactionsOverlay-XR_TNH6f.js";
 import { B as Qf, C as $f, D as ep, E as tp, F as np, I as rp, L as ip, M as ap, N as op, O as sp, P as cp, R as lp, S as up, T as dp, V as fp, _ as pp, a as mp, b as hp, c as gp, d as _p, f as vp, g as yp, h as bp, i as xp, j as Sp, l as Cp, m as wp, n as Tp, o as Ep, p as Dp, r as Op, s as kp, t as Ap, u as jp, v as Mp, w as Np, x as Pp, y as Fp, z as Ip } from "./renderers-DzJlG3P7.js";
-import { A as Lp, B as Rp, C as zp, F as Bp, I as Vp, L as Hp, M as Up, N as Wp, O as Gp, P as Kp, R as qp, h as Jp, i as Yp, j as Xp, k as Zp, n as Qp, q as $p, r as em, t as tm, z as nm } from "./ProposedEditStrip-kf8W_M9l.js";
+import { A as Lp, B as Rp, C as zp, F as Bp, I as Vp, L as Hp, M as Up, N as Wp, O as Gp, P as Kp, R as qp, h as Jp, i as Yp, j as Xp, k as Zp, n as Qp, q as $p, r as em, t as tm, z as nm } from "./ProposedEditStrip-1rygFzPw.js";
 import { n as rm, r as im, t as am } from "./EventStreamContext-CLzG8O5_.js";
 import { B as om, G as sm, I as cm, K as lm, L as um, O as dm, a as fm, b as pm, c as mm, d as hm, i as gm, l as _m, n as vm, o as ym, p as bm, r as xm, s as Sm, t as Cm, v as wm, z as Tm } from "./JsonPathInput-B7l3Ihg9.js";
 import { n as Em, t as Dm } from "./ObservabilityContext-DpoDrm3T.js";
-import { $ as Om, A as km, B as Am, C as jm, D as Mm, E as Nm, F as Pm, G as Fm, H as Im, I as Lm, J as Rm, K as zm, L as Bm, M as Vm, N as Hm, O as Um, P as Wm, Q as Gm, R as Km, S as qm, T as Jm, U as Ym, V as Xm, W as Zm, X as Qm, Y as $m, Z as eh, _ as th, a as nh, at as rh, b as ih, c as ah, d as oh, et as sh, f as ch, g as lh, h as uh, i as dh, it as fh, j as ph, k as mh, l as hh, m as gh, n as _h, nt as vh, o as yh, ot as bh, p as xh, q as Sh, r as Ch, rt as wh, s as Th, t as Eh, tt as Dh, u as Oh, v as kh, w as Ah, x as jh, y as Mh, z as Nh } from "./social-167n-N-2.js";
+import { $ as Om, A as km, B as Am, C as jm, D as Mm, E as Nm, F as Pm, G as Fm, H as Im, I as Lm, J as Rm, K as zm, L as Bm, M as Vm, N as Hm, O as Um, P as Wm, Q as Gm, R as Km, S as qm, T as Jm, U as Ym, V as Xm, W as Zm, X as Qm, Y as $m, Z as eh, _ as th, a as nh, at as rh, b as ih, c as ah, d as oh, et as sh, f as ch, g as lh, h as uh, i as dh, it as fh, j as ph, k as mh, l as hh, m as gh, n as _h, nt as vh, o as yh, ot as bh, p as xh, q as Sh, r as Ch, rt as wh, s as Th, t as Eh, tt as Dh, u as Oh, v as kh, w as Ah, x as jh, y as Mh, z as Nh } from "./social-B0AzZ5Gh.js";
 import { a as Ph, c as Fh, d as Ih, i as Lh, l as Rh, n as zh, o as Bh, r as Vh, s as Hh, t as Uh, u as Wh } from "./ConversationSurface-DEGGLCDf.js";
 import { a as Gh, c as Kh, i as qh, l as Jh, n as Yh, o as Xh, r as Zh, s as Qh, t as $h } from "./composerSendError-vB7M56RD.js";
 import { $ as eg, A as tg, B as ng, C as rg, D as ig, E as ag, F as og, G as sg, H as cg, I as lg, J as ug, K as dg, L as fg, M as pg, N as mg, O as hg, P as gg, Q as _g, R as vg, S as yg, T as bg, U as xg, V as Sg, W as Cg, X as wg, Y as Tg, Z as Eg, _ as Dg, _t as Og, a as kg, at as Ag, b as jg, c as Mg, ct as Ng, d as Pg, dt as Fg, et as Ig, f as Lg, ft as Rg, g as zg, gt as Bg, h as Vg, ht as Hg, i as Ug, it as Wg, j as Gg, k as Kg, l as qg, lt as Jg, m as Yg, mt as Xg, n as Zg, nt as Qg, o as $g, ot as e_, p as t_, pt as n_, q as r_, r as i_, rt as a_, s as o_, st as s_, t as c_, tt as l_, u as u_, ut as d_, v as f_, vt as p_, w as m_, x as h_, y as g_, yt as __, z as v_ } from "./video-Ce81aU0y.js";
@@ -337,7 +337,7 @@ function px() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var mx = Wb(() => import("./DocumentEditorPage-D-az5qog.js").then((e) => e.n));
+var mx = Wb(() => import("./DocumentEditorPage-Z6V3IT9p.js").then((e) => e.n));
 function hx({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -1522,7 +1522,7 @@ async function Bx(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var Vx = Wb(() => import("./AgentComposerDock-DxaBPqHK.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var Vx = Wb(() => import("./AgentComposerDock-DnhOV2t8.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function Hx(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,
@@ -1531,7 +1531,7 @@ function Hx(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var Ux = Wb(() => import("./ContextComposer-OnEIMyBI.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var Ux = Wb(() => import("./ContextComposer-DTX7gRNv.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function Wx(e) {
 	return /* @__PURE__ */ Q(q, {
 		fallback: null,

@@ -60,7 +60,7 @@ export declare interface VoiceChoiceCardProps {
 }
 
 /**
- * The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel.
+ * The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel, and an optional muted `hint` line under them.
  * With `pending.fields` it also shows an approve / reject toggle and a one-line note, and
  * Confirm calls back with `{ decision, note }` (note trimmed, capped at 200 characters).
  * Remounts per request (`pending.requestId`, else `title`), so the note and toggle reset.
@@ -71,6 +71,8 @@ export declare interface VoiceConfirmCardProps {
     pending: VoicePending;
     /** Handle Escape on the card itself. The dock turns this off: its popover already closes on Escape. Default true. */
     handleEscape?: boolean;
+    /** A muted one-line note under Confirm / Cancel; overrides `pending.hint`. Nothing renders without one. */
+    hint?: string;
     /** Focus the card when it mounts. Default true. */
     autoFocus?: boolean;
     className?: string;
@@ -175,6 +177,8 @@ export declare interface VoicePending {
     requestId?: string | number;
     /** One line of text, or a list of lines (an estimate, the fields a create will set). */
     detail?: string | string[];
+    /** A muted one-line note under Confirm / Cancel ("Say yes to confirm"). */
+    hint?: string;
     /** With `fields` set, an approve / reject toggle and a note input show. */
     fields?: VoiceConfirmFields;
     /** Called with `{ decision, note }` when `fields` is set, and with no argument otherwise. */

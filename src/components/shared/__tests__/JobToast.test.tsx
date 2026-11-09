@@ -33,6 +33,24 @@ describe('toastJob', () => {
     expect(screen.queryByTestId('job-toast-progress')).toBeNull();
   });
 
+  it('with onNavigate, the link click is handed over and does not navigate', () => {
+    mount();
+    const onNavigate = vi.fn();
+    act(() => api.toastJob(job({ state: 'done', href: '/runs/1', onNavigate })));
+    const link = screen.getByTestId('job-toast-link');
+    const notPrevented = fireEvent.click(link);
+    expect(notPrevented).toBe(false);
+    expect(onNavigate).toHaveBeenCalledTimes(1);
+    expect(onNavigate.mock.calls[0][0]).toBe('/runs/1');
+    expect(onNavigate.mock.calls[0][1].defaultPrevented).toBe(true);
+  });
+
+  it('without onNavigate, the click is not prevented', () => {
+    mount();
+    act(() => api.toastJob(job({ state: 'done', href: '/runs/1' })));
+    expect(fireEvent.click(screen.getByTestId('job-toast-link'))).toBe(true);
+  });
+
   it('keeps an active job and removes a settled one after dismissAfterMs', () => {
     mount();
     act(() => api.toastJob(job({ state: 'running' })));
