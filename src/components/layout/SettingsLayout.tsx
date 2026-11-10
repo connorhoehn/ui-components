@@ -53,10 +53,19 @@ export interface SettingsLayoutProps {
   /**
    * Who owns the outer gutter (since 2.516.1). `default` (unchanged): the
    * narrow header has 12px of top padding. `none`: the frame around the layout
-   * owns it, so the narrow header has no top padding. `SettingsPage` passes its
-   * own `gutter` through. Marker `data-settings-gutter`.
+   * owns it, so the narrow header has no top padding, and (since 2.516.2) the
+   * wide rail has no top padding either (was 16px). `SettingsPage` passes its
+   * own `gutter` through. Markers `data-settings-gutter`, `data-rail-gutter`.
    */
   gutter?: 'default' | 'none';
+  /**
+   * Where the section (at most 768px wide) sits in a wider body (since
+   * 2.516.2). `center` (default): centred, as before, now by the body's flex
+   * alignment instead of the section's auto margins. `start`: at the body's
+   * left edge, as the other page templates draw their content. Marker
+   * `data-section-align`.
+   */
+  sectionAlign?: 'center' | 'start';
   /** Optional secondary line under the title. */
   subtitle?: ReactNode;
   /** Section list. The first section is selected by default. */
@@ -108,6 +117,7 @@ export function SettingsLayout({
   contentAs: Content = 'main',
   contentLabel,
   gutter = 'default',
+  sectionAlign = 'center',
   subtitle,
   sections,
   activeSectionId,
@@ -212,7 +222,10 @@ export function SettingsLayout({
           role="navigation"
           aria-label="Settings sections"
           data-testid={`${testId}-rail`}
-          className={cn('shrink-0 border-r border-[var(--color-border)] overflow-y-auto py-4 px-2', narrow && '@max-[40rem]:hidden')}
+          // gutter="none" (since 2.516.2): the frame owns the top inset, so the
+          // rail's title starts at its top edge as the narrow header's does.
+          data-rail-gutter={gutter}
+          className={cn('shrink-0 border-r border-[var(--color-border)] overflow-y-auto pb-4 px-2', gutter === 'none' ? 'pt-0' : 'pt-4', narrow && '@max-[40rem]:hidden')}
           style={{ width: railWidth }}
         >
           <div className="px-3 pb-3 border-b border-[var(--color-border)] mb-3">
@@ -225,7 +238,8 @@ export function SettingsLayout({
               </div>
             )}
           </div>
-          <nav className="flex flex-col gap-0.5">
+          {/* Rail items 4px apart (2.516.2; was 2px). */}
+          <nav className="flex flex-col gap-1" data-settings-rail-items="">
             {sections.map((section) => {
               const isActive = section.id === active;
               return (
@@ -238,14 +252,14 @@ export function SettingsLayout({
                   data-active={isActive || undefined}
                   onClick={() => select(section.id)}
                   className={cn(
-                    'flex flex-col items-start gap-0.5 px-3 py-2 rounded-md text-left',
+                    'flex flex-col items-start gap-1 px-3 py-2 rounded-md text-left',
                     'border-l-[2px] cursor-pointer',
                     isActive
                       ? 'bg-[var(--color-primary-bg,#eef2ff)] border-l-[var(--color-primary,#6366f1)] text-[var(--color-primary,#4338ca)]'
                       : 'border-l-transparent hover:bg-[var(--color-surface-subtle,#f8fafc)] text-[var(--color-text-primary)]',
                   )}
                 >
-                  <span className="flex items-center gap-1.5 text-[12px] font-semibold">
+                  <span className="flex items-center gap-1 text-[12px] font-semibold">
                     {section.icon != null && (
                       <span className="shrink-0" aria-hidden>
                         {section.icon}
@@ -255,10 +269,14 @@ export function SettingsLayout({
                   </span>
                   {section.description != null && (
                     <span
+                      data-settings-rail-description=""
                       className={cn(
-                        'text-[10px] leading-snug',
+                        // 11px, the caption step (2.516.2; was 10px). The selected
+                        // row's description is the full primary, no opacity (was
+                        // the primary at 80%, which a host tint had to clear).
+                        'text-[11px] leading-snug',
                         isActive
-                          ? 'text-[var(--color-primary,#4338ca)] opacity-80'
+                          ? 'text-[var(--color-primary,#4338ca)]'
                           : 'text-[var(--color-text-tertiary)]',
                       )}
                     >
@@ -276,12 +294,16 @@ export function SettingsLayout({
           aria-label={contentLabel}
           data-testid={`${testId}-body`}
           data-settings-body={Content}
-          className="flex-1 min-w-0 min-h-0 overflow-y-auto"
+          // The section is centred by the body (a flex column), not by its own
+          // auto margins (2.516.2), so an audit reads the space beside it as
+          // layout. `sectionAlign="start"` keeps it at the body's start edge.
+          className={cn('flex flex-1 min-w-0 min-h-0 flex-col overflow-y-auto', sectionAlign === 'start' ? 'items-start' : 'items-center')}
         >
           <div
             data-testid={`${testId}-section`}
             data-section-id={activeSection?.id}
-            className={cn('p-6 max-w-3xl mx-auto', narrow && '@max-[40rem]:p-4')}
+            data-section-align={sectionAlign}
+            className={cn('w-full max-w-3xl shrink-0 p-6', narrow && '@max-[40rem]:p-4')}
           >
             {activeSection?.content}
           </div>

@@ -1927,10 +1927,10 @@
     {
       "id": "library.type-scale",
       "kind": "text",
-      "selector": "[data-detail-header-stack], [data-detail-page-tabs], [data-pipeline-run], [data-ui-procedure], [data-testid=\"presence-panel\"], [data-titled-frame-title=\"label\"], [data-settings-title]",
+      "selector": "[data-detail-header-stack], [data-detail-page-tabs], [data-pipeline-run], [data-ui-procedure], [data-testid=\"presence-panel\"], [data-titled-frame-title=\"label\"], [data-settings-title], [data-settings-rail-description], [data-workflow-step-head]",
       "properties": { "fontSize": [11, 12, 14, 16, 20] },
       "tolerance": 0.1,
-      "owner": "DetailPage header and tabs, WrappedPipelineRun card, ProcedureSteps, PresencePanel, DashboardPage panel titles, SettingsPage title (2.515.12): every text node on the house type scale 11 / 12 / 14 / 16 / 20"
+      "owner": "DetailPage header and tabs, WrappedPipelineRun card, ProcedureSteps, PresencePanel, DashboardPage panel titles, SettingsPage title (2.515.12), SettingsLayout rail descriptions and WorkflowStepper step labels (2.516.2): every text node on the house type scale 11 / 12 / 14 / 16 / 20"
     },
     {
       "id": "detail.header-stack-gap",
@@ -1965,7 +1965,20 @@
       "selector": "[data-page-template=\"settings\"] [data-settings-title]",
       "properties": { "fontSize": 20 },
       "tolerance": 0.1,
-      "owner": "SettingsPage (2.516.1): the page title at 20px, as the other page templates draw it (was 14px)"
+      "owner": "SettingsPage (2.516.1): the page title at 20px, as the other page templates draw it (was 14px)"    },
+    {
+      "id": "settings.rail-gap",
+      "kind": "style",
+      "selector": "[data-settings-rail-items], [data-settings-rail-items] > button",
+      "properties": { "rowGap": 4 },
+      "owner": "SettingsLayout rail (2.516.2): items 4px apart and each item's label 4px over its description (were 2px)"
+    },
+    {
+      "id": "stepper.head-gap",
+      "kind": "style",
+      "selector": "[data-workflow-step-head]",
+      "properties": { "columnGap": 4 },
+      "owner": "WorkflowStepper (2.516.2): every size puts the step label 4px from its marker (sm and md were 6px)"
     }
   ]
 }

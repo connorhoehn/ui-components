@@ -42,7 +42,7 @@ export interface KeyValueItem {
   action?: ReactNode;
 }
 
-export type KeyValueLayout = 'stack' | 'row' | 'grid' | 'inline';
+export type KeyValueLayout = 'stack' | 'row' | 'grid' | 'inline' | 'stacked-row';
 
 export interface KeyValueProps {
   items: KeyValueItem[];
@@ -53,6 +53,9 @@ export interface KeyValueProps {
    * `inline` (since 2.515.12): one row of pairs, each label beside its value
    * (12px label, 14px value, 4px apart, 16px between pairs), wrapping onto a
    * further line when the row is full; a header's facts line.
+   * `stacked-row` (since 2.516.2): one row of pairs, each a 12px label above
+   * its 14px value (4px apart), pairs 24px apart, wrapping lines 12px apart;
+   * a card's facts strip (the Storymaker Overview job facts).
    */
   layout?: KeyValueLayout;
   /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
@@ -83,12 +86,13 @@ export function KeyValue({
   if (items.length === 0) return null;
   const row = layout === 'row';
   const inline = layout === 'inline';
+  const stackedRow = layout === 'stacked-row';
   const ruled = row && divided;
   return (
     <dl
       className={cn(
         'm-0 min-w-0', responsive && '@container/key-value',
-        layout === 'grid' ? 'grid grid-cols-2 gap-x-6 gap-y-3' : inline ? 'flex flex-wrap items-baseline gap-x-4 gap-y-1' : ruled ? 'flex flex-col border-t border-border' : row ? 'flex flex-col gap-2' : 'flex flex-col gap-3',
+        layout === 'grid' ? 'grid grid-cols-2 gap-x-6 gap-y-3' : stackedRow ? 'flex flex-wrap items-start gap-x-6 gap-y-3' : inline ? 'flex flex-wrap items-baseline gap-x-4 gap-y-1' : ruled ? 'flex flex-col border-t border-border' : row ? 'flex flex-col gap-2' : 'flex flex-col gap-3',
         className,
       )}
       data-layout={layout}

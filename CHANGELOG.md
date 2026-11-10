@@ -1,3 +1,29 @@
+## 2.516.2
+
+The Storymaker Studio's ui-dom-audit gaps measured after it adopted 2.516.1 (G121-B1..B5 on the settings rail, G121-1..4), the composer's suggestion chips, and a `KeyValue` facts-strip layout. Every changed default a consumer's audit contract can pin is listed before → after.
+
+Changed defaults (type scale 11 / 12 / 14 / 16 / 20, spacing on 4px steps):
+
+- `SettingsLayout` rail (G121-B1): items 2px → 4px apart; an item's label to its description 2px → 4px; icon to label 6px → 4px. Marker `data-settings-rail-items`.
+- `SettingsLayout` rail descriptions (G121-B2): 10px → 11px. Marker `data-settings-rail-description`.
+- `SettingsLayout gutter="none"` (G121-B3): the wide rail's top padding 16px → 0, as the narrow header's already was, so under a frame that owns the 16px inset the title sits 16px under the header (was 32px). `gutter="default"` keeps 16px; bottom padding stays 16px. `SettingsPage gutter="none"` reaches it. Marker `data-rail-gutter`.
+- `SettingsLayout` section (G121-B4): centred by its body (a flex column, `items-center`) instead of its own `mx-auto`, so the space beside it is layout, not a 94px margin; it draws where it did. New `sectionAlign?: 'center' | 'start'` (default `center`); `start` puts it at the body's left edge, as the other templates draw. Marker `data-section-align`.
+- `SettingsLayout` selected rail item (G121-B5): the description is the full primary (was the primary at `opacity-80`), so a host tint only has to clear the primary itself.
+- `ImageCompare` (and `ImageFilmstrip`, which draws it) (G121-1): picture-to-caption gap 6px → 4px; label-to-description 2px → 4px.
+- `TitledFrame` (G121-2): `titleStyle` defaults by tone. `tone="surface"`: `mono` → `label` (10px monospace with 6px padding → 12px house font, medium, 4px padding). `tone="code"` (the default tone, terminal panes): `mono`, unchanged. Library users of the surface tone: `DashboardPage` already passed `label`; `WorkActivityCanvas`'s effort frame draws its own 12px sans title, so only its title padding moves (6px → 4px). Pass `titleStyle="mono"` to keep the old surface look. `label` is not the default for `code` because `ComputerLab`'s terminal panes rely on the multiplexer look.
+- `WorkflowStepper` (G121-3): `md` (the default outside compact density) step labels 11px → 12px (line 11 → 16px) and marker-to-label gap 6px → 4px; `sm` (deprecated since 2.440.0) labels 10px → 12px, gap 6px → 4px, 20px marker unchanged. `sm` stays an accepted value in this patch release (removing it would break consumers' types); it still warns. `compact` unchanged. Marker `data-workflow-step-head`.
+- `StatusPill` `size="md"` (G121-4): dot-to-label gap 6px → 4px in every variant (`pill`, `text`, `tag`/`label`). `sm` unchanged (4px).
+- `RichChatComposer` suggestion chips: block padding 2px → 0, line 16px → 20px, so the chip stays 22px tall with no off-scale padding.
+
+New props, defaults unchanged:
+
+- `KeyValue layout="stacked-row"`: one wrapping row of facts, each a 12px label above its 14px value (4px apart), items 24px apart, wrapped lines 12px apart; a card's facts strip (the drawing's label-over-value row that 2.515.12's `inline` was not). `KeyValueLayout` gains `'stacked-row'`.
+- `SettingsLayout sectionAlign` (above).
+
+ui-dom-audit: `settings.rail-gap` (rail items and each item's label-to-description 4px), `stepper.head-gap` (4px), and `library.type-scale` now also reads `[data-settings-rail-description]` and `[data-workflow-step-head]`. Self-test: the on-scale fixture passes; a 2px rail or item gap, a 10px description, a 6px stepper head and a 10px step label each fail. `contracts.md` "Settings rail and stepper heads".
+
+Not in this release: removing `WorkflowStepper size="sm"` (a breaking type change; for the next minor). Off-scale values outside the gap list: `StatusPill` `md` pill 10px side padding and `sm` 10px text, `Chip xs` 10px text, `MarkdownView sm` 6px heading margins.
+
 ## 2.516.1
 
 The open half of the Storymaker Studio's ui-dom-audit gap list (G88-O1..O5, G88-E8, G88-A1, G119-1, G119-2, G120-1..3). Every changed default a consumer's audit contract can pin is listed with its measured value before → after. Where the old value is one other consumers may rely on, the fix is a new prop and the default is unchanged; those say so.

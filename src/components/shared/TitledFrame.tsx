@@ -38,10 +38,12 @@ export interface TitledFrameProps {
    */
   tone?: TitledFrameTone;
   /**
-   * How the title reads (since 2.515.12). `mono` (default, unchanged): the
-   * multiplexer label, 10px monospace with 6px padding. `label`: the house
-   * font at 12px with 4px padding, so the title's text starts 12px in from
-   * the frame's edge, on a `p-3` body's inset (`DashboardPage` panels).
+   * How the title reads (since 2.515.12). `mono`: the multiplexer label,
+   * 10px monospace with 6px padding. `label`: the house font at 12px with 4px
+   * padding, so the title's text starts 12px in from the frame's edge, on a
+   * `p-3` body's inset (`DashboardPage` panels). Default (since 2.516.2): by
+   * tone — `mono` for `tone="code"` (a terminal pane, unchanged), `label` for
+   * `tone="surface"` (was `mono`).
    */
   titleStyle?: 'mono' | 'label';
   children: ReactNode;
@@ -80,7 +82,7 @@ export function TitledFrame({
   titleText,
   active = false,
   tone = 'code',
-  titleStyle = 'mono',
+  titleStyle: titleStyleProp,
   children,
   onActivate,
   className,
@@ -89,6 +91,7 @@ export function TitledFrame({
   'data-testid': testId,
 }: TitledFrameProps) {
   const palette = TONE[tone];
+  const titleStyle = titleStyleProp ?? (tone === 'code' ? 'mono' : 'label');
   return (
     <div
       data-testid={testId}
