@@ -48,7 +48,12 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [internalPhase, setInternalPhase] = useState<PlayerPhase>('idle');
+  // A file source (a plain `src`, no `stream`) whose metadata has loaded is a
+  // clip at rest, not a connection: it shows its poster/first frame and its
+  // controls, never the idle/connecting overlay over them (since 2.515.7).
+  const [fileLoaded, setFileLoaded] = useState(false);
   const phase = controlledPhase ?? internalPhase;
+  const source = stream ? 'stream' : src ? 'file' : 'none';
 
   useEffect(() => {
     const el = videoRef.current;
@@ -58,11 +63,14 @@ export function VideoPlayer({
       ['waiting', () => { setInternalPhase('buffering'); onPhaseChange?.('buffering'); }],
       ['playing', () => { setInternalPhase('playing'); onPhaseChange?.('playing'); }],
       ['error', () => { setInternalPhase('error'); onPhaseChange?.('error'); }],
-      ['loadstart', () => { setInternalPhase('connecting'); onPhaseChange?.('connecting'); }],
+      ['loadstart', () => { setFileLoaded(false); setInternalPhase('connecting'); onPhaseChange?.('connecting'); }],
+      ['loadedmetadata', () => { if (!el.srcObject) setFileLoaded(true); }],
       ['timeupdate', () => { onTimeUpdate?.(el.currentTime, el.duration); }],
     ];
 
     handlers.forEach(([evt, fn]) => el.addEventListener(evt, fn));
+    // Metadata may already be in (a cached clip) before the listeners attach.
+    if (el.readyState >= 1 && !el.srcObject && el.currentSrc) setFileLoaded(true);
     return () => handlers.forEach(([evt, fn]) => el.removeEventListener(evt, fn));
   }, [onPhaseChange, onTimeUpdate]);
 
@@ -77,13 +85,18 @@ export function VideoPlayer({
     }
   }, [stream]);
 
-  const showOverlay = phase !== 'playing';
+  const fileAtRest = source === 'file' && fileLoaded && (phase === 'idle' || phase === 'connecting');
+  const showOverlay = phase !== 'playing' && !fileAtRest;
   const overlayText = overlayLabels[phase];
 
   return (
     <div
       className={cn('relative bg-black rounded-lg overflow-hidden aspect-video', className)}
       style={style}
+      data-video-player=""
+      data-phase={phase}
+      data-source={source}
+      {...(source === 'file' && fileLoaded ? { 'data-file-loaded': '' } : {})}
     >
       <video
         ref={videoRef}
@@ -97,7 +110,7 @@ export function VideoPlayer({
         className={cn('w-full h-full object-contain block')}
       />
       {showOverlay && overlayText && (
-        <div className={cn('absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide')}>
+        <div className={cn('absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide')} data-video-overlay={phase}>
           {phase === 'buffering' && <Spinner />}
           <span className={cn(phase === 'buffering' ? 'ml-2' : '')}>{overlayText}</span>
         </div>

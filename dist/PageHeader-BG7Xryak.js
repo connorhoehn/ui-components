@@ -364,17 +364,20 @@ function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge:
 		children: [
 			N,
 			/* @__PURE__ */ b("div", {
-				className: "flex h-7 min-w-0 items-center gap-3",
+				className: "flex min-h-7 min-w-0 flex-wrap items-center gap-x-3 gap-y-1",
 				"data-testid": `${O}-row`,
+				"data-page-header-row": "",
 				children: [
 					B,
 					/* @__PURE__ */ b("div", {
-						className: "flex min-w-0 flex-1 items-center gap-2",
+						className: "flex min-w-0 flex-1 basis-32 items-center gap-2",
+						"data-page-header-title-cell": "",
 						children: [
 							/* @__PURE__ */ y(r, {
 								className: t("m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]", f === "sm" ? "text-sm leading-5" : "text-xl leading-7"),
 								title: n,
 								"data-title-size": f,
+								"data-page-header-title": "",
 								children: n
 							}),
 							u,
@@ -399,7 +402,8 @@ function z({ title: n, as: r = "h1", description: i, actions: s, back: l, badge:
 						]
 					}),
 					s && /* @__PURE__ */ y("div", {
-						className: "flex flex-shrink-0 items-center gap-2",
+						className: "flex max-w-full flex-shrink-0 flex-wrap items-center gap-2",
+						"data-page-header-actions": "",
 						children: s
 					})
 				]

@@ -1902,5 +1902,27 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS page.template, subject.frame, confirm.inline, inspector.shape, nav.rail-groups and tile.actions-inside catch a second template, an empty or cropped subject, a decision behind a dialog, an inspector out of shape, a rail off its manifest and tile actions leaving their tile, and accept the library shapes');
   }
+  {
+    // header.title-room (2.515.7): a compact page header in a 302px column
+    // with four actions. One unwrapping row squeezed the h1 to 0px; the
+    // library's row wraps the actions under the title instead.
+    const page = await browser.newPage({ viewport: { width: 390, height: 800 } });
+    const rule = fullContract.rules.find(r => r.id === 'header.title-room');
+    assert.ok(rule && !rule.deep, 'header.title-room is in the resting gate');
+    const judge = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules: [rule] }, selectors: {} });
+    const header = (row, cell, acts, title = 'Episodes') => `<style>*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}h1{margin:0;font-size:20px;line-height:28px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;min-width:0}button{flex:none;height:28px;white-space:nowrap}</style><div style="width:302px"><div data-page-header><div style="${row}"><div style="${cell}"><h1 data-page-header-title>${title}</h1></div><div style="${acts}"><button>Generate</button><button>More</button><button>Start blank draft</button><button>New episode</button></div></div></div></div>`;
+    await page.setContent(header('display:flex;height:28px;align-items:center;gap:12px', 'display:flex;flex:1;min-width:0', 'display:flex;flex-shrink:0;gap:8px'));
+    const squeezed = await judge();
+    assert.ok(squeezed.issues.some(i => i.rule === 'header.title-room' && i.property === 'title squeezed'), `one unwrapping row squeezes the title ${JSON.stringify(squeezed.issues)}`);
+    await page.setContent(header('display:flex;flex-wrap:wrap;min-height:28px;align-items:center;gap:4px 12px', 'display:flex;flex:1 1 8rem;min-width:0', 'display:flex;flex-shrink:0;flex-wrap:wrap;max-width:100%;gap:8px'));
+    const wrapped = await judge();
+    assert.deepEqual(wrapped.issues, [], 'the wrapping row keeps the title');
+    assert.equal(wrapped.coverage.find(c => c.rule === 'header.title-room').matched, 1);
+    // A short title only needs its own width.
+    await page.setContent(header('display:flex;flex-wrap:wrap;gap:12px', 'display:flex;flex:1 1 8rem;min-width:0', 'display:flex;flex-wrap:wrap;max-width:100%', 'Cast'));
+    assert.deepEqual((await judge()).issues, [], 'a short title that fits passes');
+    await page.close();
+    console.log('PASS header.title-room catches a page title squeezed out by its header actions and accepts the wrapping row');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

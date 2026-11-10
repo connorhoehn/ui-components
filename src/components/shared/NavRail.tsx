@@ -106,6 +106,12 @@ export interface NavRailProps {
    * different keys or they share collapse state.
    */
   storageKey?: string;
+  /**
+   * Groups (by their `group` name) that start folded (since 2.515.7). A
+   * group holding the active item starts open anyway. A remembered state
+   * (`storageKey`) wins over this, in both directions.
+   */
+  defaultCollapsedGroups?: string[];
   /** Render links with a router's Link/NavLink. Defaults to a plain `<a>`. */
   renderLink?: (
     item: NavRailItem,
@@ -361,6 +367,7 @@ function RailGroup({
   renderLink,
   size = 'sm',
   divided = false,
+  defaultCollapsed = false,
 }: {
   name: string;
   items: NavRailItem[];
@@ -372,15 +379,18 @@ function RailGroup({
   size?: 'sm' | 'md';
   /** A hairline above the group — every group after the first, at `md`. */
   divided?: boolean;
+  /** Start folded unless a remembered state says otherwise. */
+  defaultCollapsed?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState<boolean>(() => {
-    if (!storageKey || typeof window === 'undefined') return false;
+    if (!storageKey || typeof window === 'undefined') return defaultCollapsed;
     try {
-      return window.localStorage?.getItem(storageKey) === '1';
+      const stored = window.localStorage?.getItem(storageKey);
+      return stored === '1' ? true : stored === '0' ? false : defaultCollapsed;
     } catch {
       // Safari in private mode throws on localStorage access. A rail that
       // cannot remember its state is fine; a rail that crashes is not.
-      return false;
+      return defaultCollapsed;
     }
   });
 
@@ -388,11 +398,13 @@ function RailGroup({
     if (!storageKey || typeof window === 'undefined') return;
     try {
       if (collapsed) window.localStorage?.setItem(storageKey, '1');
+      // A default-folded group remembers being opened; others forget, as before.
+      else if (defaultCollapsed) window.localStorage?.setItem(storageKey, '0');
       else window.localStorage?.removeItem(storageKey);
     } catch {
       /* see above */
     }
-  }, [collapsed, storageKey]);
+  }, [collapsed, storageKey, defaultCollapsed]);
 
   const bodyId = useId();
   const headerRef = useRef<HTMLButtonElement | null>(null);
@@ -463,6 +475,7 @@ export function NavRail({
   renderLink,
   tone = 'surface',
   size = 'sm',
+  defaultCollapsedGroups,
   collapsed: collapsedProp,
   onToggleCollapsed,
   'aria-label': ariaLabel,
@@ -562,6 +575,7 @@ export function NavRail({
               renderLink={renderLink}
               size={size}
               divided={size === 'md' && gi > 0}
+              defaultCollapsed={!!defaultCollapsedGroups?.includes(g.name) && !g.items.some((item) => isActive(item, activeHref, match))}
             />
           ),
         )}

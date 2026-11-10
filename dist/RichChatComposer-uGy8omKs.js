@@ -1,9 +1,9 @@
 import { d as e, t } from "./Button-DQoeE5dN.js";
 import { n } from "./Text-DYn7PTcU.js";
 import { t as r } from "./IconButton-BgM9MvwA.js";
-import { B as i, D as a, E as o, S as s, U as c, V as l, X as u, _ as d, _t as f, ct as p, d as m, ft as h, gt as g, h as _, m as v, n as y, pt as b, r as x, st as ee } from "./Icons-CqVFbuiZ.js";
-import { t as S } from "./DropdownMenu-DoCRgXx4.js";
-import { i as C, n as te, r as ne } from "./Tabs-CuHFNMDN.js";
+import { B as i, D as a, E as o, S as s, U as c, V as l, X as u, _ as d, _t as f, ct as p, d as m, ft as h, gt as g, h as _, m as v, n as y, pt as b, r as x, st as S } from "./Icons-CqVFbuiZ.js";
+import { t as C } from "./DropdownMenu-DoCRgXx4.js";
+import { i as ee, n as te, r as ne } from "./Tabs-CuHFNMDN.js";
 import { n as re } from "./Avatar-BcOAdTaX.js";
 import { t as ie } from "./RovingToolbar-C8vF753M.js";
 import { a as ae, i as oe, n as se, o as ce, s as le } from "./backdropTone-DokCqPDL.js";
@@ -18,7 +18,7 @@ import { Extension as Ne, InputRule as Pe, Mark as Fe, PasteRule as Ie, combineT
 import { Plugin as Ge, PluginKey as Ke, TextSelection as qe } from "@tiptap/pm/state";
 import { Decoration as Je, DecorationSet as Ye } from "@tiptap/pm/view";
 import Xe from "@tiptap/extension-mention";
-//#region ../ui-components/node_modules/linkifyjs/dist/linkify.mjs
+//#region node_modules/linkifyjs/dist/linkify.mjs
 var Ze = "aaa1rp3bb0ott3vie4c1le2ogado5udhabi7c0ademy5centure6ountant0s9o1tor4d0s1ult4e0g1ro2tna4f0l1rica5g0akhan5ency5i0g1rbus3force5tel5kdn3l0ibaba4pay4lfinanz6state5y2sace3tom5m0azon4ericanexpress7family11x2fam3ica3sterdam8nalytics7droid5quan4z2o0l2partments8p0le4q0uarelle8r0ab1mco4chi3my2pa2t0e3s0da2ia2sociates9t0hleta5torney7u0ction5di0ble3o3spost5thor3o0s4w0s2x0a2z0ure5ba0by2idu3namex4d1k2r0celona5laycard4s5efoot5gains6seball5ketball8uhaus5yern5b0c1t1va3cg1n2d1e0ats2uty4er2rlin4st0buy5t2f1g1h0arti5i0ble3d1ke2ng0o3o1z2j1lack0friday9ockbuster8g1omberg7ue3m0s1w2n0pparibas9o0ats3ehringer8fa2m1nd2o0k0ing5sch2tik2on4t1utique6x2r0adesco6idgestone9oadway5ker3ther5ussels7s1t1uild0ers6siness6y1zz3v1w1y1z0h3ca0b1fe2l0l1vinklein9m0era3p2non3petown5ital0one8r0avan4ds2e0er0s4s2sa1e1h1ino4t0ering5holic7ba1n1re3c1d1enter4o1rn3f0a1d2g1h0anel2nel4rity4se2t2eap3intai5ristmas6ome4urch5i0priani6rcle4sco3tadel4i0c2y3k1l0aims4eaning6ick2nic1que6othing5ud3ub0med6m1n1o0ach3des3ffee4llege4ogne5m0mbank4unity6pany2re3uter5sec4ndos3struction8ulting7tact3ractors9oking4l1p2rsica5untry4pon0s4rses6pa2r0edit0card4union9icket5own3s1uise0s6u0isinella9v1w1x1y0mru3ou3z2dad1nce3ta1e1ing3sun4y2clk3ds2e0al0er2s3gree4livery5l1oitte5ta3mocrat6ntal2ist5si0gn4v2hl2iamonds6et2gital5rect0ory7scount3ver5h2y2j1k1m1np2o0cs1tor4g1mains5t1wnload7rive4tv2ubai3pont4rban5vag2r2z2earth3t2c0o2deka3u0cation8e1g1mail3erck5nergy4gineer0ing9terprises10pson4quipment8r0icsson6ni3s0q1tate5t1u0rovision8s2vents5xchange6pert3osed4ress5traspace10fage2il1rwinds6th3mily4n0s2rm0ers5shion4t3edex3edback6rrari3ero6i0delity5o2lm2nal1nce1ial7re0stone6mdale6sh0ing5t0ness6j1k1lickr3ghts4r2orist4wers5y2m1o0o0d1tball6rd1ex2sale4um3undation8x2r0ee1senius7l1ogans4ntier7tr2ujitsu5n0d2rniture7tbol5yi3ga0l0lery3o1up4me0s3p1rden4y2b0iz3d0n2e0a1nt0ing5orge5f1g0ee3h1i0ft0s3ves2ing5l0ass3e1obal2o4m0ail3bh2o1x2n1odaddy5ld0point6f2odyear5g0le4p1t1v2p1q1r0ainger5phics5tis4een3ipe3ocery4up4s1t1u0cci3ge2ide2tars5ru3w1y2hair2mburg5ngout5us3bo2dfc0bank7ealth0care8lp1sinki6re1mes5iphop4samitsu7tachi5v2k0t2m1n1ockey4ldings5iday5medepot5goods5s0ense7nda3rse3spital5t0ing5t0els3mail5use3w2r1sbc3t1u0ghes5yatt3undai7ibm2cbc2e1u2d1e0ee3fm2kano4l1m0amat4db2mo0bilien9n0c1dustries8finiti5o2g1k1stitute6urance4e4t0ernational10uit4vestments10o1piranga7q1r0ish4s0maili5t0anbul7t0au2v3jaguar4va3cb2e0ep2tzt3welry6io2ll2m0p2nj2o0bs1urg4t1y2p0morgan6rs3uegos4niper7kaufen5ddi3e0rryhotels6properties14fh2g1h1i0a1ds2m1ndle4tchen5wi3m1n1oeln3matsu5sher5p0mg2n2r0d1ed3uokgroup8w1y0oto4z2la0caixa5mborghini8er3nd0rover6xess5salle5t0ino3robe5w0yer5b1c1ds2ease3clerc5frak4gal2o2xus4gbt3i0dl2fe0insurance9style7ghting6ke2lly3mited4o2ncoln4k2ve1ing5k1lc1p2oan0s3cker3us3l1ndon4tte1o3ve3pl0financial11r1s1t0d0a3u0ndbeck6xe1ury5v1y2ma0drid4if1son4keup4n0agement7go3p1rket0ing3s4riott5shalls7ttel5ba2c0kinsey7d1e0d0ia3et2lbourne7me1orial6n0u2rck0msd7g1h1iami3crosoft7l1ni1t2t0subishi9k1l0b1s2m0a2n1o0bi0le4da2e1i1m1nash3ey2ster5rmon3tgage6scow4to0rcycles9v0ie4p1q1r1s0d2t0n1r2u0seum3ic4v1w1x1y1z2na0b1goya4me2vy3ba2c1e0c1t0bank4flix4work5ustar5w0s2xt0direct7us4f0l2g0o2hk2i0co2ke1on3nja3ssan1y5l1o0kia3rton4w0ruz3tv4p1r0a1w2tt2u1yc2z2obi1server7ffice5kinawa6layan0group9lo3m0ega4ne1g1l0ine5oo2pen3racle3nge4g0anic5igins6saka4tsuka4t2vh3pa0ge2nasonic7ris2s1tners4s1y3y2ccw3e0t2f0izer5g1h0armacy6d1ilips5one2to0graphy6s4ysio5ics1tet2ures6d1n0g1k2oneer5zza4k1l0ace2y0station9umbing5s3m1n0c2ohl2ker3litie5rn2st3r0axi3ess3ime3o0d0uctions8f1gressive8mo2perties3y5tection8u0dential9s1t1ub2w0c2y2qa1pon3uebec3st5racing4dio4e0ad1lestate6tor2y4cipes5d0umbrella9hab3ise0n3t2liance6n0t0als5pair3ort3ublican8st0aurant8view0s5xroth6ich0ardli6oh3l1o1p2o0cks3deo3gers4om3s0vp3u0gby3hr2n2w0e2yukyu6sa0arland6fe0ty4kura4le1on3msclub4ung5ndvik0coromant12ofi4p1rl2s1ve2xo3b0i1s2c0b1haeffler7midt4olarships8ol3ule3warz5ience5ot3d1e0arch3t2cure1ity6ek2lect4ner3rvices6ven3w1x0y3fr2g1h0angrila6rp3ell3ia1ksha5oes2p0ping5uji3w3i0lk2na1gles5te3j1k0i0n2y0pe4l0ing4m0art3ile4n0cf3o0ccer3ial4ftbank4ware6hu2lar2utions7ng1y2y2pa0ce3ort2t3r0l2s1t0ada2ples4r1tebank4farm7c0group6ockholm6rage3e3ream4udio2y3yle4u0cks3pplies3y2ort5rf1gery5zuki5v1watch4iss4x1y0dney4stems6z2tab1ipei4lk2obao4rget4tamotors6r2too4x0i3c0i2d0k2eam2ch0nology8l1masek5nnis4va3f1g1h0d1eater2re6iaa2ckets5enda4ps2res2ol4j0maxx4x2k0maxx5l1m0all4n1o0day3kyo3ols3p1ray3shiba5tal3urs3wn2yota3s3r0ade1ing4ining5vel0ers0insurance16ust3v2t1ube2i1nes3shu4v0s2w1z2ua1bank3s2g1k1nicom3versity8o2ol2ps2s1y1z2va0cations7na1guard7c1e0gas3ntures6risign5mögensberater2ung14sicherung10t2g1i0ajes4deo3g1king4llas4n1p1rgin4sa1ion4va1o3laanderen9n1odka3lvo3te1ing3o2yage5u2wales2mart4ter4ng0gou5tch0es6eather0channel12bcam3er2site5d0ding5ibo2r3f1hoswho6ien2ki2lliamhill9n0dows4e1ners6me2oodside6rk0s2ld3w2s1tc1f3xbox3erox4ihuan4n2xx2yz3yachts4hoo3maxun5ndex5e1odobashi7ga2kohama6u0tube6t1un3za0ppos4ra3ero3ip2m1one3uerich6w2", Qe = "ελ1υ2бг1ел3дети4ею2католик6ом3мкд2он1сква6онлайн5рг3рус2ф2сайт3рб3укр3қаз3հայ3ישראל5קום3ابوظبي5رامكو5لاردن4بحرين5جزائر5سعودية6عليان5مغرب5مارات5یران5بارت2زار4يتك3ھارت5تونس4سودان3رية5شبكة4عراق2ب2مان4فلسطين6قطر3كاثوليك6وم3مصر2ليسيا5وريتانيا7قع4همراه5پاکستان7ڀارت4कॉम3नेट3भारत0म्3ोत5संगठन5বাংলা5ভারত2ৰত4ਭਾਰਤ4ભારત4ଭାରତ4இந்தியா6லங்கை6சிங்கப்பூர்11భారత్5ಭಾರತ4ഭാരതം5ලංකා4คอม3ไทย3ລາວ3გე2みんな3アマゾン4クラウド4グーグル4コム2ストア3セール3ファッション6ポイント4世界2中信1国1國1文网3亚马逊3企业2佛山2信息2健康2八卦2公司1益2台湾1灣2商城1店1标2嘉里0大酒店5在线2大拿2天主教3娱乐2家電2广东2微博2慈善2我爱你3手机2招聘2政务1府2新加坡2闻2时尚2書籍2机构2淡马锡3游戏2澳門2点看2移动2组织机构4网址1店1站1络2联通2谷歌2购物2通販2集团2電訊盈科4飞利浦3食品2餐厅2香格里拉3港2닷넷1컴2삼성2한국2", $e = "numeric", et = "ascii", tt = "alpha", nt = "asciinumeric", rt = "alphanumeric", it = "domain", at = "emoji", ot = "scheme", st = "slashscheme", ct = "whitespace";
 function lt(e, t) {
 	return e in t || (t[e] = []), t[e];
@@ -443,9 +443,9 @@ function Ln({ groups: e }) {
 	j(v, e.numeric, y);
 	let b = In(Fn), x = In();
 	j(b, t, b), j(b, n, x), j(x, t, b), j(x, n, x), N(_, cn, b), N(y, cn, b);
-	let ee = N(s, Kt), S = N(N(N(c, Kt), cn), cn);
-	j(s, e.domain, o), N(s, Yt, g), N(s, Qt, h), j(c, e.domain, o), N(c, Yt, g), N(c, Qt, h), j(ee, e.domain, b), N(ee, cn, b), N(ee, rn, b), j(S, e.domain, b), j(S, t, b), N(S, cn, b);
-	let C = [
+	let S = N(s, Kt), C = N(N(N(c, Kt), cn), cn);
+	j(s, e.domain, o), N(s, Yt, g), N(s, Qt, h), j(c, e.domain, o), N(c, Yt, g), N(c, Qt, h), j(S, e.domain, b), N(S, cn, b), N(S, rn, b), j(C, e.domain, b), j(C, t, b), N(C, cn, b);
+	let ee = [
 		[wt, Tt],
 		[Et, Dt],
 		[Ot, kt],
@@ -455,8 +455,8 @@ function Ln({ groups: e }) {
 		[It, Lt],
 		[Rt, zt]
 	];
-	for (let e = 0; e < C.length; e++) {
-		let [r, i] = C[e], a = N(b, r);
+	for (let e = 0; e < ee.length; e++) {
+		let [r, i] = ee[e], a = N(b, r);
 		N(x, r, a);
 		let o = In(Fn);
 		j(a, t, o);
@@ -529,7 +529,7 @@ function V(e, t = null, n = null) {
 	return a;
 }
 //#endregion
-//#region ../ui-components/node_modules/@tiptap/extension-link/dist/index.js
+//#region node_modules/@tiptap/extension-link/dist/index.js
 var H = "[\0- \xA0 ᠎ -\u2029 　]", Kn = new RegExp(H), qn = RegExp(`${H}$`), Jn = new RegExp(H, "g");
 function Yn(e) {
 	return e.length === 1 ? e[0].isLink : e.length === 3 && e[1].isLink ? ["()", "[]"].includes(e[0].value + e[2].value) : !1;
@@ -989,7 +989,7 @@ function Pr(e) {
 	};
 }
 //#endregion
-//#region ../ui-components/node_modules/@floating-ui/core/dist/floating-ui.core.mjs
+//#region node_modules/@floating-ui/core/dist/floating-ui.core.mjs
 function Fr(e, t, n) {
 	let { reference: r, floating: i } = e, a = br(t), o = xr(t), s = yr(o), c = gr(t), l = a === "y", u = r.x + r.width / 2 - i.width / 2, d = r.y + r.height / 2 - i.height / 2, f = r[s] / 2 - i[s] / 2, p;
 	switch (c) {
@@ -1105,16 +1105,16 @@ var Lr = 50, Rr = async (e, t, n) => {
 			if ((n = i.arrow) != null && n.alignmentOffset) return {};
 			let g = gr(r), _ = br(o), v = gr(o) === o, y = await (s.isRTL == null ? void 0 : s.isRTL(c.floating)), b = d || (v || !m ? [jr(o)] : Cr(o)), x = p !== "none";
 			!d && x && b.push(...Ar(o, m, p, y));
-			let ee = [o, ...b], S = await s.detectOverflow(t, h), C = [], te = i.flip?.overflows || [];
-			if (l && C.push(S[g]), u) {
+			let S = [o, ...b], C = await s.detectOverflow(t, h), ee = [], te = i.flip?.overflows || [];
+			if (l && ee.push(C[g]), u) {
 				let e = Sr(r, a, y);
-				C.push(S[e[0]], S[e[1]]);
+				ee.push(C[e[0]], C[e[1]]);
 			}
 			if (te = [...te, {
 				placement: r,
-				overflows: C
-			}], !C.every((e) => e <= 0)) {
-				let e = (i.flip?.index || 0) + 1, t = ee[e];
+				overflows: ee
+			}], !ee.every((e) => e <= 0)) {
+				let e = (i.flip?.index || 0) + 1, t = S[e];
 				if (t && (u !== "alignment" || _ === br(t) || te.every((e) => br(e.placement) !== _ || e.overflows[0] > 0))) return {
 					data: {
 						index: e,
@@ -1180,7 +1180,7 @@ var Hr = function(e) {
 	};
 };
 //#endregion
-//#region ../ui-components/node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.mjs
+//#region node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.mjs
 function Ur() {
 	return typeof window < "u";
 }
@@ -1277,7 +1277,7 @@ function oi(e) {
 	return e.parent && Object.getPrototypeOf(e.parent) ? e.frameElement : null;
 }
 //#endregion
-//#region ../ui-components/node_modules/@floating-ui/dom/dist/floating-ui.dom.mjs
+//#region node_modules/@floating-ui/dom/dist/floating-ui.dom.mjs
 function Q(e) {
 	let t = ni(e), n = parseFloat(t.width) || 0, r = parseFloat(t.height) || 0, i = Kr(e), a = i ? e.offsetWidth : n, o = i ? e.offsetHeight : r, s = fr(n) !== a || fr(r) !== o;
 	return s && (n = a, r = o), {
@@ -1595,7 +1595,7 @@ var Fi = Hr, Ii = zr, Li = (e, t, n) => {
 	});
 };
 //#endregion
-//#region ../ui-components/node_modules/@tiptap/suggestion/dist/index.js
+//#region node_modules/@tiptap/suggestion/dist/index.js
 function Ri(e) {
 	let { char: t, allowSpaces: n, allowToIncludeChar: r, allowedPrefixes: i, startOfLine: a, $position: o } = e, s = n && !r, c = Re(t), l = RegExp(`\\s${c}$`), u = a ? "^" : "", d = r ? "" : c, f = RegExp(s ? `${u}${c}.*?(?=\\s${d}|$)` : `${u}(?:^)?${c}[^\\s${d}]*`, "gm"), p = o.nodeBefore?.isText && o.nodeBefore.text;
 	if (!p) return null;
@@ -1656,15 +1656,20 @@ function Wi({ pluginKey: e, decorationTag: t, decorationClass: n, decorationCont
 		handleKeyDown(t, n) {
 			var r;
 			let i = e.getState(t.state);
-			return i.active ? n.key === "Escape" || n.key === "Esc" ? ((r = a?.onKeyDown) == null || r.call(a, {
+			if (!i.active) return !1;
+			if (n.key === "Escape" || n.key === "Esc") {
+				var s;
+				return a == null || (s = a.onKeyDown) == null || s.call(a, {
+					view: t,
+					event: n,
+					range: i.range
+				}), o(t), !0;
+			}
+			return (a == null || (r = a.onKeyDown) == null ? void 0 : r.call(a, {
 				view: t,
 				event: n,
 				range: i.range
-			}), o(t), !0) : (a?.onKeyDown)?.call(a, {
-				view: t,
-				event: n,
-				range: i.range
-			}) || !1 : !1;
+			})) || !1;
 		},
 		decorations(a) {
 			let { active: o, range: s, decorationId: c, query: l } = e.getState(a);
@@ -1773,14 +1778,15 @@ function Ki({ editor: e, items: t }) {
 	};
 }
 function qi({ placement: e, offset: t, flip: n, floatingUi: r }) {
-	let i = [Fi({
+	var i;
+	let a = [Fi({
 		mainAxis: t.mainAxis ?? 4,
 		crossAxis: t.crossAxis ?? 0
 	})];
-	return n && i.push(Ii()), r?.middleware?.length && i.push(...r.middleware), {
+	return n && a.push(Ii()), r != null && (i = r.middleware) != null && i.length && a.push(...r.middleware), {
 		placement: e,
 		strategy: r?.strategy ?? "absolute",
-		middleware: i
+		middleware: a
 	};
 }
 function Ji(e) {
@@ -1841,42 +1847,44 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 		floatingUi: d
 	});
 	function y(e, t) {
-		var n, i, a;
 		switch (e) {
 			case "started":
-				(n = r?.onStart) == null || n.call(r, t);
+				var n;
+				r == null || (n = r.onStart) == null || n.call(r, t);
 				break;
 			case "updated":
-				(i = r?.onUpdate) == null || i.call(r, t);
+				var i;
+				r == null || (i = r.onUpdate) == null || i.call(r, t);
 				break;
-			case "stopped": (a = r?.onExit) == null || a.call(r, t);
+			case "stopped":
+				var a;
+				r == null || (a = r.onExit) == null || a.call(r, t);
 		}
 	}
 	return {
 		update: async (n, d) => {
-			var b, x;
-			let ee = t.getState(d), S = t.getState(n.state);
-			if (!ee || !S) return;
-			let C = null, te = ee.query !== S.query, ne = ee.text !== S.text, re = ee.range.from !== S.range.from || ee.range.to !== S.range.to, ie = te || ne || re;
-			if (!ee.active && S.active) C = "started";
-			else if (ee.active && !S.active) C = "stopped";
-			else if (S.active && ie) C = "updated";
+			let b = t.getState(d), x = t.getState(n.state);
+			if (!b || !x) return;
+			let S = null, C = b.query !== x.query, ee = b.text !== x.text, te = b.range.from !== x.range.from || b.range.to !== x.range.to, ne = C || ee || te;
+			if (!b.active && x.active) S = "started";
+			else if (b.active && !x.active) S = "stopped";
+			else if (x.active && ne) S = "updated";
 			else return;
-			let ae = C === "stopped" ? ee : S, oe = n.dom.querySelector(`[data-decoration-id="${ae.decorationId}"]`), se = m(n, oe), ce = i === 0 || (ae.query ? ae.query.length >= i : !1), le = (C === "started" || C === "updated") && ce;
+			let re = S === "stopped" ? b : x, ie = n.dom.querySelector(`[data-decoration-id="${re.decorationId}"]`), ae = m(n, ie), oe = i === 0 || (re.query ? re.query.length >= i : !1), se = (S === "started" || S === "updated") && oe;
 			if (g = {
 				editor: e,
-				range: ae.range,
-				query: ae.query || "",
-				text: ae.text || "",
+				range: re.range,
+				query: re.query || "",
+				text: re.text || "",
 				items: o ?? [],
 				command: (t) => p({
 					editor: e,
-					range: ae.range,
+					range: re.range,
 					props: t
 				}),
-				decorationNode: oe,
-				clientRect: se,
-				loading: le,
+				decorationNode: ie,
+				clientRect: ae,
+				loading: se,
 				placement: s,
 				offset: {
 					mainAxis: c.mainAxis ?? 4,
@@ -1886,15 +1894,23 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 				flip: u,
 				floatingUi: v,
 				mount: Yi({
-					getReferenceRect: se,
+					getReferenceRect: ae,
 					contextElement: n.dom,
 					config: v,
 					container: l,
 					dismissOnOutsideClick: f,
 					dismiss: () => h(e.view)
 				})
-			}, C === "started" && ((b = r?.onBeforeStart) == null || b.call(r, g)), C === "updated" && ((x = r?.onBeforeUpdate) == null || x.call(r, g)), C === "started" && y(C, g), C === "started" || C === "updated") {
-				if (!le) _.abort(), g = {
+			}, S === "started") {
+				var ce;
+				r == null || (ce = r.onBeforeStart) == null || ce.call(r, g);
+			}
+			if (S === "updated") {
+				var le;
+				r == null || (le = r.onBeforeUpdate) == null || le.call(r, g);
+			}
+			if (S === "started" && y(S, g), S === "started" || S === "updated") {
+				if (!se) _.abort(), g = {
 					...g,
 					items: o ?? [],
 					loading: !1
@@ -1904,8 +1920,8 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 						...g,
 						items: o ?? [],
 						loading: !0
-					}, C = "updated", y(C, g);
-					let e = await _.fetch(ae.query || "", a);
+					}, S = "updated", y(S, g);
+					let e = await _.fetch(re.query || "", a);
 					if (e.status === "aborted") return;
 					if (!t.getState(n.state)?.active) {
 						_.abort();
@@ -1921,21 +1937,21 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 					};
 				}
 			}
-			if (C === "stopped") {
-				_.abort(), y(C, g), g = void 0;
+			if (S === "stopped") {
+				_.abort(), y(S, g), g = void 0;
 				return;
 			}
-			C === "updated" && y(C, g);
+			S === "updated" && y(S, g);
 		},
 		destroy: () => {
 			var e;
-			_.abort(), g && ((e = r?.onExit) == null || e.call(r, g));
+			_.abort(), g && (r == null || (e = r.onExit) == null || e.call(r, g));
 		}
 	};
 }
 var Zi = new Ke("suggestion");
-function Qi({ pluginKey: e = Zi, editor: t, char: n = "@", allowSpaces: r = !1, allowToIncludeChar: i = !1, allowedPrefixes: a = [" "], startOfLine: o = !1, decorationTag: s = "span", decorationClass: c = "suggestion", decorationContent: l = "", decorationEmptyClass: u = "is-empty", command: d = () => null, items: f = () => [], minQueryLength: p = 0, debounce: m = 0, initialItems: h, placement: g = "bottom-start", offset: _ = {}, container: v, flip: y = !0, floatingUi: b, dismissOnOutsideClick: x = !0, render: ee = () => ({}), allow: S = () => !0, findSuggestionMatch: C = Ri, shouldShow: te, shouldResetDismissed: ne }) {
-	let re = ee?.(), ie = r && !i, ae = (n, r) => Vi(t, n, r, e);
+function Qi({ pluginKey: e = Zi, editor: t, char: n = "@", allowSpaces: r = !1, allowToIncludeChar: i = !1, allowedPrefixes: a = [" "], startOfLine: o = !1, decorationTag: s = "span", decorationClass: c = "suggestion", decorationContent: l = "", decorationEmptyClass: u = "is-empty", command: d = () => null, items: f = () => [], minQueryLength: p = 0, debounce: m = 0, initialItems: h, placement: g = "bottom-start", offset: _ = {}, container: v, flip: y = !0, floatingUi: b, dismissOnOutsideClick: x = !0, render: S = () => ({}), allow: C = () => !0, findSuggestionMatch: ee = Ri, shouldShow: te, shouldResetDismissed: ne }) {
+	let re = S?.(), ie = r && !i, ae = (n, r) => Vi(t, n, r, e);
 	function oe(e) {
 		return Hi({
 			...e,
@@ -1975,8 +1991,8 @@ function Qi({ pluginKey: e = Zi, editor: t, char: n = "@", allowSpaces: r = !1, 
 			allowToIncludeChar: i,
 			allowedPrefixes: a,
 			startOfLine: o,
-			findSuggestionMatch: C,
-			allow: S,
+			findSuggestionMatch: ee,
+			allow: C,
 			shouldShow: te,
 			shouldKeepDismissed: oe,
 			pluginKey: e
@@ -2385,7 +2401,7 @@ var ua = xe(function({ items: t, command: n, label: r = "Commands", draft: i, wi
 	wide: ne.pane
 };
 function pa(e) {
-	return e === null ? "wide" : e < fa.narrow ? "narrow" : C(e, fa.wide) === "compact" ? "medium" : "wide";
+	return e === null ? "wide" : e < fa.narrow ? "narrow" : ee(e, fa.wide) === "compact" ? "medium" : "wide";
 }
 var ma = {
 	none: "0px",
@@ -2406,7 +2422,7 @@ var ma = {
 	terminal: "Terminal"
 }, _a = {
 	chat: /* @__PURE__ */ D(m, { size: 13 }),
-	agent: /* @__PURE__ */ D(ee, { size: 13 }),
+	agent: /* @__PURE__ */ D(S, { size: 13 }),
 	terminal: /* @__PURE__ */ D("span", {
 		className: "font-mono text-[11px]",
 		children: ">_"
@@ -2547,7 +2563,7 @@ function La(e, t, n = !1) {
 		}
 	};
 }
-var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCommandPick: ne, onSearchPeople: re, mentionMembers: ye, onMentionNonMember: be, onSearchDocuments: xe, allowAttachments: Pe = !1, allowEmoji: Fe = !1, onRequestLink: Ie, placeholder: Le = "Write a message…", inputLabel: Re, commands: ze, privacy: Be = "visible", onPrivacyChange: Ve, privacyLabels: He, disabled: Ue = !1, readOnly: We, references: k, onRemoveReference: Ze, toolbarExtras: Qe, toolbar: $e = "full", moreActions: et, moreActionsLabel: tt = "More actions", processes: nt, mode: rt = "chat", onModeChange: it, fixedMode: at, modePlaceholders: ot, hints: st, onQuickOpen: ct, sendOptions: lt, onSendOption: ut, onShellCommand: dt, modeControl: A = "tabs", modeShortcuts: j = !1, modeTriggers: M, disabledModes: ft, modes: N, modeUnavailableReasons: pt, modeHints: mt, submitLead: ht, submitLabel: gt, submitDisabledReason: _t, radius: vt, backdropTone: yt = "auto", working: bt, maxInputHeight: xt, layout: St = "auto", density: Ct = "comfortable", status: P, suggestions: wt, onSuggestion: Tt, suggestionsVisible: Et = "focused", modeRowEnd: Dt, hideModeMenu: Ot = !1, singleModeLabel: kt = !1, referencesAction: At, referencesPlacement: jt = "end", referenceDrop: Mt, collapseWhenIdle: Nt = !1, responsive: Pt, expanded: Ft = !1, onIdleFoldChange: It, documentMenu: Lt, modeRowStart: Rt, header: zt, sendWithReferencesOnly: Bt = !1, sendShortcut: Vt = "enter", defaultCommand: Ht, presentation: Ut = "card", className: Wt, "data-testid": F = "rich-chat-composer" }, Gt) {
+var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onCommandPick: ne, onSearchPeople: re, mentionMembers: ye, onMentionNonMember: be, onSearchDocuments: xe, allowAttachments: Pe = !1, allowEmoji: Fe = !1, onRequestLink: Ie, placeholder: Le = "Write a message…", inputLabel: Re, commands: ze, privacy: Be = "visible", onPrivacyChange: Ve, privacyLabels: He, disabled: Ue = !1, readOnly: We, references: k, onRemoveReference: Ze, toolbarExtras: Qe, toolbar: $e = "full", moreActions: et, moreActionsLabel: tt = "More actions", processes: nt, mode: rt = "chat", onModeChange: it, fixedMode: at, modePlaceholders: ot, hints: st, onQuickOpen: ct, sendOptions: lt, onSendOption: ut, onShellCommand: dt, modeControl: A = "tabs", modeShortcuts: j = !1, modeTriggers: M, disabledModes: ft, modes: N, modeUnavailableReasons: pt, modeHints: mt, submitLead: ht, submitLabel: gt, submitDisabledReason: _t, radius: vt, backdropTone: yt = "auto", working: bt, maxInputHeight: xt, layout: St = "auto", density: Ct = "comfortable", status: P, suggestions: wt, onSuggestion: Tt, suggestionsVisible: Et = "focused", modeRowEnd: Dt, hideModeMenu: Ot = !1, singleModeLabel: kt = !1, referencesAction: At, referencesPlacement: jt = "end", referenceDrop: Mt, collapseWhenIdle: Nt = !1, responsive: Pt, expanded: Ft = !1, onIdleFoldChange: It, documentMenu: Lt, modeRowStart: Rt, header: zt, sendWithReferencesOnly: Bt = !1, sendShortcut: Vt = "enter", defaultCommand: Ht, presentation: Ut = "card", className: Wt, "data-testid": F = "rich-chat-composer" }, Gt) {
 	let Kt = T(() => {}), qt = T(Vt);
 	qt.current = Vt;
 	let Jt = T(Lt);
@@ -2586,8 +2602,8 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 	Bn.current = be;
 	let Vn = !!re, B = T(xe);
 	B.current = xe;
-	let Hn = !!xe, Un = T(C);
-	Un.current = C;
+	let Hn = !!xe, Un = T(ee);
+	Un.current = ee;
 	let Wn = T(null), Gn = T(!1), V = T(h?.command?.argument ? {
 		trigger: h.command.trigger,
 		item: h.command.argument
@@ -3375,7 +3391,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 						}) : J ? Ot && Y ? null : /* @__PURE__ */ O("span", {
 							className: "group/modemenu flex min-w-0 items-center gap-1.5",
 							"data-testid": `${F}-mode-control`,
-							children: [/* @__PURE__ */ D(S, {
+							children: [/* @__PURE__ */ D(C, {
 								trigger: /* @__PURE__ */ O("span", {
 									className: e("flex items-center gap-1.5 text-text-primary", Jr ? "gap-2 font-medium" : "font-semibold", Y ? "text-xs" : "text-sm"),
 									"data-testid": `${F}-mode-label`,
@@ -3536,7 +3552,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 								{
 									id: "agent",
 									label: "Agent",
-									icon: /* @__PURE__ */ D(ee, { size: 13 })
+									icon: /* @__PURE__ */ D(S, { size: 13 })
 								},
 								{
 									id: "terminal",
@@ -3615,7 +3631,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 							"data-folded": si || void 0,
 							title: [li ? $[z] : null, ...(k ?? []).map((e) => e.title ?? e.label)].filter(Boolean).join(" · "),
 							className: "group/chip ml-1.5 flex min-w-0 max-w-[min(45%,calc(100%-14rem))] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary",
-							children: [li && (wn && R.length > 1 ? /* @__PURE__ */ D(S, {
+							children: [li && (wn && R.length > 1 ? /* @__PURE__ */ D(C, {
 								trigger: /* @__PURE__ */ O("span", {
 									className: "flex items-center gap-1 font-semibold text-text-primary",
 									"data-testid": `${F}-mode-label`,
@@ -3708,7 +3724,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 							className: Ti || Ei ? "flex min-w-0 items-start" : "contents",
 							"data-testid": `${F}-input-line`,
 							children: [
-								Ei && /* @__PURE__ */ D(S, {
+								Ei && /* @__PURE__ */ D(C, {
 									trigger: /* @__PURE__ */ O("span", {
 										className: "inline-flex items-center gap-1.5",
 										"data-testid": `${F}-command`,
@@ -3873,7 +3889,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 									label: "Prompt tools",
 									className: "min-w-0 gap-2",
 									"data-testid": `${F}-prompt-toolbar`,
-									children: [!!ze?.length && /* @__PURE__ */ D(S, {
+									children: [!!ze?.length && /* @__PURE__ */ D(C, {
 										trigger: /* @__PURE__ */ O("span", {
 											className: "inline-flex items-center gap-1.5",
 											children: [/* @__PURE__ */ D("span", {
@@ -3944,7 +3960,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 												children: "1."
 											})),
 											yi && Ii("Quote", U.isActive("blockquote"), () => U.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ D(p, { size: Y ? 18 : 16 })),
-											!G && /* @__PURE__ */ D(S, {
+											!G && /* @__PURE__ */ D(C, {
 												trigger: /* @__PURE__ */ D("span", {
 													"aria-hidden": "true",
 													className: "text-sm leading-none",
@@ -4028,7 +4044,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 									"data-testid": `${F}-commands-hint`,
 									children: "/ commands"
 								}),
-								!Z && !Y && (!q || ui) && (!$r && W.length || ni || xi && U) ? /* @__PURE__ */ D(S, {
+								!Z && !Y && (!q || ui) && (!$r && W.length || ni || xi && U) ? /* @__PURE__ */ D(C, {
 									trigger: /* @__PURE__ */ D("span", {
 										"aria-hidden": "true",
 										className: "text-xs font-semibold leading-none",
@@ -4099,7 +4115,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 								wi && !Z && (!q || ui) && /* @__PURE__ */ D("span", {
 									className: "ml-auto flex shrink-0 items-center pr-1",
 									"data-testid": `${F}-more-actions`,
-									children: /* @__PURE__ */ D(S, {
+									children: /* @__PURE__ */ D(C, {
 										trigger: /* @__PURE__ */ D("span", {
 											"aria-hidden": "true",
 											className: "text-sm leading-none",
@@ -4130,7 +4146,7 @@ var Ra = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCo
 										"data-testid": `${F}-send`,
 										className: e(`shrink-0 rounded-l-md rounded-r-none bg-primary ${t} text-on-primary disabled:opacity-40`, Yr),
 										children: Xr
-									}), /* @__PURE__ */ D(S, {
+									}), /* @__PURE__ */ D(C, {
 										trigger: /* @__PURE__ */ D("span", {
 											"aria-hidden": "true",
 											className: "text-xs leading-none",

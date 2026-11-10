@@ -258,4 +258,31 @@ describe('NavRail audit markers (2.515.0, nav.rail-groups)', () => {
     expect(Array.from(nav.querySelectorAll('[data-rail-item]')).map((e) => e.getAttribute('data-rail-item'))).toEqual(['Help', 'Overview', 'Episodes', 'Halt']);
     expect(nav.querySelector('[data-rail-group="PRODUCTION"]')?.querySelectorAll('[data-rail-item]')).toHaveLength(2);
   });
+
+  // 2.515.7
+  describe('defaultCollapsedGroups', () => {
+    afterEach(() => window.localStorage.clear());
+
+    it('starts the named groups folded, unless they hold the active item', () => {
+      const { container } = render(<NavRail items={ITEMS} defaultCollapsedGroups={['Build', 'Operate']} activeHref="/operate/health" />);
+      expect(container.querySelector('[data-rail-group="Build"]')).toHaveAttribute('data-rail-group-collapsed');
+      expect(screen.getByRole('button', { name: 'Build' })).toHaveAttribute('aria-expanded', 'false');
+      expect(screen.queryByRole('link', { name: /Work/ })).toBeNull();
+      expect(container.querySelector('[data-rail-group="Operate"]')).not.toHaveAttribute('data-rail-group-collapsed');
+    });
+
+    it('remembers a default-folded group being opened', () => {
+      const { unmount } = render(<NavRail items={ITEMS} storageKey="t.rail" defaultCollapsedGroups={['Build']} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Build' }));
+      expect(screen.getByRole('link', { name: /Work/ })).toBeInTheDocument();
+      unmount();
+      render(<NavRail items={ITEMS} storageKey="t.rail" defaultCollapsedGroups={['Build']} />);
+      expect(screen.getByRole('link', { name: /Work/ })).toBeInTheDocument();
+    });
+
+    it('omitted: every group starts open', () => {
+      const { container } = render(<NavRail items={ITEMS} />);
+      expect(container.querySelector('[data-rail-group-collapsed]')).toBeNull();
+    });
+  });
 });

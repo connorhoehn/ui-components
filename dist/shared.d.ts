@@ -3070,7 +3070,7 @@ export declare interface DetailHeaderProps {
  *   ]}
  *   aside={<ContextColumn … />} />
  */
-export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DetailPageProps): JSX.Element;
+export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, tabsLabel, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DetailPageProps): JSX.Element;
 
 export declare interface DetailPageProps {
     /** What the record is. */
@@ -3093,6 +3093,12 @@ export declare interface DetailPageProps {
     titleAs?: 'h1' | 'h2' | 'h3';
     /** The record's sections. With none, `children` is the one body. */
     tabs?: DetailPageTab[];
+    /**
+     * The tab list's accessible name (since 2.515.7). Default `Sections`; name
+     * it for the record ("Episode sections") when a page holds more than one
+     * tab list, so a screen reader can tell them apart.
+     */
+    tabsLabel?: string;
     /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
     activeTab?: string;
     onTabChange?: (id: string) => void;
@@ -6775,7 +6781,7 @@ export declare function nameToColor(name: string): string;
 
 export declare function nameToInitials(name: string): string;
 
-export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, size, collapsed: collapsedProp, onToggleCollapsed, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
+export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, size, defaultCollapsedGroups, collapsed: collapsedProp, onToggleCollapsed, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
 
 export declare interface NavRailItem {
     /** Target path. Also the React key unless `id` is given. */
@@ -6829,6 +6835,12 @@ export declare interface NavRailProps {
      * different keys or they share collapse state.
      */
     storageKey?: string;
+    /**
+     * Groups (by their `group` name) that start folded (since 2.515.7). A
+     * group holding the active item starts open anyway. A remembered state
+     * (`storageKey`) wins over this, in both directions.
+     */
+    defaultCollapsedGroups?: string[];
     /** Render links with a router's Link/NavLink. Defaults to a plain `<a>`. */
     renderLink?: (item: NavRailItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
     tone?: NavRailTone;

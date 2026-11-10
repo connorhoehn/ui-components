@@ -2058,6 +2058,29 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         }
         coverage.at(-1).matched = measured;
       }
+      else if (rule.kind === 'header-title-room') {
+        // A page header keeps its title (header.title-room, 2.515.7): its
+        // title (the first `title` match whose header is this one) is at
+        // least `minWidth` px wide, or its whole text when that is shorter.
+        // A narrow column whose header actions shared one unwrapping row with
+        // the title squeezed the h1 to 0px: the page lost its name while the
+        // buttons stayed. Visibility is judged on the header, not the title,
+        // so a zero-width title is measured rather than skipped as unpainted.
+        const tol = rule.tolerance ?? tolerance, min = rule.minWidth ?? 64, headerSel = css(rule.selector);
+        const titleSel = css(rule.title ?? '[data-page-header-title], h1, h2, h3, h4, [role="heading"]');
+        let measured = 0;
+        for (const header of nodes) {
+          const title = [...header.querySelectorAll(titleSel)].find(t => t.closest(headerSel) === header);
+          if (!title) continue;
+          const s = cs(title);
+          if (s.display === 'none' || s.visibility === 'hidden' || s.position === 'absolute' || s.position === 'fixed') continue;
+          measured++;
+          const width = title.getBoundingClientRect().width, need = Math.min(min, title.scrollWidth);
+          samples.push({ rule: rule.id, selector: selectorOf(title), property: 'title width', actual: round(width), expected: { min: need } });
+          if (width + tol < need) add(rule, title, 'title squeezed', `>= ${need}px (minWidth, or the whole title when shorter): the header's actions wrap under it`, `${round(width)}px of "${snippet((title.textContent ?? '').trim())}" in a ${round(header.getBoundingClientRect().width)}px header`);
+        }
+        coverage.at(-1).matched = measured;
+      }
       else if (rule.kind === 'unmarked') {
         // Hand-rolled DOM (element.unmarked): an interactive element or page
         // section in the content column was not rendered by the component

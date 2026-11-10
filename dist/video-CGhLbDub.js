@@ -45,7 +45,7 @@ var Re = {
 	error: "Playback Error"
 };
 function ze({ src: t, stream: n, autoPlay: r = !1, muted: i = !0, loop: a = !1, controls: o = !1, poster: s, phase: c, className: l, style: u, onPhaseChange: d, onTimeUpdate: f }) {
-	let p = K(null), [m, h] = q("idle"), g = c ?? m;
+	let p = K(null), [m, h] = q("idle"), [g, _] = q(!1), v = c ?? m, y = n ? "stream" : t ? "file" : "none";
 	W(() => {
 		let e = p.current;
 		if (!e) return;
@@ -60,21 +60,28 @@ function ze({ src: t, stream: n, autoPlay: r = !1, muted: i = !0, loop: a = !1, 
 				h("error"), d?.("error");
 			}],
 			["loadstart", () => {
-				h("connecting"), d?.("connecting");
+				_(!1), h("connecting"), d?.("connecting");
+			}],
+			["loadedmetadata", () => {
+				e.srcObject || _(!0);
 			}],
 			["timeupdate", () => {
 				f?.(e.currentTime, e.duration);
 			}]
 		];
-		return t.forEach(([t, n]) => e.addEventListener(t, n)), () => t.forEach(([t, n]) => e.removeEventListener(t, n));
+		return t.forEach(([t, n]) => e.addEventListener(t, n)), e.readyState >= 1 && !e.srcObject && e.currentSrc && _(!0), () => t.forEach(([t, n]) => e.removeEventListener(t, n));
 	}, [d, f]), W(() => {
 		let e = p.current;
 		e && n !== void 0 && (e.srcObject = n);
 	}, [n]);
-	let _ = g !== "playing", v = Re[g];
+	let b = v !== "playing" && !(y === "file" && g && (v === "idle" || v === "connecting")), x = Re[v];
 	return /* @__PURE__ */ X("div", {
 		className: e("relative bg-black rounded-lg overflow-hidden aspect-video", l),
 		style: u,
+		"data-video-player": "",
+		"data-phase": v,
+		"data-source": y,
+		...y === "file" && g ? { "data-file-loaded": "" } : {},
 		children: [/* @__PURE__ */ Y("video", {
 			ref: p,
 			src: n ? void 0 : t,
@@ -85,11 +92,12 @@ function ze({ src: t, stream: n, autoPlay: r = !1, muted: i = !0, loop: a = !1, 
 			poster: s,
 			playsInline: !0,
 			className: e("w-full h-full object-contain block")
-		}), _ && v && /* @__PURE__ */ X("div", {
+		}), b && x && /* @__PURE__ */ X("div", {
 			className: e("absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide"),
-			children: [g === "buffering" && /* @__PURE__ */ Y(Be, {}), /* @__PURE__ */ Y("span", {
-				className: e(g === "buffering" ? "ml-2" : ""),
-				children: v
+			"data-video-overlay": v,
+			children: [v === "buffering" && /* @__PURE__ */ Y(Be, {}), /* @__PURE__ */ Y("span", {
+				className: e(v === "buffering" ? "ml-2" : ""),
+				children: x
 			})]
 		})]
 	});
