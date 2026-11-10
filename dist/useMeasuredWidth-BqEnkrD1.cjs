@@ -1,0 +1,1 @@
+const e=require("./Tabs-B3f9yexc.cjs");function t(t){let{ref:n,size:r}=e.a(t?{forward:t}:{});return{ref:n,width:r}}Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return t}});

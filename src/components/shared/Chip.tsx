@@ -45,14 +45,19 @@ const PALETTE = {
   },
 } as const;
 
+// Padding on the 4px scale (2.516.1, G88-O1). The chip's height comes from
+// its line box, not block padding, so every size keeps its old height:
+// sm 20px (11px text, 20px line, 0 / 8px — was 2 / 8px), md 20px (0 / 8px —
+// was 2 / 6px), xs 16px (0 / 4px — was 1 / 6px), lg 28px (4 / 12px — was
+// 4 / 10px). Marker `data-chip="<size>"` (audit `chip.padding`).
 const SIZE_CLASSES: Record<'lg' | 'md' | 'sm' | 'xs', string> = {
   // A tag read as a word, not a badge — "Blocked" leading a work row (the
-  // Initiatives v2 overview, 2.396.0): 14px regular type, 10px × 4px.
-  lg: 'rounded-md px-2.5 py-1 text-[14px] font-normal leading-5',
+  // Initiatives v2 overview, 2.396.0): 14px regular type, 12px × 4px.
+  lg: 'rounded-md px-3 py-1 text-[14px] font-normal leading-5',
   // A count pill beside a 15px tree row (the Folders explorer, 2.386.0).
-  md: 'min-w-6 justify-center px-1.5 py-0.5 text-[12px] font-semibold leading-4 tabular-nums',
-  sm: 'px-2 py-0.5 text-[11px]',
-  xs: 'px-1.5 py-px text-[10px]',
+  md: 'min-w-6 justify-center px-2 py-0 text-[12px] font-semibold leading-5 tabular-nums',
+  sm: 'px-2 py-0 text-[11px] leading-5',
+  xs: 'px-1 py-0 text-[10px] leading-4',
 };
 
 const DOT_SIZE: Record<'lg' | 'md' | 'sm' | 'xs', string> = {
@@ -70,7 +75,7 @@ export interface ChipProps {
    * debugger or terminal pane.
    */
   palette?: ChipPalette;
-  /** `lg` since 2.396.0: 14px regular text, 10px × 4px padding, 6px corners. */
+  /** `lg` since 2.396.0: 14px regular text, 12px × 4px padding (10px before 2.516.1), 6px corners. */
   size?: 'lg' | 'md' | 'sm' | 'xs';
   /** Solid fill (dark bg + white text) instead of soft tint. */
   solid?: boolean;
@@ -181,6 +186,7 @@ export default function Chip({
     <Root
       {...rootProps}
       data-testid={testId}
+      data-chip={size}
       aria-label={ariaLabel}
       title={title}
       className={cn(

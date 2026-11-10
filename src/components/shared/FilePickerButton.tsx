@@ -5,6 +5,7 @@
 
 import { useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { CONTROL_HEIGHT } from './controlMetrics';
 
 export interface FilePickerButtonProps {
   onFiles: (files: File[]) => void;
@@ -13,7 +14,11 @@ export interface FilePickerButtonProps {
   multiple?: boolean;
   /** `secondary` is a 36px bordered button, `primary` the brand one. */
   variant?: 'secondary' | 'primary';
-  /** `md` (default) is 36px tall; `sm` (since 2.456.1) is the 32px header-action height. */
+  /**
+   * `md` (default) is 36px tall, `Button md`'s height; `sm` (since 2.456.1) is
+   * `Button sm`'s 28px (`--ui-control-sm`; 32px before 2.516.1), so a header
+   * title beside it centres on the same line as beside a small Button.
+   */
   size?: 'sm' | 'md';
   icon?: ReactNode;
   disabled?: boolean;
@@ -51,7 +56,7 @@ export function FilePickerButton({
         onClick={() => input.current?.click()}
         className={cn(
           'inline-flex cursor-pointer items-center gap-2 rounded-lg text-sm font-medium transition-colors duration-100',
-          size === 'sm' ? 'h-8 px-3' : 'h-9 px-3.5',
+          size === 'sm' ? `${CONTROL_HEIGHT.sm} px-3` : 'h-9 px-3.5',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50',
           variant === 'primary'
             ? 'border-none bg-primary text-on-primary hover:bg-primary-hover'

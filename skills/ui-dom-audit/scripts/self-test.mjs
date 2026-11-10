@@ -1990,5 +1990,39 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS library.type-scale, detail.header-stack-gap and rail.header-inset catch off-scale library text, a 6px header stack and a 20px rail inset, and accept the 2.515.12 values');
   }
+  {
+    // chip.padding, tabs.segmented-track, settings.page-title (2.516.1): the
+    // Studio audit measured Chip padding at 2 / 6px, a 2px segmented track and
+    // a 14px SettingsPage title.
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const ids = ['chip.padding', 'tabs.segmented-track', 'settings.page-title'];
+    const rules = fullContract.rules.filter(r => ids.includes(r.id));
+    assert.equal(rules.length, 3, 'the 2.516.1 rules are in the shipped contract');
+    assert.ok(rules.every(r => !r.deep), 'the 2.516.1 rules are in the resting gate');
+    const judge = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules }, selectors: {} });
+    const fixture = `<style>*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}[data-chip]{display:inline-flex;padding:0 8px;line-height:20px;font-size:11px}[data-chip=lg]{padding:4px 12px}[data-tabs-variant]{display:inline-flex;padding:4px;gap:4px}</style>
+      <span data-chip="sm" id="chip">Draft</span><span data-chip="lg">Blocked</span><span data-chip="xs" style="padding:0 4px">3</span>
+      <div role="tablist" data-tabs-variant="segmented" id="track"><button role="tab">Grid</button><button role="tab">List</button></div>
+      <div data-page-template="settings"><h1 data-settings-title id="settings" style="font-size:20px;margin:0">Access</h1></div>`;
+    await page.setContent(fixture);
+    const clean = await judge();
+    assert.deepEqual(clean.issues, [], `the on-scale fixture passes ${JSON.stringify(clean.issues)}`);
+    for (const id of ids) assert.ok(clean.coverage.some(c => c.rule === id && c.matched > 0), `${id} is exercised by the valid fixture`);
+    const mutations = [
+      ['#chip', el => { el.style.padding = '2px 8px'; }, 'chip.padding'],
+      ['#chip', el => { el.style.padding = '0 6px'; }, 'chip.padding'],
+      ['#track', el => { el.style.padding = '2px'; }, 'tabs.segmented-track'],
+      ['#track', el => { el.style.gap = '2px'; }, 'tabs.segmented-track'],
+      ['#settings', el => { el.style.fontSize = '14px'; }, 'settings.page-title'],
+    ];
+    for (const [selector, mutate, rule] of mutations) {
+      await page.setContent(fixture);
+      await page.locator(selector).first().evaluate(mutate);
+      const found = await judge();
+      assert.ok(found.issues.some(i => i.rule === rule), `${selector} off the scale fails ${rule}: ${JSON.stringify(found.issues)}`);
+    }
+    await page.close();
+    console.log('PASS chip.padding, tabs.segmented-track and settings.page-title catch 2 / 6px chip padding, a 2px segmented track and a 14px settings title, and accept the 2.516.1 values');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

@@ -1018,3 +1018,13 @@ Three resting rules bind library markers to the house type scale (11 / 12 / 14 /
 - `rail.header-inset` (`style`): a `WorkspaceRail` header (`data-rail-inset`) insets 16px (tall headings), 12px (compact strip) or 0 (collapsed).
 
 Self-test: the on-scale fixture passes; a 13px title, a 10px pill, a 12.8px presence header, a 6px stack and a 20px rail inset each fail.
+
+## Chip, segmented tabs and the settings title (2.516.1)
+
+- `chip.padding` (`style`): a `Chip` (`data-chip`) has 0 block padding (4px at `lg`) and 4 / 8 / 12px sides; its height comes from the line box.
+- `tabs.segmented-track` (`style`): a `Tabs variant="segmented"` track (`data-tabs-variant="segmented"`) pads its options 4px and spaces them 4px.
+- `settings.page-title` (`style`): a `SettingsPage` title is 20px, the page-title size.
+
+`SettingsPage`'s section body is a `div` since 2.516.1, so `a11y.landmarks` no longer finds a second `main` inside the shell's.
+
+Self-test: the on-scale fixture passes; 2px or 6px chip padding, a 2px track padding or gap, and a 14px settings title each fail.

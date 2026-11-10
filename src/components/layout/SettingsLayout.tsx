@@ -33,6 +33,30 @@ export interface SettingsLayoutProps {
    * size (14px semibold) is the same either way.
    */
   titleAs?: 'h1' | 'h2' | 'h3' | 'div';
+  /**
+   * The title's size (since 2.516.1). `panel` (default, unchanged): 14px
+   * semibold, a settings panel's title. `page`: 20px semibold on a 28px line,
+   * the page title the other page templates draw; `SettingsPage` passes it.
+   * Marker `data-title-size`.
+   */
+  titleSize?: 'panel' | 'page';
+  /**
+   * The element of the scrolling section body (since 2.516.1). Default `main`
+   * (unchanged, with `role="main"`). A layout inside a host that already has
+   * its `<main>` (an `AppShell`) passes `div` or `section` (name it with
+   * `contentLabel`) so the page keeps one main landmark. `SettingsPage`
+   * defaults to `div`. Marker `data-settings-body="<element>"`.
+   */
+  contentAs?: 'main' | 'section' | 'div';
+  /** `aria-label` for the section body; meaningful with `contentAs="section"`. */
+  contentLabel?: string;
+  /**
+   * Who owns the outer gutter (since 2.516.1). `default` (unchanged): the
+   * narrow header has 12px of top padding. `none`: the frame around the layout
+   * owns it, so the narrow header has no top padding. `SettingsPage` passes its
+   * own `gutter` through. Marker `data-settings-gutter`.
+   */
+  gutter?: 'default' | 'none';
   /** Optional secondary line under the title. */
   subtitle?: ReactNode;
   /** Section list. The first section is selected by default. */
@@ -80,6 +104,10 @@ export interface SettingsLayoutProps {
 export function SettingsLayout({
   title,
   titleAs: TitleTag = 'div',
+  titleSize = 'panel',
+  contentAs: Content = 'main',
+  contentLabel,
+  gutter = 'default',
   subtitle,
   sections,
   activeSectionId,
@@ -109,6 +137,12 @@ export function SettingsLayout({
   }, [activeSectionId, firstId, internalActive]);
 
   const activeSection = sections.find((s) => s.id === active) ?? sections[0];
+  const titleClass = cn(
+    'm-0 font-semibold text-[var(--color-text-primary)]',
+    titleSize === 'page' ? 'text-xl leading-7' : 'text-[14px] leading-tight',
+  );
+  // Subtitle 4px under the title (2.516.1; was 2px).
+  const subtitleClass = 'mt-1 text-[11px] text-[var(--color-text-secondary)] leading-snug';
 
   const select = (id: string) => {
     if (activeSectionId == null) setInternalActive(id);
@@ -120,6 +154,7 @@ export function SettingsLayout({
       data-testid={testId}
       data-dirty={dirty || undefined}
       data-settings-narrow={narrow ? '' : undefined}
+      data-settings-gutter={gutter}
       className={cn(
         'flex flex-col h-full min-h-0 bg-[var(--color-surface,#fff)]',
         narrow && '@container min-w-0',
@@ -132,9 +167,9 @@ export function SettingsLayout({
       <div className={cn('flex flex-1 min-h-0', narrow && '@max-[40rem]:flex-col')}>
         {narrow && (
           <div className="flex shrink-0 min-w-0 flex-col border-b border-[var(--color-border)] @min-[40rem]:hidden" data-settings-narrow-header="">
-            <div className="px-4 pt-3">
-              <TitleTag className="m-0 text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight" data-settings-title="">{title}</TitleTag>
-              {subtitle != null && <div className="mt-0.5 text-[11px] text-[var(--color-text-secondary)] leading-snug">{subtitle}</div>}
+            <div className={cn('px-4', gutter === 'none' ? 'pt-0' : 'pt-3')} data-settings-narrow-title="">
+              <TitleTag className={titleClass} data-settings-title="" data-title-size={titleSize}>{title}</TitleTag>
+              {subtitle != null && <div className={subtitleClass} data-settings-subtitle="">{subtitle}</div>}
             </div>
             <nav
               aria-label="Settings sections (compact)"
@@ -155,7 +190,8 @@ export function SettingsLayout({
                     aria-current={isActive ? 'page' : undefined}
                     onClick={() => select(section.id)}
                     className={cn(
-                      'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2 text-[12px] font-semibold cursor-pointer',
+                      // Icon-to-label gap 4px (2.516.1; was 6px).
+                      'inline-flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-[12px] font-semibold cursor-pointer',
                       'border-b-[3px] bg-transparent',
                       'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--color-primary)]',
                       isActive
@@ -180,11 +216,11 @@ export function SettingsLayout({
           style={{ width: railWidth }}
         >
           <div className="px-3 pb-3 border-b border-[var(--color-border)] mb-3">
-            <TitleTag className="m-0 text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight" data-settings-title="">
+            <TitleTag className={titleClass} data-settings-title="" data-title-size={titleSize}>
               {title}
             </TitleTag>
             {subtitle != null && (
-              <div className="mt-0.5 text-[11px] text-[var(--color-text-secondary)] leading-snug">
+              <div className={subtitleClass} data-settings-subtitle="">
                 {subtitle}
               </div>
             )}
@@ -235,9 +271,11 @@ export function SettingsLayout({
           </nav>
         </aside>
 
-        <main
-          role="main"
+        <Content
+          {...(Content === 'main' ? { role: 'main' } : {})}
+          aria-label={contentLabel}
           data-testid={`${testId}-body`}
+          data-settings-body={Content}
           className="flex-1 min-w-0 min-h-0 overflow-y-auto"
         >
           <div
@@ -247,7 +285,7 @@ export function SettingsLayout({
           >
             {activeSection?.content}
           </div>
-        </main>
+        </Content>
       </div>
 
       {dirty && (

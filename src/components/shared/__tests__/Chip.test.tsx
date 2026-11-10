@@ -53,12 +53,12 @@ describe('Chip', () => {
     expect(chip).not.toHaveClass('bg-surface/60');
   });
 
-  it("size='lg' is 14px regular type with 10×4 padding; md is unchanged (2.396.0)", () => {
+  it("size='lg' is 14px regular type with 12×4 padding (10×4 before 2.516.1); md 8px sides (2.396.0)", () => {
     const { rerender } = render(<Chip size="lg" data-testid="chip">Blocked</Chip>);
-    expect(screen.getByTestId('chip')).toHaveClass('text-[14px]', 'font-normal', 'px-2.5', 'py-1', 'rounded-md', 'leading-5');
+    expect(screen.getByTestId('chip')).toHaveClass('text-[14px]', 'font-normal', 'px-3', 'py-1', 'rounded-md', 'leading-5');
     expect(screen.getByTestId('chip')).not.toHaveClass('font-semibold');
     rerender(<Chip size="md" data-testid="chip">3</Chip>);
-    expect(screen.getByTestId('chip')).toHaveClass('text-[12px]', 'font-semibold', 'px-1.5');
+    expect(screen.getByTestId('chip')).toHaveClass('text-[12px]', 'font-semibold', 'px-2', 'py-0');
   });
 
   it('applies translucent variant styling on the code palette', () => {
@@ -90,7 +90,7 @@ describe('Chip', () => {
   it('renders with xs size', () => {
     render(<Chip size="xs" data-testid="chip">XS</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveClass('px-1.5', 'text-[10px]');
+    expect(chip).toHaveClass('px-1', 'py-0', 'text-[10px]');
   });
 
   it('applies monospace font when mono is true', () => {

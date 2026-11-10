@@ -1,3 +1,30 @@
+## 2.516.1
+
+The open half of the Storymaker Studio's ui-dom-audit gap list (G88-O1..O5, G88-E8, G88-A1, G119-1, G119-2, G120-1..3). Every changed default a consumer's audit contract can pin is listed with its measured value before → after. Where the old value is one other consumers may rely on, the fix is a new prop and the default is unchanged; those say so.
+
+Changed defaults (type scale 11 / 12 / 14 / 16 / 20, spacing on 4px steps):
+
+- `Chip` (G88-O1): padding on the 4px scale at every size, with the height carried by the line box so no chip changes height. `sm` (default) block 2px → 0, sides 8px (unchanged), line 15.4px → 20px (height 19.4 → 20px). `md` block 2px → 0, sides 6px → 8px, line 16px → 20px (height 20px, unchanged). `xs` block 1px → 0, sides 6px → 4px, line 14px → 16px (height 16px, unchanged). `lg` sides 10px → 12px (block 4px, height 28px, unchanged). Marker `data-chip="<size>"`.
+- `Tabs variant="segmented"` (G88-O2): track padding 2px → 4px, gap between options 2px → 4px (the track is 4px taller and 4px wider per option). Every tab list now carries `data-tabs-variant`.
+- `FilePickerButton size="sm"` (G88-O3): height 32px → 28px (`--ui-control-sm`, the `Button size="sm"` height). Its 14px label is unchanged; `md` (36px) is unchanged.
+- `MarkdownView scale="md"` (G88-O4): `##` top margin 20px → 16px. Also `scale="lg"` `###` top margin 20px → 16px. Other margins unchanged.
+- `SettingsPage` (G119-1): the title 14px → 20px semibold on a 28px line (`text-xl`), the page title the other five templates draw, through the new `SettingsLayout titleSize?: 'panel' | 'page'` (default `panel`, 14px, so a bare `SettingsLayout` keeps its title; `SettingsPage titleSize` defaults to `page`). Marker `data-title-size`.
+- `SettingsPage` (G88-O5): the section body is a `div` (was `<main role="main">`), since a page template sits inside its shell's `main`; the other five templates draw no landmark either. New `SettingsLayout contentAs?: 'main' | 'section' | 'div'` (default `main`, unchanged) and `contentLabel`, as `SubNavLayout` has them; `SettingsPage contentAs` defaults to `div`, pass `main` for a page rendered without a shell. Marker `data-settings-body="<element>"`.
+- `SettingsLayout` (G88-O5): the subtitle's top margin 2px → 4px (rail and narrow header); the narrow strip items' icon-to-label gap 6px → 4px. New `gutter?: 'default' | 'none'` (default `default`: the narrow header keeps 12px of top padding); `none` drops it to 0, for a frame that owns the gutter. `SettingsPage gutter="none"` passes it through. Markers `data-settings-gutter`, `data-settings-subtitle`, `data-settings-narrow-title`.
+- `T` / `Text` `tone="success" | "warning" | "danger"` (G119-2): text in the tone's text ink instead of its fill. Light: success #16a34a → #15803d, warning #d97706 → #b45309, danger #dc2626 → #b91c1c (`--color-<tone>-fg`, AA on white); dark follows the dark `-fg` inks. A host that darkened the fill tokens to make `T` legible can drop that override.
+- `DialogueSegment` (G88-A1): the metadata line no longer reserves 96px of right padding (`pr-24` → 0). The hover actions overlay the line's end on the row's hover fill (`bg-surface-hover`), and with no `actions` no action bar is drawn at all (was an empty toolbar). New `reserveActions?: boolean` restores the 96px. Marker `data-dialogue-actions="overlay|reserve|none"`.
+- `ActionRowList` (G120-2): a string `description` (the subline) carries its full text as `title`, with or without `columns`, as the title has since 2.515.12.
+- `RichChatComposer` context chip remove button (G120-3): the × label 11px → 12px (`text-xs`); its 16px box is unchanged.
+
+New props, defaults unchanged:
+
+- `DataTable` `rowActionsHeader?: ReactNode` (default "Actions") and `rowActionsHeaderHidden?: boolean` (G88-E8): the actions column's header text, and an empty visible header that keeps the text as screen-reader-only (`sr-only`), so the column is still named. A prop, not a default, because other consumers show the "Actions" header. The header cell has `data-testid="datatable-actions-header"` and `data-row-actions-header="visible|hidden"`.
+- `SubjectFrameDisclosure['data-testid']` (G120-1): a test id per disclosure; default `<frame testid>-disclosure-<id>` (unchanged).
+
+ui-dom-audit: three resting rules on library markers. `chip.padding` (block 0 or 4px, sides 4 / 8 / 12px), `tabs.segmented-track` (4px padding and gap), `settings.page-title` (20px). Self-test: the on-scale fixture passes; 2px or 6px chip padding, a 2px track padding or gap and a 14px settings title each fail. `contracts.md` "Chip, segmented tabs and the settings title".
+
+Not in this release: G88-E8's second half (the actions column cut off, "ACTIC", when a table's minimum passes its box). `Table` already scrolls a table wider than its box inside its own scroller, and a Chromium check of the DataTable markup (truncate column, 34% width, 420px box) scrolls rather than clips, so the cut is not reproducible from the library; it needs the Studio's page to find the ancestor that clips. Also not in it: the `SettingsLayout` rail's 2px item gaps and 10px descriptions, `Chip xs` 10px text, and `MarkdownView sm` 6px heading margins (off-scale, not in the gap list).
+
 ## 2.516.0
 
 New props, defaults unchanged.

@@ -16,14 +16,18 @@ import { Inline } from '../ui/Stack';
 
 export type TextSize = 'xs' | 'sm' | 'base' | 'lg';
 export type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
-/** `success` / `warning` / `danger` (since 2.515.1): a status line's outcome ("Saved.", "Could not save"). */
+/**
+ * `success` / `warning` / `danger` (since 2.515.1): a status line's outcome ("Saved.", "Could not save").
+ * Drawn in the tone's text ink (`--color-<tone>-fg`, AA on the surface) since 2.516.1; they were the
+ * fill tokens (`text-warning` #d97706 at 3.19:1 on white).
+ */
 export type TextTone = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'inherit';
 
 const SIZE: Record<TextSize, string> = { xs: 'text-xs', sm: 'text-sm', base: 'text-base', lg: 'text-lg' };
 const WEIGHT: Record<TextWeight, string> = { normal: 'font-normal', medium: 'font-medium', semibold: 'font-semibold', bold: 'font-bold' };
 const TONE: Record<TextTone, string> = {
   primary: 'text-text-primary', secondary: 'text-text-secondary', tertiary: 'text-text-tertiary',
-  success: 'text-success', warning: 'text-warning', danger: 'text-danger', inherit: '',
+  success: 'text-success-fg', warning: 'text-warning-fg', danger: 'text-danger-fg', inherit: '',
 };
 
 export interface TextProps {
