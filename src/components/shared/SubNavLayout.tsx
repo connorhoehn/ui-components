@@ -14,6 +14,7 @@ import {
   RAIL_ROW_PAD_Y,
   RAIL_ROW_PITCH,
 } from './railType';
+import { safeHref } from '../../lib/safeHref';
 
 // Shared "section with left-rail" layout. Pattern mirrors the InvokePage
 // session sidebar — slim rail, section title at top, NavLink items with
@@ -515,7 +516,7 @@ function ItemLink({
   // Default: plain anchor, no active-state detection.
   return (
     <a
-      href={item.path}
+      href={safeHref(item.path) ?? undefined}
       className={inactiveNavItemClassName}
     >
       {body}

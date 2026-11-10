@@ -27,6 +27,7 @@ import { ArrowRightIcon, ChevronIcon, ExternalLinkIcon, InfoIcon } from '../ui/I
 import { Inline, Stack } from '../ui/Stack';
 import { RecordMark, RecordStatus, recordResultKey, type RecordResultItem } from './recordMarks';
 import { DensityProvider } from '../shared/Density';
+import { safeHref } from '../../lib/safeHref';
 
 export interface RecordResultGroup {
   id: string;
@@ -85,7 +86,7 @@ function SeeAll({ group }: { group: RecordResultGroup }) {
   if (group.seeAllHref) {
     return (
       <a
-        href={group.seeAllHref}
+        href={safeHref(group.seeAllHref) ?? undefined}
         className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         onClick={(event) => {
           if (group.onSeeAll && isPlainClick(event)) {
@@ -136,7 +137,7 @@ function GroupHeading({ group, onToggleGroup }: { group: RecordResultGroup; onTo
         <h2 className="m-0">{title}</h2>
         {group.seeAllHref ? (
           <a
-            href={group.seeAllHref}
+            href={safeHref(group.seeAllHref) ?? undefined}
             aria-label={`Show ${group.label}`}
             className="inline-flex items-center text-text-secondary hover:text-text-primary"
             onClick={(event) => {
@@ -205,7 +206,7 @@ function RecordRow({ record, selected, terms, onToggleSelect, onOpen, openLabel 
       <RecordMark record={record} />
       <Stack gap="none" className="min-w-0 flex-1">
         <a
-          href={record.href}
+          href={safeHref(record.href) ?? undefined}
           onClick={openOnPlainClick}
           className="truncate text-sm font-medium text-text-primary hover:text-primary"
         >
@@ -221,7 +222,7 @@ function RecordRow({ record, selected, terms, onToggleSelect, onOpen, openLabel 
       {record.status && <RecordStatus status={record.status} className="flex h-8 shrink-0 items-center" />}
       {label ? (
         <a
-          href={record.href}
+          href={safeHref(record.href) ?? undefined}
           onClick={openOnPlainClick}
           className="flex h-8 shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
         >

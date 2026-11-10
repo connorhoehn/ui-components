@@ -5,6 +5,7 @@ import { ChevronIcon } from '../ui/Icons';
 import Chip from '../shared/Chip';
 import { useReportRailHeader } from '../shared/SubNavLayout';
 import { RAIL_CAPTION, RAIL_GROUP_COUNT, RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK } from '../shared/railType';
+import { safeHref } from '../../lib/safeHref';
 
 export interface WorkspaceRailBack {
   label: string;
@@ -90,7 +91,7 @@ export function WorkspaceRail({
       {back && !collapsed && (
         <div className={cn('flex shrink-0 items-center pt-4', heading !== 'compact' ? 'px-5' : 'px-3.5')} data-testid={`${testId}-back-row`}>
           {back.href ? (
-            <a href={back.href} onClick={back.onClick} className={WORKSPACE_RAIL_BACK_CLASS} data-testid={`${testId}-back`}>
+            <a href={safeHref(back.href) ?? undefined} onClick={back.onClick} className={WORKSPACE_RAIL_BACK_CLASS} data-testid={`${testId}-back`}>
               <ChevronIcon dir="left" size={14} />
               {back.label}
             </a>

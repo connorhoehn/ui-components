@@ -32,6 +32,7 @@ import { ExternalLinkIcon, LinkIcon } from '../ui/Icons';
 import { TONE_SOLID_BG } from '../shared/tones';
 import { HeaderCollapseToggle, HeaderDescriptionInfo, foldTitleIntoTrail } from '../shared/headerDensity';
 import { useDensityForm, type Density } from '../shared/Density';
+import { safeHref } from '../../lib/safeHref';
 
 /**
  * A tab's attention dot. `true` is the brand dot ("something new"); a tone
@@ -351,7 +352,7 @@ function RightGroup({
       )}
       {link && linkStyle === 'button' && (
         <a
-          href={link.href}
+          href={safeHref(link.href) ?? undefined}
           target="_blank"
           rel="noreferrer"
           data-testid={`${testId}-link`}
@@ -364,7 +365,7 @@ function RightGroup({
       )}
       {link && linkStyle !== 'button' && (
         <a
-          href={link.href}
+          href={safeHref(link.href) ?? undefined}
           target="_blank"
           rel="noreferrer"
           data-testid={`${testId}-link`}
@@ -669,7 +670,7 @@ function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boole
   const common = { title: item.label, 'data-crumb': '', 'data-testid': `${testId}-crumb` } as const;
   if (item.href) {
     return (
-      <a href={item.href} onClick={item.onClick} className={cn(cls, 'no-underline hover:text-text-primary')} {...common}>
+      <a href={safeHref(item.href) ?? undefined} onClick={item.onClick} className={cn(cls, 'no-underline hover:text-text-primary')} {...common}>
         {item.label}
       </a>
     );

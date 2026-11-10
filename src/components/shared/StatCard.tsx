@@ -17,6 +17,7 @@ import type { CSSProperties, ElementType, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Sparkline from './Sparkline';
 import { useDensitySize } from './Density';
+import { safeHref } from '../../lib/safeHref';
 
 export interface StatCardDelta {
   /** Magnitude of the change. Rendered with a sign derived from `direction`. */
@@ -195,7 +196,7 @@ export function StatCard({
       );
     }
     return (
-      <a href={to} title={title} data-testid={testId} className={baseClasses} style={style}>
+      <a href={safeHref(to) ?? undefined} title={title} data-testid={testId} className={baseClasses} style={style}>
         {content}
       </a>
     );

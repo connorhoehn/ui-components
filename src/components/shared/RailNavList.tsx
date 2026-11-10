@@ -27,6 +27,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { RAIL_ITEM_COUNT, RAIL_ITEM_TEXT } from './railType';
+import { safeHref } from '../../lib/safeHref';
 
 export interface RailNavListItem {
   id: string;
@@ -105,7 +106,7 @@ export function RailNavList({
           return (
             <li key={item.id} className="min-w-0">
               {item.href && !item.disabled ? (
-                <a href={item.href} onClick={(event) => { item.onNavigate?.(event); item.onSelect?.(); }} {...common}>
+                <a href={safeHref(item.href) ?? undefined} onClick={(event) => { item.onNavigate?.(event); item.onSelect?.(); }} {...common}>
                   {body}
                 </a>
               ) : (

@@ -1,4 +1,5 @@
 import { cn } from '../../lib/cn';
+import { safeHref } from '../../lib/safeHref';
 
 export interface EntityCellProps {
   label: string;
@@ -34,7 +35,7 @@ export function EntityCell({
       >
         {href ? (
           <a
-            href={href}
+            href={safeHref(href) ?? undefined}
             className="hover:text-[var(--color-primary)] hover:underline"
           >
             {labelInner}

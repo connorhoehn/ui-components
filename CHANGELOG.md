@@ -1,3 +1,10 @@
+## 2.515.8
+
+- Security (security lane): untrusted URLs no longer become navigable links. `safeHref` now also takes `undefined` and accepts scheme-less relative references (`docs/a`, `../a`, `?tab=x`); `javascript:`, `vbscript:`, `data:` and control-character tricks stay rejected. New `safeDownloadHref` for download links: adds `blob:` and passive `data:` types (images, pdf, audio, video, zip, json, plain text, csv), never `data:text/html` or svg.
+- Fixed sinks that took document or metadata content: `FileUploadReaderRenderer` (file name shown as text when the data URL is not passive), `LinkBlockReaderRenderer` (label as text), `AgentRunCard` (link results must pass `safeHref`, both live and from metadata), `CommandPalette` (record fallback navigation). Every other `<a href>` in `src/` now goes through `safeHref`/`safeDownloadHref` (`Link`, `Breadcrumbs`, `StatStrip`, `ScopeHeader`, search lists, rails, toasts, `MarkdownView`, `RecordingPlayer`, `VideoPlayerModal` and the rest); a rejected value renders an `<a>` with no `href`.
+- `eslint-plugin`: new opt-in rule `safe-url-attributes` (href on `a`/`area`, src on frames, embeds and scripts must be a literal, an in-app path template or a `safeHref()` result). Not in `recommended`. `npm run lint` also runs `scripts/check-link-sinks.mjs`, the same check without needing eslint. The plugin's source regex no longer accepts the old `@connorhoehnslalom` scope.
+- Hygiene: `.npmrc` maps `@connorhoehn`; two e2e fixtures no longer import a local absolute path; `repository.url` uses the `git+https` form npm publishes.
+
 ## 2.515.7
 
 - `PageHeader` compact row (so `CollectionPage`, `PageFrame`, `DashboardPage` and every template header): the row wraps. The title cell lays out at an 8rem basis (`flex: 1 1 8rem`) and the actions are capped at the row's width and wrap inside it, so when the title's 8rem and the actions do not fit the header's width the actions take their own row under the title instead of squeezing it to 0px. A 302px column with four header actions (Studio's Episodes and Cast & assets at a 390px viewport) used to lose its h1. Wide headers are unchanged: the title cell grows and the actions stay on the right. It is the header's own flex line, not a container query, so it holds in any host, including one that sizes the header to its content (a container query would make the header a size container, which cannot take its width from its content). No prop. The row is no longer a fixed 28px (`min-h-7`). New markers: `data-page-header-row`, `data-page-header-title-cell`, `data-page-header-title` (the heading), `data-page-header-actions`.
@@ -272,7 +279,7 @@ Fixes from the Storymaker Studio audit. Version note: an unpushed local branch (
 
 # Changelog
 
-All notable changes to `@connorhoehnslalom/ui-components` will be documented here.
+All notable changes to `@connorhoehn/ui-components` will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 

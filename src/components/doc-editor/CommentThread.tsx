@@ -11,6 +11,7 @@ import { cn } from '../../lib/cn';
 import { onActivationKey } from '../../lib/activationKey';
 import { Textarea } from '../forms/Textarea';
 import { ChevronIcon, SparkleIcon, UndoIcon } from '../ui/Icons';
+import { safeHref } from '../../lib/safeHref';
 
 // ---------------------------------------------------------------------------
 // Small display helpers
@@ -81,7 +82,7 @@ export function renderCommentText(text: string): React.ReactNode {
   while ((m = link.exec(text)) !== null) {
     if (m.index > last) out.push(...renderMentions(text.slice(last, m.index), `t${last}`));
     out.push(
-      <a key={`l${m.index}`} href={m[2]} className={cn('text-info-fg underline underline-offset-2 hover:text-info')}>
+      <a key={`l${m.index}`} href={safeHref(m[2]) ?? undefined} className={cn('text-info-fg underline underline-offset-2 hover:text-info')}>
         {m[1]}
       </a>,
     );

@@ -22,7 +22,8 @@ export type UiComponentsRuleName =
   | 'no-inline-style'
   | 'no-arbitrary-token-values'
   | 'button-explicit-variant'
-  | 'no-hand-rolled-separators';
+  | 'no-hand-rolled-separators'
+  | 'safe-url-attributes';
 
 declare const plugin: {
   meta: { name: string; version: string };

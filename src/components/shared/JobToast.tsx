@@ -10,6 +10,7 @@ import { ProgressBar } from './ProgressBar';
 import { T } from './Text';
 import { Inline, Stack } from '../ui/Stack';
 import type { ToneOrAlias } from './tones';
+import { safeHref } from '../../lib/safeHref';
 
 export type JobToastState = 'queued' | 'running' | 'done' | 'failed';
 
@@ -114,7 +115,7 @@ export function JobToast({
       )}
       {href && (
         <a
-          href={href}
+          href={safeHref(href) ?? undefined}
           onClick={onNavigate ? (e) => { e.preventDefault(); onNavigate(href, e); } : undefined}
           data-testid="job-toast-link"
           className="text-xs font-semibold text-primary no-underline hover:underline self-start"

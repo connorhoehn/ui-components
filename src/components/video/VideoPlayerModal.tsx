@@ -19,6 +19,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { focusInitialElement, restoreFocus, trapTabKey } from '../../lib/focusTrap';
 import { useOverlayLayer } from '../../lib/overlayStack';
+import { safeDownloadHref } from '../../lib/safeHref';
 
 export interface VideoPlayerSource {
   /** Direct media URL (mp4 / webm / etc) served with Range support. */
@@ -217,7 +218,7 @@ export function VideoPlayerModal({
             <div className="min-w-0 flex-1 flex items-center gap-2">{footer}</div>
             {!hideDownload && active && (
               <a
-                href={active.url}
+                href={safeDownloadHref(active.url) ?? undefined}
                 download
                 className="underline hover:text-[var(--color-primary)] shrink-0"
               >

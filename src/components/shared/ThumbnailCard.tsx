@@ -9,6 +9,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Chip, { type ChipTone } from './Chip';
+import { safeHref } from '../../lib/safeHref';
 
 export interface ThumbnailCardProps {
   /** Card title (required). */
@@ -123,7 +124,7 @@ export function ThumbnailCard({
   if (href) {
     return (
       <a
-        href={href}
+        href={safeHref(href) ?? undefined}
         onClick={onClick}
         data-testid={testId}
         className={cn(shell, 'no-underline text-inherit')}

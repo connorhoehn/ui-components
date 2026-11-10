@@ -84,6 +84,7 @@ import {
   RAIL_ITEM_TEXT,
   RAIL_ROW_PAD_Y,
 } from './railType';
+import { safeHref } from '../../lib/safeHref';
 
 /** `data-*` attributes passed straight through to a row or group heading. */
 export type StackedRailDataAttributes = Record<`data-${string}`, string | number | boolean | undefined>;
@@ -554,7 +555,7 @@ export function StackedRail({
       <li key={row.id} className="min-w-0">
         <div className="group/row flex min-w-0 items-center">
           {row.href && !row.disabled ? (
-            <a href={row.href} onClick={(event) => activate(event)} {...common}>
+            <a href={safeHref(row.href) ?? undefined} onClick={(event) => activate(event)} {...common}>
               {body}
             </a>
           ) : (

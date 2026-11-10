@@ -7,6 +7,7 @@
 import type { RMUseFileUploadReturn } from './types';
 import { adaptFileUploads, type FileUploadSummary } from './adapters';
 import { FileUploadDrop } from '../../components/shared/FileUploadDrop';
+import { safeDownloadHref } from '../../lib/safeHref';
 
 export interface WrappedFileUploadDropProps {
   /** Return value of useFileUpload(channel) from realtime-modules */
@@ -93,7 +94,7 @@ function UploadProgressList({ summaries, onDismiss }: UploadProgressListProps) {
           </span>
           {(s.status === 'completed' || s.status === 'clean') && s.downloadUrl && (
             <a
-              href={s.downloadUrl}
+              href={safeDownloadHref(s.downloadUrl) ?? undefined}
               target="_blank"
               rel="noreferrer"
               className="text-xs text-info"

@@ -11,6 +11,7 @@
 import type { ReactNode, MouseEventHandler } from 'react';
 import { cn } from '../../lib/cn';
 import { Text } from './Text';
+import { safeHref } from '../../lib/safeHref';
 
 export type AppBrandSize = 'sm' | 'md';
 
@@ -63,7 +64,7 @@ export function AppBrand({
   if (href) {
     const label = ariaLabel ?? (typeof name === 'string' ? `${name} home` : undefined);
     return (
-      <a href={href} onClick={onClick} aria-label={label} className={cn(shell, 'rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary')}
+      <a href={safeHref(href) ?? undefined} onClick={onClick} aria-label={label} className={cn(shell, 'rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary')}
         data-app-brand={size} data-testid={testId}>
         {body}
       </a>

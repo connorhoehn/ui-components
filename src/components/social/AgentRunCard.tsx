@@ -42,6 +42,7 @@ import { SparklesIcon } from '../video/MediaIcons';
 import type { ChatSidePanelRef } from './chatCommands';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
+import { safeHref } from '../../lib/safeHref';
 
 export type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
 
@@ -679,8 +680,8 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             {resultLabel}
           </button>
         )}
-        {outcome?.kind === 'link' && !onOpenResult && (
-          <a href={outcome.href} target="_blank" rel="noopener noreferrer" className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-result`} data-result-kind="link">
+        {outcome?.kind === 'link' && !onOpenResult && safeHref(outcome.href) && (
+          <a href={safeHref(outcome.href) ?? undefined} target="_blank" rel="noopener noreferrer" className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-result`} data-result-kind="link">
             {resultLabel}
           </a>
         )}
@@ -798,7 +799,8 @@ export function agentRunResultFromMetadata(value: unknown): AgentRunResult | nul
   if (!value || typeof value !== 'object') return null;
   const r = value as Record<string, unknown>;
   if (r.kind === 'document' && typeof r.documentId === 'string' && r.documentId) return { kind: 'document', documentId: r.documentId };
-  if (r.kind === 'link' && typeof r.href === 'string' && r.href) {
+  // The href is untrusted metadata: a result link must be http(s), mailto or an in-app path.
+  if (r.kind === 'link' && typeof r.href === 'string' && safeHref(r.href)) {
     return { kind: 'link', href: r.href, ...(typeof r.label === 'string' && r.label ? { label: r.label } : {}) };
   }
   if (r.kind === 'panel' && r.panel && typeof r.panel === 'object') {

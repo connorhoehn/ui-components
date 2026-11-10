@@ -61,6 +61,7 @@ import { useDensitySize } from '../shared/Density';
 import { ArrowRightIcon, ChevronIcon } from '../ui/Icons';
 import type { Tone } from '../shared/tones';
 import { Avatar } from '../shared/Avatar';
+import { safeHref } from '../../lib/safeHref';
 
 /** Row tint. `neutral` (and absent) draws none. */
 export type ActionRowTone = Exclude<Tone, 'neutral'> | 'neutral';
@@ -339,7 +340,7 @@ export function ActionRowList({
             return (
             <li key={item.id} className={cn(!toned && 'border-b border-border', stripe && 'bg-surface-inset', itemClass)} data-testid={`${testId}-row-${item.id}`} {...(stripe ? { 'data-stripe': '' } : {})} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (
-                <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`} data-ui-row-main="">
+                <a href={safeHref(item.href) ?? undefined} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`} data-ui-row-main="">
                   {body}
                 </a>
               ) : (

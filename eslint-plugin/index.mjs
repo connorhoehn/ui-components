@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
 const INDEX = 'docs/COMPONENT_INDEX.md in @connorhoehn/ui-components';
-const LIBRARY_SOURCE_RE = /^@connorhoehn(?:slalom)?\/ui-components(?:\/|$)/;
+const LIBRARY_SOURCE_RE = /^@connorhoehn\/ui-components(?:\/|$)/;
 const DEFAULT_CLASS_CALLEES = ['cn', 'clsx', 'cx', 'classnames', 'classNames', 'twMerge', 'twJoin'];
 
 // ---------------------------------------------------------------------------
@@ -454,6 +454,88 @@ const noHandRolledSeparators = {
 };
 
 // ---------------------------------------------------------------------------
+// safe-url-attributes
+// ---------------------------------------------------------------------------
+
+const URL_SINKS = { a: ['href'], area: ['href'], iframe: ['src'], frame: ['src'], embed: ['src'], object: ['data'], script: ['src'] };
+const SAFE_URL_CALLS = new Set(['safeHref', 'safeDownloadHref']);
+
+/** True when a JSX URL value cannot carry a scripting scheme. Mirrors scripts/check-link-sinks.mjs. */
+function isSafeUrlExpression(node, safeNames) {
+  if (!node) return true;
+  switch (node.type) {
+    case 'Literal':
+      return true;
+    case 'Identifier':
+      return node.name === 'undefined' || safeNames.has(node.name);
+    case 'CallExpression':
+      return node.callee.type === 'Identifier' && safeNames.has(node.callee.name);
+    case 'TemplateLiteral': {
+      // An in-app path or fragment (`/x/${id}`, `#${id}`) cannot start a scheme.
+      const head = node.quasis[0].value.cooked ?? '';
+      return /^[/#]/.test(head) && !/^\/[/\\]/.test(head);
+    }
+    case 'ConditionalExpression':
+      return isSafeUrlExpression(node.consequent, safeNames) && isSafeUrlExpression(node.alternate, safeNames);
+    case 'LogicalExpression':
+      if (node.operator === '&&') return isSafeUrlExpression(node.right, safeNames);
+      return isSafeUrlExpression(node.left, safeNames) && isSafeUrlExpression(node.right, safeNames);
+    case 'TSAsExpression':
+    case 'TSNonNullExpression':
+      return isSafeUrlExpression(node.expression, safeNames);
+    default:
+      return false;
+  }
+}
+
+const safeUrlAttributes = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description:
+        'Require href/src on anchors, frames and embeds to be a string literal, an in-app path template, or a safeHref() result, so `javascript:` and `data:text/html` values never become navigable.',
+    },
+    schema: [
+      {
+        type: 'object',
+        properties: { safeFunctions: { type: 'array', items: { type: 'string' } } },
+        additionalProperties: false,
+      },
+    ],
+    messages: {
+      unsafe:
+        '`{{attr}}` on <{{element}}> is not a literal or a safeHref() result. A `javascript:` or `data:text/html` value would run in this origin; wrap it in safeHref() (import from @connorhoehn/ui-components) and render no link when it returns null. <img>/<video> src is not covered (not a script sink).',
+    },
+  },
+  create(context) {
+    const { safeFunctions = [] } = context.options[0] ?? {};
+    const callNames = new Set([...SAFE_URL_CALLS, ...safeFunctions]);
+    // `const href = safeHref(raw)` makes `href` safe for the rest of the file.
+    const safeNames = new Set(callNames);
+    return {
+      VariableDeclarator(node) {
+        if (node.id.type === 'Identifier' && node.init?.type === 'CallExpression'
+          && node.init.callee.type === 'Identifier' && callNames.has(node.init.callee.name)) {
+          // Variables are only trusted by identifier; a call is distinguished by node type above.
+          safeNames.add(node.id.name);
+        }
+      },
+      JSXOpeningElement(node) {
+        if (!isIntrinsic(node.name)) return;
+        const sinks = URL_SINKS[node.name.name];
+        if (!sinks) return;
+        for (const name of sinks) {
+          const a = attr(node, name);
+          if (!a || !a.value || a.value.type === 'Literal') continue;
+          if (a.value.type === 'JSXExpressionContainer' && isSafeUrlExpression(a.value.expression, safeNames)) continue;
+          context.report({ node: a, messageId: 'unsafe', data: { attr: name, element: node.name.name } });
+        }
+      },
+    };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Plugin + configs
 // ---------------------------------------------------------------------------
 
@@ -463,6 +545,7 @@ const rules = {
   'no-arbitrary-token-values': noArbitraryTokenValues,
   'button-explicit-variant': buttonExplicitVariant,
   'no-hand-rolled-separators': noHandRolledSeparators,
+  'safe-url-attributes': safeUrlAttributes,
 };
 
 const plugin = {

@@ -23,6 +23,7 @@ import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { useDensitySize } from './Density';
 import type { SurfaceTone } from './tones';
+import { safeHref } from '../../lib/safeHref';
 
 /** @see SurfaceTone — which colour family the empty state paints in. */
 export type EmptyStateTone = SurfaceTone;
@@ -376,7 +377,7 @@ function GuidedAction({
     return (
       <a
         data-testid="empty-state-actions-link"
-        href={action.href}
+        href={safeHref(action.href) ?? undefined}
         onClick={action.onClick}
         className={className}
         {...(external

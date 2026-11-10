@@ -21,6 +21,7 @@ import { cn } from '../../lib/cn';
 import { Avatar } from './Avatar';
 import Chip from './Chip';
 import { Button } from '../ui/Button';
+import { safeHref } from '../../lib/safeHref';
 
 export interface ExpertSkillMatch {
   name: string;
@@ -153,7 +154,7 @@ export function ExpertCard({
               {doc.source && <Chip tone="neutral" size="xs" mono>{doc.source}</Chip>}
               {doc.href ? (
                 <a
-                  href={doc.href}
+                  href={safeHref(doc.href) ?? undefined}
                   onClick={(e) => e.stopPropagation()}
                   className="text-[11.5px] text-text-secondary no-underline hover:underline truncate"
                 >

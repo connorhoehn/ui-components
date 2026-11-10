@@ -19,6 +19,7 @@ import {
 import { Command as Cmdk } from 'cmdk';
 import { cn } from '../../lib/cn';
 import Modal from './Modal';
+import { safeHref } from '../../lib/safeHref';
 
 export interface Command {
   id: string;
@@ -558,7 +559,11 @@ export function CommandPalette({
       close();
       void Promise.resolve().then(() => {
         if (onOpenRecord) onOpenRecord(rec);
-        else if (typeof window !== 'undefined') window.location.assign(rec.href);
+        else if (typeof window !== 'undefined') {
+          // rec.href comes from a search backend; never navigate to a scripting scheme.
+          const href = safeHref(rec.href);
+          if (href) window.location.assign(href);
+        }
       });
     },
     [close, onOpenRecord],

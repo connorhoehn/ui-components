@@ -14,6 +14,7 @@ import { cn } from '../../lib/cn';
 import { FileKindMark, type FileKind } from '../shared/FileKindMark';
 import { ChevronIcon } from '../ui/Icons';
 import { formatCompactAge } from './compactAge';
+import { safeHref } from '../../lib/safeHref';
 
 export interface SourceCardProps {
   id: string;
@@ -73,7 +74,7 @@ function SourceTitle({ id, title, onOpen, href }: Pick<SourceCardProps, 'id' | '
     );
   }
   if (href) {
-    return <a href={href} className={cn(cls, 'no-underline hover:text-primary hover:underline')}>{title}</a>;
+    return <a href={safeHref(href) ?? undefined} className={cn(cls, 'no-underline hover:text-primary hover:underline')}>{title}</a>;
   }
   return <span className={cls}>{title}</span>;
 }
@@ -119,7 +120,7 @@ export function SourceCard({
       return <button data-ui-part="" type="button" onClick={() => onOpen(id)} className={cn(rowCls, interactive)} {...common}>{inner}</button>;
     }
     if (href) {
-      return <a href={href} className={cn(rowCls, interactive)} {...common}>{inner}</a>;
+      return <a href={safeHref(href) ?? undefined} className={cn(rowCls, interactive)} {...common}>{inner}</a>;
     }
     return <div className={rowCls} data-testid={testId} data-layout="row" data-ui-source-row="" {...(current ? { 'aria-current': 'true' as const } : {})}>{inner}</div>;
   }

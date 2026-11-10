@@ -1,5 +1,4 @@
 import '@connorhoehn/ui-components/styles.css';
-import '/Users/connorhoehn/Projects/aws-agentcore/portal/src/app.css';
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Modal } from '@connorhoehn/ui-components/shared';

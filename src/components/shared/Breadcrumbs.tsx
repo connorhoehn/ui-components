@@ -24,6 +24,7 @@
 import { useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { InlinePopover } from './InlinePopover';
+import { safeHref } from '../../lib/safeHref';
 
 export interface BreadcrumbItem {
   label: string;
@@ -115,7 +116,7 @@ function BreadcrumbLink({
 
   if (item.href) {
     return (
-      <a title={item.label} href={item.href} onClick={activate} className={cn(baseClass, 'no-underline')}>
+      <a title={item.label} href={safeHref(item.href) ?? undefined} onClick={activate} className={cn(baseClass, 'no-underline')}>
         {item.label}
       </a>
     );

@@ -14,6 +14,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar } from './Avatar';
+import { safeHref } from '../../lib/safeHref';
 
 export interface CaptionedAvatarProps {
   name: string;
@@ -68,7 +69,7 @@ export function CaptionedAvatar({
     'data-testid': testId,
   } as const;
   if (href) {
-    return <a {...common} href={href} aria-current={selected || undefined} className={shared}>{content}</a>;
+    return <a {...common} href={safeHref(href) ?? undefined} aria-current={selected || undefined} className={shared}>{content}</a>;
   }
   if (onClick) {
     return <button {...common} type="button" aria-current={selected || undefined} onClick={onClick} className={shared}>{content}</button>;

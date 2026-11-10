@@ -28,6 +28,7 @@ import { MetaLine } from '../shared/MetaLine';
 import { Button } from '../ui/Button';
 import VisuallyHidden from '../shared/VisuallyHidden';
 import { relativeAgo } from '../pipelines/list/catalog';
+import { safeHref } from '../../lib/safeHref';
 
 export type WorkActivityKind = 'status' | 'run' | 'estimate' | 'comment' | 'system';
 
@@ -188,7 +189,7 @@ export function WorkActivityList({
                   showTime ? <time key="t" dateTime={iso}>{ago}</time> : null,
                   e.detail ?? null,
                   e.href ? (
-                    <a key="l" href={e.href} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                    <a key="l" href={safeHref(e.href) ?? undefined} target="_blank" rel="noreferrer" className="text-primary hover:underline">
                       {e.openLabel ?? 'Open'}
                     </a>
                   ) : e.onOpen ? (

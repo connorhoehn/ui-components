@@ -28,6 +28,7 @@ import { Button } from '../ui/Button';
 import { cn } from '../../lib/cn';
 import { formatBytes } from '../../lib/formatBytes';
 import { isImageAttachment, type Attachment } from './attachmentText';
+import { safeHref } from '../../lib/safeHref';
 
 export interface AttachmentBlockProps {
     attachment: Attachment;
@@ -113,7 +114,7 @@ export function AttachmentBlock({
                     ) : href ? (
                         <a
                             data-testid={`${testId}-anchor`}
-                            href={href}
+                            href={safeHref(href) ?? undefined}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex min-w-0 hover:underline"

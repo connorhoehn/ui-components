@@ -9,6 +9,7 @@ import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '../../lib/cn';
 import CodeBlock, { type CodeBlockLanguage } from './CodeBlock';
+import { safeHref } from '../../lib/safeHref';
 
 export type MarkdownViewScale = 'sm' | 'md' | 'lg';
 
@@ -99,7 +100,7 @@ function buildComponents(scale: MarkdownViewScale): Components {
   },
   a({ href, children }) {
     return (
-      <a href={href} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2 hover:text-primary-hover">
+      <a href={safeHref(href) ?? undefined} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2 hover:text-primary-hover">
         {children}
       </a>
     );

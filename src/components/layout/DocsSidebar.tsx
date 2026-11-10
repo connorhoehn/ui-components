@@ -11,6 +11,7 @@ import {
   type AnchorHTMLAttributes,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { safeHref } from '../../lib/safeHref';
 
 export interface DocsSidebarItem {
   id: string;
@@ -64,7 +65,7 @@ function defaultRenderLink(
   item: { to: string },
   props: AnchorHTMLAttributes<HTMLAnchorElement>,
 ): ReactNode {
-  return <a {...props} href={item.to}>{props.children}</a>;
+  return <a {...props} href={safeHref(item.to) ?? undefined}>{props.children}</a>;
 }
 
 export function DocsSidebar({

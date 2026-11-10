@@ -23,6 +23,7 @@ import { Avatar } from './Avatar';
 import { Button } from '../ui/Button';
 import { Textarea } from '../forms/Textarea';
 import type { ToneOrAlias } from './tones';
+import { safeHref } from '../../lib/safeHref';
 
 export type ReviewAuthorKind = 'agent' | 'human';
 
@@ -95,7 +96,7 @@ export function ArtifactTile({ name, type, url }: { name: string; type?: string;
       </div>
       <div className="flex-1" />
       {url ? (
-        <a href={url} target="_blank" rel="noreferrer" className="text-xs text-primary no-underline hover:underline">
+        <a href={safeHref(url) ?? undefined} target="_blank" rel="noreferrer" className="text-xs text-primary no-underline hover:underline">
           open →
         </a>
       ) : (

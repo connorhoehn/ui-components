@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehn/ui-components",
-  "version": "2.515.7",
+  "version": "2.515.8",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -166,7 +166,7 @@
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "node scripts/tsc.mjs --noEmit && node scripts/tsc.mjs --noEmit -p demo/tsconfig.json",
+    "lint": "node scripts/check-link-sinks.mjs && node scripts/tsc.mjs --noEmit && node scripts/tsc.mjs --noEmit -p demo/tsconfig.json",
     "lint:static-styles": "node scripts/check-static-styles.mjs",
     "demo": "vite --config demo/vite.config.ts",
     "test:e2e": "playwright test",
@@ -184,7 +184,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/connorhoehn/ui-components.git"
+    "url": "git+https://github.com/connorhoehn/ui-components.git"
   },
   "dependencies": {
     "ajv": "^8.20.0",

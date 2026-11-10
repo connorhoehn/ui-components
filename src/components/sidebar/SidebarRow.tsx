@@ -26,6 +26,7 @@ import {
   useRef,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { safeHref } from '../../lib/safeHref';
 
 export interface SidebarRowProps {
   /** Leading icon. */
@@ -156,7 +157,7 @@ export function SidebarRow({
     return (
       <a
         ref={rowRef as React.RefObject<HTMLAnchorElement>}
-        href={href}
+        href={safeHref(href) ?? undefined}
         aria-current={active ? 'page' : undefined}
         aria-disabled={disabled || undefined}
         aria-label={ariaLabel}

@@ -25,6 +25,7 @@
 
 import { type AnchorHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { safeHref } from '../../lib/safeHref';
 
 export interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
   /** Required — a link with nowhere to go is a button. */
@@ -64,7 +65,7 @@ export function Link({
   return (
     <a
       {...rest}
-      href={href}
+      href={safeHref(href) ?? undefined}
       target={finalTarget}
       rel={opensNewTab ? safeRel(rel) : rel}
       className={cn(!unstyled && BASE, className)}

@@ -15,6 +15,7 @@ import {
   HeaderCollapseToggle, HeaderDescriptionInfo, HeaderPeople, HeaderTrailFold, visibleHeaderPeople,
   type HeaderPeopleGroup,
 } from './headerDensity';
+import { safeHref } from '../../lib/safeHref';
 
 export interface PageHeaderBack {
   label: string;
@@ -159,7 +160,7 @@ function PageHeader({
     : null;
 
   // Compact/collapsed headers must retain the route back to their list.
-  const compactBack = back ? <Tooltip content={back.label}><a href={back.to} onClick={back.onClick}
+  const compactBack = back ? <Tooltip content={back.label}><a href={safeHref(back.to) ?? undefined} onClick={back.onClick}
     aria-label={back.label} className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-secondary hover:bg-primary/10 hover:text-primary focus-visible:outline-2 focus-visible:outline-primary">
     <ChevronIcon dir="left" size={16} />
   </a></Tooltip> : null;
@@ -215,7 +216,7 @@ function PageHeader({
       {trail && <div className="mb-2.5">{trail}</div>}
       {back && (
         <a
-          href={back.to}
+          href={safeHref(back.to) ?? undefined}
           onClick={back.onClick}
           className="inline-flex items-center gap-1 text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] mb-1 w-fit"
         >

@@ -7,6 +7,7 @@ import {
   type AnchorHTMLAttributes,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { safeHref } from '../../lib/safeHref';
 
 export interface TopNavItem {
   label: ReactNode;
@@ -41,7 +42,7 @@ function isActive(activeHref: string | undefined, to: string): boolean {
 }
 
 function defaultRenderLink(item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>): ReactNode {
-  return <a {...props} href={item.to}>{props.children}</a>;
+  return <a {...props} href={safeHref(item.to) ?? undefined}>{props.children}</a>;
 }
 
 type AnchorPropsWithData = AnchorHTMLAttributes<HTMLAnchorElement> & Record<`data-${string}`, string | undefined>;

@@ -7,6 +7,7 @@ import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
 import { cn } from '../../../lib/cn';
+import { safeHref } from '../../../lib/safeHref';
 
 export interface SetupGuidePageProps {
   status: {
@@ -129,7 +130,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
             {status.wellKnownUrl && (
               <p className="m-0 text-sm text-text-secondary">
                 Well-known URL:{' '}
-                <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" className="text-info-fg underline">
+                <a href={safeHref(status.wellKnownUrl) ?? undefined} target="_blank" rel="noopener noreferrer" className="text-info-fg underline">
                   {status.wellKnownUrl}
                 </a>
               </p>

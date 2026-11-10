@@ -27,6 +27,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
+import { safeDownloadHref } from '../../lib/safeHref';
 
 /**
  * What kind of source a URL names, by extension.
@@ -300,7 +301,7 @@ export function RecordingPlayer({
           <div className="flex-1" />
           {!hideDownload && playlistUrl && (
             <a
-              href={playlistUrl}
+              href={safeDownloadHref(playlistUrl) ?? undefined}
               download
               className="text-white/80 hover:text-white text-xs underline"
               aria-label="Download"

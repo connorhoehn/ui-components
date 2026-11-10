@@ -18,6 +18,7 @@ import { cn } from '../../lib/cn';
 import { useDensitySize } from './Density';
 import { TONE_SOLID_BG, TONE_TEXT, type Tone } from './tones';
 import { ProgressBar } from './ProgressBar';
+import { safeHref } from '../../lib/safeHref';
 
 /** A cluster's health line: a tone dot and a short worded state. */
 export interface StatStripStatus {
@@ -283,7 +284,7 @@ export function StatStrip({
           const inner = <LineCluster item={item} sm={size === 'sm'} />;
           let cluster: ReactNode;
           if (item.href) {
-            cluster = <a href={item.href} className="min-w-0 rounded no-underline hover:underline" {...tip}>{inner}</a>;
+            cluster = <a href={safeHref(item.href) ?? undefined} className="min-w-0 rounded no-underline hover:underline" {...tip}>{inner}</a>;
           } else if (item.onSelect) {
             cluster = (
               <button data-ui-part="" type="button" onClick={item.onSelect} className="min-w-0 cursor-pointer rounded border-none bg-transparent p-0 text-left hover:underline" {...tip}>
@@ -320,7 +321,7 @@ export function StatStrip({
           const tip = item.title ? { title: item.title } : {};
           const inner = <InlineCluster item={item} first={i === 0} last={i === items.length - 1} />;
           if (item.href) {
-            return <a key={item.label} href={item.href} className="min-w-0 flex-1 no-underline hover:bg-surface-hover" {...tip}>{inner}</a>;
+            return <a key={item.label} href={safeHref(item.href) ?? undefined} className="min-w-0 flex-1 no-underline hover:bg-surface-hover" {...tip}>{inner}</a>;
           }
           if (item.onSelect) {
             return (
@@ -351,7 +352,7 @@ export function StatStrip({
         let cluster: ReactNode;
         if (item.href) {
           cluster = (
-            <a href={item.href} className={cn('min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover', flow && NARROW.cell)} {...tip}>
+            <a href={safeHref(item.href) ?? undefined} className={cn('min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover', flow && NARROW.cell)} {...tip}>
               <Cluster item={item} flush={flush} control flow={flowMode} />
             </a>
           );

@@ -145,6 +145,28 @@ tester.run('no-hand-rolled-separators', rules['no-hand-rolled-separators'] as ne
   ],
 });
 
+tester.run('safe-url-attributes', rules['safe-url-attributes'] as never, {
+  valid: [
+    `const A = () => <a href="https://x.test">x</a>;`,
+    `const A = () => <a href={safeHref(url)}>x</a>;`,
+    `const A = () => <a href={safeHref(url) ?? undefined}>x</a>;`,
+    `const A = () => <a href={\`/docs/\${id}\`}>x</a>;`,
+    `const A = () => <a href={\`#\${id}\`}>x</a>;`,
+    `const A = () => { const href = safeHref(url); return <a href={href}>x</a>; };`,
+    `const A = () => <a href={ok ? safeHref(u) : undefined}>x</a>;`,
+    `const A = () => <img src={dataUrl} alt="" />;`,
+    `const A = () => <Link href={dynamic}>x</Link>;`,
+  ],
+  invalid: [
+    { code: `const A = () => <a href={url}>x</a>;`, errors: [{ messageId: 'unsafe' }] },
+    { code: `const A = () => <a href={m.fileDataUrl ?? '#'}>x</a>;`, errors: [{ messageId: 'unsafe' }] },
+    { code: `const A = () => <a href={\`\${base}/x\`}>x</a>;`, errors: [{ messageId: 'unsafe' }] },
+    { code: `const A = () => <a href={\`//\${host}\`}>x</a>;`, errors: [{ messageId: 'unsafe' }] },
+    { code: `const A = () => <iframe src={u} />;`, errors: [{ messageId: 'unsafe' }] },
+    { code: `const A = () => <a href={other(url)}>x</a>;`, errors: [{ messageId: 'unsafe' }] },
+  ],
+});
+
 describe('configs.recommended', () => {
   it('errors on the first four rules in component files and warns on separators in page files', () => {
     const linter = new Linter({ configType: 'flat', cwd: '/repo' });
@@ -183,7 +205,7 @@ describe('configs.recommended', () => {
   it('reports its own version and exposes every rule', () => {
     expect(plugin.meta.version).toMatch(/^\d+\.\d+\.\d+/);
     expect(Object.keys(plugin.rules).sort()).toEqual(
-      ['button-explicit-variant', 'no-arbitrary-token-values', 'no-hand-rolled-separators', 'no-inline-style', 'no-raw-controls'],
+      ['button-explicit-variant', 'no-arbitrary-token-values', 'no-hand-rolled-separators', 'no-inline-style', 'no-raw-controls', 'safe-url-attributes'],
     );
   });
 });

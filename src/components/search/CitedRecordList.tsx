@@ -20,6 +20,7 @@ import { IconButton } from '../ui/IconButton';
 import { ArrowRightIcon, ChevronIcon } from '../ui/Icons';
 import { Inline, Stack } from '../ui/Stack';
 import { RecordMark, RecordStatus, recordResultKey, type RecordResultItem, type RecordResultType } from './recordMarks';
+import { safeHref } from '../../lib/safeHref';
 
 export interface CitedRecordItem extends RecordResultItem {
   /** The record's citation number in the answer. */
@@ -78,7 +79,7 @@ function Citations({ numbers, byNumber, onOpen }: { numbers: number[]; byNumber:
         return (
           <a
             key={n}
-            href={source.href}
+            href={safeHref(source.href) ?? undefined}
             aria-label={`Source ${n}: ${source.title}`}
             className={cn(pill, 'hover:bg-primary-bg')}
             onClick={(event) => {
@@ -110,7 +111,7 @@ function CitedRow({ record, byNumber, onOpen }: { record: CitedRecordItem; byNum
       <Stack gap="none" className="min-w-0 flex-1">
         <span className="truncate text-sm" title={citedSourceTitle(record)}>
           <a
-            href={record.href}
+            href={safeHref(record.href) ?? undefined}
             className="font-medium text-text-primary hover:text-primary"
             onClick={(event) => {
               event.stopPropagation();

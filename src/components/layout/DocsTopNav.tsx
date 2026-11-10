@@ -7,6 +7,7 @@
 import type { ReactNode, CSSProperties, AnchorHTMLAttributes } from 'react';
 import { cn } from '../../lib/cn';
 import { TopNav, type TopNavItem } from './TopNav';
+import { safeHref } from '../../lib/safeHref';
 
 export interface DocsTopNavProps {
   items: TopNavItem[];
@@ -33,7 +34,7 @@ export interface DocsTopNavProps {
 function defaultBrandLink(brandTo: string, brand: ReactNode): ReactNode {
   return (
     <a
-      href={brandTo}
+      href={safeHref(brandTo) ?? undefined}
       className="text-base font-bold text-[var(--color-text-primary)] no-underline whitespace-nowrap"
       data-testid="docs-topnav-brand"
     >

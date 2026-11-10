@@ -1,6 +1,7 @@
 // Phase 51 / hub#71 — Link Block reader renderer (read-only viewer).
 
 import type { SectionRendererProps } from '../types';
+import { safeHref } from '../../lib/safeHref';
 
 interface LinkRow { label: string; url: string }
 interface LinksMeta { links?: LinkRow[] }
@@ -33,18 +34,27 @@ export default function LinkBlockReaderRenderer({ section }: SectionRendererProp
       data-testid={`link-block-reader-${section.id}`}
       className="list-none m-0 p-0 flex flex-col gap-1"
     >
-      {links.map((l, idx) => (
-        <li key={idx} className="text-[13px]">
-          <a
-            href={l.url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-primary font-medium no-underline"
-          >
-            {l.label || l.url}
-          </a>
-        </li>
-      ))}
+      {links.map((l, idx) => {
+        // The URL is document content. A scheme safeHref rejects renders as
+        // plain text, not as a link.
+        const href = safeHref(l.url);
+        return (
+          <li key={idx} className="text-[13px]">
+            {href ? (
+              <a
+                href={href}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-primary font-medium no-underline"
+              >
+                {l.label || l.url}
+              </a>
+            ) : (
+              <span className="text-text-secondary font-medium">{l.label || l.url}</span>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

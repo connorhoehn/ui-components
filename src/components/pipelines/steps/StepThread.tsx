@@ -11,6 +11,7 @@ import { isAgentStepOutput, liveAgentOutputFromCalls } from './agentTrace';
 import { VisionResultViewer } from '../vision';
 import type { VisionResult } from '../vision';
 import { useImageUrlOptional } from '../services/PipelineEditorServicesContext';
+import { safeDownloadHref } from '../../../lib/safeHref';
 
 export interface StepThreadProps {
   stepId: string;
@@ -340,7 +341,7 @@ export function StepThread({
                         </button>
                       ) : (
                         <a
-                          href={href}
+                          href={safeDownloadHref(href) ?? undefined}
                           target="_blank"
                           rel="noreferrer"
                           data-testid={`step-artifact-${img.imageId}`}
