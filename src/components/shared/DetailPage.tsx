@@ -45,6 +45,12 @@ export interface DetailPageProps {
   titleAs?: 'h1' | 'h2' | 'h3';
   /** The record's sections. With none, `children` is the one body. */
   tabs?: DetailPageTab[];
+  /**
+   * The tab list's accessible name (since 2.515.7). Default `Sections`; name
+   * it for the record ("Episode sections") when a page holds more than one
+   * tab list, so a screen reader can tell them apart.
+   */
+  tabsLabel?: string;
   /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
   activeTab?: string;
   onTabChange?: (id: string) => void;
@@ -75,7 +81,7 @@ export interface DetailPageProps {
  *   aside={<ContextColumn … />} />
  */
 export function DetailPage({
-  title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, activeTab, onTabChange, children, aside,
+  title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, tabsLabel = 'Sections', activeTab, onTabChange, children, aside,
   gutter = 'page', className, 'data-testid': testId, 'data-page-spec': spec,
 }: DetailPageProps) {
   const idPrefix = useId();
@@ -97,10 +103,13 @@ export function DetailPage({
       <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-page-column="">
         <div className={cn('flex shrink-0 min-w-0 flex-col gap-2', gx, trail ? 'pt-2' : 'pt-3')} data-detail-page-header="" data-page-trail="">
           {trail && <Breadcrumbs items={breadcrumbs!} separator="›" maxItems={5} className="min-w-0" />}
-          <div className="flex min-w-0 items-start gap-3">
-            <DetailHeader title={title} as={titleAs} className="min-w-0 flex-1"
+          {/* Wraps like PageHeader's compact row (since 2.515.7): when the
+              header's 8rem basis and the actions do not fit, the actions take
+              their own row under it instead of squeezing the title away. */}
+          <div className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2" data-detail-page-row="">
+            <DetailHeader title={title} as={titleAs} className="min-w-0 flex-1 basis-32"
               {...(badge != null ? { badge } : {})} {...(description != null ? { description } : {})} {...(meta != null ? { meta } : {})} />
-            {actions != null && <div className="flex shrink-0 items-center gap-2" data-detail-page-actions="">{actions}</div>}
+            {actions != null && <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2" data-detail-page-actions="">{actions}</div>}
           </div>
         </div>
         {hasTabs ? (
@@ -116,7 +125,7 @@ export function DetailPage({
                 variant="underline"
                 size="sm"
                 badgeStyle="plain"
-                aria-label="Sections"
+                aria-label={tabsLabel}
               />
             </div>
             {tabs!.map((tab) => (

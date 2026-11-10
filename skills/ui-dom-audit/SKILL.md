@@ -24,6 +24,9 @@ equals the manifest's `groups`) and `tile.actions-inside` (an AssetGallery
 tile's actions never leave the tile: `minTileWidth` and the wrapping action
 row). `page.template` and `nav.rail-groups` judge only what the consumer
 declares through `ruleOptions` (`routes`, `expected`, `groups`).
+`header.title-room` (2.515.7) fails a page header whose title its actions
+squeezed below 64px (or below its own text, when shorter): a narrow column
+must wrap the actions under the title, never drop the page's name.
 
 Measure the rendered app against a shared contract. Fix a component family once,
 then verify its consumers. When the user asks to fix findings or improve the UI,

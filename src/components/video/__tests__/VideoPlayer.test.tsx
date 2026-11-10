@@ -93,4 +93,43 @@ describe('VideoPlayer', () => {
     expect(video.controls).toBe(true);
     expect(video.autoplay).toBe(true);
   });
+
+  // 2.515.7: a paused file clip is not a connection.
+  it('a file source with loaded metadata shows no connecting overlay over its controls', () => {
+    const { container } = render(<VideoPlayer src="/clip.mp4" controls />);
+    const video = getVideo(container);
+    const root = container.querySelector('[data-video-player]')!;
+    expect(root).toHaveAttribute('data-source', 'file');
+    act(() => { video.dispatchEvent(new Event('loadstart')); });
+    expect(screen.getByText('Connecting…')).toBeInTheDocument();
+    act(() => { video.dispatchEvent(new Event('loadedmetadata')); });
+    expect(screen.queryByText('Connecting…')).not.toBeInTheDocument();
+    expect(container.querySelector('[data-video-overlay]')).toBeNull();
+    expect(root).toHaveAttribute('data-file-loaded');
+    // A new source starts over until its own metadata is in.
+    act(() => { video.dispatchEvent(new Event('loadstart')); });
+    expect(container.querySelector('[data-video-overlay="connecting"]')).not.toBeNull();
+    expect(root).not.toHaveAttribute('data-file-loaded');
+  });
+
+  it('a loaded file still shows buffering and errors', () => {
+    const { container } = render(<VideoPlayer src="/clip.mp4" />);
+    const video = getVideo(container);
+    act(() => { video.dispatchEvent(new Event('loadstart')); });
+    act(() => { video.dispatchEvent(new Event('loadedmetadata')); });
+    act(() => { video.dispatchEvent(new Event('waiting')); });
+    expect(screen.getByText('Buffering…')).toBeInTheDocument();
+    act(() => { video.dispatchEvent(new Event('error')); });
+    expect(screen.getByText('Playback Error')).toBeInTheDocument();
+  });
+
+  it('a stream keeps its connecting overlay after metadata', () => {
+    const stream = {} as MediaStream;
+    const { container } = render(<VideoPlayer stream={stream} />);
+    const video = getVideo(container);
+    act(() => { video.dispatchEvent(new Event('loadstart')); });
+    act(() => { video.dispatchEvent(new Event('loadedmetadata')); });
+    expect(screen.getByText('Connecting…')).toBeInTheDocument();
+    expect(container.querySelector('[data-video-player]')).toHaveAttribute('data-source', 'stream');
+  });
 });

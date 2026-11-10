@@ -181,10 +181,18 @@ function PageHeader({
     return (
       <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-page-header="" data-density="compact" data-collapsed="false">
         {trail}
-        <div className="flex h-7 min-w-0 items-center gap-3" data-testid={`${testId}-row`}>
+        {/* The row wraps (since 2.515.7): the title cell is laid out at an
+            8rem basis, so when the title's 8rem, the gap and the actions do not
+            fit the header's width, the actions take their own row under the
+            title instead of squeezing it to nothing (a 302px column with four
+            header actions used to lose its h1). Wide headers are unchanged:
+            the cell grows to fill the row and the actions stay right. No
+            container query: the header's own flex line does it, so it holds
+            in any host, including one that sizes the header to its content. */}
+        <div className="flex min-h-7 min-w-0 flex-wrap items-center gap-x-3 gap-y-1" data-testid={`${testId}-row`} data-page-header-row="">
           {compactBack}
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <Heading className={cn('m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]', size === 'sm' ? 'text-sm leading-5' : 'text-xl leading-7')} title={title} data-title-size={size}>
+          <div className="flex min-w-0 flex-1 basis-32 items-center gap-2" data-page-header-title-cell="">
+            <Heading className={cn('m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]', size === 'sm' ? 'text-sm leading-5' : 'text-xl leading-7')} title={title} data-title-size={size} data-page-header-title="">
               {title}
             </Heading>
             {badge}
@@ -193,7 +201,9 @@ function PageHeader({
             {groups.length > 0 && <div className="flex min-w-0 shrink-[8] overflow-hidden"><HeaderPeople groups={groups} density="compact" data-testid={`${testId}-people`} /></div>}
             {chevron}
           </div>
-          {actions && <div className="flex flex-shrink-0 items-center gap-2">{actions}</div>}
+          {/* Capped at the row's width and wrapping inside it, so actions on
+              their own row never run past the column's edge. */}
+          {actions && <div className="flex max-w-full flex-shrink-0 flex-wrap items-center gap-2" data-page-header-actions="">{actions}</div>}
         </div>
         {tabStrip}
       </div>

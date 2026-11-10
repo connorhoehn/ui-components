@@ -58,7 +58,7 @@ import "./RovingToolbar-C8vF753M.js";
 import { t as Ot } from "./InlineAlert-BgM4PLN-.js";
 import "./CardHeader-DDkwr0A5.js";
 import { t as kt } from "./Breadcrumbs-Ba-7aI6X.js";
-import { a as At, d as jt, f as Mt, o as Nt, p as Pt, t as Ft, u as It } from "./PageHeader-zmrqH8me.js";
+import { a as At, d as jt, f as Mt, o as Nt, p as Pt, t as Ft, u as It } from "./PageHeader-BG7Xryak.js";
 import { c as Lt } from "./SidebarRow-D2zxIDTs.js";
 import "./LogStream-MdjhSR7f.js";
 import "./RisingParticles-BkeXugHs.js";
@@ -4981,31 +4981,36 @@ function qa({ item: e, active: t, palette: n, renderLink: r }) {
 		})
 	});
 }
-function Ja({ name: e, items: t, activeHref: n, match: r, palette: a, storageKey: o, renderLink: s, size: c = "sm", divided: l = !1 }) {
-	let [u, d] = J(() => {
-		if (!o || typeof window > "u") return !1;
+function Ja({ name: e, items: t, activeHref: n, match: r, palette: a, storageKey: o, renderLink: s, size: c = "sm", divided: l = !1, defaultCollapsed: u = !1 }) {
+	let [d, f] = J(() => {
+		if (!o || typeof window > "u") return u;
 		try {
-			return window.localStorage?.getItem(o) === "1";
+			let e = window.localStorage?.getItem(o);
+			return e === "1" || e !== "0" && u;
 		} catch {
-			return !1;
+			return u;
 		}
 	});
 	W(() => {
 		if (!(!o || typeof window > "u")) try {
-			u ? window.localStorage?.setItem(o, "1") : window.localStorage?.removeItem(o);
+			d ? window.localStorage?.setItem(o, "1") : u ? window.localStorage?.setItem(o, "0") : window.localStorage?.removeItem(o);
 		} catch {}
-	}, [u, o]);
-	let f = G(), p = q(null), m = q(null), h = U(() => {
-		if (!u) {
+	}, [
+		d,
+		o,
+		u
+	]);
+	let p = G(), m = q(null), h = q(null), g = U(() => {
+		if (!d) {
 			let e = typeof document > "u" ? null : document.activeElement;
-			e && m.current?.contains(e) && p.current?.focus();
+			e && h.current?.contains(e) && m.current?.focus();
 		}
-		d((e) => !e);
-	}, [u]);
+		f((e) => !e);
+	}, [d]);
 	return /* @__PURE__ */ Z("section", {
 		"data-ui-part": "",
 		"data-rail-group": e,
-		...u ? { "data-rail-group-collapsed": "" } : {},
+		...d ? { "data-rail-group-collapsed": "" } : {},
 		className: i(c === "md" && "pb-1"),
 		children: [
 			l && /* @__PURE__ */ X("div", {
@@ -5014,24 +5019,24 @@ function Ja({ name: e, items: t, activeHref: n, match: r, palette: a, storageKey
 			}),
 			/* @__PURE__ */ Z("button", {
 				"data-ui-part": "",
-				ref: p,
+				ref: m,
 				type: "button",
-				onClick: h,
-				"aria-expanded": !u,
-				"aria-controls": f,
+				onClick: g,
+				"aria-expanded": !d,
+				"aria-controls": p,
 				className: i("flex w-full cursor-pointer items-center gap-1.5 border-none bg-transparent text-left", at, st, c === "md" ? "px-3.5" : "px-2", a.group),
 				children: [/* @__PURE__ */ X("span", {
 					"aria-hidden": "true",
 					className: "grid h-5 w-5 shrink-0 place-items-center",
-					children: /* @__PURE__ */ X(it, { open: !u })
+					children: /* @__PURE__ */ X(it, { open: !d })
 				}), /* @__PURE__ */ X("span", {
 					className: "flex-1 truncate",
 					children: e
 				})]
 			}),
-			!u && /* @__PURE__ */ X("div", {
-				id: f,
-				ref: m,
+			!d && /* @__PURE__ */ X("div", {
+				id: p,
+				ref: h,
 				children: t.map((e, t) => /* @__PURE__ */ X(Ga, {
 					item: e,
 					active: Ua(e, n, r),
@@ -5043,65 +5048,65 @@ function Ja({ name: e, items: t, activeHref: n, match: r, palette: a, storageKey
 		]
 	});
 }
-function Ya({ title: e, items: t, activeHref: n, match: r = "prefix", titleAction: a, header: o, footer: s, width: c = "default", storageKey: l, renderLink: u, tone: d = "surface", size: f = "sm", collapsed: p, onToggleCollapsed: m, "aria-label": h, className: g, "data-testid": _ }) {
-	let v = Ca(), y = p ?? v?.folded ?? !1, b = m ?? v?.toggle, x = !!v, S = Va[d], C = K(() => Wa(t), [t]), w = h ?? (typeof e == "string" ? e : void 0) ?? "Navigation";
+function Ya({ title: e, items: t, activeHref: n, match: r = "prefix", titleAction: a, header: o, footer: s, width: c = "default", storageKey: l, renderLink: u, tone: d = "surface", size: f = "sm", defaultCollapsedGroups: p, collapsed: m, onToggleCollapsed: h, "aria-label": g, className: _, "data-testid": v }) {
+	let y = Ca(), b = m ?? y?.folded ?? !1, x = h ?? y?.toggle, S = !!y, C = Va[d], w = K(() => Wa(t), [t]), T = g ?? (typeof e == "string" ? e : void 0) ?? "Navigation";
 	return /* @__PURE__ */ X("nav", {
-		"aria-label": w,
-		"data-testid": _,
+		"aria-label": T,
+		"data-testid": v,
 		"data-nav-rail": "",
-		"data-rail-folded": y ? "true" : "false",
-		className: i("flex flex-none flex-col overflow-hidden", x ? "h-full w-full" : "border-r", y ? "w-11 min-w-11" : !x && Ba[c], S.rail, g),
-		children: y ? /* @__PURE__ */ Z(Y, { children: [
-			b && /* @__PURE__ */ X("div", {
-				className: i("flex flex-none justify-center border-b py-2", S.divider),
-				children: Xa(!0, w, b)
+		"data-rail-folded": b ? "true" : "false",
+		className: i("flex flex-none flex-col overflow-hidden", S ? "h-full w-full" : "border-r", b ? "w-11 min-w-11" : !S && Ba[c], C.rail, _),
+		children: b ? /* @__PURE__ */ Z(Y, { children: [
+			x && /* @__PURE__ */ X("div", {
+				className: i("flex flex-none justify-center border-b py-2", C.divider),
+				children: Xa(!0, T, x)
 			}),
 			/* @__PURE__ */ X("div", {
 				className: "min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-1",
 				"data-nav-rail-strip": "",
-				children: C.map((e, t) => /* @__PURE__ */ Z("div", {
+				children: w.map((e, t) => /* @__PURE__ */ Z("div", {
 					role: "group",
 					"aria-label": e.name ?? void 0,
 					...e.name ? { "data-rail-group": e.name } : {},
 					children: [t > 0 && /* @__PURE__ */ X("div", {
 						"aria-hidden": "true",
-						className: i("mx-2 my-1 border-t", S.divider)
+						className: i("mx-2 my-1 border-t", C.divider)
 					}), e.items.map((e, t) => /* @__PURE__ */ X(Ga, {
 						item: e,
 						active: Ua(e, n, r),
-						palette: S,
+						palette: C,
 						renderLink: u,
 						collapsed: !0
 					}, Ha(e, t)))]
 				}, e.name ?? "__ungrouped"))
 			}),
 			s && /* @__PURE__ */ X("div", {
-				className: i("flex-none border-t py-2", S.divider),
+				className: i("flex-none border-t py-2", C.divider),
 				children: s
 			})
 		] }) : /* @__PURE__ */ Z(Y, { children: [
-			(e != null || a || b) && /* @__PURE__ */ Z("div", {
-				className: i("flex flex-none items-center justify-between gap-2", f === "md" ? "h-12 pl-5 pr-3" : "border-b px-3 py-2.5", S.divider),
+			(e != null || a || x) && /* @__PURE__ */ Z("div", {
+				className: i("flex flex-none items-center justify-between gap-2", f === "md" ? "h-12 pl-5 pr-3" : "border-b px-3 py-2.5", C.divider),
 				children: [/* @__PURE__ */ X("span", {
-					className: i("truncate text-[11px] font-semibold uppercase tracking-[0.05em]", S.title),
+					className: i("truncate text-[11px] font-semibold uppercase tracking-[0.05em]", C.title),
 					children: e
 				}), /* @__PURE__ */ Z("span", {
 					className: "flex flex-none items-center gap-1",
-					children: [a, b && Xa(!1, w, b)]
+					children: [a, x && Xa(!1, T, x)]
 				})]
 			}),
 			o && /* @__PURE__ */ X("div", {
-				className: i("flex-none border-b px-2 py-2", S.divider),
+				className: i("flex-none border-b px-2 py-2", C.divider),
 				children: o
 			}),
 			/* @__PURE__ */ X("div", {
 				className: "min-h-0 flex-1 overflow-y-auto py-1",
-				children: C.map((e, t) => e.name === null ? /* @__PURE__ */ X("div", {
+				children: w.map((e, t) => e.name === null ? /* @__PURE__ */ X("div", {
 					"data-rail-group": "",
 					children: e.items.map((e, t) => /* @__PURE__ */ X(Ga, {
 						item: e,
 						active: Ua(e, n, r),
-						palette: S,
+						palette: C,
 						renderLink: u,
 						size: f
 					}, Ha(e, t)))
@@ -5110,15 +5115,16 @@ function Ya({ title: e, items: t, activeHref: n, match: r = "prefix", titleActio
 					items: e.items,
 					activeHref: n,
 					match: r,
-					palette: S,
+					palette: C,
 					storageKey: l ? `${l}.g${t}.${e.name}` : void 0,
 					renderLink: u,
 					size: f,
-					divided: f === "md" && t > 0
+					divided: f === "md" && t > 0,
+					defaultCollapsed: !!p?.includes(e.name) && !e.items.some((e) => Ua(e, n, r))
 				}, e.name))
 			}),
 			s && /* @__PURE__ */ X("div", {
-				className: i("flex-none border-t px-2 py-2", S.divider),
+				className: i("flex-none border-t px-2 py-2", C.divider),
 				children: s
 			})
 		] })
@@ -8827,44 +8833,45 @@ function pc({ title: e, description: t, breadcrumbs: n, actions: r, badge: a, ba
 }
 //#endregion
 //#region src/components/shared/DetailPage.tsx
-function mc({ title: e, badge: t, description: n, meta: r, actions: a, breadcrumbs: o, titleAs: s = "h1", tabs: c, activeTab: l, onTabChange: u, children: d, aside: f, gutter: p = "page", className: m, "data-testid": h, "data-page-spec": g }) {
-	let _ = G(), v = c?.find((e) => !e.disabled)?.id ?? c?.[0]?.id ?? "", [y, b] = J(v), x = l ?? y, S = c?.some((e) => e.id === x) ? x : v, C = (e) => {
-		l ?? b(e), u?.(e);
-	}, w = p === "page" && "px-[var(--ui-page-gutter,1.5rem)]", T = i("min-h-0 min-w-0 flex-1 overflow-auto pt-3", w, p === "page" && "pb-[var(--ui-page-gutter,1.5rem)]"), E = !!c && c.length > 0, D = !!o && o.length > 0;
+function mc({ title: e, badge: t, description: n, meta: r, actions: a, breadcrumbs: o, titleAs: s = "h1", tabs: c, tabsLabel: l = "Sections", activeTab: u, onTabChange: d, children: f, aside: p, gutter: m = "page", className: h, "data-testid": g, "data-page-spec": _ }) {
+	let v = G(), y = c?.find((e) => !e.disabled)?.id ?? c?.[0]?.id ?? "", [b, x] = J(y), S = u ?? b, C = c?.some((e) => e.id === S) ? S : y, w = (e) => {
+		u ?? x(e), d?.(e);
+	}, T = m === "page" && "px-[var(--ui-page-gutter,1.5rem)]", E = i("min-h-0 min-w-0 flex-1 overflow-auto pt-3", T, m === "page" && "pb-[var(--ui-page-gutter,1.5rem)]"), D = !!c && c.length > 0, O = !!o && o.length > 0;
 	return /* @__PURE__ */ Z("div", {
-		className: i("flex h-full min-h-0 min-w-0 flex-row", m),
+		className: i("flex h-full min-h-0 min-w-0 flex-row", h),
 		"data-page-template": "detail",
-		"data-page-spec": g,
-		"data-testid": h,
+		"data-page-spec": _,
+		"data-testid": g,
 		children: [/* @__PURE__ */ Z("div", {
 			className: "flex min-h-0 min-w-0 flex-1 flex-col",
 			"data-page-column": "",
 			children: [/* @__PURE__ */ Z("div", {
-				className: i("flex shrink-0 min-w-0 flex-col gap-2", w, D ? "pt-2" : "pt-3"),
+				className: i("flex shrink-0 min-w-0 flex-col gap-2", T, O ? "pt-2" : "pt-3"),
 				"data-detail-page-header": "",
 				"data-page-trail": "",
-				children: [D && /* @__PURE__ */ X(kt, {
+				children: [O && /* @__PURE__ */ X(kt, {
 					items: o,
 					separator: "›",
 					maxItems: 5,
 					className: "min-w-0"
 				}), /* @__PURE__ */ Z("div", {
-					className: "flex min-w-0 items-start gap-3",
+					className: "flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2",
+					"data-detail-page-row": "",
 					children: [/* @__PURE__ */ X(co, {
 						title: e,
 						as: s,
-						className: "min-w-0 flex-1",
+						className: "min-w-0 flex-1 basis-32",
 						...t == null ? {} : { badge: t },
 						...n == null ? {} : { description: n },
 						...r == null ? {} : { meta: r }
 					}), a != null && /* @__PURE__ */ X("div", {
-						className: "flex shrink-0 items-center gap-2",
+						className: "flex max-w-full shrink-0 flex-wrap items-center gap-2",
 						"data-detail-page-actions": "",
 						children: a
 					})]
 				})]
-			}), E ? /* @__PURE__ */ Z(Y, { children: [/* @__PURE__ */ X("div", {
-				className: i("shrink-0 min-w-0 border-b border-border", w),
+			}), D ? /* @__PURE__ */ Z(Y, { children: [/* @__PURE__ */ X("div", {
+				className: i("shrink-0 min-w-0 border-b border-border", T),
 				children: /* @__PURE__ */ X(ft, {
 					items: c.map(({ id: e, label: t, badge: n, icon: r, disabled: i }) => ({
 						id: e,
@@ -8873,29 +8880,29 @@ function mc({ title: e, badge: t, description: n, meta: r, actions: a, breadcrum
 						...r == null ? {} : { icon: r },
 						...i ? { disabled: i } : {}
 					})),
-					value: S,
-					onValueChange: C,
-					idPrefix: _,
+					value: C,
+					onValueChange: w,
+					idPrefix: v,
 					variant: "underline",
 					size: "sm",
 					badgeStyle: "plain",
-					"aria-label": "Sections"
+					"aria-label": l
 				})
 			}), c.map((e) => /* @__PURE__ */ X(pt, {
 				id: e.id,
-				when: S,
-				idPrefix: _,
-				className: T,
+				when: C,
+				idPrefix: v,
+				className: E,
 				children: e.content
 			}, e.id))] }) : /* @__PURE__ */ X("div", {
-				className: T,
+				className: E,
 				"data-detail-page-body": "",
-				children: d
+				children: f
 			})]
-		}), f != null && /* @__PURE__ */ X("div", {
+		}), p != null && /* @__PURE__ */ X("div", {
 			className: "flex h-full min-h-0 shrink-0",
 			"data-detail-page-aside": "",
-			children: f
+			children: p
 		})]
 	});
 }
