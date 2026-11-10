@@ -215,9 +215,18 @@ describe('adaptPresenceEntry', () => {
   // Presence has four states and the avatar has three dots. Collapsing away
   // and busy into plain green is the difference between a roster and a list of
   // names: someone who stepped away reads as sitting right there.
-  it.each(['away', 'busy'] as const)('renders %s as idle, not plain online', (status) => {
-    const u = adaptPresenceEntry(entry({ status }));
+  it('renders away as idle, not plain online', () => {
+    const u = adaptPresenceEntry(entry({ status: 'away' }));
     expect(u.idle).toBe(true);
+    expect(u.online).toBe(true);
+  });
+
+  // 2.515.9: busy is its own state. A working worker read as away (dimmed,
+  // "Away") while it was the busiest entry on the roster.
+  it('renders busy as busy, not idle', () => {
+    const u = adaptPresenceEntry(entry({ status: 'busy' }));
+    expect(u.busy).toBe(true);
+    expect(u.idle).toBeUndefined();
     expect(u.online).toBe(true);
   });
 

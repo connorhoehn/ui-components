@@ -70,6 +70,7 @@ export {
   adaptMessageReactions,
   adaptActivityEvent,
   adaptActivityEvents,
+  newestActivityFirst,
   adaptFileUploadState,
   adaptFileUploads,
   adaptHangoutParticipant,
@@ -77,7 +78,7 @@ export {
   adaptNotification,
   adaptNotifications,
 } from './adapters';
-export type { FileUploadSummary, UIMessageReaction } from './adapters';
+export type { FileUploadSummary, UIMessageReaction, AdaptedPresenceUser, AdaptPresenceOptions } from './adapters';
 
 // Wrapped components
 export { WrappedChatPanel } from './WrappedChatPanel';
@@ -86,7 +87,7 @@ export type { WrappedChatPanelProps, WrappedLocalMessage, RMUsePinsReturn } from
 export { WrappedPresencePanel } from './WrappedPresencePanel';
 export type { WrappedPresencePanelProps } from './WrappedPresencePanel';
 
-export { WrappedActivityPanel } from './WrappedActivityPanel';
+export { WrappedActivityPanel, ACTIVITY_HISTORY_LINES } from './WrappedActivityPanel';
 export { WrappedWorkGraph, adaptWorkGraphState } from './WrappedWorkGraph';
 export type { WrappedWorkGraphProps, WrappedWorkGraphCanvasProps } from './WrappedWorkGraph';
 export { WrappedPipelineRun, pipelineRunSteps } from './WrappedPipelineRun';

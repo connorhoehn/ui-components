@@ -54,6 +54,18 @@ export interface SettingsLayoutProps {
   saveBarSlot?: ReactNode;
   /** Width of the rail in px. Default 220. */
   railWidth?: number;
+  /**
+   * The narrow form (since 2.515.9, like `SubNavLayout narrow` in 2.515.5):
+   * the layout is its own size container and under 40rem of its own width
+   * the section rail gives the content the whole width. The title (and
+   * subtitle) sit above one row of the sections that scrolls sideways
+   * (`<nav data-settings-strip>`, "Settings sections (compact)"; items
+   * `<testid>-strip-item` with `data-section-id`, the current one
+   * `aria-current="page"` and underlined), then the section. A container
+   * query, not the viewport, so a settings page inside a narrow column
+   * folds too. Omitted: the rail sits beside the content at every width.
+   */
+  narrow?: boolean;
   className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
@@ -73,6 +85,7 @@ export function SettingsLayout({
   saving = false,
   saveBarSlot,
   railWidth = 220,
+  narrow = false,
   className,
   style,
   'data-testid': testId = 'settings-layout',
@@ -99,19 +112,64 @@ export function SettingsLayout({
     <div
       data-testid={testId}
       data-dirty={dirty || undefined}
+      data-settings-narrow={narrow ? '' : undefined}
       className={cn(
         'flex flex-col h-full min-h-0 bg-[var(--color-surface,#fff)]',
+        narrow && '@container min-w-0',
         className,
       )}
       style={style}
     >
-      <div className="flex flex-1 min-h-0">
+      {/* The narrow form's classes are written out whole (`@max-[40rem]:…`)
+          so a consumer's Tailwind scan of dist finds them. */}
+      <div className={cn('flex flex-1 min-h-0', narrow && '@max-[40rem]:flex-col')}>
+        {narrow && (
+          <div className="flex shrink-0 min-w-0 flex-col border-b border-[var(--color-border)] @min-[40rem]:hidden" data-settings-narrow-header="">
+            <div className="px-4 pt-3">
+              <div className="text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight">{title}</div>
+              {subtitle != null && <div className="mt-0.5 text-[11px] text-[var(--color-text-secondary)] leading-snug">{subtitle}</div>}
+            </div>
+            <nav
+              aria-label="Settings sections (compact)"
+              data-settings-strip=""
+              data-testid={`${testId}-strip`}
+              className="flex min-w-0 gap-1 overflow-x-auto overflow-y-hidden px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {sections.map((section) => {
+                const isActive = section.id === active;
+                return (
+                  <button
+                    data-ui-part=""
+                    key={section.id}
+                    type="button"
+                    data-testid={`${testId}-strip-item`}
+                    data-section-id={section.id}
+                    data-active={isActive || undefined}
+                    aria-current={isActive ? 'page' : undefined}
+                    onClick={() => select(section.id)}
+                    className={cn(
+                      'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2 text-[12px] font-semibold cursor-pointer',
+                      'border-b-[3px] bg-transparent',
+                      'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--color-primary)]',
+                      isActive
+                        ? 'border-b-[var(--color-primary,#6366f1)] text-[var(--color-primary,#4338ca)]'
+                        : 'border-b-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
+                    )}
+                  >
+                    {section.icon != null && <span className="shrink-0" aria-hidden>{section.icon}</span>}
+                    {section.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        )}
         <aside
           ref={railRef}
           role="navigation"
           aria-label="Settings sections"
           data-testid={`${testId}-rail`}
-          className="shrink-0 border-r border-[var(--color-border)] overflow-y-auto py-4 px-2"
+          className={cn('shrink-0 border-r border-[var(--color-border)] overflow-y-auto py-4 px-2', narrow && '@max-[40rem]:hidden')}
           style={{ width: railWidth }}
         >
           <div className="px-3 pb-3 border-b border-[var(--color-border)] mb-3">
@@ -173,12 +231,12 @@ export function SettingsLayout({
         <main
           role="main"
           data-testid={`${testId}-body`}
-          className="flex-1 min-w-0 overflow-y-auto"
+          className="flex-1 min-w-0 min-h-0 overflow-y-auto"
         >
           <div
             data-testid={`${testId}-section`}
             data-section-id={activeSection?.id}
-            className="p-6 max-w-3xl mx-auto"
+            className={cn('p-6 max-w-3xl mx-auto', narrow && '@max-[40rem]:p-4')}
           >
             {activeSection?.content}
           </div>

@@ -2058,6 +2058,31 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         }
         coverage.at(-1).matched = measured;
       }
+      else if (rule.kind === 'tabs-reach') {
+        // Every view of a tab row is one gesture away (tabs.reach, 2.515.9).
+        // A narrow inspector folded three of four tabs behind "More views"
+        // (`data-tabs-hidden` counts what a fold hid); a scrolling row must
+        // keep its selected tab in view, and a row that neither scrolls nor
+        // folds must not cut tabs off at its edge.
+        const tol = rule.tolerance ?? tolerance, maxHidden = rule.maxHidden ?? 1;
+        let measured = 0;
+        for (const list of nodes.filter(visible)) {
+          measured++;
+          const tabs = [...list.querySelectorAll('[role="tab"]')].filter(t => t.closest('[role="tablist"]') === list);
+          const hidden = Number(list.getAttribute('data-tabs-hidden') || 0);
+          samples.push({ rule: rule.id, selector: selectorOf(list), property: 'views behind More', actual: hidden, expected: { max: maxHidden } });
+          if (hidden > maxHidden) add(rule, list, 'views hidden behind More', `at most ${maxHidden} (overflow="scroll" keeps every view in a row that scrolls)`, `${hidden} of ${tabs.length + hidden} views folded into the menu in a ${round(list.getBoundingClientRect().width)}px row`);
+          const scrolls = ['auto', 'scroll'].includes(cs(list).overflowX);
+          if (!scrolls && list.scrollWidth > list.clientWidth + 1) add(rule, list, 'tabs cut at the row edge', 'the row scrolls or folds', `${list.scrollWidth}px of tabs in a ${list.clientWidth}px row that does not scroll`);
+          const selected = tabs.find(t => t.getAttribute('aria-selected') === 'true');
+          if (selected && scrolls) {
+            const r = list.getBoundingClientRect(), b = selected.getBoundingClientRect();
+            const out = Math.max(r.left - b.left, b.right - r.right);
+            if (out > tol) add(rule, selected, 'selected tab out of view', 'the scrolling row keeps the selected tab in view', `${round(out)}px of "${snippet((selected.textContent ?? '').trim())}" past the row's edge`);
+          }
+        }
+        coverage.at(-1).matched = measured;
+      }
       else if (rule.kind === 'header-title-room') {
         // A page header keeps its title (header.title-room, 2.515.7): its
         // title (the first `title` match whose header is this one) is at

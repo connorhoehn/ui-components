@@ -20,6 +20,9 @@ import * as Y from 'yjs';
 
 export declare function acceptsDocumentImage(file: File): boolean;
 
+/** How many lines `mode="history"` shows when `lines` is omitted. */
+export declare const ACTIVITY_HISTORY_LINES = 50;
+
 declare interface ActivityFeedItem {
     id: string;
     /** Display name of the person who performed the action, e.g. "Alex Chen". */
@@ -47,6 +50,10 @@ declare interface ActivityFeedProps {
     /** Override dot colors per kind. Merged over the built-in palette. */
     kindColors?: Record<string, string>;
     className?: string;
+    /** On the feed's root (since 2.515.9), which also carries `data-activity-feed`. */
+    'data-testid'?: string;
+    /** Set by `WrappedActivityPanel`: `ticker` or `history` (`data-activity-mode`). */
+    'data-activity-mode'?: string;
 }
 
 declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
@@ -64,6 +71,17 @@ export declare function adaptBreakoutRooms(breakout: RMBreakoutState, people: re
 export declare function adaptChatMessage(msg: RMChatMessage): ChatMessage;
 
 export declare function adaptChatMessages(messages: RMChatMessage[]): ChatMessage[];
+
+/**
+ * A roster entry as the avatars draw it, plus what the adapter read it from
+ * (since 2.515.9): the presence `status` and the entry's `metadata` (merged
+ * across a person's sessions in `adaptPresenceRoster`). A `PresenceUser`
+ * structurally, so it goes straight into `PresenceAvatars`.
+ */
+export declare interface AdaptedPresenceUser extends PresenceUser {
+    status: RMPresenceEntry['status'];
+    metadata: Record<string, unknown>;
+}
 
 export declare function adaptFileUploads(uploads: RMFileUploadState[]): FileUploadSummary[];
 
@@ -91,7 +109,22 @@ export declare function adaptNotification(n: RMNotificationEntry): NotificationI
 
 export declare function adaptNotifications(entries: RMNotificationEntry[]): NotificationItem[];
 
-export declare function adaptPresenceEntry(entry: RMPresenceEntry): PresenceUser;
+export declare function adaptPresenceEntry(entry: RMPresenceEntry, options?: AdaptPresenceOptions): AdaptedPresenceUser;
+
+export declare interface AdaptPresenceOptions {
+    /**
+     * The avatar's detail line from an entry's metadata (since 2.515.9): what
+     * the person, the worker or an agent is doing ("Working on Draw guide").
+     * Default: `metadata.detail` when it is a non-empty string.
+     */
+    detail?: (metadata: Record<string, unknown>, status: RMPresenceEntry['status']) => string | undefined;
+    /**
+     * `adaptPresenceRoster` only: keep entries whose status is `offline`
+     * (drawn grey). Default `false` since 2.515.9: a departed entry the hook
+     * still holds (a departure sent as an `update`) is not on the roster.
+     */
+    keepOffline?: boolean;
+}
 
 /**
  * The roster as PEOPLE. Presence has one row per connection, so someone with
@@ -102,11 +135,14 @@ export declare function adaptPresenceEntry(entry: RMPresenceEntry): PresenceUser
  * taken from whichever row sorted first. A tab that has not published its
  * metadata yet is a normal thing for a roster to contain, and letting it win
  * showed a truncated clientId where a name the OTHER tab had already published
- * belonged. Online-ness is likewise the OR across the connections: a stale tab
- * must not grey out someone sitting right there in another one, and `idle`
- * survives only while EVERY live session says so.
+ * belonged. The status is the most present across the live connections:
+ * busy if any session is busy (working in one tab), else online if any is,
+ * away only while every session says so. Metadata is merged freshest last
+ * (`lastHeartbeat`), so the detail line is the newest one.
+ *
+ * Offline entries are dropped (since 2.515.9) unless `keepOffline`.
  */
-export declare function adaptPresenceRoster(roster: RMPresenceEntry[]): PresenceUser[];
+export declare function adaptPresenceRoster(roster: RMPresenceEntry[], options?: AdaptPresenceOptions): AdaptedPresenceUser[];
 
 export declare function adaptReaction(reaction: RMReaction, index: number): EphemeralReaction;
 
@@ -2822,6 +2858,14 @@ export declare interface NetworkShimOptions {
     className?: string;
 }
 
+/**
+ * The events newest first (since 2.515.9): by `timestamp`, then a numeric
+ * `detail.seq` (two lines in one millisecond), else as given. The hook keeps
+ * history in the server's order and appends live lines at the end, so its
+ * array is neither order.
+ */
+export declare function newestActivityFirst(events: RMActivityEvent[]): RMActivityEvent[];
+
 export declare function NewHangoutRoomDialog({ open, onClose, onCreate, onCreated, defaultVisibility, title, submitLabel, }: NewHangoutRoomDialogProps): JSX.Element;
 
 export declare interface NewHangoutRoomDialogProps {
@@ -2943,6 +2987,10 @@ declare interface PresenceUser {
      *  provided, otherwise drops opacity) and flips the status dot to
      *  amber. Wins over `online` for the dot color. */
     idle?: boolean;
+    /** Present and working (since 2.515.9): a red status dot (`--color-danger`,
+     *  as `PresenceDot` busy), the avatar NOT dimmed, "Busy" in its
+     *  tooltip and `data-presence-busy`. Wins over `idle`. */
+    busy?: boolean;
     /** Optional editing mode — renders a small mode badge on the
      *  upper-right of the avatar (pencil / check / eye). */
     mode?: PresenceMode;
@@ -4779,17 +4827,27 @@ declare interface WorkGraphViewport {
     zoom: number;
 }
 
-export declare function WrappedActivityPanel({ activity, visibleCount, rotateMs, staggerMs, kindColors, className, }: WrappedActivityPanelProps): JSX.Element;
+export declare function WrappedActivityPanel({ activity, mode, lines, visibleCount, rotateMs, staggerMs, kindColors, className, 'data-testid': testId, }: WrappedActivityPanelProps): JSX.Element;
 
 export declare interface WrappedActivityPanelProps {
     /** Return value of useActivity(channel) from realtime-modules */
     activity: RMUseActivityReturn;
+    /**
+     * `ticker` (default, unchanged): the rotating feed. `history` (since
+     * 2.515.9): newest first by timestamp, no rotation, the newest `lines`
+     * lines shown; `visibleCount`, `rotateMs` and `staggerMs` are ignored.
+     */
+    mode?: 'ticker' | 'history';
+    /** `mode="history"`: how many lines (default 50). */
+    lines?: number;
     /** Forwarded to ActivityFeed */
     visibleCount?: ActivityFeedProps['visibleCount'];
     rotateMs?: ActivityFeedProps['rotateMs'];
     staggerMs?: ActivityFeedProps['staggerMs'];
     kindColors?: ActivityFeedProps['kindColors'];
     className?: string;
+    /** On the feed's root (since 2.515.9). */
+    'data-testid'?: string;
 }
 
 export declare function WrappedAudioVideoSettingsForm({ devices, settings, cameraOn, ...rest }: WrappedAudioVideoSettingsFormProps): JSX.Element;

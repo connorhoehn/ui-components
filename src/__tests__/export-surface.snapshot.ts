@@ -3074,6 +3074,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "useHangoutEmbed",
   ],
   "./integrations/realtime": [
+    "ACTIVITY_HISTORY_LINES",
     "ALL_REALTIME_CAPABILITIES",
     "CONVERSATION_CAPABILITY_NAMES",
     "CapabilityBoundary",
@@ -3150,6 +3151,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "meetingHandPositions",
     "meetingRosterProps",
     "meetingToolbarItems",
+    "newestActivityFirst",
     "pageHuddleStart",
     "slugifyRoomName",
     "useCanvasRecovery",
@@ -3160,6 +3162,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "withMeetingHands",
   ],
   "./integrations/realtime-modules": [
+    "ACTIVITY_HISTORY_LINES",
     "ALL_REALTIME_CAPABILITIES",
     "CONVERSATION_CAPABILITY_NAMES",
     "CanvasDocumentPane",
@@ -3238,6 +3241,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "meetingHandPositions",
     "meetingRosterProps",
     "meetingToolbarItems",
+    "newestActivityFirst",
     "pipelineRunSteps",
     "slugifyRoomName",
     "useCanvasRecovery",

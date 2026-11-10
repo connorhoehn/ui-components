@@ -150,30 +150,72 @@ export function adaptChatMessages(messages: RMChatMessage[]): UIChatMessage[] {
 // realtime-modules PresenceEntry.clientId → PresenceUser.id
 // realtime-modules PresenceEntry.metadata.displayName → PresenceUser.name
 // realtime-modules PresenceEntry.metadata.avatarUrl → PresenceUser.avatarUrl
-// realtime-modules PresenceEntry.status ("online"/"away"/"busy"/"offline") → PresenceUser.online
+// realtime-modules PresenceEntry.status → online / idle (away) / busy
+// realtime-modules PresenceEntry.metadata → PresenceUser.metadata (kept, 2.515.9)
 // ---------------------------------------------------------------------------
 
-export function adaptPresenceEntry(entry: RMPresenceEntry): UIPresenceUser {
+/**
+ * A roster entry as the avatars draw it, plus what the adapter read it from
+ * (since 2.515.9): the presence `status` and the entry's `metadata` (merged
+ * across a person's sessions in `adaptPresenceRoster`). A `PresenceUser`
+ * structurally, so it goes straight into `PresenceAvatars`.
+ */
+export interface AdaptedPresenceUser extends UIPresenceUser {
+  status: RMPresenceEntry['status'];
+  metadata: Record<string, unknown>;
+}
+
+export interface AdaptPresenceOptions {
+  /**
+   * The avatar's detail line from an entry's metadata (since 2.515.9): what
+   * the person, the worker or an agent is doing ("Working on Draw guide").
+   * Default: `metadata.detail` when it is a non-empty string.
+   */
+  detail?: (metadata: Record<string, unknown>, status: RMPresenceEntry['status']) => string | undefined;
+  /**
+   * `adaptPresenceRoster` only: keep entries whose status is `offline`
+   * (drawn grey). Default `false` since 2.515.9: a departed entry the hook
+   * still holds (a departure sent as an `update`) is not on the roster.
+   */
+  keepOffline?: boolean;
+}
+
+const defaultDetail = (metadata: Record<string, unknown>) => str(metadata.detail);
+
+/** The avatar's state flags for one presence status. `busy` is its own state (since 2.515.9), not away. */
+function presenceState(status: RMPresenceEntry['status']): Pick<UIPresenceUser, 'idle' | 'busy'> {
+  if (status === 'away') return { idle: true };
+  if (status === 'busy') return { busy: true };
+  return {};
+}
+
+export function adaptPresenceEntry(entry: RMPresenceEntry, options: AdaptPresenceOptions = {}): AdaptedPresenceUser {
   // The USER, not the connection, when presence carries one.
   //
   // `id` is what comes back to `onUserClick`, and a host answering that click
   // wants to do something to a PERSON — open the DM, start the call. A
   // clientId identifies a socket: it changes on every reconnect and there is
   // one per tab, so it cannot be looked up in any directory the host has.
-  const userId = str(entry.metadata?.userId);
+  const metadata = entry.metadata ?? {};
+  const userId = str(metadata.userId);
+  const detail = (options.detail ?? defaultDetail)(metadata, entry.status);
   return {
     id: userId || entry.clientId,
-    name: str(entry.metadata?.displayName) ?? entry.clientId.slice(0, 12),
-    avatarUrl: str(entry.metadata?.avatarUrl),
+    name: str(metadata.displayName) ?? entry.clientId.slice(0, 12),
+    avatarUrl: str(metadata.avatarUrl),
     online: entry.status !== 'offline',
-    // Presence has four states and PresenceAvatars has three dots. Collapsing
-    // `away` and `busy` into a plain green "online" was the whole difference
-    // between a roster and a list of names: someone who stepped away read as
-    // sitting right there. `idle` wins over `online` for the dot colour, which
-    // is exactly the amber these two statuses want.
-    ...(entry.status === 'away' || entry.status === 'busy' ? { idle: true } : {}),
+    // Presence has four states. `away` is the amber, dimmed avatar; `busy`
+    // (since 2.515.9) is present and working — a red dot, not dimmed; it used
+    // to read as away, so a working worker drew greyed out with "Away".
+    ...presenceState(entry.status),
+    ...(detail ? { detail } : {}),
+    status: entry.status,
+    metadata,
   };
 }
+
+/** Higher = more present. */
+const PRESENCE_RANK: Record<RMPresenceEntry['status'], number> = { busy: 3, online: 2, away: 1, offline: 0 };
 
 /**
  * The roster as PEOPLE. Presence has one row per connection, so someone with
@@ -184,57 +226,75 @@ export function adaptPresenceEntry(entry: RMPresenceEntry): UIPresenceUser {
  * taken from whichever row sorted first. A tab that has not published its
  * metadata yet is a normal thing for a roster to contain, and letting it win
  * showed a truncated clientId where a name the OTHER tab had already published
- * belonged. Online-ness is likewise the OR across the connections: a stale tab
- * must not grey out someone sitting right there in another one, and `idle`
- * survives only while EVERY live session says so.
+ * belonged. The status is the most present across the live connections:
+ * busy if any session is busy (working in one tab), else online if any is,
+ * away only while every session says so. Metadata is merged freshest last
+ * (`lastHeartbeat`), so the detail line is the newest one.
+ *
+ * Offline entries are dropped (since 2.515.9) unless `keepOffline`.
  */
-export function adaptPresenceRoster(roster: RMPresenceEntry[]): UIPresenceUser[] {
+export function adaptPresenceRoster(roster: RMPresenceEntry[], options: AdaptPresenceOptions = {}): AdaptedPresenceUser[] {
   interface Merged {
     id: string;
     /** From metadata, across ALL of the person's sessions. */
     name?: string;
     avatarUrl?: string;
     fallbackName: string;
-    online: boolean;
-    /** True only while every session seen so far says away/busy. */
-    idle: boolean;
+    status: RMPresenceEntry['status'];
+    metadata: Record<string, unknown>;
+    heartbeat: number;
   }
   const byId = new Map<string, Merged>();
+  const entries = options.keepOffline ? roster : roster.filter((e) => e.status !== 'offline');
 
-  for (const entry of roster) {
-    const id = str(entry.metadata?.userId) || entry.clientId;
-    const online = entry.status !== 'offline';
-    const idle = entry.status === 'away' || entry.status === 'busy';
+  for (const entry of entries) {
+    const meta = entry.metadata ?? {};
+    const id = str(meta.userId) || entry.clientId;
+    const heartbeat = Number.isFinite(entry.lastHeartbeat) ? entry.lastHeartbeat : 0;
     const existing = byId.get(id);
     if (!existing) {
       byId.set(id, {
         id,
-        name: str(entry.metadata?.displayName),
-        avatarUrl: str(entry.metadata?.avatarUrl),
+        name: str(meta.displayName),
+        avatarUrl: str(meta.avatarUrl),
         fallbackName: entry.clientId.slice(0, 12),
-        online,
-        idle,
+        status: entry.status,
+        metadata: { ...meta },
+        heartbeat,
       });
       continue;
     }
     // First non-empty wins per FIELD, not per row: a tab that has not
     // published its metadata yet must not blank out a name the other tab
     // already published.
-    existing.name ??= str(entry.metadata?.displayName);
-    existing.avatarUrl ??= str(entry.metadata?.avatarUrl);
-    existing.online = existing.online || online;
-    existing.idle = existing.idle && idle;
+    existing.name ??= str(meta.displayName);
+    existing.avatarUrl ??= str(meta.avatarUrl);
+    if (PRESENCE_RANK[entry.status] > PRESENCE_RANK[existing.status]) existing.status = entry.status;
+    // Freshest metadata wins per key; an empty value never blanks one.
+    const fresher = heartbeat >= existing.heartbeat;
+    for (const [k, v] of Object.entries(meta)) {
+      if (v === undefined || v === null || v === '') continue;
+      if (fresher || !(k in existing.metadata)) existing.metadata[k] = v;
+    }
+    existing.heartbeat = Math.max(existing.heartbeat, heartbeat);
   }
 
-  return [...byId.values()].map((m) => ({
-    id: m.id,
-    name: m.name ?? m.fallbackName,
-    avatarUrl: m.avatarUrl,
-    online: m.online,
-    // Away only while nobody is actually here. `idle: false` and absent mean
-    // the same thing to PresenceAvatars, so only the true case is emitted.
-    ...(m.online && m.idle ? { idle: true } : {}),
-  }));
+  const detailOf = options.detail ?? defaultDetail;
+  return [...byId.values()].map((m) => {
+    const detail = detailOf(m.metadata, m.status);
+    return {
+      id: m.id,
+      name: m.name ?? m.fallbackName,
+      avatarUrl: m.avatarUrl,
+      online: m.status !== 'offline',
+      // `idle: false` and absent mean the same thing to PresenceAvatars, so
+      // only the true case is emitted.
+      ...presenceState(m.status),
+      ...(detail ? { detail } : {}),
+      status: m.status,
+      metadata: m.metadata,
+    };
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -326,6 +386,7 @@ export function adaptMessageReactions(
 //   displayName           → actor
 //   detail.action / verb derived from eventType → action
 //   detail.subject / detail.contentId / eventType → subject
+//   detail.text (a whole sentence) → subject, with no verb (since 2.515.9)
 //   timestamp             → timeLabel (relative)
 // ---------------------------------------------------------------------------
 
@@ -385,7 +446,31 @@ function activityId(event: RMActivityEvent, subject: string): string {
   return [event.eventType, event.timestamp, event.userId ?? event.displayName, subject].join('|');
 }
 
+/**
+ * The line's own sentence, when the event carries one (since 2.515.9):
+ * `detail.text` ("Draw guide: Toby started"). A host whose activity is
+ * already written as sentences has nothing for the verb slot to say; the
+ * sentence is the line, and `detail.kind` (when a string) names its dot
+ * colour family instead of the event type's first segment.
+ */
+function sentenceOf(event: RMActivityEvent): string | undefined {
+  const t = event.detail?.text;
+  return typeof t === 'string' && t.trim() ? t.trim() : undefined;
+}
+
 export function adaptActivityEvent(event: RMActivityEvent): ActivityFeedItem {
+  const sentence = sentenceOf(event);
+  if (sentence) {
+    return {
+      id: activityId(event, sentence),
+      actor: event.displayName,
+      action: '',
+      subject: sentence,
+      ticketId: typeof event.detail.ticketId === 'string' ? event.detail.ticketId : undefined,
+      timeLabel: relativeLabel(event.timestamp),
+      kind: typeof event.detail.kind === 'string' ? event.detail.kind : event.eventType.split('.')[0],
+    };
+  }
   return {
     id: activityId(event, deriveSubject(event)),
     actor: event.displayName,
@@ -396,6 +481,23 @@ export function adaptActivityEvent(event: RMActivityEvent): ActivityFeedItem {
     timeLabel: relativeLabel(event.timestamp),
     kind: event.eventType.split('.')[0], // e.g. "social", "pipeline"
   };
+}
+
+/**
+ * The events newest first (since 2.515.9): by `timestamp`, then a numeric
+ * `detail.seq` (two lines in one millisecond), else as given. The hook keeps
+ * history in the server's order and appends live lines at the end, so its
+ * array is neither order.
+ */
+export function newestActivityFirst(events: RMActivityEvent[]): RMActivityEvent[] {
+  const seq = (e: RMActivityEvent) => (typeof e.detail?.seq === 'number' ? (e.detail.seq as number) : 0);
+  return events
+    .map((event, index) => ({ event, index, at: Date.parse(event.timestamp) }))
+    .sort((a, b) => {
+      const at = (Number.isNaN(b.at) ? 0 : b.at) - (Number.isNaN(a.at) ? 0 : a.at);
+      return at || seq(b.event) - seq(a.event) || a.index - b.index;
+    })
+    .map(({ event }) => event);
 }
 
 export function adaptActivityEvents(events: RMActivityEvent[]): ActivityFeedItem[] {

@@ -402,6 +402,17 @@ export interface PaneHeaderProps {
   trailing?: ReactNode;
   /** Names the tablist. Default "Pane sections". */
   label?: string;
+  /**
+   * What the tab row does when the pane is too narrow for it (since
+   * 2.515.9). `menu` (default, unchanged): under 360px of the row's width
+   * only the first and the current tab stay and the rest move into
+   * `More ▾`. `scroll`: every tab stays in one row that scrolls sideways
+   * (no scrollbar drawn; the current tab is kept in view), for a narrow
+   * inspector or a phone column where three of four views behind a menu is
+   * worse than a row the reader can swipe. Marker: the tablist's
+   * `data-tabs-overflow`.
+   */
+  overflow?: 'scroll' | 'menu';
   'data-testid'?: string;
 }
 
@@ -410,11 +421,11 @@ export interface PaneHeaderProps {
  * 16px inset (the frame title's edge), a trailing slot that wraps beneath
  * the tabs when a narrow pane cannot fit both, and one rule under it.
  */
-export function PaneHeader({ tabs, value, onValueChange, trailing, label = 'Pane sections', 'data-testid': testId = 'pane-header' }: PaneHeaderProps) {
+export function PaneHeader({ tabs, value, onValueChange, trailing, label = 'Pane sections', overflow = 'menu', 'data-testid': testId = 'pane-header' }: PaneHeaderProps) {
   return (
     // pl-1 + the tab's own 12px padding aligns its label with the 16px body inset.
     <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-1 min-h-11 py-1.5 border-b border-border pl-1 pr-[var(--ui-content-gutter,1rem)]" data-testid={testId}>
-      <Tabs size="md" variant="underline" indicator="bar" aria-label={label} className="min-w-0 max-w-full shrink-0 after:hidden" overflowBelow={360}
+      <Tabs size="md" variant="underline" indicator="bar" aria-label={label} className="min-w-0 max-w-full shrink-0 after:hidden" {...(overflow === 'menu' ? { overflowBelow: 360 } : {})}
         items={[...tabs]} value={value} onValueChange={onValueChange} />
       {trailing && <div className="ml-auto flex min-h-12 min-w-0 flex-wrap items-center justify-end gap-1 py-1" data-testid={`${testId}-actions`}>{trailing}</div>}
     </div>
@@ -428,6 +439,8 @@ export interface SidePaneProps extends SidePaneRegistration {
   onValueChange?: (id: string) => void;
   /** Right end of the tab row. */
   trailing?: ReactNode;
+  /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.9). Default `menu`. */
+  tabsOverflow?: 'scroll' | 'menu';
   /** Docked under the body: the pane's one composer. */
   footer?: ReactNode;
   /** The pane's density; default `compact`. */
@@ -444,7 +457,7 @@ export interface SidePaneProps extends SidePaneRegistration {
  */
 export function SidePane({
   title, subtitle, closeLabel, onClose, widthPx, paneId, explores = false, presentation,
-  tabs, value, onValueChange, trailing, footer, density = 'compact', children, 'data-testid': testId = 'side-pane-content',
+  tabs, value, onValueChange, trailing, tabsOverflow, footer, density = 'compact', children, 'data-testid': testId = 'side-pane-content',
 }: SidePaneProps) {
   const host = useContext(HostContext);
   const register = host?.register;
@@ -460,7 +473,7 @@ export function SidePane({
   if (!host?.node) return null;
   const tabRow = tabs && tabs.length > 0 && value != null && onValueChange
     ? <PaneHeader tabs={tabs.map((t) => ({ ...t, testId: t.testId ?? `${testId}-tab-${t.id}` }))} value={value} onValueChange={onValueChange}
-        {...(trailing ? { trailing } : {})} data-testid={`${testId}-header-row`} />
+        {...(trailing ? { trailing } : {})} {...(tabsOverflow ? { overflow: tabsOverflow } : {})} data-testid={`${testId}-header-row`} />
     : null;
   return createPortal(
     <DensityProvider value={density}>

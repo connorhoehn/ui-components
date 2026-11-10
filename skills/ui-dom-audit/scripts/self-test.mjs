@@ -1924,5 +1924,32 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS header.title-room catches a page title squeezed out by its header actions and accepts the wrapping row');
   }
+  {
+    // tabs.reach (2.515.9): a 380px inspector's four-tab row. The fold hid
+    // three of four views behind More; overflow="scroll" keeps every view in
+    // a row that scrolls with the selected tab in view.
+    const page = await browser.newPage({ viewport: { width: 390, height: 800 } });
+    const rule = fullContract.rules.find(r => r.id === 'tabs.reach');
+    assert.ok(rule && !rule.deep, 'tabs.reach is in the resting gate');
+    const judge = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules: [rule] }, selectors: {} });
+    const row = (attrs, style, tabs) => `<style>*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}[role=tab]{flex:none;padding:6px 12px;white-space:nowrap;border:0;background:none}</style><div style="width:300px"><div role="tablist" ${attrs} style="display:flex;max-width:100%;${style}">${tabs}</div></div>`;
+    const tab = (label, selected = false) => `<button role="tab" aria-selected="${selected}">${label}</button>`;
+    await page.setContent(row('data-tabs-overflow="menu" data-folded="true" data-tabs-hidden="3"', '', tab('Details', true) + '<button>More</button>'));
+    const folded = await judge();
+    assert.ok(folded.issues.some(i => i.rule === 'tabs.reach' && i.property === 'views hidden behind More'), `three views behind More fail ${JSON.stringify(folded.issues)}`);
+    const many = tab('Details') + tab('Versions') + tab('Activity') + tab('Links and references', true);
+    await page.setContent(row('data-tabs-overflow="scroll"', 'overflow-x:hidden', many));
+    assert.ok((await judge()).issues.some(i => i.property === 'tabs cut at the row edge'), 'a row that neither scrolls nor folds cuts its tabs');
+    await page.setContent(row('data-tabs-overflow="scroll"', 'overflow-x:auto', many));
+    assert.ok((await judge()).issues.some(i => i.property === 'selected tab out of view'), 'a scrolled-away selected tab fails');
+    await page.evaluate(() => { const l = document.querySelector('[role=tablist]'); l.scrollLeft = l.scrollWidth; });
+    const scrolled = await judge();
+    assert.deepEqual(scrolled.issues, [], 'the scrolling row with its selected tab in view passes');
+    assert.equal(scrolled.coverage.find(c => c.rule === 'tabs.reach').matched, 1);
+    await page.setContent(row('data-tabs-overflow="menu" data-folded="true" data-tabs-hidden="1"', '', tab('Details', true) + tab('Versions') + '<button>More</button>'));
+    assert.deepEqual((await judge()).issues, [], 'one view behind More is allowed');
+    await page.close();
+    console.log('PASS tabs.reach catches views folded behind More, tabs cut at a row edge and a scrolled-away selected tab, and accepts the scrolling row');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

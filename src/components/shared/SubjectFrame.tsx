@@ -118,7 +118,19 @@ export interface SubjectFrameProps {
   /** The header's own buttons, at its right edge: open in new, next, close (`IconButton`s). */
   headerActions?: ReactNode;
   /** The record's tabs (Details · Versions · Activity). Omit for a frame without tabs. */
-  tabs?: { items: readonly TabItem[]; value: string; onValueChange: (id: string) => void; label?: string };
+  tabs?: {
+    items: readonly TabItem[];
+    value: string;
+    onValueChange: (id: string) => void;
+    label?: string;
+    /**
+     * The tab row in a narrow frame (since 2.515.9; `PaneHeader overflow`).
+     * `menu` (default): under 360px the row keeps the first and current tab
+     * and folds the rest into `More ▾`. `scroll`: one row that scrolls
+     * sideways, every view in it (a 380px inspector, a phone column).
+     */
+    overflow?: 'scroll' | 'menu';
+  };
   /** The subject's picture. Omit only for a subject that has none (a text record). */
   hero?: SubjectHeroContent;
   heroAspect?: ImageCompareAspect;
@@ -126,6 +138,8 @@ export interface SubjectFrameProps {
   heroActions?: ReactNode;
   /** The facts table: at most eight rows; more are dropped (and named in the console in development). */
   facts?: KeyValueItem[];
+  /** The facts table's accessible name (since 2.515.9). Default `Facts`; name it for the subject ("Character facts") when a page holds more than one frame. */
+  factsLabel?: string;
   /** The disclosures, in order. Put Request details last, collapsed. */
   disclosures?: SubjectFrameDisclosure[];
   /** The body of a tab other than the details: replaces the hero, facts and disclosures. */
@@ -144,6 +158,7 @@ export function SubjectFrame({
   heroAspect,
   heroActions,
   facts = [],
+  factsLabel = 'Facts',
   disclosures = [],
   children,
   className,
@@ -176,7 +191,7 @@ export function SubjectFrame({
       </div>
       {tabs && (
         <div data-ui-part="" data-subject-part="tabs">
-          <PaneHeader tabs={tabs.items} value={tabs.value} onValueChange={tabs.onValueChange} label={tabs.label ?? 'Record sections'} data-testid={`${testId}-tabs`} />
+          <PaneHeader tabs={tabs.items} value={tabs.value} onValueChange={tabs.onValueChange} label={tabs.label ?? 'Record sections'} {...(tabs.overflow ? { overflow: tabs.overflow } : {})} data-testid={`${testId}-tabs`} />
         </div>
       )}
       {children != null ? (
@@ -190,7 +205,7 @@ export function SubjectFrame({
           )}
           {shownFacts.length > 0 && (
             <div data-ui-part="" data-subject-part="facts" data-subject-facts={shownFacts.length}>
-              <KeyValue items={shownFacts} layout="row" divided aria-label="Facts" data-testid={`${testId}-facts`} />
+              <KeyValue items={shownFacts} layout="row" divided aria-label={factsLabel} data-testid={`${testId}-facts`} />
             </div>
           )}
           {disclosures.length > 0 && (
