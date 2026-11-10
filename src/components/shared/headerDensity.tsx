@@ -229,14 +229,20 @@ export function HeaderPeople({ groups, density, 'data-testid': testId = 'header-
     );
   }
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2" data-testid={testId}>
+    // A size container: under 30rem a group of several people drops to its
+    // avatars (each named by its image and title); a name that still runs out
+    // of room ends with an ellipsis, never a mid-word clip ("Nora D" at 390px,
+    // walk 10 November). Since 2.517.0.
+    <div className="@container flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2" data-testid={testId}>
       {visible.map((g) => (
         <div key={g.label} role="group" aria-label={g.label} className="flex min-w-0 items-center gap-3" data-testid={`${testId}-${g.label.toLowerCase()}`}>
           <Text size="sm" tone="tertiary" className="shrink-0">{g.label}</Text>
           {g.people.map((p) => (
             <span key={p.id} className="flex min-w-0 items-center gap-2" data-testid={`${testId}-person-${p.id}`}>
-              <Avatar name={p.name} size={32} {...(p.avatarUrl ? { src: p.avatarUrl } : {})} {...(p.color ? { color: p.color } : {})} />
-              <Text size="sm" tone="primary" className="truncate">{p.name}</Text>
+              <Avatar name={p.name} size={32} className="shrink-0" {...(p.avatarUrl ? { src: p.avatarUrl } : {})} {...(p.color ? { color: p.color } : {})} />
+              <span className={cn('min-w-0', g.people.length > 1 && 'hidden @min-[30rem]:block')} data-testid={`${testId}-name-${p.id}`}>
+                <Text size="sm" tone="primary" truncate>{p.name}</Text>
+              </span>
             </span>
           ))}
           {g.action}

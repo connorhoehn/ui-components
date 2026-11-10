@@ -5,7 +5,7 @@ import { ScopeHeader } from '../../work/ScopeHeader';
 import { DensityProvider, useDensity } from '../Density';
 import { HoverCard, HOVER_CARD_CLOSE_MS, HOVER_CARD_OPEN_MS } from '../HoverCard';
 import {
-  HeaderTrailFold, foldTitleIntoTrail, headerDefaults, headerDensityStorageKey, isRichHeaderContent,
+  HeaderPeople, HeaderTrailFold, foldTitleIntoTrail, headerDefaults, headerDensityStorageKey, isRichHeaderContent,
 } from '../headerDensity';
 import { HEADER_SCROLL_COLLAPSE_PX, useHeaderDensity } from '../useHeaderDensity';
 import * as shared from '../index';
@@ -294,6 +294,22 @@ describe('useHeaderDensity', () => {
   it('is exported from the shared barrel', () => {
     for (const name of ['useHeaderDensity', 'HeaderCollapseToggle', 'HeaderTrailFold', 'HoverCard', 'DensityProvider', 'useDensity'] as const) {
       expect(typeof shared[name]).toBe('function');
+    }
+  });
+});
+
+describe('HeaderPeople at a narrow width (2.517.0)', () => {
+  it('names end with an ellipsis on a block element; a group of several drops to avatars under 30rem', () => {
+    render(<HeaderPeople groups={PEOPLE} density="comfortable" />);
+    expect(screen.getByTestId('header-people')).toHaveClass('@container');
+    const owner = screen.getByTestId('header-people-name-p1');
+    expect(owner.className).not.toContain('hidden');
+    const ownerName = owner.firstElementChild as HTMLElement;
+    expect(ownerName).toHaveAttribute('data-text-truncate');
+    expect(ownerName).toHaveAttribute('title', 'Nora DaSilva');
+    for (const id of ['p2', 'p3']) {
+      const name = screen.getByTestId(`header-people-name-${id}`);
+      expect(name).toHaveClass('hidden', '@min-[30rem]:block');
     }
   });
 });

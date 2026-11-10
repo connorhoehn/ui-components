@@ -44,6 +44,12 @@ export type VoiceConfirmCardOptions = Pick<
   'noteDefault' | 'noteLabel' | 'noteMaxLength' | 'confirmLabel' | 'cancelLabel' | 'hideDecisionToggle' | 'clickOnly'
 >;
 
+/** The Confirm button's text for the toggle's current choice. */
+export function resolveConfirmLabel(label: VoicePending['confirmLabel'], decision: VoiceDecision): string {
+  if (typeof label === 'function') return label(decision) || 'Confirm';
+  return label ?? 'Confirm';
+}
+
 export interface VoiceConfirmCardProps extends VoiceConfirmCardOptions {
   pending: VoicePending;
   /** Handle Escape on the card itself. The dock turns this off: its popover already closes on Escape. Default true. */
@@ -61,7 +67,8 @@ export interface VoiceConfirmCardProps extends VoiceConfirmCardOptions {
  * With `pending.fields` it also shows an approve / reject toggle and a one-line note, and
  * Confirm calls back with `{ decision, note }` (note trimmed, capped at 200 characters).
  * `noteDefault` opens the note pre-filled and editable (the callback gets the edited text), with `noteLabel` and a `noteMaxLength` count;
- * `confirmLabel` / `cancelLabel` rename the buttons, `hideDecisionToggle` drops the toggle, and `clickOnly` hints "Check it, then click <confirmLabel>" and sets `data-click-only`.
+ * `confirmLabel` / `cancelLabel` rename the buttons (`confirmLabel` may be a function of the toggle's choice, e.g. Approve / Reject), `hideDecisionToggle` drops the toggle, and `clickOnly` hints "Check it, then click <confirmLabel>; say cancel to drop it." and sets `data-click-only`.
+ * A long title wraps to two lines, then ends with an ellipsis (its full text is the `title` attribute).
  * Remounts per request (`pending.requestId`, else `title`), so the note and toggle reset.
  */
 export function VoiceConfirmCard(props: VoiceConfirmCardProps) {
@@ -77,14 +84,13 @@ function VoiceConfirmCardBody({
   noteDefault = pending.noteDefault,
   noteLabel = pending.noteLabel,
   noteMaxLength = pending.noteMaxLength,
-  confirmLabel = pending.confirmLabel ?? 'Confirm',
+  confirmLabel: confirmLabelProp = pending.confirmLabel,
   cancelLabel = pending.cancelLabel ?? 'Cancel',
   hideDecisionToggle = pending.hideDecisionToggle ?? false,
   clickOnly = pending.clickOnly ?? false,
   className,
   'data-testid': testId = 'voice-confirm-card',
 }: VoiceConfirmCardProps) {
-  const hint = hintProp ?? pending.hint ?? (clickOnly ? `Check it, then click ${confirmLabel}` : undefined);
   const hintId = useId();
   const noteLabelId = useId();
   const ref = useRef<HTMLDivElement>(null);
@@ -97,6 +103,8 @@ function VoiceConfirmCardBody({
   const showToggle = Boolean(fields) && !hideDecisionToggle;
   const maxLength = noteMaxLength && noteMaxLength > 0 ? Math.floor(noteMaxLength) : VOICE_NOTE_MAX;
   const [decision, setDecision] = useState<VoiceDecision>(fields?.decision ?? 'approve');
+  const confirmLabel = resolveConfirmLabel(confirmLabelProp, decision);
+  const hint = hintProp ?? pending.hint ?? (clickOnly ? `Check it, then click ${confirmLabel}; say cancel to drop it.` : undefined);
   // The card remounts per request, so a new request starts from its own default.
   const [note, setNote] = useState(() => (noteDefault ?? '').slice(0, maxLength));
 
@@ -129,7 +137,8 @@ function VoiceConfirmCardBody({
       data-click-only={clickOnly ? '' : undefined}
       className={cn('rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary', className)}
     >
-      <T size="sm" weight="semibold" tone="primary" as="p">{pending.title}</T>
+      {/* Two lines, then an ellipsis: never a hard cut, never a wall of text. */}
+      <T size="sm" weight="semibold" tone="primary" as="p" clamp={2} data-testid={`${testId}-title`}>{pending.title}</T>
       {lines.length === 1 ? <T size="xs" tone="secondary" as="p">{lines[0]}</T> : null}
       {lines.length > 1 ? (
         <Stack as="ul" gap="xs" data-testid={`${testId}-detail`} className="m-0 list-none p-0">
@@ -177,7 +186,7 @@ function VoiceConfirmCardBody({
         <Button variant="secondary" size="sm" onClick={pending.onCancel} data-testid={`${testId}-cancel`}>{cancelLabel}</Button>
         <Button variant="primary" size="sm" onClick={confirm} aria-describedby={hint ? hintId : undefined} data-testid={`${testId}-confirm`}>{confirmLabel}</Button>
       </Inline>
-      {hint ? <T size="xs" tone="secondary" as="p" id={hintId} className="truncate" data-testid={`${testId}-hint`}>{hint}</T> : null}
+      {hint ? <T size="xs" tone="secondary" as="p" id={hintId} clamp={2} data-testid={`${testId}-hint`}>{hint}</T> : null}
     </Stack>
   );
 }

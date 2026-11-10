@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { VoiceDock } from '../VoiceDock';
+import { avoidKeepoutBoxes } from '../../shared/InlinePopover';
 import { VoiceActivityRing } from '../VoiceActivityRing';
 import { VoiceTurnStrip, VoiceConfirmCard } from '../VoiceTurnStrip';
 import { VoiceChoiceCard } from '../VoiceChoiceCard';
@@ -532,6 +533,43 @@ describe('VoiceConfirmCard pre-filled note, labels and click-only (2.516.0)', ()
     expect(screen.getByTestId('voice-confirm-card')).not.toHaveAttribute('data-click-only');
   });
 
+  it('clickOnly keeps the cancel words in its default hint', () => {
+    render(<VoiceConfirmCard pending={{ ...base, clickOnly: true, confirmLabel: 'Send' }} />);
+    expect(screen.getByTestId('voice-confirm-card-hint')).toHaveTextContent('Check it, then click Send; say cancel to drop it.');
+  });
+
+  it('confirmLabel as a function follows the approve / reject toggle, in the button and the hint', () => {
+    const onConfirm = vi.fn();
+    render(
+      <VoiceConfirmCard
+        pending={{ ...base, onConfirm, fields: {}, clickOnly: true, confirmLabel: (d) => (d === 'approve' ? 'Approve' : 'Reject') }}
+      />,
+    );
+    expect(screen.getByTestId('voice-confirm-card-confirm')).toHaveTextContent('Approve');
+    expect(screen.getByTestId('voice-confirm-card-hint')).toHaveTextContent('Check it, then click Approve; say cancel to drop it.');
+    fireEvent.click(screen.getByRole('radio', { name: 'Reject' }));
+    expect(screen.getByTestId('voice-confirm-card-confirm')).toHaveTextContent('Reject');
+    expect(screen.getByTestId('voice-confirm-card-hint')).toHaveTextContent('Check it, then click Reject;');
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'reject', note: '' });
+  });
+
+  it('a function confirmLabel that returns nothing falls back to Confirm', () => {
+    render(<VoiceConfirmCard pending={{ ...base, confirmLabel: () => '' }} />);
+    expect(screen.getByTestId('voice-confirm-card-confirm')).toHaveTextContent('Confirm');
+  });
+
+  it('a long title wraps to two lines and ends with an ellipsis, its full text in the title attribute', () => {
+    const title = `Answer the consult "${'Which customer tenant goes first after the rehearsals, '.repeat(4)}"`;
+    render(<VoiceConfirmCard pending={{ ...base, title }} />);
+    const el = screen.getByTestId('voice-confirm-card-title');
+    expect(el).toHaveTextContent(title);
+    expect(el).toHaveAttribute('title', title);
+    expect(el.className).toContain('line-clamp-2');
+    expect(el.className).toContain('break-words');
+    expect(el.className).not.toMatch(/(^|\s)(truncate|block|flex)(\s|$)/);
+  });
+
   it('a new requestId resets the edited note to the new noteDefault', () => {
     const onConfirm = vi.fn();
     const { rerender } = render(<VoiceConfirmCard pending={{ ...base, onConfirm, requestId: 'q1', noteDefault: 'first answer' }} />);
@@ -555,5 +593,44 @@ describe('VoiceConfirmCard pre-filled note, labels and click-only (2.516.0)', ()
     expect(screen.getByTestId('voice-confirm-card-note')).toHaveValue('dictated');
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
     expect(onConfirm).toHaveBeenCalledWith({ decision: 'approve', note: 'dictated' });
+  });
+});
+
+describe('VoiceDock card placement (2.517.0)', () => {
+  const base = { title: 'Send the answer', onConfirm: vi.fn(), onCancel: vi.fn() };
+  it('the footer dock opens its card above the row, capped at 28rem, keeping clear of keep-outs', () => {
+    render(<VoiceDock {...dockBase} size="footer" phase="confirming" pending={base} />);
+    const pop = screen.getByTestId('voice-dock-pending');
+    expect(pop).toHaveAttribute('data-placement', 'top-start');
+    expect(pop.className).toContain('w-md');
+    expect(pop.className).toContain('max-w-[calc(100vw-1rem)]');
+  });
+
+  it('the panel dock keeps bottom-start; cardPlacement overrides either', () => {
+    const { rerender } = render(<VoiceDock {...dockBase} phase="confirming" pending={base} />);
+    expect(screen.getByTestId('voice-dock-pending')).toHaveAttribute('data-placement', 'bottom-start');
+    rerender(<VoiceDock {...dockBase} size="footer" cardPlacement="top-end" phase="confirming" pending={base} />);
+    expect(screen.getByTestId('voice-dock-pending')).toHaveAttribute('data-placement', 'top-end');
+  });
+});
+
+describe('avoidKeepoutBoxes', () => {
+  const rect = (left: number, top: number, width: number, height: number) =>
+    ({ left, top, width, height, right: left + width, bottom: top + height, x: left, y: top, toJSON: () => ({}) }) as DOMRect;
+  const bounds = { left: 8, right: 1432, top: 8, bottom: 892 };
+  it('leaves a card that covers nothing where it is', () => {
+    expect(avoidKeepoutBoxes({ left: 510, top: 600, width: 448, height: 190 }, [rect(436, 300, 984, 100)], bounds)).toBeNull();
+  });
+  it('the 1440 walk: a card over the composer and its question panel moves above the panel', () => {
+    // The panel spans the content column (436..1420) from y 560 to the footer.
+    const moved = avoidKeepoutBoxes({ left: 510, top: 660, width: 448, height: 190 }, [rect(436, 560, 984, 285)], bounds);
+    expect(moved).toEqual({ left: 510, top: 560 - 8 - 190 });
+  });
+  it('prefers the side of the panel when there is room there', () => {
+    const moved = avoidKeepoutBoxes({ left: 700, top: 600, width: 300, height: 190 }, [rect(600, 500, 500, 300)], bounds);
+    expect(moved).toEqual({ left: 600 - 8 - 300, top: 600 });
+  });
+  it('gives up (null) when no side fits', () => {
+    expect(avoidKeepoutBoxes({ left: 20, top: 100, width: 380, height: 700 }, [rect(8, 50, 380, 800)], { left: 8, right: 382, top: 8, bottom: 892 })).toBeNull();
   });
 });

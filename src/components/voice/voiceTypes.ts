@@ -73,15 +73,19 @@ export interface VoicePending {
   noteLabel?: string;
   /** The note's maximum length, shown as a visible "12/500" count. Default VOICE_NOTE_MAX, with no count. Since 2.516.0. */
   noteMaxLength?: number;
-  /** The primary button's text. Default "Confirm". Since 2.516.0. */
-  confirmLabel?: string;
+  /**
+   * The primary button's text. Default "Confirm". Since 2.516.0. Since 2.517.0 it may be
+   * a function of the approve / reject toggle's choice (`(d) => d === 'approve' ? 'Approve' : 'Reject'`),
+   * called again whenever the choice changes.
+   */
+  confirmLabel?: string | ((decision: VoiceDecision) => string);
   /** The secondary button's text. Default "Cancel". Since 2.516.0. */
   cancelLabel?: string;
   /** Hides the approve / reject toggle; the decision stays `fields.decision` (default `approve`). Since 2.516.0. */
   hideDecisionToggle?: boolean;
   /**
    * The action is confirmed by a click only (the voice never confirms it). The card
-   * shows "Check it, then click <confirmLabel>" as its hint unless one is given, and
+   * shows "Check it, then click <confirmLabel>; say cancel to drop it." as its hint unless one is given, and
    * carries `data-click-only` for hosts. Since 2.516.0.
    */
   clickOnly?: boolean;

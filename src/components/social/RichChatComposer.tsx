@@ -1018,6 +1018,50 @@ function pickedArgumentFor(
 const commandSuggestionKey = new PluginKey('commandSuggestion');
 const argumentSuggestionKey = new PluginKey('commandArgumentSuggestion');
 
+/**
+ * A suggestion menu's React mount, created a microtask after the plugin opens
+ * the menu (since 2.517.0). `ReactRenderer`'s constructor calls `flushSync`,
+ * which React refuses, with a console error, when the transaction that opened
+ * the menu was dispatched from inside a React lifecycle: a host prefilling
+ * "/unblock …" from an effect or a menu pick ("flushSync was called from inside
+ * a lifecycle method"). Props given before the mount lands are kept; a close
+ * before then cancels it.
+ */
+function lazySuggestionMount<P extends { editor: SuggestionProps['editor']; clientRect?: SuggestionProps['clientRect'] }>(
+  menu: ReturnType<typeof mountSuggestionMenu>,
+  build: (props: P) => ReactRenderer,
+) {
+  let renderer: ReactRenderer | null = null;
+  let latest: P | null = null;
+  let generation = 0;
+  return {
+    get renderer() { return renderer; },
+    start(props: P) {
+      const mine = ++generation;
+      latest = props;
+      queueMicrotask(() => {
+        if (mine !== generation || latest === null) return;
+        const at = latest;
+        renderer = build(at);
+        menu.attach(renderer.element as HTMLElement);
+        menu.place(at.clientRect?.(), at.editor.view.dom);
+      });
+    },
+    /** Records the newest props; returns the live renderer, if mounted. */
+    update(props: P): ReactRenderer | null {
+      latest = props;
+      return renderer;
+    },
+    stop() {
+      generation++;
+      latest = null;
+      menu.detach();
+      renderer?.destroy();
+      renderer = null;
+    },
+  };
+}
+
 /** A menu's imperative surface, as ReactRenderer exposes it through `ref`. */
 type SuggestionMenuRef = { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } | null;
 
@@ -1032,9 +1076,9 @@ type SuggestionMenuRef = { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } 
  * so the last list stays up until the new one lands.
  */
 function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, sendWhenExact: boolean | (() => boolean) = false) {
-  let renderer: ReactRenderer | null = null;
   let lastItems: CommandSuggestionItem[] = [];
   const menu = mountSuggestionMenu();
+  const mount = lazySuggestionMount<SuggestionProps<CommandSuggestionItem>>(menu, (props) => new ReactRenderer(CommandSuggestions, { props: withItems(props), editor: props.editor }));
   const withItems = (props: SuggestionProps<CommandSuggestionItem>) => {
     // The command menu also gets the draft: a fully typed trigger plus Enter
     // sends rather than re-inserting the trigger (see CommandSuggestions).
@@ -1052,12 +1096,10 @@ function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, send
   return {
     onStart: (props: SuggestionProps<CommandSuggestionItem>) => {
       lastItems = [];
-      renderer = new ReactRenderer(CommandSuggestions, { props: withItems(props), editor: props.editor });
-      menu.attach(renderer.element as HTMLElement);
-      menu.place(props.clientRect?.(), props.editor.view.dom);
+      mount.start(props);
     },
     onUpdate: (props: SuggestionProps<CommandSuggestionItem>) => {
-      renderer?.updateProps(withItems(props));
+      mount.update(props)?.updateProps(withItems(props));
       menu.place(props.clientRect?.(), props.editor.view.dom);
     },
     onKeyDown: (props: SuggestionKeyDownProps) => {
@@ -1065,12 +1107,10 @@ function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, send
         menu.detach();
         return true;
       }
-      return (renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
+      return (mount.renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
     },
     onExit: () => {
-      menu.detach();
-      renderer?.destroy();
-      renderer = null;
+      mount.stop();
     },
   };
 }
@@ -1393,19 +1433,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 e.chain().focus().deleteRange(range).insertContent(props.emoji).run();
               },
               render: () => {
-                let renderer: ReactRenderer | null = null;
                 const menu = mountSuggestionMenu();
+                const mount = lazySuggestionMount<SuggestionProps>(menu, (props) => new ReactRenderer(EmojiSuggestions, { props, editor: props.editor }));
                 return {
                   onStart: (props: SuggestionProps) => {
-                    renderer = new ReactRenderer(EmojiSuggestions, {
-                      props,
-                      editor: props.editor,
-                    });
-                    menu.attach(renderer.element as HTMLElement);
-                    menu.place(props.clientRect?.(), props.editor.view.dom);
+                    mount.start(props);
                   },
                   onUpdate: (props: SuggestionProps) => {
-                    renderer?.updateProps(props);
+                    mount.update(props)?.updateProps(props);
                     menu.place(props.clientRect?.(), props.editor.view.dom);
                   },
                   onKeyDown: (props: SuggestionKeyDownProps) => {
@@ -1415,15 +1450,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     }
                     return (
                       (
-                        renderer?.ref as {
+                        mount.renderer?.ref as {
                           onKeyDown?: (p: SuggestionKeyDownProps) => boolean;
                         } | null
                       )?.onKeyDown?.(props) ?? false
                     );
                   },
                   onExit: () => {
-                    menu.detach();
-                    renderer?.destroy();
+                    mount.stop();
                   },
                 };
               },
@@ -1665,7 +1699,6 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               return found.map((c) => ({ ...c, member: members.has(c.id) }));
             },
             render: () => {
-              let renderer: ReactRenderer | null = null;
               const menu = mountSuggestionMenu();
               const withGate = (props: SuggestionProps) => ({
                 ...props,
@@ -1677,18 +1710,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   onMentionNonMemberRef.current?.(userId);
                 },
               });
+              const mount = lazySuggestionMount<SuggestionProps>(menu, (props) => new ReactRenderer(MentionSuggestions, { props: withGate(props), editor: props.editor }));
 
               return {
                 onStart: (props: SuggestionProps) => {
-                  renderer = new ReactRenderer(MentionSuggestions, {
-                    props: withGate(props),
-                    editor: props.editor,
-                  });
-                  menu.attach(renderer.element as HTMLElement);
-                  menu.place(props.clientRect?.(), props.editor.view.dom);
+                  mount.start(props);
                 },
                 onUpdate: (props: SuggestionProps) => {
-                  renderer?.updateProps(withGate(props));
+                  mount.update(props)?.updateProps(withGate(props));
                   menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 // Returning the menu's answer is what stops Enter reaching the
@@ -1699,16 +1728,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     return true;
                   }
                   return (
-                    (renderer?.ref as { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } | null)
+                    (mount.renderer?.ref as { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } | null)
                       ?.onKeyDown?.(props) ?? false
                   );
                 },
                 onExit: () => {
-                  // Detached before destroy: destroy() unmounts the React tree
-                  // but leaves the host node parented to <body>, so every
-                  // dismissed menu would leak an empty div.
-                  menu.detach();
-                  renderer?.destroy();
+                  // Detached before destroy (inside stop): destroy() unmounts
+                  // the React tree but leaves the host node parented to <body>,
+                  // so every dismissed menu would leak an empty div.
+                  mount.stop();
                 },
               };
             },
@@ -1744,16 +1772,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             allow: docrefAtWordStart,
             items: ({ query }: { query: string }) => onSearchDocumentsRef.current?.(query) ?? [],
             render: () => {
-              let renderer: ReactRenderer | null = null;
               const menu = mountSuggestionMenu();
+              const mount = lazySuggestionMount<SuggestionProps>(menu, (props) => new ReactRenderer(DocumentSuggestions, { props: docMenuProps(props), editor: props.editor }));
               return {
                 onStart: (props: SuggestionProps) => {
-                  renderer = new ReactRenderer(DocumentSuggestions, { props: docMenuProps(props), editor: props.editor });
-                  menu.attach(renderer.element as HTMLElement);
-                  menu.place(props.clientRect?.(), props.editor.view.dom);
+                  mount.start(props);
                 },
                 onUpdate: (props: SuggestionProps) => {
-                  renderer?.updateProps(docMenuProps(props));
+                  mount.update(props)?.updateProps(docMenuProps(props));
                   menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 onKeyDown: (props: SuggestionKeyDownProps) => {
@@ -1761,11 +1787,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     menu.detach();
                     return true;
                   }
-                  return (renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
+                  return (mount.renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
                 },
                 onExit: () => {
-                  menu.detach();
-                  renderer?.destroy();
+                  mount.stop();
                 },
               };
             },

@@ -144,20 +144,23 @@ function InlineCluster({ item, first, last }: { item: StatStripItem; first: bool
 function LineCluster({ item, sm = false }: { item: StatStripItem; sm?: boolean }) {
   const bar = item.progress && item.progress.max > 0 && Number.isFinite(item.progress.value);
   return (
-    <span className="flex min-w-0 items-center whitespace-nowrap" data-testid="stat-strip-cluster">
+    // The track or bar wraps under its label rather than cutting it ("16 / 31
+    // points del…" at 390px, walk 10 November): a column gap, not a margin,
+    // so a wrapped bar starts at the cluster's edge (since 2.517.0).
+    <span className="flex min-w-0 flex-wrap items-center gap-x-[18px] gap-y-1 whitespace-nowrap" data-testid="stat-strip-cluster">
       <span className="flex min-w-0 items-baseline gap-1.5">
         <span className={cn('font-semibold tabular-nums', sm ? 'text-sm leading-5' : 'text-[16px] leading-6', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
         <span className={cn('min-w-0 truncate text-text-secondary', sm ? 'text-sm leading-5' : 'text-[15px] leading-6')}>{item.label}</span>
       </span>
       {item.track != null ? (
-        <span className="ml-[18px] flex shrink-0 items-center" data-testid="stat-strip-track">{item.track}</span>
+        <span className="flex shrink-0 items-center" data-testid="stat-strip-track">{item.track}</span>
       ) : bar && (
         <ProgressBar
           value={item.progress!.value}
           max={item.progress!.max}
           size="sm"
           aria-label={item.label}
-          className="ml-[18px] w-[150px] shrink-0"
+          className="w-[150px] shrink-0"
           data-testid="stat-strip-progress"
         />
       )}

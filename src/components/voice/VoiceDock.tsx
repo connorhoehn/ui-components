@@ -99,6 +99,17 @@ export interface VoiceDockProps {
    * announces; this is the visual cue. Since 2.510.6.
    */
   pulse?: boolean;
+  /**
+   * Where the confirmation and choice cards open against the dock's row
+   * (since 2.517.0). Default: `top-start` at the `footer` size (above the
+   * footer, from the dock's left edge), `bottom-start` at `panel` (below the
+   * row, flipping up when there is no room). `top-end` lines the card's right
+   * edge up with the row's. Either way the card is at most 28rem wide and
+   * keeps clear of the page's keep-out surfaces (`[data-uic-keepout]`, which
+   * the pinned composer dock and the question panel above it carry): it
+   * moves beside or above the panel it answers instead of covering it.
+   */
+  cardPlacement?: VoiceDockCardPlacement;
   className?: string;
   /** The dock's root element. */
   ref?: React.Ref<HTMLDivElement>;
@@ -106,6 +117,13 @@ export interface VoiceDockProps {
 }
 
 export type VoiceDockSize = 'footer' | 'panel';
+
+/** Where the dock's cards open against its row. Since 2.517.0. */
+export type VoiceDockCardPlacement = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
+
+// The cards' width: enough for a title on two lines and the note field, never
+// the whole footer's width, and never wider than the window.
+const CARD_WIDTH = 'w-md max-w-[calc(100vw-1rem)]';
 
 const TONE: Record<VoicePhase, StatusPillTone> = {
   off: 'neutral',
@@ -154,6 +172,7 @@ export function VoiceDock({
   keepTranscript,
   onKeepTranscriptChange,
   pulse = false,
+  cardPlacement: cardPlacementProp,
   className,
   ref,
   'data-testid': testId = 'voice-dock',
@@ -185,6 +204,7 @@ export function VoiceDock({
   const pillTitle = phase === 'unavailable' ? unavailableReason : undefined;
   const label = VOICE_PHASE_LABEL[phase];
   const footer = size === 'footer';
+  const cardPlacement = cardPlacementProp ?? (footer ? 'top-start' : 'bottom-start');
 
   return (
     <Stack
@@ -354,7 +374,9 @@ export function VoiceDock({
           trigger={rowRef}
           open={showCard}
           onClose={pending.onCancel}
-          placement="bottom-start"
+          placement={cardPlacement}
+          avoidKeepouts
+          className={CARD_WIDTH}
           aria-label={`Confirm: ${pending.title}`}
           kind="voice-confirm"
           data-testid={`${testId}-pending`}
@@ -367,7 +389,9 @@ export function VoiceDock({
           trigger={rowRef}
           open={showChoice}
           onClose={pendingChoice.onCancel}
-          placement="bottom-start"
+          placement={cardPlacement}
+          avoidKeepouts
+          className={CARD_WIDTH}
           aria-label={`Choose: ${pendingChoice.title}`}
           kind="voice-choice"
           data-testid={`${testId}-pending-choice`}

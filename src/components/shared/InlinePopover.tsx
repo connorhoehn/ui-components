@@ -13,7 +13,9 @@
 // popover to the bottom-left of the trigger. 'bottom-end' anchors the
 // top-RIGHT of the popover to the bottom-right of the trigger (for
 // triggers sitting at the viewport's right edge). 'right' anchors the
-// left edge to the trigger's right edge, top-aligned.
+// left edge to the trigger's right edge, top-aligned. 'top-start' /
+// 'top-end' (since 2.517.0) open ABOVE the trigger, start- or end-aligned:
+// for a trigger in a footer row.
 
 import {
   type CSSProperties,
@@ -29,7 +31,7 @@ import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { useOverlayLayer } from '../../lib/overlayStack';
 
-export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end';
 
 export interface InlinePopoverProps {
   /** Ref to the anchor element (the visible trigger). */
@@ -62,6 +64,16 @@ export interface InlinePopoverProps {
    * composer's supported-commands help. Since 2.442.0.
    */
   kind?: string;
+  /**
+   * Keep clear of every keep-out surface (`[data-uic-keepout]`, e.g. a pinned
+   * composer dock and the question panel above it) that does not contain the
+   * trigger, whichever side of the trigger it is on (since 2.517.0). A panel
+   * that would cover one moves beside it (left, then right) or above it,
+   * whichever fits first; with no room anywhere it stays where it was. The
+   * voice dock's cards use this so a confirmation never covers the panel it
+   * answers. Default false: only the keep-out below the trigger counts.
+   */
+  avoidKeepouts?: boolean;
   children: ReactNode;
 }
 
@@ -100,6 +112,16 @@ function computePosition(
       position: 'fixed',
       top: anchor.top,
       left: anchor.right + offset,
+    };
+  }
+  if (placement === 'top-start' || placement === 'top-end') {
+    // The panel's bottom edge `offset` above the trigger; the correction pass
+    // replaces the transform with explicit coordinates when it has to move it.
+    return {
+      position: 'fixed',
+      top: anchor.top - offset,
+      left: placement === 'top-end' ? anchor.right : anchor.left,
+      transform: placement === 'top-end' ? 'translate(-100%, -100%)' : 'translateY(-100%)',
     };
   }
   if (placement === 'bottom-end') {
@@ -160,6 +182,38 @@ export function popoverBounds(trigger: HTMLElement | null, viewportWidth: number
   return { left: Math.max(0, r.left), right: Math.min(viewportWidth, r.right) };
 }
 
+interface Box { top: number; left: number; width: number; height: number }
+
+function overlaps(a: Box, b: DOMRect): boolean {
+  return a.left < b.right && a.left + a.width > b.left && a.top < b.bottom && a.top + a.height > b.top;
+}
+
+/**
+ * Where a panel at `box` should go so it covers none of `keepouts`: beside the
+ * first one it covers (left, then right) or above it, whichever fits inside
+ * `bounds` and clear of every keep-out; `null` when it covers none or nothing
+ * fits. Exported for tests. Since 2.517.0.
+ */
+export function avoidKeepoutBoxes(
+  box: Box,
+  keepouts: DOMRect[],
+  bounds: { left: number; right: number; top: number; bottom: number },
+  margin = 8,
+): { top: number; left: number } | null {
+  const hit = keepouts.find((k) => overlaps(box, k));
+  if (!hit) return null;
+  const clear = (b: Box) =>
+    b.left >= bounds.left && b.left + b.width <= bounds.right && b.top >= bounds.top && b.top + b.height <= bounds.bottom
+    && !keepouts.some((k) => overlaps(b, k));
+  const options: Box[] = [
+    { ...box, left: hit.left - margin - box.width },
+    { ...box, left: hit.right + margin },
+    { ...box, top: hit.top - margin - box.height },
+  ];
+  const fit = options.find(clear);
+  return fit ? { top: fit.top, left: fit.left } : null;
+}
+
 // Open order of popover panels. A submenu is portalled on its own, so to its
 // parent it looks like "outside": a mousedown on a submenu row closed the
 // parent, which unmounted the submenu before the click landed, and the row's
@@ -178,6 +232,7 @@ export function InlinePopover({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   kind = 'popover',
+  avoidKeepouts = false,
   children,
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -285,9 +340,29 @@ export function InlinePopover({
       left = minLeft;
       changed = true;
     }
+    if (avoidKeepouts) {
+      const keepouts: DOMRect[] = [];
+      document.querySelectorAll<HTMLElement>('[data-uic-keepout]').forEach((el) => {
+        if (trigger.current && el.contains(trigger.current)) return;
+        if (panel.contains(el)) return;
+        const k = el.getBoundingClientRect();
+        if (k.width > 0 && k.height > 0) keepouts.push(k);
+      });
+      const moved = avoidKeepoutBoxes(
+        { top, left, width: r.width, height: r.height },
+        keepouts,
+        { left: minLeft, right: maxRight, top: margin, bottom: window.innerHeight - margin },
+        margin,
+      );
+      if (moved) {
+        top = moved.top;
+        left = moved.left;
+        changed = true;
+      }
+    }
     if (!changed) return;
     setPosition({ position: 'fixed', top, left, maxHeight: maxH, overflowY: 'auto' });
-  }, [open, position]);
+  }, [open, position, avoidKeepouts]);
 
   // The correction above runs once per anchor-derived position, so a panel
   // whose content grows AFTER it was placed (a live feed filling in, a tab

@@ -190,6 +190,14 @@ export interface DataTableProps<T> {
    * columns' keys are on the root as `data-hidden-columns`. With `narrow`,
    * the stacked card form (under 40rem) shows every column again. Default
    * `false`.
+   *
+   * Since 2.517.0: the "+N" column has a visible "More" header and a quiet
+   * regular-weight control; at most half the columns hide, and a table that
+   * would hide more (or still overflows with every hideable column gone)
+   * switches to the stacked card form instead (`data-stacked` on the root), so
+   * it never overflows its box. The fit starts over from every column shown
+   * when the box's width, the shown rows, the columns or the fonts change, so
+   * a column hidden for wide content returns when the content narrows.
    */
   responsiveColumns?: boolean;
   className?: string;
@@ -248,59 +256,114 @@ const HIDDEN_COLUMN_NARROW = 'hidden @max-[40rem]:flex';
 // The "+N columns" cell has nothing to add in the card form, which shows every column.
 const MORE_CELL_NARROW = '@max-[40rem]:hidden';
 
+// The stacked form forced by `responsiveColumns` (since 2.517.0): the narrow
+// form's classes without the container query, for a table whose columns no
+// longer fit even with the hideable ones gone.
+const STACK_TABLE = 'block';
+const STACK_HEAD = 'sr-only';
+const STACK_BODY = 'block';
+const STACK_ROW = 'block px-3 py-2';
+const STACK_CELL = 'flex h-auto max-w-none items-baseline justify-between gap-4 whitespace-normal px-0 py-1 text-right before:shrink-0 before:text-left before:text-xs before:font-semibold before:uppercase before:tracking-wide before:text-text-secondary before:content-[attr(data-label)]';
+
+interface ResponsiveColumnsState {
+  /** How many of the hide-order columns are hidden (0 while stacked). */
+  hidden: number;
+  /** The table shows as stacked cards: more than half its columns would hide, or it overflows with every hideable column gone. */
+  stacked: boolean;
+}
+
 /**
- * How many of the hide-order columns are hidden. Grows one column at a time
- * while the scroller overflows, recording the width each step needed, and
- * gives a column back once the box is at least that wide again. The record
- * resets when the columns or rows change.
+ * Fits the table to its box. Starting from every column shown, it hides one
+ * hide-order column per pass while the scroller overflows (its scrollWidth
+ * already counts the "+N" column, the cell padding and the table's border),
+ * at most half the columns; one more pass switches to the stacked form. The
+ * passes run in layout effects, so the reader never sees the intermediate
+ * states. It starts over from every column shown whenever the box's width,
+ * the rows (data, sort, search, page), the columns, the cells' text or the
+ * loaded fonts change,
+ * so a column hidden for wide content comes back once the content narrows.
  */
-function useHiddenColumnCount(
+function useResponsiveColumns(
   enabled: boolean,
   candidates: number,
+  total: number,
   rootRef: React.RefObject<HTMLDivElement | null>,
-  resetKey: unknown,
-): number {
-  const [count, setCount] = useState(0);
-  const needed = useRef<number[]>([]);
+  contentKey: unknown,
+): ResponsiveColumnsState {
+  const maxHide = Math.min(candidates, Math.floor(total / 2));
+  const [step, setStep] = useState(0);
   const [tick, setTick] = useState(0);
-  const seen = useRef<unknown>(resetKey);
+  const pendingReset = useRef(false);
+  const lastKey = useRef<unknown>(contentKey);
 
   useEffect(() => {
-    if (!enabled || typeof ResizeObserver === 'undefined') return undefined;
+    if (!enabled) return undefined;
+    let live = true;
+    const remeasure = () => {
+      if (!live) return;
+      pendingReset.current = true;
+      setTick((t) => t + 1);
+    };
+    // Web fonts landing after the first pass change every cell's width.
+    if (typeof document !== 'undefined' && document.fonts?.ready) void document.fonts.ready.then(remeasure, () => undefined);
+    if (typeof ResizeObserver === 'undefined') return () => { live = false; };
     const scroller = rootRef.current?.querySelector<HTMLElement>('[data-table-scroller]');
-    if (!scroller) return undefined;
-    const ro = new ResizeObserver(() => setTick((t) => t + 1));
+    if (!scroller) return () => { live = false; };
+    // Width only: hiding a column changes the rows' height, which must not restart the fit.
+    let lastWidth = -1;
+    const ro = new ResizeObserver(() => {
+      const w = scroller.clientWidth;
+      if (!live || w === lastWidth) return;
+      lastWidth = w;
+      remeasure();
+    });
     ro.observe(scroller);
-    return () => ro.disconnect();
+    // A cell's content can change with the same rows: a render that reads the
+    // host's other state (an initiative's name arriving after the rows). The
+    // data cells' text is the signature, the "+N" cells left out and hidden
+    // cells kept in, so the fit's own passes never look like a change.
+    let lastText: string | null = null;
+    let frame = 0;
+    const cellText = () => Array.from(scroller.querySelectorAll('tbody td:not([data-column-more])'), (td) => td.textContent ?? '').join('\u0001');
+    const mo = typeof MutationObserver === 'undefined' ? null : new MutationObserver(() => {
+      if (frame || typeof requestAnimationFrame === 'undefined') return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (!live) return;
+        const text = cellText();
+        if (lastText !== null && text !== lastText) remeasure();
+        lastText = text;
+      });
+    });
+    lastText = cellText();
+    mo?.observe(scroller, { subtree: true, childList: true, characterData: true });
+    return () => { live = false; ro.disconnect(); mo?.disconnect(); if (frame) cancelAnimationFrame(frame); };
   }, [enabled, rootRef]);
 
   useLayoutEffect(() => {
     if (!enabled) return;
-    if (seen.current !== resetKey) {
-      // New columns or rows: start over from every column shown.
-      seen.current = resetKey;
-      needed.current = [];
-      if (count !== 0) {
-        setCount(0);
+    if (lastKey.current !== contentKey) {
+      lastKey.current = contentKey;
+      pendingReset.current = true;
+    }
+    if (pendingReset.current) {
+      pendingReset.current = false;
+      if (step !== 0) {
+        setStep(0);
         return;
       }
     }
     const scroller = rootRef.current?.querySelector<HTMLElement>('[data-table-scroller]');
     if (!scroller) return;
     const avail = scroller.clientWidth;
-    const used = scroller.scrollWidth;
     if (avail <= 0) return;
-    if (used > avail + 1 && count < candidates) {
-      needed.current[count] = used;
-      setCount(count + 1);
-    } else if (count > 0) {
-      const want = needed.current[count - 1];
-      if (want !== undefined && avail >= want) setCount(count - 1);
-    }
+    if (scroller.scrollWidth > avail + 1 && step <= maxHide) setStep(step + 1);
   });
   // `tick` only re-renders so the layout effect above measures again.
   void tick;
-  return enabled ? Math.min(count, candidates) : 0;
+  if (!enabled) return { hidden: 0, stacked: false };
+  const stacked = step > maxHide;
+  return { hidden: stacked ? 0 : step, stacked };
 }
 
 interface HiddenColumnsCellProps {
@@ -325,7 +388,8 @@ function HiddenColumnsButton({ count, items, rowLabel, testId }: HiddenColumnsCe
         aria-haspopup="dialog"
         onClick={() => setOpen((o) => !o)}
         data-testid={testId}
-        className="whitespace-nowrap"
+        // Quieter than the row's own values: regular weight, secondary ink.
+        className="whitespace-nowrap font-normal text-text-secondary"
       >
         {`+${count} ${count === 1 ? 'column' : 'columns'}`}
       </Button>
@@ -493,11 +557,7 @@ export function DataTable<T>({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const order = useMemo(() => (responsiveColumns ? hideOrder(columns) : []), [responsiveColumns, columns]);
-  const hiddenCount = useHiddenColumnCount(responsiveColumns && order.length > 0, order.length, rootRef, `${columns.map((c) => c.key).join('|')}#${data.length}`);
-  const hidden = useMemo(() => new Set(order.slice(0, hiddenCount)), [order, hiddenCount]);
-  const hiddenCols = columns.filter((c) => hidden.has(c.key));
-  const hideClass = narrow ? HIDDEN_COLUMN_NARROW : HIDDEN_COLUMN;
-  const moreColumn = hiddenCols.length > 0;
+  const columnKeys = columns.map((c) => c.key).join('|');
 
   const toggleSort = (key: string) => {
     if (sortKey === key) {
@@ -543,6 +603,16 @@ export function DataTable<T>({
     return sorted.slice(start, start + pageSize);
   }, [sorted, pageSize, safePage]);
 
+  // A new identity whenever the shown rows or the columns change: the fit starts over.
+  const contentKey = useMemo(() => ({ paged, columnKeys }), [paged, columnKeys]);
+  const fit = useResponsiveColumns(responsiveColumns, order.length, columns.length, rootRef, contentKey);
+  const stacked = fit.stacked;
+  const hidden = useMemo(() => new Set(order.slice(0, fit.hidden)), [order, fit.hidden]);
+  const hiddenCols = columns.filter((c) => hidden.has(c.key));
+  const hideClass = narrow ? HIDDEN_COLUMN_NARROW : HIDDEN_COLUMN;
+  const moreColumn = hiddenCols.length > 0;
+  const labelled = narrow || stacked;
+
   return (
     <div
       ref={rootRef}
@@ -550,6 +620,7 @@ export function DataTable<T>({
       data-testid={testId}
       data-responsive-columns={responsiveColumns ? '' : undefined}
       data-hidden-columns={responsiveColumns ? hiddenCols.map((c) => c.key).join(' ') : undefined}
+      data-stacked={stacked ? '' : undefined}
       // The collection composite: an audit reads these to require activatable
       // rows unless the table says, with a reason, that its rows open nothing.
       data-collection-table=""
@@ -559,9 +630,9 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE)}
+        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
           {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {})}>
-        <TableHead className={narrow ? NARROW_HEAD : undefined} data-header-case={headerCase}>
+        <TableHead className={cn(narrow && NARROW_HEAD, stacked && STACK_HEAD)} data-header-case={headerCase}>
           <tr>
             {columns.map((col) => {
               const isSorted = col.sortable && sortKey === col.key;
@@ -583,8 +654,8 @@ export function DataTable<T>({
               );
             })}
             {moreColumn && (
-              <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'w-px whitespace-nowrap text-right')} data-testid="datatable-more-header">
-                <span className="sr-only">Hidden columns</span>
+              <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'w-px whitespace-nowrap text-right')} data-testid="datatable-more-header" data-column-more="">
+                More
               </TableTh>
             )}
             {rowActions && (
@@ -596,7 +667,7 @@ export function DataTable<T>({
         </TableHead>
         {/* DataTable stripes its data rows itself (odd index), so skeleton and
             empty-state rows never band; the body-level stripe stays off. */}
-        <TableBody striped={false} className={narrow ? NARROW_BODY : undefined} data-ui-table-striped={striped ? '' : undefined}>
+        <TableBody striped={false} className={cn(narrow && NARROW_BODY, stacked && STACK_BODY)} data-ui-table-striped={striped ? '' : undefined}>
           {loading
             ? Array.from({ length: loadingRows }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">
@@ -605,7 +676,7 @@ export function DataTable<T>({
                       <div className="h-4 w-3/4 animate-pulse rounded bg-surface-hover" />
                     </TableTd>
                   ))}
-                  {moreColumn && <TableTd />}
+                  {moreColumn && <TableTd data-column-more="" />}
                   {rowActions && (
                     <TableTd className="text-right">
                       <div className="ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" />
@@ -637,6 +708,7 @@ export function DataTable<T>({
                     // than opening on a band.
                     className={cn(
                       narrow && NARROW_ROW,
+                      stacked && STACK_ROW,
                       // The selection tint wins over the stripe (one background).
                       selected ? 'bg-primary-bg hover:bg-primary-bg' : striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined,
                       // Only a clickable row joins the tab order — a plain
@@ -675,8 +747,8 @@ export function DataTable<T>({
                       <TableTd
                         key={col.key}
                         numeric={col.numeric}
-                        className={cn(alignClass(col.align), col.truncate && TRUNCATE_CELL, narrow && NARROW_CELL, col.className, hidden.has(col.key) && hideClass)}
-                        {...(narrow ? { 'data-label': columnLabel(col) } : {})}
+                        className={cn(alignClass(col.align), col.truncate && TRUNCATE_CELL, narrow && NARROW_CELL, col.className, stacked && STACK_CELL, hidden.has(col.key) && hideClass)}
+                        {...(labelled ? { 'data-label': columnLabel(col) } : {})}
                         {...(col.truncate ? { 'data-truncate': '' } : {})}
                         {...(fullText ? { title: fullText } : {})}
                       >
@@ -687,7 +759,7 @@ export function DataTable<T>({
                     {moreColumn && (
                       // The popover is portalled, but its clicks still bubble
                       // through React to this row; they must not open it.
-                      <TableTd className={cn('w-px whitespace-nowrap text-right', narrow && MORE_CELL_NARROW)} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                      <TableTd data-column-more="" className={cn('w-px whitespace-nowrap text-right', narrow && MORE_CELL_NARROW)} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                         <HiddenColumnsButton
                           count={hiddenCols.length}
                           rowLabel={rowName(columns.find((c) => !hidden.has(c.key)), row, rowIndex) || keyField(row)}

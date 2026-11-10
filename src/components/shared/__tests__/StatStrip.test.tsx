@@ -155,3 +155,12 @@ describe('StatStrip', () => {
     expect(screen.getAllByTestId('stat-strip-separator')).toHaveLength(2);
   });
 });
+
+describe('StatStrip line cluster wraps its bar (2.517.0)', () => {
+  it('the cluster wraps the bar under its label with a column gap, no margin', () => {
+    render(<StatStrip variant="line" items={[{ label: '/ 31 points delivered', value: '16', progress: { value: 16, max: 31 } }]} />);
+    const cluster = screen.getByTestId('stat-strip-cluster');
+    expect(cluster).toHaveClass('flex-wrap', 'gap-x-[18px]');
+    expect(screen.getByTestId('stat-strip-progress').className).not.toContain('ml-[18px]');
+  });
+});

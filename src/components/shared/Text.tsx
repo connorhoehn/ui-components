@@ -54,6 +54,13 @@ export interface TextProps {
    * with `wrap`, which it overrides.
    */
   truncate?: boolean;
+  /**
+   * Wraps to at most this many lines, then ends with an ellipsis (since
+   * 2.517.0): `line-clamp-N` on a block element, long words broken rather
+   * than overflowing, and the whole text as its `title` like `truncate`.
+   * Wins over `truncate` and `wrap`.
+   */
+  clamp?: 2 | 3;
   role?: string;
   'aria-label'?: string;
   'aria-hidden'?: boolean | 'true' | 'false';
@@ -62,6 +69,14 @@ export interface TextProps {
   id?: string;
   children?: ReactNode;
 }
+
+// Written out whole (Tailwind scans source text). No `block`: `line-clamp-N`
+// sets its own `display: -webkit-box`, and a display utility beside it wins in
+// the stylesheet's order and turns the clamp off.
+const CLAMP: Record<2 | 3, string> = {
+  2: 'min-w-0 max-w-full line-clamp-2 break-words',
+  3: 'min-w-0 max-w-full line-clamp-3 break-words',
+};
 
 export function Text({
   as = 'span',
@@ -74,18 +89,20 @@ export function Text({
   tone,
   tabular = false,
   truncate = false,
+  clamp,
   ...rest
 }: TextProps) {
-  if (truncate) {
+  if (clamp || truncate) {
     // `Inline` is a flex row, and a flex container cannot ellipsize its text
     // run, so the cut is drawn on a plain element of the same tag.
     const Tag = as;
     const fullText = typeof children === 'string' || typeof children === 'number' ? String(children) : undefined;
-    const cls = ['block min-w-0 max-w-full truncate', size && SIZE[size], weight && WEIGHT[weight], tone && TONE[tone], tabular && 'tabular-nums', className]
+    const cut = clamp ? CLAMP[clamp] : 'block min-w-0 max-w-full truncate';
+    const cls = [cut, size && SIZE[size], weight && WEIGHT[weight], tone && TONE[tone], tabular && 'tabular-nums', className]
       .filter(Boolean).join(' ');
     const { role, id, onClick, ...aria } = rest;
     return (
-      <Tag className={cls} title={title ?? fullText} data-text-truncate="" role={role} id={id} onClick={onClick}
+      <Tag className={cls} title={title ?? fullText} data-text-truncate={clamp ? undefined : ''} data-text-clamp={clamp} role={role} id={id} onClick={onClick}
         aria-label={aria['aria-label']} aria-hidden={aria['aria-hidden']} data-testid={aria['data-testid']}>
         {children}
       </Tag>

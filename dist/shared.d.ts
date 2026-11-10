@@ -3058,6 +3058,14 @@ export declare interface DataTableProps<T> {
      * columns' keys are on the root as `data-hidden-columns`. With `narrow`,
      * the stacked card form (under 40rem) shows every column again. Default
      * `false`.
+     *
+     * Since 2.517.0: the "+N" column has a visible "More" header and a quiet
+     * regular-weight control; at most half the columns hide, and a table that
+     * would hide more (or still overflows with every hideable column gone)
+     * switches to the stacked card form instead (`data-stacked` on the root), so
+     * it never overflows its box. The fit starts over from every column shown
+     * when the box's width, the shown rows, the columns or the fonts change, so
+     * a column hidden for wide content returns when the content narrows.
      */
     responsiveColumns?: boolean;
     className?: string;
@@ -5719,9 +5727,9 @@ export declare interface InlinePlaceholderProps {
 /** @see SurfaceTone — which colour family the placeholder paints in. */
 export declare type InlinePlaceholderTone = SurfaceTone;
 
-export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, children, }: InlinePopoverProps): ReactPortal | null;
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, children, }: InlinePopoverProps): ReactPortal | null;
 
-export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end';
 
 export declare interface InlinePopoverProps {
     /** Ref to the anchor element (the visible trigger). */
@@ -5754,6 +5762,16 @@ export declare interface InlinePopoverProps {
      * composer's supported-commands help. Since 2.442.0.
      */
     kind?: string;
+    /**
+     * Keep clear of every keep-out surface (`[data-uic-keepout]`, e.g. a pinned
+     * composer dock and the question panel above it) that does not contain the
+     * trigger, whichever side of the trigger it is on (since 2.517.0). A panel
+     * that would cover one moves beside it (left, then right) or above it,
+     * whichever fits first; with no room anywhere it stays where it was. The
+     * voice dock's cards use this so a confirmation never covers the panel it
+     * answers. Default false: only the keep-out below the trigger counts.
+     */
+    avoidKeepouts?: boolean;
     children: ReactNode;
 }
 
@@ -11520,7 +11538,7 @@ export declare interface TenantSwitcherProps {
 /** Alias kept for clarity in contexts where "terminal log" reads better. */
 export declare const TerminalLog: typeof LogStream;
 
-declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, truncate, ...rest }: TextProps): JSX.Element;
+declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, truncate, clamp, ...rest }: TextProps): JSX.Element;
 export { Text_2 as Text }
 
 export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
@@ -11569,6 +11587,13 @@ export declare interface TextProps {
      * with `wrap`, which it overrides.
      */
     truncate?: boolean;
+    /**
+     * Wraps to at most this many lines, then ends with an ellipsis (since
+     * 2.517.0): `line-clamp-N` on a block element, long words broken rather
+     * than overflowing, and the whole text as its `title` like `truncate`.
+     * Wins over `truncate` and `wrap`.
+     */
+    clamp?: 2 | 3;
     role?: string;
     'aria-label'?: string;
     'aria-hidden'?: boolean | 'true' | 'false';
