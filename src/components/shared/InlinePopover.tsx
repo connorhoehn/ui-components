@@ -15,7 +15,11 @@
 // triggers sitting at the viewport's right edge). 'right' anchors the
 // left edge to the trigger's right edge, top-aligned. 'top-start' /
 // 'top-end' (since 2.517.0) open ABOVE the trigger, start- or end-aligned:
-// for a trigger in a footer row.
+// for a trigger in a footer row. 'sheet' (narrow batch, 2.518.0) is a
+// bottom sheet: the window's width less an 8px gutter, its bottom edge
+// `offset` above the trigger (a footer), at most 45% of the viewport high and
+// scrolling inside; a press on the page above does not dismiss it, so the page
+// stays readable and scrollable while it is up.
 
 import {
   type CSSProperties,
@@ -31,7 +35,7 @@ import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { useOverlayLayer } from '../../lib/overlayStack';
 
-export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end';
+export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 export interface InlinePopoverProps {
   /** Ref to the anchor element (the visible trigger). */
@@ -93,6 +97,10 @@ function getFocusable(root: HTMLElement): HTMLElement[] {
   );
 }
 
+/** The bottom sheet's side gutter and its height cap (a share of the viewport). */
+const SHEET_GUTTER = 8;
+const SHEET_MAX_HEIGHT = '45vh';
+
 /** The width a right-hand flyout needs before it flips to the left. */
 const FLYOUT_MIN_WIDTH = 240;
 
@@ -101,6 +109,17 @@ function computePosition(
   placement: InlinePopoverPlacement,
   offset: number,
 ): CSSProperties {
+  if (placement === 'sheet') {
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 0;
+    return {
+      position: 'fixed',
+      left: SHEET_GUTTER,
+      right: SHEET_GUTTER,
+      bottom: Math.max(0, vh - anchor.top + offset),
+      maxHeight: `min(${SHEET_MAX_HEIGHT}, ${Math.max(0, anchor.top - offset - SHEET_GUTTER)}px)`,
+      overflowY: 'auto',
+    };
+  }
   if (placement === 'right') {
     // A flyout from a menu at the window's right edge opens to the LEFT
     // rather than over its own menu (2.390.5).
@@ -286,6 +305,8 @@ export function InlinePopover({
   // transform — the measured rect already includes it.
   useLayoutEffect(() => {
     if (!open || !position) return;
+    // The sheet is placed against the window, not its content: nothing to correct.
+    if (placement === 'sheet') return;
     // One correction per anchor-derived position, or the correction's own
     // re-render would measure and correct again forever.
     if (clampedRef.current) return;
@@ -362,7 +383,7 @@ export function InlinePopover({
     }
     if (!changed) return;
     setPosition({ position: 'fixed', top, left, maxHeight: maxH, overflowY: 'auto' });
-  }, [open, position, avoidKeepouts]);
+  }, [open, position, avoidKeepouts, placement]);
 
   // The correction above runs once per anchor-derived position, so a panel
   // whose content grows AFTER it was placed (a live feed filling in, a tab
@@ -378,6 +399,7 @@ export function InlinePopover({
       const r = panel.getBoundingClientRect();
       if (r.width === 0 && r.height === 0) return;
       if (r.top < 0 || r.bottom > window.innerHeight) recompute();
+      // A sheet does not move with its content; its max height already fits.
     });
     observer.observe(panel);
     return () => observer.disconnect();
@@ -480,7 +502,7 @@ export function InlinePopover({
   // Outside-click dismiss. The trigger itself is excluded so the parent
   // can implement a "click trigger to toggle" pattern without flicker.
   useEffect(() => {
-    if (!open) return;
+    if (!open || placement === 'sheet') return;
     const onDown = (e: MouseEvent) => {
       const target = e.target as Node | null;
       if (!target) return;
@@ -492,7 +514,7 @@ export function InlinePopover({
     };
     document.addEventListener('mousedown', onDown);
     return () => document.removeEventListener('mousedown', onDown);
-  }, [open, onClose, trigger]);
+  }, [open, onClose, trigger, placement]);
 
   if (!open || !position) return null;
   if (typeof document === 'undefined') return null;
@@ -516,6 +538,7 @@ export function InlinePopover({
         // adopting the token is a no-op there and a fix in dark.
         'min-w-[160px] rounded-lg border border-border bg-surface',
         'shadow-lg p-1 text-sm text-text-primary',
+        placement === 'sheet' && 'overscroll-contain',
         className,
       )}
       style={{ ...position, zIndex: layerZ }}

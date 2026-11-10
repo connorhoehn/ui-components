@@ -514,7 +514,7 @@ export { FormWizard } from './FormWizard';
 export type { FormWizardProps, FormWizardSection, FormWizardMode } from './FormWizard';
 export { MarkdownView } from './MarkdownView';
 export type { MarkdownViewProps, MarkdownViewScale } from './MarkdownView';
-export { Tooltip } from './Tooltip';
+export { Tooltip, isTextCut } from './Tooltip';
 export type { TooltipProps, TooltipPlacement } from './Tooltip';
 // The shell's brand mark + workspace switcher (2.441.0).
 export { TenantSwitcher } from './TenantSwitcher';

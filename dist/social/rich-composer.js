@@ -5,12 +5,12 @@ import { t as s } from "../Select-CDxAVVnW.js";
 import { t as c } from "../FormField-BDZIVA7n.js";
 import { t as l } from "../Textarea-Cf4WFXAs.js";
 import { t as u } from "../DecisionPath-MhoLfpvk.js";
-import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-CkkHxdHl.js";
+import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-DQM7VsLz.js";
 import { a as ee, i as v, n as y, r as b, t as x } from "../composerContext-BLn1-Nao.js";
 import { a as S, i as C, n as te, o as ne, r as w, s as T, t as re } from "../ConversationInputs-BaYdcVOy.js";
-import { a as E, c as D, d as O, i as k, l as A, n as ie, o as j, r as M, s as N, t as ae, u as oe } from "../RichChatComposer-hZbLc95Q.js";
-import { t as se } from "../ContextComposer-hzTbItMq.js";
-import { t as P } from "../AgentComposerDock-YsbEFUZa.js";
+import { a as E, c as D, d as O, i as k, l as A, n as ie, o as j, r as M, s as N, t as ae, u as oe } from "../RichChatComposer-D5byPRYi.js";
+import { t as se } from "../ContextComposer-4vkQTskH.js";
+import { t as P } from "../AgentComposerDock-BLgziZYB.js";
 import { useCallback as F, useContext as ce, useEffect as I, useId as le, useMemo as L, useRef as R, useState as z } from "react";
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx

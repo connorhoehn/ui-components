@@ -1954,7 +1954,7 @@ export declare interface IncomingCallPopoverProps {
     'data-testid'?: string;
 }
 
-declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end';
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 /**
  * `null`/`undefined` mean nobody measured; a numeric 0 means somebody did and

@@ -376,6 +376,21 @@ export interface RichChatComposerProps {
   /** Rendered between the formatting controls and the send button. */
   toolbarExtras?: ReactNode;
   /**
+   * The menu form of `toolbarExtras` (narrow batch, 2.518.0). Below `wide`
+   * the strip folds behind `Aa` and, on the one-row idle composer, is not
+   * drawn at all, so a host menu there (`Workflow ▾`) was two taps and a
+   * focus away. While the strip is folded these sections ride the row's
+   * overflow instead: merged at the top of the `?` menu when that menu is
+   * drawn (its trigger turns into `⋯`, named "`foldedMenuLabel` and keyboard
+   * hints"), else as their own `⋯` before Send, named `foldedMenuLabel`. One
+   * tap opens it; it is a menu button, so Enter, Space and the arrow keys
+   * work. With the strip open (wide, or `Aa` on) `toolbarExtras` shows as
+   * before and these sections are not drawn.
+   */
+  foldedMenu?: readonly DropdownMenuSection[];
+  /** The folded menu's name. Default: its first section's label, else "More". */
+  foldedMenuLabel?: string;
+  /**
    * Which formatting controls the strip shows at wide width.
    *
    * - `full` (default): B, I, S, code, link, bulleted, numbered, quote — the
@@ -1139,6 +1154,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   references,
   onRemoveReference,
   toolbarExtras,
+  foldedMenu,
+  foldedMenuLabel,
   toolbar = 'full',
   moreActions,
   moreActionsLabel = 'More actions',
@@ -2478,6 +2495,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // keyboard hints only; formatting belongs to the editor toolbar.
   // A single-mode label has no menu to hold them: they go back to the `⋯`.
   const showMoreActions = !!moreActions?.length && (!docked || singleMode || quiet);
+  // The host's strip menus while the strip is folded (narrow batch): the
+  // toolbar row is not drawn on a single row, so they ride its overflow.
+  const foldMenu = !!foldedMenu?.length && singleRow && !wide && !terminalMode;
+  const foldLabel = foldedMenuLabel ?? foldedMenu?.[0]?.label ?? 'More';
+  // Drawn when the row has a `?` menu: the sections go at its top.
+  const hintsMenuShown = !collapsed && !docked && (!pane || paneTools)
+    && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor));
   const inlineCommand = docked && !!activeCommand && !collapsed && !terminalMode;
   // The prompt card's chip: the typed command, else the host's default.
   const chipCommand = promptCard && !collapsed && !terminalMode
@@ -3556,16 +3580,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             >/ commands</span>
           )}
 
-          {!collapsed && !docked && (!pane || paneTools) && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
+          {hintsMenuShown ? (
             <DropdownMenu
-              trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
-              triggerLabel="Keyboard hints"
-              triggerTitle="Keyboard hints"
+              trigger={<span aria-hidden="true" className={cn('leading-none', foldMenu ? 'text-sm' : 'text-xs font-semibold')}>{foldMenu ? '⋯' : '?'}</span>}
+              triggerLabel={foldMenu ? `${foldLabel} and keyboard hints` : 'Keyboard hints'}
+              triggerTitle={foldMenu ? `${foldLabel} and keyboard hints` : 'Keyboard hints'}
               triggerTestId={`${testId}-hints-toggle`}
               data-testid={`${testId}-hints-menu`}
               align="end"
-              triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary border-0 p-0"
+              triggerClassName={cn('grid h-7 w-7 shrink-0 place-items-center rounded hover:bg-surface-hover hover:text-text-primary border-0 p-0', foldMenu ? 'text-text-secondary' : 'text-text-tertiary')}
+              {...(foldMenu ? { triggerAttributes: { 'data-folded-menu': '' } } : {})}
               sections={[
+                ...(foldMenu ? foldedMenu! : []),
                 // The compact strip's four folded controls, first: they act
                 // on the draft, the hints below only describe keys.
                 ...(formatInHints && editor ? [{
@@ -3583,7 +3609,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   items: suggestions!.map((suggestion) => ({ label: suggestion, onSelect: () => onSuggestion?.(suggestion) })),
                 }] : []),
                 ...(!hintsInRow && resolvedHints.length ? [{
-                  ...((suggestionsInMenu || formatInHints) ? { label: 'Keys' } : {}),
+                  ...((suggestionsInMenu || formatInHints || foldMenu) ? { label: 'Keys' } : {}),
                   items: resolvedHints.map((hint) => ({
                     label: hint.label,
                     trailing: <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>,
@@ -3593,6 +3619,21 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               ]}
             />
           ) : null}
+          {foldMenu && !hintsMenuShown && (
+            // The idle row's overflow: the folded strip's host menus, one tap.
+            <DropdownMenu
+              trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
+              triggerLabel={foldLabel}
+              triggerTitle={foldLabel}
+              triggerTestId={`${testId}-folded-menu`}
+              triggerAttributes={{ 'data-folded-menu': '' }}
+              data-testid={`${testId}-folded-menu-list`}
+              align="end"
+              disabled={blocked}
+              triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover hover:text-text-primary border-0 p-0"
+              sections={[...foldedMenu!]}
+            />
+          )}
 
           {pane && paneTools && modeRowEnd != null && (
             <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>

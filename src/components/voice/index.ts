@@ -1,7 +1,7 @@
 // `@connorhoehn/ui-components/voice` — the voice navigator's primitives
 // (spec: aws-agentcore docs/voice-navigator-spec.md §5).
-export { VoiceDock } from './VoiceDock';
-export type { VoiceDockProps, VoiceDockSize, VoiceDockCardPlacement } from './VoiceDock';
+export { VoiceDock, VOICE_SHEET_QUERY } from './VoiceDock';
+export type { VoiceDockProps, VoiceDockSize, VoiceDockCardPlacement, VoiceDockCardPresentation } from './VoiceDock';
 export { VoiceActivityRing } from './VoiceActivityRing';
 export type { VoiceActivityRingProps } from './VoiceActivityRing';
 export { VoiceTurnStrip, VoiceConfirmCard } from './VoiceTurnStrip';

@@ -2363,7 +2363,7 @@ export declare interface CommandPaletteController {
     query: string;
 }
 
-export declare function CommandPaletteHint({ className, label, size }?: CommandPaletteHintProps): JSX.Element;
+export declare function CommandPaletteHint({ className, label, size, variant }?: CommandPaletteHintProps): JSX.Element;
 
 export declare interface CommandPaletteHintProps {
     className?: string;
@@ -2375,6 +2375,12 @@ export declare interface CommandPaletteHintProps {
      * "⌘K Search"). Since 2.385.0.
      */
     size?: 'sm' | 'md';
+    /**
+     * `chip` (default): "⌘K Search". `icon` (narrow batch, 2.518.0): a 28px
+     * square with a magnifier and no words, for a one-row phone header; the
+     * label stays its accessible name and tooltip.
+     */
+    variant?: 'chip' | 'icon';
 }
 
 export declare interface CommandPaletteProps {
@@ -2927,8 +2933,19 @@ export declare interface DataTableColumn<T> {
      * text is the cell's `title`: the raw value when it is a string or number,
      * else `getFilterText(row)`, else the rendered cell's text. `data-truncate`
      * on the cell.
+     *
+     * Since 2.518.0 (narrow batch) the full text is a `Tooltip` on hover and on
+     * focus (a link in the cell is reachable by keyboard, which a native
+     * `title` never was), shown only when the text is actually cut; the cell
+     * carries it as `data-full-text` instead of `title`.
      */
     truncate?: boolean;
+    /**
+     * With `truncate` (since 2.518.0): `two-lines` lets the value wrap onto a
+     * second line before it is cut (a line clamp), for titles that are the
+     * row's name — a decision, an initiative. Default `one-line`.
+     */
+    wrap?: 'one-line' | 'two-lines';
     /**
      * With `responsiveColumns` on the table (since 2.516.0): `1` (and the
      * default) is always shown; higher numbers hide first as the table's own
@@ -5729,7 +5746,7 @@ export declare type InlinePlaceholderTone = SurfaceTone;
 
 export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, children, }: InlinePopoverProps): ReactPortal | null;
 
-export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end';
+export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 export declare interface InlinePopoverProps {
     /** Ref to the anchor element (the visible trigger). */
@@ -5930,6 +5947,9 @@ export declare interface InviteToCallDialogProps {
 export declare function isBuiltinLeafKind(kind: string): kind is BuiltinLeafKind;
 
 export declare function isRichHeaderContent(kind: HeaderContentKind | undefined): boolean;
+
+/** True when `el` (or its first child) shows less than its content: an ellipsis or a clamp. */
+export declare function isTextCut(el: HTMLElement | null): boolean;
 
 /** Italic formatting, drawn as a glyph rather than changing the control font. */
 export declare function ItalicIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -10696,7 +10716,7 @@ export declare interface StatsLeaf {
     dense?: boolean;
 }
 
-export declare function StatStrip({ items, frameless, connectors, variant, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, variant, size: sizeProp, wrapSeparators, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
 export declare interface StatStripConnector {
@@ -10782,6 +10802,21 @@ export declare interface StatStripProps {
      * reads a size up from the 14px tabs.
      */
     size?: 'md' | 'sm';
+    /**
+     * `line` only (narrow batch, 2.518.0): what a wrapped line does with the
+     * "•" between clusters.
+     *
+     * `drop` (default): no line starts or ends with a separator. Each cluster
+     * after the first LEADS with its separator, and the row sits one separator
+     * width left of a clipping frame, so a separator that lands at the start of
+     * a line is drawn outside the frame. Pure layout — no measuring, no
+     * re-render on resize — and the lines read "16 / 31 points delivered ▬▬▭"
+     * / "1 agent running • $7.76 of $75 spent" at a phone's width.
+     *
+     * `trail`: the 2.392.0 behaviour — the separator trails the previous
+     * cluster, so a line never starts with one but can end with one.
+     */
+    wrapSeparators?: 'drop' | 'trail';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -12035,7 +12070,7 @@ export declare interface ToolCallStripProps {
     className?: string;
 }
 
-export declare function Tooltip({ content, children, placement, openDelay, closeDelay, disabled, className, 'data-testid': testId, }: TooltipProps): JSX.Element;
+export declare function Tooltip({ content, children, placement, openDelay, closeDelay, disabled, className, triggerClassName, onlyWhenTruncated, 'data-testid': testId, }: TooltipProps): JSX.Element;
 
 export declare type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
@@ -12049,6 +12084,17 @@ export declare interface TooltipProps {
     closeDelay?: number;
     disabled?: boolean;
     className?: string;
+    /**
+     * Classes for the wrapping span, in place of its default `inline-flex`
+     * (narrow batch, 2.518.0) — `block min-w-0` around a cell's cut text.
+     */
+    triggerClassName?: string;
+    /**
+     * Open only while the trigger's first child is cut — its content wider or
+     * taller than its box (an ellipsis, a line clamp). Checked as it opens, so
+     * a value that fits shows no tooltip. Since 2.518.0.
+     */
+    onlyWhenTruncated?: boolean;
     'data-testid'?: string;
 }
 

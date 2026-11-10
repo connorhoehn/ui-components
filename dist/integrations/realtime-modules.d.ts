@@ -2451,7 +2451,7 @@ export declare interface IncomingCallToastProps {
     'data-testid'?: string;
 }
 
-declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end';
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 declare interface KeyValueItem {
     label: string;

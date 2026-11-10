@@ -11,6 +11,9 @@ export declare const VOICE_PHASE_LABEL: Record<VoicePhase, string>;
 
 export declare const VOICE_PHASES: readonly VoicePhase[];
 
+/** The window width under which `cardPresentation="auto"` opens a sheet. */
+export declare const VOICE_SHEET_QUERY = "(max-width: 39.99rem)";
+
 export declare function VoiceActivityRing({ level, outputLevel, phase, size, label, className, 'data-testid': testId, }: VoiceActivityRingProps): JSX.Element;
 
 export declare interface VoiceActivityRingProps {
@@ -102,10 +105,13 @@ export declare interface VoiceConfirmResult {
 
 export declare type VoiceDecision = 'approve' | 'reject';
 
-export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, pendingChoice, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, size, startLabel, transcriptOpen, onToggleTranscript, onOpenLog, turns, keepTranscript, onKeepTranscriptChange, pulse, cardPlacement: cardPlacementProp, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
+export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, pendingChoice, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, size, startLabel, transcriptOpen, onToggleTranscript, onOpenLog, turns, keepTranscript, onKeepTranscriptChange, pulse, cardPlacement: cardPlacementProp, cardPresentation, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
 
 /** Where the dock's cards open against its row. Since 2.517.0. */
 export declare type VoiceDockCardPlacement = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
+
+/** How the dock's cards open. Since 2.518.0. */
+export declare type VoiceDockCardPresentation = 'auto' | 'popover' | 'sheet';
 
 export declare interface VoiceDockProps {
     phase: VoicePhase;
@@ -174,6 +180,18 @@ export declare interface VoiceDockProps {
      * moves beside or above the panel it answers instead of covering it.
      */
     cardPlacement?: VoiceDockCardPlacement;
+    /**
+     * How the confirmation and choice cards open (narrow batch, 2.518.0).
+     * `auto` (default): a bottom sheet while the window is under 40rem wide
+     * (a phone), else the popover `cardPlacement` describes. `sheet`: always a
+     * bottom sheet — the window's width less an 8px gutter, its bottom edge just
+     * above the dock's footer (the nearest `<footer>` or `[data-uic-footer]`
+     * ancestor, else the dock's row), at most 45% of the viewport high and
+     * scrolling inside; the page above stays readable and scrollable, and a
+     * press on it does not cancel the card (Cancel and Escape do). `popover`:
+     * never a sheet.
+     */
+    cardPresentation?: VoiceDockCardPresentation;
     className?: string;
     /** The dock's root element. */
     ref?: React.Ref<HTMLDivElement>;

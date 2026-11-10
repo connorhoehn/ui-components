@@ -708,6 +708,20 @@ export function ContextComposerBase({
       }]}
     />
   ) : null;
+  // The same rows as the folded strip's overflow at narrow width (narrow
+  // batch): one tap from the idle row, not focus → Aa → Workflow.
+  const foldedWorkflows: DropdownMenuSection[] | undefined = workflowRows.length > 0 && !(readOnlyOn || !!disabled) ? [{
+    label: 'Workflow',
+    items: workflowRows.map((w) => ({
+      label: w.label,
+      description: w.description,
+      disabled: w.disabled,
+      disabledReason: w.disabledReason,
+      active: draft?.command?.trigger === workflowTrigger && draft?.command?.argument?.id === w.id,
+      onSelect: () => pickWorkflow(w.id),
+      'data-testid': `${testId}-workflow-${w.id}`,
+    })),
+  }] : undefined;
   const extras = workflowMenu || shareButton || toolbarExtras != null
     ? <>{workflowMenu}{shareButton}{toolbarExtras}</>
     : undefined;
@@ -855,6 +869,7 @@ export function ContextComposerBase({
                 {...(submitDisabledReason ? { submitDisabledReason } : {})}
                 maxInputHeight={maxInputHeight}
                 toolbarExtras={extras}
+                {...(foldedWorkflows ? { foldedMenu: foldedWorkflows, foldedMenuLabel: 'Workflow' } : {})}
                 submitLead={submitLead}
                 modeRowEnd={modeRowEnd != null || collapsible ? <>{modeRowEnd}{collapsible && !header && <IconButton size="sm" aria-label="Collapse composer"
                   data-composer-readonly-allow={readOnlyOn ? 'Collapse composer' : undefined}

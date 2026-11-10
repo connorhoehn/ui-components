@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
 import { VoiceDock } from '../VoiceDock';
 import { avoidKeepoutBoxes } from '../../shared/InlinePopover';
 import { VoiceActivityRing } from '../VoiceActivityRing';
@@ -611,6 +611,68 @@ describe('VoiceDock card placement (2.517.0)', () => {
     expect(screen.getByTestId('voice-dock-pending')).toHaveAttribute('data-placement', 'bottom-start');
     rerender(<VoiceDock {...dockBase} size="footer" cardPlacement="top-end" phase="confirming" pending={base} />);
     expect(screen.getByTestId('voice-dock-pending')).toHaveAttribute('data-placement', 'top-end');
+  });
+});
+
+describe('VoiceDock bottom sheet at phone width (narrow batch)', () => {
+  const base = { title: 'Resolve "Cutover order"', onConfirm: vi.fn(), onCancel: vi.fn() };
+  const mockMatchMedia = (matches: boolean) => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches, media: query, onchange: null,
+      addEventListener: vi.fn(), removeEventListener: vi.fn(), addListener: vi.fn(), removeListener: vi.fn(), dispatchEvent: vi.fn(),
+    }));
+  };
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  it('auto: under 40rem the card is a sheet above the footer, the window wide, capped at 45vh, scrolling inside', () => {
+    mockMatchMedia(true);
+    const footerTop = 700;
+    const { container } = render(<footer data-testid="app-footer"><VoiceDock {...dockBase} size="footer" phase="confirming" pending={base} /></footer>);
+    const footerEl = container.querySelector('footer')!;
+    footerEl.getBoundingClientRect = () => ({ top: footerTop, bottom: 844, left: 0, right: 390, width: 390, height: 144, x: 0, y: footerTop, toJSON: () => ({}) }) as DOMRect;
+    // Re-open so the sheet measures the footer stub.
+    cleanup();
+    const view = render(<footer><VoiceDock {...dockBase} size="footer" phase="confirming" pending={null} /></footer>);
+    view.container.querySelector('footer')!.getBoundingClientRect = footerEl.getBoundingClientRect;
+    view.rerender(<footer><VoiceDock {...dockBase} size="footer" phase="confirming" pending={base} /></footer>);
+    const pop = screen.getByTestId('voice-dock-pending');
+    expect(pop).toHaveAttribute('data-placement', 'sheet');
+    expect(pop.className).not.toContain('w-md');
+    expect(pop.className).toContain('overscroll-contain');
+    expect(pop.style.position).toBe('fixed');
+    expect(pop.style.left).toBe('8px');
+    expect(pop.style.right).toBe('8px');
+    expect(pop.style.bottom).toBe(`${window.innerHeight - footerTop + 6}px`);
+    expect(pop.style.maxHeight).toContain('45vh');
+    expect(pop.style.overflowY).toBe('auto');
+    expect(screen.getByTestId('voice-confirm-card')).toBeInTheDocument();
+  });
+
+  it('a press on the page above does not cancel the sheet; Escape still does', () => {
+    mockMatchMedia(true);
+    const onCancel = vi.fn();
+    render(<div><p data-testid="page">Decision card</p><footer><VoiceDock {...dockBase} size="footer" phase="confirming" pending={{ ...base, onCancel }} /></footer></div>);
+    fireEvent.mouseDown(screen.getByTestId('page'));
+    expect(onCancel).not.toHaveBeenCalled();
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onCancel).toHaveBeenCalled();
+  });
+
+  it('wide windows keep the popover; cardPresentation forces either', () => {
+    mockMatchMedia(false);
+    const { rerender } = render(<VoiceDock {...dockBase} size="footer" phase="confirming" pending={base} />);
+    expect(screen.getByTestId('voice-dock-pending')).toHaveAttribute('data-placement', 'top-start');
+    rerender(<VoiceDock {...dockBase} size="footer" cardPresentation="sheet" phase="confirming" pending={base} />);
+    expect(screen.getByTestId('voice-dock-pending')).toHaveAttribute('data-placement', 'sheet');
+    mockMatchMedia(true);
+    rerender(<VoiceDock {...dockBase} size="footer" cardPresentation="popover" phase="confirming" pending={base} />);
+    expect(screen.getByTestId('voice-dock-pending')).toHaveAttribute('data-placement', 'top-start');
+  });
+
+  it('the choice card takes the sheet too', () => {
+    mockMatchMedia(true);
+    render(<footer><VoiceDock {...dockBase} size="footer" phase="confirming" pendingChoice={{ title: 'Which item?', candidates: [{ title: 'A', kind: 'initiative' }, { title: 'B', kind: 'initiative' }], onChoose: vi.fn(), onCancel: vi.fn() }} /></footer>);
+    expect(screen.getByTestId('voice-dock-pending-choice')).toHaveAttribute('data-placement', 'sheet');
   });
 });
 

@@ -2949,7 +2949,7 @@ export declare interface InlineMessageEditorProps {
     'data-testid'?: string;
 }
 
-declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end';
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 /** A person who can be invited. Thin on purpose so callers can map a
  *  presence roster straight in without dragging in PresenceUser. */

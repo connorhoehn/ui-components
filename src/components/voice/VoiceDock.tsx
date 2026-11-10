@@ -110,6 +110,18 @@ export interface VoiceDockProps {
    * moves beside or above the panel it answers instead of covering it.
    */
   cardPlacement?: VoiceDockCardPlacement;
+  /**
+   * How the confirmation and choice cards open (narrow batch, 2.518.0).
+   * `auto` (default): a bottom sheet while the window is under 40rem wide
+   * (a phone), else the popover `cardPlacement` describes. `sheet`: always a
+   * bottom sheet — the window's width less an 8px gutter, its bottom edge just
+   * above the dock's footer (the nearest `<footer>` or `[data-uic-footer]`
+   * ancestor, else the dock's row), at most 45% of the viewport high and
+   * scrolling inside; the page above stays readable and scrollable, and a
+   * press on it does not cancel the card (Cancel and Escape do). `popover`:
+   * never a sheet.
+   */
+  cardPresentation?: VoiceDockCardPresentation;
   className?: string;
   /** The dock's root element. */
   ref?: React.Ref<HTMLDivElement>;
@@ -121,9 +133,31 @@ export type VoiceDockSize = 'footer' | 'panel';
 /** Where the dock's cards open against its row. Since 2.517.0. */
 export type VoiceDockCardPlacement = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
 
+/** How the dock's cards open. Since 2.518.0. */
+export type VoiceDockCardPresentation = 'auto' | 'popover' | 'sheet';
+
+/** The window width under which `cardPresentation="auto"` opens a sheet. */
+export const VOICE_SHEET_QUERY = '(max-width: 39.99rem)';
+
+function useMatchMedia(query: string, enabled: boolean): boolean {
+  const read = () => enabled && typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(query).matches;
+  const [matches, setMatches] = useState(read);
+  useEffect(() => {
+    if (!enabled || typeof window === 'undefined' || typeof window.matchMedia !== 'function') { setMatches(false); return undefined; }
+    const mq = window.matchMedia(query);
+    const update = () => setMatches(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, [query, enabled]);
+  return matches;
+}
+
 // The cards' width: enough for a title on two lines and the note field, never
 // the whole footer's width, and never wider than the window.
 const CARD_WIDTH = 'w-md max-w-[calc(100vw-1rem)]';
+// The sheet spans the window (left and right are set by the popover).
+const SHEET_CLASS = 'w-auto p-2 shadow-xl';
 
 const TONE: Record<VoicePhase, StatusPillTone> = {
   off: 'neutral',
@@ -173,6 +207,7 @@ export function VoiceDock({
   onKeepTranscriptChange,
   pulse = false,
   cardPlacement: cardPlacementProp,
+  cardPresentation = 'auto',
   className,
   ref,
   'data-testid': testId = 'voice-dock',
@@ -204,7 +239,15 @@ export function VoiceDock({
   const pillTitle = phase === 'unavailable' ? unavailableReason : undefined;
   const label = VOICE_PHASE_LABEL[phase];
   const footer = size === 'footer';
-  const cardPlacement = cardPlacementProp ?? (footer ? 'top-start' : 'bottom-start');
+  const narrowWindow = useMatchMedia(VOICE_SHEET_QUERY, cardPresentation === 'auto');
+  const sheet = cardPresentation === 'sheet' || (cardPresentation === 'auto' && narrowWindow);
+  const cardPlacement = sheet ? 'sheet' : cardPlacementProp ?? (footer ? 'top-start' : 'bottom-start');
+  // The sheet sits on the footer the dock lives in, not on the dock's own row
+  // (a phone footer wraps to several rows; the card must clear all of them).
+  const anchorRef = useRef<HTMLElement | null>(null);
+  anchorRef.current = sheet
+    ? rowRef.current?.closest<HTMLElement>('footer, [data-uic-footer]') ?? rowRef.current
+    : rowRef.current;
 
   return (
     <Stack
@@ -371,12 +414,12 @@ export function VoiceDock({
       )}
       {pending ? (
         <InlinePopover
-          trigger={rowRef}
+          trigger={anchorRef}
           open={showCard}
           onClose={pending.onCancel}
           placement={cardPlacement}
-          avoidKeepouts
-          className={CARD_WIDTH}
+          avoidKeepouts={!sheet}
+          className={sheet ? SHEET_CLASS : CARD_WIDTH}
           aria-label={`Confirm: ${pending.title}`}
           kind="voice-confirm"
           data-testid={`${testId}-pending`}
@@ -386,12 +429,12 @@ export function VoiceDock({
       ) : null}
       {pendingChoice ? (
         <InlinePopover
-          trigger={rowRef}
+          trigger={anchorRef}
           open={showChoice}
           onClose={pendingChoice.onCancel}
           placement={cardPlacement}
-          avoidKeepouts
-          className={CARD_WIDTH}
+          avoidKeepouts={!sheet}
+          className={sheet ? SHEET_CLASS : CARD_WIDTH}
           aria-label={`Choose: ${pendingChoice.title}`}
           kind="voice-choice"
           data-testid={`${testId}-pending-choice`}

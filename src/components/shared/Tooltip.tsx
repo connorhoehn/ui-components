@@ -38,7 +38,25 @@ export interface TooltipProps {
   closeDelay?: number;
   disabled?: boolean;
   className?: string;
+  /**
+   * Classes for the wrapping span, in place of its default `inline-flex`
+   * (narrow batch, 2.518.0) — `block min-w-0` around a cell's cut text.
+   */
+  triggerClassName?: string;
+  /**
+   * Open only while the trigger's first child is cut — its content wider or
+   * taller than its box (an ellipsis, a line clamp). Checked as it opens, so
+   * a value that fits shows no tooltip. Since 2.518.0.
+   */
+  onlyWhenTruncated?: boolean;
   'data-testid'?: string;
+}
+
+/** True when `el` (or its first child) shows less than its content: an ellipsis or a clamp. */
+export function isTextCut(el: HTMLElement | null): boolean {
+  const box = (el?.firstElementChild as HTMLElement | null) ?? el;
+  if (!box) return false;
+  return box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1;
 }
 
 function computePosition(anchor: DOMRect, tip: DOMRect, placement: TooltipPlacement): CSSProperties {
@@ -65,6 +83,8 @@ export function Tooltip({
   closeDelay = 100,
   disabled = false,
   className,
+  triggerClassName,
+  onlyWhenTruncated = false,
   'data-testid': testId = 'tooltip',
 }: TooltipProps) {
   const [open, setOpen] = useState(false);
@@ -101,9 +121,10 @@ export function Tooltip({
 
   const scheduleOpen = useCallback(() => {
     if (disabled) return;
+    if (onlyWhenTruncated && !isTextCut(triggerRef.current)) return;
     clear();
     timer.current = setTimeout(() => setOpen(true), openDelay);
-  }, [clear, disabled, openDelay]);
+  }, [clear, disabled, openDelay, onlyWhenTruncated]);
 
   const scheduleClose = useCallback(() => {
     clear();
@@ -119,13 +140,14 @@ export function Tooltip({
     <>
       <span
         ref={triggerRef}
-        className="inline-flex"
+        className={triggerClassName ?? 'inline-flex'}
         onMouseEnter={scheduleOpen}
         onMouseLeave={scheduleClose}
         onFocus={(event) => {
           // React portal focus bubbles through its trigger even though the
           // menu is outside this span. Do not reopen the trigger's tooltip.
           if (disabled || !event.currentTarget.contains(event.target)) return;
+          if (onlyWhenTruncated && !isTextCut(triggerRef.current)) return;
           clear();
           setOpen(true);
         }}

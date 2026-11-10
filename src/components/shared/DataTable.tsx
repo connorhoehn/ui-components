@@ -59,8 +59,19 @@ export interface DataTableColumn<T> {
    * text is the cell's `title`: the raw value when it is a string or number,
    * else `getFilterText(row)`, else the rendered cell's text. `data-truncate`
    * on the cell.
+   *
+   * Since 2.518.0 (narrow batch) the full text is a `Tooltip` on hover and on
+   * focus (a link in the cell is reachable by keyboard, which a native
+   * `title` never was), shown only when the text is actually cut; the cell
+   * carries it as `data-full-text` instead of `title`.
    */
   truncate?: boolean;
+  /**
+   * With `truncate` (since 2.518.0): `two-lines` lets the value wrap onto a
+   * second line before it is cut (a line clamp), for titles that are the
+   * row's name — a decision, an initiative. Default `one-line`.
+   */
+  wrap?: 'one-line' | 'two-lines';
   /**
    * With `responsiveColumns` on the table (since 2.516.0): `1` (and the
    * default) is always shown; higher numbers hide first as the table's own
@@ -218,6 +229,9 @@ const SENTENCE_HEADER = 'normal-case tracking-normal';
 // column's share instead of its content's width; the inner span cuts the
 // text. The narrow (stacked card) form undoes the cap.
 const TRUNCATE_CELL = 'max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:max-w-none';
+// Two lines, then the clamp: the cell wraps (no nowrap) and the inner span clamps.
+const CLAMP_CELL = 'max-w-0 overflow-hidden @max-[40rem]:max-w-none';
+const CLAMP_TEXT = 'line-clamp-2 whitespace-normal break-words';
 
 /** The full text a truncating cell shows as its `title`. */
 function truncateTitle<T>(col: DataTableColumn<T>, row: T, content: ReactNode): string {
@@ -747,12 +761,16 @@ export function DataTable<T>({
                       <TableTd
                         key={col.key}
                         numeric={col.numeric}
-                        className={cn(alignClass(col.align), col.truncate && TRUNCATE_CELL, narrow && NARROW_CELL, col.className, stacked && STACK_CELL, hidden.has(col.key) && hideClass)}
+                        className={cn(alignClass(col.align), col.truncate && (col.wrap === 'two-lines' ? CLAMP_CELL : TRUNCATE_CELL), narrow && NARROW_CELL, col.className, stacked && STACK_CELL, hidden.has(col.key) && hideClass)}
                         {...(labelled ? { 'data-label': columnLabel(col) } : {})}
-                        {...(col.truncate ? { 'data-truncate': '' } : {})}
-                        {...(fullText ? { title: fullText } : {})}
+                        {...(col.truncate ? { 'data-truncate': col.wrap === 'two-lines' ? 'two-lines' : '' } : {})}
+                        {...(fullText ? { 'data-full-text': fullText } : {})}
                       >
-                        {col.truncate ? <span className="block min-w-0 truncate">{content}</span> : content}
+                        {col.truncate ? (
+                          <Tooltip content={fullText} disabled={!fullText} onlyWhenTruncated triggerClassName="block min-w-0" data-testid="datatable-cell-tooltip">
+                            <span className={cn('block min-w-0', col.wrap === 'two-lines' ? CLAMP_TEXT : 'truncate')}>{content}</span>
+                          </Tooltip>
+                        ) : content}
                       </TableTd>
                       );
                     })}
