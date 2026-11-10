@@ -105,6 +105,12 @@ export interface SubjectFrameDisclosure {
   /** A control in the summary row ("+ Add"). */
   action?: ReactNode;
   defaultOpen?: boolean;
+  /**
+   * The disclosure's test id (since 2.516.1). Default
+   * `<frame testid>-disclosure-<id>` (unchanged), so a host moving a
+   * hand-built inspector onto the frame can keep the ids its specs read.
+   */
+  'data-testid'?: string;
   children: ReactNode;
 }
 
@@ -229,7 +235,7 @@ export function SubjectFrame({
                     key={d.id}
                     variant="plain"
                     defaultOpen={d.defaultOpen}
-                    data-testid={`${testId}-disclosure-${d.id}`}
+                    data-testid={d['data-testid'] ?? `${testId}-disclosure-${d.id}`}
                     summary={(
                       <Inline gap="sm" align="center" justify="between" wrap={false} className="w-full min-w-0">
                         <Inline gap="xs" align="center" wrap={false} className="min-w-0">

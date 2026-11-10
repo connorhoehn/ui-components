@@ -1819,7 +1819,7 @@ export declare interface ChipProps {
      * debugger or terminal pane.
      */
     palette?: ChipPalette;
-    /** `lg` since 2.396.0: 14px regular text, 10px × 4px padding, 6px corners. */
+    /** `lg` since 2.396.0: 14px regular text, 12px × 4px padding (10px before 2.516.1), 6px corners. */
     size?: 'lg' | 'md' | 'sm' | 'xs';
     /** Solid fill (dark bg + white text) instead of soft tint. */
     solid?: boolean;
@@ -2892,7 +2892,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -2951,6 +2951,19 @@ export declare interface DataTableProps<T> {
     onRowClick?: (row: T) => void;
     /** Per-row trailing action cell (buttons, menu, etc.). */
     rowActions?: (row: T) => ReactNode;
+    /**
+     * The actions column's header text (since 2.516.1). Default "Actions"
+     * (unchanged). It is also the column's accessible name when
+     * `rowActionsHeaderHidden`.
+     */
+    rowActionsHeader?: ReactNode;
+    /**
+     * Draw the actions column with an empty visible header (since 2.516.1): the
+     * header text stays as screen-reader-only text, so the column keeps its
+     * name. Default false (the visible "Actions" header, unchanged). Marker
+     * `data-row-actions-header="visible|hidden"` on the header cell.
+     */
+    rowActionsHeaderHidden?: boolean;
     /** Show a global search input. Default: false. */
     searchable?: boolean;
     searchPlaceholder?: string;
@@ -4354,7 +4367,11 @@ export declare interface FilePickerButtonProps {
     multiple?: boolean;
     /** `secondary` is a 36px bordered button, `primary` the brand one. */
     variant?: 'secondary' | 'primary';
-    /** `md` (default) is 36px tall; `sm` (since 2.456.1) is the 32px header-action height. */
+    /**
+     * `md` (default) is 36px tall, `Button md`'s height; `sm` (since 2.456.1) is
+     * `Button sm`'s 28px (`--ui-control-sm`; 32px before 2.516.1), so a header
+     * title beside it centres on the same line as beside a small Button.
+     */
     size?: 'sm' | 'md';
     icon?: ReactNode;
     disabled?: boolean;
@@ -9699,7 +9716,7 @@ export declare function SendIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** Wireframe on (or off) for every mesh material of the model. Returns false when the scene is unreachable. */
 export declare function setModelWireframe(el: unknown, on: boolean): boolean;
 
-export declare function SettingsLayout({ title, titleAs: TitleTag, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, narrow, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
+export declare function SettingsLayout({ title, titleAs: TitleTag, titleSize, contentAs: Content, contentLabel, gutter, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, narrow, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
 export declare interface SettingsLayoutProps {
     /** Page title shown above the rail. */
@@ -9710,6 +9727,30 @@ export declare interface SettingsLayoutProps {
      * size (14px semibold) is the same either way.
      */
     titleAs?: 'h1' | 'h2' | 'h3' | 'div';
+    /**
+     * The title's size (since 2.516.1). `panel` (default, unchanged): 14px
+     * semibold, a settings panel's title. `page`: 20px semibold on a 28px line,
+     * the page title the other page templates draw; `SettingsPage` passes it.
+     * Marker `data-title-size`.
+     */
+    titleSize?: 'panel' | 'page';
+    /**
+     * The element of the scrolling section body (since 2.516.1). Default `main`
+     * (unchanged, with `role="main"`). A layout inside a host that already has
+     * its `<main>` (an `AppShell`) passes `div` or `section` (name it with
+     * `contentLabel`) so the page keeps one main landmark. `SettingsPage`
+     * defaults to `div`. Marker `data-settings-body="<element>"`.
+     */
+    contentAs?: 'main' | 'section' | 'div';
+    /** `aria-label` for the section body; meaningful with `contentAs="section"`. */
+    contentLabel?: string;
+    /**
+     * Who owns the outer gutter (since 2.516.1). `default` (unchanged): the
+     * narrow header has 12px of top padding. `none`: the frame around the layout
+     * owns it, so the narrow header has no top padding. `SettingsPage` passes its
+     * own `gutter` through. Marker `data-settings-gutter`.
+     */
+    gutter?: 'default' | 'none';
     /** Optional secondary line under the title. */
     subtitle?: ReactNode;
     /** Section list. The first section is selected by default. */
@@ -9766,9 +9807,9 @@ export declare interface SettingsLayoutProps {
  *     { id: 'members', label: 'Members', content: <MembersForm /> },
  *   ]} />
  */
-export declare function SettingsPage({ breadcrumbs, titleAs, gutter, className, 'data-testid': testId, 'data-page-spec': spec, ...layout }: SettingsPageProps): JSX.Element;
+export declare function SettingsPage({ breadcrumbs, titleAs, titleSize, contentAs, gutter, className, 'data-testid': testId, 'data-page-spec': spec, ...layout }: SettingsPageProps): JSX.Element;
 
-export declare interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
+export declare interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style' | 'gutter'> {
     /** The trail above the settings rail. */
     breadcrumbs?: BreadcrumbItem[];
     /**
@@ -9776,7 +9817,24 @@ export declare interface SettingsPageProps extends Omit<SettingsLayoutProps, 'st
      * page had no heading): the page title, as the other five templates draw it.
      */
     titleAs?: SettingsLayoutProps['titleAs'];
-    /** Default `page` — the trail at `--ui-page-gutter`. The rail stays flush. */
+    /**
+     * The title's size. Default `page` (since 2.516.1): 20px semibold on a 28px
+     * line, the page title the other five templates draw (it was 14px). `panel`
+     * restores the 14px title.
+     */
+    titleSize?: SettingsLayoutProps['titleSize'];
+    /**
+     * The section body's element. Default `div` (since 2.516.1; it was `main`):
+     * a page template sits inside its shell's `<main>`, as the other five
+     * templates do, so it draws no landmark of its own. Pass `main` for a page
+     * rendered without a shell.
+     */
+    contentAs?: SettingsLayoutProps['contentAs'];
+    /**
+     * Default `page` — the trail at `--ui-page-gutter`. The rail stays flush.
+     * `none` (the frame owns the gutter) also drops the narrow header's 12px top
+     * padding (since 2.516.1, `SettingsLayout gutter="none"`).
+     */
     gutter?: PageGutter;
     /** Set by `PageFromSpec`: the spec template this page was built from. */
     'data-page-spec'?: string;
@@ -10802,6 +10860,12 @@ export declare interface SubjectFrameDisclosure {
     /** A control in the summary row ("+ Add"). */
     action?: ReactNode;
     defaultOpen?: boolean;
+    /**
+     * The disclosure's test id (since 2.516.1). Default
+     * `<frame testid>-disclosure-<id>` (unchanged), so a host moving a
+     * hand-built inspector onto the frame can keep the ids its specs read.
+     */
+    'data-testid'?: string;
     children: ReactNode;
 }
 
@@ -11510,7 +11574,11 @@ declare interface TextSelectionData {
 
 declare type TextSize = 'xs' | 'sm' | 'base' | 'lg';
 
-/** `success` / `warning` / `danger` (since 2.515.1): a status line's outcome ("Saved.", "Could not save"). */
+/**
+ * `success` / `warning` / `danger` (since 2.515.1): a status line's outcome ("Saved.", "Could not save").
+ * Drawn in the tone's text ink (`--color-<tone>-fg`, AA on the surface) since 2.516.1; they were the
+ * fill tokens (`text-warning` #d97706 at 3.19:1 on white).
+ */
 declare type TextTone = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'inherit';
 
 declare type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';

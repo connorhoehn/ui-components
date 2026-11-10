@@ -1944,7 +1944,28 @@
       "kind": "style",
       "selector": "[data-rail-inset]",
       "properties": { "paddingLeft": [0, 12, 16] },
-      "owner": "WorkspaceRail header (MasterDetailPage / ListRailLayout / ExplorerLayout, 2.515.12): 16px inset for the tall headings, 12px for the compact strip (was 20 / 14px)"
+      "owner": "WorkspaceRail header (MasterDetailPage / ListRailLayout / ExplorerLayout, 2.515.12): 16px inset for the tall headings, 12px for the compact strip (was 20 / 14px)"    },
+    {
+      "id": "chip.padding",
+      "kind": "style",
+      "selector": "[data-chip]",
+      "properties": { "paddingTop": [0, 4], "paddingBottom": [0, 4], "paddingLeft": [4, 8, 12], "paddingRight": [4, 8, 12] },
+      "owner": "Chip (2.516.1): block padding 0 (4 at lg), sides 4 / 8 / 12px; the height comes from the line box (was 2 / 1px block, 6 / 10px sides)"
+    },
+    {
+      "id": "tabs.segmented-track",
+      "kind": "style",
+      "selector": "[data-tabs-variant=\"segmented\"]",
+      "properties": { "paddingTop": 4, "paddingLeft": 4, "columnGap": 4 },
+      "owner": "Tabs variant=\"segmented\" (2.516.1): the track pads its options 4px and spaces them 4px (was 2px)"
+    },
+    {
+      "id": "settings.page-title",
+      "kind": "style",
+      "selector": "[data-page-template=\"settings\"] [data-settings-title]",
+      "properties": { "fontSize": 20 },
+      "tolerance": 0.1,
+      "owner": "SettingsPage (2.516.1): the page title at 20px, as the other page templates draw it (was 14px)"
     }
   ]
 }

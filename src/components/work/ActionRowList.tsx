@@ -219,7 +219,7 @@ function RowBody({ item, columns, action, size = 'md' }: { item: ActionRowItem; 
       <span className="flex min-w-0 flex-1 flex-col">
         <span className={cn('truncate text-text-primary', sm ? 'text-sm font-medium leading-5' : cn('text-sm leading-6', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium'))} title={typeof item.title === 'string' ? item.title : undefined}>{item.title}</span>
         {hasDescription && (
-          <span className={cn('truncate text-text-secondary', sm ? 'text-xs leading-4' : hasColumns ? 'text-xs leading-[18px]' : 'text-sm leading-5')} data-testid="action-row-description">{item.description}</span>
+          <span className={cn('truncate text-text-secondary', sm ? 'text-xs leading-4' : hasColumns ? 'text-xs leading-[18px]' : 'text-sm leading-5')} title={typeof item.description === 'string' ? item.description : undefined} data-testid="action-row-description">{item.description}</span>
         )}
       </span>
       {item.meta != null && item.meta !== false && (

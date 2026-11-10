@@ -83,6 +83,19 @@ export interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
   /** Per-row trailing action cell (buttons, menu, etc.). */
   rowActions?: (row: T) => ReactNode;
+  /**
+   * The actions column's header text (since 2.516.1). Default "Actions"
+   * (unchanged). It is also the column's accessible name when
+   * `rowActionsHeaderHidden`.
+   */
+  rowActionsHeader?: ReactNode;
+  /**
+   * Draw the actions column with an empty visible header (since 2.516.1): the
+   * header text stays as screen-reader-only text, so the column keeps its
+   * name. Default false (the visible "Actions" header, unchanged). Marker
+   * `data-row-actions-header="visible|hidden"` on the header cell.
+   */
+  rowActionsHeaderHidden?: boolean;
   /** Show a global search input. Default: false. */
   searchable?: boolean;
   searchPlaceholder?: string;
@@ -439,6 +452,8 @@ export function DataTable<T>({
   keyField,
   onRowClick,
   rowActions,
+  rowActionsHeader = 'Actions',
+  rowActionsHeaderHidden = false,
   searchable = false,
   searchPlaceholder = 'Search…',
   pageSize,
@@ -572,7 +587,11 @@ export function DataTable<T>({
                 <span className="sr-only">Hidden columns</span>
               </TableTh>
             )}
-            {rowActions && <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'text-right')}>Actions</TableTh>}
+            {rowActions && (
+              <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'text-right')} data-testid="datatable-actions-header" data-row-actions-header={rowActionsHeaderHidden ? 'hidden' : 'visible'}>
+                {rowActionsHeaderHidden ? <span className="sr-only">{rowActionsHeader}</span> : rowActionsHeader}
+              </TableTh>
+            )}
           </tr>
         </TableHead>
         {/* DataTable stripes its data rows itself (odd index), so skeleton and

@@ -3165,7 +3165,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                       aria-label={`Remove ${label} from this draft`}
                       onClick={() => onRemoveReference(references[0]!.id)}
                       data-testid={`${testId}-context-remove`}
-                      className="-mr-1 grid h-4 w-4 shrink-0 place-items-center rounded-full border-0 bg-transparent p-0 text-[11px] leading-none text-text-tertiary opacity-0 hover:text-text-primary focus:opacity-100 group-hover/chip:opacity-100"
+                      className="-mr-1 grid h-4 w-4 shrink-0 place-items-center rounded-full border-0 bg-transparent p-0 text-xs leading-none text-text-tertiary opacity-0 hover:text-text-primary focus:opacity-100 group-hover/chip:opacity-100"
                     >
                       ×
                     </button>

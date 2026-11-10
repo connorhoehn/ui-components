@@ -102,7 +102,8 @@ function variantContainerClasses(variant: TabsVariant, bar: boolean): string {
     case 'pill':
       return 'inline-flex items-center gap-1';
     case 'segmented':
-      return 'inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5';
+      // Track padding and option gap 4px (2.516.1, G88-O2; were 2px).
+      return 'inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-1 gap-1';
   }
 }
 
@@ -245,6 +246,7 @@ export function Tabs({
       // the views a fold moved into the menu (audit `tabs.reach`).
       data-tabs-overflow={overflowBelow ? 'menu' : 'scroll'}
       data-tabs-hidden={folded ? foldedItems.length : undefined}
+      data-tabs-variant={variant}
       {...(bar ? { 'data-indicator': 'bar' } : {})}
       // A tab row never runs past its column (since 2.446.4): it is capped at
       // the column's width and scrolls inside itself (no scrollbar drawn —

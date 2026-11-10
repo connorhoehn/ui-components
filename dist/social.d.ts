@@ -2543,7 +2543,7 @@ export declare function describeRecordingParticipants(participants: readonly Rec
 
 /** Two-line transcript row. The host owns playback, persistence and full-text
  * inspection; the same action toolbar used by chat owns keyboard navigation. */
-export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, className, onDragStart }: DialogueSegmentProps): JSX.Element;
+export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, reserveActions, className, onDragStart }: DialogueSegmentProps): JSX.Element;
 
 export declare interface DialogueSegmentProps {
     author: string;
@@ -2552,6 +2552,14 @@ export declare interface DialogueSegmentProps {
     metadata?: ReactNode;
     status?: ReactNode;
     actions?: readonly MessageAction[];
+    /**
+     * Keep 96px clear at the end of the metadata line for the hover actions
+     * (the layout before 2.516.1). Default false: the action bar overlays the
+     * line's end on hover or focus, on the row's hover fill, and the line uses
+     * the full width; with no `actions` no bar is drawn. Marker
+     * `data-dialogue-actions="overlay|reserve|none"`.
+     */
+    reserveActions?: boolean;
     className?: string;
     onDragStart?: (event: DragEvent_2<HTMLDivElement>) => void;
 }

@@ -64,7 +64,8 @@ interface ScaleClasses {
   inlineCode: string;
 }
 
-// `md` reproduces the pre-2.388 classes exactly; h4 had no override then and
+// `md` reproduces the pre-2.388 classes, except the h2 top margin, 20px →
+// 16px in 2.516.1 (G88-O4, onto the 4px scale); h4 had no override then and
 // keeps none at `md`.
 const SCALES: Record<MarkdownViewScale, ScaleClasses> = {
   sm: {
@@ -78,7 +79,7 @@ const SCALES: Record<MarkdownViewScale, ScaleClasses> = {
   md: {
     body: 'text-sm',
     h1: 'mb-3 mt-6 text-sm font-semibold',
-    h2: 'mb-2 mt-5 text-sm font-semibold',
+    h2: 'mb-2 mt-4 text-sm font-semibold',
     h3: 'mb-2 mt-4 text-sm font-semibold',
     h4: '',
     inlineCode: 'text-[12px]',
@@ -88,7 +89,7 @@ const SCALES: Record<MarkdownViewScale, ScaleClasses> = {
     body: 'text-base',
     h1: 'mb-3 mt-8 text-xl font-semibold',
     h2: 'mb-2 mt-6 text-base font-semibold',
-    h3: 'mb-2 mt-5 text-base font-semibold',
+    h3: 'mb-2 mt-4 text-base font-semibold',
     h4: 'mb-2 mt-4 text-sm font-semibold',
     inlineCode: 'text-[14px]',
   },
