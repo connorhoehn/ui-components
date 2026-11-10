@@ -2315,10 +2315,16 @@ export declare interface MuteWhileTalkingToastProps {
 
 export declare type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
-export declare function NetworkQualityBadge({ quality, className, style }: NetworkQualityBadgeProps): JSX.Element;
+export declare function NetworkQualityBadge({ quality, label, className, style }: NetworkQualityBadgeProps): JSX.Element;
 
 export declare interface NetworkQualityBadgeProps {
     quality: NetworkQuality;
+    /**
+     * The visible word in place of the default grade ("Good", "Fair", "Poor",
+     * "No Connection"); e.g. "No data" when `dead` means no media is flowing
+     * rather than no connection.
+     */
+    label?: string;
     /**
      * Positioning / spacing classes from the caller. Prefer this over `style`:
      * the badge is normally docked into a corner of the video stage, and with
@@ -3480,6 +3486,30 @@ export declare function VideoIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function VideoOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
+export declare function VideoOverlayChip({ children, tone, mono, details, expanded: expandedProp, defaultExpanded, onExpandedChange, live, title, className, 'data-testid': testId, }: VideoOverlayChipProps): JSX.Element;
+
+export declare interface VideoOverlayChipProps {
+    children: ReactNode;
+    /** Default `neutral`: white text on a dark scrim. Other tones fill with the tone. */
+    tone?: VideoOverlayChipTone;
+    /** Monospace, tabular figures: for numbers that change in place. */
+    mono?: boolean;
+    /** Extra lines revealed by pressing the chip. Makes the chip a button. */
+    details?: ReactNode;
+    /** Controlled disclosure state (with `details`). */
+    expanded?: boolean;
+    /** Uncontrolled initial disclosure state (with `details`). Default false. */
+    defaultExpanded?: boolean;
+    onExpandedChange?: (expanded: boolean) => void;
+    /** Polite live region: assistive tech announces changes. Default false. */
+    live?: boolean;
+    title?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type VideoOverlayChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info';
+
 export declare function VideoPlayer({ src, stream, autoPlay, muted, loop, controls, poster, phase: controlledPhase, className, style, onPhaseChange, onTimeUpdate, }: VideoPlayerProps): JSX.Element;
 
 export declare function VideoPlayerModal({ onClose, sources, title, subtitle, autoPlay, muted, hideDownload, header, footer, className, }: VideoPlayerModalProps): JSX.Element;
@@ -3535,6 +3565,67 @@ export declare interface VideoPlayerSource {
     /** Optional size in bytes — shown next to the label when present. */
     sizeBytes?: number;
 }
+
+export declare function VideoSurface({ videoRef, stream, muted, autoPlay, playsInline, controls, poster, fit, mirrored, aspect, state, placeholder, loadingLabel, error, topLeft, topRight, bottomLeft, bottomRight, center, label, onPlayStateChange, className, 'data-testid': testId, }: VideoSurfaceProps): JSX.Element;
+
+/**
+ * `video` 16:9, `square` 1:1, `portrait` 9:16, `fill` takes the parent's box
+ * (the parent sets the height).
+ */
+export declare type VideoSurfaceAspect = 'video' | 'square' | 'portrait' | 'fill';
+
+export declare type VideoSurfaceFit = 'cover' | 'contain';
+
+export declare interface VideoSurfaceProps {
+    /**
+     * Receives the <video> element. Object refs and callback refs both work;
+     * the element is the same one for the life of the surface.
+     */
+    videoRef?: Ref<HTMLVideoElement>;
+    /**
+     * A MediaStream for the surface to bind to `srcObject`. Omit it when a hook
+     * drives the element through `videoRef`: the surface then never touches
+     * `srcObject` or `src`. `null` clears a stream the surface bound earlier.
+     */
+    stream?: MediaStream | null;
+    /** Default false. A local camera preview should pass true (no echo). */
+    muted?: boolean;
+    /** Default true. */
+    autoPlay?: boolean;
+    /** Default true, so iOS plays inline rather than going full screen. */
+    playsInline?: boolean;
+    /** Native playback controls. Default false. */
+    controls?: boolean;
+    poster?: string;
+    /** How the picture fills the frame. Default `contain` (letterboxed). */
+    fit?: VideoSurfaceFit;
+    /** Flip the picture horizontally (a selfie preview). Overlays are not flipped. */
+    mirrored?: boolean;
+    /** Frame shape. Default `video` (16:9). */
+    aspect?: VideoSurfaceAspect;
+    /** Default `ready`. */
+    state?: VideoSurfaceState;
+    /** Shown in the `empty` state. Default "No video". */
+    placeholder?: ReactNode;
+    /** Shown under the spinner in the `loading` state. Default "Loading…". */
+    loadingLabel?: ReactNode;
+    /** Shown in the `error` state. Default "Video unavailable". */
+    error?: ReactNode;
+    topLeft?: ReactNode;
+    topRight?: ReactNode;
+    bottomLeft?: ReactNode;
+    bottomRight?: ReactNode;
+    center?: ReactNode;
+    /** Accessible name for the <video> element, e.g. "Camera preview". */
+    label?: string;
+    /** Playback state of a bound `stream` (not called without one). */
+    onPlayStateChange?: (state: StreamVideoPlayState) => void;
+    /** Classes on the frame: width, max height, rounding, border. */
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type VideoSurfaceState = 'ready' | 'loading' | 'empty' | 'error';
 
 export declare function ViewerCount({ count, className, style, 'data-testid': testId, }: ViewerCountProps): JSX.Element | null;
 

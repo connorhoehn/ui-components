@@ -115,6 +115,17 @@ export { useTrackStateBump, streamHasUsableVideo } from '../../lib/video/useTrac
 export { StreamVideo } from './StreamVideo';
 export type { StreamVideoProps, StreamVideoPlayState } from './StreamVideo';
 
+export { VideoSurface } from './VideoSurface';
+export type {
+  VideoSurfaceProps,
+  VideoSurfaceFit,
+  VideoSurfaceAspect,
+  VideoSurfaceState,
+} from './VideoSurface';
+
+export { VideoOverlayChip } from './VideoOverlayChip';
+export type { VideoOverlayChipProps, VideoOverlayChipTone } from './VideoOverlayChip';
+
 export { AutoplayGate } from './AutoplayGate';
 export type { AutoplayGateProps } from './AutoplayGate';
 

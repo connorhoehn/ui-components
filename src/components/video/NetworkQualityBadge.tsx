@@ -1,10 +1,17 @@
 import type { CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
+import VisuallyHidden from '../shared/VisuallyHidden';
 
 export type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
 export interface NetworkQualityBadgeProps {
   quality: NetworkQuality;
+  /**
+   * The visible word in place of the default grade ("Good", "Fair", "Poor",
+   * "No Connection"); e.g. "No data" when `dead` means no media is flowing
+   * rather than no connection.
+   */
+  label?: string;
   /**
    * Positioning / spacing classes from the caller. Prefer this over `style`:
    * the badge is normally docked into a corner of the video stage, and with
@@ -37,13 +44,13 @@ const labels: Record<NetworkQuality, string> = {
   dead: 'No Connection',
 };
 
-export function NetworkQualityBadge({ quality, className, style }: NetworkQualityBadgeProps) {
+export function NetworkQualityBadge({ quality, label, className, style }: NetworkQualityBadgeProps) {
   const color = colors[quality];
   const bars = quality === 'good' ? 4 : quality === 'medium' ? 3 : quality === 'poor' ? 2 : 1;
 
   return (
     <div className={cn('inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-black/60 text-white text-[11px] font-medium', className)} style={style}>
-      <svg width="14" height="12" viewBox="0 0 14 12">
+      <svg width="14" height="12" viewBox="0 0 14 12" aria-hidden="true" focusable="false">
         {[0, 1, 2, 3].map(i => (
           <rect
             key={i}
@@ -56,7 +63,8 @@ export function NetworkQualityBadge({ quality, className, style }: NetworkQualit
           />
         ))}
       </svg>
-      <span className={textColorClasses[quality]}>{labels[quality]}</span>
+      <VisuallyHidden>Network quality: </VisuallyHidden>
+      <span className={textColorClasses[quality]}>{label ?? labels[quality]}</span>
     </div>
   );
 }

@@ -12,8 +12,9 @@
 // when joining a call via a background tab).
 
 import { useEffect, useRef, type MutableRefObject } from 'react';
+import { bindMediaStream, type StreamVideoPlayState } from './bindMediaStream';
 
-export type StreamVideoPlayState = 'playing' | 'paused-by-autoplay' | 'ended';
+export type { StreamVideoPlayState };
 
 export interface StreamVideoProps {
   stream: MediaStream;
@@ -42,7 +43,6 @@ export function StreamVideo({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (el.srcObject !== stream) el.srcObject = stream;
     if (videoRef) videoRef.current = el;
 
     const snapshotTracks = (label: string) => {
@@ -60,59 +60,14 @@ export function StreamVideo({
         })),
       });
     };
-    snapshotTracks('bind');
 
-    const emit = (state: StreamVideoPlayState) => {
-      callbackRef.current?.(state);
-    };
-    const handlePlay = () => emit('playing');
-    const handleEnded = () => emit('ended');
-    const handlePause = () => {
-      if (el.ended) emit('ended');
-    };
-
-    const tryPlay = () => {
-      const result = el.play();
-      if (result && typeof result.catch === 'function') {
-        result.catch((err: unknown) => {
-          const name = (err as { name?: string } | null)?.name;
-          if (name === 'NotAllowedError') emit('paused-by-autoplay');
-        });
-      }
-    };
-
-    // Chrome doesn't paint frames from tracks added after a <video> is
-    // already playing, and `el.srcObject = sameStream` is a no-op — so
-    // we have to null first to break the reference, then rebind. Hit
-    // path: WHEP delivers audio first → srcObject bound → play()
-    // succeeds → video track arrives via stream.addTrack() → tile
-    // would stay black without this.
-    const handleStreamMutation = (ev: Event) => {
-      snapshotTracks(`stream ${ev.type}`);
-      el.srcObject = null;
-      el.srcObject = stream;
-      tryPlay();
-    };
-    el.addEventListener('play', handlePlay);
-    el.addEventListener('ended', handleEnded);
-    el.addEventListener('pause', handlePause);
-    // Guarded — test stubs sometimes pass `{}` as the stream.
-    const streamHasEvents = typeof stream?.addEventListener === 'function';
-    if (streamHasEvents) {
-      stream.addEventListener('addtrack', handleStreamMutation);
-      stream.addEventListener('removetrack', handleStreamMutation);
-    }
-
-    tryPlay();
+    const unbind = bindMediaStream(el, stream, {
+      onPlayState: (state) => callbackRef.current?.(state),
+      onRebind: (reason) => snapshotTracks(reason === 'bind' ? 'bind' : `stream ${reason}`),
+    });
 
     return () => {
-      el.removeEventListener('play', handlePlay);
-      el.removeEventListener('ended', handleEnded);
-      el.removeEventListener('pause', handlePause);
-      if (streamHasEvents) {
-        stream.removeEventListener('addtrack', handleStreamMutation);
-        stream.removeEventListener('removetrack', handleStreamMutation);
-      }
+      unbind();
       if (videoRef && videoRef.current === el) videoRef.current = null;
     };
   }, [stream, videoRef]);

@@ -22,7 +22,7 @@ import {
 
 | Surface | Primary composites |
 |---|---|
-| Inline player | `VideoPlayer`, `StreamVideo`, `AutoplayGate`, `RemoteTileSlot` |
+| Inline player | `VideoPlayer`, `StreamVideo`, `VideoSurface`, `VideoOverlayChip`, `AutoplayGate`, `RemoteTileSlot` |
 | Tile grids | `VideoGrid`, `ParticipantTile`, `NetworkQualityBadge` |
 | Hangout-room | `HangoutLayout`, `HangoutGrid`, `HangoutSpotlight`, `RosterPanel`, `useStableActiveSpeaker` |
 | Call widget | `CallWidget`, `CallControls`, `CallParticipantStrip`, `CallStatsOverlay`, `MuteWhileTalkingToast` |
@@ -41,6 +41,32 @@ Composition: `<CallWidget>` is built from `<CallControls>`,
 `<CallParticipantStrip>` and `<CallStatsOverlay>`; `<HangoutLayout>` is built
 from `<HangoutGrid>`, `<HangoutSpotlight>` and the `useStableActiveSpeaker`
 hysteresis hook.
+
+## A video element a hook drives
+
+`VideoSurface` is the frame for a `<video>` whose source a hook owns: a
+publisher that assigns its captured camera to `srcObject` and never returns
+the stream, or hls.js attaching a playlist. Pass the hook's ref as `videoRef`
+and leave `stream` off; the surface then never reads or writes `srcObject` or
+`src`, and the element stays mounted through every `state` (`ready`,
+`loading`, `empty`, `error`). With `stream` it binds the stream itself, like
+`StreamVideo`. Overlays go in `topLeft` / `topRight` / `bottomLeft` /
+`bottomRight` / `center`; use `VideoOverlayChip` for a stat or phase readout
+(with `details` it expands on press) and `NetworkQualityBadge` for signal
+bars (`label` overrides its word). `mirrored` flips the picture, not the
+overlays; with `controls` the bottom slots sit above the native control bar.
+
+```tsx
+const videoRef = useRef<HTMLVideoElement>(null);
+const publisher = usePublisher({ videoRef });
+<VideoSurface
+  videoRef={videoRef}
+  muted
+  label="Camera preview"
+  bottomLeft={<VideoOverlayChip mono details={counters}>{bitrate}</VideoOverlayChip>}
+  topRight={<NetworkQualityBadge quality={quality} />}
+/>
+```
 
 ## Persistent playback
 

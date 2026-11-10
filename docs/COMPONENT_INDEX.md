@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-996 components across 21 entry points; 847 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+998 components across 21 entry points; 849 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -43,6 +43,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | Form controls | `Input` | `@connorhoehn/ui-components/shared` | Every control comes from `forms/`: `Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`, `Switch`, wrapped in `FormField` for label/help/error. | Never a raw `<input>`/`<select>`. |
 | Chat | `ChatPanel` | `@connorhoehn/ui-components/social` | Message list + composer. With realtime-modules, use `WrappedChatPanel` from `/integrations/realtime-modules`. | Don't hand-roll a message list. |
 | Who is here | `PresenceAvatars` | `@connorhoehn/ui-components/shared` | Stacked avatars for the people in a room or document. | Don't draw avatar circles by hand (single avatar: `Avatar`). |
+| A video element a hook drives | `VideoSurface` | `@connorhoehn/ui-components/video` | The framed `<video>` for a hook that owns the element: pass `videoRef` and no `stream`, and the surface never touches `srcObject`/`src` (a publisher assigning its camera, hls.js attaching a playlist); pass `stream` and it binds it. Four corner slots and `center` for overlays (`VideoOverlayChip` for stat or phase readouts, `NetworkQualityBadge` for signal bars), `state` for loading / empty / error, `fit`, `mirrored`, `aspect`. | Not for a call participant (use `ParticipantTile` / `HangoutLayout`), a broadcast stage that picks WHEP or HLS itself (use `StreamStage`), or a file clip (use `VideoPlayer`). Don't wrap a bare `<video>` in hand-rolled overlay `<div>`s. |
 
 ## Contents
 
@@ -54,7 +55,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Buttons & actions](#buttons--actions) (19)
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (109)
-- [Video](#video) (108)
+- [Video](#video) (110)
 - [Docs & editor](#docs--editor) (138)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
@@ -526,8 +527,10 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `TranscriptOverlay` | `@connorhoehn/ui-components/video` | Bottom-of-call live caption display. | `video-transcriptoverlay` |  |
 | `TranscriptPanel` | `@connorhoehn/ui-components/video` | Speaker-attributed transcript display with optional time-aligned highlighting. | `video-transcriptpanel` |  |
 | `VideoGrid` | `@connorhoehn/ui-components/video` | Static N-way grid: 1 / 2×2 / 3×3 / 4×4 column count based on participant count. | `video-videogrid` |  |
+| `VideoOverlayChip` | `@connorhoehn/ui-components/video` | A small readout drawn over video: a phase, a stat line, a status word. | `video-videooverlaychip` |  |
 | `VideoPlayer` | `@connorhoehn/ui-components/video` | — | `video-videoplayer` |  |
 | `VideoPlayerModal` | `@connorhoehn/ui-components/video` | Modal video player for raw MP4 / WebM segments. | `video-videoplayermodal` |  |
+| `VideoSurface` | `@connorhoehn/ui-components/video` | A framed <video> element that a hook can drive, with overlay slots. | `video-videosurface` |  |
 | `ViewerCount` | `@connorhoehn/ui-components/video` | How many people are watching, or nothing at all. | `video-viewercount` |  |
 | `VoiceActivityRing` | `@connorhoehn/ui-components/voice` | The "it is active" visualization for a voice session. |  |  |
 | `VoiceChoiceCard` | `@connorhoehn/ui-components/voice` | The answer to an `ambiguous` result. |  |  |

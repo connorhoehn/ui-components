@@ -451,6 +451,7 @@ const CANONICAL = [
   ['Form controls', 'Input', 'Every control comes from `forms/`: `Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`, `Checkbox`, `Slider`, `ColorInput`, `Switch`, wrapped in `FormField` for label/help/error.', 'Never a raw `<input>`/`<select>`.'],
   ['Chat', 'ChatPanel', 'Message list + composer. With realtime-modules, use `WrappedChatPanel` from `/integrations/realtime-modules`.', 'Don\'t hand-roll a message list.'],
   ['Who is here', 'PresenceAvatars', 'Stacked avatars for the people in a room or document.', 'Don\'t draw avatar circles by hand (single avatar: `Avatar`).'],
+  ['A video element a hook drives', 'VideoSurface', 'The framed `<video>` for a hook that owns the element: pass `videoRef` and no `stream`, and the surface never touches `srcObject`/`src` (a publisher assigning its camera, hls.js attaching a playlist); pass `stream` and it binds it. Four corner slots and `center` for overlays (`VideoOverlayChip` for stat or phase readouts, `NetworkQualityBadge` for signal bars), `state` for loading / empty / error, `fit`, `mirrored`, `aspect`.', 'Not for a call participant (use `ParticipantTile` / `HangoutLayout`), a broadcast stage that picks WHEP or HLS itself (use `StreamStage`), or a file clip (use `VideoPlayer`). Don\'t wrap a bare `<video>` in hand-rolled overlay `<div>`s.'],
 ];
 
 // ---------------------------------------------------------------------------

@@ -57,3 +57,17 @@ describe('NetworkQualityBadge', () => {
     },
   );
 });
+
+describe('NetworkQualityBadge label', () => {
+  it('replaces the visible grade with a caller label', () => {
+    render(<NetworkQualityBadge quality="dead" label="No data" />);
+    expect(screen.getByText('No data')).toBeInTheDocument();
+    expect(screen.queryByText('No Connection')).toBeNull();
+  });
+
+  it('names what the grade measures for assistive tech and hides the bars', () => {
+    const { container } = render(<NetworkQualityBadge quality="good" />);
+    expect(container.textContent).toBe('Network quality: Good');
+    expect(container.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+  });
+});

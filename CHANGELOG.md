@@ -1,3 +1,13 @@
+## 2.520.0
+
+(video surface) A framed `<video>` for hooks that own the element, so a camera preview or an hls.js player no longer hand-rolls its frame and corner chips.
+
+- `VideoSurface` (new, `/video` and root): the frame, letterbox and overlay slots around one `<video>`. `videoRef` (object or callback ref) receives the element, which stays mounted through every `state`. Without `stream` the surface never reads or writes `srcObject` or `src`, so a publisher hook that assigns its own capture, or hls.js `attachMedia`, keeps control; with `stream` it binds it (play attempt, rebind on `addtrack`/`removetrack`, `onPlayStateChange` with `paused-by-autoplay`) and clears `srcObject` when the stream goes away. Props: `muted` (default false), `autoPlay` / `playsInline` (default true), `controls`, `poster`, `fit` (`contain` default, `cover`), `mirrored` (the picture only, never the overlays), `aspect` (`video` default, `square`, `portrait`, `fill`), `state` (`ready` default, `loading` with a spinner and `loadingLabel` (a pill along the top with `controls`, clear of the browser's own spinner), `empty` with `placeholder`, `error` with `error` as `role="alert"`), `label` (the video's accessible name), and slots `topLeft`, `topRight`, `bottomLeft`, `bottomRight`, `center`. Slots pass pointer events through their empty area; with `controls` the bottom slots sit above the native control bar. Markers `data-video-surface`, `data-state`, `data-fit`, `data-aspect`, `data-mirrored`, `data-video-surface-slot`, `data-video-surface-state`. Storybook: Video/VideoSurface (a hook-driven preview, controls, empty, loading, error, every slot, portrait).
+- `VideoOverlayChip` (new, `/video` and root): a readout drawn over video on a dark scrim or a tone fill (`neutral`, `success`, `warning`, `danger`, `info`), `mono` for tabular figures. With `details` it is a disclosure: the summary is a button with `aria-expanded` and the details show under it (`expanded` / `defaultExpanded` / `onExpandedChange`). `live` makes it a polite status region. Storybook: Video/VideoOverlayChip.
+- `NetworkQualityBadge`: new `label?: string` replaces the visible grade (e.g. "No data" when `dead` means no media rather than no connection). The bars are `aria-hidden` and a visually hidden "Network quality:" prefixes the grade, so a screen reader hears what the word grades. Visible output unchanged.
+- `StreamVideo`: its stream binding moved to the shared `bindMediaStream` helper that `VideoSurface` also uses. Props and behaviour unchanged.
+- Component index: a canonical row "A video element a hook drives" points at `VideoSurface`.
+
 ## 2.519.0
 
 (composer + focus batch) Two bugs and three small props found by a headless walk of the agent portal.
