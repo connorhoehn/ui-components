@@ -11,7 +11,7 @@ import { t as A } from "./Input-DiOEvL5h.js";
 import { t as j } from "./Select-CG_PYETL.js";
 import { t as M } from "./InlinePopover-BQTS5egk.js";
 import { t as N } from "./SearchInput-Dk3D9lhs.js";
-import { t as P } from "./DataTable-D05MdfnS.js";
+import { t as P } from "./DataTable-C2f_Msta.js";
 import { t as F } from "./EmptyState-BTnHHhgg.js";
 import { t as ee } from "./DropdownMenu-DoCRgXx4.js";
 import { l as I } from "./railType-OvWDaK-G.js";

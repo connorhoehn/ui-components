@@ -7,12 +7,15 @@
 // Designed to replace hand-rolled `<table>` patterns across admin shells
 // (RunsTable, ActiveRunsTable, EntityTable, identity list pages, etc).
 
-import { isValidElement, useMemo, useState, type ReactNode } from 'react';
+import { isValidElement, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { CollectionToolbar } from './CollectionToolbar';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import { Tooltip } from './Tooltip';
+import { Button } from '../ui/Button';
+import InlinePopover from './InlinePopover';
+import { KeyValue } from './KeyValue';
 import {
   Table,
   TableHead,
@@ -58,6 +61,12 @@ export interface DataTableColumn<T> {
    * on the cell.
    */
   truncate?: boolean;
+  /**
+   * With `responsiveColumns` on the table (since 2.516.0): `1` (and the
+   * default) is always shown; higher numbers hide first as the table's own
+   * width narrows (the highest number first, the rightmost first on a tie).
+   */
+  priority?: number;
   className?: string;
 }
 
@@ -157,6 +166,19 @@ export interface DataTableProps<T> {
    * `data-header-case` on the `<thead>`.
    */
   headerCase?: DataTableHeaderCase;
+  /**
+   * Column priorities (since 2.516.0): as the table's own box narrows, the
+   * columns with a `priority` above 1 hide, the highest number first, until
+   * the rest fit without a horizontal scroll. Measured with a ResizeObserver
+   * on the table's scroller rather than a container query: whether a column
+   * fits depends on its content, which a fixed breakpoint cannot know. Each
+   * row then gets a "+N columns" button whose popover lists that row's hidden
+   * values. Sorting, selection and row clicks are unchanged; the hidden
+   * columns' keys are on the root as `data-hidden-columns`. With `narrow`,
+   * the stacked card form (under 40rem) shows every column again. Default
+   * `false`.
+   */
+  responsiveColumns?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -187,6 +209,127 @@ function truncateTitle<T>(col: DataTableColumn<T>, row: T, content: ReactNode): 
 
 function columnLabel<T>(col: DataTableColumn<T>): string {
   return col.label ?? (typeof col.header === 'string' ? col.header : col.key);
+}
+
+/** A row's name for the hidden-columns popover: its first shown column's text. */
+function rowName<T>(col: DataTableColumn<T> | undefined, row: T, rowIndex: number): string {
+  if (!col) return '';
+  if (col.getFilterText) return col.getFilterText(row);
+  const raw = (row as Record<string, unknown>)[col.key];
+  if (raw != null && typeof raw !== 'object') return String(raw);
+  return col.render ? nodeToFilterText(col.render(row, rowIndex)).replace(/\s+/g, ' ').trim() : '';
+}
+
+/** The order columns hide in: highest `priority` first, the rightmost first on a tie. */
+function hideOrder<T>(columns: DataTableColumn<T>[]): string[] {
+  return columns
+    .map((col, index) => ({ key: col.key, p: col.priority ?? 1, index }))
+    .filter((c) => c.p > 1)
+    .sort((a, b) => b.p - a.p || b.index - a.index)
+    .map((c) => c.key);
+}
+
+// A hidden column's cells: gone in the table, back in the stacked card form.
+const HIDDEN_COLUMN = 'hidden';
+const HIDDEN_COLUMN_NARROW = 'hidden @max-[40rem]:flex';
+// The "+N columns" cell has nothing to add in the card form, which shows every column.
+const MORE_CELL_NARROW = '@max-[40rem]:hidden';
+
+/**
+ * How many of the hide-order columns are hidden. Grows one column at a time
+ * while the scroller overflows, recording the width each step needed, and
+ * gives a column back once the box is at least that wide again. The record
+ * resets when the columns or rows change.
+ */
+function useHiddenColumnCount(
+  enabled: boolean,
+  candidates: number,
+  rootRef: React.RefObject<HTMLDivElement | null>,
+  resetKey: unknown,
+): number {
+  const [count, setCount] = useState(0);
+  const needed = useRef<number[]>([]);
+  const [tick, setTick] = useState(0);
+  const seen = useRef<unknown>(resetKey);
+
+  useEffect(() => {
+    if (!enabled || typeof ResizeObserver === 'undefined') return undefined;
+    const scroller = rootRef.current?.querySelector<HTMLElement>('[data-table-scroller]');
+    if (!scroller) return undefined;
+    const ro = new ResizeObserver(() => setTick((t) => t + 1));
+    ro.observe(scroller);
+    return () => ro.disconnect();
+  }, [enabled, rootRef]);
+
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    if (seen.current !== resetKey) {
+      // New columns or rows: start over from every column shown.
+      seen.current = resetKey;
+      needed.current = [];
+      if (count !== 0) {
+        setCount(0);
+        return;
+      }
+    }
+    const scroller = rootRef.current?.querySelector<HTMLElement>('[data-table-scroller]');
+    if (!scroller) return;
+    const avail = scroller.clientWidth;
+    const used = scroller.scrollWidth;
+    if (avail <= 0) return;
+    if (used > avail + 1 && count < candidates) {
+      needed.current[count] = used;
+      setCount(count + 1);
+    } else if (count > 0) {
+      const want = needed.current[count - 1];
+      if (want !== undefined && avail >= want) setCount(count - 1);
+    }
+  });
+  // `tick` only re-renders so the layout effect above measures again.
+  void tick;
+  return enabled ? Math.min(count, candidates) : 0;
+}
+
+interface HiddenColumnsCellProps {
+  count: number;
+  items: { label: string; value: ReactNode }[];
+  rowLabel: string;
+  testId: string;
+}
+
+/** The "+N columns" button and its popover of this row's hidden values. */
+function HiddenColumnsButton({ count, items, rowLabel, testId }: HiddenColumnsCellProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
+  const close = useCallback(() => setOpen(false), []);
+  return (
+    <>
+      <Button
+        ref={ref}
+        variant="ghost"
+        size="sm"
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        onClick={() => setOpen((o) => !o)}
+        data-testid={testId}
+        className="whitespace-nowrap"
+      >
+        {`+${count} ${count === 1 ? 'column' : 'columns'}`}
+      </Button>
+      <InlinePopover
+        trigger={ref}
+        open={open}
+        onClose={close}
+        placement="bottom-end"
+        aria-label={`Hidden columns for ${rowLabel}`}
+        kind="datatable-hidden-columns"
+        data-testid={`${testId}-popover`}
+        className="max-w-80 p-3"
+      >
+        <KeyValue items={items} layout="row" data-testid={`${testId}-values`} />
+      </InlinePopover>
+    </>
+  );
 }
 
 const NESTED_CONTROL = 'a[href], button, input, select, textarea, label, summary, [role="button"], [role="checkbox"], [role="link"], [role="menuitem"], [role="switch"], [contenteditable="true"]';
@@ -311,6 +454,7 @@ export function DataTable<T>({
   selectedKey,
   isRowSelected,
   headerCase = 'upper',
+  responsiveColumns = false,
   className,
   'data-testid': testId,
   staticRows,
@@ -331,6 +475,14 @@ export function DataTable<T>({
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
+
+  const rootRef = useRef<HTMLDivElement>(null);
+  const order = useMemo(() => (responsiveColumns ? hideOrder(columns) : []), [responsiveColumns, columns]);
+  const hiddenCount = useHiddenColumnCount(responsiveColumns && order.length > 0, order.length, rootRef, `${columns.map((c) => c.key).join('|')}#${data.length}`);
+  const hidden = useMemo(() => new Set(order.slice(0, hiddenCount)), [order, hiddenCount]);
+  const hiddenCols = columns.filter((c) => hidden.has(c.key));
+  const hideClass = narrow ? HIDDEN_COLUMN_NARROW : HIDDEN_COLUMN;
+  const moreColumn = hiddenCols.length > 0;
 
   const toggleSort = (key: string) => {
     if (sortKey === key) {
@@ -378,8 +530,11 @@ export function DataTable<T>({
 
   return (
     <div
+      ref={rootRef}
       className={cn('flex min-w-0 flex-col gap-3', narrow && '@container', className)}
       data-testid={testId}
+      data-responsive-columns={responsiveColumns ? '' : undefined}
+      data-hidden-columns={responsiveColumns ? hiddenCols.map((c) => c.key).join(' ') : undefined}
       // The collection composite: an audit reads these to require activatable
       // rows unless the table says, with a reason, that its rows open nothing.
       data-collection-table=""
@@ -402,14 +557,21 @@ export function DataTable<T>({
                   sortDirection={isSorted ? sortDir : null}
                   style={col.width ? { width: col.width } : undefined}
                   numeric={col.numeric}
-                  className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(col.align), col.className)}
+                  className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(col.align), col.className, hidden.has(col.key) && HIDDEN_COLUMN)}
                   onClick={col.sortable ? () => toggleSort(col.key) : undefined}
                   data-testid={col.sortable ? `datatable-header-${col.key}` : undefined}
+                  data-column={responsiveColumns ? col.key : undefined}
+                  {...(hidden.has(col.key) ? { 'data-column-hidden': '' } : {})}
                 >
                   {col.header}
                 </TableTh>
               );
             })}
+            {moreColumn && (
+              <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'w-px whitespace-nowrap text-right')} data-testid="datatable-more-header">
+                <span className="sr-only">Hidden columns</span>
+              </TableTh>
+            )}
             {rowActions && <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'text-right')}>Actions</TableTh>}
           </tr>
         </TableHead>
@@ -420,10 +582,11 @@ export function DataTable<T>({
             ? Array.from({ length: loadingRows }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">
                   {columns.map((col) => (
-                    <TableTd key={col.key} numeric={col.numeric} className={alignClass(col.align)}>
+                    <TableTd key={col.key} numeric={col.numeric} className={cn(alignClass(col.align), hidden.has(col.key) && HIDDEN_COLUMN)}>
                       <div className="h-4 w-3/4 animate-pulse rounded bg-surface-hover" />
                     </TableTd>
                   ))}
+                  {moreColumn && <TableTd />}
                   {rowActions && (
                     <TableTd className="text-right">
                       <div className="ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" />
@@ -435,7 +598,7 @@ export function DataTable<T>({
               ? (
                 <TableRow>
                   <TableTd
-                    colSpan={columns.length + (rowActions ? 1 : 0)}
+                    colSpan={columns.length - hiddenCols.length + (moreColumn ? 1 : 0) + (rowActions ? 1 : 0)}
                     className="text-center text-text-secondary py-8"
                   >
                     {emptyMessage}
@@ -493,7 +656,7 @@ export function DataTable<T>({
                       <TableTd
                         key={col.key}
                         numeric={col.numeric}
-                        className={cn(alignClass(col.align), col.truncate && TRUNCATE_CELL, narrow && NARROW_CELL, col.className)}
+                        className={cn(alignClass(col.align), col.truncate && TRUNCATE_CELL, narrow && NARROW_CELL, col.className, hidden.has(col.key) && hideClass)}
                         {...(narrow ? { 'data-label': columnLabel(col) } : {})}
                         {...(col.truncate ? { 'data-truncate': '' } : {})}
                         {...(fullText ? { title: fullText } : {})}
@@ -502,6 +665,21 @@ export function DataTable<T>({
                       </TableTd>
                       );
                     })}
+                    {moreColumn && (
+                      // The popover is portalled, but its clicks still bubble
+                      // through React to this row; they must not open it.
+                      <TableTd className={cn('w-px whitespace-nowrap text-right', narrow && MORE_CELL_NARROW)} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                        <HiddenColumnsButton
+                          count={hiddenCols.length}
+                          rowLabel={rowName(columns.find((c) => !hidden.has(c.key)), row, rowIndex) || keyField(row)}
+                          testId={`datatable-more-${keyField(row)}`}
+                          items={hiddenCols.map((col) => ({
+                            label: columnLabel(col),
+                            value: col.render ? col.render(row, rowIndex) : String((row as Record<string, unknown>)[col.key] ?? ''),
+                          }))}
+                        />
+                      </TableTd>
+                    )}
                     {rowActions && (
                       <TableTd className="text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-2">

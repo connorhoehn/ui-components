@@ -1,5 +1,5 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
-import { n as t } from "./ContextComposer-DP9k82m_.js";
+import { n as t } from "./ContextComposer-CWQmvD-2.js";
 import { useMemo as n } from "react";
 import { jsx as r } from "react/jsx-runtime";
 //#region src/components/social/AgentComposerDock.tsx

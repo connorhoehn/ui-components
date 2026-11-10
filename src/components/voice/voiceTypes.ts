@@ -31,10 +31,10 @@ export const VOICE_PHASE_LABEL: Record<VoicePhase, string> = {
 
 export type VoiceDecision = 'approve' | 'reject';
 
-/** What the confirm callback carries when the card has `fields`. */
+/** What the confirm callback carries when the card shows its note (`fields` or `noteDefault`). */
 export interface VoiceConfirmResult {
   decision: VoiceDecision;
-  /** Trimmed and capped at VOICE_NOTE_MAX characters; may be empty. */
+  /** Trimmed and capped at `noteMaxLength` (default VOICE_NOTE_MAX) characters; may be empty. */
   note: string;
 }
 
@@ -63,7 +63,29 @@ export interface VoicePending {
   hint?: string;
   /** With `fields` set, an approve / reject toggle and a note input show. */
   fields?: VoiceConfirmFields;
-  /** Called with `{ decision, note }` when `fields` is set, and with no argument otherwise. */
+  /**
+   * The note field's starting text, editable. Setting it shows the note field even
+   * without `fields`; Confirm then calls back with `{ decision, note }` carrying the
+   * edited text. A new `requestId` resets the note to the new value. Since 2.516.0.
+   */
+  noteDefault?: string;
+  /** A visible label above the note field ("Your answer"). Without one the field is labelled "Note" for assistive tech only. Since 2.516.0. */
+  noteLabel?: string;
+  /** The note's maximum length, shown as a visible "12/500" count. Default VOICE_NOTE_MAX, with no count. Since 2.516.0. */
+  noteMaxLength?: number;
+  /** The primary button's text. Default "Confirm". Since 2.516.0. */
+  confirmLabel?: string;
+  /** The secondary button's text. Default "Cancel". Since 2.516.0. */
+  cancelLabel?: string;
+  /** Hides the approve / reject toggle; the decision stays `fields.decision` (default `approve`). Since 2.516.0. */
+  hideDecisionToggle?: boolean;
+  /**
+   * The action is confirmed by a click only (the voice never confirms it). The card
+   * shows "Check it, then click <confirmLabel>" as its hint unless one is given, and
+   * carries `data-click-only` for hosts. Since 2.516.0.
+   */
+  clickOnly?: boolean;
+  /** Called with `{ decision, note }` when the note field shows (`fields` or `noteDefault` set), and with no argument otherwise. */
   onConfirm: (result?: VoiceConfirmResult) => void;
   onCancel: () => void;
 }

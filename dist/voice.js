@@ -233,28 +233,29 @@ function I(e) {
 	let { pending: t } = e;
 	return /* @__PURE__ */ S(L, { ...e }, t.requestId ?? t.title);
 }
-function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, hint: c, className: l, "data-testid": u = "voice-confirm-card" }) {
-	let f = c ?? a.hint, m = y(), h = b(null);
+function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, hint: c, noteDefault: l = a.noteDefault, noteLabel: u = a.noteLabel, noteMaxLength: f = a.noteMaxLength, confirmLabel: m = a.confirmLabel ?? "Confirm", cancelLabel: h = a.cancelLabel ?? "Cancel", hideDecisionToggle: g = a.hideDecisionToggle ?? !1, clickOnly: _ = a.clickOnly ?? !1, className: w, "data-testid": T = "voice-confirm-card" }) {
+	let E = c ?? a.hint ?? (_ ? `Check it, then click ${m}` : void 0), D = y(), O = y(), k = b(null);
 	v(() => {
-		s && h.current?.focus();
+		s && k.current?.focus();
 	}, [s]);
-	let { fields: g } = a, [_, w] = x(g?.decision ?? "approve"), [T, E] = x(""), D = () => {
-		g ? a.onConfirm({
-			decision: _,
-			note: T.trim().slice(0, 200).trim()
+	let { fields: A } = a, j = !!A || l !== void 0, M = !!A && !g, N = f && f > 0 ? Math.floor(f) : 200, [F, I] = x(A?.decision ?? "approve"), [L, R] = x(() => (l ?? "").slice(0, N)), z = () => {
+		j ? a.onConfirm({
+			decision: F,
+			note: L.trim().slice(0, N).trim()
 		}) : a.onConfirm();
-	}, O = (e) => {
-		e.key === "Escape" && o ? (e.stopPropagation(), a.onCancel()) : e.key === "Enter" && (e.target === e.currentTarget || g && e.target instanceof HTMLInputElement) && (e.preventDefault(), D());
-	}, k = Array.isArray(a.detail) ? a.detail.filter(Boolean) : a.detail ? [a.detail] : [];
+	}, B = (e) => {
+		e.key === "Escape" && o ? (e.stopPropagation(), a.onCancel()) : e.key === "Enter" && (e.target === e.currentTarget || j && e.target instanceof HTMLInputElement) && (e.preventDefault(), z());
+	}, V = Array.isArray(a.detail) ? a.detail.filter(Boolean) : a.detail ? [a.detail] : [];
 	return /* @__PURE__ */ C(n, {
-		ref: h,
+		ref: k,
 		gap: "sm",
 		tabIndex: 0,
 		role: "group",
 		"aria-label": `Confirm: ${a.title}`,
-		onKeyDown: O,
-		"data-testid": u,
-		className: e("rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary", l),
+		onKeyDown: B,
+		"data-testid": T,
+		"data-click-only": _ ? "" : void 0,
+		className: e("rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary", w),
 		children: [
 			/* @__PURE__ */ S(i, {
 				size: "sm",
@@ -263,43 +264,70 @@ function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, hint: c, class
 				as: "p",
 				children: a.title
 			}),
-			k.length === 1 ? /* @__PURE__ */ S(i, {
+			V.length === 1 ? /* @__PURE__ */ S(i, {
 				size: "xs",
 				tone: "secondary",
 				as: "p",
-				children: k[0]
+				children: V[0]
 			}) : null,
-			k.length > 1 ? /* @__PURE__ */ S(n, {
+			V.length > 1 ? /* @__PURE__ */ S(n, {
 				as: "ul",
 				gap: "xs",
-				"data-testid": `${u}-detail`,
+				"data-testid": `${T}-detail`,
 				className: "m-0 list-none p-0",
-				children: k.map((e, t) => /* @__PURE__ */ S(i, {
+				children: V.map((e, t) => /* @__PURE__ */ S(i, {
 					size: "xs",
 					tone: "secondary",
 					as: "li",
 					children: e
 				}, t))
 			}) : null,
-			g ? /* @__PURE__ */ C(n, {
+			j ? /* @__PURE__ */ C(n, {
 				gap: "xs",
-				children: [/* @__PURE__ */ S(p, {
-					size: "sm",
-					tone: "accent",
-					"aria-label": "Decision",
-					options: P,
-					value: _,
-					onChange: (e) => w(e),
-					"data-testid": `${u}-decision`
-				}), /* @__PURE__ */ S(d, {
-					size: "sm",
-					value: T,
-					maxLength: 200,
-					placeholder: g.notePlaceholder ?? "Note (optional)",
-					"aria-label": "Note",
-					onChange: (e) => E(e.target.value),
-					"data-testid": `${u}-note`
-				})]
+				children: [
+					M ? /* @__PURE__ */ S(p, {
+						size: "sm",
+						tone: "accent",
+						"aria-label": "Decision",
+						options: P,
+						value: F,
+						onChange: (e) => I(e),
+						"data-testid": `${T}-decision`
+					}) : null,
+					u || f ? /* @__PURE__ */ C(r, {
+						gap: "sm",
+						justify: "between",
+						wrap: !1,
+						children: [u ? /* @__PURE__ */ S(i, {
+							id: O,
+							size: "xs",
+							weight: "medium",
+							tone: "secondary",
+							"data-testid": `${T}-note-label`,
+							children: u
+						}) : /* @__PURE__ */ S(i, {
+							"aria-hidden": "true",
+							children: ""
+						}), f ? /* @__PURE__ */ S(i, {
+							size: "xs",
+							tone: "tertiary",
+							tabular: !0,
+							className: "shrink-0",
+							"data-testid": `${T}-note-count`,
+							children: `${L.length}/${N}`
+						}) : null]
+					}) : null,
+					/* @__PURE__ */ S(d, {
+						size: "sm",
+						value: L,
+						maxLength: N,
+						placeholder: A?.notePlaceholder ?? (A ? "Note (optional)" : void 0),
+						"aria-label": u ? void 0 : "Note",
+						"aria-labelledby": u ? O : void 0,
+						onChange: (e) => R(e.target.value),
+						"data-testid": `${T}-note`
+					})
+				]
 			}) : null,
 			/* @__PURE__ */ C(r, {
 				gap: "sm",
@@ -308,25 +336,25 @@ function L({ pending: a, handleEscape: o = !0, autoFocus: s = !0, hint: c, class
 					variant: "secondary",
 					size: "sm",
 					onClick: a.onCancel,
-					"data-testid": `${u}-cancel`,
-					children: "Cancel"
+					"data-testid": `${T}-cancel`,
+					children: h
 				}), /* @__PURE__ */ S(t, {
 					variant: "primary",
 					size: "sm",
-					onClick: D,
-					"aria-describedby": f ? m : void 0,
-					"data-testid": `${u}-confirm`,
-					children: "Confirm"
+					onClick: z,
+					"aria-describedby": E ? D : void 0,
+					"data-testid": `${T}-confirm`,
+					children: m
 				})]
 			}),
-			f ? /* @__PURE__ */ S(i, {
+			E ? /* @__PURE__ */ S(i, {
 				size: "xs",
 				tone: "secondary",
 				as: "p",
-				id: m,
+				id: D,
 				className: "truncate",
-				"data-testid": `${u}-hint`,
-				children: f
+				"data-testid": `${T}-hint`,
+				children: E
 			}) : null
 		]
 	});
@@ -528,7 +556,7 @@ function z({ turns: a, maxVisible: s = 4, onClear: c, pending: l = null, pending
 }
 //#endregion
 //#region src/components/voice/VoiceDock.tsx
-var ee = {
+var B = {
 	off: "neutral",
 	connecting: "pending",
 	listening: "success",
@@ -539,17 +567,17 @@ var ee = {
 	ended: "neutral",
 	unavailable: "neutral"
 };
-function te(e) {
+function V(e) {
 	let t = Math.max(0, Math.floor(e));
 	return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
-var ne = 600, B = (e) => `$${e.toFixed(2)}`;
-function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = null, pending: E = null, pendingChoice: D = null, lastLine: O = null, onStart: k, onStop: A, onMute: N, muted: P = !1, unavailableReason: F, compact: L = !1, size: R = "panel", startLabel: V = "Voice", transcriptOpen: H = !1, onToggleTranscript: U, onOpenLog: W, turns: re = [], keepTranscript: ie, onKeepTranscriptChange: ae, pulse: G = !1, className: oe, ref: K, "data-testid": q = "voice-dock" }) {
+var ee = 600, te = (e) => `$${e.toFixed(2)}`;
+function H({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = null, pending: E = null, pendingChoice: D = null, lastLine: O = null, onStart: k, onStop: A, onMute: N, muted: P = !1, unavailableReason: F, compact: L = !1, size: R = "panel", startLabel: H = "Voice", transcriptOpen: U = !1, onToggleTranscript: ne, onOpenLog: W, turns: re = [], keepTranscript: ie, onKeepTranscriptChange: ae, pulse: G = !1, className: oe, ref: K, "data-testid": q = "voice-dock" }) {
 	let [J, se] = x(!1);
 	v(() => {
 		if (!G) return;
 		se(!0);
-		let e = setTimeout(() => se(!1), ne);
+		let e = setTimeout(() => se(!1), ee);
 		return () => clearTimeout(e);
 	}, [G]);
 	let Y = J ? "motion-safe:animate-[pulse_600ms_ease-out_1]" : void 0, X = b(null), [ce, le] = x(!1);
@@ -565,7 +593,7 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 		"data-phase": d,
 		"data-size": R,
 		"data-voice-dock": "",
-		children: [H ? /* @__PURE__ */ S("div", {
+		children: [U ? /* @__PURE__ */ S("div", {
 			className: e("min-w-0 border-0 border-b border-solid border-border", $ ? "px-1 py-1" : "px-2 py-1"),
 			"data-testid": `${q}-transcript`,
 			children: /* @__PURE__ */ S(z, {
@@ -602,7 +630,7 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 						children: pe
 					}) : /* @__PURE__ */ S(m, {
 						size: "sm",
-						tone: ee[d],
+						tone: B[d],
 						label: pe
 					})
 				}),
@@ -623,7 +651,7 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 					value: w.holdUsd > 0 ? w.usedUsd / w.holdUsd : 0,
 					segments: 5,
 					showPercent: !1,
-					note: `${B(w.usedUsd)} of ${B(w.holdUsd)}`,
+					note: `${te(w.usedUsd)} of ${te(w.holdUsd)}`,
 					tone: "surface",
 					"data-testid": `${q}-budget`
 				}) : null,
@@ -632,7 +660,7 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 					tone: "tertiary",
 					tabular: !0,
 					"data-testid": `${q}-elapsed`,
-					children: te(y)
+					children: V(y)
 				}) : null,
 				Z && N ? /* @__PURE__ */ S(a, {
 					"aria-label": P ? "Unmute microphone" : "Mute microphone",
@@ -643,13 +671,13 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 					onClick: N,
 					"data-testid": `${q}-mute`
 				}) : null,
-				U ? /* @__PURE__ */ S(a, {
-					"aria-label": H ? "Hide transcript" : "Show transcript",
-					"aria-pressed": H,
+				ne ? /* @__PURE__ */ S(a, {
+					"aria-label": U ? "Hide transcript" : "Show transcript",
+					"aria-pressed": U,
 					size: "sm",
 					variant: "ghost",
 					icon: /* @__PURE__ */ S(l, { size: 16 }),
-					onClick: U,
+					onClick: ne,
 					"data-testid": `${q}-cc`
 				}) : null,
 				W ? /* @__PURE__ */ S(a, {
@@ -682,7 +710,7 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 					title: Q,
 					onClick: k,
 					"data-testid": `${q}-start`,
-					children: [/* @__PURE__ */ S(c, { size: 16 }), V]
+					children: [/* @__PURE__ */ S(c, { size: 16 }), H]
 				}) : Z ? /* @__PURE__ */ S(a, {
 					"aria-label": "End voice session",
 					size: "sm",
@@ -736,4 +764,4 @@ function V({ phase: d, level: p, outputLevel: h, elapsedSeconds: y, budget: w = 
 	});
 }
 //#endregion
-export { D as VOICE_CHOICE_MAX, E as VOICE_NOTE_MAX, w as VOICE_PHASES, T as VOICE_PHASE_LABEL, j as VoiceActivityRing, M as VoiceChoiceCard, I as VoiceConfirmCard, V as VoiceDock, z as VoiceTurnStrip };
+export { D as VOICE_CHOICE_MAX, E as VOICE_NOTE_MAX, w as VOICE_PHASES, T as VOICE_PHASE_LABEL, j as VoiceActivityRing, M as VoiceChoiceCard, I as VoiceConfirmCard, H as VoiceDock, z as VoiceTurnStrip };

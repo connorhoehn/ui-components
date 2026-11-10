@@ -1,7 +1,8 @@
 import { n as e } from "../Button-DQoeE5dN.js";
 import { i as t, n, r } from "../Text-BdZh5oMs.js";
 import { t as i } from "../Card-D4k-Buoz.js";
-import { a, i as o, n as s, t as c } from "../WorkflowStepper-C1V-HSCY.js";
+import { i as a, n as o, t as s } from "../WorkflowStepper-DZoK4I7H.js";
+import { t as c } from "../KeyValue-AuDcvU3Z.js";
 import { t as l } from "../EmptyState-BTnHHhgg.js";
 import { t as u } from "../LoadingState-BQlqtSB5.js";
 import { t as d } from "../StatusPill-BSsxOo63.js";
@@ -247,13 +248,13 @@ function ut({ status: l, title: m, titleAs: h = "h3", subtitle: g, facts: _ = []
 					label: "Reading the run…",
 					testId: `${N}-loading`
 				}),
-				_.length > 0 && /* @__PURE__ */ G(o, {
+				_.length > 0 && /* @__PURE__ */ G(c, {
 					items: _,
 					layout: "grid",
 					responsive: !0,
 					"data-testid": `${N}-facts`
 				}),
-				F.length > 0 && /* @__PURE__ */ G(c, {
+				F.length > 0 && /* @__PURE__ */ G(s, {
 					steps: Z(F, v),
 					orientation: "horizontal",
 					size: "compact",
@@ -262,7 +263,7 @@ function ut({ status: l, title: m, titleAs: h = "h3", subtitle: g, facts: _ = []
 					"data-testid": `${N}-steps`
 				}),
 				O,
-				l && I && /* @__PURE__ */ G(s, {
+				l && I && /* @__PURE__ */ G(o, {
 					title: b ?? l.stepLabel ?? m,
 					description: x,
 					state: P === "received" ? "queued" : "running",

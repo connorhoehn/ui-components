@@ -457,3 +457,103 @@ describe('VoiceConfirmCard hint', () => {
     expect(screen.getByTestId('voice-confirm-card-confirm')).not.toHaveAttribute('aria-describedby');
   });
 });
+
+describe('VoiceConfirmCard pre-filled note, labels and click-only (2.516.0)', () => {
+  const base = { title: 'Answer the agent', onConfirm: vi.fn(), onCancel: vi.fn() };
+
+  it('noteDefault opens the note filled in; editing then confirming returns the edited text', () => {
+    const onConfirm = vi.fn();
+    render(<VoiceConfirmCard pending={{ ...base, onConfirm, noteDefault: 'Ship it on Friday' }} />);
+    const input = screen.getByTestId('voice-confirm-card-note');
+    expect(input).toHaveValue('Ship it on Friday');
+    fireEvent.change(input, { target: { value: '  Ship it on Monday  ' } });
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'approve', note: 'Ship it on Monday' });
+  });
+
+  it('noteLabel is a visible label that names the field', () => {
+    render(<VoiceConfirmCard pending={{ ...base, noteDefault: '', noteLabel: 'Your answer' }} />);
+    const label = screen.getByTestId('voice-confirm-card-note-label');
+    expect(label).toHaveTextContent('Your answer');
+    expect(screen.getByRole('textbox', { name: 'Your answer' })).toBe(screen.getByTestId('voice-confirm-card-note'));
+  });
+
+  it('noteMaxLength caps the field and the result, with a visible count', () => {
+    const onConfirm = vi.fn();
+    render(<VoiceConfirmCard pending={{ ...base, onConfirm, noteDefault: 'abc', noteMaxLength: 500 }} />);
+    const input = screen.getByTestId('voice-confirm-card-note');
+    expect(input).toHaveAttribute('maxLength', '500');
+    expect(screen.getByTestId('voice-confirm-card-note-count')).toHaveTextContent('3/500');
+    fireEvent.change(input, { target: { value: 'z'.repeat(600) } });
+    expect(screen.getByTestId('voice-confirm-card-note-count')).toHaveTextContent('600/500');
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'approve', note: 'z'.repeat(500) });
+  });
+
+  it('without noteMaxLength there is no count and the cap stays at 200', () => {
+    render(<VoiceConfirmCard pending={{ ...base, noteDefault: 'abc' }} />);
+    expect(screen.queryByTestId('voice-confirm-card-note-count')).toBeNull();
+    expect(screen.getByTestId('voice-confirm-card-note')).toHaveAttribute('maxLength', '200');
+  });
+
+  it('confirmLabel and cancelLabel rename the buttons; the defaults stay Confirm and Cancel', () => {
+    const { rerender } = render(<VoiceConfirmCard pending={base} />);
+    expect(screen.getByTestId('voice-confirm-card-confirm')).toHaveTextContent('Confirm');
+    expect(screen.getByTestId('voice-confirm-card-cancel')).toHaveTextContent('Cancel');
+    rerender(<VoiceConfirmCard pending={{ ...base, confirmLabel: 'Send', cancelLabel: 'Not now' }} />);
+    expect(screen.getByRole('button', { name: 'Send' })).toBe(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(screen.getByTestId('voice-confirm-card-cancel')).toHaveTextContent('Not now');
+  });
+
+  it('the card props override the pending fields', () => {
+    render(<VoiceConfirmCard pending={{ ...base, confirmLabel: 'Send' }} confirmLabel="Queue" />);
+    expect(screen.getByTestId('voice-confirm-card-confirm')).toHaveTextContent('Queue');
+  });
+
+  it('hideDecisionToggle drops the toggle but keeps the note and the starting decision', () => {
+    const onConfirm = vi.fn();
+    render(<VoiceConfirmCard pending={{ ...base, onConfirm, fields: { decision: 'reject' }, hideDecisionToggle: true }} />);
+    expect(screen.queryByTestId('voice-confirm-card-decision')).toBeNull();
+    expect(screen.queryByRole('radio')).toBeNull();
+    fireEvent.change(screen.getByTestId('voice-confirm-card-note'), { target: { value: 'why' } });
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'reject', note: 'why' });
+  });
+
+  it('clickOnly hints "Check it, then click <confirmLabel>" and sets data-click-only', () => {
+    const { rerender } = render(<VoiceConfirmCard pending={{ ...base, clickOnly: true, confirmLabel: 'Send' }} />);
+    expect(screen.getByTestId('voice-confirm-card')).toHaveAttribute('data-click-only');
+    expect(screen.getByTestId('voice-confirm-card-hint')).toHaveTextContent('Check it, then click Send');
+    rerender(<VoiceConfirmCard pending={{ ...base, clickOnly: true }} />);
+    expect(screen.getByTestId('voice-confirm-card-hint')).toHaveTextContent('Check it, then click Confirm');
+    rerender(<VoiceConfirmCard pending={{ ...base, clickOnly: true, hint: 'Click to send' }} />);
+    expect(screen.getByTestId('voice-confirm-card-hint')).toHaveTextContent('Click to send');
+    rerender(<VoiceConfirmCard pending={base} />);
+    expect(screen.getByTestId('voice-confirm-card')).not.toHaveAttribute('data-click-only');
+  });
+
+  it('a new requestId resets the edited note to the new noteDefault', () => {
+    const onConfirm = vi.fn();
+    const { rerender } = render(<VoiceConfirmCard pending={{ ...base, onConfirm, requestId: 'q1', noteDefault: 'first answer' }} />);
+    fireEvent.change(screen.getByTestId('voice-confirm-card-note'), { target: { value: 'first answer, edited' } });
+    rerender(<VoiceConfirmCard pending={{ ...base, onConfirm, requestId: 'q2', noteDefault: 'second answer' }} />);
+    expect(screen.getByTestId('voice-confirm-card-note')).toHaveValue('second answer');
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'approve', note: 'second answer' });
+  });
+
+  it('the dock passes the new fields through to its card', () => {
+    const onConfirm = vi.fn();
+    render(
+      <VoiceDock
+        {...dockBase}
+        phase="confirming"
+        pending={{ ...base, onConfirm, noteDefault: 'dictated', confirmLabel: 'Send', hideDecisionToggle: true, clickOnly: true }}
+      />,
+    );
+    expect(screen.getByTestId('voice-confirm-card')).toHaveAttribute('data-click-only');
+    expect(screen.getByTestId('voice-confirm-card-note')).toHaveValue('dictated');
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'approve', note: 'dictated' });
+  });
+});

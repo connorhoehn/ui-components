@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
+import { n as e, t } from "./useWebSocket-D4PAHlj8.js";
 import { d as n, n as r } from "./Button-DQoeE5dN.js";
 import { n as i, r as a } from "./safeHref-D1tj5kGa.js";
 import { t as o } from "./Input-DiOEvL5h.js";

@@ -8130,7 +8130,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8167,6 +8167,12 @@ export declare interface DataTableColumn<T> {
      * on the cell.
      */
     truncate?: boolean;
+    /**
+     * With `responsiveColumns` on the table (since 2.516.0): `1` (and the
+     * default) is always shown; higher numbers hide first as the table's own
+     * width narrows (the highest number first, the rightmost first on a tie).
+     */
+    priority?: number;
     className?: string;
 }
 
@@ -8266,6 +8272,19 @@ export declare interface DataTableProps<T> {
      * `data-header-case` on the `<thead>`.
      */
     headerCase?: DataTableHeaderCase;
+    /**
+     * Column priorities (since 2.516.0): as the table's own box narrows, the
+     * columns with a `priority` above 1 hide, the highest number first, until
+     * the rest fit without a horizontal scroll. Measured with a ResizeObserver
+     * on the table's scroller rather than a container query: whether a column
+     * fits depends on its content, which a fixed breakpoint cannot know. Each
+     * row then gets a "+N columns" button whose popover lists that row's hidden
+     * values. Sorting, selection and row clicks are unchanged; the hidden
+     * columns' keys are on the root as `data-hidden-columns`. With `narrow`,
+     * the stacked card form (under 40rem) shows every column again. Default
+     * `false`.
+     */
+    responsiveColumns?: boolean;
     className?: string;
     'data-testid'?: string;
 }

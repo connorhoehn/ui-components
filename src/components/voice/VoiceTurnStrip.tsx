@@ -38,7 +38,13 @@ const TOOL_TONE: Record<VoiceToolStatus, StatusPillTone> = {
   failed: 'danger',
 };
 
-export interface VoiceConfirmCardProps {
+/** The card options a host may set on the card itself as well as on `pending`; the card prop wins. */
+export type VoiceConfirmCardOptions = Pick<
+  VoicePending,
+  'noteDefault' | 'noteLabel' | 'noteMaxLength' | 'confirmLabel' | 'cancelLabel' | 'hideDecisionToggle' | 'clickOnly'
+>;
+
+export interface VoiceConfirmCardProps extends VoiceConfirmCardOptions {
   pending: VoicePending;
   /** Handle Escape on the card itself. The dock turns this off: its popover already closes on Escape. Default true. */
   handleEscape?: boolean;
@@ -51,9 +57,11 @@ export interface VoiceConfirmCardProps {
 }
 
 /**
- * The confirmation card: a title, optional detail (a line or a list), Confirm and Cancel, and an optional muted `hint` line under them.
+ * The confirmation card: a title, optional detail, a note that can open pre-filled (`noteDefault`), renameable Confirm / Cancel, and an optional muted `hint` line.
  * With `pending.fields` it also shows an approve / reject toggle and a one-line note, and
  * Confirm calls back with `{ decision, note }` (note trimmed, capped at 200 characters).
+ * `noteDefault` opens the note pre-filled and editable (the callback gets the edited text), with `noteLabel` and a `noteMaxLength` count;
+ * `confirmLabel` / `cancelLabel` rename the buttons, `hideDecisionToggle` drops the toggle, and `clickOnly` hints "Check it, then click <confirmLabel>" and sets `data-click-only`.
  * Remounts per request (`pending.requestId`, else `title`), so the note and toggle reset.
  */
 export function VoiceConfirmCard(props: VoiceConfirmCardProps) {
@@ -66,22 +74,34 @@ function VoiceConfirmCardBody({
   handleEscape = true,
   autoFocus = true,
   hint: hintProp,
+  noteDefault = pending.noteDefault,
+  noteLabel = pending.noteLabel,
+  noteMaxLength = pending.noteMaxLength,
+  confirmLabel = pending.confirmLabel ?? 'Confirm',
+  cancelLabel = pending.cancelLabel ?? 'Cancel',
+  hideDecisionToggle = pending.hideDecisionToggle ?? false,
+  clickOnly = pending.clickOnly ?? false,
   className,
   'data-testid': testId = 'voice-confirm-card',
 }: VoiceConfirmCardProps) {
-  const hint = hintProp ?? pending.hint;
+  const hint = hintProp ?? pending.hint ?? (clickOnly ? `Check it, then click ${confirmLabel}` : undefined);
   const hintId = useId();
+  const noteLabelId = useId();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (autoFocus) ref.current?.focus();
   }, [autoFocus]);
 
   const { fields } = pending;
+  const showNote = Boolean(fields) || noteDefault !== undefined;
+  const showToggle = Boolean(fields) && !hideDecisionToggle;
+  const maxLength = noteMaxLength && noteMaxLength > 0 ? Math.floor(noteMaxLength) : VOICE_NOTE_MAX;
   const [decision, setDecision] = useState<VoiceDecision>(fields?.decision ?? 'approve');
-  const [note, setNote] = useState('');
+  // The card remounts per request, so a new request starts from its own default.
+  const [note, setNote] = useState(() => (noteDefault ?? '').slice(0, maxLength));
 
   const confirm = () => {
-    if (fields) pending.onConfirm({ decision, note: note.trim().slice(0, VOICE_NOTE_MAX).trim() });
+    if (showNote) pending.onConfirm({ decision, note: note.trim().slice(0, maxLength).trim() });
     else pending.onConfirm();
   };
 
@@ -89,7 +109,7 @@ function VoiceConfirmCardBody({
     if (e.key === 'Escape' && handleEscape) {
       e.stopPropagation();
       pending.onCancel();
-    } else if (e.key === 'Enter' && (e.target === e.currentTarget || (fields && e.target instanceof HTMLInputElement))) {
+    } else if (e.key === 'Enter' && (e.target === e.currentTarget || (showNote && e.target instanceof HTMLInputElement))) {
       e.preventDefault();
       confirm();
     }
@@ -106,6 +126,7 @@ function VoiceConfirmCardBody({
       aria-label={`Confirm: ${pending.title}`}
       onKeyDown={onKeyDown}
       data-testid={testId}
+      data-click-only={clickOnly ? '' : undefined}
       className={cn('rounded-md border border-solid border-warning/40 bg-surface p-3 outline-none focus-visible:ring-2 focus-visible:ring-primary', className)}
     >
       <T size="sm" weight="semibold" tone="primary" as="p">{pending.title}</T>
@@ -117,31 +138,44 @@ function VoiceConfirmCardBody({
           ))}
         </Stack>
       ) : null}
-      {fields ? (
+      {showNote ? (
         <Stack gap="xs">
-          <SegmentedControl
-            size="sm"
-            tone="accent"
-            aria-label="Decision"
-            options={DECISION_OPTIONS}
-            value={decision}
-            onChange={(v) => setDecision(v as VoiceDecision)}
-            data-testid={`${testId}-decision`}
-          />
+          {showToggle ? (
+            <SegmentedControl
+              size="sm"
+              tone="accent"
+              aria-label="Decision"
+              options={DECISION_OPTIONS}
+              value={decision}
+              onChange={(v) => setDecision(v as VoiceDecision)}
+              data-testid={`${testId}-decision`}
+            />
+          ) : null}
+          {noteLabel || noteMaxLength ? (
+            <Inline gap="sm" justify="between" wrap={false}>
+              {noteLabel ? (
+                <T id={noteLabelId} size="xs" weight="medium" tone="secondary" data-testid={`${testId}-note-label`}>{noteLabel}</T>
+              ) : <T aria-hidden="true">{''}</T>}
+              {noteMaxLength ? (
+                <T size="xs" tone="tertiary" tabular className="shrink-0" data-testid={`${testId}-note-count`}>{`${note.length}/${maxLength}`}</T>
+              ) : null}
+            </Inline>
+          ) : null}
           <Input
             size="sm"
             value={note}
-            maxLength={VOICE_NOTE_MAX}
-            placeholder={fields.notePlaceholder ?? 'Note (optional)'}
-            aria-label="Note"
+            maxLength={maxLength}
+            placeholder={fields?.notePlaceholder ?? (fields ? 'Note (optional)' : undefined)}
+            aria-label={noteLabel ? undefined : 'Note'}
+            aria-labelledby={noteLabel ? noteLabelId : undefined}
             onChange={(e) => setNote(e.target.value)}
             data-testid={`${testId}-note`}
           />
         </Stack>
       ) : null}
       <Inline gap="sm" justify="end">
-        <Button variant="secondary" size="sm" onClick={pending.onCancel} data-testid={`${testId}-cancel`}>Cancel</Button>
-        <Button variant="primary" size="sm" onClick={confirm} aria-describedby={hint ? hintId : undefined} data-testid={`${testId}-confirm`}>Confirm</Button>
+        <Button variant="secondary" size="sm" onClick={pending.onCancel} data-testid={`${testId}-cancel`}>{cancelLabel}</Button>
+        <Button variant="primary" size="sm" onClick={confirm} aria-describedby={hint ? hintId : undefined} data-testid={`${testId}-confirm`}>{confirmLabel}</Button>
       </Inline>
       {hint ? <T size="xs" tone="secondary" as="p" id={hintId} className="truncate" data-testid={`${testId}-hint`}>{hint}</T> : null}
     </Stack>
