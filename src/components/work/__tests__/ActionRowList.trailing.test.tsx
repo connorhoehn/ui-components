@@ -113,9 +113,17 @@ describe('ActionRowList trailing (2.509.0)', () => {
 });
 
 describe('ActionRowList type scale (2.515.0)', () => {
-  it('without columns keeps the 15px md rows; with columns every cell is 14px and meta 12px', () => {
-    const { rerender } = render(<ActionRowList items={[{ id: 'a', title: 'T', meta: 'm' }]} />);
-    expect(screen.getByTestId('action-row-meta')).toHaveClass('text-[13px]');
+  it('md is 14px title and 12px meta with or without columns (2.515.12: column-less md was 15/13)', () => {
+    const { rerender } = render(<ActionRowList action="Open" items={[{ id: 'a', title: 'Long title', meta: 'm' }]} />);
+    expect(screen.getByTestId('action-row-meta')).toHaveClass('text-xs');
+    expect(screen.getByTestId('action-row-meta').className).not.toContain('text-[13px]');
+    const title = screen.getByText('Long title');
+    expect(title).toHaveClass('text-sm');
+    expect(title.className).not.toContain('text-[15px]');
+    expect(screen.getByTestId('action-row-action')).toHaveClass('text-sm');
+    expect(screen.getByTestId('action-row-action').className).not.toContain('text-[15px]');
+    // G88-W5: a clipped column-less title carries its full text.
+    expect(title).toHaveAttribute('title', 'Long title');
     rerender(<ActionRowList columns={[{ id: 'c', width: 'md' }]} items={[{ id: 'a', title: 'T', meta: 'm', cells: { c: 'Cell' } }]} />);
     expect(screen.getByTestId('action-row-meta')).toHaveClass('text-xs');
     expect(screen.getByText('Cell').className).toMatch(/\btext-sm\b/);

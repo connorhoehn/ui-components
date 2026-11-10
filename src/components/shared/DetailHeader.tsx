@@ -31,6 +31,12 @@ export interface DetailHeaderProps {
   asideWidth?: number;
   /** Heading level, so a panel nested under a page h1 does not claim h1. `h1` (since 2.504.0) when the header is the page's (`DetailPage`). */
   as?: 'h1' | 'h2' | 'h3';
+  /**
+   * The title's size (since 2.515.12). `panel` (default): 14px, a panel's
+   * heading. `page`: 20px (`text-xl`, 28px line), the page-title size every
+   * page template's header draws; `DetailPage` passes it.
+   */
+  titleSize?: 'panel' | 'page';
   className?: string;
   'data-testid'?: string;
 }
@@ -43,6 +49,7 @@ export function DetailHeader({
   aside,
   asideWidth = 260,
   as: Heading = 'h2',
+  titleSize = 'panel',
   className,
   'data-testid': testId,
 }: DetailHeaderProps) {
@@ -51,9 +58,10 @@ export function DetailHeader({
       className={cn('flex flex-wrap items-start justify-between gap-3', className)}
       data-testid={testId}
     >
-      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+      {/* 4px between title, description and meta (since 2.515.12; was 6px). */}
+      <div className="flex flex-col gap-1 min-w-0 flex-1" data-detail-header-stack="">
         <div className="flex flex-wrap items-center gap-2">
-          <Heading className={'m-0 text-sm font-semibold text-text-primary'}>
+          <Heading className={cn('m-0 font-semibold text-text-primary', titleSize === 'page' ? 'text-xl leading-7' : 'text-sm')} data-title-size={titleSize}>
             {title}
           </Heading>
           {badge}

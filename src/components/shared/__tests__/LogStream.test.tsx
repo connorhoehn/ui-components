@@ -178,3 +178,16 @@ describe('LogStream — unrecognised level values', () => {
     expect(screen.getByText('numeric level')).toBeInTheDocument();
   });
 });
+
+describe('LogStream labels on the scale (2.515.12)', () => {
+  it('level labels are 11px (were 10px) and take the -fg text tokens', () => {
+    render(<LogStream lines={[{ id: 'w', level: 'warn', message: 'careful' }, { id: 'e', level: 'error', message: 'bad' }, { id: 'i', level: 'info', message: 'fine' }]} />);
+    const warn = screen.getByLabelText('level warn');
+    expect(warn).toHaveClass('text-[11px]');
+    expect(warn.className).toContain('--color-warning-fg');
+    expect(warn.className).not.toMatch(/--color-warning[,)]/);
+    expect(screen.getByLabelText('level error').className).toContain('--color-danger-fg');
+    expect(screen.getByLabelText('level info').className).toContain('--color-info-fg');
+    expect(document.body.innerHTML).not.toContain('text-[10px]');
+  });
+});

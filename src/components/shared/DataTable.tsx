@@ -49,8 +49,20 @@ export interface DataTableColumn<T> {
   numeric?: boolean;
   /** The label a stacked card (`narrow`) puts before this column's value. Default: `header` when it is a string, else `key`. Since 2.515.3. */
   label?: string;
+  /**
+   * Cut this column's cells to one line with an ellipsis instead of letting a
+   * long value widen the table (since 2.515.12). The cell takes the column's
+   * share of the width (`width` when given, else what is left), and the full
+   * text is the cell's `title`: the raw value when it is a string or number,
+   * else `getFilterText(row)`, else the rendered cell's text. `data-truncate`
+   * on the cell.
+   */
+  truncate?: boolean;
   className?: string;
 }
+
+/** Header letter case (since 2.515.12). `upper` (default): caps with wide tracking. `sentence`: the header text as written. */
+export type DataTableHeaderCase = 'upper' | 'sentence';
 
 export interface DataTableProps<T> {
   /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
@@ -138,6 +150,13 @@ export interface DataTableProps<T> {
   selectedKey?: string | null;
   /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
   isRowSelected?: (row: T) => boolean;
+  /**
+   * Column header letter case (since 2.515.12). `upper` (default, unchanged):
+   * 12px semibold caps with wide tracking. `sentence`: the header as written
+   * ("Episode", "Outline / Synopsis"), normal tracking, same size and weight.
+   * `data-header-case` on the `<thead>`.
+   */
+  headerCase?: DataTableHeaderCase;
   className?: string;
   'data-testid'?: string;
 }
@@ -148,6 +167,23 @@ const NARROW_HEAD = '@max-[40rem]:sr-only';
 const NARROW_BODY = '@max-[40rem]:block';
 const NARROW_ROW = '@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2';
 const NARROW_CELL = '@max-[40rem]:flex @max-[40rem]:h-auto @max-[40rem]:items-baseline @max-[40rem]:justify-between @max-[40rem]:gap-4 @max-[40rem]:whitespace-normal @max-[40rem]:px-0 @max-[40rem]:py-1 @max-[40rem]:text-right @max-[40rem]:before:shrink-0 @max-[40rem]:before:text-left @max-[40rem]:before:text-xs @max-[40rem]:before:font-semibold @max-[40rem]:before:uppercase @max-[40rem]:before:tracking-wide @max-[40rem]:before:text-text-secondary @max-[40rem]:before:content-[attr(data-label)]';
+
+// `headerCase="sentence"`: drops the caps and the wide tracking (tailwind-merge
+// replaces Table's `uppercase tracking-wide`).
+const SENTENCE_HEADER = 'normal-case tracking-normal';
+// A truncating column: `max-w-0` lets an auto-layout table give the cell the
+// column's share instead of its content's width; the inner span cuts the
+// text. The narrow (stacked card) form undoes the cap.
+const TRUNCATE_CELL = 'max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:max-w-none';
+
+/** The full text a truncating cell shows as its `title`. */
+function truncateTitle<T>(col: DataTableColumn<T>, row: T, content: ReactNode): string {
+  const raw = (row as Record<string, unknown>)[col.key];
+  if (!col.render && raw != null && typeof raw !== 'object') return String(raw);
+  if (typeof content === 'string' || typeof content === 'number') return String(content);
+  if (col.getFilterText) return col.getFilterText(row);
+  return nodeToFilterText(content).replace(/\s+/g, ' ').trim();
+}
 
 function columnLabel<T>(col: DataTableColumn<T>): string {
   return col.label ?? (typeof col.header === 'string' ? col.header : col.key);
@@ -274,10 +310,12 @@ export function DataTable<T>({
   'aria-labelledby': ariaLabelledBy,
   selectedKey,
   isRowSelected,
+  headerCase = 'upper',
   className,
   'data-testid': testId,
   staticRows,
 }: DataTableProps<T>) {
+  const sentenceHeaders = headerCase === 'sentence';
   const selection = selectedKey !== undefined || !!isRowSelected;
   const selectedRow = (row: T): boolean =>
     selectedKey !== undefined ? selectedKey !== null && keyField(row) === selectedKey : !!isRowSelected?.(row);
@@ -353,7 +391,7 @@ export function DataTable<T>({
           table's spill stays inside the table's box. */}
         <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE)}
           {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {})}>
-        <TableHead className={narrow ? NARROW_HEAD : undefined}>
+        <TableHead className={narrow ? NARROW_HEAD : undefined} data-header-case={headerCase}>
           <tr>
             {columns.map((col) => {
               const isSorted = col.sortable && sortKey === col.key;
@@ -364,7 +402,7 @@ export function DataTable<T>({
                   sortDirection={isSorted ? sortDir : null}
                   style={col.width ? { width: col.width } : undefined}
                   numeric={col.numeric}
-                  className={cn(alignClass(col.align), col.className)}
+                  className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(col.align), col.className)}
                   onClick={col.sortable ? () => toggleSort(col.key) : undefined}
                   data-testid={col.sortable ? `datatable-header-${col.key}` : undefined}
                 >
@@ -372,7 +410,7 @@ export function DataTable<T>({
                 </TableTh>
               );
             })}
-            {rowActions && <TableTh className="text-right">Actions</TableTh>}
+            {rowActions && <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'text-right')}>Actions</TableTh>}
           </tr>
         </TableHead>
         {/* DataTable stripes its data rows itself (odd index), so skeleton and
@@ -446,18 +484,24 @@ export function DataTable<T>({
                         : undefined
                     }
                   >
-                    {columns.map((col) => (
+                    {columns.map((col) => {
+                      const content = col.render
+                        ? col.render(row, rowIndex)
+                        : String((row as Record<string, unknown>)[col.key] ?? '');
+                      const fullText = col.truncate ? truncateTitle(col, row, content) : '';
+                      return (
                       <TableTd
                         key={col.key}
                         numeric={col.numeric}
-                        className={cn(alignClass(col.align), narrow && NARROW_CELL, col.className)}
+                        className={cn(alignClass(col.align), col.truncate && TRUNCATE_CELL, narrow && NARROW_CELL, col.className)}
                         {...(narrow ? { 'data-label': columnLabel(col) } : {})}
+                        {...(col.truncate ? { 'data-truncate': '' } : {})}
+                        {...(fullText ? { title: fullText } : {})}
                       >
-                        {col.render
-                          ? col.render(row, rowIndex)
-                          : String((row as Record<string, unknown>)[col.key] ?? '')}
+                        {col.truncate ? <span className="block min-w-0 truncate">{content}</span> : content}
                       </TableTd>
-                    ))}
+                      );
+                    })}
                     {rowActions && (
                       <TableTd className="text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-2">

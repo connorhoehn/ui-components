@@ -149,7 +149,10 @@ export function TableTh({ children, sortable, sortDirection, numeric, className,
       className={cn(
         size === 'sm'
           ? 'text-left px-[var(--ui-table-inset,0.75rem)] py-2 text-text-secondary font-semibold text-xs uppercase tracking-wide whitespace-nowrap select-none'
-          : 'text-left px-4 py-2.5 text-text-secondary font-semibold text-[12px] uppercase tracking-wide select-none',
+          // md header: 8px block padding (was py-2.5, 10px, off the 4px scale;
+          // 8px rather than 12px matches the sm header so both densities
+          // share one header band — since 2.515.12).
+          : 'text-left px-4 py-2 text-text-secondary font-semibold text-[12px] uppercase tracking-wide select-none',
         numeric && 'text-right',
         sortable && 'cursor-pointer hover:text-text-primary transition-colors',
         className,

@@ -1951,5 +1951,44 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS tabs.reach catches views folded behind More, tabs cut at a row edge and a scrolled-away selected tab, and accepts the scrolling row');
   }
+  {
+    // library.type-scale, detail.header-stack-gap, rail.header-inset (2.515.12):
+    // the Studio audit measured these library internals off the house scales
+    // (a 14px DetailPage title over a 6px stack, a 10px pipeline-run pill, a
+    // 12.8px monospace presence header, a 20px rail inset).
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const ids = ['library.type-scale', 'detail.header-stack-gap', 'rail.header-inset'];
+    const rules = fullContract.rules.filter(r => ids.includes(r.id));
+    assert.equal(rules.length, 3, 'the scale rules are in the shipped contract');
+    assert.ok(rules.every(r => !r.deep), 'the scale rules are in the resting gate');
+    const judge = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules }, selectors: {} });
+    const fixture = `<style>*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}[data-detail-header-stack]{display:flex;flex-direction:column;gap:4px}#title{font-size:20px}[data-rail-inset]{padding-left:16px}</style>
+      <div data-rail-inset="16" id="rail">Episodes</div>
+      <div data-detail-header-stack><h1 id="title">Episode 4</h1><p style="font-size:14px">Outline</p><span style="font-size:12px">Updated now</span></div>
+      <div role="tablist" data-detail-page-tabs="md"><button role="tab" style="font-size:14px">Overview</button></div>
+      <article data-pipeline-run><h3 style="font-size:14px">Rig check</h3><span id="pill" style="font-size:11px">Running</span><span style="font-size:12px">Mesh</span></article>
+      <ol data-ui-procedure><li style="font-size:12px">Open the sheet</li></ol>
+      <div data-testid="presence-panel"><span id="presence" style="font-size:12px">Here now</span><span style="font-size:11px">AB</span></div>
+      <span data-titled-frame-title="label" style="font-size:12px">Queue</span><h1 data-settings-title style="font-size:14px">Access</h1>`;
+    await page.setContent(fixture);
+    const clean = await judge();
+    assert.deepEqual(clean.issues, [], `the on-scale fixture passes ${JSON.stringify(clean.issues)}`);
+    for (const id of ids) assert.ok(clean.coverage.some(c => c.rule === id && c.matched > 0), `${id} is exercised by the valid fixture`);
+    const mutations = [
+      ['#title', el => { el.style.fontSize = '13px'; }, 'library.type-scale'],
+      ['#pill', el => { el.style.fontSize = '10px'; }, 'library.type-scale'],
+      ['#presence', el => { el.style.fontSize = '12.8px'; }, 'library.type-scale'],
+      ['[data-detail-header-stack]', el => { el.style.gap = '6px'; }, 'detail.header-stack-gap'],
+      ['#rail', el => { el.style.paddingLeft = '20px'; }, 'rail.header-inset'],
+    ];
+    for (const [selector, mutate, rule] of mutations) {
+      await page.setContent(fixture);
+      await page.locator(selector).first().evaluate(mutate);
+      const found = await judge();
+      assert.ok(found.issues.some(i => i.rule === rule), `${selector} off the scale fails ${rule}: ${JSON.stringify(found.issues)}`);
+    }
+    await page.close();
+    console.log('PASS library.type-scale, detail.header-stack-gap and rail.header-inset catch off-scale library text, a 6px header stack and a 20px rail inset, and accept the 2.515.12 values');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

@@ -18,9 +18,12 @@ interface PresencePanelProps {
 
 export function PresencePanel({ users, currentClientId }: PresencePanelProps) {
   return (
-    <div className="border border-border rounded p-3 font-mono">
+    // House font and type scale (2.515.12): the panel was monospace with a
+    // 12.8px header and 8.8px initials; now the body font, a 12px header and
+    // 11px initials (Avatar's step for a 20px circle).
+    <div className="border border-border rounded p-3" data-testid="presence-panel">
       {/* Header */}
-      <div className="text-[0.8rem] font-bold mb-2 text-text-primary">
+      <div className="text-xs font-bold mb-2 text-text-primary" data-testid="presence-panel-title">
         Users in channel ({users.length})
       </div>
 
@@ -64,7 +67,8 @@ export function PresencePanel({ users, currentClientId }: PresencePanelProps) {
               >
                 {/* Colored avatar circle */}
                 <div
-                  className="w-5 h-5 rounded-full flex items-center justify-center text-[0.55rem] font-bold text-white shrink-0"
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] leading-none font-bold text-white shrink-0"
+                  data-ui-text="avatar"
                   style={{ backgroundColor: color }}
                 >
                   {initials}

@@ -166,6 +166,18 @@ export interface AvatarProps {
   showTitle?: boolean;
 }
 
+/**
+ * Initials on the house type scale (2.515.12; was `size × 0.38` clamped to
+ * 9–16px, so a 32px avatar drew 12.16px): under 24px → 11px, 24–35px → 12px,
+ * 36–47px → 14px, 48px and up → 16px.
+ */
+function initialsFontSize(size: number): number {
+  if (size < 24) return 11;
+  if (size < 36) return 12;
+  if (size < 48) return 14;
+  return 16;
+}
+
 export function Avatar({
   name,
   size = 28,
@@ -212,7 +224,7 @@ export function Avatar({
         // leaving these undefined is what lets the class win.
         background: toneClasses ? undefined : bg,
         color: toneClasses ? undefined : fg,
-        fontSize: hasMark ? Math.max(9, size * 0.5) : Math.min(16, Math.max(9, size * 0.38)),
+        fontSize: hasMark ? Math.max(9, size * 0.5) : initialsFontSize(size),
         ...style,
       }}
     >
@@ -300,7 +312,7 @@ export function AvatarGroup({
           style={{
             width: size,
             height: size,
-            fontSize: Math.max(10, size * 0.38),
+            fontSize: initialsFontSize(size),
             marginLeft: overlap,
           }}
           title={`+${overflow} more`}

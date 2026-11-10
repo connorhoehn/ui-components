@@ -73,9 +73,12 @@ const LEVEL_LABEL: Record<LogLevel, string> = {
 
 const LEVEL_COLOR: Record<LogLevel, string> = {
   debug: 'text-[var(--color-text-tertiary)]',
-  info: 'text-[var(--color-info,#3b82f6)]',
-  warn: 'text-[var(--color-warning,#d97706)]',
-  error: 'text-[var(--color-danger,#dc2626)]',
+  // Text tokens (2.515.12): the level words are text, so they take the `-fg`
+  // ink that holds 4.5:1, not the fill colour (WARN was --color-warning,
+  // #d97706 on white, 3.07:1).
+  info: 'text-[var(--color-info-fg,#1d4ed8)]',
+  warn: 'text-[var(--color-warning-fg,#b45309)]',
+  error: 'text-[var(--color-danger-fg,#b91c1c)]',
 };
 
 export function LogStream({
@@ -121,7 +124,7 @@ export function LogStream({
   const defaultMeta = (
     <div className="flex items-center gap-2">
       <span
-        className="text-[10px] text-[var(--color-text-tertiary)]"
+        className="text-[11px] text-[var(--color-text-tertiary)]"
         data-testid={`${testId}-count`}
       >
         {lines.length} {lines.length === 1 ? 'line' : 'lines'}
@@ -133,7 +136,7 @@ export function LogStream({
           onClick={onClear}
           data-testid={`${testId}-clear`}
           className={cn(
-            'text-[10px] uppercase tracking-wide',
+            'text-[11px] uppercase tracking-wide',
             'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
             'border border-[var(--color-border)] rounded px-1.5 py-0.5',
             'cursor-pointer bg-transparent',
@@ -222,7 +225,7 @@ export function LogStream({
                   {showLevel && line.level && (
                     <span
                       className={cn(
-                        'shrink-0 font-semibold uppercase text-[10px] w-[44px]',
+                        'shrink-0 font-semibold uppercase text-[11px] w-[44px]',
                         levelColor,
                       )}
                       aria-label={`level ${rawLevel.toLowerCase()}`}
@@ -251,7 +254,7 @@ export function LogStream({
             onClick={jumpToLive}
             className={cn(
               'absolute bottom-3 left-1/2 -translate-x-1/2',
-              'px-3 py-1 text-[10px] font-semibold uppercase tracking-wide',
+              'px-3 py-1 text-[11px] font-semibold uppercase tracking-wide',
               'bg-primary text-on-primary rounded-full border-none cursor-pointer',
               'shadow-[0_2px_8px_rgba(0,0,0,0.25)]',
             )}

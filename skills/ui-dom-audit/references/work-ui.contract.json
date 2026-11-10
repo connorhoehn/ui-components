@@ -1923,6 +1923,28 @@
       "selector": "[role=\"tablist\"]",
       "maxHidden": 1,
       "owner": "Tabs / PaneHeader overflow / SubjectFrame tabs.overflow / DetailPage tabsOverflow (2.515.10): a narrow tab row scrolls with every view in it, or folds at most one view into More"
+    },
+    {
+      "id": "library.type-scale",
+      "kind": "text",
+      "selector": "[data-detail-header-stack], [data-detail-page-tabs], [data-pipeline-run], [data-ui-procedure], [data-testid=\"presence-panel\"], [data-titled-frame-title=\"label\"], [data-settings-title]",
+      "properties": { "fontSize": [11, 12, 14, 16, 20] },
+      "tolerance": 0.1,
+      "owner": "DetailPage header and tabs, WrappedPipelineRun card, ProcedureSteps, PresencePanel, DashboardPage panel titles, SettingsPage title (2.515.12): every text node on the house type scale 11 / 12 / 14 / 16 / 20"
+    },
+    {
+      "id": "detail.header-stack-gap",
+      "kind": "style",
+      "selector": "[data-detail-header-stack]",
+      "properties": { "rowGap": 4 },
+      "owner": "DetailHeader stack (2.515.12): title, description and meta 4px apart (was 6px)"
+    },
+    {
+      "id": "rail.header-inset",
+      "kind": "style",
+      "selector": "[data-rail-inset]",
+      "properties": { "paddingLeft": [0, 12, 16] },
+      "owner": "WorkspaceRail header (MasterDetailPage / ListRailLayout / ExplorerLayout, 2.515.12): 16px inset for the tall headings, 12px for the compact strip (was 20 / 14px)"
     }
   ]
 }

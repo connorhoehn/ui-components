@@ -37,6 +37,13 @@ export interface TitledFrameProps {
    * two different applications.
    */
   tone?: TitledFrameTone;
+  /**
+   * How the title reads (since 2.515.12). `mono` (default, unchanged): the
+   * multiplexer label, 10px monospace with 6px padding. `label`: the house
+   * font at 12px with 4px padding, so the title's text starts 12px in from
+   * the frame's edge, on a `p-3` body's inset (`DashboardPage` panels).
+   */
+  titleStyle?: 'mono' | 'label';
   children: ReactNode;
   /** Fires on mousedown anywhere in the frame — how a pane claims focus. */
   onActivate?: () => void;
@@ -73,6 +80,7 @@ export function TitledFrame({
   titleText,
   active = false,
   tone = 'code',
+  titleStyle = 'mono',
   children,
   onActivate,
   className,
@@ -105,9 +113,10 @@ export function TitledFrame({
       <div className="absolute -top-2 left-2 right-2 h-4 flex items-center gap-1 pointer-events-none">
         <span
           title={titleText ?? (typeof title === 'string' ? title : undefined)}
-          data-titled-frame-title=""
+          data-titled-frame-title={titleStyle}
           className={cn(
-            'min-w-0 px-1.5 text-[10px] font-mono leading-none truncate',
+            'min-w-0 leading-none truncate',
+            titleStyle === 'label' ? 'px-1 text-xs font-medium' : 'px-1.5 text-[10px] font-mono',
             titleAction != null ? 'max-w-[60%]' : 'max-w-full',
             palette.frame,
             active ? palette.titleActive : palette.title,

@@ -155,7 +155,7 @@ export declare interface ActionRowListProps {
     /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
     action?: string;
     /**
-     * Type step. `md` (default): the Initiatives v2 mockup's 15px rows; with `columns`, the house 14/12 scale (14px title and cells, 12px description and meta; 2.515.0, was 15/13). `sm`
+     * Type step. `md` (default): the house 14/12 scale — 14px title, cells and action, 12px meta; without `columns` a 14px description (2.515.12: the column-less title and action were 15px, meta 13px; with `columns` since 2.515.0). `sm`
      * (since 2.429.0): the app's body step — 14px medium titles and cells,
      * 12px descriptions and meta, a 14px semibold action (`T size="sm"` /
      * `T size="xs"`) — so a list in a tabbed pane reads like the rails and
@@ -2892,7 +2892,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -2920,8 +2920,20 @@ export declare interface DataTableColumn<T> {
     numeric?: boolean;
     /** The label a stacked card (`narrow`) puts before this column's value. Default: `header` when it is a string, else `key`. Since 2.515.3. */
     label?: string;
+    /**
+     * Cut this column's cells to one line with an ellipsis instead of letting a
+     * long value widen the table (since 2.515.12). The cell takes the column's
+     * share of the width (`width` when given, else what is left), and the full
+     * text is the cell's `title`: the raw value when it is a string or number,
+     * else `getFilterText(row)`, else the rendered cell's text. `data-truncate`
+     * on the cell.
+     */
+    truncate?: boolean;
     className?: string;
 }
+
+/** Header letter case (since 2.515.12). `upper` (default): caps with wide tracking. `sentence`: the header text as written. */
+export declare type DataTableHeaderCase = 'upper' | 'sentence';
 
 export declare interface DataTableProps<T> {
     /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
@@ -3009,6 +3021,13 @@ export declare interface DataTableProps<T> {
     selectedKey?: string | null;
     /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
     isRowSelected?: (row: T) => boolean;
+    /**
+     * Column header letter case (since 2.515.12). `upper` (default, unchanged):
+     * 12px semibold caps with wide tracking. `sentence`: the header as written
+     * ("Episode", "Outline / Synopsis"), normal tracking, same size and weight.
+     * `data-header-case` on the `<thead>`.
+     */
+    headerCase?: DataTableHeaderCase;
     className?: string;
     'data-testid'?: string;
 }
@@ -3060,7 +3079,7 @@ export declare interface DensityProviderProps {
 /** A monitor on a stand: a computer — a provisioned box. Since 2.411.0. */
 export declare function DesktopIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function DetailHeader({ title, badge, description, meta, aside, asideWidth, as: Heading, className, 'data-testid': testId, }: DetailHeaderProps): JSX.Element;
+export declare function DetailHeader({ title, badge, description, meta, aside, asideWidth, as: Heading, titleSize, className, 'data-testid': testId, }: DetailHeaderProps): JSX.Element;
 
 export declare interface DetailHeaderProps {
     title: ReactNode;
@@ -3076,6 +3095,12 @@ export declare interface DetailHeaderProps {
     asideWidth?: number;
     /** Heading level, so a panel nested under a page h1 does not claim h1. `h1` (since 2.504.0) when the header is the page's (`DetailPage`). */
     as?: 'h1' | 'h2' | 'h3';
+    /**
+     * The title's size (since 2.515.12). `panel` (default): 14px, a panel's
+     * heading. `page`: 20px (`text-xl`, 28px line), the page-title size every
+     * page template's header draws; `DetailPage` passes it.
+     */
+    titleSize?: 'panel' | 'page';
     className?: string;
     'data-testid'?: string;
 }
@@ -3094,7 +3119,7 @@ export declare interface DetailHeaderProps {
  *   ]}
  *   aside={<ContextColumn … />} />
  */
-export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, tabsLabel, tabsOverflow, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DetailPageProps): JSX.Element;
+export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, tabsLabel, tabsOverflow, tabsSize, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DetailPageProps): JSX.Element;
 
 export declare interface DetailPageProps {
     /** What the record is. */
@@ -3130,6 +3155,12 @@ export declare interface DetailPageProps {
      * current tab stay and the rest fold into `More ▾`.
      */
     tabsOverflow?: 'scroll' | 'menu';
+    /**
+     * The tab row's size (since 2.515.12). `md` (default): 14px labels, as
+     * `Tabs` and `PaneHeader` draw. `sm`: 12px, the size every DetailPage tab
+     * row had before 2.515.12.
+     */
+    tabsSize?: 'sm' | 'md';
     /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
     activeTab?: string;
     onTabChange?: (id: string) => void;
@@ -3332,13 +3363,21 @@ export declare interface DisclosureProps {
 
 export declare function DisconnectReconnect({ connectionState, onDisconnect, onReconnect }: Props_5): JSX.Element;
 
-export declare function Divider({ label, spacing, className, 'data-testid': testId }: DividerProps): JSX.Element;
+export declare function Divider({ label, spacing, orientation, className, 'data-testid': testId }: DividerProps): JSX.Element;
 
 export declare interface DividerProps {
     /** Optional caption sitting on the rule. */
     label?: ReactNode;
-    /** Vertical margin around the rule. Default `md`. */
+    /** Margin around the rule: vertical for a horizontal rule, side margin for a vertical one. Default `md`. */
     spacing?: DividerSpacing;
+    /**
+     * `horizontal` (default): a rule across a column. `vertical` (since
+     * 2.515.12): a hairline between the items of an inline row, `role="separator"`
+     * `aria-orientation="vertical"`, stretched to the row's height (an
+     * `align-self: stretch` flex item; 1em tall otherwise). `label` is ignored.
+     * Margins: none 0, sm 8px, md 12px, lg 16px each side.
+     */
+    orientation?: 'horizontal' | 'vertical';
     className?: string;
     'data-testid'?: string;
 }
@@ -5926,7 +5965,7 @@ export declare interface KeyValueItem {
     action?: ReactNode;
 }
 
-export declare type KeyValueLayout = 'stack' | 'row' | 'grid';
+export declare type KeyValueLayout = 'stack' | 'row' | 'grid' | 'inline';
 
 export declare interface KeyValueProps {
     items: KeyValueItem[];
@@ -5934,6 +5973,9 @@ export declare interface KeyValueProps {
      * `row` (default): label in a fixed column left of the value.
      * `stack`: label above value, one fact per line.
      * `grid`: stacked pairs in two columns.
+     * `inline` (since 2.515.12): one row of pairs, each label beside its value
+     * (12px label, 14px value, 4px apart, 16px between pairs), wrapping onto a
+     * further line when the row is full; a header's facts line.
      */
     layout?: KeyValueLayout;
     /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
@@ -6280,7 +6322,7 @@ export declare interface LogStreamProps {
     'data-testid'?: string;
 }
 
-export declare function MarkdownView({ markdown, scale, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
+export declare function MarkdownView({ markdown, scale, headingOffset, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
 
 export declare interface MarkdownViewProps {
     markdown: string;
@@ -6289,9 +6331,20 @@ export declare interface MarkdownViewProps {
      * 14px body, h1 20px. `sm` steps headings down to 17/15/14/13px over a 13px
      * body, for prose inside a card (an assistant answer) whose `#` must not
      * compete with the page title. `lg` is a document read on its own page:
-     * 15px body, h1 24px, h2 20px.
+     * 16px body, h1 20px, h2 16px, h3 16px, h4 14px, inline code 14px (since
+     * 2.515.12, on the 11/12/14/16/20 type scale; it was 15px body, h1 24px,
+     * h2 20px, h3 17px, h4 15px).
      */
     scale?: MarkdownViewScale;
+    /**
+     * Shift every heading's level down by this many (since 2.515.12), so a
+     * document embedded under a page's own h1 keeps one outline: with `1`, `#`
+     * renders an `<h2>`, `##` an `<h3>`, capped at `<h6>`. The look follows the
+     * source level (a `#` still draws at the scale's h1 size); only the element
+     * changes. Each shifted heading carries `data-md-level` (its source level).
+     * Default `0`.
+     */
+    headingOffset?: number;
     className?: string;
     'data-testid'?: string;
 }
@@ -8067,7 +8120,7 @@ export declare interface ProcedureStepsProps {
     steps: ProcedureStep[];
     /** Show step numbers. Default `true`. */
     numbered?: boolean;
-    /** `sm` 13px text, 20px markers (an inspector); `md` (default) 14px, 24px markers (a record body). */
+    /** `sm` 12px titles, 20px markers (an inspector); `md` (default) 14px titles, 24px markers (a record body). Bodies and notes are 12px at both. */
     size?: 'sm' | 'md';
     onSelectStep?: (id: string) => void;
     /** Shown when `steps` is empty. Default "No steps recorded". */
@@ -9627,11 +9680,17 @@ export declare function SendIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** Wireframe on (or off) for every mesh material of the model. Returns false when the scene is unreachable. */
 export declare function setModelWireframe(el: unknown, on: boolean): boolean;
 
-export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, narrow, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
+export declare function SettingsLayout({ title, titleAs: TitleTag, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, narrow, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
 export declare interface SettingsLayoutProps {
     /** Page title shown above the rail. */
     title: ReactNode;
+    /**
+     * The title's element (since 2.515.12). Default `div` (unchanged). `SettingsPage`
+     * passes `h1`, so the page has its heading like the other page templates. The
+     * size (14px semibold) is the same either way.
+     */
+    titleAs?: 'h1' | 'h2' | 'h3' | 'div';
     /** Optional secondary line under the title. */
     subtitle?: ReactNode;
     /** Section list. The first section is selected by default. */
@@ -9688,11 +9747,16 @@ export declare interface SettingsLayoutProps {
  *     { id: 'members', label: 'Members', content: <MembersForm /> },
  *   ]} />
  */
-export declare function SettingsPage({ breadcrumbs, gutter, className, 'data-testid': testId, 'data-page-spec': spec, ...layout }: SettingsPageProps): JSX.Element;
+export declare function SettingsPage({ breadcrumbs, titleAs, gutter, className, 'data-testid': testId, 'data-page-spec': spec, ...layout }: SettingsPageProps): JSX.Element;
 
 export declare interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
     /** The trail above the settings rail. */
     breadcrumbs?: BreadcrumbItem[];
+    /**
+     * The title's element. Default `h1` (since 2.515.12; it was a `div`, so the
+     * page had no heading): the page title, as the other five templates draw it.
+     */
+    titleAs?: SettingsLayoutProps['titleAs'];
     /** Default `page` — the trail at `--ui-page-gutter`. The rail stays flush. */
     gutter?: PageGutter;
     /** Set by `PageFromSpec`: the spec template this page was built from. */
@@ -10386,7 +10450,7 @@ export declare interface StackedRailRow extends StackedRailDragProps {
     testId?: string;
 }
 
-/** Spacing scale. Matches Tailwind's 4px base: xs=6, sm=8, md=12, lg=16, xl=24. */
+/** Spacing scale on the 4px base: xs=4 (6 before 2.515.12), sm=8, md=12, lg=16, xl=24. */
 export declare type StackGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export declare type StackJustify = 'start' | 'center' | 'end' | 'between';
@@ -10708,7 +10772,7 @@ export declare type StatusPillVariant = 'pill' | 'text' | 'tag' | 'label';
 /** The most facts the frame draws (concepts §5 draws eight). */
 export declare const SUBJECT_FRAME_MAX_FACTS = 8;
 
-export declare function SubjectFrame({ title, subtitle, badges, headerActions, tabs, hero, heroAspect, heroActions, facts, factsLabel, disclosures, children, className, 'data-testid': testId, }: SubjectFrameProps): JSX.Element;
+export declare function SubjectFrame({ title, titleHidden, subtitle, badges, headerActions, tabs, hero, heroAspect, heroActions, facts, factsLabel, disclosures, children, className, 'data-testid': testId, }: SubjectFrameProps): JSX.Element;
 
 export declare interface SubjectFrameDisclosure {
     id: string;
@@ -10723,8 +10787,16 @@ export declare interface SubjectFrameDisclosure {
 }
 
 export declare interface SubjectFrameProps {
-    /** "Toby", "Asset · Generated sheet". */
+    /** "Toby", "Asset · Generated sheet". Always given: it names the frame (`aria-labelledby`), even when `titleHidden`. */
     title: ReactNode;
+    /**
+     * The host already names the record (a `SidePane` title over the frame):
+     * the title is kept for screen readers only (an `sr-only` h2 that still names
+     * the section) and the visible title row is not drawn, unless `subtitle`,
+     * `badges` or `headerActions` are given, which then draw on their own.
+     * Since 2.515.12. Default false.
+     */
+    titleHidden?: boolean;
     /** "Character · Lead", "Episode 01". */
     subtitle?: ReactNode;
     /** Chips beside the title (state, version). */
@@ -10739,9 +10811,10 @@ export declare interface SubjectFrameProps {
         label?: string;
         /**
          * The tab row in a narrow frame (since 2.515.10; `PaneHeader overflow`).
-         * `menu` (default): under 360px the row keeps the first and current tab
-         * and folds the rest into `More ▾`. `scroll`: one row that scrolls
-         * sideways, every view in it (a 380px inspector, a phone column).
+         * `scroll` (default since 2.515.12; was `menu`): one row that scrolls
+         * sideways, every view in it and the current tab kept in view (a 380px
+         * inspector, a phone column). `menu`: under 360px the row keeps the first
+         * and current tab and folds the rest into `More ▾`.
          */
         overflow?: 'scroll' | 'menu';
     };
@@ -11595,7 +11668,7 @@ export declare interface ThumbnailCardProps {
     'data-testid'?: string;
 }
 
-export declare function TitledFrame({ title, titleAction, titleText, active, tone, children, onActivate, className, bodyClassName, style, 'data-testid': testId, }: TitledFrameProps): JSX.Element;
+export declare function TitledFrame({ title, titleAction, titleText, active, tone, titleStyle, children, onActivate, className, bodyClassName, style, 'data-testid': testId, }: TitledFrameProps): JSX.Element;
 
 export declare interface TitledFrameProps {
     /** Text sitting in the top border. Keep it short — it is a label, not a line. */
@@ -11616,6 +11689,13 @@ export declare interface TitledFrameProps {
      * two different applications.
      */
     tone?: TitledFrameTone;
+    /**
+     * How the title reads (since 2.515.12). `mono` (default, unchanged): the
+     * multiplexer label, 10px monospace with 6px padding. `label`: the house
+     * font at 12px with 4px padding, so the title's text starts 12px in from
+     * the frame's edge, on a `p-3` body's inset (`DashboardPage` panels).
+     */
+    titleStyle?: 'mono' | 'label';
     children: ReactNode;
     /** Fires on mousedown anywhere in the frame — how a pane claims focus. */
     onActivate?: () => void;
@@ -12935,6 +13015,11 @@ export declare interface WorkspaceRailProps {
      * ("WORKSPACE"); it was a 15px label with a count chip. `caption` (since
      * 2.392.0) is the same row with a 12px letter-spaced uppercase label —
      * "INITIATIVES 11", the Initiatives v2 rail.
+     *
+     * Insets (since 2.515.12, on the 4px scale): the 56px headings' title row,
+     * back row and header slot start 16px in (was 20px); the compact strip's
+     * 12px (was 14px, right 8px, was 6px); the footer 12px (was 14px); the
+     * `caption` heading's count chip has 4px block padding (was 2px).
      */
     heading?: 'compact' | 'prominent' | 'label' | 'caption';
     /**

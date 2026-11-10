@@ -24,7 +24,7 @@ describe('Stack', () => {
   it('maps the gap scale to literal Tailwind classes', () => {
     // The classes must be literals, not `gap-${n}` — a template literal
     // produces no rule at all under Tailwind v4's source scan.
-    const gaps = { none: 'gap-0', xs: 'gap-1.5', sm: 'gap-2', md: 'gap-3', lg: 'gap-4', xl: 'gap-6' } as const;
+    const gaps = { none: 'gap-0', xs: 'gap-1', sm: 'gap-2', md: 'gap-3', lg: 'gap-4', xl: 'gap-6' } as const;
     for (const [gap, cls] of Object.entries(gaps)) {
       const { unmount } = render(
         <Stack data-testid="g" gap={gap as keyof typeof gaps}>x</Stack>,
@@ -127,5 +127,15 @@ describe('Stack/Inline ref', () => {
     const ref = createRef<HTMLElement>();
     render(<Stack ref={ref} data-testid="s">x</Stack>);
     expect(screen.getByTestId('s').hasAttribute('ref')).toBe(false);
+  });
+});
+
+describe('xs gap on the 4px scale (2.515.12)', () => {
+  it('Stack and Inline gap="xs" are 4px (gap-1), not 6px (gap-1.5)', () => {
+    render(<><Stack gap="xs" data-testid="s">a</Stack><Inline gap="xs" data-testid="i">b</Inline></>);
+    for (const id of ['s', 'i']) {
+      expect(screen.getByTestId(id)).toHaveClass('gap-1');
+      expect(screen.getByTestId(id)).not.toHaveClass('gap-1.5');
+    }
   });
 });

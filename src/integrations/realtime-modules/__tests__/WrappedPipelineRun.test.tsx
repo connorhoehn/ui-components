@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { WrappedPipelineRun, pipelineRunSteps } from '../WrappedPipelineRun';
@@ -90,5 +90,33 @@ describe('WrappedPipelineRun', () => {
     expect(screen.getByRole('button', { name: 'Cancel' })).toHaveAttribute('data-action-kind', 'cancel');
     await user.click(screen.getByRole('button', { name: 'Open run' }));
     expect(onOpenRun).toHaveBeenCalledOnce();
+  });
+});
+
+describe('WrappedPipelineRun on scale (G88-W3, 2.515.12)', () => {
+  it('header 16/12px padding, subtitle 4px, pill 11px, compact step labels, h3 by default', () => {
+    render(<WrappedPipelineRun status={running} title="Mesh generation" subtitle="Toby · v1.2" />);
+    const heading = screen.getByRole('heading', { name: 'Mesh generation' });
+    expect(heading.tagName).toBe('H3');
+    const header = heading.parentElement!.parentElement!.parentElement!;
+    expect(header.className).toContain('px-4');
+    expect(header.className).toContain('pt-3');
+    expect(header.className).toContain('pb-3');
+    expect(header.className).not.toMatch(/px-3\.5|pb-2\.5/);
+    expect(header.className).toContain('[&_p]:mt-1');
+    const pill = screen.getByTestId('wrapped-pipeline-run-state');
+    expect(pill.className).toContain('text-[11px]');
+    expect(pill.className).not.toContain('text-[10px]');
+    const steps = screen.getByTestId('wrapped-pipeline-run-steps');
+    expect(steps.innerHTML).not.toContain('text-[10px]');
+    expect(within(steps).getByText('Processing').className).toContain('text-xs');
+  });
+  it('titleAs sets the heading element', () => {
+    render(<WrappedPipelineRun status={running} title="Mesh generation" titleAs="h2" />);
+    expect(screen.getByRole('heading', { level: 2, name: 'Mesh generation' })).toBeInTheDocument();
+  });
+  it('compact pill is 11px', () => {
+    render(<WrappedPipelineRun status={running} title="Mesh" compact />);
+    expect(screen.getByTestId('wrapped-pipeline-run').innerHTML).not.toContain('text-[10px]');
   });
 });

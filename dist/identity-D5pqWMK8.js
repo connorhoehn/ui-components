@@ -1,0 +1,3733 @@
+import { d as e, n as t } from "./Button-DQoeE5dN.js";
+import { n, r } from "./safeHref-D1tj5kGa.js";
+import { t as i } from "./useEventCallback-Cwx9QVSi.js";
+import { t as a } from "./Card-D4k-Buoz.js";
+import { a as o, i as s, n as c, o as l, r as u, t as d } from "./Table-DIDqq2Q1.js";
+import { t as f } from "./PageSection-BSRSHh39.js";
+import { t as p } from "./Banner-DPR4sIxI.js";
+import { t as m } from "./Modal-C88cabjQ.js";
+import { t as h } from "./ConfirmDialog-DaIkb8ho.js";
+import { t as g } from "./Input-DiOEvL5h.js";
+import { t as _ } from "./Select-CG_PYETL.js";
+import { t as v } from "./FormField-BDZIVA7n.js";
+import { t as y } from "./DataTable-D05MdfnS.js";
+import { t as b } from "./EmptyState-BTnHHhgg.js";
+import { t as x } from "./Textarea-Cf4WFXAs.js";
+import { t as S } from "./Checkbox-BkcR6gI8.js";
+import { t as C } from "./rovingFocus-Bj5Y6kwY.js";
+import { useCallback as w, useEffect as T, useId as E, useMemo as D, useRef as O, useState as k } from "react";
+import { Fragment as A, jsx as j, jsxs as M } from "react/jsx-runtime";
+//#region src/components/identity/admin/AdminDashboardPage.tsx
+function N({ stats: e, pools: n, onNavigate: r, loading: i }) {
+	let o = D(() => [
+		{
+			label: "User Pools",
+			value: e.userPools
+		},
+		{
+			label: "Applications",
+			value: e.clients
+		},
+		{
+			label: "Total Users",
+			value: e.totalUsers
+		}
+	], [e]);
+	return i ? /* @__PURE__ */ M("div", {
+		className: "flex flex-col gap-8",
+		children: [/* @__PURE__ */ j("div", {
+			className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4",
+			children: [
+				1,
+				2,
+				3
+			].map((e) => /* @__PURE__ */ M(a, {
+				padding: "md",
+				children: [/* @__PURE__ */ j("div", { className: "h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" }), /* @__PURE__ */ j("div", { className: "h-3 w-20 rounded bg-surface-hover animate-pulse" })]
+			}, e))
+		}), /* @__PURE__ */ j(a, { className: "h-[200px] animate-pulse" })]
+	}) : /* @__PURE__ */ M(f, {
+		title: "Dashboard",
+		children: [
+			/* @__PURE__ */ j("section", {
+				"data-ui-part": "",
+				className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4",
+				children: o.map((e) => /* @__PURE__ */ M(a, {
+					padding: "md",
+					children: [/* @__PURE__ */ j("div", {
+						className: "text-[2rem] font-bold text-info-fg mb-1",
+						children: e.value
+					}), /* @__PURE__ */ j("div", {
+						className: "text-sm text-neutral",
+						children: e.label
+					})]
+				}, e.label))
+			}),
+			/* @__PURE__ */ M("section", {
+				"data-ui-part": "",
+				className: "flex flex-col gap-3",
+				children: [/* @__PURE__ */ j("h2", {
+					className: "text-lg font-semibold text-text-primary m-0",
+					children: "User Pools"
+				}), /* @__PURE__ */ j(a, { children: n.length === 0 ? /* @__PURE__ */ j(b, {
+					title: "No pools created yet",
+					actionLabel: "Create Pool",
+					onAction: () => r("/identity/admin/pools/new")
+				}) : n.map((e, i) => /* @__PURE__ */ M("div", {
+					className: `flex items-center justify-between px-4 py-3 ${i < n.length - 1 ? "border-b border-border-subtle" : ""}`,
+					children: [/* @__PURE__ */ M("div", {
+						className: "flex items-center gap-3",
+						children: [/* @__PURE__ */ j("span", {
+							className: "font-medium text-text-primary",
+							children: e.poolName
+						}), /* @__PURE__ */ j("span", {
+							className: "text-xs text-text-tertiary",
+							children: e.createdAt
+						})]
+					}), /* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "sm",
+						onClick: () => r(`/identity/admin/pools/${e.poolId}`),
+						children: "View"
+					})]
+				}, e.poolId)) })]
+			}),
+			/* @__PURE__ */ M("section", {
+				"data-ui-part": "",
+				className: "flex flex-col gap-3",
+				children: [/* @__PURE__ */ j("h2", {
+					className: "text-lg font-semibold text-text-primary m-0",
+					children: "Quick Actions"
+				}), /* @__PURE__ */ M("div", {
+					className: "flex flex-wrap gap-3",
+					children: [
+						/* @__PURE__ */ j(t, {
+							variant: "secondary",
+							size: "lg",
+							onClick: () => r("/identity/admin/pools/new"),
+							children: "Create Pool"
+						}),
+						/* @__PURE__ */ j(t, {
+							variant: "secondary",
+							size: "lg",
+							onClick: () => r("/identity/admin/applications/new"),
+							children: "Create Application"
+						}),
+						/* @__PURE__ */ j(t, {
+							variant: "secondary",
+							size: "lg",
+							onClick: () => r("/identity/admin/setup"),
+							children: "Setup Guide"
+						})
+					]
+				})]
+			})
+		]
+	});
+}
+//#endregion
+//#region src/components/identity/shared/EntityTable.tsx
+function P({ columns: e, data: t, keyField: n, onRowClick: r, actions: i, emptyMessage: o = "No records found.", emptyIcon: s = "📋", loading: c = !1 }) {
+	let l = D(() => e.map((e) => ({
+		key: e.key,
+		header: e.header,
+		render: e.render ? (t) => e.render(t) : void 0,
+		sortable: e.sortable,
+		width: e.width,
+		align: e.align
+	})), [e]), u = Array.isArray(t) ? t : [];
+	return !c && u.length === 0 ? /* @__PURE__ */ M(a, {
+		className: "flex flex-col items-center justify-center min-h-[220px] p-8",
+		children: [/* @__PURE__ */ j("span", {
+			className: "text-[42px] mb-3",
+			children: s
+		}), /* @__PURE__ */ j("p", {
+			className: "text-sm font-medium text-neutral text-center max-w-[280px] m-0",
+			children: o
+		})]
+	}) : /* @__PURE__ */ j(a, { children: /* @__PURE__ */ j(y, {
+		data: u,
+		columns: l,
+		keyField: (e) => String(e[n]),
+		onRowClick: r,
+		rowActions: i,
+		loading: c,
+		frameless: !0
+	}) });
+}
+//#endregion
+//#region src/components/identity/admin/PoolListPage.tsx
+function F({ pools: e, onCreatePool: n, onEditPool: r, onDeletePool: i, onViewPool: a, loading: o }) {
+	let [s, c] = k(null), [l, u] = k(!1), [d, m] = k(null), g = w(async (e) => {
+		u(!0), m(null);
+		try {
+			await i(e), c(null);
+		} catch (e) {
+			m(e instanceof Error ? e.message : "Failed to delete pool.");
+		} finally {
+			u(!1);
+		}
+	}, [i]), _ = w(() => {
+		c(null), m(null);
+	}, []), v = D(() => [
+		{
+			key: "poolName",
+			header: "Name",
+			sortable: !0
+		},
+		{
+			key: "clientId",
+			header: "Client ID"
+		},
+		{
+			key: "createdAt",
+			header: "Created",
+			sortable: !0
+		}
+	], []), y = w((e) => /* @__PURE__ */ M(A, { children: [
+		/* @__PURE__ */ j(t, {
+			variant: "ghost",
+			size: "sm",
+			onClick: () => a(e.poolId),
+			children: "View"
+		}),
+		/* @__PURE__ */ j(t, {
+			variant: "ghost",
+			size: "sm",
+			onClick: () => r(e.poolId),
+			children: "Edit"
+		}),
+		/* @__PURE__ */ j(t, {
+			variant: "danger",
+			size: "sm",
+			onClick: () => {
+				c(e.poolId), m(null);
+			},
+			children: "Delete"
+		})
+	] }), [r, a]);
+	return /* @__PURE__ */ M(f, {
+		title: "User Pools",
+		actions: /* @__PURE__ */ j(t, {
+			variant: "primary",
+			size: "lg",
+			onClick: n,
+			children: "Create Pool"
+		}),
+		children: [/* @__PURE__ */ j(P, {
+			columns: v,
+			data: e,
+			keyField: "poolId",
+			actions: y,
+			loading: o,
+			emptyMessage: "No user pools found. Create one to get started.",
+			emptyIcon: "🏊"
+		}), /* @__PURE__ */ j(h, {
+			open: !!s,
+			onConfirm: () => {
+				s && g(s);
+			},
+			onCancel: _,
+			title: "Delete Pool",
+			body: "This action cannot be undone. All users in this pool will be affected.",
+			tone: "destructive",
+			confirmLabel: "Delete",
+			confirmDisabled: l,
+			children: d && /* @__PURE__ */ j(p, {
+				variant: "error",
+				children: d
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/shared/FormField.tsx
+function I({ label: e, name: t, type: n = "text", value: r, onChange: i, error: a, required: o, placeholder: s, options: c, helpText: l, disabled: u }) {
+	let d = E(), f = w((e) => {
+		if (n === "number") {
+			let t = e.target.value;
+			if (t.trim() === "") return;
+			let n = Number(t);
+			if (Number.isNaN(n)) return;
+			i(n);
+		} else i(e.target.value);
+	}, [i, n]);
+	if (n === "checkbox") {
+		let n = a || l ? `${d}-desc` : void 0;
+		return /* @__PURE__ */ M("div", {
+			className: "mb-4",
+			children: [
+				/* @__PURE__ */ M("label", {
+					className: "flex items-center gap-2 cursor-pointer",
+					children: [/* @__PURE__ */ j(S, {
+						name: t,
+						checked: !!r,
+						onChange: (e) => i(e),
+						disabled: u,
+						"aria-describedby": n
+					}), /* @__PURE__ */ M("span", {
+						className: "text-sm text-text-primary",
+						children: [e, o && /* @__PURE__ */ j("span", {
+							"aria-hidden": "true",
+							className: "text-danger-fg",
+							children: " *"
+						})]
+					})]
+				}),
+				a && /* @__PURE__ */ j("p", {
+					id: n,
+					role: "alert",
+					className: "mt-1 text-sm text-danger-fg",
+					children: a
+				}),
+				l && !a && /* @__PURE__ */ j("p", {
+					id: n,
+					className: "mt-1 text-sm text-text-tertiary",
+					children: l
+				})
+			]
+		});
+	}
+	return /* @__PURE__ */ j(v, {
+		label: e,
+		required: o,
+		error: a,
+		hint: l,
+		className: "mb-4",
+		children: ({ labelId: e, ...i }) => n === "textarea" ? /* @__PURE__ */ j(x, {
+			...i,
+			name: t,
+			value: String(r),
+			onChange: f,
+			placeholder: s,
+			disabled: u,
+			required: o,
+			rows: 5,
+			invalid: !!a,
+			className: "resize-y min-h-[100px]"
+		}) : n === "select" ? /* @__PURE__ */ j(_, {
+			...i,
+			name: t,
+			value: String(r),
+			onChange: f,
+			disabled: u,
+			required: o,
+			invalid: !!a,
+			options: [{
+				value: "",
+				label: s || "Select..."
+			}, ...c ?? []]
+		}) : /* @__PURE__ */ j(g, {
+			...i,
+			type: n,
+			name: t,
+			value: String(r),
+			onChange: f,
+			placeholder: s,
+			disabled: u,
+			required: o,
+			invalid: !!a
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/admin/PoolFormPage.tsx
+function L({ pool: e, isEdit: n, onSubmit: r, onCancel: i, error: o }) {
+	let [s, c] = k(e?.poolName ?? ""), [l, u] = k(e?.settings?.mfaConfiguration ?? "OFF"), [d, m] = k(e?.settings?.passwordPolicy?.minLength ?? 8), [h, _] = k(e?.settings?.passwordPolicy?.requireUppercase ?? !0), [v, y] = k(e?.settings?.passwordPolicy?.requireLowercase ?? !0), [b, x] = k(e?.settings?.passwordPolicy?.requireNumbers ?? !0), [S, C] = k(e?.settings?.passwordPolicy?.requireSymbols ?? !1), [T, E] = k(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => ({
+		key: e,
+		value: t
+	}))), [D, O] = k(!1), A = w(() => {
+		E((e) => [...e, {
+			key: "",
+			value: ""
+		}]);
+	}, []), N = w((e) => {
+		E((t) => t.filter((t, n) => n !== e));
+	}, []), P = w((e, t, n) => {
+		E((r) => r.map((r, i) => i === e ? {
+			...r,
+			[t]: n
+		} : r));
+	}, []), F = w(async (e) => {
+		e.preventDefault(), O(!0);
+		try {
+			let e = {};
+			for (let { key: t, value: n } of T) t.trim() && (e[t.trim()] = n);
+			await r({
+				poolName: s,
+				customAttributes: e,
+				settings: {
+					mfaConfiguration: l,
+					passwordPolicy: {
+						minLength: d,
+						requireUppercase: h,
+						requireLowercase: v,
+						requireNumbers: b,
+						requireSymbols: S
+					}
+				}
+			});
+		} finally {
+			O(!1);
+		}
+	}, [
+		s,
+		l,
+		d,
+		h,
+		v,
+		b,
+		S,
+		T,
+		r
+	]);
+	return /* @__PURE__ */ M(f, {
+		title: n ? "Edit Pool" : "Create Pool",
+		className: "max-w-[640px]",
+		children: [o && /* @__PURE__ */ j(p, {
+			variant: "error",
+			children: o
+		}), /* @__PURE__ */ j(a, {
+			padding: "md",
+			children: /* @__PURE__ */ M("form", {
+				onSubmit: F,
+				children: [
+					/* @__PURE__ */ j(I, {
+						label: "Pool Name",
+						name: "poolName",
+						value: s,
+						onChange: (e) => c(String(e)),
+						required: !0,
+						placeholder: "my-user-pool"
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						className: "mb-6",
+						children: [/* @__PURE__ */ j("h3", {
+							className: "text-base font-semibold text-text-primary mb-2",
+							children: "MFA Configuration"
+						}), /* @__PURE__ */ j(I, {
+							label: "MFA Mode",
+							name: "mfaConfig",
+							type: "select",
+							value: l,
+							onChange: (e) => u(String(e)),
+							options: [
+								{
+									value: "OFF",
+									label: "Off"
+								},
+								{
+									value: "OPTIONAL",
+									label: "Optional"
+								},
+								{
+									value: "REQUIRED",
+									label: "Required"
+								}
+							]
+						})]
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						className: "mb-6",
+						children: [
+							/* @__PURE__ */ j("h3", {
+								className: "text-base font-semibold text-text-primary mb-2",
+								children: "Password Policy"
+							}),
+							/* @__PURE__ */ j(I, {
+								label: "Minimum Length",
+								name: "minLength",
+								type: "number",
+								value: d,
+								onChange: (e) => m(Number(e))
+							}),
+							/* @__PURE__ */ j(I, {
+								label: "Require Uppercase",
+								name: "requireUppercase",
+								type: "checkbox",
+								value: h,
+								onChange: (e) => _(!!e)
+							}),
+							/* @__PURE__ */ j(I, {
+								label: "Require Lowercase",
+								name: "requireLowercase",
+								type: "checkbox",
+								value: v,
+								onChange: (e) => y(!!e)
+							}),
+							/* @__PURE__ */ j(I, {
+								label: "Require Numbers",
+								name: "requireNumbers",
+								type: "checkbox",
+								value: b,
+								onChange: (e) => x(!!e)
+							}),
+							/* @__PURE__ */ j(I, {
+								label: "Require Symbols",
+								name: "requireSymbols",
+								type: "checkbox",
+								value: S,
+								onChange: (e) => C(!!e)
+							})
+						]
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						className: "mb-6",
+						children: [
+							/* @__PURE__ */ j("h3", {
+								className: "text-base font-semibold text-text-primary mb-2",
+								children: "Custom Attributes"
+							}),
+							T.map((e, n) => /* @__PURE__ */ M("div", {
+								className: "flex gap-2 items-center mb-2",
+								children: [
+									/* @__PURE__ */ j(g, {
+										"aria-label": `Attribute ${n + 1} name`,
+										className: "flex-1",
+										placeholder: "Attribute name",
+										value: e.key,
+										onChange: (e) => P(n, "key", e.target.value)
+									}),
+									/* @__PURE__ */ j(g, {
+										"aria-label": `Attribute ${n + 1} type`,
+										className: "flex-1",
+										placeholder: "Type (string, number, etc.)",
+										value: e.value,
+										onChange: (e) => P(n, "value", e.target.value)
+									}),
+									/* @__PURE__ */ j(t, {
+										variant: "danger",
+										size: "sm",
+										"aria-label": `Remove attribute ${n + 1}`,
+										onClick: () => N(n),
+										children: "Remove"
+									})
+								]
+							}, n)),
+							/* @__PURE__ */ j(t, {
+								variant: "ghost",
+								size: "sm",
+								onClick: A,
+								children: "+ Add Attribute"
+							})
+						]
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle",
+						children: [/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							disabled: D,
+							children: D ? "Saving..." : n ? "Update Pool" : "Create Pool"
+						}), /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							onClick: i,
+							children: "Cancel"
+						})]
+					})
+				]
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/shared/StatusBadge.tsx
+var R = {
+	CONFIRMED: "success",
+	ACTIVE: "success",
+	ENABLED: "success",
+	UNCONFIRMED: "warning",
+	PENDING: "warning",
+	FORCE_CHANGE_PASSWORD: "caution",
+	DISABLED: "danger",
+	COMPROMISED: "danger",
+	ARCHIVED: "neutral",
+	UNKNOWN: "neutral"
+}, z = {
+	success: "success",
+	warning: "warning",
+	danger: "danger",
+	info: "info",
+	neutral: "neutral"
+};
+function B({ status: e, variant: t }) {
+	let n = t ? z[t] || "neutral" : R[e] || "neutral";
+	return /* @__PURE__ */ j(r, {
+		tone: n,
+		size: "sm",
+		children: e
+	});
+}
+//#endregion
+//#region src/components/identity/admin/UserListPage.tsx
+function V({ users: e, poolName: n, onCreateUser: r, onEditUser: i, onDeleteUser: a, loading: o }) {
+	let [s, c] = k(null), [l, u] = k(!1), [d, m] = k(null), g = w(async (e) => {
+		u(!0), m(null);
+		try {
+			await a(e), c(null);
+		} catch (e) {
+			m(e instanceof Error ? e.message : "Failed to delete user.");
+		} finally {
+			u(!1);
+		}
+	}, [a]), _ = w(() => {
+		c(null), m(null);
+	}, []), v = D(() => [
+		{
+			key: "email",
+			header: "Email",
+			sortable: !0
+		},
+		{
+			key: "name",
+			header: "Name",
+			render: (e) => [e.givenName, e.familyName].filter(Boolean).join(" ") || "—"
+		},
+		{
+			key: "status",
+			header: "Status",
+			width: "180px",
+			render: (e) => /* @__PURE__ */ j(B, { status: e.status })
+		},
+		{
+			key: "createdAt",
+			header: "Created",
+			sortable: !0
+		}
+	], []), y = w((e) => /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ j(t, {
+		variant: "ghost",
+		size: "sm",
+		onClick: () => i(e.userId),
+		children: "Edit"
+	}), /* @__PURE__ */ j(t, {
+		variant: "danger",
+		size: "sm",
+		onClick: () => {
+			c(e.userId), m(null);
+		},
+		children: "Delete"
+	})] }), [i]);
+	return /* @__PURE__ */ M(f, {
+		title: `Users — ${n}`,
+		actions: /* @__PURE__ */ j(t, {
+			variant: "primary",
+			size: "lg",
+			onClick: r,
+			children: "Create User"
+		}),
+		children: [/* @__PURE__ */ j(P, {
+			columns: v,
+			data: e,
+			keyField: "userId",
+			actions: y,
+			loading: o,
+			emptyMessage: "No users in this pool yet.",
+			emptyIcon: "👤"
+		}), /* @__PURE__ */ j(h, {
+			open: !!s,
+			onConfirm: () => {
+				s && g(s);
+			},
+			onCancel: _,
+			title: "Delete User",
+			body: "This action cannot be undone. The user will be permanently removed.",
+			tone: "destructive",
+			confirmLabel: "Delete",
+			confirmDisabled: l,
+			children: d && /* @__PURE__ */ j(p, {
+				variant: "error",
+				children: d
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/UserFormPage.tsx
+function ee({ user: e, isEdit: n, customAttributeDefinitions: r, onSubmit: i, onCancel: o, error: s }) {
+	let [c, l] = k(e?.email ?? ""), [u, d] = k(""), [m, h] = k(e?.givenName ?? ""), [g, _] = k(e?.familyName ?? ""), [v, y] = k(e?.nickname ?? ""), [b, x] = k(e?.picture ?? ""), [S, C] = k(e?.website ?? ""), [T, E] = k(Object.fromEntries(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => [e, String(t)]))), [D, O] = k(!1), A = w((e, t) => {
+		E((n) => ({
+			...n,
+			[e]: t
+		}));
+	}, []), N = w(async (e) => {
+		e.preventDefault(), O(!0);
+		try {
+			await i({
+				email: c,
+				...!n && u ? { password: u } : {},
+				givenName: m || void 0,
+				familyName: g || void 0,
+				nickname: v || void 0,
+				picture: b || void 0,
+				website: S || void 0,
+				customAttributes: T
+			});
+		} finally {
+			O(!1);
+		}
+	}, [
+		c,
+		u,
+		m,
+		g,
+		v,
+		b,
+		S,
+		T,
+		n,
+		i
+	]);
+	return /* @__PURE__ */ M(f, {
+		title: n ? "Edit User" : "Create User",
+		className: "max-w-[640px]",
+		children: [s && /* @__PURE__ */ j(p, {
+			variant: "error",
+			children: s
+		}), /* @__PURE__ */ j(a, {
+			padding: "md",
+			children: /* @__PURE__ */ M("form", {
+				onSubmit: N,
+				children: [
+					/* @__PURE__ */ j(I, {
+						label: "Email",
+						name: "email",
+						type: "email",
+						value: c,
+						onChange: (e) => l(String(e)),
+						required: !0,
+						placeholder: "user@example.com"
+					}),
+					!n && /* @__PURE__ */ j(I, {
+						label: "Password",
+						name: "password",
+						type: "password",
+						value: u,
+						onChange: (e) => d(String(e)),
+						required: !0,
+						placeholder: "Temporary password",
+						helpText: "User will be prompted to change on first login."
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Given Name",
+						name: "givenName",
+						value: m,
+						onChange: (e) => h(String(e)),
+						placeholder: "John"
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Family Name",
+						name: "familyName",
+						value: g,
+						onChange: (e) => _(String(e)),
+						placeholder: "Doe"
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Nickname",
+						name: "nickname",
+						value: v,
+						onChange: (e) => y(String(e)),
+						placeholder: "johnny"
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Picture URL",
+						name: "picture",
+						value: b,
+						onChange: (e) => x(String(e)),
+						placeholder: "https://..."
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Website",
+						name: "website",
+						value: S,
+						onChange: (e) => C(String(e)),
+						placeholder: "https://..."
+					}),
+					r && Object.keys(r).length > 0 && /* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [/* @__PURE__ */ j("h3", {
+							className: "text-base font-semibold text-text-primary mt-6 mb-2",
+							children: "Custom Attributes"
+						}), Object.entries(r).map(([e, t]) => /* @__PURE__ */ j(I, {
+							label: e,
+							name: `custom_${e}`,
+							type: t === "number" ? "number" : "text",
+							value: T[e] ?? "",
+							onChange: (t) => A(e, String(t)),
+							helpText: `Type: ${t}`
+						}, e))]
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle",
+						children: [/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							disabled: D,
+							children: D ? "Saving..." : n ? "Update User" : "Create User"
+						}), /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							onClick: o,
+							children: "Cancel"
+						})]
+					})
+				]
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/GroupListPage.tsx
+function H({ groups: e, poolName: n, onCreateGroup: i, onEditGroup: a, onDeleteGroup: o, loading: s }) {
+	let [c, l] = k(null), [u, d] = k(!1), [m, g] = k(null), _ = w(async (e) => {
+		d(!0), g(null);
+		try {
+			await o(e), l(null);
+		} catch (e) {
+			g(e instanceof Error ? e.message : "Failed to delete group.");
+		} finally {
+			d(!1);
+		}
+	}, [o]), v = w(() => {
+		l(null), g(null);
+	}, []), y = D(() => [
+		{
+			key: "groupName",
+			header: "Name",
+			sortable: !0
+		},
+		{
+			key: "description",
+			header: "Description"
+		},
+		{
+			key: "permissions",
+			header: "Permissions",
+			render: (e) => {
+				let t = Array.isArray(e.permissions) ? e.permissions : [];
+				return /* @__PURE__ */ j("div", {
+					className: "flex flex-wrap gap-1",
+					children: t.length === 0 ? /* @__PURE__ */ j("span", {
+						className: "text-text-tertiary text-xs",
+						children: "None"
+					}) : t.map((e) => /* @__PURE__ */ j(r, {
+						tone: "info",
+						size: "xs",
+						children: e
+					}, e))
+				});
+			}
+		}
+	], []), b = w((e) => /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ j(t, {
+		variant: "ghost",
+		size: "sm",
+		onClick: () => a(e.groupId),
+		children: "Edit"
+	}), /* @__PURE__ */ j(t, {
+		variant: "danger",
+		size: "sm",
+		onClick: () => {
+			l(e.groupId), g(null);
+		},
+		children: "Delete"
+	})] }), [a]);
+	return /* @__PURE__ */ M(f, {
+		title: `Groups — ${n}`,
+		actions: /* @__PURE__ */ j(t, {
+			variant: "primary",
+			size: "lg",
+			onClick: i,
+			children: "Create Group"
+		}),
+		children: [/* @__PURE__ */ j(P, {
+			columns: y,
+			data: e,
+			keyField: "groupId",
+			actions: b,
+			loading: s,
+			emptyMessage: "No groups in this pool yet.",
+			emptyIcon: "👥"
+		}), /* @__PURE__ */ j(h, {
+			open: !!c,
+			onConfirm: () => {
+				c && _(c);
+			},
+			onCancel: v,
+			title: "Delete Group",
+			body: "This action cannot be undone. Members will lose their group permissions.",
+			tone: "destructive",
+			confirmLabel: "Delete",
+			confirmDisabled: u,
+			children: m && /* @__PURE__ */ j(p, {
+				variant: "error",
+				children: m
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/GroupFormPage.tsx
+function U({ group: e, isEdit: n, members: r, availableUsers: i, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: u }) {
+	let [d, m] = k(e?.groupName ?? ""), [h, v] = k(e?.description ?? ""), [y, b] = k(e?.permissions ?? []), [x, S] = k(""), [C, T] = k(""), [D, O] = k(!1), A = E(), N = w((e) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			let t = x.trim();
+			t && !y.includes(t) && b((e) => [...e, t]), S("");
+		}
+	}, [x, y]), P = w((e) => {
+		b((t) => t.filter((t) => t !== e));
+	}, []), F = w(async () => {
+		C && s && (await s(C), T(""));
+	}, [C, s]), L = w(async (e) => {
+		e.preventDefault(), O(!0);
+		try {
+			await o({
+				groupName: d,
+				description: h,
+				permissions: y
+			});
+		} finally {
+			O(!1);
+		}
+	}, [
+		d,
+		h,
+		y,
+		o
+	]);
+	return /* @__PURE__ */ M(f, {
+		title: n ? "Edit Group" : "Create Group",
+		className: "max-w-[640px]",
+		children: [u && /* @__PURE__ */ j(p, {
+			variant: "error",
+			children: u
+		}), /* @__PURE__ */ j(a, {
+			padding: "md",
+			children: /* @__PURE__ */ M("form", {
+				onSubmit: L,
+				children: [
+					/* @__PURE__ */ j(I, {
+						label: "Group Name",
+						name: "groupName",
+						value: d,
+						onChange: (e) => m(String(e)),
+						required: !0,
+						placeholder: "admins"
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Description",
+						name: "description",
+						type: "textarea",
+						value: h,
+						onChange: (e) => v(String(e)),
+						placeholder: "Describe this group's purpose..."
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [
+							/* @__PURE__ */ j("h3", {
+								id: `${A}-permissions`,
+								className: "text-base font-semibold text-text-primary mt-6 mb-2",
+								children: "Permissions"
+							}),
+							/* @__PURE__ */ j("div", {
+								className: "flex flex-wrap gap-1.5 mb-2",
+								children: y.map((e) => /* @__PURE__ */ M("span", {
+									className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium",
+									children: [e, /* @__PURE__ */ j(t, {
+										variant: "ghost",
+										size: "sm",
+										className: "p-0 text-white text-[14px] leading-none min-w-0 min-h-0",
+										onClick: () => P(e),
+										"aria-label": `Remove permission ${e}`,
+										children: "x"
+									})]
+								}, e))
+							}),
+							/* @__PURE__ */ j(g, {
+								"aria-labelledby": `${A}-permissions`,
+								placeholder: "Type a permission and press Enter",
+								value: x,
+								onChange: (e) => S(e.target.value),
+								onKeyDown: N
+							})
+						]
+					}),
+					n && r && /* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [
+							/* @__PURE__ */ j("h3", {
+								id: `${A}-members`,
+								className: "text-base font-semibold text-text-primary mt-6 mb-2",
+								children: "Members"
+							}),
+							r.length === 0 ? /* @__PURE__ */ j("p", {
+								className: "text-text-tertiary text-sm",
+								children: "No members yet."
+							}) : r.map((e) => /* @__PURE__ */ M("div", {
+								className: "flex items-center justify-between py-1.5 border-b border-border",
+								children: [/* @__PURE__ */ j("span", {
+									className: "text-base",
+									children: e.email
+								}), c && /* @__PURE__ */ j(t, {
+									variant: "danger",
+									size: "sm",
+									onClick: () => c(e.userId),
+									children: "Remove"
+								})]
+							}, e.userId)),
+							i && i.length > 0 && s && /* @__PURE__ */ M("div", {
+								className: "flex gap-2 mt-2",
+								children: [/* @__PURE__ */ j(_, {
+									"aria-label": "Add member",
+									className: "flex-1",
+									value: C,
+									onChange: (e) => T(e.target.value),
+									placeholder: "Select user to add...",
+									options: i.map((e) => ({
+										value: e.userId,
+										label: e.email
+									}))
+								}), /* @__PURE__ */ j(t, {
+									variant: "ghost",
+									size: "sm",
+									onClick: F,
+									disabled: !C,
+									children: "Add"
+								})]
+							})
+						]
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle",
+						children: [/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							disabled: D,
+							children: D ? "Saving..." : n ? "Update Group" : "Create Group"
+						}), /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							onClick: l,
+							children: "Cancel"
+						})]
+					})
+				]
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/ApplicationListPage.tsx
+function W({ applications: e, onCreateApp: n, onCreateAppWithPool: i, onEditApp: a, onDeleteApp: o, loading: s }) {
+	let [c, l] = k(null), [u, d] = k(!1), [m, g] = k(null), _ = w(async (e) => {
+		d(!0), g(null);
+		try {
+			await o(e), l(null);
+		} catch (e) {
+			g(e instanceof Error ? e.message : "Failed to delete application.");
+		} finally {
+			d(!1);
+		}
+	}, [o]), v = w(() => {
+		l(null), g(null);
+	}, []), y = D(() => [
+		{
+			key: "clientName",
+			header: "Name",
+			sortable: !0
+		},
+		{
+			key: "clientId",
+			header: "Client ID",
+			render: (e) => /* @__PURE__ */ j("span", {
+				className: "font-mono text-xs text-neutral",
+				children: e.clientId
+			})
+		},
+		{
+			key: "poolName",
+			header: "Pool",
+			render: (e) => e.poolName || e.poolId
+		},
+		{
+			key: "redirectUris",
+			header: "Redirect URIs",
+			render: (e) => {
+				let t = Array.isArray(e.redirectUris) ? e.redirectUris : [];
+				return /* @__PURE__ */ M("div", {
+					className: "flex flex-wrap gap-1",
+					children: [
+						t.length === 0 && /* @__PURE__ */ j("span", {
+							className: "text-text-tertiary text-xs",
+							children: "None"
+						}),
+						t.slice(0, 2).map((e) => /* @__PURE__ */ j(r, {
+							tone: "neutral",
+							size: "xs",
+							children: e
+						}, e)),
+						t.length > 2 && /* @__PURE__ */ M(r, {
+							tone: "neutral",
+							size: "xs",
+							children: [
+								"+",
+								t.length - 2,
+								" more"
+							]
+						})
+					]
+				});
+			}
+		}
+	], []), b = w((e) => /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ j(t, {
+		variant: "ghost",
+		size: "sm",
+		onClick: () => a(e.clientId),
+		children: "Edit"
+	}), /* @__PURE__ */ j(t, {
+		variant: "danger",
+		size: "sm",
+		onClick: () => {
+			l(e.clientId), g(null);
+		},
+		children: "Delete"
+	})] }), [a]);
+	return /* @__PURE__ */ M(f, {
+		title: "Applications",
+		actions: /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ j(t, {
+			variant: "primary",
+			size: "lg",
+			onClick: n,
+			children: "New Application"
+		}), /* @__PURE__ */ j(t, {
+			variant: "secondary",
+			size: "lg",
+			onClick: i,
+			children: "New App + Pool"
+		})] }),
+		children: [/* @__PURE__ */ j(P, {
+			columns: y,
+			data: e,
+			keyField: "clientId",
+			actions: b,
+			loading: s,
+			emptyMessage: "No applications registered yet.",
+			emptyIcon: "🔐"
+		}), /* @__PURE__ */ j(h, {
+			open: !!c,
+			onConfirm: () => {
+				c && _(c);
+			},
+			onCancel: v,
+			title: "Delete Application",
+			body: "This action cannot be undone. The application will lose access immediately.",
+			tone: "destructive",
+			confirmLabel: "Delete",
+			confirmDisabled: u,
+			children: m && /* @__PURE__ */ j(p, {
+				variant: "error",
+				children: m
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/ApplicationFormPage.tsx
+function G({ label: e, values: n, onChange: r, placeholder: i }) {
+	let a = E(), o = () => r([...n, ""]), s = (e) => r(n.filter((t, n) => n !== e)), c = (e, t) => r(n.map((n, r) => r === e ? t : n)), l = `${a}-label`;
+	return /* @__PURE__ */ M("div", {
+		className: "mb-4",
+		children: [/* @__PURE__ */ j("label", {
+			id: l,
+			className: "block mb-1 text-sm font-semibold text-text-primary",
+			children: e
+		}), /* @__PURE__ */ M("div", {
+			role: "group",
+			"aria-labelledby": l,
+			children: [n.map((n, r) => /* @__PURE__ */ M("div", {
+				className: "flex gap-2 items-center mb-1.5",
+				children: [/* @__PURE__ */ j(g, {
+					"aria-label": `${e} ${r + 1}`,
+					className: "flex-1",
+					value: n,
+					onChange: (e) => c(r, e.target.value),
+					placeholder: i
+				}), /* @__PURE__ */ j(t, {
+					variant: "danger",
+					size: "sm",
+					"aria-label": `Remove ${e} ${r + 1}`,
+					onClick: () => s(r),
+					children: "Remove"
+				})]
+			}, r)), /* @__PURE__ */ j(t, {
+				variant: "ghost",
+				size: "sm",
+				"aria-label": `Add ${e}`,
+				onClick: o,
+				children: "+ Add"
+			})]
+		})]
+	});
+}
+var K = [
+	"authorization_code",
+	"client_credentials",
+	"refresh_token"
+], q = [
+	"code",
+	"token",
+	"id_token"
+];
+function J({ application: e, isEdit: n, pools: r, onSubmit: i, onCancel: o, error: s }) {
+	let [c, l] = k(e?.clientName ?? ""), [u, d] = k(e?.poolId ?? ""), [m, h] = k(e?.redirectUris ?? [""]), [g, _] = k(e?.postLogoutRedirectUris ?? []), [v, y] = k(e?.grantTypes ?? ["authorization_code"]), [b, x] = k(e?.responseTypes ?? ["code"]), [C, T] = k(e?.scope ?? "openid profile email"), [E, D] = k(!1), O = w((e) => {
+		y((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
+	}, []), A = w((e) => {
+		x((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
+	}, []), N = w(async (e) => {
+		e.preventDefault(), D(!0);
+		try {
+			await i({
+				clientName: c,
+				poolId: u,
+				redirectUris: m.filter((e) => e.trim()),
+				postLogoutRedirectUris: g.filter((e) => e.trim()),
+				grantTypes: v,
+				responseTypes: b,
+				scope: C
+			});
+		} finally {
+			D(!1);
+		}
+	}, [
+		c,
+		u,
+		m,
+		g,
+		v,
+		b,
+		C,
+		i
+	]);
+	return /* @__PURE__ */ M(f, {
+		title: n ? "Edit Application" : "New Application",
+		className: "max-w-[640px]",
+		children: [s && /* @__PURE__ */ j(p, {
+			variant: "error",
+			children: s
+		}), /* @__PURE__ */ j(a, {
+			padding: "md",
+			children: /* @__PURE__ */ M("form", {
+				onSubmit: N,
+				children: [
+					/* @__PURE__ */ j(I, {
+						label: "Application Name",
+						name: "clientName",
+						value: c,
+						onChange: (e) => l(String(e)),
+						required: !0,
+						placeholder: "My App"
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "User Pool",
+						name: "poolId",
+						type: "select",
+						value: u,
+						onChange: (e) => d(String(e)),
+						required: !0,
+						options: r.map((e) => ({
+							value: e.poolId,
+							label: e.poolName
+						})),
+						placeholder: "Select a pool..."
+					}),
+					/* @__PURE__ */ j(G, {
+						label: "Redirect URIs",
+						values: m,
+						onChange: h,
+						placeholder: "https://app.example.com/callback"
+					}),
+					/* @__PURE__ */ j(G, {
+						label: "Post-Logout Redirect URIs",
+						values: g,
+						onChange: _,
+						placeholder: "https://app.example.com/logout"
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [/* @__PURE__ */ j("h3", {
+							className: "text-base font-semibold text-text-primary mt-6 mb-2",
+							children: "Grant Types"
+						}), /* @__PURE__ */ j("div", {
+							className: "flex flex-col gap-2 mb-4",
+							children: K.map((e) => /* @__PURE__ */ M("label", {
+								className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
+								children: [/* @__PURE__ */ j(S, {
+									checked: v.includes(e),
+									onChange: () => O(e)
+								}), e]
+							}, e))
+						})]
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [/* @__PURE__ */ j("h3", {
+							className: "text-base font-semibold text-text-primary mt-6 mb-2",
+							children: "Response Types"
+						}), /* @__PURE__ */ j("div", {
+							className: "flex flex-col gap-2 mb-4",
+							children: q.map((e) => /* @__PURE__ */ M("label", {
+								className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
+								children: [/* @__PURE__ */ j(S, {
+									checked: b.includes(e),
+									onChange: () => A(e)
+								}), e]
+							}, e))
+						})]
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Scope",
+						name: "scope",
+						value: C,
+						onChange: (e) => T(String(e)),
+						placeholder: "openid profile email",
+						helpText: "Space-separated list of scopes."
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle",
+						children: [/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							disabled: E,
+							children: E ? "Saving..." : n ? "Update Application" : "Create Application"
+						}), /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							onClick: o,
+							children: "Cancel"
+						})]
+					})
+				]
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/ApplicationPoolFormPage.tsx
+var Y = [
+	"authorization_code",
+	"client_credentials",
+	"refresh_token"
+];
+function X({ onSubmit: e, onCancel: n, error: r }) {
+	let [i, o] = k(""), [s, c] = k(""), [l, u] = k([""]), [d, m] = k(["authorization_code"]), [h, _] = k(!1), v = w((e) => {
+		m((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
+	}, []), y = w(() => {
+		u((e) => [...e, ""]);
+	}, []), b = w((e) => {
+		u((t) => t.filter((t, n) => n !== e));
+	}, []), x = w((e, t) => {
+		u((n) => n.map((n, r) => r === e ? t : n));
+	}, []), C = w(async (t) => {
+		t.preventDefault(), _(!0);
+		try {
+			await e({
+				poolName: i,
+				clientName: s,
+				redirectUris: l.filter((e) => e.trim()),
+				grantTypes: d
+			});
+		} finally {
+			_(!1);
+		}
+	}, [
+		i,
+		s,
+		l,
+		d,
+		e
+	]);
+	return /* @__PURE__ */ M(f, {
+		title: "New Application + Pool",
+		description: "Create a user pool and register an application in one step.",
+		className: "max-w-[640px]",
+		children: [r && /* @__PURE__ */ j(p, {
+			variant: "error",
+			children: r
+		}), /* @__PURE__ */ j(a, {
+			padding: "md",
+			children: /* @__PURE__ */ M("form", {
+				onSubmit: C,
+				children: [
+					/* @__PURE__ */ j(I, {
+						label: "Pool Name",
+						name: "poolName",
+						value: i,
+						onChange: (e) => o(String(e)),
+						required: !0,
+						placeholder: "my-user-pool"
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Application Name",
+						name: "clientName",
+						value: s,
+						onChange: (e) => c(String(e)),
+						required: !0,
+						placeholder: "My App"
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [
+							/* @__PURE__ */ j("h3", {
+								className: "text-base font-semibold text-text-primary mt-6 mb-2",
+								children: "Redirect URIs"
+							}),
+							l.map((e, n) => /* @__PURE__ */ M("div", {
+								className: "flex gap-2 items-center mb-1.5",
+								children: [/* @__PURE__ */ j(g, {
+									"aria-label": `Redirect URI ${n + 1}`,
+									className: "flex-1",
+									value: e,
+									onChange: (e) => x(n, e.target.value),
+									placeholder: "https://app.example.com/callback"
+								}), l.length > 1 && /* @__PURE__ */ j(t, {
+									variant: "danger",
+									size: "sm",
+									"aria-label": `Remove redirect URI ${n + 1}`,
+									onClick: () => b(n),
+									children: "Remove"
+								})]
+							}, n)),
+							/* @__PURE__ */ j(t, {
+								variant: "ghost",
+								size: "sm",
+								onClick: y,
+								children: "+ Add URI"
+							})
+						]
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [/* @__PURE__ */ j("h3", {
+							className: "text-base font-semibold text-text-primary mt-6 mb-2",
+							children: "Grant Types"
+						}), /* @__PURE__ */ j("div", {
+							className: "flex flex-col gap-2 mb-4",
+							children: Y.map((e) => /* @__PURE__ */ M("label", {
+								className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
+								children: [/* @__PURE__ */ j(S, {
+									checked: d.includes(e),
+									onChange: () => v(e)
+								}), e]
+							}, e))
+						})]
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle",
+						children: [/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							disabled: h,
+							children: h ? "Creating..." : "Create Pool + Application"
+						}), /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							onClick: n,
+							children: "Cancel"
+						})]
+					})
+				]
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/EmailTemplateListPage.tsx
+function te({ templates: e, onCreateTemplate: n, onEditTemplate: r, onDeleteTemplate: i, onTestSend: a, loading: o }) {
+	let [s, c] = k(null), [l, u] = k(!1), [d, g] = k(null), [_, v] = k(null), [y, b] = k(""), [x, S] = k(!1), [C, T] = k(null), E = w(async (e) => {
+		u(!0), g(null);
+		try {
+			await i(e), c(null);
+		} catch (e) {
+			g(e instanceof Error ? e.message : "Failed to delete template.");
+		} finally {
+			u(!1);
+		}
+	}, [i]), O = w(() => {
+		c(null), g(null);
+	}, []), N = w(async () => {
+		if (!(!_ || !y.trim())) {
+			S(!0), T(null);
+			try {
+				await a(_, y.trim()), v(null), b("");
+			} catch (e) {
+				T(e instanceof Error ? e.message : "Failed to send test email.");
+			} finally {
+				S(!1);
+			}
+		}
+	}, [
+		_,
+		y,
+		a
+	]), F = D(() => [{
+		key: "name",
+		header: "Name",
+		sortable: !0
+	}, {
+		key: "subject",
+		header: "Subject"
+	}], []), L = w((e) => /* @__PURE__ */ M(A, { children: [
+		/* @__PURE__ */ j(t, {
+			variant: "ghost",
+			size: "sm",
+			onClick: () => r(e.templateId),
+			children: "Edit"
+		}),
+		/* @__PURE__ */ j(t, {
+			variant: "ghost",
+			size: "sm",
+			onClick: () => {
+				v(e.templateId), b(""), T(null);
+			},
+			children: "Test Send"
+		}),
+		/* @__PURE__ */ j(t, {
+			variant: "danger",
+			size: "sm",
+			onClick: () => {
+				c(e.templateId), g(null);
+			},
+			children: "Delete"
+		})
+	] }), [r]);
+	return /* @__PURE__ */ M(f, {
+		title: "Email Templates",
+		actions: /* @__PURE__ */ j(t, {
+			variant: "primary",
+			size: "lg",
+			onClick: n,
+			children: "Create Template"
+		}),
+		children: [
+			/* @__PURE__ */ j(P, {
+				columns: F,
+				data: e,
+				keyField: "templateId",
+				actions: L,
+				loading: o,
+				emptyMessage: "No email templates configured.",
+				emptyIcon: "✉️"
+			}),
+			/* @__PURE__ */ M(m, {
+				open: !!_,
+				onClose: () => {
+					v(null), T(null);
+				},
+				title: "Send Test Email",
+				footer: /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ j(t, {
+					variant: "ghost",
+					size: "md",
+					onClick: () => {
+						v(null), T(null);
+					},
+					children: "Cancel"
+				}), /* @__PURE__ */ j(t, {
+					variant: "primary",
+					size: "md",
+					onClick: () => {
+						N();
+					},
+					disabled: x || !y.trim(),
+					children: x ? "Sending..." : "Send"
+				})] }),
+				children: [C && /* @__PURE__ */ j("div", {
+					className: "mb-3",
+					children: /* @__PURE__ */ j(p, {
+						variant: "error",
+						children: C
+					})
+				}), /* @__PURE__ */ j(I, {
+					label: "Recipient Email",
+					name: "test-email",
+					type: "email",
+					value: y,
+					onChange: (e) => b(String(e)),
+					placeholder: "recipient@example.com"
+				})]
+			}),
+			/* @__PURE__ */ j(h, {
+				open: !!s,
+				onConfirm: () => {
+					s && E(s);
+				},
+				onCancel: O,
+				title: "Delete Template",
+				body: "This action cannot be undone. The template will be permanently removed.",
+				tone: "destructive",
+				confirmLabel: "Delete",
+				confirmDisabled: l,
+				children: d && /* @__PURE__ */ j(p, {
+					variant: "error",
+					children: d
+				})
+			})
+		]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/EmailTemplateFormPage.tsx
+function ne({ template: e, isEdit: n, onSubmit: r, onCancel: i, error: o }) {
+	let [s, c] = k(e?.name ?? ""), [l, u] = k(e?.subject ?? ""), [d, m] = k(e?.htmlBody ?? ""), [h, _] = k(e?.textBody ?? ""), [v, y] = k(e?.variables ?? []), [b, S] = k(""), [C, T] = k(!1), D = E(), [O, A] = k(!1), N = w((e) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			let t = b.trim();
+			t && !v.includes(t) && y((e) => [...e, t]), S("");
+		}
+	}, [b, v]), P = w((e) => {
+		y((t) => t.filter((t) => t !== e));
+	}, []), F = w(async (e) => {
+		e.preventDefault(), A(!0);
+		try {
+			await r({
+				name: s,
+				subject: l,
+				htmlBody: d,
+				textBody: h,
+				variables: v
+			});
+		} finally {
+			A(!1);
+		}
+	}, [
+		s,
+		l,
+		d,
+		h,
+		v,
+		r
+	]);
+	return /* @__PURE__ */ M(f, {
+		title: n ? "Edit Email Template" : "Create Email Template",
+		className: "max-w-[800px]",
+		children: [o && /* @__PURE__ */ j(p, {
+			variant: "error",
+			children: o
+		}), /* @__PURE__ */ j(a, {
+			padding: "md",
+			children: /* @__PURE__ */ M("form", {
+				onSubmit: F,
+				children: [
+					/* @__PURE__ */ j(I, {
+						label: "Template Name",
+						name: "name",
+						value: s,
+						onChange: (e) => c(String(e)),
+						required: !0,
+						placeholder: "welcome-email"
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Subject",
+						name: "subject",
+						value: l,
+						onChange: (e) => u(String(e)),
+						required: !0,
+						placeholder: "Welcome to {{appName}}"
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "mb-4",
+						children: [
+							/* @__PURE__ */ M("div", {
+								className: "flex items-center justify-between mb-1",
+								children: [/* @__PURE__ */ j("label", {
+									htmlFor: `${D}-html-body`,
+									className: "text-sm font-semibold text-text-primary",
+									children: "HTML Body"
+								}), /* @__PURE__ */ j(t, {
+									variant: "ghost",
+									size: "sm",
+									onClick: () => T((e) => !e),
+									children: C ? "Hide Preview" : "Show Preview"
+								})]
+							}),
+							/* @__PURE__ */ j(x, {
+								id: `${D}-html-body`,
+								value: d,
+								onChange: (e) => m(e.target.value),
+								placeholder: "<html><body>...</body></html>",
+								rows: 10,
+								className: "resize-y font-mono"
+							}),
+							C && /* @__PURE__ */ j("iframe", {
+								title: "Email template preview",
+								sandbox: "",
+								srcDoc: d,
+								className: "border border-border rounded-sm bg-surface min-h-[200px] w-full mt-2"
+							})
+						]
+					}),
+					/* @__PURE__ */ j(I, {
+						label: "Text Body",
+						name: "textBody",
+						type: "textarea",
+						value: h,
+						onChange: (e) => _(String(e)),
+						placeholder: "Plain text version of the email..."
+					}),
+					/* @__PURE__ */ M("section", {
+						"data-ui-part": "",
+						children: [
+							/* @__PURE__ */ j("h3", {
+								id: `${D}-variables`,
+								className: "text-base font-semibold text-text-primary mt-6 mb-2",
+								children: "Variables"
+							}),
+							/* @__PURE__ */ j("div", {
+								className: "flex flex-wrap gap-1.5 mb-2",
+								children: v.map((e) => /* @__PURE__ */ M("span", {
+									className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium",
+									children: ["{{" + e + "}}", /* @__PURE__ */ j(t, {
+										variant: "ghost",
+										size: "sm",
+										className: "p-0 text-white text-[14px] leading-none min-w-0 min-h-0",
+										onClick: () => P(e),
+										"aria-label": `Remove variable ${e}`,
+										children: "x"
+									})]
+								}, e))
+							}),
+							/* @__PURE__ */ j(g, {
+								"aria-labelledby": `${D}-variables`,
+								placeholder: "Type variable name and press Enter",
+								value: b,
+								onChange: (e) => S(e.target.value),
+								onKeyDown: N
+							})
+						]
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle",
+						children: [/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							disabled: O,
+							children: O ? "Saving..." : n ? "Update Template" : "Create Template"
+						}), /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							onClick: i,
+							children: "Cancel"
+						})]
+					})
+				]
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/shared/FilterField.tsx
+function Z({ label: t, hint: n, children: r, layout: i = "stacked", className: a }) {
+	return /* @__PURE__ */ j(v, {
+		label: t,
+		hint: n,
+		layout: i,
+		className: a ?? (i === "stacked" ? "gap-1.5" : void 0),
+		labelClassName: e("text-xs font-semibold text-neutral uppercase tracking-wide", i === "inline" && "min-w-0"),
+		children: ({ labelId: e, ...t }) => r(t)
+	});
+}
+//#endregion
+//#region src/components/identity/admin/MfaManagementPage.tsx
+function re({ metrics: e, users: n, pools: r, onRefresh: i, loading: o }) {
+	let [s, c] = k(""), l = D(() => (n ?? []).some((e) => e.poolId !== void 0), [n]), u = D(() => {
+		let e = n ?? [];
+		return !s || !l ? e : e.filter((e) => e.poolId === s);
+	}, [
+		n,
+		s,
+		l
+	]), d = D(() => [
+		{
+			key: "email",
+			header: "Email",
+			sortable: !0
+		},
+		{
+			key: "mfaEnabled",
+			header: "MFA Status",
+			width: "140px",
+			render: (e) => /* @__PURE__ */ j(B, {
+				status: e.mfaEnabled ? "ENABLED" : "DISABLED",
+				variant: e.mfaEnabled ? "success" : "warning"
+			})
+		},
+		{
+			key: "deviceCount",
+			header: "Devices",
+			width: "100px"
+		}
+	], []);
+	return o ? /* @__PURE__ */ M(f, {
+		title: "MFA Management",
+		children: [/* @__PURE__ */ j("div", {
+			className: "grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4",
+			children: [
+				1,
+				2,
+				3,
+				4
+			].map((e) => /* @__PURE__ */ M(a, {
+				padding: "md",
+				children: [/* @__PURE__ */ j("div", { className: "h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" }), /* @__PURE__ */ j("div", { className: "h-3 w-20 rounded bg-surface-hover animate-pulse" })]
+			}, e))
+		}), /* @__PURE__ */ j(a, { className: "h-[200px] animate-pulse" })]
+	}) : /* @__PURE__ */ M(f, {
+		title: "MFA Management",
+		actions: /* @__PURE__ */ j(t, {
+			variant: "ghost",
+			size: "lg",
+			onClick: i,
+			children: "Refresh"
+		}),
+		children: [
+			e && /* @__PURE__ */ M("section", {
+				"data-ui-part": "",
+				className: "grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4",
+				children: [
+					/* @__PURE__ */ M(a, {
+						padding: "md",
+						children: [/* @__PURE__ */ j("div", {
+							className: "text-[1.75rem] font-bold text-info-fg mb-1",
+							children: e.totalUsers
+						}), /* @__PURE__ */ j("div", {
+							className: "text-sm text-neutral",
+							children: "Total Users"
+						})]
+					}),
+					/* @__PURE__ */ M(a, {
+						padding: "md",
+						children: [/* @__PURE__ */ j("div", {
+							className: "text-[1.75rem] font-bold text-success-fg mb-1",
+							children: e.mfaEnabled
+						}), /* @__PURE__ */ j("div", {
+							className: "text-sm text-neutral",
+							children: "MFA Enabled"
+						})]
+					}),
+					/* @__PURE__ */ M(a, {
+						padding: "md",
+						children: [/* @__PURE__ */ j("div", {
+							className: "text-[1.75rem] font-bold text-warning-fg mb-1",
+							children: e.mfaDisabled
+						}), /* @__PURE__ */ j("div", {
+							className: "text-sm text-neutral",
+							children: "MFA Disabled"
+						})]
+					}),
+					/* @__PURE__ */ M(a, {
+						padding: "md",
+						children: [/* @__PURE__ */ M("div", {
+							className: "text-[1.75rem] font-bold text-info-fg mb-1",
+							children: [e.adoptionRate, "%"]
+						}), /* @__PURE__ */ j("div", {
+							className: "text-sm text-neutral",
+							children: "Adoption Rate"
+						})]
+					})
+				]
+			}),
+			r && r.length > 0 && l && /* @__PURE__ */ j(Z, {
+				label: "Filter by pool",
+				layout: "inline",
+				children: (e) => /* @__PURE__ */ j(_, {
+					...e,
+					className: "w-64",
+					value: s,
+					onChange: (e) => c(e.target.value),
+					options: [{
+						value: "",
+						label: "All Pools"
+					}, ...r.map((e) => ({
+						value: e.poolId,
+						label: `${e.poolName} (${e.userCount} users)`
+					}))]
+				})
+			}),
+			/* @__PURE__ */ j(P, {
+				columns: d,
+				data: u,
+				keyField: "userId",
+				emptyMessage: "No user MFA data available.",
+				emptyIcon: "🔑"
+			})
+		]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/AuditPage.tsx
+var ie = [
+	"",
+	"user",
+	"pool",
+	"client",
+	"group",
+	"template"
+];
+function ae({ records: e, onQuery: n, onViewEntity: r, onReplay: i, loading: o, totalRecords: s }) {
+	let [c, l] = k(""), [u, d] = k(""), [p, m] = k(""), [h, v] = k(""), [y, b] = k("50"), [x, S] = k(""), [C, T] = k(""), [E, O] = k(null), [A, N] = k(!1), F = w(async () => {
+		await n({
+			entityType: c || void 0,
+			entityId: u || void 0,
+			fromTime: p ? new Date(p).getTime() : void 0,
+			toTime: h ? new Date(h).getTime() : void 0,
+			limit: y ? Number(y) : void 0
+		});
+	}, [
+		c,
+		u,
+		p,
+		h,
+		y,
+		n
+	]), I = w(async () => {
+		if (!(!x || !C)) {
+			N(!0);
+			try {
+				let e = await i(x, new Date(C).getTime());
+				O(e);
+			} finally {
+				N(!1);
+			}
+		}
+	}, [
+		x,
+		C,
+		i
+	]), L = D(() => [
+		{
+			key: "timestamp",
+			header: "Timestamp",
+			sortable: !0,
+			render: (e) => /* @__PURE__ */ j("span", {
+				className: "font-mono text-xs text-neutral",
+				children: new Date(e.timestamp).toLocaleString()
+			})
+		},
+		{
+			key: "actor",
+			header: "Actor",
+			render: (e) => typeof e.actor == "string" ? e.actor : e.actor?.email || e.actor?.id || JSON.stringify(e.actor)
+		},
+		{
+			key: "entityType",
+			header: "Entity Type"
+		},
+		{
+			key: "entityId",
+			header: "Entity ID",
+			render: (e) => /* @__PURE__ */ j(t, {
+				variant: "ghost",
+				size: "sm",
+				className: "p-0 underline text-info-fg font-mono text-xs",
+				onClick: () => r(e.entityType, e.entityId),
+				children: e.entityId
+			})
+		},
+		{
+			key: "operation",
+			header: "Operation"
+		}
+	], [r]);
+	return /* @__PURE__ */ M(f, {
+		title: "Audit Log",
+		children: [
+			/* @__PURE__ */ j(a, {
+				padding: "md",
+				children: /* @__PURE__ */ M("div", {
+					className: "flex flex-wrap gap-4 items-end",
+					children: [
+						/* @__PURE__ */ j(Z, {
+							label: "Entity Type",
+							children: (e) => /* @__PURE__ */ j(_, {
+								...e,
+								className: "w-40",
+								value: c,
+								onChange: (e) => l(e.target.value),
+								options: [{
+									value: "",
+									label: "All"
+								}, ...ie.filter(Boolean).map((e) => ({
+									value: e,
+									label: e
+								}))]
+							})
+						}),
+						/* @__PURE__ */ j(Z, {
+							label: "Entity ID",
+							children: (e) => /* @__PURE__ */ j(g, {
+								...e,
+								className: "w-44",
+								value: u,
+								onChange: (e) => d(e.target.value),
+								placeholder: "Optional"
+							})
+						}),
+						/* @__PURE__ */ j(Z, {
+							label: "From",
+							children: (e) => /* @__PURE__ */ j(g, {
+								...e,
+								className: "w-52",
+								type: "datetime-local",
+								value: p,
+								onChange: (e) => m(e.target.value)
+							})
+						}),
+						/* @__PURE__ */ j(Z, {
+							label: "To",
+							children: (e) => /* @__PURE__ */ j(g, {
+								...e,
+								className: "w-52",
+								type: "datetime-local",
+								value: h,
+								onChange: (e) => v(e.target.value)
+							})
+						}),
+						/* @__PURE__ */ j(Z, {
+							label: "Limit",
+							children: (e) => /* @__PURE__ */ j(g, {
+								...e,
+								className: "w-[70px]",
+								type: "number",
+								value: y,
+								onChange: (e) => b(e.target.value)
+							})
+						}),
+						/* @__PURE__ */ j(t, {
+							variant: "primary",
+							size: "lg",
+							onClick: F,
+							disabled: o,
+							children: o ? "Querying..." : "Query"
+						})
+					]
+				})
+			}),
+			s !== void 0 && /* @__PURE__ */ M("p", {
+				className: "text-sm text-text-tertiary m-0",
+				children: [s, " total record(s)"]
+			}),
+			/* @__PURE__ */ j(P, {
+				columns: L,
+				data: e,
+				keyField: "timestamp",
+				loading: o,
+				emptyMessage: "No audit records found. Adjust filters and query.",
+				emptyIcon: "📜"
+			}),
+			/* @__PURE__ */ M(a, {
+				padding: "md",
+				children: [
+					/* @__PURE__ */ j("h3", {
+						className: "text-base font-semibold text-text-primary mb-4 mt-0",
+						children: "Point-in-Time Replay"
+					}),
+					/* @__PURE__ */ M("div", {
+						className: "flex flex-wrap gap-4 items-end mb-4",
+						children: [
+							/* @__PURE__ */ j(Z, {
+								label: "Entity ID",
+								children: (e) => /* @__PURE__ */ j(g, {
+									...e,
+									className: "w-44",
+									value: x,
+									onChange: (e) => S(e.target.value),
+									placeholder: "entity-id"
+								})
+							}),
+							/* @__PURE__ */ j(Z, {
+								label: "At Timestamp",
+								children: (e) => /* @__PURE__ */ j(g, {
+									...e,
+									className: "w-52",
+									type: "datetime-local",
+									value: C,
+									onChange: (e) => T(e.target.value)
+								})
+							}),
+							/* @__PURE__ */ j(t, {
+								variant: "primary",
+								size: "lg",
+								onClick: I,
+								disabled: A || !x || !C,
+								children: A ? "Replaying..." : "Replay"
+							})
+						]
+					}),
+					E && /* @__PURE__ */ j("pre", {
+						className: "p-4 bg-surface-panel border border-border rounded-md font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0",
+						children: JSON.stringify(E, null, 2)
+					})
+				]
+			})
+		]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/SetupGuidePage.tsx
+function oe({ status: r, onNavigate: i }) {
+	let [o, s] = k(null), c = E(), l = w((e) => {
+		s((t) => t === e ? null : e);
+	}, []), u = D(() => [
+		{
+			title: "Create User Pool",
+			done: r.hasUserPools,
+			content: /* @__PURE__ */ M("div", {
+				className: "flex flex-col gap-2",
+				children: [/* @__PURE__ */ j("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: r.hasUserPools ? `${r.poolCount} pool(s) configured.` : "No user pools yet."
+				}), /* @__PURE__ */ j("div", { children: /* @__PURE__ */ j(t, {
+					variant: "ghost",
+					size: "sm",
+					onClick: () => i("/identity/admin/pools/new"),
+					children: "Create a User Pool"
+				}) })]
+			})
+		},
+		{
+			title: "Register Application",
+			done: r.hasClients,
+			content: /* @__PURE__ */ M("div", {
+				className: "flex flex-col gap-2",
+				children: [/* @__PURE__ */ j("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: r.hasClients ? `${r.clientCount} application(s) registered.` : "No applications registered."
+				}), /* @__PURE__ */ j("div", { children: /* @__PURE__ */ j(t, {
+					variant: "ghost",
+					size: "sm",
+					onClick: () => i("/identity/admin/applications/new"),
+					children: "Register an Application"
+				}) })]
+			})
+		},
+		{
+			title: "Create Admin User",
+			done: r.hasAdminUser,
+			content: /* @__PURE__ */ M("div", {
+				className: "flex flex-col gap-2",
+				children: [r.hasAdminUser ? /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ M("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: ["Admin users: ", r.adminEmails.join(", ")]
+				}), /* @__PURE__ */ M("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: [r.totalUsers, " total user(s) across all pools."]
+				})] }) : /* @__PURE__ */ j("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: "No admin user found. Create one in a user pool."
+				}), r.firstPoolId && /* @__PURE__ */ j("div", { children: /* @__PURE__ */ j(t, {
+					variant: "ghost",
+					size: "sm",
+					onClick: () => i(`/identity/admin/pools/${r.firstPoolId}/users/new`),
+					children: "Create Admin User"
+				}) })]
+			})
+		},
+		{
+			title: "Configure SMTP",
+			done: r.smtpConfigured,
+			content: /* @__PURE__ */ j("p", {
+				className: "m-0 text-sm text-text-secondary",
+				children: r.smtpConfigured ? `SMTP configured: ${r.smtpHost}` : "SMTP is not yet configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS environment variables."
+			})
+		},
+		{
+			title: "Configure Issuer",
+			done: r.issuerConfigured,
+			content: /* @__PURE__ */ M("div", {
+				className: "flex flex-col gap-2",
+				children: [/* @__PURE__ */ M("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: ["Issuer: ", /* @__PURE__ */ j("code", {
+						className: "px-1.5 py-0.5 bg-surface-hover rounded text-xs font-mono",
+						children: r.issuer || "Not set"
+					})]
+				}), r.wellKnownUrl && /* @__PURE__ */ M("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: [
+						"Well-known URL:",
+						" ",
+						/* @__PURE__ */ j("a", {
+							href: n(r.wellKnownUrl) ?? void 0,
+							target: "_blank",
+							rel: "noopener noreferrer",
+							className: "text-info-fg underline",
+							children: r.wellKnownUrl
+						})
+					]
+				})]
+			})
+		},
+		{
+			title: "Test Integration",
+			done: r.hasUserPools && r.hasClients && r.issuerConfigured,
+			content: /* @__PURE__ */ j("div", {
+				className: "flex flex-col gap-3",
+				children: r.firstClientId ? /* @__PURE__ */ M(A, { children: [
+					/* @__PURE__ */ M("p", {
+						className: "m-0 text-sm text-text-secondary",
+						children: ["Client ID: ", /* @__PURE__ */ j("code", {
+							className: "px-1.5 py-0.5 bg-surface-hover rounded text-xs font-mono",
+							children: r.firstClientId
+						})]
+					}),
+					/* @__PURE__ */ j("p", {
+						className: "m-0 text-sm text-text-secondary",
+						children: "Use this code snippet to test the OIDC authorization flow:"
+					}),
+					/* @__PURE__ */ j("pre", {
+						className: "px-4 py-3 bg-surface-inverse text-text-inverse rounded-md font-mono text-xs overflow-x-auto whitespace-pre m-0",
+						children: `// OIDC Authorization Code Flow
+const authUrl = \`\${issuer}/authorize?\` + new URLSearchParams({
+  client_id: '${r.firstClientId}',
+  response_type: 'code',
+  redirect_uri: 'http://localhost:3000/callback',
+  scope: 'openid profile email',
+}).toString();
+
+window.location.href = authUrl;`
+					})
+				] }) : /* @__PURE__ */ j("p", {
+					className: "m-0 text-sm text-text-secondary",
+					children: "Complete the previous steps first to test the integration."
+				})
+			})
+		}
+	], [r, i]), d = u.filter((e) => e.done).length, p = Math.round(d / u.length * 100);
+	return /* @__PURE__ */ M(f, {
+		title: "Setup Guide",
+		description: `${d} of ${u.length} steps completed (${p}%)`,
+		children: [/* @__PURE__ */ j("div", {
+			className: "h-2 bg-surface-hover rounded-full overflow-hidden",
+			children: /* @__PURE__ */ j("div", {
+				className: "h-full bg-success rounded-full transition-[width] duration-300 ease-in-out",
+				style: { width: `${p}%` }
+			})
+		}), /* @__PURE__ */ j("div", {
+			className: "flex flex-col gap-2",
+			children: u.map((t, n) => /* @__PURE__ */ M(a, { children: [/* @__PURE__ */ M("button", {
+				"data-ui-part": "",
+				type: "button",
+				className: "flex items-center justify-between w-full text-left px-5 py-4 cursor-pointer select-none bg-transparent border-none font-[inherit]",
+				onClick: () => l(n),
+				"aria-expanded": o === n,
+				"aria-controls": `${c}-${n}`,
+				children: [/* @__PURE__ */ M("div", {
+					className: "flex items-center gap-3",
+					children: [/* @__PURE__ */ j("div", {
+						className: e("w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0", t.done ? "bg-success text-white" : "bg-surface-hover text-text-tertiary"),
+						children: t.done ? "✓" : n + 1
+					}), /* @__PURE__ */ j("span", {
+						className: "text-sm font-medium text-text-primary",
+						children: t.title
+					})]
+				}), /* @__PURE__ */ j("span", {
+					className: "text-text-tertiary text-sm",
+					"aria-hidden": "true",
+					children: o === n ? "▲" : "▼"
+				})]
+			}), o === n && /* @__PURE__ */ j("div", {
+				id: `${c}-${n}`,
+				className: "px-5 pb-5 pt-0 border-t border-border-subtle",
+				children: /* @__PURE__ */ j("div", {
+					className: "pt-4",
+					children: t.content
+				})
+			})] }, n))
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/admin/DiagnosticsPage.tsx
+function se({ data: e }) {
+	return /* @__PURE__ */ j("pre", {
+		className: "p-5 font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-surface-panel",
+		children: JSON.stringify(e, null, 2)
+	});
+}
+function ce({ rates: e }) {
+	let t = Object.entries(e);
+	return t.length === 0 ? /* @__PURE__ */ j("p", {
+		className: "p-5 text-center text-text-tertiary text-sm m-0",
+		children: "No rate limiter data available."
+	}) : /* @__PURE__ */ M(d, { children: [/* @__PURE__ */ j(u, { children: /* @__PURE__ */ M("tr", { children: [/* @__PURE__ */ j(l, { children: "Key" }), /* @__PURE__ */ j(l, { children: "Value" })] }) }), /* @__PURE__ */ j(c, { children: t.map(([e, t]) => /* @__PURE__ */ M(s, { children: [/* @__PURE__ */ j(o, {
+		className: "font-mono text-xs",
+		children: e
+	}), /* @__PURE__ */ j(o, { children: typeof t == "object" ? JSON.stringify(t) : String(t) })] }, e)) })] });
+}
+function le({ diagnostics: e, rates: n, dlq: m, onRedrive: h, onPurge: g, onRefresh: _, loading: v }) {
+	let [y, b] = k(!1), x = O(null), C = i(_);
+	T(() => (y ? x.current = setInterval(C, 1e4) : x.current &&= (clearInterval(x.current), null), () => {
+		x.current && clearInterval(x.current);
+	}), [y, C]);
+	let [E, D] = k(null), [A, N] = k(null), P = w(async (e, t, n) => {
+		N(e), D(null);
+		try {
+			await t(e);
+		} catch (t) {
+			D(t instanceof Error ? `${n} failed for ${e}: ${t.message}` : `${n} failed for ${e}.`);
+		} finally {
+			N(null);
+		}
+	}, []), F = w((e) => P(e, h, "Redrive"), [P, h]), I = w((e) => P(e, g, "Purge"), [P, g]);
+	return v ? /* @__PURE__ */ j(f, {
+		title: "Diagnostics",
+		children: /* @__PURE__ */ j("div", {
+			className: "flex flex-col gap-4",
+			children: [
+				1,
+				2,
+				3
+			].map((e) => /* @__PURE__ */ j(a, { className: "h-[120px] animate-pulse" }, e))
+		})
+	}) : /* @__PURE__ */ M(f, {
+		title: "Diagnostics",
+		actions: /* @__PURE__ */ M("div", {
+			className: "flex items-center gap-3",
+			children: [/* @__PURE__ */ M("label", {
+				className: "flex items-center gap-1.5 text-sm text-neutral cursor-pointer",
+				children: [/* @__PURE__ */ j(S, {
+					checked: y,
+					onChange: b,
+					className: "rounded"
+				}), "Auto-refresh (10s)"]
+			}), /* @__PURE__ */ j(t, {
+				variant: "ghost",
+				size: "lg",
+				onClick: _,
+				children: "Refresh"
+			})]
+		}),
+		children: [
+			/* @__PURE__ */ M(a, { children: [/* @__PURE__ */ j("div", {
+				className: "px-5 py-3 border-b border-border bg-surface-panel",
+				children: /* @__PURE__ */ j("h3", {
+					className: "text-sm font-semibold text-text-primary m-0",
+					children: "Node / Cluster Diagnostics"
+				})
+			}), e ? /* @__PURE__ */ j(se, { data: e }) : /* @__PURE__ */ j("p", {
+				className: "p-5 text-center text-text-tertiary text-sm m-0",
+				children: "No diagnostics data available."
+			})] }),
+			/* @__PURE__ */ M(a, { children: [/* @__PURE__ */ j("div", {
+				className: "px-5 py-3 border-b border-border bg-surface-panel",
+				children: /* @__PURE__ */ j("h3", {
+					className: "text-sm font-semibold text-text-primary m-0",
+					children: "Rate Limiter Stats"
+				})
+			}), n ? /* @__PURE__ */ j(ce, { rates: n }) : /* @__PURE__ */ j("p", {
+				className: "p-5 text-center text-text-tertiary text-sm m-0",
+				children: "No rate data available."
+			})] }),
+			/* @__PURE__ */ M(a, { children: [
+				/* @__PURE__ */ j("div", {
+					className: "px-5 py-3 border-b border-border bg-surface-panel",
+					children: /* @__PURE__ */ j("h3", {
+						className: "text-sm font-semibold text-text-primary m-0",
+						children: "Dead Letter Queue"
+					})
+				}),
+				E && /* @__PURE__ */ j("div", {
+					className: "px-5 pt-4",
+					children: /* @__PURE__ */ j(p, {
+						variant: "error",
+						onDismiss: () => D(null),
+						children: E
+					})
+				}),
+				!m || m.length === 0 ? /* @__PURE__ */ j("p", {
+					className: "p-5 text-center text-text-tertiary text-sm m-0",
+					children: "Dead letter queue is empty."
+				}) : /* @__PURE__ */ M(d, { children: [/* @__PURE__ */ j(u, { children: /* @__PURE__ */ M("tr", { children: [
+					/* @__PURE__ */ j(l, { children: "ID" }),
+					/* @__PURE__ */ j(l, { children: "Error" }),
+					/* @__PURE__ */ j(l, { children: "Failed At" }),
+					/* @__PURE__ */ j(l, { children: "Retries" }),
+					/* @__PURE__ */ j(l, {
+						className: "text-right",
+						children: "Actions"
+					})
+				] }) }), /* @__PURE__ */ j(c, { children: m.map((e) => /* @__PURE__ */ M(s, { children: [
+					/* @__PURE__ */ M(o, {
+						className: "font-mono text-xs",
+						children: [e.id.substring(0, 12), "..."]
+					}),
+					/* @__PURE__ */ j(o, { children: /* @__PURE__ */ j(r, {
+						tone: "danger",
+						size: "xs",
+						children: e.error
+					}) }),
+					/* @__PURE__ */ j(o, {
+						className: "text-xs text-neutral",
+						children: new Date(e.failedAt).toLocaleString()
+					}),
+					/* @__PURE__ */ j(o, { children: /* @__PURE__ */ j(r, {
+						tone: "neutral",
+						size: "xs",
+						mono: !0,
+						children: e.retryCount
+					}) }),
+					/* @__PURE__ */ j(o, {
+						className: "text-right",
+						children: /* @__PURE__ */ M("div", {
+							className: "flex items-center justify-end gap-2",
+							children: [/* @__PURE__ */ j(t, {
+								variant: "ghost",
+								size: "sm",
+								disabled: A === e.id,
+								onClick: () => {
+									F(e.id);
+								},
+								children: "Redrive"
+							}), /* @__PURE__ */ j(t, {
+								variant: "danger",
+								size: "sm",
+								disabled: A === e.id,
+								onClick: () => {
+									I(e.id);
+								},
+								children: "Purge"
+							})]
+						})
+					})
+				] }, e.id)) })] })
+			] })
+		]
+	});
+}
+//#endregion
+//#region src/components/identity/auth/LoginPage.tsx
+function ue({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: f = "signin" }) {
+	let [m, h] = k(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = k(!1), [v, y] = k(null), [b, x] = k(""), [S, T] = k(""), [E, D] = k(""), [O, N] = k(""), [P, F] = k(""), [L, R] = k(""), [z, B] = k(""), [V, ee] = k(!1), [H, U] = k(""), [W, G] = k(!1), K = o || v, q = w(async (e) => {
+		e.preventDefault(), y(null), _(!0);
+		try {
+			await s(b, S);
+		} catch (e) {
+			y(e instanceof Error ? e.message : "Login failed");
+		} finally {
+			_(!1);
+		}
+	}, [
+		b,
+		S,
+		s
+	]), J = w(async (e) => {
+		if (e.preventDefault(), y(null), O !== P) {
+			y("Passwords do not match");
+			return;
+		}
+		_(!0);
+		try {
+			await c({
+				email: E,
+				password: O,
+				givenName: L || void 0,
+				familyName: z || void 0,
+				enableMfa: V || void 0
+			});
+		} catch (e) {
+			y(e instanceof Error ? e.message : "Registration failed");
+		} finally {
+			_(!1);
+		}
+	}, [
+		E,
+		O,
+		P,
+		L,
+		z,
+		V,
+		c
+	]), Y = w(async (e) => {
+		e.preventDefault(), y(null), _(!0);
+		try {
+			await l(H), G(!0);
+		} catch (e) {
+			y(e instanceof Error ? e.message : "Request failed");
+		} finally {
+			_(!1);
+		}
+	}, [H, l]), X = (e) => {
+		h(e), y(null), G(!1);
+	};
+	return /* @__PURE__ */ j("div", {
+		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
+		children: /* @__PURE__ */ M("div", {
+			className: "w-full max-w-[440px] bg-surface rounded-xl shadow-md p-8",
+			role: "main",
+			"aria-label": "Authentication",
+			children: [
+				/* @__PURE__ */ M("header", {
+					className: "flex flex-col items-center gap-3 mb-6",
+					children: [a && /* @__PURE__ */ j("img", {
+						src: a,
+						alt: "",
+						className: "w-14 h-14 object-contain rounded-md"
+					}), i && /* @__PURE__ */ j("h1", {
+						className: "text-xl font-bold text-text-primary m-0",
+						children: i
+					})]
+				}),
+				/* @__PURE__ */ M("div", {
+					className: "flex border-b border-border mb-6",
+					role: "tablist",
+					"aria-label": "Authentication method",
+					onKeyDown: C,
+					children: [
+						/* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "sm",
+							role: "tab",
+							"aria-selected": m === "signin",
+							tabIndex: m === "signin" ? 0 : -1,
+							className: e("flex-1 rounded-none border-b-2", m === "signin" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
+							onClick: () => X("signin"),
+							children: "Sign In"
+						}),
+						u && /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "sm",
+							role: "tab",
+							"aria-selected": m === "register",
+							tabIndex: m === "register" ? 0 : -1,
+							className: e("flex-1 rounded-none border-b-2", m === "register" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
+							onClick: () => X("register"),
+							children: "Register"
+						}),
+						d && /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "sm",
+							role: "tab",
+							"aria-selected": m === "forgot",
+							tabIndex: m === "forgot" ? 0 : -1,
+							className: e("flex-1 rounded-none border-b-2", m === "forgot" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
+							onClick: () => X("forgot"),
+							children: "Forgot Password"
+						})
+					]
+				}),
+				K && /* @__PURE__ */ j("div", {
+					className: "mb-5",
+					children: /* @__PURE__ */ j(p, {
+						variant: "error",
+						children: K
+					})
+				}),
+				m === "signin" && /* @__PURE__ */ M("form", {
+					onSubmit: q,
+					"aria-label": "Sign in form",
+					children: [
+						/* @__PURE__ */ j("input", {
+							"data-ui-part": "",
+							type: "hidden",
+							name: "uid",
+							value: n
+						}),
+						/* @__PURE__ */ j(I, {
+							label: "Email",
+							name: "login-email",
+							type: "email",
+							value: b,
+							onChange: (e) => x(String(e)),
+							required: !0,
+							placeholder: "you@example.com",
+							disabled: g
+						}),
+						/* @__PURE__ */ j(I, {
+							label: "Password",
+							name: "login-password",
+							type: "password",
+							value: S,
+							onChange: (e) => T(String(e)),
+							required: !0,
+							disabled: g
+						}),
+						/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							fullWidth: !0,
+							disabled: g,
+							children: g ? "Signing in..." : "Sign In"
+						})
+					]
+				}),
+				m === "register" && /* @__PURE__ */ M("form", {
+					onSubmit: J,
+					"aria-label": "Registration form",
+					children: [
+						/* @__PURE__ */ j(I, {
+							label: "Email",
+							name: "reg-email",
+							type: "email",
+							value: E,
+							onChange: (e) => D(String(e)),
+							required: !0,
+							placeholder: "you@example.com",
+							disabled: g
+						}),
+						/* @__PURE__ */ M("div", {
+							className: "flex gap-3",
+							children: [/* @__PURE__ */ j("div", {
+								className: "flex-1",
+								children: /* @__PURE__ */ j(I, {
+									label: "Given Name",
+									name: "reg-given",
+									value: L,
+									onChange: (e) => R(String(e)),
+									disabled: g
+								})
+							}), /* @__PURE__ */ j("div", {
+								className: "flex-1",
+								children: /* @__PURE__ */ j(I, {
+									label: "Family Name",
+									name: "reg-family",
+									value: z,
+									onChange: (e) => B(String(e)),
+									disabled: g
+								})
+							})]
+						}),
+						/* @__PURE__ */ j(I, {
+							label: "Password",
+							name: "reg-password",
+							type: "password",
+							value: O,
+							onChange: (e) => N(String(e)),
+							required: !0,
+							disabled: g
+						}),
+						/* @__PURE__ */ j(I, {
+							label: "Confirm Password",
+							name: "reg-confirm",
+							type: "password",
+							value: P,
+							onChange: (e) => F(String(e)),
+							required: !0,
+							disabled: g
+						}),
+						/* @__PURE__ */ j(I, {
+							label: "Enable Multi-Factor Authentication",
+							name: "reg-mfa",
+							type: "checkbox",
+							value: V,
+							onChange: (e) => ee(!!e),
+							disabled: g
+						}),
+						/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							fullWidth: !0,
+							disabled: g,
+							children: g ? "Creating account..." : "Create Account"
+						})
+					]
+				}),
+				m === "forgot" && /* @__PURE__ */ j("form", {
+					onSubmit: Y,
+					"aria-label": "Forgot password form",
+					children: W ? /* @__PURE__ */ j(p, {
+						variant: "success",
+						children: "If an account exists for that email, a password reset link has been sent."
+					}) : /* @__PURE__ */ M(A, { children: [
+						/* @__PURE__ */ j("p", {
+							className: "text-sm text-neutral mb-4 mt-0 leading-relaxed",
+							children: "Enter your email address and we'll send you a link to reset your password."
+						}),
+						/* @__PURE__ */ j(I, {
+							label: "Email",
+							name: "forgot-email",
+							type: "email",
+							value: H,
+							onChange: (e) => U(String(e)),
+							required: !0,
+							placeholder: "you@example.com",
+							disabled: g
+						}),
+						/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							fullWidth: !0,
+							disabled: g,
+							children: g ? "Sending..." : "Send Reset Link"
+						})
+					] })
+				})
+			]
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/auth/ConsentPage.tsx
+var de = {
+	openid: "Verify your identity",
+	profile: "Access your name and profile information",
+	email: "Access your email address",
+	address: "Access your mailing address",
+	phone: "Access your phone number",
+	offline_access: "Maintain access when you are not present"
+};
+function fe(e) {
+	return de[e] || `Access: ${e}`;
+}
+function pe({ clientName: n, scopes: r, redirectUri: i, onAuthorize: a, onDeny: o, logoUrl: s }) {
+	let [c, l] = k(!1), u = w(async () => {
+		l(!0);
+		try {
+			await a();
+		} finally {
+			l(!1);
+		}
+	}, [a]), d = w(async () => {
+		l(!0);
+		try {
+			await o();
+		} finally {
+			l(!1);
+		}
+	}, [o]);
+	return /* @__PURE__ */ j("div", {
+		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
+		children: /* @__PURE__ */ M("div", {
+			className: "w-full max-w-[440px] bg-surface rounded-xl shadow-md overflow-hidden",
+			role: "main",
+			"aria-label": "Authorization consent",
+			children: [
+				/* @__PURE__ */ M("header", {
+					className: "flex flex-col items-center gap-3 px-8 pt-8 pb-5",
+					children: [
+						s && /* @__PURE__ */ j("img", {
+							src: s,
+							alt: "",
+							className: "w-14 h-14 object-contain rounded-md"
+						}),
+						/* @__PURE__ */ M("h1", {
+							className: "text-xl font-bold text-text-primary m-0 text-center",
+							children: ["Authorize ", n]
+						}),
+						/* @__PURE__ */ j("p", {
+							className: "text-sm text-neutral m-0 text-center leading-relaxed",
+							children: "This application is requesting access to your account."
+						})
+					]
+				}),
+				/* @__PURE__ */ M("div", {
+					className: "mx-8 border border-border rounded-md overflow-hidden mb-6",
+					children: [/* @__PURE__ */ j("p", {
+						className: "text-[11px] font-semibold uppercase tracking-wide text-neutral px-4 py-2.5 m-0 bg-surface-panel border-b border-border",
+						children: "Requested Permissions"
+					}), /* @__PURE__ */ j("ul", {
+						className: "list-none p-0 m-0",
+						"aria-label": "Requested permissions",
+						children: r.map((t, n) => /* @__PURE__ */ M("li", {
+							className: e("flex items-center gap-3 px-4 py-3 text-sm text-text-primary", n < r.length - 1 && "border-b border-border"),
+							children: [/* @__PURE__ */ j("span", {
+								className: "w-2 h-2 rounded-full bg-info shrink-0",
+								"aria-hidden": "true"
+							}), /* @__PURE__ */ j("span", { children: fe(t) })]
+						}, t))
+					})]
+				}),
+				/* @__PURE__ */ M("div", {
+					className: "px-8 pb-8",
+					children: [i && /* @__PURE__ */ M("p", {
+						className: "text-[11px] text-text-tertiary mb-5 mt-0 break-all leading-relaxed",
+						children: ["You will be redirected to: ", /* @__PURE__ */ j("strong", {
+							className: "text-neutral",
+							children: i
+						})]
+					}), /* @__PURE__ */ M("div", {
+						className: "flex gap-3",
+						children: [/* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							fullWidth: !0,
+							onClick: d,
+							disabled: c,
+							children: "Deny"
+						}), /* @__PURE__ */ j(t, {
+							variant: "primary",
+							size: "lg",
+							fullWidth: !0,
+							onClick: u,
+							disabled: c,
+							children: c ? "Authorizing..." : "Authorize"
+						})]
+					})]
+				})
+			]
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/shared/QrCodeDisplay.tsx
+function Q({ value: e, size: t = 200, label: n }) {
+	return /* @__PURE__ */ M("figure", {
+		className: "flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-white",
+		children: [/* @__PURE__ */ j("img", {
+			src: e,
+			alt: n || "QR Code",
+			width: t,
+			height: t,
+			className: "block rounded-sm [image-rendering:pixelated]"
+		}), n && /* @__PURE__ */ j("figcaption", {
+			className: "text-sm text-neutral text-center",
+			children: n
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/shared/CodeInput.tsx
+function $({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, autoFocus: a = !1 }) {
+	let [o, s] = k(Array(t).fill("")), c = O([]);
+	T(() => {
+		a && c.current[0] && c.current[0].focus();
+	}, [a]);
+	let l = w((e) => {
+		e >= 0 && e < t && c.current[e] && (c.current[e].focus(), c.current[e].select());
+	}, [t]), u = O(null);
+	T(() => {
+		let e = o.join("");
+		if (!(e.length === t && o.every((e) => e !== ""))) {
+			u.current = null;
+			return;
+		}
+		u.current !== e && (u.current = e, n(e));
+	}, [
+		o,
+		t,
+		n
+	]);
+	let d = w((e, n) => {
+		let r = n.replace(/\D/g, "").slice(-1);
+		s((t) => {
+			let n = [...t];
+			if (n[e] = r, r && t.every((e) => e !== "")) for (let t = e + 1; t < n.length; t++) n[t] = "";
+			return n;
+		}), r && e < t - 1 && l(e + 1);
+	}, [t, l]), f = w((e, n) => {
+		n.key === "Backspace" ? o[e] === "" && e > 0 ? (n.preventDefault(), s((t) => {
+			let n = [...t];
+			return n[e - 1] = "", n;
+		}), l(e - 1)) : s((t) => {
+			let n = [...t];
+			return n[e] = "", n;
+		}) : n.key === "ArrowLeft" && e > 0 ? (n.preventDefault(), l(e - 1)) : n.key === "ArrowRight" && e < t - 1 && (n.preventDefault(), l(e + 1));
+	}, [
+		o,
+		t,
+		l
+	]), p = w((e) => {
+		e.preventDefault();
+		let n = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, t);
+		if (!n) return;
+		let r = Array(t).fill("");
+		for (let e = 0; e < n.length; e++) r[e] = n[e];
+		s(r), n.length < t && l(Math.min(n.length, t - 1));
+	}, [t, l]);
+	return /* @__PURE__ */ M("div", {
+		className: "flex flex-col items-center gap-2",
+		children: [/* @__PURE__ */ j("div", {
+			className: "flex gap-2",
+			role: "group",
+			"aria-label": "Verification code input",
+			children: Array.from({ length: t }, (n, a) => /* @__PURE__ */ j("input", {
+				"data-ui-part": "",
+				ref: (e) => {
+					c.current[a] = e;
+				},
+				type: "text",
+				inputMode: "numeric",
+				pattern: "[0-9]",
+				maxLength: 1,
+				value: o[a],
+				disabled: i,
+				"aria-label": `Digit ${a + 1} of ${t}`,
+				onChange: (e) => d(a, e.target.value),
+				onKeyDown: (e) => f(a, e),
+				onPaste: p,
+				onFocus: (e) => e.target.select(),
+				className: e("w-11 h-[52px] text-center text-lg font-semibold font-[inherit]", "rounded-md outline-none transition-[border-color,box-shadow] duration-150", "border-2", r ? "border-danger" : "border-border", i ? "bg-surface-panel cursor-not-allowed" : "bg-surface cursor-text", "text-text-primary", "focus:border-info focus:ring-2 focus:ring-info/20")
+			}, a))
+		}), r && /* @__PURE__ */ j("p", {
+			role: "alert",
+			className: "m-0 text-sm text-danger-fg",
+			children: r
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/auth/MfaSetupPage.tsx
+var me = [
+	"name",
+	"scan",
+	"verify",
+	"backup"
+], he = [
+	"Name",
+	"Scan",
+	"Verify",
+	"Backup"
+];
+function ge({ onSetup: n, onVerify: r, onComplete: i, userEmail: a, initialStep: o = "name", initialSetupResult: s, initialDeviceName: c = "" }) {
+	let [l, u] = k(o === "scan" && !s ? "name" : o), [d, f] = k(!1), [m, h] = k(null), [g, _] = k(c), [v, y] = k(s ?? null), [b, x] = k(s?.backupCodes ?? []), [S, C] = k(!1), E = me.indexOf(l), D = w(async (e) => {
+		if (e.preventDefault(), g.trim()) {
+			h(null), f(!0);
+			try {
+				let e = await n(g.trim());
+				y(e), x(e.backupCodes), u("scan");
+			} catch (e) {
+				h(e instanceof Error ? e.message : "Setup failed");
+			} finally {
+				f(!1);
+			}
+		}
+	}, [g, n]), A = w(async (e) => {
+		if (v) {
+			h(null), f(!0);
+			try {
+				let t = await r(v.deviceId, e);
+				t.success ? (t.backupCodes && x(t.backupCodes), u("backup")) : h("Verification failed. Please try again.");
+			} catch (e) {
+				h(e instanceof Error ? e.message : "Verification failed");
+			} finally {
+				f(!1);
+			}
+		}
+	}, [v, r]), N = O(null);
+	T(() => () => {
+		N.current && clearTimeout(N.current);
+	}, []);
+	let P = w(async () => {
+		try {
+			await navigator.clipboard.writeText(b.join("\n")), C(!0), N.current && clearTimeout(N.current), N.current = setTimeout(() => C(!1), 2e3);
+		} catch {}
+	}, [b]);
+	return /* @__PURE__ */ j("div", {
+		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
+		children: /* @__PURE__ */ M("div", {
+			className: "w-full max-w-[480px] bg-surface rounded-xl shadow-md p-8",
+			role: "main",
+			"aria-label": "MFA setup",
+			children: [
+				/* @__PURE__ */ j("h1", {
+					className: "text-xl font-bold text-text-primary mb-2 mt-0 text-center",
+					children: "Set Up Multi-Factor Authentication"
+				}),
+				a && /* @__PURE__ */ j("p", {
+					className: "text-sm text-neutral mb-5 mt-0 text-center",
+					children: a
+				}),
+				/* @__PURE__ */ j("div", {
+					className: "flex justify-center gap-6 mb-6",
+					role: "group",
+					"aria-label": "Setup progress",
+					children: me.map((t, n) => /* @__PURE__ */ M("div", {
+						className: "flex flex-col items-center gap-1.5",
+						children: [/* @__PURE__ */ j("div", {
+							className: e("w-3 h-3 rounded-full transition-colors duration-200", n < E ? "bg-success" : n === E ? "bg-info" : "bg-surface-emphasis"),
+							"aria-label": `Step ${n + 1}${n === E ? " (current)" : n < E ? " (completed)" : ""}`
+						}), /* @__PURE__ */ j("span", {
+							className: e("text-[10px] uppercase tracking-wide font-medium", n === E ? "text-text-primary" : "text-text-tertiary"),
+							children: he[n]
+						})]
+					}, t))
+				}),
+				m && /* @__PURE__ */ j("div", {
+					className: "mb-5",
+					children: /* @__PURE__ */ j(p, {
+						variant: "error",
+						children: m
+					})
+				}),
+				l === "name" && /* @__PURE__ */ M("form", {
+					onSubmit: D,
+					"aria-label": "Name your device",
+					children: [
+						/* @__PURE__ */ j("p", {
+							className: "text-sm text-neutral mb-4 mt-0 text-center leading-relaxed",
+							children: "Give your authenticator device a name so you can identify it later."
+						}),
+						/* @__PURE__ */ j(I, {
+							label: "Device Name",
+							name: "device-name",
+							value: g,
+							onChange: (e) => _(String(e)),
+							required: !0,
+							placeholder: "e.g., My Phone",
+							disabled: d
+						}),
+						/* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							fullWidth: !0,
+							disabled: d || !g.trim(),
+							children: d ? "Setting up..." : "Continue"
+						})
+					]
+				}),
+				l === "scan" && v && /* @__PURE__ */ M("div", { children: [
+					/* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "sm",
+						className: "p-0 mb-4",
+						onClick: () => u("name"),
+						"aria-label": "Go back to name step",
+						children: "← Back"
+					}),
+					/* @__PURE__ */ j("p", {
+						className: "text-sm text-neutral mb-5 mt-0 text-center leading-relaxed",
+						children: "Scan this QR code with your authenticator app"
+					}),
+					/* @__PURE__ */ j("div", {
+						className: "flex justify-center mb-5",
+						children: /* @__PURE__ */ j(Q, {
+							value: v.qrCode,
+							size: 200,
+							label: g ? `Device: ${g}` : void 0
+						})
+					}),
+					/* @__PURE__ */ j("p", {
+						className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary text-center mb-2 mt-0",
+						children: "Or enter this secret manually"
+					}),
+					/* @__PURE__ */ j("div", {
+						className: "px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary break-all text-center mb-6 select-all",
+						children: v.secret
+					}),
+					/* @__PURE__ */ j(t, {
+						variant: "primary",
+						size: "lg",
+						fullWidth: !0,
+						onClick: () => u("verify"),
+						children: "I've scanned it"
+					})
+				] }),
+				l === "verify" && /* @__PURE__ */ M("div", { children: [
+					/* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "sm",
+						className: "p-0 mb-4",
+						onClick: () => u("scan"),
+						"aria-label": "Go back to scan step",
+						children: "← Back"
+					}),
+					/* @__PURE__ */ j("p", {
+						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
+						children: "Enter the 6-digit code from your authenticator app to confirm setup"
+					}),
+					/* @__PURE__ */ j($, {
+						onComplete: A,
+						error: m,
+						disabled: d,
+						autoFocus: !0
+					}),
+					d && /* @__PURE__ */ j("p", {
+						className: "text-center text-sm text-text-tertiary mt-3",
+						children: "Verifying..."
+					})
+				] }),
+				l === "backup" && /* @__PURE__ */ M("div", { children: [
+					/* @__PURE__ */ j("div", {
+						className: "w-14 h-14 mx-auto mb-5 rounded-full bg-success-bg flex items-center justify-center",
+						children: /* @__PURE__ */ j("svg", {
+							width: "28",
+							height: "28",
+							viewBox: "0 0 24 24",
+							fill: "none",
+							stroke: "currentColor",
+							strokeWidth: "2",
+							strokeLinecap: "round",
+							strokeLinejoin: "round",
+							className: "text-success-fg",
+							children: /* @__PURE__ */ j("polyline", { points: "20 6 9 17 4 12" })
+						})
+					}),
+					/* @__PURE__ */ j("p", {
+						className: "text-sm text-neutral mb-5 mt-0 text-center leading-relaxed",
+						children: "Save these backup codes in a safe place. Each code can only be used once."
+					}),
+					/* @__PURE__ */ j("div", {
+						className: "grid grid-cols-2 gap-2.5 mb-6",
+						children: b.map((e, t) => /* @__PURE__ */ j("div", {
+							className: "px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary text-center select-all",
+							children: e
+						}, t))
+					}),
+					/* @__PURE__ */ j(t, {
+						variant: "primary",
+						size: "lg",
+						fullWidth: !0,
+						onClick: P,
+						children: S ? "Copied!" : "Copy All Codes"
+					}),
+					/* @__PURE__ */ j("div", {
+						className: "mt-3",
+						children: /* @__PURE__ */ j(t, {
+							variant: "ghost",
+							size: "lg",
+							fullWidth: !0,
+							onClick: i,
+							children: "I've saved them — Continue"
+						})
+					})
+				] })
+			]
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/auth/MfaVerifyPage.tsx
+function _e({ onVerify: e, onVerifyBackup: n, error: r = null, defaultMode: i = "totp" }) {
+	let [a, o] = k(i), [s, c] = k(!1), [l, u] = k(null), [d, f] = k(""), m = r || l, h = w(async (t) => {
+		u(null), c(!0);
+		try {
+			await e(t);
+		} catch (e) {
+			u(e instanceof Error ? e.message : "Verification failed");
+		} finally {
+			c(!1);
+		}
+	}, [e]), g = w(async (e) => {
+		if (e.preventDefault(), d.trim()) {
+			u(null), c(!0);
+			try {
+				await n(d.trim());
+			} catch (e) {
+				u(e instanceof Error ? e.message : "Verification failed");
+			} finally {
+				c(!1);
+			}
+		}
+	}, [d, n]);
+	return /* @__PURE__ */ j("div", {
+		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
+		children: /* @__PURE__ */ M("div", {
+			className: "w-full max-w-[440px] bg-surface rounded-xl shadow-md p-8",
+			role: "main",
+			"aria-label": "Multi-factor verification",
+			children: [
+				/* @__PURE__ */ j("div", {
+					className: "w-14 h-14 mx-auto mb-5 rounded-full bg-info-bg flex items-center justify-center",
+					children: /* @__PURE__ */ M("svg", {
+						width: "28",
+						height: "28",
+						viewBox: "0 0 24 24",
+						fill: "none",
+						stroke: "currentColor",
+						strokeWidth: "2",
+						strokeLinecap: "round",
+						strokeLinejoin: "round",
+						className: "text-info-fg",
+						children: [/* @__PURE__ */ j("rect", {
+							x: "3",
+							y: "11",
+							width: "18",
+							height: "11",
+							rx: "2",
+							ry: "2"
+						}), /* @__PURE__ */ j("path", { d: "M7 11V7a5 5 0 0 1 10 0v4" })]
+					})
+				}),
+				/* @__PURE__ */ j("h1", {
+					className: "text-xl font-bold text-text-primary mb-2 mt-0 text-center",
+					children: "Verify Your Identity"
+				}),
+				a === "totp" ? /* @__PURE__ */ M(A, { children: [
+					/* @__PURE__ */ j("p", {
+						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
+						children: "Enter the 6-digit code from your authenticator app"
+					}),
+					m && /* @__PURE__ */ j("div", {
+						className: "mb-5",
+						children: /* @__PURE__ */ j(p, {
+							variant: "error",
+							children: m
+						})
+					}),
+					/* @__PURE__ */ j($, {
+						onComplete: h,
+						error: null,
+						disabled: s,
+						autoFocus: !0
+					}),
+					s && /* @__PURE__ */ j("p", {
+						className: "text-center text-sm text-text-tertiary mt-3",
+						children: "Verifying..."
+					}),
+					/* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "sm",
+						className: "block mt-6 mx-auto underline text-info-fg",
+						onClick: () => {
+							o("backup"), u(null);
+						},
+						children: "Use a backup code instead"
+					})
+				] }) : /* @__PURE__ */ M(A, { children: [
+					/* @__PURE__ */ j("p", {
+						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
+						children: "Enter one of your backup codes"
+					}),
+					m && /* @__PURE__ */ j("div", {
+						className: "mb-5",
+						children: /* @__PURE__ */ j(p, {
+							variant: "error",
+							children: m
+						})
+					}),
+					/* @__PURE__ */ M("form", {
+						onSubmit: g,
+						"aria-label": "Backup code verification",
+						children: [/* @__PURE__ */ j(I, {
+							label: "Backup Code",
+							name: "backup-code",
+							value: d,
+							onChange: (e) => f(String(e)),
+							required: !0,
+							placeholder: "XXXX-XXXX-XXXX",
+							disabled: s
+						}), /* @__PURE__ */ j(t, {
+							type: "submit",
+							variant: "primary",
+							size: "lg",
+							fullWidth: !0,
+							disabled: s || !d.trim(),
+							children: s ? "Verifying..." : "Verify Backup Code"
+						})]
+					}),
+					/* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "sm",
+						className: "block mt-6 mx-auto underline text-info-fg",
+						onClick: () => {
+							o("totp"), u(null);
+						},
+						children: "Use authenticator code instead"
+					})
+				] })
+			]
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/auth/MfaDashboardPage.tsx
+function ve(e) {
+	try {
+		return new Date(e).toLocaleDateString(void 0, {
+			year: "numeric",
+			month: "short",
+			day: "numeric"
+		});
+	} catch {
+		return e;
+	}
+}
+function ye({ devices: e, userEmail: n, mfaEnabled: i, onAddDevice: a, onRenameDevice: o, onRemoveDevice: s, loading: c = !1 }) {
+	let [l, u] = k(null), [d, f] = k(null), [m, g] = k(""), [_, v] = k(!1), [y, x] = k(null), S = w(async () => {
+		if (l) {
+			v(!0), x(null);
+			try {
+				await s(l), u(null);
+			} catch (e) {
+				x(e instanceof Error ? e.message : "Failed to remove device.");
+			} finally {
+				v(!1);
+			}
+		}
+	}, [l, s]), C = w(async (e) => {
+		if (m.trim()) {
+			v(!0), x(null);
+			try {
+				await o(e, m.trim()), f(null), g("");
+			} catch (e) {
+				x(e instanceof Error ? e.message : "Failed to rename device.");
+			} finally {
+				v(!1);
+			}
+		}
+	}, [m, o]), T = (e) => {
+		f(e.deviceId), g(e.deviceName), x(null);
+	};
+	return /* @__PURE__ */ j("div", {
+		className: "min-h-full flex items-start justify-center p-6 bg-surface-panel",
+		children: /* @__PURE__ */ M("div", {
+			className: "w-full max-w-[600px] bg-surface rounded-xl shadow-md p-8",
+			role: "main",
+			"aria-label": "MFA device management",
+			children: [
+				/* @__PURE__ */ M("div", {
+					className: "flex items-center justify-between mb-6 flex-wrap gap-3",
+					children: [/* @__PURE__ */ M("div", {
+						className: "flex flex-col gap-1",
+						children: [/* @__PURE__ */ j("h1", {
+							className: "text-xl font-bold text-text-primary m-0",
+							children: "MFA Devices"
+						}), n && /* @__PURE__ */ j("p", {
+							className: "text-sm text-neutral m-0",
+							children: n
+						})]
+					}), /* @__PURE__ */ M("div", {
+						className: "flex items-center gap-3",
+						children: [/* @__PURE__ */ j(r, {
+							tone: i ? "success" : "warning",
+							children: i ? "Enabled" : "Disabled"
+						}), /* @__PURE__ */ j(t, {
+							variant: "primary",
+							size: "md",
+							onClick: a,
+							children: "Add Device"
+						})]
+					})]
+				}),
+				y && !l && /* @__PURE__ */ j("div", {
+					className: "mb-5",
+					children: /* @__PURE__ */ j(p, {
+						variant: "error",
+						children: y
+					})
+				}),
+				c && /* @__PURE__ */ j("p", {
+					className: "text-center text-text-tertiary text-sm py-8",
+					children: "Loading devices..."
+				}),
+				!c && e.length === 0 && /* @__PURE__ */ j(b, {
+					icon: "🔐",
+					title: "No MFA devices configured",
+					body: "Add a device to secure your account with multi-factor authentication.",
+					actionLabel: "Add Device",
+					onAction: a
+				}),
+				!c && e.length > 0 && /* @__PURE__ */ j("div", {
+					className: "flex flex-col gap-3",
+					role: "list",
+					"aria-label": "MFA devices",
+					children: e.map((e) => /* @__PURE__ */ M("div", {
+						className: "p-5 border border-border rounded-lg bg-surface",
+						role: "listitem",
+						children: [
+							/* @__PURE__ */ j("div", {
+								className: "flex items-center justify-between mb-2",
+								children: /* @__PURE__ */ j("div", {
+									className: "flex items-center gap-2.5",
+									children: d === e.deviceId ? /* @__PURE__ */ M("form", {
+										onSubmit: (t) => {
+											t.preventDefault(), C(e.deviceId);
+										},
+										className: "flex gap-2 items-center",
+										children: [
+											/* @__PURE__ */ j(I, {
+												label: "",
+												name: `rename-${e.deviceId}`,
+												value: m,
+												onChange: (e) => g(String(e)),
+												disabled: _
+											}),
+											/* @__PURE__ */ j(t, {
+												type: "submit",
+												variant: "primary",
+												size: "sm",
+												disabled: _ || !m.trim(),
+												children: "Save"
+											}),
+											/* @__PURE__ */ j(t, {
+												variant: "ghost",
+												size: "sm",
+												onClick: () => f(null),
+												children: "Cancel"
+											})
+										]
+									}) : /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ j("h3", {
+										className: "text-[15px] font-semibold text-text-primary m-0",
+										children: e.deviceName
+									}), /* @__PURE__ */ j(B, { status: e.isVerified ? "CONFIRMED" : "UNCONFIRMED" })] })
+								})
+							}),
+							/* @__PURE__ */ M("p", {
+								className: "text-[11px] text-text-tertiary m-0 mb-3",
+								children: [
+									"Type: ",
+									e.deviceType,
+									" · Added: ",
+									ve(e.createdAt),
+									e.lastUsed && ` · Last used: ${ve(e.lastUsed)}`
+								]
+							}),
+							d !== e.deviceId && /* @__PURE__ */ M("div", {
+								className: "flex gap-2",
+								children: [/* @__PURE__ */ j(t, {
+									variant: "ghost",
+									size: "sm",
+									onClick: () => T(e),
+									children: "Rename"
+								}), /* @__PURE__ */ j(t, {
+									variant: "danger",
+									size: "sm",
+									onClick: () => {
+										u(e.deviceId), x(null);
+									},
+									children: "Remove"
+								})]
+							})
+						]
+					}, e.deviceId))
+				}),
+				/* @__PURE__ */ j(h, {
+					open: !!l,
+					onConfirm: () => {
+						S();
+					},
+					onCancel: () => {
+						u(null), x(null);
+					},
+					title: "Remove Device",
+					body: "Are you sure you want to remove this MFA device? You will no longer be able to use it for verification.",
+					confirmLabel: _ ? "Removing..." : "Remove",
+					confirmDisabled: _,
+					tone: "destructive",
+					children: y && /* @__PURE__ */ j(p, {
+						variant: "error",
+						children: y
+					})
+				})
+			]
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/auth/LogoutPage.tsx
+function be({ onConfirm: e, onCancel: n, clientName: r }) {
+	return /* @__PURE__ */ j("div", {
+		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
+		children: /* @__PURE__ */ M("div", {
+			className: "w-full max-w-[420px] bg-surface rounded-xl shadow-md p-8 text-center",
+			role: "main",
+			"aria-label": "Sign out confirmation",
+			children: [
+				/* @__PURE__ */ j("div", {
+					className: "w-14 h-14 mx-auto mb-5 rounded-full bg-danger-bg flex items-center justify-center",
+					children: /* @__PURE__ */ M("svg", {
+						width: "28",
+						height: "28",
+						viewBox: "0 0 24 24",
+						fill: "none",
+						stroke: "currentColor",
+						strokeWidth: "2",
+						strokeLinecap: "round",
+						strokeLinejoin: "round",
+						className: "text-danger-fg",
+						children: [
+							/* @__PURE__ */ j("path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" }),
+							/* @__PURE__ */ j("polyline", { points: "16 17 21 12 16 7" }),
+							/* @__PURE__ */ j("line", {
+								x1: "21",
+								y1: "12",
+								x2: "9",
+								y2: "12"
+							})
+						]
+					})
+				}),
+				/* @__PURE__ */ j("h1", {
+					className: "text-xl font-bold text-text-primary mb-3 mt-0",
+					children: "Sign Out"
+				}),
+				/* @__PURE__ */ M("p", {
+					className: "text-sm text-neutral mb-6 mt-0 leading-relaxed",
+					children: [
+						"Are you sure you want to sign out",
+						r ? /* @__PURE__ */ M(A, { children: [" from ", /* @__PURE__ */ j("strong", {
+							className: "text-text-primary",
+							children: r
+						})] }) : "",
+						"? You will need to sign in again to access your account."
+					]
+				}),
+				/* @__PURE__ */ M("div", {
+					className: "flex gap-3 justify-center",
+					children: [n && /* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "lg",
+						fullWidth: !0,
+						onClick: n,
+						children: "Cancel"
+					}), /* @__PURE__ */ j(t, {
+						variant: "danger-solid",
+						size: "lg",
+						fullWidth: !0,
+						onClick: e,
+						children: "Sign Out"
+					})]
+				})
+			]
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/auth/ErrorPage.tsx
+function xe({ title: e = "Something went wrong", message: n, error: r, onRetry: i, onBack: a }) {
+	return /* @__PURE__ */ j("div", {
+		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
+		children: /* @__PURE__ */ M("div", {
+			className: "w-full max-w-[420px] bg-surface rounded-xl shadow-md p-8 text-center",
+			role: "main",
+			"aria-label": "Error",
+			children: [
+				/* @__PURE__ */ j("div", {
+					className: "w-14 h-14 rounded-full bg-danger-bg flex items-center justify-center mx-auto mb-5",
+					"aria-hidden": "true",
+					children: /* @__PURE__ */ M("svg", {
+						width: "28",
+						height: "28",
+						viewBox: "0 0 24 24",
+						fill: "none",
+						stroke: "currentColor",
+						strokeWidth: "2",
+						strokeLinecap: "round",
+						strokeLinejoin: "round",
+						className: "text-danger-fg",
+						children: [
+							/* @__PURE__ */ j("circle", {
+								cx: "12",
+								cy: "12",
+								r: "10"
+							}),
+							/* @__PURE__ */ j("line", {
+								x1: "15",
+								y1: "9",
+								x2: "9",
+								y2: "15"
+							}),
+							/* @__PURE__ */ j("line", {
+								x1: "9",
+								y1: "9",
+								x2: "15",
+								y2: "15"
+							})
+						]
+					})
+				}),
+				/* @__PURE__ */ j("h1", {
+					className: "text-xl font-bold text-text-primary mb-3 mt-0",
+					children: e
+				}),
+				/* @__PURE__ */ j("p", {
+					className: "text-sm text-neutral mb-3 mt-0 leading-relaxed",
+					children: n
+				}),
+				r && /* @__PURE__ */ j("code", {
+					className: "text-[11px] text-text-tertiary font-mono mb-5 px-3.5 py-2 bg-surface-panel border border-border rounded-md inline-block max-w-full overflow-x-auto",
+					children: r
+				}),
+				(i || a) && /* @__PURE__ */ M("div", {
+					className: "flex gap-3 justify-center mt-6",
+					children: [a && /* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "lg",
+						onClick: a,
+						children: "Go Back"
+					}), i && /* @__PURE__ */ j(t, {
+						variant: "primary",
+						size: "lg",
+						onClick: i,
+						children: "Try Again"
+					})]
+				})
+			]
+		})
+	});
+}
+//#endregion
+//#region src/components/identity/shared/IdentityAdminLayout.tsx
+var Se = [
+	{
+		label: "Dashboard",
+		path: "/identity/admin",
+		icon: "⌂"
+	},
+	{
+		label: "Pools",
+		path: "/identity/admin/pools",
+		icon: "☰"
+	},
+	{
+		label: "Applications",
+		path: "/identity/admin/applications",
+		icon: "⬚"
+	},
+	{
+		label: "Email Templates",
+		path: "/identity/admin/email-templates",
+		icon: "✉"
+	},
+	{
+		label: "Audit",
+		path: "/identity/admin/audit",
+		icon: "⌸"
+	},
+	{
+		label: "Diagnostics",
+		path: "/identity/admin/diagnostics",
+		icon: "⚙"
+	},
+	{
+		label: "Setup Guide",
+		path: "/identity/admin/setup",
+		icon: "✓"
+	}
+];
+function Ce({ item: t, active: n, onNavigate: r }) {
+	return /* @__PURE__ */ j("li", { children: /* @__PURE__ */ M("button", {
+		"data-ui-part": "",
+		type: "button",
+		className: e("flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer", "border-none rounded-none border-l-[3px] transition-colors", n ? "bg-surface-panel text-info-fg font-semibold border-l-info" : "bg-transparent text-text-primary border-l-transparent hover:bg-surface-hover"),
+		onClick: () => r(t.path),
+		"aria-current": n ? "page" : void 0,
+		children: [/* @__PURE__ */ j("span", { children: t.icon }), /* @__PURE__ */ j("span", { children: t.label })]
+	}) });
+}
+function we({ children: n, activePath: r, adminEmail: i, onNavigate: a, onLogout: o, defaultSidebarOpen: s = !0 }) {
+	let [c, l] = k(s), u = w(() => l((e) => !e), []);
+	return /* @__PURE__ */ M("div", {
+		className: "flex min-h-screen bg-surface-panel font-[inherit]",
+		children: [/* @__PURE__ */ M("aside", {
+			className: e("bg-surface border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden", c ? "w-60" : "w-0 border-r-0"),
+			children: [/* @__PURE__ */ j("div", {
+				className: "p-4 font-bold text-lg text-info-fg border-b border-border",
+				children: "Identity Admin"
+			}), /* @__PURE__ */ j("ul", {
+				className: "list-none m-0 p-0 py-2 flex-1",
+				children: Se.map((e) => /* @__PURE__ */ j(Ce, {
+					item: e,
+					active: r === e.path,
+					onNavigate: a
+				}, e.path))
+			})]
+		}), /* @__PURE__ */ M("div", {
+			className: "flex-1 flex flex-col min-w-0",
+			children: [/* @__PURE__ */ M("header", {
+				className: "flex items-center justify-between px-4 py-2 bg-surface border-b border-border",
+				children: [/* @__PURE__ */ j(t, {
+					variant: "ghost",
+					size: "sm",
+					onClick: u,
+					"aria-label": "Toggle sidebar",
+					children: c ? "←" : "→"
+				}), /* @__PURE__ */ M("div", {
+					className: "flex items-center gap-4",
+					children: [i && /* @__PURE__ */ j("span", {
+						className: "text-sm text-neutral",
+						children: i
+					}), o && /* @__PURE__ */ j(t, {
+						variant: "danger-solid",
+						size: "sm",
+						onClick: o,
+						children: "Logout"
+					})]
+				})]
+			}), /* @__PURE__ */ j("main", {
+				className: "flex-1 p-6 overflow-y-auto",
+				children: n
+			})]
+		})]
+	});
+}
+//#endregion
+//#region src/components/identity/shared/PoolScopedLayout.tsx
+var Te = [
+	{
+		key: "users",
+		label: "Users"
+	},
+	{
+		key: "groups",
+		label: "Groups"
+	},
+	{
+		key: "mfa",
+		label: "MFA"
+	}
+];
+function Ee({ label: n, active: r, onClick: i }) {
+	return /* @__PURE__ */ j(t, {
+		variant: "ghost",
+		size: "sm",
+		className: e("rounded-none -mb-[2px] border-b-2", r ? "font-semibold text-info-fg border-b-info" : "font-normal text-neutral border-b-transparent"),
+		onClick: i,
+		"aria-selected": r,
+		role: "tab",
+		tabIndex: r ? 0 : -1,
+		children: n
+	});
+}
+function De({ children: e, poolId: n, poolName: r, activeSection: i, onNavigate: a, onBack: o }) {
+	let s = w((e) => {
+		a(`/identity/admin/pools/${n}/${e}`);
+	}, [a, n]), c = i ? i.charAt(0).toUpperCase() + i.slice(1) : "";
+	return /* @__PURE__ */ M("div", {
+		className: "flex flex-col gap-4",
+		children: [
+			/* @__PURE__ */ M("nav", {
+				className: "flex items-center gap-1.5 text-sm text-text-tertiary",
+				"aria-label": "Breadcrumb",
+				children: [
+					/* @__PURE__ */ j(t, {
+						variant: "ghost",
+						size: "sm",
+						className: "p-0 underline text-info-fg",
+						onClick: o,
+						"aria-label": "Navigate to Pools",
+						children: "Pools"
+					}),
+					/* @__PURE__ */ j("span", { children: "/" }),
+					/* @__PURE__ */ j("span", {
+						className: "text-text-primary font-medium",
+						children: r
+					}),
+					i && /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ j("span", { children: "/" }), /* @__PURE__ */ j("span", { children: c })] })
+				]
+			}),
+			/* @__PURE__ */ j("div", { children: /* @__PURE__ */ j(t, {
+				variant: "secondary",
+				size: "sm",
+				onClick: o,
+				children: "← Back to Pools"
+			}) }),
+			/* @__PURE__ */ j("div", {
+				role: "tablist",
+				"aria-label": "Pool sections",
+				onKeyDown: C,
+				className: "flex border-b-2 border-border",
+				children: Te.map((e) => /* @__PURE__ */ j(Ee, {
+					label: e.label,
+					active: i === e.key,
+					onClick: () => s(e.key)
+				}, e.key))
+			}),
+			/* @__PURE__ */ j("div", { children: e })
+		]
+	});
+}
+//#endregion
+export { N as A, ee as C, I as D, L as E, F as O, H as S, B as T, te as _, ye as a, W as b, $ as c, ue as d, le as f, ne as g, re as h, be as i, P as k, Q as l, ae as m, we as n, _e as o, oe as p, xe as r, ge as s, De as t, pe as u, X as v, V as w, U as x, J as y };

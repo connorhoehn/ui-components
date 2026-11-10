@@ -122,3 +122,12 @@ describe('TreeView', () => {
     expect(screen.getByTestId('tree-view-row-leaf').className).toContain('select-none');
   });
 });
+
+describe('TreeView sm row padding (2.515.12)', () => {
+  it('sm rows pad 4px vertically (was 6px) and keep their 32px height with min-h-8', () => {
+    render(<TreeView nodes={NODES} selectedId={null} onSelect={() => {}} size="sm" />);
+    const row = screen.getByTestId('tree-view-row-leaf');
+    expect(row).toHaveClass('py-1', 'min-h-8');
+    expect(row).not.toHaveClass('py-1.5');
+  });
+});

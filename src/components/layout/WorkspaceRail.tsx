@@ -43,6 +43,11 @@ export interface WorkspaceRailProps {
    * ("WORKSPACE"); it was a 15px label with a count chip. `caption` (since
    * 2.392.0) is the same row with a 12px letter-spaced uppercase label —
    * "INITIATIVES 11", the Initiatives v2 rail.
+   *
+   * Insets (since 2.515.12, on the 4px scale): the 56px headings' title row,
+   * back row and header slot start 16px in (was 20px); the compact strip's
+   * 12px (was 14px, right 8px, was 6px); the footer 12px (was 14px); the
+   * `caption` heading's count chip has 4px block padding (was 2px).
    */
   heading?: 'compact' | 'prominent' | 'label' | 'caption';
   /**
@@ -89,7 +94,7 @@ export function WorkspaceRail({
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
       className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'xs' ? 'w-[220px]' : width === 'sm' ? 'w-[240px]' : width === 'ms' ? 'w-[264px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
       {back && !collapsed && (
-        <div className={cn('flex shrink-0 items-center pt-4', heading !== 'compact' ? 'px-5' : 'px-3.5')} data-testid={`${testId}-back-row`}>
+        <div className={cn('flex shrink-0 items-center pt-4', heading !== 'compact' ? 'px-4' : 'px-3')} data-testid={`${testId}-back-row`}>
           {back.href ? (
             <a href={safeHref(back.href) ?? undefined} onClick={back.onClick} className={WORKSPACE_RAIL_BACK_CLASS} data-testid={`${testId}-back`}>
               <ChevronIcon dir="left" size={14} />
@@ -104,7 +109,7 @@ export function WorkspaceRail({
         </div>
       )}
       {hasHeader && (
-        <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
+        <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-4 pr-3' : 'pl-3 pr-2')} data-testid={`${testId}-header`} data-rail-inset={heading !== 'compact' ? 16 : 12}>
           {!collapsed && (title ? (
             <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? cn(RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK) : heading === 'caption' ? RAIL_CAPTION : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
@@ -112,7 +117,7 @@ export function WorkspaceRail({
                 <span className={cn('shrink-0', heading === 'label' ? RAIL_GROUP_COUNT : 'text-xs font-medium text-text-secondary')} aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>
               )}
               {typeof count === 'number' && !plainCount && (
-                <Chip size={heading === 'prominent' ? 'md' : heading === 'caption' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
+                <Chip size={heading === 'prominent' ? 'md' : heading === 'caption' ? 'sm' : 'xs'} tone="neutral" className={cn('shrink-0', heading === 'caption' && 'py-1')} aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
               )}
             </h2>
           ) : <span className="flex-1" />)}
@@ -131,11 +136,11 @@ export function WorkspaceRail({
           )}
         </div>
       )}
-      {!collapsed && header && <div className={cn('shrink-0 py-3', heading !== 'compact' ? 'px-5 pt-0' : 'px-3.5')}>{header}</div>}
+      {!collapsed && header && <div className={cn('shrink-0 py-3', heading !== 'compact' ? 'px-4 pt-0' : 'px-3')} data-rail-header-slot="">{header}</div>}
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden" data-testid={`${testId}-scroll`}>
         {collapsed ? collapsedContent : children}
       </div>
-      {!collapsed && footer && <div className="shrink-0 border-t border-border px-3.5 py-2">{footer}</div>}
+      {!collapsed && footer && <div className="shrink-0 border-t border-border px-3 py-2">{footer}</div>}
     </nav>
   );
 }

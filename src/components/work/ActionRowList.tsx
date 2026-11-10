@@ -189,7 +189,7 @@ export interface ActionRowListProps {
   /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
   action?: string;
   /**
-   * Type step. `md` (default): the Initiatives v2 mockup's 15px rows; with `columns`, the house 14/12 scale (14px title and cells, 12px description and meta; 2.515.0, was 15/13). `sm`
+   * Type step. `md` (default): the house 14/12 scale — 14px title, cells and action, 12px meta; without `columns` a 14px description (2.515.12: the column-less title and action were 15px, meta 13px; with `columns` since 2.515.0). `sm`
    * (since 2.429.0): the app's body step — 14px medium titles and cells,
    * 12px descriptions and meta, a 14px semibold action (`T size="sm"` /
    * `T size="xs"`) — so a list in a tabbed pane reads like the rails and
@@ -217,13 +217,13 @@ function RowBody({ item, columns, action, size = 'md' }: { item: ActionRowItem; 
         <span className="flex shrink-0 items-center" data-testid="action-row-leading">{item.leading}</span>
       )}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className={cn('truncate text-text-primary', sm ? 'text-sm font-medium leading-5' : cn(hasColumns ? 'text-sm leading-6' : 'text-[15px] leading-6', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium'))} title={hasColumns ? item.title : undefined}>{item.title}</span>
+        <span className={cn('truncate text-text-primary', sm ? 'text-sm font-medium leading-5' : cn('text-sm leading-6', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium'))} title={typeof item.title === 'string' ? item.title : undefined}>{item.title}</span>
         {hasDescription && (
           <span className={cn('truncate text-text-secondary', sm ? 'text-xs leading-4' : hasColumns ? 'text-xs leading-[18px]' : 'text-sm leading-5')} data-testid="action-row-description">{item.description}</span>
         )}
       </span>
       {item.meta != null && item.meta !== false && (
-        <span className={cn('shrink-0 whitespace-nowrap text-text-secondary', sm || hasColumns ? 'text-xs' : 'text-[13px]')} data-testid="action-row-meta">{item.meta}</span>
+        <span className={cn('shrink-0 whitespace-nowrap text-text-secondary', 'text-xs')} data-testid="action-row-meta">{item.meta}</span>
       )}
       {hasColumns && (
         <span className="flex shrink-0 items-center" data-testid="action-row-cells">
@@ -247,7 +247,7 @@ function RowBody({ item, columns, action, size = 'md' }: { item: ActionRowItem; 
         </span>
       )}
       {action ? (
-        <span className={cn('ml-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-primary', sm ? 'text-sm font-semibold leading-5' : hasColumns ? 'text-sm font-medium leading-6' : 'text-[15px] font-medium leading-6')} data-testid="action-row-action">
+        <span className={cn('ml-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-primary', sm ? 'text-sm font-semibold leading-5' : 'text-sm font-medium leading-6')} data-testid="action-row-action">
           {action}
           <ArrowRightIcon size={16} aria-hidden="true" />
         </span>

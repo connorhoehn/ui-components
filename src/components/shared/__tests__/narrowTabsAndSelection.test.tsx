@@ -38,11 +38,11 @@ describe('tab overflow: scroll or menu', () => {
     expect(list.className).toContain('overflow-x-auto');
   });
 
-  it('SubjectFrame passes tabs.overflow to its tab row', () => {
+  it('SubjectFrame scrolls its tab row by default (since 2.515.12) and passes tabs.overflow', () => {
     const { rerender } = render(<SubjectFrame title="Toby" tabs={{ items: tabs, value: 'details', onValueChange: () => {} }} />);
-    expect(screen.getByRole('tablist', { name: 'Record sections' }).getAttribute('data-tabs-overflow')).toBe('menu');
-    rerender(<SubjectFrame title="Toby" tabs={{ items: tabs, value: 'details', onValueChange: () => {}, overflow: 'scroll' }} />);
     expect(screen.getByRole('tablist', { name: 'Record sections' }).getAttribute('data-tabs-overflow')).toBe('scroll');
+    rerender(<SubjectFrame title="Toby" tabs={{ items: tabs, value: 'details', onValueChange: () => {}, overflow: 'menu' }} />);
+    expect(screen.getByRole('tablist', { name: 'Record sections' }).getAttribute('data-tabs-overflow')).toBe('menu');
   });
 
   it('DetailPage scrolls by default and folds when asked', () => {

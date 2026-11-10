@@ -71,3 +71,16 @@ describe('PresencePanel', () => {
     expect(screen.queryByText('typing...')).not.toBeInTheDocument();
   });
 });
+
+describe('PresencePanel type scale (2.515.12)', () => {
+  it('uses the house font with a 12px header and 11px initials (was monospace, 12.8px and 8.8px)', () => {
+    render(<PresencePanel users={[makeUser({ clientId: 'a', metadata: { displayName: 'Alice Smith' } })]} currentClientId={null} />);
+    expect(screen.getByTestId('presence-panel')).not.toHaveClass('font-mono');
+    const title = screen.getByTestId('presence-panel-title');
+    expect(title).toHaveClass('text-xs');
+    expect(title.className).not.toContain('0.8rem');
+    const initials = screen.getByTestId('presence-panel').querySelector('[data-ui-text="avatar"]')!;
+    expect(initials).toHaveClass('text-[11px]');
+    expect(initials.className).not.toContain('0.55rem');
+  });
+});

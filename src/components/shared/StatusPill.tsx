@@ -132,7 +132,7 @@ const TEXT_SIZE_CLASSES: Record<StatusPillSize, string> = {
 
 const TAG_SIZE_CLASSES: Record<StatusPillSize, string> = {
   sm: 'px-1.5 py-0.5 text-[11px] gap-1',
-  md: 'px-2 py-[5px] text-[13px] gap-1.5',
+  md: 'px-2 py-[5px] text-[12px] gap-1.5', // 12px since 2.515.12 (was 13px, off the house scale)
 };
 
 const DOT_SIZE_CLASSES: Record<StatusPillSize, string> = {
