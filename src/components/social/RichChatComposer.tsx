@@ -953,6 +953,8 @@ const DocRef = Mention.extend({ name: 'docref' });
 const docrefSuggestionKey = new PluginKey('docrefSuggestion');
 
 let stagedSeq = 0;
+/** How many recently emitted html values a focused editor refuses to have applied back over it. */
+const EMITTED_HTML_WINDOW = 32;
 
 /**
  * Where the command line the menu-mode chip already names sits in the doc —
@@ -1227,6 +1229,27 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     { open: false, href: '', text: '' },
   );
   const draftRef = useRef(draft);
+  /**
+   * What this instance emitted, so it never applies its own words back.
+   *
+   * `revisions` maps each draft object `publish` handed the host to a
+   * monotonic local revision; `seenRevision` is the newest of them the host
+   * has passed back as `draft`. A host lags: on a loaded machine a render can
+   * commit between two keystrokes while the host still holds a draft from
+   * one keystroke ago. Applying that draft reverted the editor and lost the
+   * newest character (2.519.0). An own draft that arrives in order (its
+   * revision not older than one already seen) is that echo and is never
+   * applied; one that goes BACKWARDS is the host deliberately returning to
+   * it (an unkeyed conversation switch) and is applied. `recentHtml` covers
+   * a host that copies each draft into a new object: while the editor has
+   * focus, html this instance emitted since the newest draft the host has
+   * passed back is never applied over it.
+   */
+  const emittedRef = useRef<{ revisions: WeakMap<RichChatDraft, number>; next: number; seenRevision: number; recentHtml: { html: string; revision: number }[] }>(
+    { revisions: new WeakMap(), next: 1, seenRevision: 0, recentHtml: [] },
+  );
+  /** The last `draft` prop the sync effect looked at; an unchanged prop is never "external". */
+  const seenDraftRef = useRef(draft);
   const changeRef = useRef(onDraftChange);
   changeRef.current = onDraftChange;
   const [staged, setStaged] = useState<StagedFile[]>(() => (draft?.files ?? []).map((file) => ({ id: `staged-${stagedSeq++}`, file })));
@@ -2002,6 +2025,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       && previous.command?.trigger === next.command?.trigger && previous.command?.argument === next.command?.argument
       && previous.privacy === next.privacy) return;
     draftRef.current = next;
+    const emitted = emittedRef.current;
+    const revision = emitted.next++;
+    emitted.revisions.set(next, revision);
+    emitted.recentHtml.push({ html: next.html, revision });
+    if (emitted.recentHtml.length > EMITTED_HTML_WINDOW) emitted.recentHtml.shift();
     changeRef.current?.(next, previous);
   };
   publishRef.current = publish;
@@ -2009,6 +2037,42 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     stagedRef.current = next;
     setStaged(next);
     if (editor && !editor.isDestroyed) publishRef.current(editor);
+  };
+  /**
+   * Whether an incoming `draft` prop is a genuine external change (a restore,
+   * a clear, a prefill) rather than this composer's own words coming back.
+   * Records what it saw, so call it once per effect run.
+   */
+  const isExternalDraft = (e: Editor, incoming: RichChatDraft | undefined): boolean => {
+    const changed = incoming !== seenDraftRef.current;
+    seenDraftRef.current = incoming;
+    const emitted = emittedRef.current;
+    const revision = incoming ? emitted.revisions.get(incoming) : undefined;
+    if (revision !== undefined && revision >= emitted.seenRevision) {
+      // Ours, in order: the current draft or a stale echo of an earlier one.
+      emitted.seenRevision = revision;
+      return false;
+    }
+    // A re-render with the same prop (a fresh inline `onDraftChange`) says
+    // nothing new — the host's initial draft, re-delivered after typing,
+    // must not wipe what was typed since.
+    if (!changed || incoming === draftRef.current) return false;
+    if (revision !== undefined) return true; // ours, but the host went back to it
+    // A copy of one of our drafts: matched by html against what was emitted
+    // since the newest draft the host has already passed back. Going back to
+    // older html than that is the host's own decision (a clear, a restore).
+    const html = incoming?.html ?? '';
+    let hit: { html: string; revision: number } | undefined;
+    for (let i = emitted.recentHtml.length - 1; i >= 0; i--) {
+      const entry = emitted.recentHtml[i]!;
+      if (entry.revision < emitted.seenRevision) break;
+      if (entry.html === html) { hit = entry; break; }
+    }
+    if (!hit) return true;
+    emitted.seenRevision = hit.revision;
+    // Same text as on screen: the idempotent apply below keeps the caret.
+    if (html === (e.isEmpty ? '' : e.getHTML())) return true;
+    return !e.isFocused;
   };
   // The editor the derived state below was last read from — see the effect.
   const syncedEditorRef = useRef<Editor | null>(null);
@@ -2021,8 +2085,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     if (!editor || editor.isDestroyed) return;
     // An external change may be a restored conversation or a send completion
     // from its previous composer. Do not rebuild the editor or move its caret
-    // in response to our own onDraftChange echo.
-    const external = !!onDraftChange && draft !== draftRef.current;
+    // in response to our own onDraftChange echo — the latest one, or one
+    // from a keystroke ago that a lagging host is only now passing back.
+    const external = !!onDraftChange && isExternalDraft(editor, draft);
     // Our own echo on the same editor: NOTHING to do. `onUpdate` already set
     // every piece of state below from this very text, and re-setting it here
     // is not free — this effect runs in the passive phase of the keystroke's

@@ -78,6 +78,23 @@ export interface InlinePopoverProps {
    * answers. Default false: only the keep-out below the trigger counts.
    */
   avoidKeepouts?: boolean;
+  /**
+   * Where focus goes when the panel opens. `first` (default): its first
+   * focusable element, else the panel. `none`: focus stays where it is — the
+   * content decides (the voice cards never take focus from a field the
+   * person is typing in). With `none`, closing hands focus back only when it
+   * was inside the panel (or nowhere). Since 2.519.0.
+   */
+  focusOnOpen?: 'first' | 'none';
+  /**
+   * Which Escape presses close the panel. `window` (default): any Escape
+   * while it is the top layer. `inside`: only an Escape pressed while focus
+   * is inside the panel, so a panel that did not take focus never eats the
+   * Escape of a field elsewhere. Since 2.519.0.
+   */
+  escapeScope?: 'window' | 'inside';
+  /** Keep Tab / Shift+Tab cycling inside the panel. Default true. Since 2.519.0. */
+  trapFocus?: boolean;
   children: ReactNode;
 }
 
@@ -252,6 +269,9 @@ export function InlinePopover({
   'aria-labelledby': ariaLabelledBy,
   kind = 'popover',
   avoidKeepouts = false,
+  focusOnOpen = 'first',
+  escapeScope = 'window',
+  trapFocus = true,
   children,
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -427,6 +447,7 @@ export function InlinePopover({
     closedByEscapeRef.current = false;
     // Defer until panel is mounted.
     queueMicrotask(() => {
+      if (focusOnOpen === 'none') return;
       const panel = panelRef.current;
       if (!panel) return;
       const focusables = getFocusable(panel);
@@ -450,7 +471,13 @@ export function InlinePopover({
       const prevUsable = !!prev && prev !== document.body && document.contains(prev);
       const escaped = closedByEscapeRef.current;
       closedByEscapeRef.current = false;
-      const target = prevUsable ? prev : escaped && anchor && document.contains(anchor) ? anchor : null;
+      // A panel that never took focus hands it back only when focus is lost
+      // with it (it was inside the panel); a field the person moved to stays.
+      const now = document.activeElement;
+      const focusLost = !now || now === document.body || !document.contains(now);
+      const target = focusOnOpen === 'none' && !focusLost
+        ? null
+        : prevUsable ? prev : escaped && anchor && document.contains(anchor) ? anchor : null;
       if (target && typeof target.focus === 'function' && document.contains(target)) {
         target.focus();
       }
@@ -465,12 +492,13 @@ export function InlinePopover({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (!isTopLayer()) return;
+        if (escapeScope === 'inside' && !(e.target instanceof Node && panelRef.current?.contains(e.target))) return;
         e.stopPropagation();
         closedByEscapeRef.current = true;
         onClose();
         return;
       }
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab' || !trapFocus) return;
       if (!isTopLayer()) return;
       const panel = panelRef.current;
       if (!panel) return;
@@ -497,7 +525,7 @@ export function InlinePopover({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose, isTopLayer]);
+  }, [open, onClose, isTopLayer, escapeScope, trapFocus]);
 
   // Outside-click dismiss. The trigger itself is excluded so the parent
   // can implement a "click trigger to toggle" pattern without flicker.

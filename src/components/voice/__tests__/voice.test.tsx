@@ -168,7 +168,7 @@ describe('VoiceTurnStrip', () => {
     expect(onClear).toHaveBeenCalledTimes(1);
   });
 
-  it('confirmation card: buttons, Enter confirms on the card, Escape cancels', () => {
+  it('confirmation card: buttons, Enter on the card does NOT confirm (2.519.0), Escape cancels', () => {
     const onConfirm = vi.fn();
     const onCancel = vi.fn();
     render(<VoiceTurnStrip turns={[]} pending={{ title: 'Delete?', detail: 'Cannot undo', onConfirm, onCancel }} />);
@@ -176,11 +176,11 @@ describe('VoiceTurnStrip', () => {
     expect(card).toHaveTextContent('Cannot undo');
     expect(card).toHaveFocus();
     fireEvent.keyDown(card, { key: 'Enter' });
-    expect(onConfirm).toHaveBeenCalledTimes(1);
+    expect(onConfirm).not.toHaveBeenCalled();
     fireEvent.keyDown(card, { key: 'Escape' });
     expect(onCancel).toHaveBeenCalledTimes(1);
     fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
-    expect(onConfirm).toHaveBeenCalledTimes(2);
+    expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 
   it('Enter on the Cancel button does not also confirm', () => {
@@ -289,13 +289,24 @@ describe('VoiceConfirmCard fields', () => {
     expect(onConfirm).toHaveBeenLastCalledWith({ decision: 'reject', note: 'x'.repeat(200) });
   });
 
-  it('a long note without padding is capped at exactly 200; Enter in the note confirms', () => {
+  it('a long note without padding is capped at exactly 200; Enter in the note does nothing by default', () => {
     const onConfirm = vi.fn();
     render(<VoiceConfirmCard pending={{ title: 'Decide', fields: { decision: 'reject' }, onConfirm, onCancel: vi.fn() }} />);
     const input = screen.getByTestId('voice-confirm-card-note');
     fireEvent.change(input, { target: { value: 'y'.repeat(300) } });
     fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onConfirm).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('voice-confirm-card-confirm'));
     expect(onConfirm).toHaveBeenCalledWith({ decision: 'reject', note: 'y'.repeat(200) });
+  });
+
+  it('submitOnEnter: Enter in the note confirms', () => {
+    const onConfirm = vi.fn();
+    render(<VoiceConfirmCard submitOnEnter pending={{ title: 'Decide', fields: { decision: 'reject' }, onConfirm, onCancel: vi.fn() }} />);
+    const input = screen.getByTestId('voice-confirm-card-note');
+    fireEvent.change(input, { target: { value: 'ok' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onConfirm).toHaveBeenCalledWith({ decision: 'reject', note: 'ok' });
   });
 });
 
@@ -654,7 +665,10 @@ describe('VoiceDock bottom sheet at phone width (narrow batch)', () => {
     render(<div><p data-testid="page">Decision card</p><footer><VoiceDock {...dockBase} size="footer" phase="confirming" pending={{ ...base, onCancel }} /></footer></div>);
     fireEvent.mouseDown(screen.getByTestId('page'));
     expect(onCancel).not.toHaveBeenCalled();
+    // An Escape from outside the card is not the card's (2.519.0).
     fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onCancel).not.toHaveBeenCalled();
+    fireEvent.keyDown(screen.getByTestId('voice-confirm-card'), { key: 'Escape' });
     expect(onCancel).toHaveBeenCalled();
   });
 

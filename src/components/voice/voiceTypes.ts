@@ -89,6 +89,11 @@ export interface VoicePending {
    * carries `data-click-only` for hosts. Since 2.516.0.
    */
   clickOnly?: boolean;
+  /**
+   * Enter in the note field confirms. Default false: Enter there does
+   * nothing, and only a focused Confirm button confirms. Since 2.519.0.
+   */
+  submitOnEnter?: boolean;
   /** Called with `{ decision, note }` when the note field shows (`fields` or `noteDefault` set), and with no argument otherwise. */
   onConfirm: (result?: VoiceConfirmResult) => void;
   onCancel: () => void;

@@ -28,7 +28,8 @@ import InlinePopover from '../shared/InlinePopover';
 import { StatusPill, type StatusPillTone } from '../shared/StatusPill';
 import { T } from '../shared/Text';
 import { CaptionsIcon, MicIcon, MicOffIcon, PhoneOffIcon } from '../video/MediaIcons';
-import { HistoryIcon } from '../ui/Icons';
+import { HistoryIcon, MoreIcon } from '../ui/Icons';
+import { DropdownMenu } from '../shared/DropdownMenu';
 import { VoiceActivityRing } from './VoiceActivityRing';
 import { VoiceConfirmCard, VoiceTurnStrip } from './VoiceTurnStrip';
 import { VoiceChoiceCard } from './VoiceChoiceCard';
@@ -122,6 +123,15 @@ export interface VoiceDockProps {
    * never a sheet.
    */
   cardPresentation?: VoiceDockCardPresentation;
+  /**
+   * `default` (unchanged) or `compact` (since 2.519.0), for a phone-width
+   * footer: while no session runs the phase text is visually hidden (it stays
+   * the status live region) and the idle ring is dropped; the captions toggle
+   * and the history control always move into one "More voice controls"
+   * overflow menu. A live session and an open card still show their phase
+   * text. `data-density` on the root.
+   */
+  density?: VoiceDockDensity;
   className?: string;
   /** The dock's root element. */
   ref?: React.Ref<HTMLDivElement>;
@@ -129,6 +139,9 @@ export interface VoiceDockProps {
 }
 
 export type VoiceDockSize = 'footer' | 'panel';
+
+/** How much of the dock's row shows. Since 2.519.0. */
+export type VoiceDockDensity = 'default' | 'compact';
 
 /** Where the dock's cards open against its row. Since 2.517.0. */
 export type VoiceDockCardPlacement = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
@@ -208,6 +221,7 @@ export function VoiceDock({
   pulse = false,
   cardPlacement: cardPlacementProp,
   cardPresentation = 'auto',
+  density = 'default',
   className,
   ref,
   'data-testid': testId = 'voice-dock',
@@ -239,6 +253,9 @@ export function VoiceDock({
   const pillTitle = phase === 'unavailable' ? unavailableReason : undefined;
   const label = VOICE_PHASE_LABEL[phase];
   const footer = size === 'footer';
+  const dense = density === 'compact';
+  // Compact: the phase text shows only while something is happening.
+  const quietIdle = dense && !live && !pending && !pendingChoice;
   const narrowWindow = useMatchMedia(VOICE_SHEET_QUERY, cardPresentation === 'auto');
   const sheet = cardPresentation === 'sheet' || (cardPresentation === 'auto' && narrowWindow);
   const cardPlacement = sheet ? 'sheet' : cardPlacementProp ?? (footer ? 'top-start' : 'bottom-start');
@@ -257,6 +274,7 @@ export function VoiceDock({
       data-testid={testId}
       data-phase={phase}
       data-size={size}
+      data-density={density}
       data-voice-dock=""
     >
       {transcriptOpen ? (
@@ -281,17 +299,20 @@ export function VoiceDock({
       className={cn('min-w-0', footer ? 'px-1' : 'px-2 py-1')}
       data-testid={`${testId}-row`}
     >
-      <VoiceActivityRing
-        level={level}
-        outputLevel={outputLevel}
-        phase={phase}
-        size={compact || footer ? 'sm' : 'md'}
-        data-testid={`${testId}-ring`}
-      />
+      {quietIdle ? null : (
+        <VoiceActivityRing
+          level={level}
+          outputLevel={outputLevel}
+          phase={phase}
+          size={compact || footer ? 'sm' : 'md'}
+          data-testid={`${testId}-ring`}
+        />
+      )}
       <T
         title={pillTitle}
         role="status"
         aria-live="polite"
+        className={quietIdle ? 'sr-only' : undefined}
         data-testid={`${testId}-phase`}
       >
         {footer
@@ -336,7 +357,35 @@ export function VoiceDock({
           data-testid={`${testId}-mute`}
         />
       ) : null}
-      {onToggleTranscript ? (
+      {dense && (onToggleTranscript || onOpenLog) ? (
+        <DropdownMenu
+          trigger={<MoreIcon size={16} />}
+          triggerLabel="More voice controls"
+          triggerTitle="More voice controls"
+          triggerVariant="link"
+          triggerTestId={`${testId}-overflow`}
+          align="end"
+          data-testid={`${testId}-overflow-menu`}
+          sections={[{
+            items: [
+              ...(onToggleTranscript ? [{
+                label: transcriptOpen ? 'Hide transcript' : 'Show transcript',
+                icon: <CaptionsIcon size={16} />,
+                checked: transcriptOpen,
+                onSelect: onToggleTranscript,
+                'data-testid': `${testId}-cc`,
+              }] : []),
+              ...(onOpenLog ? [{
+                label: 'Open voice history',
+                icon: <HistoryIcon size={16} />,
+                onSelect: onOpenLog,
+                'data-testid': `${testId}-history`,
+              }] : []),
+            ],
+          }]}
+        />
+      ) : null}
+      {!dense && onToggleTranscript ? (
         <IconButton
           aria-label={transcriptOpen ? 'Hide transcript' : 'Show transcript'}
           aria-pressed={transcriptOpen}
@@ -347,7 +396,7 @@ export function VoiceDock({
           data-testid={`${testId}-cc`}
         />
       ) : null}
-      {onOpenLog ? (
+      {!dense && onOpenLog ? (
         <IconButton
           aria-label="Open voice history"
           size="sm"
@@ -422,6 +471,9 @@ export function VoiceDock({
           className={sheet ? SHEET_CLASS : CARD_WIDTH}
           aria-label={`Confirm: ${pending.title}`}
           kind="voice-confirm"
+          focusOnOpen="none"
+          escapeScope="inside"
+          trapFocus={false}
           data-testid={`${testId}-pending`}
         >
           <VoiceConfirmCard pending={pending} handleEscape={false} />
@@ -437,6 +489,9 @@ export function VoiceDock({
           className={sheet ? SHEET_CLASS : CARD_WIDTH}
           aria-label={`Choose: ${pendingChoice.title}`}
           kind="voice-choice"
+          focusOnOpen="none"
+          escapeScope="inside"
+          trapFocus={false}
           data-testid={`${testId}-pending-choice`}
         >
           <VoiceChoiceCard choice={pendingChoice} handleEscape={false} compact={footer} />

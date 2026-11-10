@@ -20,6 +20,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
+import { IconButton } from '../ui/IconButton';
+import { Tooltip } from '../shared/Tooltip';
 import { T } from '../shared/Text';
 import { ChatIcon, PeopleIcon, PhoneIcon } from '../ui/Icons';
 import { PresenceAvatars } from '../shared/PresenceAvatars';
@@ -156,6 +158,12 @@ export interface HuddleBarProps {
   meetingItems?: MeetingToolbarItem[];
   /** Extra controls before Leave. */
   extras?: ReactNode;
+  /**
+   * Icon-only Start and Join (since 2.519.0), for a phone-width footer: the
+   * label moves to the button's accessible name and a tooltip, and the bar's
+   * own padding and gaps tighten. `data-compact` on the root.
+   */
+  compact?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -206,6 +214,7 @@ export function HuddleBar({
   leaveLabel = 'Leave',
   meetingItems,
   extras,
+  compact = false,
   className,
   'data-testid': testId = 'huddle-bar',
 }: HuddleBarProps) {
@@ -237,7 +246,8 @@ export function HuddleBar({
       aria-label={phase === 'idle' ? name : `${name} huddle`}
       data-testid={testId}
       data-phase={phase}
-      className={cn('@container flex min-w-0 items-center gap-3 px-3 py-1.5', className)}
+      data-compact={compact ? '' : undefined}
+      className={cn('@container flex min-w-0 items-center', compact ? 'gap-1.5 px-1 py-1' : 'gap-3 px-3 py-1.5', className)}
     >
       {showContext && <div className="flex min-w-0 items-center gap-2" data-testid={`${testId}-status`}>
         <PresenceDot state={PHASE_DOT[phase]} ariaLabel={PHASE_LABEL[phase]} data-testid={`${testId}-dot`} />
@@ -275,7 +285,7 @@ export function HuddleBar({
         )}
       </div>}
 
-      <div className="ml-auto flex shrink-0 items-center gap-2">
+      <div className={cn('ml-auto flex shrink-0 items-center', compact ? 'gap-1' : 'gap-2')}>
         {!joinable && mic && media('microphone', mic)}
         {!joinable && camera && media('camera', camera)}
         {!joinable && shareSlot != null && <T className="items-center" data-testid={`${testId}-share`}>{shareSlot}</T>}
@@ -295,7 +305,19 @@ export function HuddleBar({
             {participantCount !== undefined && <T tabular>{participantCount}</T>}
           </Button>
         )}
-        {phase === 'idle' && onStart && (
+        {phase === 'idle' && onStart && (compact ? (
+          <Tooltip content={startDisabledReason ?? startLabel}>
+            <IconButton
+              variant="outline"
+              size="sm"
+              onClick={onStart}
+              disabled={startDisabledReason !== undefined}
+              aria-label={startLabel}
+              icon={<PhoneIcon size={16} />}
+              data-testid={`${testId}-start`}
+            />
+          </Tooltip>
+        ) : (
           <Button
             variant="secondary"
             size="sm"
@@ -308,8 +330,20 @@ export function HuddleBar({
             <PhoneIcon size={16} />
             {startLabel}
           </Button>
-        )}
-        {joinable && onJoin && (
+        ))}
+        {joinable && onJoin && (compact ? (
+          <Tooltip content={joinDisabledReason ?? `${joinLabel} ${name} huddle`}>
+            <IconButton
+              variant="primary"
+              size="sm"
+              onClick={onJoin}
+              disabled={joinDisabledReason !== undefined}
+              aria-label={`${joinLabel} ${name} huddle`}
+              icon={<PhoneIcon size={16} />}
+              data-testid={`${testId}-join`}
+            />
+          </Tooltip>
+        ) : (
           <Button
             variant="primary"
             size="sm"
@@ -323,7 +357,7 @@ export function HuddleBar({
             <PhoneIcon size={16} />
             {joinLabel}
           </Button>
-        )}
+        ))}
         {onToggleChat && (
           <T className="relative inline-flex">
             <Button

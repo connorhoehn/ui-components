@@ -14,6 +14,7 @@ import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import { Tooltip } from './Tooltip';
 import { Button } from '../ui/Button';
+import { Stack } from '../ui/Stack';
 import InlinePopover from './InlinePopover';
 import { KeyValue } from './KeyValue';
 import {
@@ -211,6 +212,16 @@ export interface DataTableProps<T> {
    * a column hidden for wide content returns when the content narrows.
    */
   responsiveColumns?: boolean;
+  /**
+   * Where the hidden columns of `responsiveColumns` are reached (since
+   * 2.519.0). `row` (default, unchanged): every row carries a "+N columns"
+   * button. `header`: ONE control in the "More" header lists the hidden
+   * columns for the whole table; choosing one swaps it in for the
+   * lowest-priority column still shown (or, with none left to swap, switches
+   * to the stacked card form). Rows then carry no "+N" link: each row's
+   * hidden values open from a quiet chevron in its "More" cell.
+   */
+  hiddenColumnsControl?: DataTableHiddenColumnsControl;
   className?: string;
   'data-testid'?: string;
 }
@@ -380,21 +391,104 @@ function useResponsiveColumns(
   return { hidden: stacked ? 0 : step, stacked };
 }
 
+/** Where a responsive table's hidden columns are reached. Since 2.519.0. */
+export type DataTableHiddenColumnsControl = 'row' | 'header';
+
+/** The table-wide hidden-columns control in the "More" header (`hiddenColumnsControl="header"`). */
+function HiddenColumnsHeaderControl({ columns, onChoose, onStack }: {
+  columns: { key: string; label: string }[];
+  onChoose: (key: string) => void;
+  onStack?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
+  const close = useCallback(() => setOpen(false), []);
+  const count = columns.length;
+  return (
+    <>
+      <Button
+        ref={ref}
+        variant="ghost"
+        size="sm"
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        aria-label={`${count} hidden ${count === 1 ? 'column' : 'columns'}: choose one to show`}
+        onClick={() => setOpen((o) => !o)}
+        data-testid="datatable-more-header-control"
+        className="gap-1 whitespace-nowrap font-normal normal-case tracking-normal text-text-secondary"
+      >
+        {`+${count} ${count === 1 ? 'column' : 'columns'}`}
+        <ChevronIcon dir="down" />
+      </Button>
+      <InlinePopover
+        trigger={ref}
+        open={open}
+        onClose={close}
+        placement="bottom-end"
+        aria-label="Hidden columns"
+        kind="datatable-hidden-columns-menu"
+        data-testid="datatable-more-header-menu"
+        className="max-w-80 p-1"
+      >
+        <Stack gap="none">
+          {columns.map((col) => (
+            <Button
+              key={col.key}
+              variant="ghost"
+              size="sm"
+              className="justify-start font-normal"
+              onClick={() => { setOpen(false); onChoose(col.key); }}
+              data-testid={`datatable-more-header-show-${col.key}`}
+            >
+              {`Show ${col.label}`}
+            </Button>
+          ))}
+          {onStack ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start font-normal"
+              onClick={() => { setOpen(false); onStack(); }}
+              data-testid="datatable-more-header-stack"
+            >
+              Show every column as cards
+            </Button>
+          ) : null}
+        </Stack>
+      </InlinePopover>
+    </>
+  );
+}
+
 interface HiddenColumnsCellProps {
   count: number;
   items: { label: string; value: ReactNode }[];
   rowLabel: string;
   testId: string;
+  /** `chevron`: a quiet icon control instead of the "+N columns" link (`hiddenColumnsControl="header"`). */
+  variant?: 'link' | 'chevron';
 }
 
-/** The "+N columns" button and its popover of this row's hidden values. */
-function HiddenColumnsButton({ count, items, rowLabel, testId }: HiddenColumnsCellProps) {
+/** The "+N columns" button (or the row's chevron) and its popover of this row's hidden values. */
+function HiddenColumnsButton({ count, items, rowLabel, testId, variant = 'link' }: HiddenColumnsCellProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
   const close = useCallback(() => setOpen(false), []);
   return (
     <>
-      <Button
+      {variant === 'chevron' ? (
+        <IconButton
+          ref={ref}
+          size="sm"
+          variant="ghost"
+          aria-expanded={open}
+          aria-haspopup="dialog"
+          aria-label={`${count} more ${count === 1 ? 'value' : 'values'} for ${rowLabel}`}
+          icon={<ChevronIcon dir={open ? 'up' : 'down'} />}
+          onClick={() => setOpen((o) => !o)}
+          data-testid={testId}
+        />
+      ) : <Button
         ref={ref}
         variant="ghost"
         size="sm"
@@ -406,7 +500,7 @@ function HiddenColumnsButton({ count, items, rowLabel, testId }: HiddenColumnsCe
         className="whitespace-nowrap font-normal text-text-secondary"
       >
         {`+${count} ${count === 1 ? 'column' : 'columns'}`}
-      </Button>
+      </Button>}
       <InlinePopover
         trigger={ref}
         open={open}
@@ -548,6 +642,7 @@ export function DataTable<T>({
   isRowSelected,
   headerCase = 'upper',
   responsiveColumns = false,
+  hiddenColumnsControl = 'row',
   className,
   'data-testid': testId,
   staticRows,
@@ -570,7 +665,17 @@ export function DataTable<T>({
   const [page, setPage] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const order = useMemo(() => (responsiveColumns ? hideOrder(columns) : []), [responsiveColumns, columns]);
+  // `hiddenColumnsControl="header"`: the column the reader chose to show
+  // moves to the end of the hide order, so it is the last to hide and the
+  // lowest-priority shown column takes its place. `forceStacked`: they chose
+  // the card form because nothing shown was left to swap out.
+  const [shownByChoice, setShownByChoice] = useState<string | null>(null);
+  const [forceStacked, setForceStacked] = useState(false);
+  const order = useMemo(() => {
+    if (!responsiveColumns) return [];
+    const base = hideOrder(columns);
+    return shownByChoice && base.includes(shownByChoice) ? [...base.filter((k) => k !== shownByChoice), shownByChoice] : base;
+  }, [responsiveColumns, columns, shownByChoice]);
   const columnKeys = columns.map((c) => c.key).join('|');
 
   const toggleSort = (key: string) => {
@@ -618,10 +723,16 @@ export function DataTable<T>({
   }, [sorted, pageSize, safePage]);
 
   // A new identity whenever the shown rows or the columns change: the fit starts over.
-  const contentKey = useMemo(() => ({ paged, columnKeys }), [paged, columnKeys]);
+  const contentKey = useMemo(() => ({ paged, columnKeys, shownByChoice }), [paged, columnKeys, shownByChoice]);
   const fit = useResponsiveColumns(responsiveColumns, order.length, columns.length, rootRef, contentKey);
-  const stacked = fit.stacked;
-  const hidden = useMemo(() => new Set(order.slice(0, fit.hidden)), [order, fit.hidden]);
+  const stacked = fit.stacked || (responsiveColumns && forceStacked);
+  const hidden = useMemo(() => new Set(stacked ? [] : order.slice(0, fit.hidden)), [order, fit.hidden, stacked]);
+  const headerControl = hiddenColumnsControl === 'header';
+  const chooseHidden = (key: string) => {
+    // A swap needs a shown column that is allowed to hide.
+    if (order.length > fit.hidden) setShownByChoice(key);
+    else setForceStacked(true);
+  };
   const hiddenCols = columns.filter((c) => hidden.has(c.key));
   const hideClass = narrow ? HIDDEN_COLUMN_NARROW : HIDDEN_COLUMN;
   const moreColumn = hiddenCols.length > 0;
@@ -668,8 +779,14 @@ export function DataTable<T>({
               );
             })}
             {moreColumn && (
-              <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'w-px whitespace-nowrap text-right')} data-testid="datatable-more-header" data-column-more="">
-                More
+              <TableTh className={cn(sentenceHeaders && SENTENCE_HEADER, 'w-px whitespace-nowrap text-right')} data-testid="datatable-more-header" data-column-more="" data-hidden-columns-control={hiddenColumnsControl}>
+                {headerControl ? (
+                  <HiddenColumnsHeaderControl
+                    columns={hiddenCols.map((col) => ({ key: col.key, label: columnLabel(col) }))}
+                    onChoose={chooseHidden}
+                    onStack={order.length > fit.hidden ? undefined : () => setForceStacked(true)}
+                  />
+                ) : 'More'}
               </TableTh>
             )}
             {rowActions && (
@@ -782,6 +899,7 @@ export function DataTable<T>({
                           count={hiddenCols.length}
                           rowLabel={rowName(columns.find((c) => !hidden.has(c.key)), row, rowIndex) || keyField(row)}
                           testId={`datatable-more-${keyField(row)}`}
+                          variant={headerControl ? 'chevron' : 'link'}
                           items={hiddenCols.map((col) => ({
                             label: columnLabel(col),
                             value: col.render ? col.render(row, rowIndex) : String((row as Record<string, unknown>)[col.key] ?? ''),

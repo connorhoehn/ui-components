@@ -17,6 +17,7 @@ import { SegmentedControl } from '../shared/SegmentedControl';
 import { StatusPill, type StatusPillTone } from '../shared/StatusPill';
 import { T } from '../shared/Text';
 import { VoiceChoiceCard } from './VoiceChoiceCard';
+import { mayTakeFocus } from './voiceFocus';
 import {
   VOICE_NOTE_MAX,
   type VoiceDecision,
@@ -41,7 +42,7 @@ const TOOL_TONE: Record<VoiceToolStatus, StatusPillTone> = {
 /** The card options a host may set on the card itself as well as on `pending`; the card prop wins. */
 export type VoiceConfirmCardOptions = Pick<
   VoicePending,
-  'noteDefault' | 'noteLabel' | 'noteMaxLength' | 'confirmLabel' | 'cancelLabel' | 'hideDecisionToggle' | 'clickOnly'
+  'noteDefault' | 'noteLabel' | 'noteMaxLength' | 'confirmLabel' | 'cancelLabel' | 'hideDecisionToggle' | 'clickOnly' | 'submitOnEnter'
 >;
 
 /** The Confirm button's text for the toggle's current choice. */
@@ -56,7 +57,12 @@ export interface VoiceConfirmCardProps extends VoiceConfirmCardOptions {
   handleEscape?: boolean;
   /** A muted one-line note under Confirm / Cancel; overrides `pending.hint`. Nothing renders without one. */
   hint?: string;
-  /** Focus the card when it mounts. Default true. */
+  /**
+   * Focus the card container when it mounts. Default true. Even then it never
+   * takes focus from an input, textarea or contenteditable the person is in
+   * (the live region announces the card instead), and it never focuses
+   * Confirm: Enter confirms only while Confirm itself has focus.
+   */
   autoFocus?: boolean;
   className?: string;
   'data-testid'?: string;
@@ -88,6 +94,7 @@ function VoiceConfirmCardBody({
   cancelLabel = pending.cancelLabel ?? 'Cancel',
   hideDecisionToggle = pending.hideDecisionToggle ?? false,
   clickOnly = pending.clickOnly ?? false,
+  submitOnEnter = pending.submitOnEnter ?? false,
   className,
   'data-testid': testId = 'voice-confirm-card',
 }: VoiceConfirmCardProps) {
@@ -95,8 +102,14 @@ function VoiceConfirmCardBody({
   const noteLabelId = useId();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (autoFocus) ref.current?.focus();
+    if (autoFocus && mayTakeFocus(ref.current)) ref.current?.focus();
   }, [autoFocus]);
+  // Filled after mount so screen readers announce it: a live region that
+  // mounts already holding its text is often read by nobody.
+  const [announcement, setAnnouncement] = useState('');
+  useEffect(() => {
+    setAnnouncement(`Confirmation needed: ${pending.title}`);
+  }, [pending.title]);
 
   const { fields } = pending;
   const showNote = Boolean(fields) || noteDefault !== undefined;
@@ -114,12 +127,16 @@ function VoiceConfirmCardBody({
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    // Escape here is always from inside the card. Enter confirms only through
+    // the focused Confirm button's own click — never from the card container,
+    // so an Enter meant for something else cannot approve an action. The note
+    // field's Enter does nothing unless `submitOnEnter` is set.
     if (e.key === 'Escape' && handleEscape) {
       e.stopPropagation();
       pending.onCancel();
-    } else if (e.key === 'Enter' && (e.target === e.currentTarget || (showNote && e.target instanceof HTMLInputElement))) {
+    } else if (e.key === 'Enter' && showNote && e.target instanceof HTMLInputElement) {
       e.preventDefault();
-      confirm();
+      if (submitOnEnter) confirm();
     }
   };
 
@@ -187,6 +204,7 @@ function VoiceConfirmCardBody({
         <Button variant="primary" size="sm" onClick={confirm} aria-describedby={hint ? hintId : undefined} data-testid={`${testId}-confirm`}>{confirmLabel}</Button>
       </Inline>
       {hint ? <T size="xs" tone="secondary" as="p" id={hintId} clamp={2} data-testid={`${testId}-hint`}>{hint}</T> : null}
+      <T className="sr-only" role="status" aria-live="polite" data-testid={`${testId}-announce`}>{announcement}</T>
     </Stack>
   );
 }

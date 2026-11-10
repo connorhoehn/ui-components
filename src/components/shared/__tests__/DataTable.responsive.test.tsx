@@ -233,3 +233,52 @@ describe('DataTable responsiveColumns', () => {
     expect(document.querySelectorAll('thead th')).toHaveLength(4);
   });
 });
+
+describe('DataTable hiddenColumnsControl="header" (2.519.0)', () => {
+  it('one control in the "More" header lists the hidden columns; rows carry no "+N" link, only a chevron', () => {
+    renderTable({ hiddenColumnsControl: 'header' });
+    resize(380);
+    expect(hiddenKeys()).toBe('owner date');
+    const head = screen.getByTestId('datatable-more-header');
+    expect(head).toHaveAttribute('data-hidden-columns-control', 'header');
+    const control = within(head).getByTestId('datatable-more-header-control');
+    expect(control).toHaveTextContent('+2 columns');
+    expect(control).toHaveAccessibleName('2 hidden columns: choose one to show');
+    // No row repeats "+2 columns".
+    expect(document.querySelector('tbody')!.textContent).not.toMatch(/\+\d+ column/);
+    const chevron = screen.getByTestId('datatable-more-a');
+    expect(chevron).toHaveAccessibleName('2 more values for Alpha');
+    fireEvent.click(chevron);
+    const pop = screen.getByTestId('datatable-more-a-popover');
+    expect(within(pop).getByText('Owner')).toBeInTheDocument();
+    expect(within(pop).getByText('2026-01-02')).toBeInTheDocument();
+  });
+
+  it('choosing a hidden column swaps it in for the lowest-priority shown column', () => {
+    renderTable({ hiddenColumnsControl: 'header' });
+    resize(560);
+    expect(hiddenKeys()).toBe('date');
+    fireEvent.click(screen.getByTestId('datatable-more-header-control'));
+    fireEvent.click(screen.getByTestId('datatable-more-header-show-date'));
+    expect(hiddenKeys()).toBe('owner');
+    expect(headerTexts().slice(0, 3)).toEqual(['Name', 'Amount', 'Date']);
+  });
+
+  it('with no shown column left to swap out, choosing opens the stacked form', () => {
+    renderTable({ hiddenColumnsControl: 'header' });
+    resize(380);
+    fireEvent.click(screen.getByTestId('datatable-more-header-control'));
+    expect(screen.getByTestId('datatable-more-header-stack')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('datatable-more-header-show-date'));
+    expect(screen.getByTestId('dt')).toHaveAttribute('data-stacked');
+    expect(hiddenKeys()).toBe('');
+  });
+
+  it('the default stays "row": a "+N columns" link per row and a plain "More" header', () => {
+    renderTable();
+    resize(560);
+    expect(screen.getByTestId('datatable-more-header')).toHaveTextContent(/^More$/);
+    expect(screen.queryByTestId('datatable-more-header-control')).toBeNull();
+    expect(screen.getByTestId('datatable-more-a')).toHaveTextContent('+1 column');
+  });
+});

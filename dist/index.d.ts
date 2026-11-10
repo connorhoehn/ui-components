@@ -8136,7 +8136,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8195,6 +8195,9 @@ export declare interface DataTableColumn<T> {
 
 /** Header letter case (since 2.515.12). `upper` (default): caps with wide tracking. `sentence`: the header text as written. */
 export declare type DataTableHeaderCase = 'upper' | 'sentence';
+
+/** Where a responsive table's hidden columns are reached. Since 2.519.0. */
+export declare type DataTableHiddenColumnsControl = 'row' | 'header';
 
 export declare interface DataTableProps<T> {
     /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
@@ -8323,6 +8326,16 @@ export declare interface DataTableProps<T> {
      * a column hidden for wide content returns when the content narrows.
      */
     responsiveColumns?: boolean;
+    /**
+     * Where the hidden columns of `responsiveColumns` are reached (since
+     * 2.519.0). `row` (default, unchanged): every row carries a "+N columns"
+     * button. `header`: ONE control in the "More" header lists the hidden
+     * columns for the whole table; choosing one swaps it in for the
+     * lowest-priority column still shown (or, with none left to swap, switches
+     * to the stacked card form). Rows then carry no "+N" link: each row's
+     * hidden values open from a quiet chevron in its "More" cell.
+     */
+    hiddenColumnsControl?: DataTableHiddenColumnsControl;
     className?: string;
     'data-testid'?: string;
 }
@@ -12599,7 +12612,7 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
 export declare interface HuddleBarLiveParticipant {
@@ -12696,6 +12709,12 @@ export declare interface HuddleBarProps {
     meetingItems?: MeetingToolbarItem[];
     /** Extra controls before Leave. */
     extras?: ReactNode;
+    /**
+     * Icon-only Start and Join (since 2.519.0), for a phone-width footer: the
+     * label moves to the button's accessible name and a tooltip, and the bar's
+     * own padding and gaps tighten. `data-compact` on the root.
+     */
+    compact?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -13567,7 +13586,7 @@ export declare interface InlinePlaceholderProps {
 /** @see SurfaceTone — which colour family the placeholder paints in. */
 export declare type InlinePlaceholderTone = SurfaceTone;
 
-export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, children, }: InlinePopoverProps): ReactPortal | null;
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, focusOnOpen, escapeScope, trapFocus, children, }: InlinePopoverProps): ReactPortal | null;
 
 export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
@@ -13612,6 +13631,23 @@ export declare interface InlinePopoverProps {
      * answers. Default false: only the keep-out below the trigger counts.
      */
     avoidKeepouts?: boolean;
+    /**
+     * Where focus goes when the panel opens. `first` (default): its first
+     * focusable element, else the panel. `none`: focus stays where it is — the
+     * content decides (the voice cards never take focus from a field the
+     * person is typing in). With `none`, closing hands focus back only when it
+     * was inside the panel (or nowhere). Since 2.519.0.
+     */
+    focusOnOpen?: 'first' | 'none';
+    /**
+     * Which Escape presses close the panel. `window` (default): any Escape
+     * while it is the top layer. `inside`: only an Escape pressed while focus
+     * is inside the panel, so a panel that did not take focus never eats the
+     * Escape of a field elsewhere. Since 2.519.0.
+     */
+    escapeScope?: 'window' | 'inside';
+    /** Keep Tab / Shift+Tab cycling inside the panel. Default true. Since 2.519.0. */
+    trapFocus?: boolean;
     children: ReactNode;
 }
 
