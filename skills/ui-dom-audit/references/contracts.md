@@ -1028,3 +1028,11 @@ Self-test: the on-scale fixture passes; a 13px title, a 10px pill, a 12.8px pres
 `SettingsPage`'s section body is a `div` since 2.516.1, so `a11y.landmarks` no longer finds a second `main` inside the shell's.
 
 Self-test: the on-scale fixture passes; 2px or 6px chip padding, a 2px track padding or gap, and a 14px settings title each fail.
+
+## Settings rail and stepper heads (2.516.2)
+
+- `settings.rail-gap` (`style`): the `SettingsLayout` rail's items (`data-settings-rail-items`) are 4px apart, and each item's label sits 4px over its description.
+- `stepper.head-gap` (`style`): a `WorkflowStepper` step's marker and label (`data-workflow-step-head`) are 4px apart at every size.
+- `library.type-scale` now also reads `[data-settings-rail-description]` (11px) and `[data-workflow-step-head]` (12px labels).
+
+Self-test: the on-scale fixture passes; a 2px rail or item gap, a 10px description, a 6px stepper head and a 10px step label each fail.

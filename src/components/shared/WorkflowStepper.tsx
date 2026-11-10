@@ -43,8 +43,10 @@ export interface WorkflowStepperProps {
   steps: WorkflowStep[];
   /**
    * Default: the density's — `compact` under `DensityProvider density="compact"`,
-   * else `md`. `sm` (10px labels, off the app's scale) is deprecated since
-   * 2.440.0; `compact` and `md` stay as explicit overrides.
+   * else `md`. `sm` is deprecated since 2.440.0 (it still draws a 20px marker;
+   * since 2.516.2 its label is 12px, as `md`'s, was 10px); `compact` and `md`
+   * stay as explicit overrides. Every size puts the label 4px from its marker
+   * (2.516.2; `sm` and `md` were 6px).
    */
   size?: 'sm' | 'md' | 'compact';
   /** Names the track for assistive tech ("Level L1 of target L3"). */
@@ -73,8 +75,9 @@ const NODE_SIZE: Record<StepperSize, string> = {
 };
 
 const LABEL_SIZE: Record<StepperSize, string> = {
-  sm: 'text-[10px] font-medium leading-none',
-  md: 'text-[11px] font-medium leading-none',
+  // 12px on a 16px line since 2.516.2 (sm was 10px, md 11px, both on a 1.0 line).
+  sm: 'text-xs font-medium leading-4',
+  md: 'text-xs font-medium leading-4',
   compact: 'text-xs font-semibold leading-4',
 };
 
@@ -174,7 +177,7 @@ export function WorkflowStepper({ steps, size: sizeProp, wrap = false, orientati
         </li>;
         return <li key={step.step} aria-current={step.active ? 'step' : undefined} data-state={state}
           className={compact ? 'flex items-center' : 'flex flex-1 items-center last:flex-none'}>
-          <div className={cn('flex items-center whitespace-nowrap', compact ? 'gap-1' : 'gap-1.5')}>{node}{label}</div>
+          <div className="flex items-center gap-1 whitespace-nowrap" data-workflow-step-head="">{node}{label}</div>
           {!isLast && <div aria-hidden="true" className={cn(compact ? 'mx-2 h-0.5 w-3' : 'mx-2 h-1 flex-1', 'rounded-full transition-colors', connectorClass)} />}
         </li>;
       })}

@@ -5,7 +5,7 @@ import { J as a, O as o, Q as s, R as c, V as l, W as u, at as d, b as f, h as p
 import { t as v } from "./InlinePopover-BQTS5egk.js";
 import { t as y } from "./SearchInput-Dk3D9lhs.js";
 import { t as b } from "./DropdownMenu-DoCRgXx4.js";
-import { t as x } from "./TitledFrame-BREq0PgE.js";
+import { t as x } from "./TitledFrame-DGQy0mBU.js";
 import { t as S } from "./DotMeter-DJzl5dNX.js";
 import { t as C } from "./StatusDot-DAok6F5B.js";
 import { t as ee } from "./LogStream-WjbAlUsk.js";

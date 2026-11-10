@@ -121,18 +121,18 @@ const STATE_TOKENS: Record<StatusPillTone, PillTokens> = {
 
 const SIZE_CLASSES: Record<StatusPillSize, string> = {
   sm: 'px-1.5 py-0.5 text-[10px] gap-1',
-  md: 'px-2.5 py-1 text-[12px] gap-1.5',
+  md: 'px-2.5 py-1 text-[12px] gap-1', // dot gap 4px since 2.516.2 (was 6px)
 };
 
 /** The text variant keeps the type size and gap, drops the padding with the box. */
 const TEXT_SIZE_CLASSES: Record<StatusPillSize, string> = {
   sm: 'text-[10px] gap-1',
-  md: 'text-[12px] gap-1.5',
+  md: 'text-[12px] gap-1',
 };
 
 const TAG_SIZE_CLASSES: Record<StatusPillSize, string> = {
   sm: 'px-1.5 py-0.5 text-[11px] gap-1',
-  md: 'px-2 py-[5px] text-[12px] gap-1.5', // 12px since 2.515.12 (was 13px, off the house scale)
+  md: 'px-2 py-[5px] text-[12px] gap-1', // 12px since 2.515.12 (was 13px); dot gap 4px since 2.516.2 (was 6px)
 };
 
 const DOT_SIZE_CLASSES: Record<StatusPillSize, string> = {

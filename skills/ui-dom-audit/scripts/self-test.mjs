@@ -2024,5 +2024,37 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS chip.padding, tabs.segmented-track and settings.page-title catch 2 / 6px chip padding, a 2px segmented track and a 14px settings title, and accept the 2.516.1 values');
   }
+  {
+    // settings.rail-gap, stepper.head-gap and the widened library.type-scale
+    // (2.516.2): a 2px settings rail, 10px rail descriptions, a 6px stepper
+    // head and 10px step labels.
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const ids = ['settings.rail-gap', 'stepper.head-gap', 'library.type-scale'];
+    const rules = fullContract.rules.filter(r => ids.includes(r.id));
+    assert.equal(rules.length, 3, 'the 2.516.2 rules are in the shipped contract');
+    const judge = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules }, selectors: {} });
+    const fixture = `<style>*{box-sizing:border-box}body{margin:0;font:14px/20px system-ui,sans-serif}[data-settings-rail-items],[data-settings-rail-items]>button{display:flex;flex-direction:column;gap:4px}[data-workflow-step-head]{display:flex;gap:4px;font-size:12px}</style>
+      <nav data-settings-rail-items id="rail"><button id="item"><span style="font-size:12px">General</span><span data-settings-rail-description id="desc" style="font-size:11px">Name and owner</span></button><button><span style="font-size:12px">Members</span></button></nav>
+      <ol><li><div data-workflow-step-head id="head"><span></span><span id="step">Mesh</span></div></li></ol>`;
+    await page.setContent(fixture);
+    const clean = await judge();
+    assert.deepEqual(clean.issues, [], `the on-scale fixture passes ${JSON.stringify(clean.issues)}`);
+    for (const id of ids) assert.ok(clean.coverage.some(c => c.rule === id && c.matched > 0), `${id} is exercised by the valid fixture`);
+    const mutations = [
+      ['#rail', el => { el.style.gap = '2px'; }, 'settings.rail-gap'],
+      ['#item', el => { el.style.gap = '2px'; }, 'settings.rail-gap'],
+      ['#desc', el => { el.style.fontSize = '10px'; }, 'library.type-scale'],
+      ['#head', el => { el.style.gap = '6px'; }, 'stepper.head-gap'],
+      ['#step', el => { el.style.fontSize = '10px'; }, 'library.type-scale'],
+    ];
+    for (const [selector, mutate, rule] of mutations) {
+      await page.setContent(fixture);
+      await page.locator(selector).first().evaluate(mutate);
+      const found = await judge();
+      assert.ok(found.issues.some(i => i.rule === rule), `${selector} off the scale fails ${rule}: ${JSON.stringify(found.issues)}`);
+    }
+    await page.close();
+    console.log('PASS settings.rail-gap, stepper.head-gap and library.type-scale catch a 2px settings rail, 10px rail descriptions, a 6px stepper head and 10px step labels, and accept the 2.516.2 values');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

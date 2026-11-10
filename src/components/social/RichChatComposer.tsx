@@ -3043,7 +3043,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => onSuggestion?.(suggestion)}
                 data-ui-chip="suggestion"
-                className="cursor-pointer rounded-full border border-border bg-surface px-2 py-0.5 text-xs leading-4 text-text-secondary hover:border-border-emphasis hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="cursor-pointer rounded-full border border-border bg-surface px-2 py-0 text-xs leading-5 text-text-secondary hover:border-border-emphasis hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {suggestion}
               </button>

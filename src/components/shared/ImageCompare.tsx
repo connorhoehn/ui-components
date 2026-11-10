@@ -128,7 +128,7 @@ export function ImageCompare({
           );
           return (
             <li key={`${i}-${image.src ?? 'placeholder'}`} data-image-compare-pane={i} className="min-w-0">
-              <figure className="m-0 flex flex-col gap-1.5">
+              <figure className="m-0 flex flex-col gap-1">
                 {zoomable && hasPicture ? (
                   <button
                     type="button"
@@ -141,7 +141,7 @@ export function ImageCompare({
                 ) : (
                   frame
                 )}
-                <figcaption className="flex min-w-0 flex-col gap-0.5">
+                <figcaption className="flex min-w-0 flex-col gap-1">
                   <span className="flex min-w-0 items-center gap-2">
                     <span data-image-compare-label className="truncate text-sm font-medium text-text-primary" title={image.label}>
                       {image.label}

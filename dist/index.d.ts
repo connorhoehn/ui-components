@@ -13922,7 +13922,7 @@ export declare interface KeyValueItem {
     action?: ReactNode;
 }
 
-export declare type KeyValueLayout = 'stack' | 'row' | 'grid' | 'inline';
+export declare type KeyValueLayout = 'stack' | 'row' | 'grid' | 'inline' | 'stacked-row';
 
 export declare interface KeyValueProps {
     items: KeyValueItem[];
@@ -13933,6 +13933,9 @@ export declare interface KeyValueProps {
      * `inline` (since 2.515.12): one row of pairs, each label beside its value
      * (12px label, 14px value, 4px apart, 16px between pairs), wrapping onto a
      * further line when the row is full; a header's facts line.
+     * `stacked-row` (since 2.516.2): one row of pairs, each a 12px label above
+     * its 14px value (4px apart), pairs 24px apart, wrapping lines 12px apart;
+     * a card's facts strip (the Storymaker Overview job facts).
      */
     layout?: KeyValueLayout;
     /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
@@ -22655,7 +22658,7 @@ export declare function setModelWireframe(el: unknown, on: boolean): boolean;
 /** A cog: "device settings" — which microphone, speaker and camera this call uses. */
 export declare function SettingsGearIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function SettingsLayout({ title, titleAs: TitleTag, titleSize, contentAs: Content, contentLabel, gutter, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, narrow, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
+export declare function SettingsLayout({ title, titleAs: TitleTag, titleSize, contentAs: Content, contentLabel, gutter, sectionAlign, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, narrow, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
 export declare interface SettingsLayoutProps {
     /** Page title shown above the rail. */
@@ -22686,10 +22689,19 @@ export declare interface SettingsLayoutProps {
     /**
      * Who owns the outer gutter (since 2.516.1). `default` (unchanged): the
      * narrow header has 12px of top padding. `none`: the frame around the layout
-     * owns it, so the narrow header has no top padding. `SettingsPage` passes its
-     * own `gutter` through. Marker `data-settings-gutter`.
+     * owns it, so the narrow header has no top padding, and (since 2.516.2) the
+     * wide rail has no top padding either (was 16px). `SettingsPage` passes its
+     * own `gutter` through. Markers `data-settings-gutter`, `data-rail-gutter`.
      */
     gutter?: 'default' | 'none';
+    /**
+     * Where the section (at most 768px wide) sits in a wider body (since
+     * 2.516.2). `center` (default): centred, as before, now by the body's flex
+     * alignment instead of the section's auto margins. `start`: at the body's
+     * left edge, as the other page templates draw their content. Marker
+     * `data-section-align`.
+     */
+    sectionAlign?: 'center' | 'start';
     /** Optional secondary line under the title. */
     subtitle?: ReactNode;
     /** Section list. The first section is selected by default. */
@@ -25576,7 +25588,7 @@ export declare interface TimedReaction {
     displayName?: string;
 }
 
-export declare function TitledFrame({ title, titleAction, titleText, active, tone, titleStyle, children, onActivate, className, bodyClassName, style, 'data-testid': testId, }: TitledFrameProps): JSX.Element;
+export declare function TitledFrame({ title, titleAction, titleText, active, tone, titleStyle: titleStyleProp, children, onActivate, className, bodyClassName, style, 'data-testid': testId, }: TitledFrameProps): JSX.Element;
 
 export declare interface TitledFrameProps {
     /** Text sitting in the top border. Keep it short — it is a label, not a line. */
@@ -25598,10 +25610,12 @@ export declare interface TitledFrameProps {
      */
     tone?: TitledFrameTone;
     /**
-     * How the title reads (since 2.515.12). `mono` (default, unchanged): the
-     * multiplexer label, 10px monospace with 6px padding. `label`: the house
-     * font at 12px with 4px padding, so the title's text starts 12px in from
-     * the frame's edge, on a `p-3` body's inset (`DashboardPage` panels).
+     * How the title reads (since 2.515.12). `mono`: the multiplexer label,
+     * 10px monospace with 6px padding. `label`: the house font at 12px with 4px
+     * padding, so the title's text starts 12px in from the frame's edge, on a
+     * `p-3` body's inset (`DashboardPage` panels). Default (since 2.516.2): by
+     * tone — `mono` for `tone="code"` (a terminal pane, unchanged), `label` for
+     * `tone="surface"` (was `mono`).
      */
     titleStyle?: 'mono' | 'label';
     children: ReactNode;
@@ -29375,8 +29389,10 @@ declare interface UseActivityBusReturn {
       steps: WorkflowStep[];
       /**
        * Default: the density's — `compact` under `DensityProvider density="compact"`,
-       * else `md`. `sm` (10px labels, off the app's scale) is deprecated since
-       * 2.440.0; `compact` and `md` stay as explicit overrides.
+       * else `md`. `sm` is deprecated since 2.440.0 (it still draws a 20px marker;
+       * since 2.516.2 its label is 12px, as `md`'s, was 10px); `compact` and `md`
+       * stay as explicit overrides. Every size puts the label 4px from its marker
+       * (2.516.2; `sm` and `md` were 6px).
        */
       size?: 'sm' | 'md' | 'compact';
       /** Names the track for assistive tech ("Level L1 of target L3"). */
