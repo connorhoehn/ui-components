@@ -39,6 +39,10 @@ export interface ActivityFeedProps {
   /** Override dot colors per kind. Merged over the built-in palette. */
   kindColors?: Record<string, string>;
   className?: string;
+  /** On the feed's root (since 2.515.10), which also carries `data-activity-feed`. */
+  'data-testid'?: string;
+  /** Set by `WrappedActivityPanel`: `ticker` or `history` (`data-activity-mode`). */
+  'data-activity-mode'?: string;
 }
 
 // ─── Default dot palette ──────────────────────────────────────────────────────
@@ -85,7 +89,8 @@ function ActivityRow({ item, dotColor }: ActivityRowProps) {
       <span className="text-xs text-text-primary font-medium shrink-0">
         {shortName(item.actor)}
       </span>
-      <span className="text-xs text-text-tertiary shrink-0">{item.action}</span>
+      {/* A line that is one sentence (`action: ''`) has no verb to draw. */}
+      {item.action !== '' && <span className="text-xs text-text-tertiary shrink-0">{item.action}</span>}
 
       {/* Ticket badge */}
       {item.ticketId && (
@@ -131,6 +136,8 @@ export function ActivityFeed({
   staggerMs = 0,
   kindColors,
   className,
+  'data-testid': testId,
+  'data-activity-mode': mode,
 }: ActivityFeedProps) {
   const palette = { ...DEFAULT_KIND_COLORS, ...kindColors };
 
@@ -175,14 +182,14 @@ export function ActivityFeed({
 
   if (visible.length === 0) {
     return (
-      <div className={cn('flex-1 flex items-center', className)}>
+      <div className={cn('flex-1 flex items-center', className)} data-activity-feed="" data-activity-mode={mode} data-testid={testId}>
         <span className="text-xs text-text-secondary">No recent activity</span>
       </div>
     );
   }
 
   return (
-    <div className={cn('flex-1 flex flex-col overflow-hidden', className)}>
+    <div className={cn('flex-1 flex flex-col overflow-hidden', className)} data-activity-feed="" data-activity-mode={mode} data-testid={testId}>
       {visible.map((item) => (
         <ActivityRow
           key={item.id}

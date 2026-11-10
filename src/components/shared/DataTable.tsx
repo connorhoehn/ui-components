@@ -118,6 +118,26 @@ export interface DataTableProps<T> {
    * Default `false`: the table keeps scrolling inside its own box.
    */
   narrow?: boolean;
+  /**
+   * The table's accessible name (since 2.515.10), on the `<table>` element.
+   * A page with two tables (Jobs and Workers) needs each named for a screen
+   * reader and for `getByRole('table', { name })`.
+   */
+  'aria-label'?: string;
+  /** The id of the visible heading that names the table (since 2.515.10), on the `<table>`. Wins over `aria-label` for assistive tech, as ARIA says. */
+  'aria-labelledby'?: string;
+  /**
+   * The selected row's key (`keyField(row)`) (since 2.515.10): the row the
+   * page's inspector shows. It is tinted with the selection token
+   * (`bg-primary-bg`, over the stripe), carries `aria-selected="true"` and
+   * `data-selected`; while a selection is in use (this or `isRowSelected`
+   * given) every other row carries `aria-selected="false"`. `null`: nothing
+   * selected. Display only: the host still owns the selection
+   * (`onRowClick`).
+   */
+  selectedKey?: string | null;
+  /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
+  isRowSelected?: (row: T) => boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -250,10 +270,17 @@ export function DataTable<T>({
   size,
   striped = true,
   narrow = false,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  selectedKey,
+  isRowSelected,
   className,
   'data-testid': testId,
   staticRows,
 }: DataTableProps<T>) {
+  const selection = selectedKey !== undefined || !!isRowSelected;
+  const selectedRow = (row: T): boolean =>
+    selectedKey !== undefined ? selectedKey !== null && keyField(row) === selectedKey : !!isRowSelected?.(row);
   // A library's props cross a trust boundary: the types are erased at runtime,
   // and a host that hands us `undefined` (an in-flight fetch, a response shape
   // that changed) used to take down the whole page with a TypeError from
@@ -324,7 +351,8 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE)}>
+        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE)}
+          {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {})}>
         <TableHead className={narrow ? NARROW_HEAD : undefined}>
           <tr>
             {columns.map((col) => {
@@ -376,16 +404,21 @@ export function DataTable<T>({
                   </TableTd>
                 </TableRow>
               )
-              : paged.map((row, rowIndex) => (
+              : paged.map((row, rowIndex) => {
+                  const selected = selection && selectedRow(row);
+                  return (
                   <TableRow
                     key={keyField(row)}
                     clickable={!!onRowClick}
+                    {...(selection ? { 'aria-selected': selected } : {})}
+                    {...(selected ? { 'data-selected': '' } : {})}
                     // Striping the ODD rows keeps the first row on the plain
                     // surface, so the table starts flush with the page rather
                     // than opening on a band.
                     className={cn(
                       narrow && NARROW_ROW,
-                      striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined,
+                      // The selection tint wins over the stripe (one background).
+                      selected ? 'bg-primary-bg hover:bg-primary-bg' : striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined,
                       // Only a clickable row joins the tab order — a plain
                       // display table has nothing to activate, and adding a
                       // stop with no effect would be a worse keyboard
@@ -433,7 +466,8 @@ export function DataTable<T>({
                       </TableTd>
                     )}
                   </TableRow>
-                ))}
+                  );
+                })}
         </TableBody>
         </Table>
       {pageSize && pageSize > 0 && sorted.length > pageSize && (

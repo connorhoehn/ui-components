@@ -166,6 +166,7 @@ export {
   adaptMessageReactions,
   adaptActivityEvent,
   adaptActivityEvents,
+  newestActivityFirst,
   adaptFileUploadState,
   adaptFileUploads,
   adaptHangoutParticipant,
@@ -173,13 +174,13 @@ export {
   adaptNotification,
   adaptNotifications,
 } from '../realtime-modules/adapters';
-export type { FileUploadSummary, UIMessageReaction } from '../realtime-modules/adapters';
+export type { FileUploadSummary, UIMessageReaction, AdaptedPresenceUser, AdaptPresenceOptions } from '../realtime-modules/adapters';
 
 export { WrappedChatPanel } from '../realtime-modules/WrappedChatPanel';
 export type { WrappedChatPanelProps, RMUsePinsReturn } from '../realtime-modules/WrappedChatPanel';
 export { WrappedPresencePanel } from '../realtime-modules/WrappedPresencePanel';
 export type { WrappedPresencePanelProps } from '../realtime-modules/WrappedPresencePanel';
-export { WrappedActivityPanel } from '../realtime-modules/WrappedActivityPanel';
+export { WrappedActivityPanel, ACTIVITY_HISTORY_LINES } from '../realtime-modules/WrappedActivityPanel';
 export type { WrappedActivityPanelProps } from '../realtime-modules/WrappedActivityPanel';
 export { WrappedCursorOverlay } from '../realtime-modules/WrappedCursorOverlay';
 export type { WrappedCursorOverlayProps } from '../realtime-modules/WrappedCursorOverlay';

@@ -48,6 +48,10 @@ export interface PresenceUser {
    *  provided, otherwise drops opacity) and flips the status dot to
    *  amber. Wins over `online` for the dot color. */
   idle?: boolean;
+  /** Present and working (since 2.515.10): a red status dot (`--color-danger`,
+   *  as `PresenceDot` busy), the avatar NOT dimmed, "Busy" in its
+   *  tooltip and `data-presence-busy`. Wins over `idle`. */
+  busy?: boolean;
   /** Optional editing mode — renders a small mode badge on the
    *  upper-right of the avatar (pencil / check / eye). */
   mode?: PresenceMode;
@@ -94,6 +98,7 @@ export interface PresenceAvatarsProps {
  * because a user can be "online + away" (we want amber, not green).
  */
 function resolveDotColor(user: PresenceUser): string | null {
+  if (user.busy === true) return 'var(--color-danger)'; // red, as PresenceDot's busy
   if (user.idle === true) return '#f59e0b';     // amber
   if (user.online === false) return 'var(--color-text-tertiary)';  // slate
   if (user.online === true) return '#22c55e';   // green
@@ -249,14 +254,16 @@ export function PresenceAvatars({
     <div className={cn('inline-flex items-center', className)} role="list" aria-label="Online users">
       {visible.map((user, index) => {
         const dotColor = resolveDotColor(user);
-        const isIdle = user.idle === true;
+        const isBusy = user.busy === true;
+        const isIdle = user.idle === true && !isBusy;
         const effectiveColor = isIdle ? dimColor(user.color) : user.color;
         // Wrapper opacity is the idle fallback when no explicit color
         // is provided (Avatar derives its own background from name).
         const wrapperOpacity = isIdle && !user.color ? 0.6 : undefined;
         const modeInfo = user.mode ? MODE_GLYPHS[user.mode] : null;
         const titleParts = [user.name];
-        if (isIdle) titleParts.push('Away');
+        if (isBusy) titleParts.push('Busy');
+        else if (isIdle) titleParts.push('Away');
         else if (modeInfo) titleParts.push(modeInfo.label);
         // The status message rides in the same tooltip, after the name and
         // state: "Ada — Away: back at 3". Without `detail` the title is
@@ -269,6 +276,7 @@ export function PresenceAvatars({
           'data-presence-user': user.name,
           'data-presence-user-id': user.id,
           ...(isIdle ? { 'data-presence-idle': 'true' } : {}),
+          ...(isBusy ? { 'data-presence-busy': 'true' } : {}),
           ...(user.mode ? { 'data-presence-mode': user.mode } : {}),
           ...(user.detail ? { 'data-presence-detail': user.detail } : {}),
         };
@@ -304,7 +312,8 @@ export function PresenceAvatars({
                   color={dotColor}
                   size="xs"
                   aria-label={
-                    isIdle ? `${user.name} away`
+                    isBusy ? `${user.name} busy`
+                    : isIdle ? `${user.name} away`
                     : user.online === false ? `${user.name} offline`
                     : `${user.name} online`
                   }

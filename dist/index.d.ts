@@ -367,7 +367,7 @@ declare interface ActivityEvent {
     source: 'local' | 'remote';
 }
 
-export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, }: ActivityFeedProps): JSX.Element;
+export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, 'data-testid': testId, 'data-activity-mode': mode, }: ActivityFeedProps): JSX.Element;
 
 export declare interface ActivityFeedItem {
     id: string;
@@ -396,6 +396,10 @@ export declare interface ActivityFeedProps {
     /** Override dot colors per kind. Merged over the built-in palette. */
     kindColors?: Record<string, string>;
     className?: string;
+    /** On the feed's root (since 2.515.10), which also carries `data-activity-feed`. */
+    'data-testid'?: string;
+    /** Set by `WrappedActivityPanel`: `ticker` or `history` (`data-activity-mode`). */
+    'data-activity-mode'?: string;
 }
 
 /** A lightning bolt: activity, "things are happening". */
@@ -8126,7 +8130,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8223,6 +8227,26 @@ export declare interface DataTableProps<T> {
      * Default `false`: the table keeps scrolling inside its own box.
      */
     narrow?: boolean;
+    /**
+     * The table's accessible name (since 2.515.10), on the `<table>` element.
+     * A page with two tables (Jobs and Workers) needs each named for a screen
+     * reader and for `getByRole('table', { name })`.
+     */
+    'aria-label'?: string;
+    /** The id of the visible heading that names the table (since 2.515.10), on the `<table>`. Wins over `aria-label` for assistive tech, as ARIA says. */
+    'aria-labelledby'?: string;
+    /**
+     * The selected row's key (`keyField(row)`) (since 2.515.10): the row the
+     * page's inspector shows. It is tinted with the selection token
+     * (`bg-primary-bg`, over the stripe), carries `aria-selected="true"` and
+     * `data-selected`; while a selection is in use (this or `isRowSelected`
+     * given) every other row carries `aria-selected="false"`. `null`: nothing
+     * selected. Display only: the host still owns the selection
+     * (`onRowClick`).
+     */
+    selectedKey?: string | null;
+    /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
+    isRowSelected?: (row: T) => boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -8529,7 +8553,7 @@ export declare interface DetailHeaderProps {
  *   ]}
  *   aside={<ContextColumn … />} />
  */
-export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, tabsLabel, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DetailPageProps): JSX.Element;
+export declare function DetailPage({ title, badge, description, meta, actions, breadcrumbs, titleAs, tabs, tabsLabel, tabsOverflow, activeTab, onTabChange, children, aside, gutter, className, 'data-testid': testId, 'data-page-spec': spec, }: DetailPageProps): JSX.Element;
 
 export declare interface DetailPageProps {
     /** What the record is. */
@@ -8558,6 +8582,13 @@ export declare interface DetailPageProps {
      * tab list, so a screen reader can tell them apart.
      */
     tabsLabel?: string;
+    /**
+     * The tab row in a column too narrow for it (since 2.515.10). `scroll`
+     * (default, unchanged): one row that scrolls sideways, the current tab
+     * kept in view. `menu`: under 360px of the row's width the first and the
+     * current tab stay and the rest fold into `More ▾`.
+     */
+    tabsOverflow?: 'scroll' | 'menu';
     /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
     activeTab?: string;
     onTabChange?: (id: string) => void;
@@ -8608,6 +8639,10 @@ export declare interface DetailPageTab {
     badge?: ReactNode;
     icon?: ReactNode;
     disabled?: boolean;
+    /** `data-testid` on this tab's trigger (since 2.515.10). */
+    testId?: string;
+    /** The same as `testId`, in attribute form (since 2.515.10); `testId` wins when both are given. */
+    'data-testid'?: string;
     /** The section body. Only the active tab's body is mounted. */
     content: ReactNode;
 }
@@ -16867,7 +16902,7 @@ export declare interface PaletteRecordGroup {
  * 16px inset (the frame title's edge), a trailing slot that wraps beneath
  * the tabs when a narrow pane cannot fit both, and one rule under it.
  */
-export declare function PaneHeader({ tabs, value, onValueChange, trailing, label, 'data-testid': testId }: PaneHeaderProps): JSX.Element;
+export declare function PaneHeader({ tabs, value, onValueChange, trailing, label, overflow, 'data-testid': testId }: PaneHeaderProps): JSX.Element;
 
 export declare interface PaneHeaderProps {
     /** The pane's sections. One tab row — the only tablist in the pane. */
@@ -16878,6 +16913,17 @@ export declare interface PaneHeaderProps {
     trailing?: ReactNode;
     /** Names the tablist. Default "Pane sections". */
     label?: string;
+    /**
+     * What the tab row does when the pane is too narrow for it (since
+     * 2.515.10). `menu` (default, unchanged): under 360px of the row's width
+     * only the first and the current tab stay and the rest move into
+     * `More ▾`. `scroll`: every tab stays in one row that scrolls sideways
+     * (no scrollbar drawn; the current tab is kept in view), for a narrow
+     * inspector or a phone column where three of four views behind a menu is
+     * worse than a row the reader can swipe. Marker: the tablist's
+     * `data-tabs-overflow`.
+     */
+    overflow?: 'scroll' | 'menu';
     'data-testid'?: string;
 }
 
@@ -18416,6 +18462,10 @@ export declare interface PresenceAvatarUser {
      *  provided, otherwise drops opacity) and flips the status dot to
      *  amber. Wins over `online` for the dot color. */
     idle?: boolean;
+    /** Present and working (since 2.515.10): a red status dot (`--color-danger`,
+     *  as `PresenceDot` busy), the avatar NOT dimmed, "Busy" in its
+     *  tooltip and `data-presence-busy`. Wins over `idle`. */
+    busy?: boolean;
     /** Optional editing mode — renders a small mode badge on the
      *  upper-right of the avatar (pencil / check / eye). */
     mode?: PresenceMode;
@@ -22508,7 +22558,7 @@ export declare function setModelWireframe(el: unknown, on: boolean): boolean;
 /** A cog: "device settings" — which microphone, speaker and camera this call uses. */
 export declare function SettingsGearIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
+export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, narrow, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
 export declare interface SettingsLayoutProps {
     /** Page title shown above the rail. */
@@ -22540,6 +22590,18 @@ export declare interface SettingsLayoutProps {
     saveBarSlot?: ReactNode;
     /** Width of the rail in px. Default 220. */
     railWidth?: number;
+    /**
+     * The narrow form (since 2.515.10, like `SubNavLayout narrow` in 2.515.5):
+     * the layout is its own size container and under 40rem of its own width
+     * the section rail gives the content the whole width. The title (and
+     * subtitle) sit above one row of the sections that scrolls sideways
+     * (`<nav data-settings-strip>`, "Settings sections (compact)"; items
+     * `<testid>-strip-item` with `data-section-id`, the current one
+     * `aria-current="page"` and underlined), then the section. A container
+     * query, not the viewport, so a settings page inside a narrow column
+     * folds too. Omitted: the rail sits beside the content at every width.
+     */
+    narrow?: boolean;
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
@@ -22776,7 +22838,7 @@ export declare interface SidebarSectionProps {
  * into its right column. Outside a host it renders nothing (the page's own
  * column is unchanged).
  */
-export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
+export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, tabsOverflow, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
 
 export declare interface SidePaneBounds {
     /** The split's ratio (page share) when nothing is remembered. Default 0.72. */
@@ -22838,6 +22900,8 @@ export declare interface SidePaneProps extends SidePaneRegistration {
     onValueChange?: (id: string) => void;
     /** Right end of the tab row. */
     trailing?: ReactNode;
+    /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.10). Default `menu`. */
+    tabsOverflow?: 'scroll' | 'menu';
     /** Docked under the body: the pane's one composer. */
     footer?: ReactNode;
     /** The pane's density; default `compact`. */
@@ -24221,7 +24285,7 @@ export declare interface StreamVideoProps {
 /** The most facts the frame draws (concepts §5 draws eight). */
 export declare const SUBJECT_FRAME_MAX_FACTS = 8;
 
-export declare function SubjectFrame({ title, subtitle, badges, headerActions, tabs, hero, heroAspect, heroActions, facts, disclosures, children, className, 'data-testid': testId, }: SubjectFrameProps): JSX.Element;
+export declare function SubjectFrame({ title, subtitle, badges, headerActions, tabs, hero, heroAspect, heroActions, facts, factsLabel, disclosures, children, className, 'data-testid': testId, }: SubjectFrameProps): JSX.Element;
 
 export declare interface SubjectFrameDisclosure {
     id: string;
@@ -24250,6 +24314,13 @@ export declare interface SubjectFrameProps {
         value: string;
         onValueChange: (id: string) => void;
         label?: string;
+        /**
+         * The tab row in a narrow frame (since 2.515.10; `PaneHeader overflow`).
+         * `menu` (default): under 360px the row keeps the first and current tab
+         * and folds the rest into `More ▾`. `scroll`: one row that scrolls
+         * sideways, every view in it (a 380px inspector, a phone column).
+         */
+        overflow?: 'scroll' | 'menu';
     };
     /** The subject's picture. Omit only for a subject that has none (a text record). */
     hero?: SubjectHeroContent;
@@ -24258,6 +24329,8 @@ export declare interface SubjectFrameProps {
     heroActions?: ReactNode;
     /** The facts table: at most eight rows; more are dropped (and named in the console in development). */
     facts?: KeyValueItem[];
+    /** The facts table's accessible name (since 2.515.10). Default `Facts`; name it for the subject ("Character facts") when a page holds more than one frame. */
+    factsLabel?: string;
     /** The disclosures, in order. Put Request details last, collapsed. */
     disclosures?: SubjectFrameDisclosure[];
     /** The body of a tab other than the details: replaces the hero, facts and disclosures. */
@@ -25054,7 +25127,7 @@ export declare const TerminalLog: typeof LogStream;
 
 export declare type TerminalRendererStatus = keyof typeof TERMINAL_DECISIONS;
 
-declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, ...rest }: TextProps): JSX.Element;
+declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, truncate, ...rest }: TextProps): JSX.Element;
 export { Text_2 as Text }
 
 export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
@@ -25099,6 +25172,14 @@ export declare interface TextProps {
     /** Forwarded to `Inline`'s own `wrap` (`flex-wrap` vs not). Default
      *  `false`. Wrapped prose keeps text and inline marks in one flow. */
     wrap?: boolean;
+    /**
+     * One line, cut with an ellipsis at the width it is given (since
+     * 2.515.10): `truncate min-w-0` on the element (block-level, so the cut
+     * happens inside a flex row as well), and the whole text as its `title`
+     * when the children are a string or number and no `title` is given. Not
+     * with `wrap`, which it overrides.
+     */
+    truncate?: boolean;
     role?: string;
     'aria-label'?: string;
     'aria-hidden'?: boolean | 'true' | 'false';

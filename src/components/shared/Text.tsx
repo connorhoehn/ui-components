@@ -42,6 +42,14 @@ export interface TextProps {
   /** Forwarded to `Inline`'s own `wrap` (`flex-wrap` vs not). Default
    *  `false`. Wrapped prose keeps text and inline marks in one flow. */
   wrap?: boolean;
+  /**
+   * One line, cut with an ellipsis at the width it is given (since
+   * 2.515.10): `truncate min-w-0` on the element (block-level, so the cut
+   * happens inside a flex row as well), and the whole text as its `title`
+   * when the children are a string or number and no `title` is given. Not
+   * with `wrap`, which it overrides.
+   */
+  truncate?: boolean;
   role?: string;
   'aria-label'?: string;
   'aria-hidden'?: boolean | 'true' | 'false';
@@ -61,8 +69,24 @@ export function Text({
   weight,
   tone,
   tabular = false,
+  truncate = false,
   ...rest
 }: TextProps) {
+  if (truncate) {
+    // `Inline` is a flex row, and a flex container cannot ellipsize its text
+    // run, so the cut is drawn on a plain element of the same tag.
+    const Tag = as;
+    const fullText = typeof children === 'string' || typeof children === 'number' ? String(children) : undefined;
+    const cls = ['block min-w-0 max-w-full truncate', size && SIZE[size], weight && WEIGHT[weight], tone && TONE[tone], tabular && 'tabular-nums', className]
+      .filter(Boolean).join(' ');
+    const { role, id, onClick, ...aria } = rest;
+    return (
+      <Tag className={cls} title={title ?? fullText} data-text-truncate="" role={role} id={id} onClick={onClick}
+        aria-label={aria['aria-label']} aria-hidden={aria['aria-hidden']} data-testid={aria['data-testid']}>
+        {children}
+      </Tag>
+    );
+  }
   const classes = [size && SIZE[size], weight && WEIGHT[weight], tone && TONE[tone], tabular && 'tabular-nums', className]
     .filter(Boolean).join(' ') || undefined;
   return (

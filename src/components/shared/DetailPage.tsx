@@ -20,6 +20,10 @@ export interface DetailPageTab {
   badge?: ReactNode;
   icon?: ReactNode;
   disabled?: boolean;
+  /** `data-testid` on this tab's trigger (since 2.515.10). */
+  testId?: string;
+  /** The same as `testId`, in attribute form (since 2.515.10); `testId` wins when both are given. */
+  'data-testid'?: string;
   /** The section body. Only the active tab's body is mounted. */
   content: ReactNode;
 }
@@ -51,6 +55,13 @@ export interface DetailPageProps {
    * tab list, so a screen reader can tell them apart.
    */
   tabsLabel?: string;
+  /**
+   * The tab row in a column too narrow for it (since 2.515.10). `scroll`
+   * (default, unchanged): one row that scrolls sideways, the current tab
+   * kept in view. `menu`: under 360px of the row's width the first and the
+   * current tab stay and the rest fold into `More ▾`.
+   */
+  tabsOverflow?: 'scroll' | 'menu';
   /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
   activeTab?: string;
   onTabChange?: (id: string) => void;
@@ -81,7 +92,7 @@ export interface DetailPageProps {
  *   aside={<ContextColumn … />} />
  */
 export function DetailPage({
-  title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, tabsLabel = 'Sections', activeTab, onTabChange, children, aside,
+  title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, tabsLabel = 'Sections', tabsOverflow = 'scroll', activeTab, onTabChange, children, aside,
   gutter = 'page', className, 'data-testid': testId, 'data-page-spec': spec,
 }: DetailPageProps) {
   const idPrefix = useId();
@@ -116,8 +127,9 @@ export function DetailPage({
           <>
             <div className={cn('shrink-0 min-w-0 border-b border-border', gx)}>
               <Tabs
-                items={tabs!.map(({ id, label, badge: b, icon, disabled }) => ({
+                items={tabs!.map(({ id, label, badge: b, icon, disabled, testId: tid, 'data-testid': dtid }) => ({
                   id, label, ...(b != null ? { badge: b } : {}), ...(icon != null ? { icon } : {}), ...(disabled ? { disabled } : {}),
+                  ...((tid ?? dtid) ? { testId: tid ?? dtid } : {}),
                 }))}
                 value={current}
                 onValueChange={select}
@@ -126,6 +138,7 @@ export function DetailPage({
                 size="sm"
                 badgeStyle="plain"
                 aria-label={tabsLabel}
+                {...(tabsOverflow === 'menu' ? { overflowBelow: 360 } : {})}
               />
             </div>
             {tabs!.map((tab) => (

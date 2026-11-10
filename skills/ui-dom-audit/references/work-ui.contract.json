@@ -1916,6 +1916,13 @@
       "title": "[data-page-header-title], h1, h2, h3, h4, [role=\"heading\"]",
       "minWidth": 64,
       "owner": "PageHeader compact row / DetailPage header row (2.515.7): the title cell lays out at an 8rem basis and the actions wrap under it, so a narrow column keeps its page title"
+    },
+    {
+      "id": "tabs.reach",
+      "kind": "tabs-reach",
+      "selector": "[role=\"tablist\"]",
+      "maxHidden": 1,
+      "owner": "Tabs / PaneHeader overflow / SubjectFrame tabs.overflow / DetailPage tabsOverflow (2.515.10): a narrow tab row scrolls with every view in it, or folds at most one view into More"
     }
   ]
 }
