@@ -1,3 +1,7 @@
+## 2.515.11
+
+- Fix (voice lane): `RichChatComposer` re-derived the active command in an effect keyed on the `commands` array's identity, and hosts pass a new array on every render, so the effect re-ran on every keystroke. It is now keyed on a content signature of the commands (trigger, label, hint, description, disabled, whether it takes an argument), and the state write is skipped when nothing it shows changed. The other composers (`ContextComposer`, `ConversationComposer`, `ComposerPromptDeck`, `AgentComposerDock`) already key their effects on content or read props through refs; none had the same pattern.
+
 ## 2.515.10
 
 Gaps the Storymaker Studio recorded while building its pages, each of which it had worked around locally. Additive props; two adapter defaults change as noted under the presence adapter.

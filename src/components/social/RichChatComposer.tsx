@@ -1306,6 +1306,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // whenever the draft is cleared.
   const argPickRef = useRef<{ trigger: string; item: ComposerArgumentItem } | null>(draft?.command?.argument ? { trigger: draft.command.trigger, item: draft.command.argument } : null);
   const [activeCommand, setActiveCommand] = useState<ComposerCommand | null>(null);
+  // A content signature of the commands: identity changes every host render.
+  const commandsSignature = (commands ?? [])
+    .map((c) => [c.trigger, c.label, c.hint ?? '', c.description ?? '', c.disabled ? 1 : 0, c.argument ? 1 : 0].join('\u0001'))
+    .join('\u0000');
   // Whether the active command's argument is still blank, for the status bar.
   const [argumentEmpty, setArgumentEmpty] = useState(true);
   // The argument picked from the second menu while its label is still intact
@@ -1324,10 +1328,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     const e = editorRef.current as { getText: () => string; isDestroyed?: boolean } | null;
     if (!e || e.isDestroyed) return;
     const hit = matchComposerCommand(e.getText(), commands);
-    setActiveCommand((prev) => (prev?.trigger === hit?.trigger && prev?.disabled === hit?.disabled ? prev : hit));
+    setActiveCommand((prev) => (
+      prev?.trigger === hit?.trigger && prev?.disabled === hit?.disabled && prev?.label === hit?.label && prev?.hint === hit?.hint ? prev : hit
+    ));
     setPrefixHidden(readPrefixHidden(e as unknown as Editor));
+    // Keyed on what the commands SAY, not on the array: hosts build a fresh
+    // `commands` array on every render, and keying on identity re-ran this on
+    // every keystroke (2.515.11).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [commands]);
+  }, [commandsSignature]);
   const editorRef = useRef<{ getText: () => string } | null>(null);
 
   const extensions = useMemo(() => {
