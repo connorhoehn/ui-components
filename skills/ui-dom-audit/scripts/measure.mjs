@@ -2059,7 +2059,7 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         coverage.at(-1).matched = measured;
       }
       else if (rule.kind === 'tabs-reach') {
-        // Every view of a tab row is one gesture away (tabs.reach, 2.515.9).
+        // Every view of a tab row is one gesture away (tabs.reach, 2.515.10).
         // A narrow inspector folded three of four tabs behind "More views"
         // (`data-tabs-hidden` counts what a fold hid); a scrolling row must
         // keep its selected tab in view, and a row that neither scrolls nor

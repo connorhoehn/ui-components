@@ -240,7 +240,7 @@ export function Tabs({
       aria-label={ariaLabel}
       data-testid={testId}
       data-folded={overflowBelow ? (folded ? 'true' : 'false') : undefined}
-      // How the row meets a column too narrow for it (since 2.515.9): `menu`
+      // How the row meets a column too narrow for it (since 2.515.10): `menu`
       // folds into More, `scroll` scrolls in place. `data-tabs-hidden` counts
       // the views a fold moved into the menu (audit `tabs.reach`).
       data-tabs-overflow={overflowBelow ? 'menu' : 'scroll'}

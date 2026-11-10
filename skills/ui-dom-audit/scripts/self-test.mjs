@@ -1925,7 +1925,7 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     console.log('PASS header.title-room catches a page title squeezed out by its header actions and accepts the wrapping row');
   }
   {
-    // tabs.reach (2.515.9): a 380px inspector's four-tab row. The fold hid
+    // tabs.reach (2.515.10): a 380px inspector's four-tab row. The fold hid
     // three of four views behind More; overflow="scroll" keeps every view in
     // a row that scrolls with the selected tab in view.
     const page = await browser.newPage({ viewport: { width: 390, height: 800 } });

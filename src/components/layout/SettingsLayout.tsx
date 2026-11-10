@@ -55,7 +55,7 @@ export interface SettingsLayoutProps {
   /** Width of the rail in px. Default 220. */
   railWidth?: number;
   /**
-   * The narrow form (since 2.515.9, like `SubNavLayout narrow` in 2.515.5):
+   * The narrow form (since 2.515.10, like `SubNavLayout narrow` in 2.515.5):
    * the layout is its own size container and under 40rem of its own width
    * the section rail gives the content the whole width. The title (and
    * subtitle) sit above one row of the sections that scrolls sideways

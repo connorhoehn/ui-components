@@ -1922,7 +1922,7 @@
       "kind": "tabs-reach",
       "selector": "[role=\"tablist\"]",
       "maxHidden": 1,
-      "owner": "Tabs / PaneHeader overflow / SubjectFrame tabs.overflow / DetailPage tabsOverflow (2.515.9): a narrow tab row scrolls with every view in it, or folds at most one view into More"
+      "owner": "Tabs / PaneHeader overflow / SubjectFrame tabs.overflow / DetailPage tabsOverflow (2.515.10): a narrow tab row scrolls with every view in it, or folds at most one view into More"
     }
   ]
 }

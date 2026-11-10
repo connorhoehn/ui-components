@@ -221,7 +221,7 @@ describe('adaptPresenceEntry', () => {
     expect(u.online).toBe(true);
   });
 
-  // 2.515.9: busy is its own state. A working worker read as away (dimmed,
+  // 2.515.10: busy is its own state. A working worker read as away (dimmed,
   // "Away") while it was the busiest entry on the roster.
   it('renders busy as busy, not idle', () => {
     const u = adaptPresenceEntry(entry({ status: 'busy' }));

@@ -50,7 +50,7 @@ declare interface ActivityFeedProps {
     /** Override dot colors per kind. Merged over the built-in palette. */
     kindColors?: Record<string, string>;
     className?: string;
-    /** On the feed's root (since 2.515.9), which also carries `data-activity-feed`. */
+    /** On the feed's root (since 2.515.10), which also carries `data-activity-feed`. */
     'data-testid'?: string;
     /** Set by `WrappedActivityPanel`: `ticker` or `history` (`data-activity-mode`). */
     'data-activity-mode'?: string;
@@ -74,7 +74,7 @@ export declare function adaptChatMessages(messages: RMChatMessage[]): ChatMessag
 
 /**
  * A roster entry as the avatars draw it, plus what the adapter read it from
- * (since 2.515.9): the presence `status` and the entry's `metadata` (merged
+ * (since 2.515.10): the presence `status` and the entry's `metadata` (merged
  * across a person's sessions in `adaptPresenceRoster`). A `PresenceUser`
  * structurally, so it goes straight into `PresenceAvatars`.
  */
@@ -113,14 +113,14 @@ export declare function adaptPresenceEntry(entry: RMPresenceEntry, options?: Ada
 
 export declare interface AdaptPresenceOptions {
     /**
-     * The avatar's detail line from an entry's metadata (since 2.515.9): what
+     * The avatar's detail line from an entry's metadata (since 2.515.10): what
      * the person, the worker or an agent is doing ("Working on Draw guide").
      * Default: `metadata.detail` when it is a non-empty string.
      */
     detail?: (metadata: Record<string, unknown>, status: RMPresenceEntry['status']) => string | undefined;
     /**
      * `adaptPresenceRoster` only: keep entries whose status is `offline`
-     * (drawn grey). Default `false` since 2.515.9: a departed entry the hook
+     * (drawn grey). Default `false` since 2.515.10: a departed entry the hook
      * still holds (a departure sent as an `update`) is not on the roster.
      */
     keepOffline?: boolean;
@@ -140,7 +140,7 @@ export declare interface AdaptPresenceOptions {
  * away only while every session says so. Metadata is merged freshest last
  * (`lastHeartbeat`), so the detail line is the newest one.
  *
- * Offline entries are dropped (since 2.515.9) unless `keepOffline`.
+ * Offline entries are dropped (since 2.515.10) unless `keepOffline`.
  */
 export declare function adaptPresenceRoster(roster: RMPresenceEntry[], options?: AdaptPresenceOptions): AdaptedPresenceUser[];
 
@@ -3209,7 +3209,7 @@ export declare interface NetworkShimOptions {
 }
 
 /**
- * The events newest first (since 2.515.9): by `timestamp`, then a numeric
+ * The events newest first (since 2.515.10): by `timestamp`, then a numeric
  * `detail.seq` (two lines in one millisecond), else as given. The hook keeps
  * history in the server's order and appends live lines at the end, so its
  * array is neither order.
@@ -3362,7 +3362,7 @@ declare interface PresenceUser {
      *  provided, otherwise drops opacity) and flips the status dot to
      *  amber. Wins over `online` for the dot color. */
     idle?: boolean;
-    /** Present and working (since 2.515.9): a red status dot (`--color-danger`,
+    /** Present and working (since 2.515.10): a red status dot (`--color-danger`,
      *  as `PresenceDot` busy), the avatar NOT dimmed, "Busy" in its
      *  tooltip and `data-presence-busy`. Wins over `idle`. */
     busy?: boolean;
@@ -4575,7 +4575,7 @@ export declare interface WrappedActivityPanelProps {
     activity: RMUseActivityReturn;
     /**
      * `ticker` (default, unchanged): the rotating feed. `history` (since
-     * 2.515.9): newest first by timestamp, no rotation, the newest `lines`
+     * 2.515.10): newest first by timestamp, no rotation, the newest `lines`
      * lines shown; `visibleCount`, `rotateMs` and `staggerMs` are ignored.
      */
     mode?: 'ticker' | 'history';
@@ -4587,7 +4587,7 @@ export declare interface WrappedActivityPanelProps {
     staggerMs?: ActivityFeedProps['staggerMs'];
     kindColors?: ActivityFeedProps['kindColors'];
     className?: string;
-    /** On the feed's root (since 2.515.9). */
+    /** On the feed's root (since 2.515.10). */
     'data-testid'?: string;
 }
 

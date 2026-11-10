@@ -48,7 +48,7 @@ export interface PresenceUser {
    *  provided, otherwise drops opacity) and flips the status dot to
    *  amber. Wins over `online` for the dot color. */
   idle?: boolean;
-  /** Present and working (since 2.515.9): a red status dot (`--color-danger`,
+  /** Present and working (since 2.515.10): a red status dot (`--color-danger`,
    *  as `PresenceDot` busy), the avatar NOT dimmed, "Busy" in its
    *  tooltip and `data-presence-busy`. Wins over `idle`. */
   busy?: boolean;

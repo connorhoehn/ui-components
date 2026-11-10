@@ -1,4 +1,4 @@
-// 2.515.9: the Studio's two local adapters, moved into the library.
+// 2.515.10: the Studio's two local adapters, moved into the library.
 // - WrappedActivityPanel mode="history": newest first, no rotation, N lines;
 //   an event whose line is one sentence (`detail.text`) is drawn as that
 //   sentence (the Studio passed rotateMs={0} and mapped every line by hand).

@@ -1,4 +1,4 @@
-// 2.515.9: gaps the Storymaker Studio recorded while building its pages.
+// 2.515.10: gaps the Storymaker Studio recorded while building its pages.
 // - A tab row in a narrow inspector can scroll instead of folding three of
 //   four views behind "More" (PaneHeader / SubjectFrame / SidePane / DetailPage).
 // - SettingsLayout's narrow form: the sections become one scrolling row.

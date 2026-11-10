@@ -20,9 +20,9 @@ export interface DetailPageTab {
   badge?: ReactNode;
   icon?: ReactNode;
   disabled?: boolean;
-  /** `data-testid` on this tab's trigger (since 2.515.9). */
+  /** `data-testid` on this tab's trigger (since 2.515.10). */
   testId?: string;
-  /** The same as `testId`, in attribute form (since 2.515.9); `testId` wins when both are given. */
+  /** The same as `testId`, in attribute form (since 2.515.10); `testId` wins when both are given. */
   'data-testid'?: string;
   /** The section body. Only the active tab's body is mounted. */
   content: ReactNode;
@@ -56,7 +56,7 @@ export interface DetailPageProps {
    */
   tabsLabel?: string;
   /**
-   * The tab row in a column too narrow for it (since 2.515.9). `scroll`
+   * The tab row in a column too narrow for it (since 2.515.10). `scroll`
    * (default, unchanged): one row that scrolls sideways, the current tab
    * kept in view. `menu`: under 360px of the row's width the first and the
    * current tab stay and the rest fold into `More ▾`.

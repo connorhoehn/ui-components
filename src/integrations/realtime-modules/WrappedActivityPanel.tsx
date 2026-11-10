@@ -4,7 +4,7 @@
 // Adapts RMActivityEvent[] to ActivityFeedItem[] automatically.
 //
 // Two modes. `ticker` (default): the rotating three-line feed. `history`
-// (since 2.515.9): a record's history — newest first, no rotation, the
+// (since 2.515.10): a record's history — newest first, no rotation, the
 // newest `lines` lines all shown. An event that carries its own sentence in
 // `detail.text` is drawn as that sentence (see `adaptActivityEvent`) in both.
 
@@ -22,7 +22,7 @@ export interface WrappedActivityPanelProps {
   activity: RMUseActivityReturn;
   /**
    * `ticker` (default, unchanged): the rotating feed. `history` (since
-   * 2.515.9): newest first by timestamp, no rotation, the newest `lines`
+   * 2.515.10): newest first by timestamp, no rotation, the newest `lines`
    * lines shown; `visibleCount`, `rotateMs` and `staggerMs` are ignored.
    */
   mode?: 'ticker' | 'history';
@@ -34,7 +34,7 @@ export interface WrappedActivityPanelProps {
   staggerMs?: ActivityFeedProps['staggerMs'];
   kindColors?: ActivityFeedProps['kindColors'];
   className?: string;
-  /** On the feed's root (since 2.515.9). */
+  /** On the feed's root (since 2.515.10). */
   'data-testid'?: string;
 }
 

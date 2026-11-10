@@ -1,4 +1,4 @@
-## 2.515.9
+## 2.515.10
 
 Gaps the Storymaker Studio recorded while building its pages, each of which it had worked around locally. Additive props; two adapter defaults change as noted under the presence adapter.
 
@@ -12,6 +12,10 @@ Gaps the Storymaker Studio recorded while building its pages, each of which it h
 - `DetailPageTab` `testId?: string` (or `'data-testid'`) on that tab's trigger.
 - `ui-dom-audit`: `tabs.reach` (`tabs-reach`, resting gate, `maxHidden` 1): a tab row that folded more than one view into More, a row that neither scrolls nor folds whose tabs run past its edge, or a scrolling row whose selected tab is out of view. Self-test fixtures: three views behind More, a cut row and a scrolled-away selected tab fail; the scrolling row and one folded view pass.
 - Not in this release: a bridge so `useNotifications` / `usePresence` work under `SharedSocketProvider`. It fills realtime-modules' own `GatewayContext`, which this package's integrations entry may only import as a type (scope-agnostic packaging), so it belongs in realtime-modules next to `SharedSocketProvider`.
+
+## 2.515.9
+
+- Security (security lane): `safeHref` decides on the raw value first. Any ASCII control character (0x00-0x1F, 0x7F) or backslash anywhere refuses the value, then `//...` is refused, then `/path`, `#hash` and `?query` pass, then the scheme allowlist, then scheme-less relative references. Before this, a value starting with `/` returned before the control-character check, so `"/\t/evil.example"` and `"/\n/evil.example"` passed and browsers resolved them off-site. `tel:` and `sms:` are now allowed beside `http:`, `https:` and `mailto:` (case-insensitive); nothing else. `safeDownloadHref` applies the same control-character and backslash refusal before its `blob:`/`data:` check and still rejects svg, xml, xhtml, html and any `data:` without a passive type. Table-driven bypass tests cover both.
 
 ## 2.515.8
 

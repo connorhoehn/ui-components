@@ -27,7 +27,7 @@ declares through `ruleOptions` (`routes`, `expected`, `groups`).
 `header.title-room` (2.515.7) fails a page header whose title its actions
 squeezed below 64px (or below its own text, when shorter): a narrow column
 must wrap the actions under the title, never drop the page's name.
-`tabs.reach` (2.515.9) fails a tab row that hid more than one view behind
+`tabs.reach` (2.515.10) fails a tab row that hid more than one view behind
 More (`data-tabs-hidden`), cut tabs at an edge it does not scroll, or scrolled
 its selected tab out of view: a narrow inspector passes `overflow="scroll"`.
 

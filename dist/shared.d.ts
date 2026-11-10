@@ -297,7 +297,7 @@ export declare interface ActivityFeedProps {
     /** Override dot colors per kind. Merged over the built-in palette. */
     kindColors?: Record<string, string>;
     className?: string;
-    /** On the feed's root (since 2.515.9), which also carries `data-activity-feed`. */
+    /** On the feed's root (since 2.515.10), which also carries `data-activity-feed`. */
     'data-testid'?: string;
     /** Set by `WrappedActivityPanel`: `ticker` or `history` (`data-activity-mode`). */
     'data-activity-mode'?: string;
@@ -2990,15 +2990,15 @@ export declare interface DataTableProps<T> {
      */
     narrow?: boolean;
     /**
-     * The table's accessible name (since 2.515.9), on the `<table>` element.
+     * The table's accessible name (since 2.515.10), on the `<table>` element.
      * A page with two tables (Jobs and Workers) needs each named for a screen
      * reader and for `getByRole('table', { name })`.
      */
     'aria-label'?: string;
-    /** The id of the visible heading that names the table (since 2.515.9), on the `<table>`. Wins over `aria-label` for assistive tech, as ARIA says. */
+    /** The id of the visible heading that names the table (since 2.515.10), on the `<table>`. Wins over `aria-label` for assistive tech, as ARIA says. */
     'aria-labelledby'?: string;
     /**
-     * The selected row's key (`keyField(row)`) (since 2.515.9): the row the
+     * The selected row's key (`keyField(row)`) (since 2.515.10): the row the
      * page's inspector shows. It is tinted with the selection token
      * (`bg-primary-bg`, over the stripe), carries `aria-selected="true"` and
      * `data-selected`; while a selection is in use (this or `isRowSelected`
@@ -3007,7 +3007,7 @@ export declare interface DataTableProps<T> {
      * (`onRowClick`).
      */
     selectedKey?: string | null;
-    /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.9). `selectedKey` wins when both are given. */
+    /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
     isRowSelected?: (row: T) => boolean;
     className?: string;
     'data-testid'?: string;
@@ -3124,7 +3124,7 @@ export declare interface DetailPageProps {
      */
     tabsLabel?: string;
     /**
-     * The tab row in a column too narrow for it (since 2.515.9). `scroll`
+     * The tab row in a column too narrow for it (since 2.515.10). `scroll`
      * (default, unchanged): one row that scrolls sideways, the current tab
      * kept in view. `menu`: under 360px of the row's width the first and the
      * current tab stay and the rest fold into `More ▾`.
@@ -3180,9 +3180,9 @@ export declare interface DetailPageTab {
     badge?: ReactNode;
     icon?: ReactNode;
     disabled?: boolean;
-    /** `data-testid` on this tab's trigger (since 2.515.9). */
+    /** `data-testid` on this tab's trigger (since 2.515.10). */
     testId?: string;
-    /** The same as `testId`, in attribute form (since 2.515.9); `testId` wins when both are given. */
+    /** The same as `testId`, in attribute form (since 2.515.10); `testId` wins when both are given. */
     'data-testid'?: string;
     /** The section body. Only the active tab's body is mounted. */
     content: ReactNode;
@@ -7500,7 +7500,7 @@ export declare interface PaneHeaderProps {
     label?: string;
     /**
      * What the tab row does when the pane is too narrow for it (since
-     * 2.515.9). `menu` (default, unchanged): under 360px of the row's width
+     * 2.515.10). `menu` (default, unchanged): under 360px of the row's width
      * only the first and the current tab stay and the rest move into
      * `More ▾`. `scroll`: every tab stays in one row that scrolls sideways
      * (no scrollbar drawn; the current tab is kept in view), for a narrow
@@ -7988,7 +7988,7 @@ export declare interface PresenceAvatarUser {
      *  provided, otherwise drops opacity) and flips the status dot to
      *  amber. Wins over `online` for the dot color. */
     idle?: boolean;
-    /** Present and working (since 2.515.9): a red status dot (`--color-danger`,
+    /** Present and working (since 2.515.10): a red status dot (`--color-danger`,
      *  as `PresenceDot` busy), the avatar NOT dimmed, "Busy" in its
      *  tooltip and `data-presence-busy`. Wins over `idle`. */
     busy?: boolean;
@@ -9660,7 +9660,7 @@ export declare interface SettingsLayoutProps {
     /** Width of the rail in px. Default 220. */
     railWidth?: number;
     /**
-     * The narrow form (since 2.515.9, like `SubNavLayout narrow` in 2.515.5):
+     * The narrow form (since 2.515.10, like `SubNavLayout narrow` in 2.515.5):
      * the layout is its own size container and under 40rem of its own width
      * the section rail gives the content the whole width. The title (and
      * subtitle) sit above one row of the sections that scrolls sideways
@@ -9905,7 +9905,7 @@ export declare interface SidePaneProps extends SidePaneRegistration {
     onValueChange?: (id: string) => void;
     /** Right end of the tab row. */
     trailing?: ReactNode;
-    /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.9). Default `menu`. */
+    /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.10). Default `menu`. */
     tabsOverflow?: 'scroll' | 'menu';
     /** Docked under the body: the pane's one composer. */
     footer?: ReactNode;
@@ -10738,7 +10738,7 @@ export declare interface SubjectFrameProps {
         onValueChange: (id: string) => void;
         label?: string;
         /**
-         * The tab row in a narrow frame (since 2.515.9; `PaneHeader overflow`).
+         * The tab row in a narrow frame (since 2.515.10; `PaneHeader overflow`).
          * `menu` (default): under 360px the row keeps the first and current tab
          * and folds the rest into `More ▾`. `scroll`: one row that scrolls
          * sideways, every view in it (a 380px inspector, a phone column).
@@ -10752,7 +10752,7 @@ export declare interface SubjectFrameProps {
     heroActions?: ReactNode;
     /** The facts table: at most eight rows; more are dropped (and named in the console in development). */
     facts?: KeyValueItem[];
-    /** The facts table's accessible name (since 2.515.9). Default `Facts`; name it for the subject ("Character facts") when a page holds more than one frame. */
+    /** The facts table's accessible name (since 2.515.10). Default `Facts`; name it for the subject ("Character facts") when a page holds more than one frame. */
     factsLabel?: string;
     /** The disclosures, in order. Put Request details last, collapsed. */
     disclosures?: SubjectFrameDisclosure[];
@@ -11395,7 +11395,7 @@ export declare interface TextProps {
     wrap?: boolean;
     /**
      * One line, cut with an ellipsis at the width it is given (since
-     * 2.515.9): `truncate min-w-0` on the element (block-level, so the cut
+     * 2.515.10): `truncate min-w-0` on the element (block-level, so the cut
      * happens inside a flex row as well), and the whole text as its `title`
      * when the children are a string or number and no `title` is given. Not
      * with `wrap`, which it overrides.

@@ -151,12 +151,12 @@ export function adaptChatMessages(messages: RMChatMessage[]): UIChatMessage[] {
 // realtime-modules PresenceEntry.metadata.displayName → PresenceUser.name
 // realtime-modules PresenceEntry.metadata.avatarUrl → PresenceUser.avatarUrl
 // realtime-modules PresenceEntry.status → online / idle (away) / busy
-// realtime-modules PresenceEntry.metadata → PresenceUser.metadata (kept, 2.515.9)
+// realtime-modules PresenceEntry.metadata → PresenceUser.metadata (kept, 2.515.10)
 // ---------------------------------------------------------------------------
 
 /**
  * A roster entry as the avatars draw it, plus what the adapter read it from
- * (since 2.515.9): the presence `status` and the entry's `metadata` (merged
+ * (since 2.515.10): the presence `status` and the entry's `metadata` (merged
  * across a person's sessions in `adaptPresenceRoster`). A `PresenceUser`
  * structurally, so it goes straight into `PresenceAvatars`.
  */
@@ -167,14 +167,14 @@ export interface AdaptedPresenceUser extends UIPresenceUser {
 
 export interface AdaptPresenceOptions {
   /**
-   * The avatar's detail line from an entry's metadata (since 2.515.9): what
+   * The avatar's detail line from an entry's metadata (since 2.515.10): what
    * the person, the worker or an agent is doing ("Working on Draw guide").
    * Default: `metadata.detail` when it is a non-empty string.
    */
   detail?: (metadata: Record<string, unknown>, status: RMPresenceEntry['status']) => string | undefined;
   /**
    * `adaptPresenceRoster` only: keep entries whose status is `offline`
-   * (drawn grey). Default `false` since 2.515.9: a departed entry the hook
+   * (drawn grey). Default `false` since 2.515.10: a departed entry the hook
    * still holds (a departure sent as an `update`) is not on the roster.
    */
   keepOffline?: boolean;
@@ -182,7 +182,7 @@ export interface AdaptPresenceOptions {
 
 const defaultDetail = (metadata: Record<string, unknown>) => str(metadata.detail);
 
-/** The avatar's state flags for one presence status. `busy` is its own state (since 2.515.9), not away. */
+/** The avatar's state flags for one presence status. `busy` is its own state (since 2.515.10), not away. */
 function presenceState(status: RMPresenceEntry['status']): Pick<UIPresenceUser, 'idle' | 'busy'> {
   if (status === 'away') return { idle: true };
   if (status === 'busy') return { busy: true };
@@ -205,7 +205,7 @@ export function adaptPresenceEntry(entry: RMPresenceEntry, options: AdaptPresenc
     avatarUrl: str(metadata.avatarUrl),
     online: entry.status !== 'offline',
     // Presence has four states. `away` is the amber, dimmed avatar; `busy`
-    // (since 2.515.9) is present and working — a red dot, not dimmed; it used
+    // (since 2.515.10) is present and working — a red dot, not dimmed; it used
     // to read as away, so a working worker drew greyed out with "Away".
     ...presenceState(entry.status),
     ...(detail ? { detail } : {}),
@@ -231,7 +231,7 @@ const PRESENCE_RANK: Record<RMPresenceEntry['status'], number> = { busy: 3, onli
  * away only while every session says so. Metadata is merged freshest last
  * (`lastHeartbeat`), so the detail line is the newest one.
  *
- * Offline entries are dropped (since 2.515.9) unless `keepOffline`.
+ * Offline entries are dropped (since 2.515.10) unless `keepOffline`.
  */
 export function adaptPresenceRoster(roster: RMPresenceEntry[], options: AdaptPresenceOptions = {}): AdaptedPresenceUser[] {
   interface Merged {
@@ -386,7 +386,7 @@ export function adaptMessageReactions(
 //   displayName           → actor
 //   detail.action / verb derived from eventType → action
 //   detail.subject / detail.contentId / eventType → subject
-//   detail.text (a whole sentence) → subject, with no verb (since 2.515.9)
+//   detail.text (a whole sentence) → subject, with no verb (since 2.515.10)
 //   timestamp             → timeLabel (relative)
 // ---------------------------------------------------------------------------
 
@@ -447,7 +447,7 @@ function activityId(event: RMActivityEvent, subject: string): string {
 }
 
 /**
- * The line's own sentence, when the event carries one (since 2.515.9):
+ * The line's own sentence, when the event carries one (since 2.515.10):
  * `detail.text` ("Draw guide: Toby started"). A host whose activity is
  * already written as sentences has nothing for the verb slot to say; the
  * sentence is the line, and `detail.kind` (when a string) names its dot
@@ -484,7 +484,7 @@ export function adaptActivityEvent(event: RMActivityEvent): ActivityFeedItem {
 }
 
 /**
- * The events newest first (since 2.515.9): by `timestamp`, then a numeric
+ * The events newest first (since 2.515.10): by `timestamp`, then a numeric
  * `detail.seq` (two lines in one millisecond), else as given. The hook keeps
  * history in the server's order and appends live lines at the end, so its
  * array is neither order.

@@ -404,7 +404,7 @@ export interface PaneHeaderProps {
   label?: string;
   /**
    * What the tab row does when the pane is too narrow for it (since
-   * 2.515.9). `menu` (default, unchanged): under 360px of the row's width
+   * 2.515.10). `menu` (default, unchanged): under 360px of the row's width
    * only the first and the current tab stay and the rest move into
    * `More ▾`. `scroll`: every tab stays in one row that scrolls sideways
    * (no scrollbar drawn; the current tab is kept in view), for a narrow
@@ -439,7 +439,7 @@ export interface SidePaneProps extends SidePaneRegistration {
   onValueChange?: (id: string) => void;
   /** Right end of the tab row. */
   trailing?: ReactNode;
-  /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.9). Default `menu`. */
+  /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.10). Default `menu`. */
   tabsOverflow?: 'scroll' | 'menu';
   /** Docked under the body: the pane's one composer. */
   footer?: ReactNode;

@@ -119,15 +119,15 @@ export interface DataTableProps<T> {
    */
   narrow?: boolean;
   /**
-   * The table's accessible name (since 2.515.9), on the `<table>` element.
+   * The table's accessible name (since 2.515.10), on the `<table>` element.
    * A page with two tables (Jobs and Workers) needs each named for a screen
    * reader and for `getByRole('table', { name })`.
    */
   'aria-label'?: string;
-  /** The id of the visible heading that names the table (since 2.515.9), on the `<table>`. Wins over `aria-label` for assistive tech, as ARIA says. */
+  /** The id of the visible heading that names the table (since 2.515.10), on the `<table>`. Wins over `aria-label` for assistive tech, as ARIA says. */
   'aria-labelledby'?: string;
   /**
-   * The selected row's key (`keyField(row)`) (since 2.515.9): the row the
+   * The selected row's key (`keyField(row)`) (since 2.515.10): the row the
    * page's inspector shows. It is tinted with the selection token
    * (`bg-primary-bg`, over the stripe), carries `aria-selected="true"` and
    * `data-selected`; while a selection is in use (this or `isRowSelected`
@@ -136,7 +136,7 @@ export interface DataTableProps<T> {
    * (`onRowClick`).
    */
   selectedKey?: string | null;
-  /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.9). `selectedKey` wins when both are given. */
+  /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
   isRowSelected?: (row: T) => boolean;
   className?: string;
   'data-testid'?: string;

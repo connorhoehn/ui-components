@@ -39,7 +39,7 @@ export interface ActivityFeedProps {
   /** Override dot colors per kind. Merged over the built-in palette. */
   kindColors?: Record<string, string>;
   className?: string;
-  /** On the feed's root (since 2.515.9), which also carries `data-activity-feed`. */
+  /** On the feed's root (since 2.515.10), which also carries `data-activity-feed`. */
   'data-testid'?: string;
   /** Set by `WrappedActivityPanel`: `ticker` or `history` (`data-activity-mode`). */
   'data-activity-mode'?: string;

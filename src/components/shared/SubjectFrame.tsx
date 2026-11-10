@@ -124,7 +124,7 @@ export interface SubjectFrameProps {
     onValueChange: (id: string) => void;
     label?: string;
     /**
-     * The tab row in a narrow frame (since 2.515.9; `PaneHeader overflow`).
+     * The tab row in a narrow frame (since 2.515.10; `PaneHeader overflow`).
      * `menu` (default): under 360px the row keeps the first and current tab
      * and folds the rest into `More ▾`. `scroll`: one row that scrolls
      * sideways, every view in it (a 380px inspector, a phone column).
@@ -138,7 +138,7 @@ export interface SubjectFrameProps {
   heroActions?: ReactNode;
   /** The facts table: at most eight rows; more are dropped (and named in the console in development). */
   facts?: KeyValueItem[];
-  /** The facts table's accessible name (since 2.515.9). Default `Facts`; name it for the subject ("Character facts") when a page holds more than one frame. */
+  /** The facts table's accessible name (since 2.515.10). Default `Facts`; name it for the subject ("Character facts") when a page holds more than one frame. */
   factsLabel?: string;
   /** The disclosures, in order. Put Request details last, collapsed. */
   disclosures?: SubjectFrameDisclosure[];

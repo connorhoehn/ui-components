@@ -44,7 +44,7 @@ export interface TextProps {
   wrap?: boolean;
   /**
    * One line, cut with an ellipsis at the width it is given (since
-   * 2.515.9): `truncate min-w-0` on the element (block-level, so the cut
+   * 2.515.10): `truncate min-w-0` on the element (block-level, so the cut
    * happens inside a flex row as well), and the whole text as its `title`
    * when the children are a string or number and no `title` is given. Not
    * with `wrap`, which it overrides.
