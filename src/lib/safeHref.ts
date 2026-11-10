@@ -4,18 +4,22 @@
  * `javascript:` is the obvious exclusion; `data:` is the less obvious one —
  * `data:text/html` in an anchor executes in the page's origin on click.
  */
-const SAFE_SCHEME = /^(https?:|mailto:)/i;
+const SAFE_SCHEME = /^(https?:|mailto:|tel:|sms:)/i;
+
+/** ASCII control characters and backslashes: browsers strip or rewrite them, which can reassemble a scheme or a `//host`. */
+const FORBIDDEN_CHARS = /[\u0000-\u001f\u007f\\]/;
 
 export function safeHref(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const v = raw.trim();
-  // Relative links stay in-app and cannot carry a scheme.
-  if ((v.startsWith('/') && v[1] !== '/' && v[1] !== '\\') || v.startsWith('#')) return v;
+  if (!v) return null;
+  // Decide on the raw value first: nothing below may see a control character or backslash.
+  if (FORBIDDEN_CHARS.test(v)) return null;
+  if (v.startsWith('//')) return null;
+  if (v.startsWith('/') || v.startsWith('#') || v.startsWith('?')) return v;
   if (SAFE_SCHEME.test(v)) return v;
-  // Scheme-less relative references (`docs/a`, `../a`, `?tab=x`) stay in-app.
-  // No `:` before the first `/`, `?` or `#` means no scheme; control characters
-  // are refused because browsers strip them, which can reassemble `java\tscript:`.
-  if (/[\u0000-\u001f\\]/.test(v) || v.startsWith('//')) return null;
+  // Scheme-less relative references (`docs/a`, `../a`) stay in-app: no `:`
+  // before the first `/`, `?` or `#` means no scheme.
   const firstDelim = v.search(/[/?#]/);
   const head = firstDelim === -1 ? v : v.slice(0, firstDelim);
   return head.includes(':') ? null : v;
@@ -36,6 +40,7 @@ const SAFE_DATA_URL = /^data:(image\/(png|jpe?g|gif|webp|avif|bmp)|audio\/[\w.+-
 export function safeDownloadHref(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const v = raw.trim();
+  if (FORBIDDEN_CHARS.test(v)) return null;
   if (/^blob:/i.test(v) || SAFE_DATA_URL.test(v)) return v;
   return safeHref(v);
 }

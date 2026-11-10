@@ -1,5 +1,5 @@
 import { d as e, n as t } from "./Button-DQoeE5dN.js";
-import { r as n } from "./safeHref-BL4Z8n8E.js";
+import { r as n } from "./safeHref-D1tj5kGa.js";
 import { r, t as i } from "./Text-DYn7PTcU.js";
 import { J as a, O as o, Q as s, R as c, V as l, W as u, at as d, b as f, h as p, it as m, m as h, vt as g, z as _ } from "./Icons-CqVFbuiZ.js";
 import { t as v } from "./InlinePopover-BQTS5egk.js";
@@ -13,8 +13,8 @@ import { t as te } from "./SectionLabel-B60gea5o.js";
 import { t as w } from "./InlinePlaceholder-CKUJyqFh.js";
 import { n as T } from "./FloatingPanel-JFP5InEY.js";
 import { a as E, i as ne, n as re, r as ie, t as ae } from "./useComputeProjects-ZSazDRet.js";
-import { a as D, i as O, n as k, o as oe, r as A, s as j, t as se } from "./PaneStatusLine-B3Mss__M.js";
-import { $ as M, A as ce, B as le, C as ue, Ct as de, D as fe, E as pe, F as N, G as me, H as he, I as ge, J as _e, K as ve, L as P, M as ye, N as be, O as xe, P as Se, Q as F, R as I, S as L, St as Ce, T as we, U as Te, V as Ee, W as De, X as Oe, Y as ke, Z as Ae, _ as je, _t as Me, a as Ne, at as Pe, b as Fe, bt as Ie, c as Le, ct as R, d as Re, dt as ze, et as z, f as B, ft as Be, g as Ve, gt as He, h as Ue, ht as We, i as Ge, it as Ke, j as qe, k as Je, l as V, lt as Ye, m as H, mt as Xe, n as Ze, nt as Qe, o as $e, ot as et, p as tt, pt as nt, q as rt, r as it, rt as at, s as ot, st, t as ct, tt as lt, u as ut, ut as dt, v as ft, vt as pt, w as mt, wt as ht, x as gt, xt as _t, y as vt, yt, z as bt } from "./ComputeContext-D7DPBijT.js";
+import { a as D, i as O, n as k, o as oe, r as A, s as j, t as se } from "./PaneStatusLine-UaBMckiA.js";
+import { $ as M, A as ce, B as le, C as ue, Ct as de, D as fe, E as pe, F as N, G as me, H as he, I as ge, J as _e, K as ve, L as P, M as ye, N as be, O as xe, P as Se, Q as F, R as I, S as L, St as Ce, T as we, U as Te, V as Ee, W as De, X as Oe, Y as ke, Z as Ae, _ as je, _t as Me, a as Ne, at as Pe, b as Fe, bt as Ie, c as Le, ct as R, d as Re, dt as ze, et as z, f as B, ft as Be, g as Ve, gt as He, h as Ue, ht as We, i as Ge, it as Ke, j as qe, k as Je, l as V, lt as Ye, m as H, mt as Xe, n as Ze, nt as Qe, o as $e, ot as et, p as tt, pt as nt, q as rt, r as it, rt as at, s as ot, st, t as ct, tt as lt, u as ut, ut as dt, v as ft, vt as pt, w as mt, wt as ht, x as gt, xt as _t, y as vt, yt, z as bt } from "./ComputeContext-CpsENet8.js";
 import { Fragment as xt, useCallback as U, useEffect as W, useMemo as G, useRef as K, useState as q, useSyncExternalStore as St } from "react";
 import { Fragment as Ct, jsx as J, jsxs as Y } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts

@@ -1,3 +1,7 @@
+## 2.515.9
+
+- Security (security lane): `safeHref` decides on the raw value first. Any ASCII control character (0x00-0x1F, 0x7F) or backslash anywhere refuses the value, then `//...` is refused, then `/path`, `#hash` and `?query` pass, then the scheme allowlist, then scheme-less relative references. Before this, a value starting with `/` returned before the control-character check, so `"/\t/evil.example"` and `"/\n/evil.example"` passed and browsers resolved them off-site. `tel:` and `sms:` are now allowed beside `http:`, `https:` and `mailto:` (case-insensitive); nothing else. `safeDownloadHref` applies the same control-character and backslash refusal before its `blob:`/`data:` check and still rejects svg, xml, xhtml, html and any `data:` without a passive type. Table-driven bypass tests cover both.
+
 ## 2.515.8
 
 - Security (security lane): untrusted URLs no longer become navigable links. `safeHref` now also takes `undefined` and accepts scheme-less relative references (`docs/a`, `../a`, `?tab=x`); `javascript:`, `vbscript:`, `data:` and control-character tricks stay rejected. New `safeDownloadHref` for download links: adds `blob:` and passive `data:` types (images, pdf, audio, video, zip, json, plain text, csv), never `data:text/html` or svg.
