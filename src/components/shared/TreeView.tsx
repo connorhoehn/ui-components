@@ -309,7 +309,7 @@ function TreeRow({
           // is the keyboard's only sign of which row has the focus.
           'select-none outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
           rail ? cn('min-h-9 gap-1.5 pr-2.5', RAIL_ROW_PAD_Y, RAIL_ITEM_TEXT)
-            : md ? 'min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6' : 'gap-1 py-1.5 pr-2 text-sm',
+            : md ? 'min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6' : 'min-h-8 gap-1 py-1 pr-2 text-sm',
           // A row you can pick up says so before you try. Only when the host
           // wired a drop target: a grab cursor over an immovable row is a lie.
           draggable ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',

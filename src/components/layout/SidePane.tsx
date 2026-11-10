@@ -424,7 +424,7 @@ export interface PaneHeaderProps {
 export function PaneHeader({ tabs, value, onValueChange, trailing, label = 'Pane sections', overflow = 'menu', 'data-testid': testId = 'pane-header' }: PaneHeaderProps) {
   return (
     // pl-1 + the tab's own 12px padding aligns its label with the 16px body inset.
-    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-1 min-h-11 py-1.5 border-b border-border pl-1 pr-[var(--ui-content-gutter,1rem)]" data-testid={testId}>
+    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-1 min-h-11 py-1 border-b border-border pl-1 pr-[var(--ui-content-gutter,1rem)]" data-testid={testId}>
       <Tabs size="md" variant="underline" indicator="bar" aria-label={label} className="min-w-0 max-w-full shrink-0 after:hidden" {...(overflow === 'menu' ? { overflowBelow: 360 } : {})}
         items={[...tabs]} value={value} onValueChange={onValueChange} />
       {trailing && <div className="ml-auto flex min-h-12 min-w-0 flex-wrap items-center justify-end gap-1 py-1" data-testid={`${testId}-actions`}>{trailing}</div>}

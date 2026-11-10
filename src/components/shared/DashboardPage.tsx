@@ -94,6 +94,7 @@ export function DashboardPage({
               key={panel.id}
               title={panel.title}
               tone="surface"
+              titleStyle="label"
               {...(panel.action != null ? { titleAction: panel.action } : {})}
               className={cn('min-w-0', LG_SPAN[panel.span ?? 1])}
               bodyClassName="overflow-auto p-3"

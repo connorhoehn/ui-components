@@ -43,6 +43,8 @@ export interface WrappedPipelineRunProps {
   status: RMPipelineRunStatus | undefined;
   /** The stage: "Mesh generation (Meshy)". */
   title: string;
+  /** The title's heading element (since 2.515.12). Default `h3`; `h2` for a card directly under the page title. */
+  titleAs?: 'h2' | 'h3' | 'h4';
   /** A quieter line under the title ("Toby · v1.2"). */
   subtitle?: string;
   /** The facts row: Job ID, Model, Preset, Topology, Created. */
@@ -78,6 +80,11 @@ export interface WrappedPipelineRunProps {
   'data-testid'?: string;
 }
 
+// The card's header and pill on scale (2.515.12); tailwind-merge replaces
+// CardHeader's `px-3.5 pt-3 pb-2.5` and StatusPill sm's `text-[10px]`.
+const RUN_HEADER = 'px-4 pt-3 pb-3 [&_p]:mt-1';
+const RUN_PILL = 'text-[11px]';
+
 const PHASE: Record<RMPipelineRunPhase, { label: string; tone: StatusPillTone }> = {
   received: { label: 'Queued', tone: 'pending' },
   running: { label: 'Processing', tone: 'info' },
@@ -102,6 +109,7 @@ export function pipelineRunSteps(steps: readonly RMPipelineRunStepDetail[], time
 export function WrappedPipelineRun({
   status,
   title,
+  titleAs = 'h3',
   subtitle,
   facts = [],
   stepTimes,
@@ -140,7 +148,7 @@ export function WrappedPipelineRun({
         className={className}
       >
         <Inline gap="xs" align="center" wrap={false} className="min-w-0">
-          <StatusPill size="sm" tone={pill.tone} label={pill.label} />
+          <StatusPill size="sm" tone={pill.tone} label={pill.label} className={RUN_PILL} />
           <Text as="span" size="sm" tone="primary" className="truncate">
             {[subject ?? title, stepOf].filter(Boolean).join(' · ')}
           </Text>
@@ -157,18 +165,23 @@ export function WrappedPipelineRun({
 
   return (
     <Card padding="none" data-pipeline-run="" data-run-phase={phase ?? 'loading'} data-testid={testId} className={className}>
+      {/* On the 4px spacing scale (2.515.12): the inset header is 16px x /
+          12px y (was 14 / 12 top, 10 bottom), the subtitle 4px under the title
+          (was 2px); the state pill's text 11px (was 10px). */}
       <CardHeader
         title={title}
+        as={titleAs}
         subtitle={subtitle}
         inset
-        meta={<StatusPill size="sm" tone={pill.tone} label={pill.label} />}
+        className={RUN_HEADER}
+        meta={<StatusPill size="sm" tone={pill.tone} label={pill.label} className={RUN_PILL} data-testid={`${testId}-state`} />}
         action={headerAction}
       />
       <Stack gap="lg" className="p-4">
         {!status && <LoadingState label="Reading the run…" testId={`${testId}-loading`} />}
         {facts.length > 0 && <KeyValue items={facts} layout="grid" responsive data-testid={`${testId}-facts`} />}
         {steps.length > 0 && (
-          <WorkflowStepper steps={pipelineRunSteps(steps, stepTimes)} orientation="horizontal" size="sm" wrap aria-label={`${title} steps`} data-testid={`${testId}-steps`} />
+          <WorkflowStepper steps={pipelineRunSteps(steps, stepTimes)} orientation="horizontal" size="compact" wrap aria-label={`${title} steps`} data-testid={`${testId}-steps`} />
         )}
         {picture}
         {status && working && (

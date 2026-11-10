@@ -62,6 +62,12 @@ export interface DetailPageProps {
    * current tab stay and the rest fold into `More ▾`.
    */
   tabsOverflow?: 'scroll' | 'menu';
+  /**
+   * The tab row's size (since 2.515.12). `md` (default): 14px labels, as
+   * `Tabs` and `PaneHeader` draw. `sm`: 12px, the size every DetailPage tab
+   * row had before 2.515.12.
+   */
+  tabsSize?: 'sm' | 'md';
   /** Controlled active tab. Uncontrolled (first enabled tab) when omitted. */
   activeTab?: string;
   onTabChange?: (id: string) => void;
@@ -92,7 +98,7 @@ export interface DetailPageProps {
  *   aside={<ContextColumn … />} />
  */
 export function DetailPage({
-  title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, tabsLabel = 'Sections', tabsOverflow = 'scroll', activeTab, onTabChange, children, aside,
+  title, badge, description, meta, actions, breadcrumbs, titleAs = 'h1', tabs, tabsLabel = 'Sections', tabsOverflow = 'scroll', tabsSize = 'md', activeTab, onTabChange, children, aside,
   gutter = 'page', className, 'data-testid': testId, 'data-page-spec': spec,
 }: DetailPageProps) {
   const idPrefix = useId();
@@ -112,20 +118,22 @@ export function DetailPage({
   return (
     <div className={cn('flex h-full min-h-0 min-w-0 flex-row', className)} data-page-template="detail" data-page-spec={spec} data-testid={testId}>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-page-column="">
-        <div className={cn('flex shrink-0 min-w-0 flex-col gap-2', gx, trail ? 'pt-2' : 'pt-3')} data-detail-page-header="" data-page-trail="">
+        {/* The top inset is the page gutter's: with gutter="none" the host's
+            frame owns it, so none is drawn (since 2.515.12). */}
+        <div className={cn('flex shrink-0 min-w-0 flex-col gap-2', gx, gutter === 'page' && (trail ? 'pt-2' : 'pt-3'))} data-detail-page-header="" data-page-trail="">
           {trail && <Breadcrumbs items={breadcrumbs!} separator="›" maxItems={5} className="min-w-0" />}
           {/* Wraps like PageHeader's compact row (since 2.515.7): when the
               header's 8rem basis and the actions do not fit, the actions take
               their own row under it instead of squeezing the title away. */}
           <div className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2" data-detail-page-row="">
-            <DetailHeader title={title} as={titleAs} className="min-w-0 flex-1 basis-32"
+            <DetailHeader title={title} as={titleAs} titleSize="page" className="min-w-0 flex-1 basis-32"
               {...(badge != null ? { badge } : {})} {...(description != null ? { description } : {})} {...(meta != null ? { meta } : {})} />
             {actions != null && <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2" data-detail-page-actions="">{actions}</div>}
           </div>
         </div>
         {hasTabs ? (
           <>
-            <div className={cn('shrink-0 min-w-0 border-b border-border', gx)}>
+            <div className={cn('shrink-0 min-w-0 border-b border-border', gx)} data-detail-page-tabs={tabsSize}>
               <Tabs
                 items={tabs!.map(({ id, label, badge: b, icon, disabled, testId: tid, 'data-testid': dtid }) => ({
                   id, label, ...(b != null ? { badge: b } : {}), ...(icon != null ? { icon } : {}), ...(disabled ? { disabled } : {}),
@@ -135,7 +143,7 @@ export function DetailPage({
                 onValueChange={select}
                 idPrefix={idPrefix}
                 variant="underline"
-                size="sm"
+                size={tabsSize}
                 badgeStyle="plain"
                 aria-label={tabsLabel}
                 {...(tabsOverflow === 'menu' ? { overflowBelow: 360 } : {})}

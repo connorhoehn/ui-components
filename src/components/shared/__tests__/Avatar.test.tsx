@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Avatar, AVATAR_PALETTE, nameToInitials, nameToColor } from '../Avatar';
+import { Avatar, AvatarGroup, AVATAR_PALETTE, nameToInitials, nameToColor } from '../Avatar';
 
 describe('Avatar', () => {
   it('renders initials derived from the name when no src is provided', () => {
@@ -114,7 +114,7 @@ describe('Avatar — glyph and icon', () => {
 
   it('sizes a single glyph larger than two initials would be', () => {
     const { rerender } = render(<Avatar name="general" size={40} />);
-    expect(screen.getByTitle('general')).toHaveStyle({ fontSize: '15.2px' });
+    expect(screen.getByTitle('general')).toHaveStyle({ fontSize: '14px' });
     rerender(<Avatar name="general" size={40} glyph="#" />);
     expect(screen.getByTitle('general')).toHaveStyle({ fontSize: '20px' });
   });
@@ -165,10 +165,17 @@ describe('Avatar foreground and title opt-out', () => {
     expect(container.firstElementChild).not.toHaveAttribute('title');
   });
 
-  it('keeps initials within 9-16px whatever the circle size', () => {
+  it('snaps initials to the house type scale by size step (2.515.12; was size × 0.38)', () => {
+    const table: Array<[number, string]> = [[16, '11px'], [18, '11px'], [20, '11px'], [24, '12px'], [28, '12px'], [32, '12px'], [36, '14px'], [40, '14px'], [48, '16px'], [64, '16px']];
     const { rerender } = render(<Avatar name="Vera Green" size={48} />);
-    expect(screen.getByTitle('Vera Green')).toHaveStyle({ fontSize: '16px' });
-    rerender(<Avatar name="Vera Green" size={18} />);
-    expect(screen.getByTitle('Vera Green')).toHaveStyle({ fontSize: '9px' });
+    for (const [size, px] of table) {
+      rerender(<Avatar name="Vera Green" size={size} />);
+      expect(screen.getByTitle('Vera Green')).toHaveStyle({ fontSize: px });
+    }
+  });
+
+  it('AvatarGroup overflow count uses the same scale', () => {
+    render(<AvatarGroup names={['A B', 'C D', 'E F']} maxVisible={1} size={32} />);
+    expect(screen.getByTitle('+2 more')).toHaveStyle({ fontSize: '12px' });
   });
 });

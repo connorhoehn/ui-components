@@ -68,8 +68,9 @@ describe('MarkdownView', () => {
     expect(screen.getByText('Body').className).toContain('text-sm');
     unmount();
     render(<MarkdownView markdown={md} scale="lg" />);
-    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-2xl');
-    expect(screen.getByRole('heading', { level: 2 }).className).toContain('text-xl');
-    expect(screen.getByText('Body').className).toContain('text-[15px]');
+    // On the type scale since 2.515.12 (was 24 / 20 / 15px).
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-xl');
+    expect(screen.getByRole('heading', { level: 2 }).className).toContain('text-base');
+    expect(screen.getByText('Body').className).toContain('text-base');
   });
 });

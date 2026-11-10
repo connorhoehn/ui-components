@@ -45,3 +45,16 @@ describe('StatusPill stays on one line', () => {
     expect(pill).toHaveTextContent('Completed');
   });
 });
+
+describe('StatusPill tag type scale (2.515.12)', () => {
+  it('tag and label at md are 12px (were 13px); sm stays 11px', () => {
+    for (const variant of ['tag', 'label'] as const) {
+      const { rerender, unmount } = render(<StatusPill state="info" variant={variant} size="md" label="Draft" data-testid="p" />);
+      expect(screen.getByTestId('p')).toHaveClass('text-[12px]');
+      expect(screen.getByTestId('p').className).not.toContain('text-[13px]');
+      rerender(<StatusPill state="info" variant={variant} size="sm" label="Draft" data-testid="p" />);
+      expect(screen.getByTestId('p')).toHaveClass('text-[11px]');
+      unmount();
+    }
+  });
+});

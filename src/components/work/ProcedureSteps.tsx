@@ -33,7 +33,7 @@ export interface ProcedureStepsProps {
   steps: ProcedureStep[];
   /** Show step numbers. Default `true`. */
   numbered?: boolean;
-  /** `sm` 13px text, 20px markers (an inspector); `md` (default) 14px, 24px markers (a record body). */
+  /** `sm` 12px titles, 20px markers (an inspector); `md` (default) 14px titles, 24px markers (a record body). Bodies and notes are 12px at both. */
   size?: 'sm' | 'md';
   onSelectStep?: (id: string) => void;
   /** Shown when `steps` is empty. Default "No steps recorded". */
@@ -88,8 +88,10 @@ export function ProcedureSteps({
   'aria-label': ariaLabel,
   'data-testid': testId = 'procedure-steps',
 }: ProcedureStepsProps) {
-  const text = size === 'sm' ? 'text-[13px]' : 'text-[14px]';
-  const meta = size === 'sm' ? 'text-[12px]' : 'text-[13px]';
+  // House type scale (2.515.12): sm titles 12px (was 13), md 14px; bodies,
+  // notes and the empty line 12px at both sizes (md was 13).
+  const text = size === 'sm' ? 'text-[12px]' : 'text-[14px]';
+  const meta = 'text-[12px]';
 
   if (steps.length === 0) {
     return <p className={cn('m-0 text-text-tertiary', meta, className)} data-testid={`${testId}-empty`}>{emptyLabel}</p>;

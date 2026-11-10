@@ -299,7 +299,12 @@ export function Tabs({
             )}
             {item.badge !== undefined && item.badge !== null && (
               <span
-                className={badgeStyle === 'plain' ? 'ml-2.5 inline-flex items-center text-[14px] font-medium tabular-nums text-[var(--color-text-tertiary)]' : cn(
+                data-tab-badge={badgeStyle}
+                // The badge's line box matches the label's (16px at sm, 20px at
+                // md), so a tab with a count sits on its siblings' baseline
+                // (since 2.515.12: a 14px plain count kept its own 18.67px line
+                // in a 12px tab and dropped that tab's label 1.33px).
+                className={badgeStyle === 'plain' ? cn('ml-2.5 inline-flex items-center text-[14px] font-medium tabular-nums text-[var(--color-text-tertiary)]', size === 'sm' ? 'leading-4' : 'leading-5') : cn(
                   'ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-xs leading-4 font-semibold',
                   active && variant === 'pill'
                     ? 'bg-white/20 text-white'

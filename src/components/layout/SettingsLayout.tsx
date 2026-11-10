@@ -27,6 +27,12 @@ export interface SettingsSection {
 export interface SettingsLayoutProps {
   /** Page title shown above the rail. */
   title: ReactNode;
+  /**
+   * The title's element (since 2.515.12). Default `div` (unchanged). `SettingsPage`
+   * passes `h1`, so the page has its heading like the other page templates. The
+   * size (14px semibold) is the same either way.
+   */
+  titleAs?: 'h1' | 'h2' | 'h3' | 'div';
   /** Optional secondary line under the title. */
   subtitle?: ReactNode;
   /** Section list. The first section is selected by default. */
@@ -73,6 +79,7 @@ export interface SettingsLayoutProps {
 
 export function SettingsLayout({
   title,
+  titleAs: TitleTag = 'div',
   subtitle,
   sections,
   activeSectionId,
@@ -126,7 +133,7 @@ export function SettingsLayout({
         {narrow && (
           <div className="flex shrink-0 min-w-0 flex-col border-b border-[var(--color-border)] @min-[40rem]:hidden" data-settings-narrow-header="">
             <div className="px-4 pt-3">
-              <div className="text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight">{title}</div>
+              <TitleTag className="m-0 text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight" data-settings-title="">{title}</TitleTag>
               {subtitle != null && <div className="mt-0.5 text-[11px] text-[var(--color-text-secondary)] leading-snug">{subtitle}</div>}
             </div>
             <nav
@@ -173,9 +180,9 @@ export function SettingsLayout({
           style={{ width: railWidth }}
         >
           <div className="px-3 pb-3 border-b border-[var(--color-border)] mb-3">
-            <div className="text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight">
+            <TitleTag className="m-0 text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight" data-settings-title="">
               {title}
-            </div>
+            </TitleTag>
             {subtitle != null && (
               <div className="mt-0.5 text-[11px] text-[var(--color-text-secondary)] leading-snug">
                 {subtitle}

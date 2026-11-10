@@ -21,7 +21,7 @@
 import { type ElementType, type HTMLAttributes, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 
-/** Spacing scale. Matches Tailwind's 4px base: xs=6, sm=8, md=12, lg=16, xl=24. */
+/** Spacing scale on the 4px base: xs=4 (6 before 2.515.12), sm=8, md=12, lg=16, xl=24. */
 export type StackGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type StackAlign = 'start' | 'center' | 'end' | 'baseline' | 'stretch';
 export type StackJustify = 'start' | 'center' | 'end' | 'between';
@@ -66,7 +66,7 @@ export interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'
 // template literal (`gap-${n}`) produces no rule at all — the classic v4 trap.
 const GAP: Record<StackGap, string> = {
   none: 'gap-0',
-  xs: 'gap-1.5',
+  xs: 'gap-1', // 4px since 2.515.12 (was gap-1.5, 6px, off the 4px scale)
   sm: 'gap-2',
   md: 'gap-3',
   lg: 'gap-4',

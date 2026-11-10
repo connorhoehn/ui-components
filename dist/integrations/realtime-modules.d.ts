@@ -5390,13 +5390,15 @@ export declare interface WrappedNotificationCenterProps extends Omit<Notificatio
     onItemClick?: (item: NotificationItem, entry: RMNotificationEntry | undefined) => void;
 }
 
-export declare function WrappedPipelineRun({ status, title, subtitle, facts, stepTimes, steps: givenSteps, progressTitle, progressDescription, progress, remainingMs, onRefresh, onCancel, headerAction, onOpenRun, picture, log, compact, subject, className, 'data-testid': testId, }: WrappedPipelineRunProps): JSX.Element;
+export declare function WrappedPipelineRun({ status, title, titleAs, subtitle, facts, stepTimes, steps: givenSteps, progressTitle, progressDescription, progress, remainingMs, onRefresh, onCancel, headerAction, onOpenRun, picture, log, compact, subject, className, 'data-testid': testId, }: WrappedPipelineRunProps): JSX.Element;
 
 export declare interface WrappedPipelineRunProps {
     /** `usePipelineRunStatus(runs, opts)(runId)`. Undefined while the first snapshot loads. */
     status: RMPipelineRunStatus | undefined;
     /** The stage: "Mesh generation (Meshy)". */
     title: string;
+    /** The title's heading element (since 2.515.12). Default `h3`; `h2` for a card directly under the page title. */
+    titleAs?: 'h2' | 'h3' | 'h4';
     /** A quieter line under the title ("Toby · v1.2"). */
     subtitle?: string;
     /** The facts row: Job ID, Model, Preset, Topology, Created. */

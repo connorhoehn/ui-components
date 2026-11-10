@@ -109,8 +109,16 @@ export interface SubjectFrameDisclosure {
 }
 
 export interface SubjectFrameProps {
-  /** "Toby", "Asset · Generated sheet". */
+  /** "Toby", "Asset · Generated sheet". Always given: it names the frame (`aria-labelledby`), even when `titleHidden`. */
   title: ReactNode;
+  /**
+   * The host already names the record (a `SidePane` title over the frame):
+   * the title is kept for screen readers only (an `sr-only` h2 that still names
+   * the section) and the visible title row is not drawn, unless `subtitle`,
+   * `badges` or `headerActions` are given, which then draw on their own.
+   * Since 2.515.12. Default false.
+   */
+  titleHidden?: boolean;
   /** "Character · Lead", "Episode 01". */
   subtitle?: ReactNode;
   /** Chips beside the title (state, version). */
@@ -125,9 +133,10 @@ export interface SubjectFrameProps {
     label?: string;
     /**
      * The tab row in a narrow frame (since 2.515.10; `PaneHeader overflow`).
-     * `menu` (default): under 360px the row keeps the first and current tab
-     * and folds the rest into `More ▾`. `scroll`: one row that scrolls
-     * sideways, every view in it (a 380px inspector, a phone column).
+     * `scroll` (default since 2.515.12; was `menu`): one row that scrolls
+     * sideways, every view in it and the current tab kept in view (a 380px
+     * inspector, a phone column). `menu`: under 360px the row keeps the first
+     * and current tab and folds the rest into `More ▾`.
      */
     overflow?: 'scroll' | 'menu';
   };
@@ -150,6 +159,7 @@ export interface SubjectFrameProps {
 
 export function SubjectFrame({
   title,
+  titleHidden = false,
   subtitle,
   badges,
   headerActions,
@@ -179,19 +189,22 @@ export function SubjectFrame({
       data-testid={testId}
       className={cn('flex min-w-0 flex-col', className)}
     >
+      {titleHidden && <h2 id={titleId} className="sr-only" data-subject-title-hidden="">{title}</h2>}
+      {(!titleHidden || subtitle != null || badges != null || headerActions != null) && (
       <div data-ui-part="" data-subject-part="title" className="flex min-w-0 items-start justify-between gap-3 px-4 pb-2 pt-3">
         <Stack gap="none" className="min-w-0">
           <Inline gap="sm" align="center" className="min-w-0">
-            <h2 id={titleId} className="m-0 truncate text-base font-semibold text-text-primary">{title}</h2>
+            {!titleHidden && <h2 id={titleId} className="m-0 truncate text-base font-semibold text-text-primary">{title}</h2>}
             {badges}
           </Inline>
           {subtitle != null && <Text as="span" size="xs" tone="secondary" className="truncate">{subtitle}</Text>}
         </Stack>
         {headerActions != null && <Inline gap="xs" align="center" wrap={false} className="shrink-0">{headerActions}</Inline>}
       </div>
+      )}
       {tabs && (
         <div data-ui-part="" data-subject-part="tabs">
-          <PaneHeader tabs={tabs.items} value={tabs.value} onValueChange={tabs.onValueChange} label={tabs.label ?? 'Record sections'} {...(tabs.overflow ? { overflow: tabs.overflow } : {})} data-testid={`${testId}-tabs`} />
+          <PaneHeader tabs={tabs.items} value={tabs.value} onValueChange={tabs.onValueChange} label={tabs.label ?? 'Record sections'} overflow={tabs.overflow ?? 'scroll'} data-testid={`${testId}-tabs`} />
         </div>
       )}
       {children != null ? (

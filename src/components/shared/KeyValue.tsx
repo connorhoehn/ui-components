@@ -11,6 +11,9 @@
 //   Input    13 notes      Input             Input      Output
 //   Output   4 patterns    13 notes          13 notes   4 patterns
 //
+//   inline (2.515.12): every pair on one line, pairs side by side
+//   Input 13 notes   Output 4 patterns   Duration 2 min
+//
 // Semantics are a real description list (`<dl>` / `<dt>` / `<dd>`), so a
 // screen reader announces each value with its label.
 
@@ -39,7 +42,7 @@ export interface KeyValueItem {
   action?: ReactNode;
 }
 
-export type KeyValueLayout = 'stack' | 'row' | 'grid';
+export type KeyValueLayout = 'stack' | 'row' | 'grid' | 'inline';
 
 export interface KeyValueProps {
   items: KeyValueItem[];
@@ -47,6 +50,9 @@ export interface KeyValueProps {
    * `row` (default): label in a fixed column left of the value.
    * `stack`: label above value, one fact per line.
    * `grid`: stacked pairs in two columns.
+   * `inline` (since 2.515.12): one row of pairs, each label beside its value
+   * (12px label, 14px value, 4px apart, 16px between pairs), wrapping onto a
+   * further line when the row is full; a header's facts line.
    */
   layout?: KeyValueLayout;
   /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
@@ -76,12 +82,13 @@ export function KeyValue({
 }: KeyValueProps) {
   if (items.length === 0) return null;
   const row = layout === 'row';
+  const inline = layout === 'inline';
   const ruled = row && divided;
   return (
     <dl
       className={cn(
         'm-0 min-w-0', responsive && '@container/key-value',
-        layout === 'grid' ? 'grid grid-cols-2 gap-x-6 gap-y-3' : ruled ? 'flex flex-col border-t border-border' : row ? 'flex flex-col gap-1.5' : 'flex flex-col gap-3',
+        layout === 'grid' ? 'grid grid-cols-2 gap-x-6 gap-y-3' : inline ? 'flex flex-wrap items-baseline gap-x-4 gap-y-1' : ruled ? 'flex flex-col border-t border-border' : row ? 'flex flex-col gap-2' : 'flex flex-col gap-3',
         className,
       )}
       data-layout={layout}
@@ -94,7 +101,7 @@ export function KeyValue({
           key={`${item.label}-${i}`}
           className={cn(
             'min-w-0', responsive && ruled && 'flex-wrap @lg/key-value:flex-nowrap',
-            ruled ? 'flex min-h-[38px] items-center gap-3 border-b border-border px-2.5 py-1.5' : row ? 'flex items-baseline gap-3' : 'flex flex-col gap-0.5',
+            ruled ? 'flex min-h-[38px] items-center gap-3 border-b border-border px-3 py-1.5' : row ? 'flex items-baseline gap-3' : inline ? 'flex items-baseline gap-1' : 'flex flex-col gap-1',
           )}
           data-testid={`${testId}-item`}
           data-key-value-row=""
@@ -103,7 +110,7 @@ export function KeyValue({
             className={cn(
               'm-0', responsive && ruled && 'basis-full @lg/key-value:basis-auto',
               ruled ? cn('shrink-0 text-sm text-text-primary', labelWidth) : 'text-text-secondary',
-              !ruled && (row ? cn('shrink-0 text-xs', labelWidth) : 'text-[12px]'),
+              !ruled && (row ? cn('shrink-0 text-xs', labelWidth) : inline ? 'shrink-0 text-xs' : 'text-[12px]'),
             )}
           >
             {item.label}

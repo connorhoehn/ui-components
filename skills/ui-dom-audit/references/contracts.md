@@ -1008,3 +1008,13 @@ empty state, a full collection with count and pager, a search holding a
 query over "no matches", an empty side panel beside real items; defects — a
 marked count, a hand-rolled "0 of 0 artworks" line, a pager, and an empty
 full-width search band over the empty state.
+
+## Library internals on the house scales (2.515.12)
+
+Three resting rules bind library markers to the house type scale (11 / 12 / 14 / 16 / 20) and the 4px spacing steps, so a consumer's audit no longer has to skip them by name:
+
+- `library.type-scale` (`text`): every visible text node inside `[data-detail-header-stack]`, `[data-detail-page-tabs]`, `[data-pipeline-run]`, `[data-ui-procedure]`, `[data-testid="presence-panel"]`, `[data-titled-frame-title="label"]` and `[data-settings-title]` is 11, 12, 14, 16 or 20px.
+- `detail.header-stack-gap` (`style`): the `DetailHeader` stack is 4px apart.
+- `rail.header-inset` (`style`): a `WorkspaceRail` header (`data-rail-inset`) insets 16px (tall headings), 12px (compact strip) or 0 (collapsed).
+
+Self-test: the on-scale fixture passes; a 13px title, a 10px pill, a 12.8px presence header, a 6px stack and a 20px rail inset each fail.

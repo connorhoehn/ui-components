@@ -58,7 +58,19 @@ describe('ProcedureSteps', () => {
     render(<ProcedureSteps steps={PLAIN} size="sm" />);
     const li = screen.getByTestId('procedure-steps-step-s1');
     expect(li.querySelector('[aria-hidden="true"]')!.className).toContain('h-5');
-    expect(li.innerHTML).toContain('text-[13px]');
+    expect(li.innerHTML).toContain('text-[12px]');
+    expect(li.innerHTML).not.toContain('text-[13px]');
+  });
+
+  it('type is on the house scale: sm titles 12px, md titles 14px, notes and bodies 12px (2.515.12; were 13px)', () => {
+    const steps = [{ id: 'n', title: 'Title', body: 'Body', note: 'Note' }];
+    const { rerender } = render(<ProcedureSteps steps={steps} size="sm" />);
+    expect(screen.getByText('Title').closest('div.flex-col')!.className).toContain('text-[12px]');
+    rerender(<ProcedureSteps steps={steps} />);
+    expect(screen.getByText('Title').closest('div.flex-col')!.className).toContain('text-[14px]');
+    expect(screen.getByText('Body').className).toContain('text-[12px]');
+    expect(screen.getByTestId('procedure-steps-note-n').className).toContain('text-[12px]');
+    expect(screen.getByTestId('procedure-steps-step-n').innerHTML).not.toContain('text-[13px]');
   });
 
   it('says so when there are no steps', () => {

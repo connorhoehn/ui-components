@@ -4,7 +4,7 @@
 // highlighting and copy button as everywhere else in the library; wide tables
 // scroll inside their own container rather than the page.
 
-import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import { useMemo, type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '../../lib/cn';
@@ -20,9 +20,20 @@ export interface MarkdownViewProps {
    * 14px body, h1 20px. `sm` steps headings down to 17/15/14/13px over a 13px
    * body, for prose inside a card (an assistant answer) whose `#` must not
    * compete with the page title. `lg` is a document read on its own page:
-   * 15px body, h1 24px, h2 20px.
+   * 16px body, h1 20px, h2 16px, h3 16px, h4 14px, inline code 14px (since
+   * 2.515.12, on the 11/12/14/16/20 type scale; it was 15px body, h1 24px,
+   * h2 20px, h3 17px, h4 15px).
    */
   scale?: MarkdownViewScale;
+  /**
+   * Shift every heading's level down by this many (since 2.515.12), so a
+   * document embedded under a page's own h1 keeps one outline: with `1`, `#`
+   * renders an `<h2>`, `##` an `<h3>`, capped at `<h6>`. The look follows the
+   * source level (a `#` still draws at the scale's h1 size); only the element
+   * changes. Each shifted heading carries `data-md-level` (its source level).
+   * Default `0`.
+   */
+  headingOffset?: number;
   className?: string;
   'data-testid'?: string;
 }
@@ -72,17 +83,24 @@ const SCALES: Record<MarkdownViewScale, ScaleClasses> = {
     h4: '',
     inlineCode: 'text-[12px]',
   },
+  // On the 11/12/14/16/20 type scale and 4px spacing (2.515.12).
   lg: {
-    body: 'text-[15px]',
-    h1: 'mb-3 mt-7 text-2xl font-semibold',
-    h2: 'mb-2 mt-6 text-xl font-semibold',
-    h3: 'mb-2 mt-5 text-[17px] font-semibold',
-    h4: 'mb-1.5 mt-4 text-[15px] font-semibold',
+    body: 'text-base',
+    h1: 'mb-3 mt-8 text-xl font-semibold',
+    h2: 'mb-2 mt-6 text-base font-semibold',
+    h3: 'mb-2 mt-5 text-base font-semibold',
+    h4: 'mb-2 mt-4 text-sm font-semibold',
     inlineCode: 'text-[14px]',
   },
 };
 
-function buildComponents(scale: MarkdownViewScale): Components {
+type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+
+function headingTag(level: number, offset: number): HeadingTag {
+  return `h${Math.min(6, Math.max(1, level + offset))}` as HeadingTag;
+}
+
+function buildComponents(scale: MarkdownViewScale, offset = 0): Components {
   const t = SCALES[scale];
   const components: Components = {
   table({ children }) {
@@ -105,15 +123,7 @@ function buildComponents(scale: MarkdownViewScale): Components {
       </a>
     );
   },
-  h1({ children }) {
-    return <h1 className={cn(t.h1, 'text-text-primary first:mt-0')}>{children}</h1>;
-  },
-  h2({ children }) {
-    return <h2 className={cn(t.h2, 'text-text-primary first:mt-0')}>{children}</h2>;
-  },
-  h3({ children }) {
-    return <h3 className={cn(t.h3, 'text-text-primary first:mt-0')}>{children}</h3>;
-  },
+
   p({ children }) {
     return <p className={cn('mb-3 leading-relaxed text-text-secondary last:mb-0', t.body)}>{children}</p>;
   },
@@ -146,9 +156,17 @@ function buildComponents(scale: MarkdownViewScale): Components {
     return <code className={className}>{children}</code>;
   },
   };
-  if (t.h4) {
-    components.h4 = ({ children }) => <h4 className={cn(t.h4, 'text-text-primary first:mt-0')}>{children}</h4>;
-  }
+  const looks: Record<1 | 2 | 3 | 4, string> = { 1: t.h1, 2: t.h2, 3: t.h3, 4: t.h4 };
+  ([1, 2, 3, 4, 5, 6] as const).forEach((level) => {
+    const look = level <= 4 ? looks[level as 1 | 2 | 3 | 4] : '';
+    // Unstyled levels (h4 at md, h5, h6) keep react-markdown's plain element
+    // unless an offset has to move them.
+    if (!look && offset === 0) return;
+    const Tag = headingTag(level, offset);
+    components[`h${level}` as HeadingTag] = ({ children }) => (
+      <Tag className={look ? cn(look, 'text-text-primary first:mt-0') : undefined} {...(offset ? { 'data-md-level': level } : {})}>{children}</Tag>
+    );
+  });
   return components;
 }
 
@@ -170,10 +188,13 @@ function CodeBlockFromPre({ children, className }: { children?: ReactNode; class
   return <CodeBlock code={code} language={language} className="mb-3" copyButton />;
 }
 
-export function MarkdownView({ markdown, scale = 'md', className, 'data-testid': testId = 'markdown-view' }: MarkdownViewProps) {
+export function MarkdownView({ markdown, scale = 'md', headingOffset = 0, className, 'data-testid': testId = 'markdown-view' }: MarkdownViewProps) {
+  const offset = Number.isFinite(headingOffset) ? Math.max(0, Math.min(5, Math.trunc(headingOffset))) : 0;
+  const known = SCALES[scale] ? scale : 'md';
+  const components = useMemo(() => (offset ? buildComponents(known, offset) : COMPONENTS[known]), [known, offset]);
   return (
-    <div className={cn('min-w-0', className)} data-scale={scale} data-testid={testId}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPONENTS[scale] ?? COMPONENTS.md}>
+    <div className={cn('min-w-0', className)} data-scale={scale} data-heading-offset={offset || undefined} data-testid={testId}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
         {markdown}
       </ReactMarkdown>
     </div>

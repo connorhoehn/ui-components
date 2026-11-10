@@ -9,6 +9,11 @@ import { PAGE_GUTTER_X, type PageGutter } from './pageTemplate';
 export interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
   /** The trail above the settings rail. */
   breadcrumbs?: BreadcrumbItem[];
+  /**
+   * The title's element. Default `h1` (since 2.515.12; it was a `div`, so the
+   * page had no heading): the page title, as the other five templates draw it.
+   */
+  titleAs?: SettingsLayoutProps['titleAs'];
   /** Default `page` — the trail at `--ui-page-gutter`. The rail stays flush. */
   gutter?: PageGutter;
   /** Set by `PageFromSpec`: the spec template this page was built from. */
@@ -27,7 +32,7 @@ export interface SettingsPageProps extends Omit<SettingsLayoutProps, 'style'> {
  *     { id: 'members', label: 'Members', content: <MembersForm /> },
  *   ]} />
  */
-export function SettingsPage({ breadcrumbs, gutter = 'page', className, 'data-testid': testId = 'settings-page', 'data-page-spec': spec, ...layout }: SettingsPageProps) {
+export function SettingsPage({ breadcrumbs, titleAs = 'h1', gutter = 'page', className, 'data-testid': testId = 'settings-page', 'data-page-spec': spec, ...layout }: SettingsPageProps) {
   const trail = !!breadcrumbs && breadcrumbs.length > 0;
   return (
     <div className={cn('flex h-full min-h-0 min-w-0 flex-col', className)} data-page-template="settings" data-page-column="" data-page-spec={spec} data-testid={testId}>
@@ -36,7 +41,7 @@ export function SettingsPage({ breadcrumbs, gutter = 'page', className, 'data-te
           <Breadcrumbs items={breadcrumbs!} separator="›" maxItems={5} className="min-w-0" />
         </div>
       )}
-      <SettingsLayout {...layout} className="min-h-0 flex-1" data-testid={`${testId}-layout`} />
+      <SettingsLayout {...layout} titleAs={titleAs} className="min-h-0 flex-1" data-testid={`${testId}-layout`} />
     </div>
   );
 }
