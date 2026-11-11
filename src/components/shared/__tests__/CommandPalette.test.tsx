@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { useMemo, useState } from 'react';
 import {
   CommandPalette,
+  CommandPaletteHint,
   CommandPaletteProvider,
   matchHotkey,
   useCommandPalette,
@@ -612,5 +613,32 @@ describe('CommandPalette', () => {
     const kbd = item.querySelector('kbd')!;
     expect(kbd.className).toContain('text-[11px]');
     expect(kbd.className).not.toContain('text-[10px]');
+  });
+});
+
+describe('CommandPaletteHint icon variant (narrow batch)', () => {
+  it('is a 28px magnifier with no words, named for the palette, and opens it', () => {
+    let controller: ReturnType<typeof useCommandPalette> | null = null;
+    function Spy() { controller = useCommandPalette(); return null; }
+    render(
+      <CommandPaletteProvider commands={[]}>
+        <CommandPaletteHint variant="icon" />
+        <Spy />
+      </CommandPaletteProvider>,
+    );
+    const hint = screen.getByTestId('command-palette-hint');
+    expect(hint).toHaveAttribute('data-variant', 'icon');
+    expect(hint).toHaveClass('h-7', 'w-7');
+    expect(hint.textContent).toBe('');
+    expect(hint).toHaveAccessibleName('Open command palette');
+    expect(hint).toHaveAttribute('title', 'Search (⌘K)');
+    expect(hint.querySelector('svg')).not.toBeNull();
+    act(() => { fireEvent.click(hint); });
+    expect(controller!.isOpen).toBe(true);
+  });
+
+  it('the chip stays the default', () => {
+    render(<CommandPaletteProvider commands={[]}><CommandPaletteHint /></CommandPaletteProvider>);
+    expect(screen.getByTestId('command-palette-hint')).toHaveTextContent('⌘KSearch');
   });
 });

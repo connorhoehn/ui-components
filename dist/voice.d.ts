@@ -11,6 +11,9 @@ export declare const VOICE_PHASE_LABEL: Record<VoicePhase, string>;
 
 export declare const VOICE_PHASES: readonly VoicePhase[];
 
+/** The window width under which `cardPresentation="auto"` opens a sheet. */
+export declare const VOICE_SHEET_QUERY = "(max-width: 39.99rem)";
+
 export declare function VoiceActivityRing({ level, outputLevel, phase, size, label, className, 'data-testid': testId, }: VoiceActivityRingProps): JSX.Element;
 
 export declare interface VoiceActivityRingProps {
@@ -64,13 +67,14 @@ export declare interface VoiceChoiceCardProps {
  * With `pending.fields` it also shows an approve / reject toggle and a one-line note, and
  * Confirm calls back with `{ decision, note }` (note trimmed, capped at 200 characters).
  * `noteDefault` opens the note pre-filled and editable (the callback gets the edited text), with `noteLabel` and a `noteMaxLength` count;
- * `confirmLabel` / `cancelLabel` rename the buttons, `hideDecisionToggle` drops the toggle, and `clickOnly` hints "Check it, then click <confirmLabel>" and sets `data-click-only`.
+ * `confirmLabel` / `cancelLabel` rename the buttons (`confirmLabel` may be a function of the toggle's choice, e.g. Approve / Reject), `hideDecisionToggle` drops the toggle, and `clickOnly` hints "Check it, then click <confirmLabel>; say cancel to drop it." and sets `data-click-only`.
+ * A long title wraps to two lines, then ends with an ellipsis (its full text is the `title` attribute).
  * Remounts per request (`pending.requestId`, else `title`), so the note and toggle reset.
  */
 export declare function VoiceConfirmCard(props: VoiceConfirmCardProps): JSX.Element;
 
 /** The card options a host may set on the card itself as well as on `pending`; the card prop wins. */
-export declare type VoiceConfirmCardOptions = Pick<VoicePending, 'noteDefault' | 'noteLabel' | 'noteMaxLength' | 'confirmLabel' | 'cancelLabel' | 'hideDecisionToggle' | 'clickOnly'>;
+export declare type VoiceConfirmCardOptions = Pick<VoicePending, 'noteDefault' | 'noteLabel' | 'noteMaxLength' | 'confirmLabel' | 'cancelLabel' | 'hideDecisionToggle' | 'clickOnly' | 'submitOnEnter'>;
 
 export declare interface VoiceConfirmCardProps extends VoiceConfirmCardOptions {
     pending: VoicePending;
@@ -78,7 +82,12 @@ export declare interface VoiceConfirmCardProps extends VoiceConfirmCardOptions {
     handleEscape?: boolean;
     /** A muted one-line note under Confirm / Cancel; overrides `pending.hint`. Nothing renders without one. */
     hint?: string;
-    /** Focus the card when it mounts. Default true. */
+    /**
+     * Focus the card container when it mounts. Default true. Even then it never
+     * takes focus from an input, textarea or contenteditable the person is in
+     * (the live region announces the card instead), and it never focuses
+     * Confirm: Enter confirms only while Confirm itself has focus.
+     */
     autoFocus?: boolean;
     className?: string;
     'data-testid'?: string;
@@ -101,7 +110,16 @@ export declare interface VoiceConfirmResult {
 
 export declare type VoiceDecision = 'approve' | 'reject';
 
-export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, pendingChoice, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, size, startLabel, transcriptOpen, onToggleTranscript, onOpenLog, turns, keepTranscript, onKeepTranscriptChange, pulse, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
+export declare function VoiceDock({ phase, level, outputLevel, elapsedSeconds, budget, pending, pendingChoice, lastLine, onStart, onStop, onMute, muted, unavailableReason, compact, size, startLabel, transcriptOpen, onToggleTranscript, onOpenLog, turns, keepTranscript, onKeepTranscriptChange, pulse, cardPlacement: cardPlacementProp, cardPresentation, density, className, ref, 'data-testid': testId, }: VoiceDockProps): JSX.Element;
+
+/** Where the dock's cards open against its row. Since 2.517.0. */
+export declare type VoiceDockCardPlacement = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
+
+/** How the dock's cards open. Since 2.518.0. */
+export declare type VoiceDockCardPresentation = 'auto' | 'popover' | 'sheet';
+
+/** How much of the dock's row shows. Since 2.519.0. */
+export declare type VoiceDockDensity = 'default' | 'compact';
 
 export declare interface VoiceDockProps {
     phase: VoicePhase;
@@ -159,6 +177,38 @@ export declare interface VoiceDockProps {
      * announces; this is the visual cue. Since 2.510.6.
      */
     pulse?: boolean;
+    /**
+     * Where the confirmation and choice cards open against the dock's row
+     * (since 2.517.0). Default: `top-start` at the `footer` size (above the
+     * footer, from the dock's left edge), `bottom-start` at `panel` (below the
+     * row, flipping up when there is no room). `top-end` lines the card's right
+     * edge up with the row's. Either way the card is at most 28rem wide and
+     * keeps clear of the page's keep-out surfaces (`[data-uic-keepout]`, which
+     * the pinned composer dock and the question panel above it carry): it
+     * moves beside or above the panel it answers instead of covering it.
+     */
+    cardPlacement?: VoiceDockCardPlacement;
+    /**
+     * How the confirmation and choice cards open (narrow batch, 2.518.0).
+     * `auto` (default): a bottom sheet while the window is under 40rem wide
+     * (a phone), else the popover `cardPlacement` describes. `sheet`: always a
+     * bottom sheet — the window's width less an 8px gutter, its bottom edge just
+     * above the dock's footer (the nearest `<footer>` or `[data-uic-footer]`
+     * ancestor, else the dock's row), at most 45% of the viewport high and
+     * scrolling inside; the page above stays readable and scrollable, and a
+     * press on it does not cancel the card (Cancel and Escape do). `popover`:
+     * never a sheet.
+     */
+    cardPresentation?: VoiceDockCardPresentation;
+    /**
+     * `default` (unchanged) or `compact` (since 2.519.0), for a phone-width
+     * footer: while no session runs the phase text is visually hidden (it stays
+     * the status live region) and the idle ring is dropped; the captions toggle
+     * and the history control always move into one "More voice controls"
+     * overflow menu. A live session and an open card still show their phase
+     * text. `data-density` on the root.
+     */
+    density?: VoiceDockDensity;
     className?: string;
     /** The dock's root element. */
     ref?: React.Ref<HTMLDivElement>;
@@ -196,18 +246,27 @@ export declare interface VoicePending {
     noteLabel?: string;
     /** The note's maximum length, shown as a visible "12/500" count. Default VOICE_NOTE_MAX, with no count. Since 2.516.0. */
     noteMaxLength?: number;
-    /** The primary button's text. Default "Confirm". Since 2.516.0. */
-    confirmLabel?: string;
+    /**
+     * The primary button's text. Default "Confirm". Since 2.516.0. Since 2.517.0 it may be
+     * a function of the approve / reject toggle's choice (`(d) => d === 'approve' ? 'Approve' : 'Reject'`),
+     * called again whenever the choice changes.
+     */
+    confirmLabel?: string | ((decision: VoiceDecision) => string);
     /** The secondary button's text. Default "Cancel". Since 2.516.0. */
     cancelLabel?: string;
     /** Hides the approve / reject toggle; the decision stays `fields.decision` (default `approve`). Since 2.516.0. */
     hideDecisionToggle?: boolean;
     /**
      * The action is confirmed by a click only (the voice never confirms it). The card
-     * shows "Check it, then click <confirmLabel>" as its hint unless one is given, and
+     * shows "Check it, then click <confirmLabel>; say cancel to drop it." as its hint unless one is given, and
      * carries `data-click-only` for hosts. Since 2.516.0.
      */
     clickOnly?: boolean;
+    /**
+     * Enter in the note field confirms. Default false: Enter there does
+     * nothing, and only a focused Confirm button confirms. Since 2.519.0.
+     */
+    submitOnEnter?: boolean;
     /** Called with `{ decision, note }` when the note field shows (`fields` or `noteDefault` set), and with no argument otherwise. */
     onConfirm: (result?: VoiceConfirmResult) => void;
     onCancel: () => void;

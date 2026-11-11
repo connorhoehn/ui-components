@@ -1,7 +1,8 @@
-import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
+import { n as e, t } from "./useWebSocket-D4PAHlj8.js";
 import { d as n, n as r, o as i } from "./Button-DQoeE5dN.js";
 import { r as a } from "./safeHref-CSAycLWi.js";
-import { i as o, n as s, r as c } from "./Text-Bs4sXKqJ.js";
+import { n as o, t as s } from "./Stack-CE1FjEn8.js";
+import { n as c } from "./Text-XdCzxWMv.js";
 import { t as l } from "./Card-D4k-Buoz.js";
 import { t as u } from "./IconButton-BgM9MvwA.js";
 import { _t as d, dt as f, m as p } from "./Icons-CqVFbuiZ.js";
@@ -12,18 +13,18 @@ import { t as v } from "./Banner-DPR4sIxI.js";
 import { t as y } from "./Modal-C88cabjQ.js";
 import { t as b } from "./Input-DiOEvL5h.js";
 import { t as x } from "./Select-CDxAVVnW.js";
-import { t as S } from "./InlinePopover-BQTS5egk.js";
+import { t as S } from "./InlinePopover-BJntntHW.js";
 import { t as C } from "./EmptyState-DqWgLbIq.js";
 import { n as w } from "./ThinkingDots-mwuPsKFX.js";
 import { t as T } from "./LoadingState-BQlqtSB5.js";
-import { t as ee } from "./DropdownMenu-DoCRgXx4.js";
-import { t as te } from "./SegmentedControl-DMudc23g.js";
-import { n as ne } from "./Tabs-CWZ22_QP.js";
+import { t as ee } from "./DropdownMenu-DsOGcoH4.js";
+import { t as te } from "./SegmentedControl-n6nEQjaK.js";
+import { n as ne } from "./Tabs-GZcuU5Qk.js";
 import { n as E } from "./Avatar-KvxS_RDw.js";
 import { t as D } from "./Textarea-Cf4WFXAs.js";
 import { t as O } from "./InlineAlert-Cpf1ooBU.js";
 import { t as k } from "./CardHeader-DDkwr0A5.js";
-import { t as A } from "./Breadcrumbs-DU2WIn6J.js";
+import { t as A } from "./Breadcrumbs-CO54b8pv.js";
 import { t as re } from "./PresenceAvatars-BAnIZpRB.js";
 import { o as ie, s as ae, t as oe } from "./VerdictChip-DJpOyrHG.js";
 import { t as j } from "./MetaLine-CXoGFWAF.js";
@@ -31,14 +32,14 @@ import { t as M } from "./Checkbox-DgSkOMOT.js";
 import { n as se } from "./FileKindMark-BcwT0tiz.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { A as P, k as ce } from "./renderers-D6AzUgCS.js";
-import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-IV6JBKv9.js";
+import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-Bm7n6kxl.js";
 import { t as Ze } from "./InlineEditableText-CKjRokmb.js";
 import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-Blmu8WT6.js";
 import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-DbxmNCal.js";
-import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-DMGli9q6.js";
-import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-B4NZr9mP.js";
-import { i as In } from "./ConversationInputs-1Kd--Fk4.js";
-import { r as Ln } from "./RichChatComposer-DLelWN8O.js";
+import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-DgTk9o0M.js";
+import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-SM3LMrpU.js";
+import { i as In } from "./ConversationInputs-CCs-hXjV.js";
+import { r as Ln } from "./RichChatComposer-DtSBcOQ-.js";
 import { forwardRef as Rn, useCallback as B, useEffect as V, useId as zn, useImperativeHandle as Bn, useMemo as H, useRef as U, useState as W } from "react";
 import { Fragment as G, jsx as K, jsxs as q } from "react/jsx-runtime";
 import * as Vn from "yjs";
@@ -2773,12 +2774,12 @@ function Ma({ count: e, children: t, onAcceptAll: o, onRejectAll: s, acceptLabel
 //#endregion
 //#region src/components/doc-editor/DocumentReviewPanel.tsx
 function Na({ request: e, onDecide: t, onWithdraw: n }) {
-	let [i, s] = W(""), [l, u] = W(!1), [d, f] = W(null), p = U(!1);
+	let [i, c] = W(""), [l, u] = W(!1), [d, f] = W(null), p = U(!1);
 	async function m(e) {
 		if (!p.current) {
 			p.current = !0, u(!0), f(null);
 			try {
-				await e(), s("");
+				await e(), c("");
 			} catch (e) {
 				f(e instanceof Error ? e.message : "The review could not be updated.");
 			} finally {
@@ -2793,7 +2794,7 @@ function Na({ request: e, onDecide: t, onWithdraw: n }) {
 		children: /* @__PURE__ */ q(o, {
 			gap: "sm",
 			children: [
-				/* @__PURE__ */ q(c, {
+				/* @__PURE__ */ q(s, {
 					gap: "sm",
 					wrap: !0,
 					children: [
@@ -2825,12 +2826,12 @@ function Na({ request: e, onDecide: t, onWithdraw: n }) {
 				}),
 				t && e.state === "pending" && /* @__PURE__ */ q(G, { children: [/* @__PURE__ */ K(D, {
 					value: i,
-					onChange: (e) => s(e.target.value),
+					onChange: (e) => c(e.target.value),
 					rows: 2,
 					disabled: l,
 					"aria-label": `Review comment for ${h}`,
 					placeholder: "Add a comment (optional)"
-				}), /* @__PURE__ */ q(c, {
+				}), /* @__PURE__ */ q(s, {
 					gap: "sm",
 					wrap: !0,
 					children: [/* @__PURE__ */ K(r, {
@@ -2858,7 +2859,7 @@ function Na({ request: e, onDecide: t, onWithdraw: n }) {
 		})
 	});
 }
-function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: s, onRequest: l, onDecide: u, onWithdraw: d }) {
+function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: c, onRequest: l, onDecide: u, onWithdraw: d }) {
 	let [f, p] = W(""), [m, g] = W(""), [_, v] = W(!0), [y, b] = W(!1), [S, C] = W(null), w = U(!1);
 	async function T() {
 		if (!(!l || !t.some((e) => e.id === f) || w.current)) {
@@ -2905,7 +2906,7 @@ function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 						disabled: y,
 						onChange: (e) => g(e.target.value)
 					}),
-					/* @__PURE__ */ q(c, {
+					/* @__PURE__ */ q(s, {
 						as: "label",
 						gap: "sm",
 						align: "center",
@@ -2935,7 +2936,7 @@ function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					size: "sm",
 					variant: "ghost",
 					disabled: i,
-					onClick: s,
+					onClick: c,
 					children: "Refresh reviews"
 				}),
 				empty: { title: i ? "Loading reviews…" : a ? "Reviews unavailable" : "No reviews requested" },
@@ -3276,15 +3277,15 @@ function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onC
 		ariaLabel: `Present ${e}`,
 		maxWidth: 1280,
 		cardClassName: "flex h-[min(90vh,960px)] flex-col p-4",
-		children: [/* @__PURE__ */ q(c, {
+		children: [/* @__PURE__ */ q(s, {
 			gap: "sm",
 			align: "center",
 			className: "justify-between",
-			children: [/* @__PURE__ */ K(s, {
+			children: [/* @__PURE__ */ K(c, {
 				size: "sm",
 				weight: "semibold",
 				children: "Presenting"
-			}), /* @__PURE__ */ q(c, {
+			}), /* @__PURE__ */ q(s, {
 				gap: "xs",
 				align: "center",
 				children: [h && /* @__PURE__ */ K(r, {
@@ -3419,7 +3420,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 		if (e.altKey || e.ctrlKey || e.metaKey || e.target.closest("input, textarea, select, [contenteditable=\"true\"]")) return;
 		let t = e.key === "ArrowRight" || e.key === "PageDown" ? L + 1 : e.key === "ArrowLeft" || e.key === "PageUp" ? L - 1 : e.key === "Home" ? 0 : e.key === "End" ? I.length - 1 : null;
 		t !== null && (e.preventDefault(), ue(t));
-	}, fe = E === "fit" ? Math.max(120, Math.min(1024, ie.width, ie.height * 16 / 9)) : 960 * Number(E) / 100, pe = /* @__PURE__ */ q(c, {
+	}, fe = E === "fit" ? Math.max(120, Math.min(1024, ie.width, ie.height * 16 / 9)) : 960 * Number(E) / 100, pe = /* @__PURE__ */ q(s, {
 		gap: "xs",
 		align: "center",
 		wrap: !0,
@@ -3456,7 +3457,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 				onClick: () => ue(L - 1),
 				children: "←"
 			}),
-			/* @__PURE__ */ q(s, {
+			/* @__PURE__ */ q(c, {
 				size: "xs",
 				tabular: !0,
 				className: "deck-reader-position whitespace-nowrap",
@@ -3623,7 +3624,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 							children: /* @__PURE__ */ K(T, { label: "Rendering the current version…" })
 						}) : /* @__PURE__ */ q("div", {
 							className: "deck-reader-no-preview flex flex-col items-center gap-2 p-6",
-							children: [/* @__PURE__ */ K(s, {
+							children: [/* @__PURE__ */ K(c, {
 								size: "sm",
 								children: ce ?? "This slide’s preview is unavailable."
 							}), se && /* @__PURE__ */ K(r, {
@@ -3648,7 +3649,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 						htmlFor: `${oe}-text`,
 						id: oe,
 						className: "max-[1199px]:leading-4",
-						children: /* @__PURE__ */ K(s, {
+						children: /* @__PURE__ */ K(c, {
 							size: "xs",
 							weight: "semibold",
 							className: "max-[1199px]:leading-4",
@@ -3666,7 +3667,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 						"data-testid": `${_}-notes`,
 						className: n("min-h-[42px] border-transparent bg-transparent p-0 text-sm text-text-secondary", "max-[1199px]:h-10! max-[1199px]:max-h-10! max-[1199px]:min-h-10 max-[1199px]:overflow-y-auto! max-[1199px]:leading-[18px]")
 					})]
-				}) : R?.generated ? /* @__PURE__ */ K(s, {
+				}) : R?.generated ? /* @__PURE__ */ K(c, {
 					size: "xs",
 					tone: "secondary",
 					children: "This generated Sources slide has no speaker notes."

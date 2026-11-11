@@ -376,6 +376,21 @@ export interface RichChatComposerProps {
   /** Rendered between the formatting controls and the send button. */
   toolbarExtras?: ReactNode;
   /**
+   * The menu form of `toolbarExtras` (narrow batch, 2.518.0). Below `wide`
+   * the strip folds behind `Aa` and, on the one-row idle composer, is not
+   * drawn at all, so a host menu there (`Workflow ▾`) was two taps and a
+   * focus away. While the strip is folded these sections ride the row's
+   * overflow instead: merged at the top of the `?` menu when that menu is
+   * drawn (its trigger turns into `⋯`, named "`foldedMenuLabel` and keyboard
+   * hints"), else as their own `⋯` before Send, named `foldedMenuLabel`. One
+   * tap opens it; it is a menu button, so Enter, Space and the arrow keys
+   * work. With the strip open (wide, or `Aa` on) `toolbarExtras` shows as
+   * before and these sections are not drawn.
+   */
+  foldedMenu?: readonly DropdownMenuSection[];
+  /** The folded menu's name. Default: its first section's label, else "More". */
+  foldedMenuLabel?: string;
+  /**
    * Which formatting controls the strip shows at wide width.
    *
    * - `full` (default): B, I, S, code, link, bulleted, numbered, quote — the
@@ -938,6 +953,8 @@ const DocRef = Mention.extend({ name: 'docref' });
 const docrefSuggestionKey = new PluginKey('docrefSuggestion');
 
 let stagedSeq = 0;
+/** How many recently emitted html values a focused editor refuses to have applied back over it. */
+const EMITTED_HTML_WINDOW = 32;
 
 /**
  * Where the command line the menu-mode chip already names sits in the doc —
@@ -1018,6 +1035,50 @@ function pickedArgumentFor(
 const commandSuggestionKey = new PluginKey('commandSuggestion');
 const argumentSuggestionKey = new PluginKey('commandArgumentSuggestion');
 
+/**
+ * A suggestion menu's React mount, created a microtask after the plugin opens
+ * the menu (since 2.517.0). `ReactRenderer`'s constructor calls `flushSync`,
+ * which React refuses, with a console error, when the transaction that opened
+ * the menu was dispatched from inside a React lifecycle: a host prefilling
+ * "/unblock …" from an effect or a menu pick ("flushSync was called from inside
+ * a lifecycle method"). Props given before the mount lands are kept; a close
+ * before then cancels it.
+ */
+function lazySuggestionMount<P extends { editor: SuggestionProps['editor']; clientRect?: SuggestionProps['clientRect'] }>(
+  menu: ReturnType<typeof mountSuggestionMenu>,
+  build: (props: P) => ReactRenderer,
+) {
+  let renderer: ReactRenderer | null = null;
+  let latest: P | null = null;
+  let generation = 0;
+  return {
+    get renderer() { return renderer; },
+    start(props: P) {
+      const mine = ++generation;
+      latest = props;
+      queueMicrotask(() => {
+        if (mine !== generation || latest === null) return;
+        const at = latest;
+        renderer = build(at);
+        menu.attach(renderer.element as HTMLElement);
+        menu.place(at.clientRect?.(), at.editor.view.dom);
+      });
+    },
+    /** Records the newest props; returns the live renderer, if mounted. */
+    update(props: P): ReactRenderer | null {
+      latest = props;
+      return renderer;
+    },
+    stop() {
+      generation++;
+      latest = null;
+      menu.detach();
+      renderer?.destroy();
+      renderer = null;
+    },
+  };
+}
+
 /** A menu's imperative surface, as ReactRenderer exposes it through `ref`. */
 type SuggestionMenuRef = { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } | null;
 
@@ -1032,9 +1093,9 @@ type SuggestionMenuRef = { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } 
  * so the last list stays up until the new one lands.
  */
 function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, sendWhenExact: boolean | (() => boolean) = false) {
-  let renderer: ReactRenderer | null = null;
   let lastItems: CommandSuggestionItem[] = [];
   const menu = mountSuggestionMenu();
+  const mount = lazySuggestionMount<SuggestionProps<CommandSuggestionItem>>(menu, (props) => new ReactRenderer(CommandSuggestions, { props: withItems(props), editor: props.editor }));
   const withItems = (props: SuggestionProps<CommandSuggestionItem>) => {
     // The command menu also gets the draft: a fully typed trigger plus Enter
     // sends rather than re-inserting the trigger (see CommandSuggestions).
@@ -1052,12 +1113,10 @@ function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, send
   return {
     onStart: (props: SuggestionProps<CommandSuggestionItem>) => {
       lastItems = [];
-      renderer = new ReactRenderer(CommandSuggestions, { props: withItems(props), editor: props.editor });
-      menu.attach(renderer.element as HTMLElement);
-      menu.place(props.clientRect?.(), props.editor.view.dom);
+      mount.start(props);
     },
     onUpdate: (props: SuggestionProps<CommandSuggestionItem>) => {
-      renderer?.updateProps(withItems(props));
+      mount.update(props)?.updateProps(withItems(props));
       menu.place(props.clientRect?.(), props.editor.view.dom);
     },
     onKeyDown: (props: SuggestionKeyDownProps) => {
@@ -1065,12 +1124,10 @@ function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, send
         menu.detach();
         return true;
       }
-      return (renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
+      return (mount.renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
     },
     onExit: () => {
-      menu.detach();
-      renderer?.destroy();
-      renderer = null;
+      mount.stop();
     },
   };
 }
@@ -1099,6 +1156,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   references,
   onRemoveReference,
   toolbarExtras,
+  foldedMenu,
+  foldedMenuLabel,
   toolbar = 'full',
   moreActions,
   moreActionsLabel = 'More actions',
@@ -1170,6 +1229,27 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     { open: false, href: '', text: '' },
   );
   const draftRef = useRef(draft);
+  /**
+   * What this instance emitted, so it never applies its own words back.
+   *
+   * `revisions` maps each draft object `publish` handed the host to a
+   * monotonic local revision; `seenRevision` is the newest of them the host
+   * has passed back as `draft`. A host lags: on a loaded machine a render can
+   * commit between two keystrokes while the host still holds a draft from
+   * one keystroke ago. Applying that draft reverted the editor and lost the
+   * newest character (2.519.0). An own draft that arrives in order (its
+   * revision not older than one already seen) is that echo and is never
+   * applied; one that goes BACKWARDS is the host deliberately returning to
+   * it (an unkeyed conversation switch) and is applied. `recentHtml` covers
+   * a host that copies each draft into a new object: while the editor has
+   * focus, html this instance emitted since the newest draft the host has
+   * passed back is never applied over it.
+   */
+  const emittedRef = useRef<{ revisions: WeakMap<RichChatDraft, number>; next: number; seenRevision: number; recentHtml: { html: string; revision: number }[] }>(
+    { revisions: new WeakMap(), next: 1, seenRevision: 0, recentHtml: [] },
+  );
+  /** The last `draft` prop the sync effect looked at; an unchanged prop is never "external". */
+  const seenDraftRef = useRef(draft);
   const changeRef = useRef(onDraftChange);
   changeRef.current = onDraftChange;
   const [staged, setStaged] = useState<StagedFile[]>(() => (draft?.files ?? []).map((file) => ({ id: `staged-${stagedSeq++}`, file })));
@@ -1393,19 +1473,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 e.chain().focus().deleteRange(range).insertContent(props.emoji).run();
               },
               render: () => {
-                let renderer: ReactRenderer | null = null;
                 const menu = mountSuggestionMenu();
+                const mount = lazySuggestionMount<SuggestionProps>(menu, (props) => new ReactRenderer(EmojiSuggestions, { props, editor: props.editor }));
                 return {
                   onStart: (props: SuggestionProps) => {
-                    renderer = new ReactRenderer(EmojiSuggestions, {
-                      props,
-                      editor: props.editor,
-                    });
-                    menu.attach(renderer.element as HTMLElement);
-                    menu.place(props.clientRect?.(), props.editor.view.dom);
+                    mount.start(props);
                   },
                   onUpdate: (props: SuggestionProps) => {
-                    renderer?.updateProps(props);
+                    mount.update(props)?.updateProps(props);
                     menu.place(props.clientRect?.(), props.editor.view.dom);
                   },
                   onKeyDown: (props: SuggestionKeyDownProps) => {
@@ -1415,15 +1490,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     }
                     return (
                       (
-                        renderer?.ref as {
+                        mount.renderer?.ref as {
                           onKeyDown?: (p: SuggestionKeyDownProps) => boolean;
                         } | null
                       )?.onKeyDown?.(props) ?? false
                     );
                   },
                   onExit: () => {
-                    menu.detach();
-                    renderer?.destroy();
+                    mount.stop();
                   },
                 };
               },
@@ -1665,7 +1739,6 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               return found.map((c) => ({ ...c, member: members.has(c.id) }));
             },
             render: () => {
-              let renderer: ReactRenderer | null = null;
               const menu = mountSuggestionMenu();
               const withGate = (props: SuggestionProps) => ({
                 ...props,
@@ -1677,18 +1750,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   onMentionNonMemberRef.current?.(userId);
                 },
               });
+              const mount = lazySuggestionMount<SuggestionProps>(menu, (props) => new ReactRenderer(MentionSuggestions, { props: withGate(props), editor: props.editor }));
 
               return {
                 onStart: (props: SuggestionProps) => {
-                  renderer = new ReactRenderer(MentionSuggestions, {
-                    props: withGate(props),
-                    editor: props.editor,
-                  });
-                  menu.attach(renderer.element as HTMLElement);
-                  menu.place(props.clientRect?.(), props.editor.view.dom);
+                  mount.start(props);
                 },
                 onUpdate: (props: SuggestionProps) => {
-                  renderer?.updateProps(withGate(props));
+                  mount.update(props)?.updateProps(withGate(props));
                   menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 // Returning the menu's answer is what stops Enter reaching the
@@ -1699,16 +1768,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     return true;
                   }
                   return (
-                    (renderer?.ref as { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } | null)
+                    (mount.renderer?.ref as { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } | null)
                       ?.onKeyDown?.(props) ?? false
                   );
                 },
                 onExit: () => {
-                  // Detached before destroy: destroy() unmounts the React tree
-                  // but leaves the host node parented to <body>, so every
-                  // dismissed menu would leak an empty div.
-                  menu.detach();
-                  renderer?.destroy();
+                  // Detached before destroy (inside stop): destroy() unmounts
+                  // the React tree but leaves the host node parented to <body>,
+                  // so every dismissed menu would leak an empty div.
+                  mount.stop();
                 },
               };
             },
@@ -1744,16 +1812,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             allow: docrefAtWordStart,
             items: ({ query }: { query: string }) => onSearchDocumentsRef.current?.(query) ?? [],
             render: () => {
-              let renderer: ReactRenderer | null = null;
               const menu = mountSuggestionMenu();
+              const mount = lazySuggestionMount<SuggestionProps>(menu, (props) => new ReactRenderer(DocumentSuggestions, { props: docMenuProps(props), editor: props.editor }));
               return {
                 onStart: (props: SuggestionProps) => {
-                  renderer = new ReactRenderer(DocumentSuggestions, { props: docMenuProps(props), editor: props.editor });
-                  menu.attach(renderer.element as HTMLElement);
-                  menu.place(props.clientRect?.(), props.editor.view.dom);
+                  mount.start(props);
                 },
                 onUpdate: (props: SuggestionProps) => {
-                  renderer?.updateProps(docMenuProps(props));
+                  mount.update(props)?.updateProps(docMenuProps(props));
                   menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 onKeyDown: (props: SuggestionKeyDownProps) => {
@@ -1761,11 +1827,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     menu.detach();
                     return true;
                   }
-                  return (renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
+                  return (mount.renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
                 },
                 onExit: () => {
-                  menu.detach();
-                  renderer?.destroy();
+                  mount.stop();
                 },
               };
             },
@@ -1960,6 +2025,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       && previous.command?.trigger === next.command?.trigger && previous.command?.argument === next.command?.argument
       && previous.privacy === next.privacy) return;
     draftRef.current = next;
+    const emitted = emittedRef.current;
+    const revision = emitted.next++;
+    emitted.revisions.set(next, revision);
+    emitted.recentHtml.push({ html: next.html, revision });
+    if (emitted.recentHtml.length > EMITTED_HTML_WINDOW) emitted.recentHtml.shift();
     changeRef.current?.(next, previous);
   };
   publishRef.current = publish;
@@ -1967,6 +2037,42 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     stagedRef.current = next;
     setStaged(next);
     if (editor && !editor.isDestroyed) publishRef.current(editor);
+  };
+  /**
+   * Whether an incoming `draft` prop is a genuine external change (a restore,
+   * a clear, a prefill) rather than this composer's own words coming back.
+   * Records what it saw, so call it once per effect run.
+   */
+  const isExternalDraft = (e: Editor, incoming: RichChatDraft | undefined): boolean => {
+    const changed = incoming !== seenDraftRef.current;
+    seenDraftRef.current = incoming;
+    const emitted = emittedRef.current;
+    const revision = incoming ? emitted.revisions.get(incoming) : undefined;
+    if (revision !== undefined && revision >= emitted.seenRevision) {
+      // Ours, in order: the current draft or a stale echo of an earlier one.
+      emitted.seenRevision = revision;
+      return false;
+    }
+    // A re-render with the same prop (a fresh inline `onDraftChange`) says
+    // nothing new — the host's initial draft, re-delivered after typing,
+    // must not wipe what was typed since.
+    if (!changed || incoming === draftRef.current) return false;
+    if (revision !== undefined) return true; // ours, but the host went back to it
+    // A copy of one of our drafts: matched by html against what was emitted
+    // since the newest draft the host has already passed back. Going back to
+    // older html than that is the host's own decision (a clear, a restore).
+    const html = incoming?.html ?? '';
+    let hit: { html: string; revision: number } | undefined;
+    for (let i = emitted.recentHtml.length - 1; i >= 0; i--) {
+      const entry = emitted.recentHtml[i]!;
+      if (entry.revision < emitted.seenRevision) break;
+      if (entry.html === html) { hit = entry; break; }
+    }
+    if (!hit) return true;
+    emitted.seenRevision = hit.revision;
+    // Same text as on screen: the idempotent apply below keeps the caret.
+    if (html === (e.isEmpty ? '' : e.getHTML())) return true;
+    return !e.isFocused;
   };
   // The editor the derived state below was last read from — see the effect.
   const syncedEditorRef = useRef<Editor | null>(null);
@@ -1979,8 +2085,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     if (!editor || editor.isDestroyed) return;
     // An external change may be a restored conversation or a send completion
     // from its previous composer. Do not rebuild the editor or move its caret
-    // in response to our own onDraftChange echo.
-    const external = !!onDraftChange && draft !== draftRef.current;
+    // in response to our own onDraftChange echo — the latest one, or one
+    // from a keystroke ago that a lagging host is only now passing back.
+    const external = !!onDraftChange && isExternalDraft(editor, draft);
     // Our own echo on the same editor: NOTHING to do. `onUpdate` already set
     // every piece of state below from this very text, and re-setting it here
     // is not free — this effect runs in the passive phase of the keystroke's
@@ -2453,6 +2560,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // keyboard hints only; formatting belongs to the editor toolbar.
   // A single-mode label has no menu to hold them: they go back to the `⋯`.
   const showMoreActions = !!moreActions?.length && (!docked || singleMode || quiet);
+  // The host's strip menus while the strip is folded (narrow batch): the
+  // toolbar row is not drawn on a single row, so they ride its overflow.
+  const foldMenu = !!foldedMenu?.length && singleRow && !wide && !terminalMode;
+  const foldLabel = foldedMenuLabel ?? foldedMenu?.[0]?.label ?? 'More';
+  // Drawn when the row has a `?` menu: the sections go at its top.
+  const hintsMenuShown = !collapsed && !docked && (!pane || paneTools)
+    && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor));
   const inlineCommand = docked && !!activeCommand && !collapsed && !terminalMode;
   // The prompt card's chip: the typed command, else the host's default.
   const chipCommand = promptCard && !collapsed && !terminalMode
@@ -3531,16 +3645,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             >/ commands</span>
           )}
 
-          {!collapsed && !docked && (!pane || paneTools) && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
+          {hintsMenuShown ? (
             <DropdownMenu
-              trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
-              triggerLabel="Keyboard hints"
-              triggerTitle="Keyboard hints"
+              trigger={<span aria-hidden="true" className={cn('leading-none', foldMenu ? 'text-sm' : 'text-xs font-semibold')}>{foldMenu ? '⋯' : '?'}</span>}
+              triggerLabel={foldMenu ? `${foldLabel} and keyboard hints` : 'Keyboard hints'}
+              triggerTitle={foldMenu ? `${foldLabel} and keyboard hints` : 'Keyboard hints'}
               triggerTestId={`${testId}-hints-toggle`}
               data-testid={`${testId}-hints-menu`}
               align="end"
-              triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary border-0 p-0"
+              triggerClassName={cn('grid h-7 w-7 shrink-0 place-items-center rounded hover:bg-surface-hover hover:text-text-primary border-0 p-0', foldMenu ? 'text-text-secondary' : 'text-text-tertiary')}
+              {...(foldMenu ? { triggerAttributes: { 'data-folded-menu': '' } } : {})}
               sections={[
+                ...(foldMenu ? foldedMenu! : []),
                 // The compact strip's four folded controls, first: they act
                 // on the draft, the hints below only describe keys.
                 ...(formatInHints && editor ? [{
@@ -3558,7 +3674,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   items: suggestions!.map((suggestion) => ({ label: suggestion, onSelect: () => onSuggestion?.(suggestion) })),
                 }] : []),
                 ...(!hintsInRow && resolvedHints.length ? [{
-                  ...((suggestionsInMenu || formatInHints) ? { label: 'Keys' } : {}),
+                  ...((suggestionsInMenu || formatInHints || foldMenu) ? { label: 'Keys' } : {}),
                   items: resolvedHints.map((hint) => ({
                     label: hint.label,
                     trailing: <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>,
@@ -3568,6 +3684,21 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               ]}
             />
           ) : null}
+          {foldMenu && !hintsMenuShown && (
+            // The idle row's overflow: the folded strip's host menus, one tap.
+            <DropdownMenu
+              trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
+              triggerLabel={foldLabel}
+              triggerTitle={foldLabel}
+              triggerTestId={`${testId}-folded-menu`}
+              triggerAttributes={{ 'data-folded-menu': '' }}
+              data-testid={`${testId}-folded-menu-list`}
+              align="end"
+              disabled={blocked}
+              triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover hover:text-text-primary border-0 p-0"
+              sections={[...foldedMenu!]}
+            />
+          )}
 
           {pane && paneTools && modeRowEnd != null && (
             <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>

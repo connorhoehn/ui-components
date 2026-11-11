@@ -50,24 +50,26 @@ describe('DataTable headerCase (G88-E7)', () => {
 });
 
 describe('DataTable column truncate (G88-E6)', () => {
-  it('cuts a truncating cell to one line with the full text as title', () => {
+  it('cuts a truncating cell to one line with the full text as data-full-text (2.518.0: a Tooltip, not title)', () => {
     render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} />);
     const cell = screen.getByText(/A very long outline/).closest('td')!;
     expect(cell).toHaveAttribute('data-truncate');
-    expect(cell).toHaveAttribute('title', rows[0].outline);
+    expect(cell).toHaveAttribute('data-full-text', rows[0].outline);
+    expect(cell).not.toHaveAttribute('title');
     expect(cell.className).toContain('max-w-0');
     expect(screen.getByText(/A very long outline/).className).toContain('truncate');
   });
   it('a rendered truncating cell takes its text as title', () => {
     render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} />);
     const cell = screen.getByText('3').closest('td')!;
-    expect(cell).toHaveAttribute('title', '3 shots');
+    expect(cell).toHaveAttribute('data-full-text', '3 shots');
   });
   it('other columns are untouched', () => {
     render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} />);
     const cell = screen.getByText('Pilot').closest('td')!;
     expect(cell).not.toHaveAttribute('data-truncate');
     expect(cell).not.toHaveAttribute('title');
+    expect(cell).not.toHaveAttribute('data-full-text');
     expect(cell.className).not.toContain('max-w-0');
   });
 });

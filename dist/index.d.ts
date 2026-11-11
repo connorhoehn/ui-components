@@ -6026,7 +6026,7 @@ export declare interface CommandPaletteController {
     query: string;
 }
 
-export declare function CommandPaletteHint({ className, label, size }?: CommandPaletteHintProps): JSX.Element;
+export declare function CommandPaletteHint({ className, label, size, variant }?: CommandPaletteHintProps): JSX.Element;
 
 export declare interface CommandPaletteHintProps {
     className?: string;
@@ -6038,6 +6038,12 @@ export declare interface CommandPaletteHintProps {
      * "⌘K Search"). Since 2.385.0.
      */
     size?: 'sm' | 'md';
+    /**
+     * `chip` (default): "⌘K Search". `icon` (narrow batch, 2.518.0): a 28px
+     * square with a magnifier and no words, for a one-row phone header; the
+     * label stays its accessible name and tooltip.
+     */
+    variant?: 'chip' | 'icon';
 }
 
 export declare interface CommandPaletteProps {
@@ -8130,7 +8136,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8165,8 +8171,19 @@ export declare interface DataTableColumn<T> {
      * text is the cell's `title`: the raw value when it is a string or number,
      * else `getFilterText(row)`, else the rendered cell's text. `data-truncate`
      * on the cell.
+     *
+     * Since 2.518.0 (narrow batch) the full text is a `Tooltip` on hover and on
+     * focus (a link in the cell is reachable by keyboard, which a native
+     * `title` never was), shown only when the text is actually cut; the cell
+     * carries it as `data-full-text` instead of `title`.
      */
     truncate?: boolean;
+    /**
+     * With `truncate` (since 2.518.0): `two-lines` lets the value wrap onto a
+     * second line before it is cut (a line clamp), for titles that are the
+     * row's name — a decision, an initiative. Default `one-line`.
+     */
+    wrap?: 'one-line' | 'two-lines';
     /**
      * With `responsiveColumns` on the table (since 2.516.0): `1` (and the
      * default) is always shown; higher numbers hide first as the table's own
@@ -8178,6 +8195,9 @@ export declare interface DataTableColumn<T> {
 
 /** Header letter case (since 2.515.12). `upper` (default): caps with wide tracking. `sentence`: the header text as written. */
 export declare type DataTableHeaderCase = 'upper' | 'sentence';
+
+/** Where a responsive table's hidden columns are reached. Since 2.519.0. */
+export declare type DataTableHiddenColumnsControl = 'row' | 'header';
 
 export declare interface DataTableProps<T> {
     /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
@@ -8296,8 +8316,26 @@ export declare interface DataTableProps<T> {
      * columns' keys are on the root as `data-hidden-columns`. With `narrow`,
      * the stacked card form (under 40rem) shows every column again. Default
      * `false`.
+     *
+     * Since 2.517.0: the "+N" column has a visible "More" header and a quiet
+     * regular-weight control; at most half the columns hide, and a table that
+     * would hide more (or still overflows with every hideable column gone)
+     * switches to the stacked card form instead (`data-stacked` on the root), so
+     * it never overflows its box. The fit starts over from every column shown
+     * when the box's width, the shown rows, the columns or the fonts change, so
+     * a column hidden for wide content returns when the content narrows.
      */
     responsiveColumns?: boolean;
+    /**
+     * Where the hidden columns of `responsiveColumns` are reached (since
+     * 2.519.0). `row` (default, unchanged): every row carries a "+N columns"
+     * button. `header`: ONE control in the "More" header lists the hidden
+     * columns for the whole table; choosing one swaps it in for the
+     * lowest-priority column still shown (or, with none left to swap, switches
+     * to the stacked card form). Rows then carry no "+N" link: each row's
+     * hidden values open from a quiet chevron in its "More" cell.
+     */
+    hiddenColumnsControl?: DataTableHiddenColumnsControl;
     className?: string;
     'data-testid'?: string;
 }
@@ -12574,7 +12612,7 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
 export declare interface HuddleBarLiveParticipant {
@@ -12671,6 +12709,12 @@ export declare interface HuddleBarProps {
     meetingItems?: MeetingToolbarItem[];
     /** Extra controls before Leave. */
     extras?: ReactNode;
+    /**
+     * Icon-only Start and Join (since 2.519.0), for a phone-width footer: the
+     * label moves to the button's accessible name and a tooltip, and the bar's
+     * own padding and gaps tighten. `data-compact` on the root.
+     */
+    compact?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -13542,9 +13586,9 @@ export declare interface InlinePlaceholderProps {
 /** @see SurfaceTone — which colour family the placeholder paints in. */
 export declare type InlinePlaceholderTone = SurfaceTone;
 
-export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, children, }: InlinePopoverProps): ReactPortal | null;
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, focusOnOpen, escapeScope, trapFocus, children, }: InlinePopoverProps): ReactPortal | null;
 
-export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 export declare interface InlinePopoverProps {
     /** Ref to the anchor element (the visible trigger). */
@@ -13577,6 +13621,33 @@ export declare interface InlinePopoverProps {
      * composer's supported-commands help. Since 2.442.0.
      */
     kind?: string;
+    /**
+     * Keep clear of every keep-out surface (`[data-uic-keepout]`, e.g. a pinned
+     * composer dock and the question panel above it) that does not contain the
+     * trigger, whichever side of the trigger it is on (since 2.517.0). A panel
+     * that would cover one moves beside it (left, then right) or above it,
+     * whichever fits first; with no room anywhere it stays where it was. The
+     * voice dock's cards use this so a confirmation never covers the panel it
+     * answers. Default false: only the keep-out below the trigger counts.
+     */
+    avoidKeepouts?: boolean;
+    /**
+     * Where focus goes when the panel opens. `first` (default): its first
+     * focusable element, else the panel. `none`: focus stays where it is — the
+     * content decides (the voice cards never take focus from a field the
+     * person is typing in). With `none`, closing hands focus back only when it
+     * was inside the panel (or nowhere). Since 2.519.0.
+     */
+    focusOnOpen?: 'first' | 'none';
+    /**
+     * Which Escape presses close the panel. `window` (default): any Escape
+     * while it is the top layer. `inside`: only an Escape pressed while focus
+     * is inside the panel, so a panel that did not take focus never eats the
+     * Escape of a field elsewhere. Since 2.519.0.
+     */
+    escapeScope?: 'window' | 'inside';
+    /** Keep Tab / Shift+Tab cycling inside the panel. Default true. Since 2.519.0. */
+    trapFocus?: boolean;
     children: ReactNode;
 }
 
@@ -13770,6 +13841,9 @@ export declare function isRichHeaderContent(kind: HeaderContentKind | undefined)
 
 /** A run that is still moving — the panel keeps re-reading it. */
 export declare function isRunPanelLive(status: RunPanelStatus): boolean;
+
+/** True when `el` (or its first child) shows less than its content: an ellipsis or a clamp. */
+export declare function isTextCut(el: HTMLElement | null): boolean;
 
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
 
@@ -20888,6 +20962,21 @@ declare interface RichChatComposerProps {
     /** Rendered between the formatting controls and the send button. */
     toolbarExtras?: ReactNode;
     /**
+     * The menu form of `toolbarExtras` (narrow batch, 2.518.0). Below `wide`
+     * the strip folds behind `Aa` and, on the one-row idle composer, is not
+     * drawn at all, so a host menu there (`Workflow ▾`) was two taps and a
+     * focus away. While the strip is folded these sections ride the row's
+     * overflow instead: merged at the top of the `?` menu when that menu is
+     * drawn (its trigger turns into `⋯`, named "`foldedMenuLabel` and keyboard
+     * hints"), else as their own `⋯` before Send, named `foldedMenuLabel`. One
+     * tap opens it; it is a menu button, so Enter, Space and the arrow keys
+     * work. With the strip open (wide, or `Aa` on) `toolbarExtras` shows as
+     * before and these sections are not drawn.
+     */
+    foldedMenu?: readonly DropdownMenuSection[];
+    /** The folded menu's name. Default: its first section's label, else "More". */
+    foldedMenuLabel?: string;
+    /**
      * Which formatting controls the strip shows at wide width.
      *
      * - `full` (default): B, I, S, code, link, bulleted, numbered, quote — the
@@ -23875,7 +23964,7 @@ export declare interface StatsLeaf {
     dense?: boolean;
 }
 
-export declare function StatStrip({ items, frameless, connectors, variant, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, variant, size: sizeProp, wrapSeparators, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
 export declare interface StatStripConnector {
@@ -23961,6 +24050,21 @@ export declare interface StatStripProps {
      * reads a size up from the 14px tabs.
      */
     size?: 'md' | 'sm';
+    /**
+     * `line` only (narrow batch, 2.518.0): what a wrapped line does with the
+     * "•" between clusters.
+     *
+     * `drop` (default): no line starts or ends with a separator. Each cluster
+     * after the first LEADS with its separator, and the row sits one separator
+     * width left of a clipping frame, so a separator that lands at the start of
+     * a line is drawn outside the frame. Pure layout — no measuring, no
+     * re-render on resize — and the lines read "16 / 31 points delivered ▬▬▭"
+     * / "1 agent running • $7.76 of $75 spent" at a phone's width.
+     *
+     * `trail`: the 2.392.0 behaviour — the separator trails the previous
+     * cluster, so a line never starts with one but can end with one.
+     */
+    wrapSeparators?: 'drop' | 'trail';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -25303,7 +25407,7 @@ export declare const TerminalLog: typeof LogStream;
 
 export declare type TerminalRendererStatus = keyof typeof TERMINAL_DECISIONS;
 
-declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, truncate, ...rest }: TextProps): JSX.Element;
+declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, truncate, clamp, ...rest }: TextProps): JSX.Element;
 export { Text_2 as Text }
 
 export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
@@ -25356,6 +25460,13 @@ export declare interface TextProps {
      * with `wrap`, which it overrides.
      */
     truncate?: boolean;
+    /**
+     * Wraps to at most this many lines, then ends with an ellipsis (since
+     * 2.517.0): `line-clamp-N` on a block element, long words broken rather
+     * than overflowing, and the whole text as its `title` like `truncate`.
+     * Wins over `truncate` and `wrap`.
+     */
+    clamp?: 2 | 3;
     role?: string;
     'aria-label'?: string;
     'aria-hidden'?: boolean | 'true' | 'false';
@@ -25865,7 +25976,7 @@ export declare interface ToolCallStripProps {
     className?: string;
 }
 
-export declare function Tooltip({ content, children, placement, openDelay, closeDelay, disabled, className, 'data-testid': testId, }: TooltipProps): JSX.Element;
+export declare function Tooltip({ content, children, placement, openDelay, closeDelay, disabled, className, triggerClassName, onlyWhenTruncated, 'data-testid': testId, }: TooltipProps): JSX.Element;
 
 export declare type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
@@ -25879,6 +25990,17 @@ export declare interface TooltipProps {
     closeDelay?: number;
     disabled?: boolean;
     className?: string;
+    /**
+     * Classes for the wrapping span, in place of its default `inline-flex`
+     * (narrow batch, 2.518.0) — `block min-w-0` around a cell's cut text.
+     */
+    triggerClassName?: string;
+    /**
+     * Open only while the trigger's first child is cut — its content wider or
+     * taller than its box (an ellipsis, a line clamp). Checked as it opens, so
+     * a value that fits shows no tooltip. Since 2.518.0.
+     */
+    onlyWhenTruncated?: boolean;
     'data-testid'?: string;
 }
 

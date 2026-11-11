@@ -103,6 +103,21 @@ export interface StatStripProps {
    * reads a size up from the 14px tabs.
    */
   size?: 'md' | 'sm';
+  /**
+   * `line` only (narrow batch, 2.518.0): what a wrapped line does with the
+   * "•" between clusters.
+   *
+   * `drop` (default): no line starts or ends with a separator. Each cluster
+   * after the first LEADS with its separator, and the row sits one separator
+   * width left of a clipping frame, so a separator that lands at the start of
+   * a line is drawn outside the frame. Pure layout — no measuring, no
+   * re-render on resize — and the lines read "16 / 31 points delivered ▬▬▭"
+   * / "1 agent running • $7.76 of $75 spent" at a phone's width.
+   *
+   * `trail`: the 2.392.0 behaviour — the separator trails the previous
+   * cluster, so a line never starts with one but can end with one.
+   */
+  wrapSeparators?: 'drop' | 'trail';
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -144,20 +159,23 @@ function InlineCluster({ item, first, last }: { item: StatStripItem; first: bool
 function LineCluster({ item, sm = false }: { item: StatStripItem; sm?: boolean }) {
   const bar = item.progress && item.progress.max > 0 && Number.isFinite(item.progress.value);
   return (
-    <span className="flex min-w-0 items-center whitespace-nowrap" data-testid="stat-strip-cluster">
+    // The track or bar wraps under its label rather than cutting it ("16 / 31
+    // points del…" at 390px, walk 10 November): a column gap, not a margin,
+    // so a wrapped bar starts at the cluster's edge (since 2.517.0).
+    <span className="flex min-w-0 flex-wrap items-center gap-x-[18px] gap-y-1 whitespace-nowrap" data-testid="stat-strip-cluster">
       <span className="flex min-w-0 items-baseline gap-1.5">
         <span className={cn('font-semibold tabular-nums', sm ? 'text-sm leading-5' : 'text-[16px] leading-6', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
         <span className={cn('min-w-0 truncate text-text-secondary', sm ? 'text-sm leading-5' : 'text-[15px] leading-6')}>{item.label}</span>
       </span>
       {item.track != null ? (
-        <span className="ml-[18px] flex shrink-0 items-center" data-testid="stat-strip-track">{item.track}</span>
+        <span className="flex shrink-0 items-center" data-testid="stat-strip-track">{item.track}</span>
       ) : bar && (
         <ProgressBar
           value={item.progress!.value}
           max={item.progress!.max}
           size="sm"
           aria-label={item.label}
-          className="ml-[18px] w-[150px] shrink-0"
+          className="w-[150px] shrink-0"
           data-testid="stat-strip-progress"
         />
       )}
@@ -263,6 +281,7 @@ export function StatStrip({
   connectors,
   variant = 'default',
   size: sizeProp,
+  wrapSeparators = 'drop',
   className,
   'aria-label': ariaLabel,
   'data-testid': testId,
@@ -270,41 +289,68 @@ export function StatStrip({
   const size = useDensitySize('StatStrip', sizeProp, { comfortable: 'md', compact: 'sm' });
   const flow = !!connectors && connectors.length > 0;
   if (variant === 'line') {
+    const drop = wrapSeparators === 'drop';
+    const sepType = size === 'sm' ? 'text-sm leading-5' : 'text-[15px] leading-6';
+    const units = items.map((item, i) => {
+      const tip = item.title ? { title: item.title } : {};
+      const inner = <LineCluster item={item} sm={size === 'sm'} />;
+      // Inset focus rings: the `drop` frame clips anything outside it.
+      const ring = 'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary';
+      let cluster: ReactNode;
+      if (item.href) {
+        cluster = <a href={safeHref(item.href) ?? undefined} className={cn('min-w-0 rounded no-underline hover:underline', ring)} {...tip}>{inner}</a>;
+      } else if (item.onSelect) {
+        cluster = (
+          <button data-ui-part="" type="button" onClick={item.onSelect} className={cn('min-w-0 cursor-pointer rounded border-none bg-transparent p-0 text-left hover:underline', ring)} {...tip}>
+            {inner}
+          </button>
+        );
+      } else {
+        cluster = <span className="min-w-0" {...tip}>{inner}</span>;
+      }
+      if (drop) {
+        return (
+          // The separator LEADS its cluster in one nowrap unit, a fixed
+          // `w-11`; at the start of a line it falls in the clipped gutter.
+          <span key={item.label} className={cn('inline-flex min-w-0 items-baseline', i === 0 && 'pl-11')} data-testid="stat-strip-unit">
+            {i > 0 && (
+              <span aria-hidden="true" className={cn('w-11 shrink-0 text-center text-text-secondary', sepType)} data-testid="stat-strip-separator">•</span>
+            )}
+            {cluster}
+          </span>
+        );
+      }
+      return (
+        // The separator trails the PREVIOUS cluster inside one nowrap unit,
+        // so a wrapped line never starts with "•".
+        <span key={item.label} className="inline-flex min-w-0 items-baseline" data-testid="stat-strip-unit">
+          {cluster}
+          {i < items.length - 1 && (
+            <span aria-hidden="true" className={cn('mx-5 text-text-secondary', sepType)} data-testid="stat-strip-separator">•</span>
+          )}
+        </span>
+      );
+    });
+    const group = {
+      role: 'group' as const,
+      'data-variant': 'line',
+      'data-wrap-separators': wrapSeparators,
+      ...(size === 'sm' ? { 'data-size': 'sm' } : {}),
+      ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+      ...(testId ? { 'data-testid': testId } : {}),
+    };
+    if (drop) {
+      return (
+        <div {...group} className={cn('min-w-0 overflow-hidden', className)}>
+          <div className="-ml-11 flex w-[calc(100%+2.75rem)] max-w-none flex-wrap items-center gap-y-1" data-stat-strip-row="">
+            {units}
+          </div>
+        </div>
+      );
+    }
     return (
-      <div
-        role="group"
-        data-variant="line"
-        {...(size === 'sm' ? { 'data-size': 'sm' } : {})}
-        className={cn('flex min-w-0 flex-wrap items-center gap-y-1', className)}
-        {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
-        {...(testId ? { 'data-testid': testId } : {})}
-      >
-        {items.map((item, i) => {
-          const tip = item.title ? { title: item.title } : {};
-          const inner = <LineCluster item={item} sm={size === 'sm'} />;
-          let cluster: ReactNode;
-          if (item.href) {
-            cluster = <a href={safeHref(item.href) ?? undefined} className="min-w-0 rounded no-underline hover:underline" {...tip}>{inner}</a>;
-          } else if (item.onSelect) {
-            cluster = (
-              <button data-ui-part="" type="button" onClick={item.onSelect} className="min-w-0 cursor-pointer rounded border-none bg-transparent p-0 text-left hover:underline" {...tip}>
-                {inner}
-              </button>
-            );
-          } else {
-            cluster = <span className="min-w-0" {...tip}>{inner}</span>;
-          }
-          return (
-            // The separator trails the PREVIOUS cluster inside one nowrap unit,
-            // so a wrapped line never starts with "•".
-            <span key={item.label} className="inline-flex min-w-0 items-baseline" data-testid="stat-strip-unit">
-              {cluster}
-              {i < items.length - 1 && (
-                <span aria-hidden="true" className={cn('mx-5 text-text-secondary', size === 'sm' ? 'text-sm leading-5' : 'text-[15px] leading-6')} data-testid="stat-strip-separator">•</span>
-              )}
-            </span>
-          );
-        })}
+      <div {...group} className={cn('flex min-w-0 flex-wrap items-center gap-y-1', className)}>
+        {units}
       </div>
     );
   }

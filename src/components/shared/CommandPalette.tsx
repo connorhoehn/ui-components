@@ -20,6 +20,7 @@ import { Command as Cmdk } from 'cmdk';
 import { cn } from '../../lib/cn';
 import Modal from './Modal';
 import { safeHref } from '../../lib/safeHref';
+import { SearchIcon } from '../ui/Icons';
 
 export interface Command {
   id: string;
@@ -132,6 +133,12 @@ export interface CommandPaletteHintProps {
    * "⌘K Search"). Since 2.385.0.
    */
   size?: 'sm' | 'md';
+  /**
+   * `chip` (default): "⌘K Search". `icon` (narrow batch, 2.518.0): a 28px
+   * square with a magnifier and no words, for a one-row phone header; the
+   * label stays its accessible name and tooltip.
+   */
+  variant?: 'chip' | 'icon';
 }
 
 export interface CommandPaletteController {
@@ -769,8 +776,30 @@ export function CommandPalette({
 
 // ── <CommandPaletteHint /> — affordance button ──────────────────────────
 
-export function CommandPaletteHint({ className, label = 'Search', size = 'sm' }: CommandPaletteHintProps = {}) {
+export function CommandPaletteHint({ className, label = 'Search', size = 'sm', variant = 'chip' }: CommandPaletteHintProps = {}) {
   const { toggle } = useInternal();
+  if (variant === 'icon') {
+    return (
+      <button
+        data-ui-part=""
+        type="button"
+        onClick={toggle}
+        data-testid="command-palette-hint"
+        data-variant="icon"
+        title={`${label} (⌘K)`}
+        className={cn(
+          'grid h-7 w-7 shrink-0 place-items-center rounded-md border-0 bg-transparent p-0 text-text-secondary hover:bg-surface-hover hover:text-text-primary',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+          'cursor-pointer transition-colors',
+          className,
+        )}
+        aria-label={label === 'Search' ? 'Open command palette' : label}
+        aria-keyshortcuts="Meta+K Control+K"
+      >
+        <SearchIcon size={16} aria-hidden="true" />
+      </button>
+    );
+  }
   return (
     <button
       data-ui-part=""

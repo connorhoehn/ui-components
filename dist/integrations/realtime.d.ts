@@ -2823,7 +2823,7 @@ export declare interface IncomingCallToastProps {
     'data-testid'?: string;
 }
 
-declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 /** Where a loop is. Mirrors the run status platform-api reports. */
 declare type LabStatus = 'planning' | 'starting' | 'running' | 'waiting' | 'done' | 'failed' | 'stopped' | 'budget';

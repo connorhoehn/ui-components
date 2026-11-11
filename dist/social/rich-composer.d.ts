@@ -1898,6 +1898,21 @@ export declare interface RichChatComposerProps {
     /** Rendered between the formatting controls and the send button. */
     toolbarExtras?: ReactNode;
     /**
+     * The menu form of `toolbarExtras` (narrow batch, 2.518.0). Below `wide`
+     * the strip folds behind `Aa` and, on the one-row idle composer, is not
+     * drawn at all, so a host menu there (`Workflow ▾`) was two taps and a
+     * focus away. While the strip is folded these sections ride the row's
+     * overflow instead: merged at the top of the `?` menu when that menu is
+     * drawn (its trigger turns into `⋯`, named "`foldedMenuLabel` and keyboard
+     * hints"), else as their own `⋯` before Send, named `foldedMenuLabel`. One
+     * tap opens it; it is a menu button, so Enter, Space and the arrow keys
+     * work. With the strip open (wide, or `Aa` on) `toolbarExtras` shows as
+     * before and these sections are not drawn.
+     */
+    foldedMenu?: readonly DropdownMenuSection[];
+    /** The folded menu's name. Default: its first section's label, else "More". */
+    foldedMenuLabel?: string;
+    /**
      * Which formatting controls the strip shows at wide width.
      *
      * - `full` (default): B, I, S, code, link, bulleted, numbered, quote — the

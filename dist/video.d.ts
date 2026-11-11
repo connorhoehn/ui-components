@@ -1802,7 +1802,7 @@ export declare type HlsPhase =
 /** Unplayable. `error` carries the wording. */
 | 'error';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
 export declare interface HuddleBarLiveParticipant {
@@ -1899,6 +1899,12 @@ export declare interface HuddleBarProps {
     meetingItems?: MeetingToolbarItem[];
     /** Extra controls before Leave. */
     extras?: ReactNode;
+    /**
+     * Icon-only Start and Join (since 2.519.0), for a phone-width footer: the
+     * label moves to the button's accessible name and a tooltip, and the bar's
+     * own padding and gaps tighten. `data-compact` on the root.
+     */
+    compact?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -1954,7 +1960,7 @@ export declare interface IncomingCallPopoverProps {
     'data-testid'?: string;
 }
 
-declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 /**
  * `null`/`undefined` mean nobody measured; a numeric 0 means somebody did and

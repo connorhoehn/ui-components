@@ -10,6 +10,7 @@
 // overridden roles. The card remounts per request (keyed on `choice.requestId`,
 // else its title), so a second decision starts clean.
 
+import { mayTakeFocus } from './voiceFocus';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
@@ -53,7 +54,8 @@ function VoiceChoiceCardBody({
   const [active, setActive] = useState(validOrdinal(choice.ordinal) ? choice.ordinal - 1 : 0);
 
   useEffect(() => {
-    if (autoFocus) ref.current?.focus();
+    // Never away from a field the person is typing in (see voiceFocus.ts).
+    if (autoFocus && mayTakeFocus(ref.current)) ref.current?.focus();
   }, [autoFocus]);
 
   // The voice said "the second one": choose that row, once per ordinal value.

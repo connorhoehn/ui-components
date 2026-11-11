@@ -143,8 +143,8 @@ describe('StatStrip', () => {
     expect(screen.getByTitle('Last compaction 50 minutes ago')).toBeTruthy();
   });
 
-  it('line variant: the separator trails the previous cluster, never leads the next', () => {
-    render(<StatStrip variant="line" items={[
+  it('line variant, wrapSeparators="trail": the separator trails the previous cluster, never leads the next', () => {
+    render(<StatStrip variant="line" wrapSeparators="trail" items={[
       { label: 'Agents', value: 2 }, { label: 'Spend', value: '$4' }, { label: 'Open', value: 7 },
     ]} />);
     const units = screen.getAllByTestId('stat-strip-unit');
@@ -153,5 +153,55 @@ describe('StatStrip', () => {
     expect(units[1]!.lastElementChild).toHaveAttribute('data-testid', 'stat-strip-separator');
     expect(units[2]!.querySelector('[data-testid="stat-strip-separator"]')).toBeNull();
     expect(screen.getAllByTestId('stat-strip-separator')).toHaveLength(2);
+  });
+});
+
+describe('StatStrip line cluster wraps its bar (2.517.0)', () => {
+  it('the cluster wraps the bar under its label with a column gap, no margin', () => {
+    render(<StatStrip variant="line" items={[{ label: '/ 31 points delivered', value: '16', progress: { value: 16, max: 31 } }]} />);
+    const cluster = screen.getByTestId('stat-strip-cluster');
+    expect(cluster).toHaveClass('flex-wrap', 'gap-x-[18px]');
+    expect(screen.getByTestId('stat-strip-progress').className).not.toContain('ml-[18px]');
+  });
+});
+
+describe('StatStrip line drops separators at line ends (narrow batch)', () => {
+  const items = [
+    { label: '/ 31 points delivered', value: '16', progress: { value: 16, max: 31 } },
+    { label: 'agent running', value: '1' },
+    { label: 'of $75 spent', value: '$7.76' },
+  ];
+
+  it('is the default: each cluster after the first LEADS with its separator, none trails', () => {
+    render(<StatStrip variant="line" items={items} data-testid="strip" />);
+    expect(screen.getByTestId('strip')).toHaveAttribute('data-wrap-separators', 'drop');
+    const units = screen.getAllByTestId('stat-strip-unit');
+    expect(units[0]!.querySelector('[data-testid="stat-strip-separator"]')).toBeNull();
+    expect(units[1]!.firstElementChild).toHaveAttribute('data-testid', 'stat-strip-separator');
+    expect(units[2]!.firstElementChild).toHaveAttribute('data-testid', 'stat-strip-separator');
+    for (const u of units) expect(u.lastElementChild).not.toHaveAttribute('data-testid', 'stat-strip-separator');
+    expect(screen.getAllByTestId('stat-strip-separator')).toHaveLength(2);
+  });
+
+  it('clips a line-start separator: the row sits one separator width left of a clipping frame', () => {
+    render(<StatStrip variant="line" items={items} data-testid="strip" />);
+    const frame = screen.getByTestId('strip');
+    expect(frame).toHaveClass('overflow-hidden');
+    const row = frame.querySelector('[data-stat-strip-row]')!;
+    expect(row).toHaveClass('-ml-11', 'flex-wrap');
+    // The separator box is exactly the gutter, and the first cluster is inset by it.
+    for (const sep of screen.getAllByTestId('stat-strip-separator')) expect(sep).toHaveClass('w-11', 'shrink-0');
+    expect(screen.getAllByTestId('stat-strip-unit')[0]).toHaveClass('pl-11');
+  });
+
+  it('keeps the progress bar, which wraps under its label inside the cluster', () => {
+    render(<StatStrip variant="line" items={items} />);
+    expect(screen.getByTestId('stat-strip-progress')).toBeInTheDocument();
+    expect(screen.getAllByTestId('stat-strip-cluster')[0]).toHaveClass('flex-wrap');
+  });
+
+  it('a host className still lands on the outer frame', () => {
+    render(<StatStrip variant="line" items={items} className="flex-1" data-testid="strip" />);
+    expect(screen.getByTestId('strip')).toHaveClass('flex-1', 'overflow-hidden');
   });
 });

@@ -1,13 +1,14 @@
 import { n as e } from "../Button-DQoeE5dN.js";
-import { i as t, n, r } from "../Text-Bs4sXKqJ.js";
+import { n as t, t as n } from "../Stack-CE1FjEn8.js";
+import { n as r } from "../Text-XdCzxWMv.js";
 import { g as i } from "../MediaIcons-_ai5Til2.js";
 import { t as a } from "../Modal-C88cabjQ.js";
-import { t as o } from "../DropdownMenu-DoCRgXx4.js";
+import { t as o } from "../DropdownMenu-DsOGcoH4.js";
 import { t as s } from "../Switch-CRiY_kzy.js";
-import { C as c } from "../BreakoutRoomsPanel-CU5HPjkK.js";
-import { n as l, r as u } from "../RecordingConsentNotice-WYT30YW4.js";
-import { i as d, n as f, r as p, t as m } from "../useDocumentImageUpload-B4NZr9mP.js";
-import { $ as h, A as g, B as ee, C as _, Ct as v, D as y, E as b, F as x, G as S, H as C, I as w, J as T, K as E, L as D, M as O, N as k, O as A, P as j, Q as M, R as N, S as te, St as P, T as F, U as I, V as ne, W as re, X as ie, Y as L, Z as ae, _ as oe, _t as se, a as R, at as ce, b as z, bt as B, c as le, ct as V, d as ue, dt as de, et as H, f as fe, ft as pe, g as me, gt as U, h as he, ht as ge, i as W, it as _e, j as ve, k as ye, l as be, lt as xe, m as Se, mt as Ce, n as we, nt as Te, o as Ee, ot as De, p as Oe, pt as ke, q as Ae, r as je, rt as Me, s as Ne, st as Pe, t as Fe, tt as Ie, u as Le, ut as Re, v as ze, vt as Be, w as Ve, wt as He, x as Ue, xt as We, y as Ge, yt as Ke, z as qe } from "../meeting-DeoDOGrR.js";
+import { C as c } from "../BreakoutRoomsPanel-BkKG_eD6.js";
+import { n as l, r as u } from "../RecordingConsentNotice-DKzXXWvX.js";
+import { i as d, n as f, r as p, t as m } from "../useDocumentImageUpload-SM3LMrpU.js";
+import { $ as h, A as g, B as ee, C as _, Ct as v, D as y, E as b, F as x, G as S, H as C, I as w, J as T, K as E, L as D, M as O, N as k, O as A, P as j, Q as M, R as N, S as te, St as P, T as F, U as I, V as ne, W as re, X as ie, Y as L, Z as ae, _ as oe, _t as se, a as R, at as ce, b as z, bt as B, c as le, ct as V, d as ue, dt as de, et as H, f as fe, ft as pe, g as me, gt as U, h as he, ht as ge, i as W, it as _e, j as ve, k as ye, l as be, lt as xe, m as Se, mt as Ce, n as we, nt as Te, o as Ee, ot as De, p as Oe, pt as ke, q as Ae, r as je, rt as Me, s as Ne, st as Pe, t as Fe, tt as Ie, u as Le, ut as Re, v as ze, vt as Be, w as Ve, wt as He, x as Ue, xt as We, y as Ge, yt as Ke, z as qe } from "../meeting-O8iHTZdh.js";
 import { createContext as Je, useCallback as G, useContext as K, useEffect as q, useLayoutEffect as Ye, useMemo as J, useRef as Y, useState as X, useSyncExternalStore as Xe } from "react";
 import { Fragment as Ze, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { createPortal as Qe } from "react-dom";
@@ -226,7 +227,7 @@ function jt(d) {
 			cardClassName: "flex max-h-[90dvh] flex-col gap-5 overflow-hidden border border-border p-5 sm:p-6",
 			backdropTestId: "prejoin-backdrop",
 			children: [
-				/* @__PURE__ */ Q(r, {
+				/* @__PURE__ */ Q(n, {
 					justify: "between",
 					align: "baseline",
 					gap: "md",
@@ -236,7 +237,7 @@ function jt(d) {
 					children: [/* @__PURE__ */ Z("h2", {
 						className: "m-0 shrink-0 text-lg font-semibold text-text-primary",
 						children: _t[l]
-					}), /* @__PURE__ */ Z(n, {
+					}), /* @__PURE__ */ Z(r, {
 						size: "sm",
 						weight: "medium",
 						className: "min-w-0 truncate text-right",
@@ -255,7 +256,7 @@ function jt(d) {
 					onKeyDownCapture: () => {
 						k.current = !0, O(null);
 					},
-					children: [/* @__PURE__ */ Q(n, {
+					children: [/* @__PURE__ */ Q(r, {
 						size: "xs",
 						tone: "secondary",
 						children: ["Joining as ", f]
@@ -345,14 +346,14 @@ function jt(d) {
 						] })
 					})]
 				}),
-				/* @__PURE__ */ Q(r, {
+				/* @__PURE__ */ Q(n, {
 					justify: "between",
 					align: "center",
 					gap: "md",
 					wrap: !0,
 					className: "shrink-0 border-t border-border pt-4",
 					"data-testid": "prejoin-footer",
-					children: [/* @__PURE__ */ Q(r, {
+					children: [/* @__PURE__ */ Q(n, {
 						gap: "sm",
 						align: "center",
 						wrap: !1,
@@ -364,12 +365,12 @@ function jt(d) {
 							})),
 							"aria-label": "Remember and skip this check next time",
 							"data-testid": "prejoin-remember"
-						}), /* @__PURE__ */ Z(n, {
+						}), /* @__PURE__ */ Z(r, {
 							size: "xs",
 							tone: "secondary",
 							children: "Skip device setup next time"
 						})]
-					}), /* @__PURE__ */ Q(r, {
+					}), /* @__PURE__ */ Q(n, {
 						gap: "sm",
 						justify: "end",
 						className: "ml-auto",

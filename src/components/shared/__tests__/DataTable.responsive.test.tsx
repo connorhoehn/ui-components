@@ -19,7 +19,12 @@ const columns: DataTableColumn<Row>[] = [
   { key: 'date', header: 'Date', priority: 3 },
 ];
 // Name 200 + Amount 100 + Owner 150 + Date 150 = 600; the "+N" column adds 80.
+// Name grows to 400 while any shown name is longer than ten characters.
 const WIDTH: Record<string, number> = { name: 200, amount: 100, owner: 150, date: 150 };
+function nameWidth(scroller: HTMLElement): number {
+  const names = Array.from(scroller.querySelectorAll('tbody tr')).map((tr) => tr.querySelector('td')?.textContent ?? '');
+  return names.some((n) => n.length > 10) ? 400 : WIDTH.name!;
+}
 
 let boxWidth = 1000;
 const observers: Array<() => void> = [];
@@ -34,7 +39,7 @@ function shownWidth(scroller: HTMLElement): number {
   scroller.querySelectorAll('thead th').forEach((th) => {
     if (th.hasAttribute('data-column-hidden')) return;
     const key = th.getAttribute('data-column');
-    sum += key ? WIDTH[key] ?? 0 : 80;
+    sum += key === 'name' ? nameWidth(scroller) : key ? WIDTH[key] ?? 0 : 80;
   });
   return sum;
 }
@@ -91,7 +96,7 @@ describe('DataTable responsiveColumns', () => {
     renderTable();
     resize(560);
     expect(hiddenKeys()).toBe('date');
-    expect(headerTexts()).toEqual(['Name', 'Amount', 'Owner', expect.stringContaining('Hidden columns')]);
+    expect(headerTexts()).toEqual(['Name', 'Amount', 'Owner', 'More']);
     const more = screen.getByTestId('datatable-more-a');
     expect(more).toHaveTextContent('+1 column');
     fireEvent.click(more);
@@ -106,10 +111,85 @@ describe('DataTable responsiveColumns', () => {
     resize(380);
     expect(hiddenKeys()).toBe('owner date');
     expect(screen.getByTestId('datatable-more-b')).toHaveTextContent('+2 columns');
-    resize(300);
-    expect(hiddenKeys()).toBe('owner date');
     expect(headerTexts().slice(0, 2)).toEqual(['Name', 'Amount']);
     resize(1000);
+    expect(hiddenKeys()).toBe('');
+  });
+
+  it('the fit counts the "+N" column itself: 520px hides two columns although 450px of data would fit after one', () => {
+    renderTable();
+    // Date hidden: 200 + 100 + 150 + the 80px "+1" column = 530 > 520, so Owner goes too.
+    resize(520);
+    expect(hiddenKeys()).toBe('owner date');
+    resize(530);
+    expect(hiddenKeys()).toBe('date');
+  });
+
+  it('the "+N" column has a visible "More" header and a quiet, regular-weight control', () => {
+    renderTable();
+    resize(560);
+    const head = screen.getByTestId('datatable-more-header');
+    expect(head).toHaveTextContent(/^More$/);
+    const more = screen.getByTestId('datatable-more-a');
+    expect(more.className).toContain('font-normal');
+    expect(more.className).not.toContain('font-semibold');
+    expect(more.className).toContain('text-text-secondary');
+  });
+
+  it('switches to the stacked form instead of hiding more than half the columns', () => {
+    const cols: DataTableColumn<Row>[] = [
+      { key: 'name', header: 'Name' },
+      { key: 'amount', header: 'Amount', numeric: true, priority: 2 },
+      { key: 'owner', header: 'Owner', priority: 3 },
+      { key: 'date', header: 'Date', priority: 4 },
+    ];
+    renderTable({ columns: cols });
+    resize(380);
+    // Two of four hidden is half: still a table.
+    expect(hiddenKeys()).toBe('owner date');
+    expect(screen.getByTestId('dt')).not.toHaveAttribute('data-stacked');
+    // A third would leave Name and "+3": the cards instead, every column back.
+    resize(300);
+    const root = screen.getByTestId('dt');
+    expect(root).toHaveAttribute('data-stacked');
+    expect(hiddenKeys()).toBe('');
+    expect(screen.queryByTestId('datatable-more-a')).toBeNull();
+    const cell = screen.getAllByRole('row')[1]!.querySelectorAll('td')[3]!;
+    expect(cell).toHaveAttribute('data-label', 'Date');
+    expect(cell.className).toContain('before:content-[attr(data-label)]');
+    expect(document.querySelector('thead')!.className).toContain('sr-only');
+    // Widening brings the table back.
+    resize(1000);
+    expect(screen.getByTestId('dt')).not.toHaveAttribute('data-stacked');
+    expect(hiddenKeys()).toBe('');
+  });
+
+  it('stacks when every hideable column is gone and it still overflows', () => {
+    renderTable();
+    resize(300);
+    expect(screen.getByTestId('dt')).toHaveAttribute('data-stacked');
+    expect(hiddenKeys()).toBe('');
+  });
+
+  it('re-measures when a cell\'s text changes with the same rows (a name read from the host\'s other state)', async () => {
+    const cols = (long: boolean): DataTableColumn<Row>[] => columns.map((c) => (c.key === 'name' ? { ...c, render: (r: Row) => (long ? `${r.name} with a long name` : r.name) } : c));
+    const { rerender } = render(<DataTable data={rows} columns={cols(true)} keyField={(r) => r.id} staticRows="test" responsiveColumns data-testid="dt" />);
+    resize(700);
+    expect(hiddenKeys()).toBe('owner date');
+    rerender(<DataTable data={rows} columns={cols(false)} keyField={(r) => r.id} staticRows="test" responsiveColumns data-testid="dt" />);
+    await act(async () => { await new Promise((r) => setTimeout(r, 50)); });
+    expect(hiddenKeys()).toBe('');
+  });
+
+  it('a column hidden for wide content returns when the content narrows at the same width', () => {
+    const wide = rows.map((r, i) => (i === 0 ? { ...r, name: 'Alpha with a long name' } : r));
+    const { rerender } = renderTable({ data: wide });
+    resize(700);
+    // Name 400 + 100 + 150 + 150 = 800: Date, then Owner (730 with "+1") hide.
+    expect(hiddenKeys()).toBe('owner date');
+    act(() => {
+      rerender(<DataTable data={rows} columns={columns} keyField={(r) => r.id} staticRows="test" responsiveColumns data-testid="dt" />);
+    });
     expect(hiddenKeys()).toBe('');
   });
 
@@ -151,5 +231,54 @@ describe('DataTable responsiveColumns', () => {
     resize(300);
     expect(screen.getByTestId('dt')).not.toHaveAttribute('data-hidden-columns');
     expect(document.querySelectorAll('thead th')).toHaveLength(4);
+  });
+});
+
+describe('DataTable hiddenColumnsControl="header" (2.519.0)', () => {
+  it('one control in the "More" header lists the hidden columns; rows carry no "+N" link, only a chevron', () => {
+    renderTable({ hiddenColumnsControl: 'header' });
+    resize(380);
+    expect(hiddenKeys()).toBe('owner date');
+    const head = screen.getByTestId('datatable-more-header');
+    expect(head).toHaveAttribute('data-hidden-columns-control', 'header');
+    const control = within(head).getByTestId('datatable-more-header-control');
+    expect(control).toHaveTextContent('+2 columns');
+    expect(control).toHaveAccessibleName('2 hidden columns: choose one to show');
+    // No row repeats "+2 columns".
+    expect(document.querySelector('tbody')!.textContent).not.toMatch(/\+\d+ column/);
+    const chevron = screen.getByTestId('datatable-more-a');
+    expect(chevron).toHaveAccessibleName('2 more values for Alpha');
+    fireEvent.click(chevron);
+    const pop = screen.getByTestId('datatable-more-a-popover');
+    expect(within(pop).getByText('Owner')).toBeInTheDocument();
+    expect(within(pop).getByText('2026-01-02')).toBeInTheDocument();
+  });
+
+  it('choosing a hidden column swaps it in for the lowest-priority shown column', () => {
+    renderTable({ hiddenColumnsControl: 'header' });
+    resize(560);
+    expect(hiddenKeys()).toBe('date');
+    fireEvent.click(screen.getByTestId('datatable-more-header-control'));
+    fireEvent.click(screen.getByTestId('datatable-more-header-show-date'));
+    expect(hiddenKeys()).toBe('owner');
+    expect(headerTexts().slice(0, 3)).toEqual(['Name', 'Amount', 'Date']);
+  });
+
+  it('with no shown column left to swap out, choosing opens the stacked form', () => {
+    renderTable({ hiddenColumnsControl: 'header' });
+    resize(380);
+    fireEvent.click(screen.getByTestId('datatable-more-header-control'));
+    expect(screen.getByTestId('datatable-more-header-stack')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('datatable-more-header-show-date'));
+    expect(screen.getByTestId('dt')).toHaveAttribute('data-stacked');
+    expect(hiddenKeys()).toBe('');
+  });
+
+  it('the default stays "row": a "+N columns" link per row and a plain "More" header', () => {
+    renderTable();
+    resize(560);
+    expect(screen.getByTestId('datatable-more-header')).toHaveTextContent(/^More$/);
+    expect(screen.queryByTestId('datatable-more-header-control')).toBeNull();
+    expect(screen.getByTestId('datatable-more-a')).toHaveTextContent('+1 column');
   });
 });

@@ -13,7 +13,13 @@
 // popover to the bottom-left of the trigger. 'bottom-end' anchors the
 // top-RIGHT of the popover to the bottom-right of the trigger (for
 // triggers sitting at the viewport's right edge). 'right' anchors the
-// left edge to the trigger's right edge, top-aligned.
+// left edge to the trigger's right edge, top-aligned. 'top-start' /
+// 'top-end' (since 2.517.0) open ABOVE the trigger, start- or end-aligned:
+// for a trigger in a footer row. 'sheet' (narrow batch, 2.518.0) is a
+// bottom sheet: the window's width less an 8px gutter, its bottom edge
+// `offset` above the trigger (a footer), at most 45% of the viewport high and
+// scrolling inside; a press on the page above does not dismiss it, so the page
+// stays readable and scrollable while it is up.
 
 import {
   type CSSProperties,
@@ -29,7 +35,7 @@ import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { useOverlayLayer } from '../../lib/overlayStack';
 
-export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
 export interface InlinePopoverProps {
   /** Ref to the anchor element (the visible trigger). */
@@ -62,6 +68,33 @@ export interface InlinePopoverProps {
    * composer's supported-commands help. Since 2.442.0.
    */
   kind?: string;
+  /**
+   * Keep clear of every keep-out surface (`[data-uic-keepout]`, e.g. a pinned
+   * composer dock and the question panel above it) that does not contain the
+   * trigger, whichever side of the trigger it is on (since 2.517.0). A panel
+   * that would cover one moves beside it (left, then right) or above it,
+   * whichever fits first; with no room anywhere it stays where it was. The
+   * voice dock's cards use this so a confirmation never covers the panel it
+   * answers. Default false: only the keep-out below the trigger counts.
+   */
+  avoidKeepouts?: boolean;
+  /**
+   * Where focus goes when the panel opens. `first` (default): its first
+   * focusable element, else the panel. `none`: focus stays where it is — the
+   * content decides (the voice cards never take focus from a field the
+   * person is typing in). With `none`, closing hands focus back only when it
+   * was inside the panel (or nowhere). Since 2.519.0.
+   */
+  focusOnOpen?: 'first' | 'none';
+  /**
+   * Which Escape presses close the panel. `window` (default): any Escape
+   * while it is the top layer. `inside`: only an Escape pressed while focus
+   * is inside the panel, so a panel that did not take focus never eats the
+   * Escape of a field elsewhere. Since 2.519.0.
+   */
+  escapeScope?: 'window' | 'inside';
+  /** Keep Tab / Shift+Tab cycling inside the panel. Default true. Since 2.519.0. */
+  trapFocus?: boolean;
   children: ReactNode;
 }
 
@@ -81,6 +114,10 @@ function getFocusable(root: HTMLElement): HTMLElement[] {
   );
 }
 
+/** The bottom sheet's side gutter and its height cap (a share of the viewport). */
+const SHEET_GUTTER = 8;
+const SHEET_MAX_HEIGHT = '45vh';
+
 /** The width a right-hand flyout needs before it flips to the left. */
 const FLYOUT_MIN_WIDTH = 240;
 
@@ -89,6 +126,17 @@ function computePosition(
   placement: InlinePopoverPlacement,
   offset: number,
 ): CSSProperties {
+  if (placement === 'sheet') {
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 0;
+    return {
+      position: 'fixed',
+      left: SHEET_GUTTER,
+      right: SHEET_GUTTER,
+      bottom: Math.max(0, vh - anchor.top + offset),
+      maxHeight: `min(${SHEET_MAX_HEIGHT}, ${Math.max(0, anchor.top - offset - SHEET_GUTTER)}px)`,
+      overflowY: 'auto',
+    };
+  }
   if (placement === 'right') {
     // A flyout from a menu at the window's right edge opens to the LEFT
     // rather than over its own menu (2.390.5).
@@ -100,6 +148,16 @@ function computePosition(
       position: 'fixed',
       top: anchor.top,
       left: anchor.right + offset,
+    };
+  }
+  if (placement === 'top-start' || placement === 'top-end') {
+    // The panel's bottom edge `offset` above the trigger; the correction pass
+    // replaces the transform with explicit coordinates when it has to move it.
+    return {
+      position: 'fixed',
+      top: anchor.top - offset,
+      left: placement === 'top-end' ? anchor.right : anchor.left,
+      transform: placement === 'top-end' ? 'translate(-100%, -100%)' : 'translateY(-100%)',
     };
   }
   if (placement === 'bottom-end') {
@@ -160,6 +218,38 @@ export function popoverBounds(trigger: HTMLElement | null, viewportWidth: number
   return { left: Math.max(0, r.left), right: Math.min(viewportWidth, r.right) };
 }
 
+interface Box { top: number; left: number; width: number; height: number }
+
+function overlaps(a: Box, b: DOMRect): boolean {
+  return a.left < b.right && a.left + a.width > b.left && a.top < b.bottom && a.top + a.height > b.top;
+}
+
+/**
+ * Where a panel at `box` should go so it covers none of `keepouts`: beside the
+ * first one it covers (left, then right) or above it, whichever fits inside
+ * `bounds` and clear of every keep-out; `null` when it covers none or nothing
+ * fits. Exported for tests. Since 2.517.0.
+ */
+export function avoidKeepoutBoxes(
+  box: Box,
+  keepouts: DOMRect[],
+  bounds: { left: number; right: number; top: number; bottom: number },
+  margin = 8,
+): { top: number; left: number } | null {
+  const hit = keepouts.find((k) => overlaps(box, k));
+  if (!hit) return null;
+  const clear = (b: Box) =>
+    b.left >= bounds.left && b.left + b.width <= bounds.right && b.top >= bounds.top && b.top + b.height <= bounds.bottom
+    && !keepouts.some((k) => overlaps(b, k));
+  const options: Box[] = [
+    { ...box, left: hit.left - margin - box.width },
+    { ...box, left: hit.right + margin },
+    { ...box, top: hit.top - margin - box.height },
+  ];
+  const fit = options.find(clear);
+  return fit ? { top: fit.top, left: fit.left } : null;
+}
+
 // Open order of popover panels. A submenu is portalled on its own, so to its
 // parent it looks like "outside": a mousedown on a submenu row closed the
 // parent, which unmounted the submenu before the click landed, and the row's
@@ -178,6 +268,10 @@ export function InlinePopover({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   kind = 'popover',
+  avoidKeepouts = false,
+  focusOnOpen = 'first',
+  escapeScope = 'window',
+  trapFocus = true,
   children,
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -231,6 +325,8 @@ export function InlinePopover({
   // transform — the measured rect already includes it.
   useLayoutEffect(() => {
     if (!open || !position) return;
+    // The sheet is placed against the window, not its content: nothing to correct.
+    if (placement === 'sheet') return;
     // One correction per anchor-derived position, or the correction's own
     // re-render would measure and correct again forever.
     if (clampedRef.current) return;
@@ -285,9 +381,29 @@ export function InlinePopover({
       left = minLeft;
       changed = true;
     }
+    if (avoidKeepouts) {
+      const keepouts: DOMRect[] = [];
+      document.querySelectorAll<HTMLElement>('[data-uic-keepout]').forEach((el) => {
+        if (trigger.current && el.contains(trigger.current)) return;
+        if (panel.contains(el)) return;
+        const k = el.getBoundingClientRect();
+        if (k.width > 0 && k.height > 0) keepouts.push(k);
+      });
+      const moved = avoidKeepoutBoxes(
+        { top, left, width: r.width, height: r.height },
+        keepouts,
+        { left: minLeft, right: maxRight, top: margin, bottom: window.innerHeight - margin },
+        margin,
+      );
+      if (moved) {
+        top = moved.top;
+        left = moved.left;
+        changed = true;
+      }
+    }
     if (!changed) return;
     setPosition({ position: 'fixed', top, left, maxHeight: maxH, overflowY: 'auto' });
-  }, [open, position]);
+  }, [open, position, avoidKeepouts, placement]);
 
   // The correction above runs once per anchor-derived position, so a panel
   // whose content grows AFTER it was placed (a live feed filling in, a tab
@@ -303,6 +419,7 @@ export function InlinePopover({
       const r = panel.getBoundingClientRect();
       if (r.width === 0 && r.height === 0) return;
       if (r.top < 0 || r.bottom > window.innerHeight) recompute();
+      // A sheet does not move with its content; its max height already fits.
     });
     observer.observe(panel);
     return () => observer.disconnect();
@@ -330,6 +447,7 @@ export function InlinePopover({
     closedByEscapeRef.current = false;
     // Defer until panel is mounted.
     queueMicrotask(() => {
+      if (focusOnOpen === 'none') return;
       const panel = panelRef.current;
       if (!panel) return;
       const focusables = getFocusable(panel);
@@ -353,7 +471,13 @@ export function InlinePopover({
       const prevUsable = !!prev && prev !== document.body && document.contains(prev);
       const escaped = closedByEscapeRef.current;
       closedByEscapeRef.current = false;
-      const target = prevUsable ? prev : escaped && anchor && document.contains(anchor) ? anchor : null;
+      // A panel that never took focus hands it back only when focus is lost
+      // with it (it was inside the panel); a field the person moved to stays.
+      const now = document.activeElement;
+      const focusLost = !now || now === document.body || !document.contains(now);
+      const target = focusOnOpen === 'none' && !focusLost
+        ? null
+        : prevUsable ? prev : escaped && anchor && document.contains(anchor) ? anchor : null;
       if (target && typeof target.focus === 'function' && document.contains(target)) {
         target.focus();
       }
@@ -368,12 +492,13 @@ export function InlinePopover({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (!isTopLayer()) return;
+        if (escapeScope === 'inside' && !(e.target instanceof Node && panelRef.current?.contains(e.target))) return;
         e.stopPropagation();
         closedByEscapeRef.current = true;
         onClose();
         return;
       }
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab' || !trapFocus) return;
       if (!isTopLayer()) return;
       const panel = panelRef.current;
       if (!panel) return;
@@ -400,12 +525,12 @@ export function InlinePopover({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose, isTopLayer]);
+  }, [open, onClose, isTopLayer, escapeScope, trapFocus]);
 
   // Outside-click dismiss. The trigger itself is excluded so the parent
   // can implement a "click trigger to toggle" pattern without flicker.
   useEffect(() => {
-    if (!open) return;
+    if (!open || placement === 'sheet') return;
     const onDown = (e: MouseEvent) => {
       const target = e.target as Node | null;
       if (!target) return;
@@ -417,7 +542,7 @@ export function InlinePopover({
     };
     document.addEventListener('mousedown', onDown);
     return () => document.removeEventListener('mousedown', onDown);
-  }, [open, onClose, trigger]);
+  }, [open, onClose, trigger, placement]);
 
   if (!open || !position) return null;
   if (typeof document === 'undefined') return null;
@@ -441,6 +566,7 @@ export function InlinePopover({
         // adopting the token is a no-op there and a fix in dark.
         'min-w-[160px] rounded-lg border border-border bg-surface',
         'shadow-lg p-1 text-sm text-text-primary',
+        placement === 'sheet' && 'overscroll-contain',
         className,
       )}
       style={{ ...position, zIndex: layerZ }}
