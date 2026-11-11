@@ -213,6 +213,46 @@ describe('ModelViewer', () => {
     expect(container.querySelector('[data-model-viewer-poster]')).toBeNull();
   });
 
+  it('fit="fill": the frame takes the height the host gives, with no aspect of its own (G174-1)', () => {
+    const { container } = render(<ModelViewer src="/m.glb" fit="fill" aspect="square" />);
+    const section = container.querySelector('[data-ui-model-viewer]') as HTMLElement;
+    const frame = container.querySelector('[data-model-viewer-frame]') as HTMLElement;
+    expect(section).toHaveAttribute('data-model-viewer-fit', 'fill');
+    expect(section.className).toContain('h-full');
+    expect(section.className).toContain('min-h-0');
+    expect(frame.className).toContain('flex-1');
+    expect(frame.className).not.toContain('aspect-');
+  });
+
+  it('fit defaults to the aspect frame, unchanged', () => {
+    const { container } = render(<ModelViewer src="/m.glb" />);
+    const section = container.querySelector('[data-ui-model-viewer]') as HTMLElement;
+    expect(section).toHaveAttribute('data-model-viewer-fit', 'aspect');
+    expect(section.className).not.toContain('h-full');
+    expect((container.querySelector('[data-model-viewer-frame]') as HTMLElement).className).toContain('aspect-square');
+  });
+
+  it('cameraOrbit opens the camera where the host says; none leaves model-viewer its own (G174-2)', () => {
+    const { container, rerender } = render(<ModelViewer src="/m.glb" cameraOrbit="180deg 75deg auto" />);
+    expect(container.querySelector('model-viewer')).toHaveAttribute('camera-orbit', '180deg 75deg auto');
+    rerender(<ModelViewer src="/m.glb" />);
+    expect(container.querySelector('model-viewer')).not.toHaveAttribute('camera-orbit');
+  });
+
+  it('a reference that goes (or comes) after mount still reaches ready on the element then drawn (G174-4)', () => {
+    const onLoad = vi.fn();
+    const { container, rerender } = render(<ModelViewer src="/m.glb" poster="/p.png" reference={{ src: '/concept.png' }} onLoad={onLoad} />);
+    const first = viewerElement(container);
+    rerender(<ModelViewer src="/m.glb" poster="/p.png" onLoad={onLoad} />);
+    const second = viewerElement(container);
+    expect(second).not.toBe(first);
+    expect(root(container)).toHaveAttribute('data-model-viewer-state', 'loading');
+    load(second);
+    expect(root(container)).toHaveAttribute('data-model-viewer-state', 'ready');
+    expect(container.querySelector('[data-model-viewer-poster]')).toBeNull();
+    expect(onLoad).toHaveBeenCalledTimes(1);
+  });
+
   it('draws the reference beside the model in the same frame classes', () => {
     const { container } = render(<ModelViewer src="/cube.glb" aspect="landscape" reference={{ src: '/concept.png' }} />);
     const ref = container.querySelector('[data-model-viewer-reference]') as HTMLElement;

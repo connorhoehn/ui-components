@@ -790,6 +790,8 @@ function ConversationComposerImpl({
       {...(deckInHeader ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" presentation="prompt" data-testid={`${testId}-prompts`} /> }
         : dialogueOpen ? { replacement: <ComposerPromptDeck deck={deck} data-testid={`${testId}-prompts`} /> }
         : deck.visible ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" data-testid={`${testId}-prompts`} /> } : {})}
+      // A deck folded to its one line ("1 question waiting · … Show") rides the idle row (G174-3).
+      headerFolds={deck.collapsed && !!deck.active}
       {...(modeRowEnd ? { modeRowEnd } : {})}
       {...(references ? { references, onRemoveReference: removeReference } : {})}
       modePlaceholders={placeholders}
