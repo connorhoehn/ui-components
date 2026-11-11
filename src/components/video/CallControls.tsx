@@ -12,6 +12,7 @@
 
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type KeyboardEvent,
@@ -55,6 +56,23 @@ export interface CallControlsProps {
   onToggleScreenShare?: () => void;
   onUpgradeToVideo?: () => void;
   onEndCall?: () => void;
+
+  /** Disables the mute toggle. Same names as MediaControlsBar. */
+  audioDisabled?: boolean;
+  /**
+   * Why the mute toggle is off-limits ("The host made you view-only").
+   * Disables it on its own and is its tooltip and accessible description;
+   * the button stays focusable (`aria-disabled`) so the reason is reachable.
+   */
+  audioDisabledReason?: string;
+  /** Disables the camera toggle and, in an audio call, "Switch to video". */
+  videoDisabled?: boolean;
+  /** Same as `audioDisabledReason`, for the camera toggle and "Switch to video". */
+  videoDisabledReason?: string;
+  /** Disables the screen-share toggle. */
+  screenShareDisabled?: boolean;
+  /** Same as `audioDisabledReason`, for the screen-share toggle. */
+  screenShareDisabledReason?: string;
 
   /** When provided, shows the "add participant" button + picker popover. */
   onAddParticipant?: (participantId: string) => void;
@@ -166,6 +184,8 @@ interface ControlButtonProps {
   danger?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  /** Disables the button but keeps it focusable (aria-disabled), as its tooltip and description. */
+  disabledReason?: string;
   testId?: string;
   /** Set only by the overflow trigger, so it announces its menu. */
   expanded?: boolean;
@@ -179,31 +199,39 @@ function ControlButton({
   danger = false,
   onClick,
   disabled = false,
+  disabledReason,
   testId,
   expanded,
   buttonRef,
 }: ControlButtonProps) {
+  const reasonId = useId();
+  const reason = disabledReason || undefined;
+  const off = disabled || reason !== undefined;
   return (
     <button
       data-ui-part=""
       ref={buttonRef}
       type="button"
-      title={label}
+      title={reason ?? label}
       aria-label={label}
       aria-haspopup={expanded === undefined ? undefined : 'menu'}
       aria-expanded={expanded}
-      disabled={disabled}
-      onClick={onClick}
+      disabled={reason === undefined ? disabled : undefined}
+      aria-disabled={reason !== undefined ? 'true' : undefined}
+      aria-describedby={reason !== undefined ? reasonId : undefined}
+      onClick={reason !== undefined ? undefined : onClick}
       data-testid={testId}
+      data-disabled-reason={reason}
       className={cn(
         'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
         danger && 'bg-danger text-white hover:bg-danger',
         active && !danger && 'bg-white/20 text-white',
         !active && !danger && 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white',
-        disabled && 'opacity-40 cursor-not-allowed',
+        off && 'opacity-40 cursor-not-allowed',
       )}
     >
       {icon}
+      {reason !== undefined && <span id={reasonId} hidden>{reason}</span>}
     </button>
   );
 }
@@ -226,6 +254,9 @@ interface ControlSpec {
   active?: boolean;
   onClick: () => void;
   testId: string;
+  disabled?: boolean;
+  /** Set with `disabled`: shown under the menu item's label, and its description. */
+  disabledReason?: string;
 }
 
 /**
@@ -300,31 +331,53 @@ function OverflowMenu({ controls }: { controls: ControlSpec[] }) {
           className="absolute bottom-full right-0 z-10 mb-2 min-w-[176px] overflow-hidden rounded-lg border border-call-chrome-border bg-call-chrome py-1 shadow-lg"
         >
           {controls.map((c) => (
-            <button
-              data-ui-part=""
-              key={c.key}
-              type="button"
-              role="menuitem"
-              data-testid={c.testId}
-              aria-label={c.label}
-              onClick={() => {
-                c.onClick();
-                setOpen(false);
-              }}
-              className={cn(
-                'flex w-full cursor-pointer items-center gap-2.5 border-none px-3 py-2 text-left text-xs transition-colors',
-                c.active
-                  ? 'bg-white/15 text-white'
-                  : 'bg-transparent text-white/80 hover:bg-white/10 hover:text-white',
-              )}
-            >
-              <span className="shrink-0" aria-hidden="true">{c.icon}</span>
-              {c.label}
-            </button>
+            <OverflowItem key={c.key} control={c} onDone={() => setOpen(false)} />
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * One row of the "More" menu. A disabled row stays focusable
+ * (`aria-disabled`, as DropdownMenu's rows do) so arrowing onto it reads the
+ * reason, which is also drawn under the label.
+ */
+function OverflowItem({ control: c, onDone }: { control: ControlSpec; onDone: () => void }) {
+  const reasonId = useId();
+  const reason = c.disabled ? c.disabledReason || undefined : undefined;
+  return (
+    <button
+      data-ui-part=""
+      type="button"
+      role="menuitem"
+      data-testid={c.testId}
+      aria-label={c.label}
+      aria-disabled={c.disabled ? 'true' : undefined}
+      aria-describedby={reason ? reasonId : undefined}
+      title={reason}
+      data-disabled-reason={reason}
+      onClick={() => {
+        if (c.disabled) return;
+        c.onClick();
+        onDone();
+      }}
+      className={cn(
+        'flex w-full items-center gap-2.5 border-none px-3 py-2 text-left text-xs transition-colors',
+        c.disabled
+          ? 'cursor-not-allowed bg-transparent text-white/40'
+          : c.active
+            ? 'cursor-pointer bg-white/15 text-white'
+            : 'cursor-pointer bg-transparent text-white/80 hover:bg-white/10 hover:text-white',
+      )}
+    >
+      <span className="shrink-0" aria-hidden="true">{c.icon}</span>
+      <span className="flex min-w-0 flex-col">
+        {c.label}
+        {reason && <span id={reasonId} className="text-[10px] leading-tight text-white/50">{reason}</span>}
+      </span>
+    </button>
   );
 }
 
@@ -339,6 +392,12 @@ function OverflowMenu({ controls }: { controls: ControlSpec[] }) {
  */
 const COMPACT_INLINE_KEYS = new Set(['mute', 'camera']);
 
+/** A control's disabled fields: a non-empty reason disables it on its own. */
+function disabledState(disabled: boolean, reason: string | undefined): Pick<ControlSpec, 'disabled' | 'disabledReason'> {
+  if (reason) return { disabled: true, disabledReason: reason };
+  return disabled ? { disabled: true } : {};
+}
+
 export function CallControls({
   mode,
   density = 'full',
@@ -350,6 +409,12 @@ export function CallControls({
   onToggleScreenShare,
   onUpgradeToVideo,
   onEndCall,
+  audioDisabled = false,
+  audioDisabledReason,
+  videoDisabled = false,
+  videoDisabledReason,
+  screenShareDisabled = false,
+  screenShareDisabledReason,
   onAddParticipant,
   availableParticipants,
   currentParticipantIds,
@@ -377,6 +442,7 @@ export function CallControls({
       active: isMuted,
       onClick: onToggleMute,
       testId: 'mute-button',
+      ...disabledState(audioDisabled, audioDisabledReason),
     });
   }
   if (mode === 'video' && onToggleCamera) {
@@ -387,6 +453,7 @@ export function CallControls({
       active: !isCameraOn,
       onClick: onToggleCamera,
       testId: 'camera-button',
+      ...disabledState(videoDisabled, videoDisabledReason),
     });
   }
   if (mode === 'audio' && onUpgradeToVideo) {
@@ -396,6 +463,7 @@ export function CallControls({
       label: 'Switch to video',
       onClick: onUpgradeToVideo,
       testId: 'upgrade-to-video-button',
+      ...disabledState(videoDisabled, videoDisabledReason),
     });
   }
   if (onToggleScreenShare) {
@@ -406,6 +474,7 @@ export function CallControls({
       active: isScreenSharing,
       onClick: onToggleScreenShare,
       testId: 'screenshare-button',
+      ...disabledState(screenShareDisabled, screenShareDisabledReason),
     });
   }
   if (onAddParticipant || onOpenAddParticipant) {
@@ -441,6 +510,8 @@ export function CallControls({
             active={c.active}
             onClick={c.onClick}
             testId={c.testId}
+            disabled={c.disabled}
+            disabledReason={c.disabledReason}
           />
         ))}
         {/* Sits where the demoted controls used to, so the row's shape is

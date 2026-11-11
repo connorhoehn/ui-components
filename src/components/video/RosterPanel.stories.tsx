@@ -103,3 +103,38 @@ export const RaisedHandsQueue: Story = {
     );
   },
 };
+
+/** A host's roster: Ana is view-only (the chip), and every other row has a ⋯
+ *  menu from `rowMenu` to change who can publish. */
+export const ViewOnlyWithRowMenu: Story = {
+  args: { participants: PEOPLE },
+  render: (args) => {
+    const [viewOnly, setViewOnly] = useState<string[]>(['alice']);
+    const participants = args.participants.map((p) => (viewOnly.includes(p.id) ? { ...p, access: 'view-only' as const } : p));
+    return (
+      <RosterPanel
+        {...args}
+        participants={participants}
+        rowMenu={(p) =>
+          p.isLocal
+            ? null
+            : [{
+                label: 'Camera and microphone',
+                items: [p.access === 'view-only'
+                  ? { label: 'Allow publishing', onSelect: () => setViewOnly((ids) => ids.filter((id) => id !== p.id)) }
+                  : { label: 'Make view-only', danger: true, onSelect: () => setViewOnly((ids) => [...ids, p.id]) }],
+              }]
+        }
+      />
+    );
+  },
+};
+
+/** The same on dark call chrome (`tone="dark"`). */
+export const ViewOnlyDark: Story = {
+  args: {
+    participants: PEOPLE.map((p) => (p.id === 'alice' ? { ...p, access: 'view-only' as const } : p)),
+    tone: 'dark',
+    rowMenu: (p) => (p.isLocal ? null : [{ items: [{ label: 'Make view-only', onSelect: () => {} }] }]),
+  },
+};

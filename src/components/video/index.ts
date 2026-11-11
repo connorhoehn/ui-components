@@ -345,6 +345,8 @@ export { useConsentDismissal } from './RecordingConsentNotice';
 export type { ConsentDismissal, UseConsentDismissalOptions } from './RecordingConsentNotice';
 export { RaisedHandBadge, raisedHandLabel } from './RaisedHandBadge';
 export type { RaisedHandBadgeProps } from './RaisedHandBadge';
+export { ParticipantAccessBadge, participantAccessInfo } from './ParticipantAccessBadge';
+export type { ParticipantAccessBadgeProps, ParticipantAccess, ParticipantAccessInfo } from './ParticipantAccessBadge';
 export { BreakoutRoomsPanel } from './BreakoutRoomsPanel';
 export type {
   BreakoutRoomsPanelProps,

@@ -27,7 +27,7 @@ import { t as ee } from "./FileUploadDrop-Da3teuhw.js";
 import { t as te } from "./ActivityFeed-DB9ULSns.js";
 import { t as ne } from "./ReactionsOverlay-XR_TNH6f.js";
 import { d as re, n as ie, t as F, u as ae } from "./ConversationSurface-2j7dwhoR.js";
-import { A as I, E as L, J as oe, K as se, T as R, X as z, _ as B, i as ce, n as le, s as ue, t as de, w as fe, x as pe, y as V, z as H } from "./BreakoutRoomsPanel-BOPDCLpb.js";
+import { A as I, E as L, J as oe, K as se, T as ce, X as R, _ as le, i as ue, n as de, s as z, t as B, w as fe, x as pe, y as V, z as H } from "./BreakoutRoomsPanel-CpCb172c.js";
 import { t as me } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as he, o as ge, s as _e } from "./useDocumentImageUpload-SM3LMrpU.js";
 import { Component as ve, createContext as ye, createElement as be, useCallback as U, useContext as xe, useEffect as W, useId as Se, useMemo as G, useRef as K, useState as q } from "react";
@@ -582,7 +582,7 @@ function Je(e, { channelArn: t, excludeParticipantId: n, getAuthToken: r, baseUr
 		c,
 		s.error,
 		a
-	]), /* @__PURE__ */ Y(ue, {
+	]), /* @__PURE__ */ Y(z, {
 		...o,
 		live: c,
 		stream: s.stream,
@@ -605,7 +605,7 @@ function Ye(e, { channelArn: t, playbackToken: n, baseUrl: r, onStatusChange: i,
 			live: o.ready,
 			error: null
 		});
-	}, [o.ready, i]), /* @__PURE__ */ Y(ue, {
+	}, [o.ready, i]), /* @__PURE__ */ Y(z, {
 		...a,
 		live: o.ready,
 		playlistUrl: o.playlistUrl,
@@ -648,7 +648,7 @@ function Qe(e, t) {
 	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ Y(Ze, {
 		stream: i,
 		displayName: r
-	}) : /* @__PURE__ */ Y(R, {
+	}) : /* @__PURE__ */ Y(ce, {
 		stream: i,
 		displayName: r,
 		cameraOn: e.hasVideo
@@ -672,34 +672,36 @@ function $e(e) {
 	}
 	return t;
 }
-function et(e, { stageToken: t, participantId: n, userId: r, localClientId: i, getStageToken: a, overlay: o, spotlightContent: s, onParticipantClick: c, mode: l = "auto", activeSpeakerStrategy: u = "audio-level", localTileLabel: d, showLocalAsTile: f = !0, handFor: p, className: m, "data-testid": h }) {
-	let g = e.useLVSHangout({
+function et(e, { stageToken: t, participantId: n, userId: r, localClientId: i, getStageToken: a, overlay: o, spotlightContent: s, onParticipantClick: c, mode: l = "auto", activeSpeakerStrategy: u = "audio-level", localTileLabel: d, showLocalAsTile: f = !0, handFor: p, accessFor: m, className: h, "data-testid": g }) {
+	let _ = e.useLVSHangout({
 		stageToken: t,
 		participantId: n,
 		userId: r ?? n.slice(0, 8),
 		getAuthToken: a
-	}), _ = G(() => g.participants.filter((e) => f || !e.isLocal).map((e) => {
-		let t = Qe(e, d), n = p?.(e.appUserId ?? e.userId);
-		return n ? {
+	}), v = G(() => _.participants.filter((e) => f || !e.isLocal).map((e) => {
+		let t = Qe(e, d), n = e.appUserId ?? e.userId, r = p?.(n), i = m?.(n);
+		return !r && !i ? t : {
 			...t,
-			handRaised: n
-		} : t;
+			...r ? { handRaised: r } : {},
+			...i ? { access: i } : {}
+		};
 	}), [
-		g.participants,
+		_.participants,
 		f,
 		d,
-		p
-	]), v = g.participants.filter((e) => !e.isLocal).length, y = {
-		connectionState: g.connectionState,
-		error: g.error,
-		participantCount: g.participants.length,
-		remoteCount: v
+		p,
+		m
+	]), y = _.participants.filter((e) => !e.isLocal).length, b = {
+		connectionState: _.connectionState,
+		error: _.error,
+		participantCount: _.participants.length,
+		remoteCount: y
 	};
 	return /* @__PURE__ */ X("div", {
-		"data-testid": h,
-		className: `relative flex-1 min-h-0 ${m ?? ""}`,
+		"data-testid": g,
+		className: `relative flex-1 min-h-0 ${h ?? ""}`,
 		children: [/* @__PURE__ */ Y(I, {
-			participants: _,
+			participants: v,
 			localParticipant: null,
 			mode: l,
 			spotlightContent: s,
@@ -710,7 +712,7 @@ function et(e, { stageToken: t, participantId: n, userId: r, localClientId: i, g
 			"data-testid": "wrapped-overlay-slot",
 			children: /* @__PURE__ */ Y("div", {
 				className: "pointer-events-auto",
-				children: o(y)
+				children: o(b)
 			})
 		})]
 	});
@@ -857,7 +859,7 @@ function mt(e) {
 			onUnpersistedChanges: A.retain
 		}), M = e.useCanvasDocument({ ydoc: j.ydoc }), N = k.connectionState === "connected", P = u && d && j.synced && N, te = K(P);
 		te.current = P;
-		let [ne, re] = q(!1), [ie, F] = q(null), [ae, I] = q(!1), [L, oe] = q(!1), [se, R] = q(null), z = K(null), B = G(() => ({
+		let [ne, re] = q(!1), [ie, F] = q(null), [ae, I] = q(!1), [L, oe] = q(!1), [se, ce] = q(null), R = K(null), le = G(() => ({
 			name: c,
 			color: l
 		}), [c, l]);
@@ -875,12 +877,12 @@ function mt(e) {
 			b?.(j.pendingUpdateCount);
 		}, [j.pendingUpdateCount, b]), W(() => {
 			j.provider?.awareness.setLocalStateField("user", {
-				...B,
+				...le,
 				id: s
 			});
 		}, [
 			j.provider,
-			B,
+			le,
 			s
 		]), W(() => {
 			if (j.pendingUpdateCount === 0) return;
@@ -891,24 +893,24 @@ function mt(e) {
 		}, [j.pendingUpdateCount]), W(() => k.onMessage((e) => {
 			e.channel === `doc:${a}` && (e.type === "crdt:error" && F(typeof e.error == "string" ? e.error : "The document operation was refused."), e.type === "crdt:snapshot" && F(null));
 		}), [k.onMessage, a]);
-		let ce = async (e) => {
-			let t = z.current;
+		let ue = async (e) => {
+			let t = R.current;
 			if (!(!y || !t || t.isDestroyed || !te.current || L)) {
-				oe(!0), R(null);
+				oe(!0), ce(null);
 				try {
 					let n = await y(e);
-					if (z.current !== t || t.isDestroyed || !te.current) throw Error("The document is no longer editable. The image was not inserted.");
+					if (R.current !== t || t.isDestroyed || !te.current) throw Error("The document is no longer editable. The image was not inserted.");
 					t.chain().focus().setImage({
 						src: n,
 						alt: e.name
 					}).run(), I(!1);
 				} catch (e) {
-					R(e instanceof Error ? e.message : "The image could not be uploaded.");
+					ce(e instanceof Error ? e.message : "The image could not be uploaded.");
 				} finally {
 					oe(!1);
 				}
 			}
-		}, le = dt(j.persistenceState, j.pendingUpdateCount, N, j.retryPersistence), ue = {
+		}, de = dt(j.persistenceState, j.pendingUpdateCount, N, j.retryPersistence), z = {
 			editable: P,
 			online: N,
 			synced: j.synced,
@@ -917,7 +919,7 @@ function mt(e) {
 			docVersion: j.docVersion,
 			ydoc: j.ydoc,
 			exportMarkdown: M.exportMarkdown
-		}, de = /* @__PURE__ */ X(J, { children: [
+		}, B = /* @__PURE__ */ X(J, { children: [
 			x,
 			A.recovered && /* @__PURE__ */ Y(w, {
 				tone: "warning",
@@ -997,19 +999,19 @@ function mt(e) {
 						disabled: L || !P,
 						label: L ? "Uploading image…" : "Choose an image or drop it here",
 						onFiles: (e) => {
-							e[0] && ce(e[0]);
+							e[0] && ue(e[0]);
 						}
 					})]
 				})
 			})
 		] }), V = (e, t = null, n = null) => D ? D({
-			notices: de,
+			notices: B,
 			canvas: e,
 			toolbar: t,
 			ruler: n,
-			saveState: le,
-			state: ue
-		}) : /* @__PURE__ */ X(J, { children: [de, e] });
+			saveState: de,
+			state: z
+		}) : /* @__PURE__ */ X(J, { children: [B, e] });
 		if (!fe) return V(/* @__PURE__ */ Y(v, { label: E }));
 		if (!M.isCanvas) return V(/* @__PURE__ */ Y(_, {
 			title: "Document migration is incomplete",
@@ -1026,15 +1028,15 @@ function mt(e) {
 				body: M.body,
 				ydoc: j.ydoc,
 				provider: j.provider,
-				user: B,
+				user: le,
 				editable: P,
 				extensions: m,
 				...y && P ? { onInsertImage: () => {
-					R(null), I(!0);
+					ce(null), I(!0);
 				} } : {},
 				...e ? { renderFrame: ({ toolbar: t, ruler: n, surface: r }) => e(t, n, r) } : {},
 				onEditorReady: (e) => {
-					z.current = e, T?.(e);
+					R.current = e, T?.(e);
 				}
 			}), pe]
 		});
@@ -1082,16 +1084,17 @@ function vt(e, t, n) {
 	}));
 	return i.length ? [...e, ...i] : e;
 }
-function yt(e, t) {
-	if (!t) return e;
-	let n = !1, r = e.map((e) => {
-		let r = t(e.userId);
-		return r ? (n = !0, {
+function yt(e, t, n) {
+	if (!t && !n) return e;
+	let r = !1, i = e.map((e) => {
+		let i = t?.(e.userId), a = n?.(e.userId);
+		return !i && !a ? e : (r = !0, {
 			...e,
-			handRaised: r
-		}) : e;
+			...i ? { handRaised: i } : {},
+			...a ? { access: a } : {}
+		});
 	});
-	return n ? r : e;
+	return r ? i : e;
 }
 function bt(e) {
 	let t = (e?.participants ?? []).filter((e) => !e.isLocal && e.stream && (e.state === "in-call" || e.state === "reconnecting")), n = t.map((e) => `${e.id}=${e.stream.id}`).join("|");
@@ -1100,58 +1103,72 @@ function bt(e) {
 		streams: [e.stream]
 	})), [n]);
 }
-function xt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettings: a, onPopOut: o, extras: s, cameraMenuItems: c, tile: l = gt, notice: u, handFor: d, selfName: p, compact: m = !1, tileSize: h, documents: g, onOpenDocuments: _, documentsOpen: v, onDocumentClick: y, layout: b = "shelf", className: x, "data-testid": S = "conversation-call-dock" }) {
-	let [C, T] = q(!1), E = t.media?.captureError ?? null, [D, O] = q(null);
+function xt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettings: a, onPopOut: o, extras: s, cameraMenuItems: c, tile: l = gt, notice: u, handFor: d, accessFor: p, publishDisabledReason: m, selfName: h, compact: g = !1, tileSize: _, documents: v, onOpenDocuments: y, documentsOpen: b, onDocumentClick: x, layout: S = "shelf", className: C, "data-testid": T = "conversation-call-dock" }) {
+	let [E, D] = q(!1), O = t.media?.captureError ?? null, [k, A] = q(null);
 	W(() => {
-		E || O(null);
-	}, [E]);
-	let k = e.useAudioVideoSettings({ preview: C }), { activeSpeakerId: A } = me({ participants: bt(t.call) }), j = e.conversationCallDockProps(t, {
+		O || A(null);
+	}, [O]);
+	let j = e.useAudioVideoSettings({ preview: E }), { activeSpeakerId: M } = me({ participants: bt(t.call) }), N = e.conversationCallDockProps(t, {
 		title: n,
 		onOpenPeople: r,
 		...i === void 0 ? {} : { peopleOpen: i },
-		onOpenSettings: a ?? (() => T(!0)),
+		onOpenSettings: a ?? (() => D(!0)),
 		...o ? { onPopOut: o } : {},
 		...s === void 0 ? {} : { extras: s },
 		...c ? { cameraMenuItems: c } : {},
 		tile: l,
-		activeSpeakerId: A ?? t.activeSpeakerId,
-		compact: m,
-		"data-testid": S
+		activeSpeakerId: M ?? t.activeSpeakerId,
+		compact: g,
+		"data-testid": T
 	});
-	if (!j) return null;
-	let M = {
-		...j,
-		participants: yt(vt(j.participants, t.call?.participants ?? [], j.phase), d),
-		layout: b,
-		...h ? { tileSize: h } : {},
-		...g ? { documents: g } : {},
-		..._ ? { onOpenDocuments: _ } : {},
-		...v === void 0 ? {} : { documentsOpen: v },
-		...y ? { onDocumentClick: y } : {},
-		...x ? { className: x } : {}
+	if (!N) return null;
+	let P = {
+		...N,
+		participants: yt(vt(N.participants, t.call?.participants ?? [], N.phase), d, p),
+		...m ? {
+			mic: {
+				...N.mic,
+				disabledReason: m
+			},
+			camera: {
+				...N.camera,
+				disabledReason: m
+			},
+			screenShare: {
+				...N.screenShare,
+				disabledReason: m
+			}
+		} : {},
+		layout: S,
+		..._ ? { tileSize: _ } : {},
+		...v ? { documents: v } : {},
+		...y ? { onOpenDocuments: y } : {},
+		...b === void 0 ? {} : { documentsOpen: b },
+		...x ? { onDocumentClick: x } : {},
+		...C ? { className: C } : {}
 	};
 	return /* @__PURE__ */ X(J, { children: [
 		u ? /* @__PURE__ */ Y(w, {
 			tone: "info",
-			"data-testid": `${S}-notice`,
+			"data-testid": `${T}-notice`,
 			children: u
 		}) : null,
-		E && E !== D ? /* @__PURE__ */ X(w, {
+		O && O !== k ? /* @__PURE__ */ X(w, {
 			tone: "warning",
-			"data-testid": `${S}-capture-error`,
-			onDismiss: () => O(E),
-			children: [E, " You can keep listening. Check browser device access, then turn the device on to retry."]
+			"data-testid": `${T}-capture-error`,
+			onDismiss: () => A(O),
+			children: [O, " You can keep listening. Check browser device access, then turn the device on to retry."]
 		}) : null,
-		/* @__PURE__ */ Y(pe, { ...M }),
+		/* @__PURE__ */ Y(pe, { ...P }),
 		!a && /* @__PURE__ */ Y(f, {
-			open: C,
-			onClose: () => T(!1),
+			open: E,
+			onClose: () => D(!1),
 			title: "Call devices",
-			children: /* @__PURE__ */ Y(ce, {
-				"data-testid": `${S}-settings`,
-				value: k.settings,
+			children: /* @__PURE__ */ Y(ue, {
+				"data-testid": `${T}-settings`,
+				value: j.settings,
 				onChange: (e) => {
-					k.update(e), t.devices.set({
+					j.update(e), t.devices.set({
 						...t.devices.prefs,
 						...e.microphoneId ? { microphoneId: e.microphoneId } : {},
 						...e.cameraId ? { cameraId: e.cameraId } : {},
@@ -1164,14 +1181,14 @@ function xt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 					speakers: t.devices.list.speakers
 				},
 				permission: t.devices.list.permission,
-				micLevel: k.micLevel,
-				previewStream: k.previewStream,
+				micLevel: j.micLevel,
+				previewStream: j.previewStream,
 				cameraOn: t.self.cameraOn,
 				speakerSelectionSupported: _t(),
-				onTestMic: k.testMic,
-				onTestSound: k.testSound,
-				testMicState: k.testMicState,
-				...p === void 0 ? {} : { selfName: p }
+				onTestMic: j.testMic,
+				onTestSound: j.testSound,
+				testMicState: j.testMicState,
+				...h === void 0 ? {} : { selfName: h }
 			})
 		})
 	] });
@@ -1460,7 +1477,8 @@ function Jt(e, t, n) {
 		displayName: e.displayName || e.clientId.slice(0, 12),
 		isMuted: !e.audioOn,
 		isLocal: t == null ? void 0 : e.clientId === t,
-		...n ? { avatarUrl: n } : {}
+		...n ? { avatarUrl: n } : {},
+		...e.role === "viewer" ? { access: "view-only" } : {}
 	};
 }
 function Yt(e, t, n) {
@@ -1498,7 +1516,7 @@ function Qt(e) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: O, hasMore: k, loadingMore: A, composer: j, renderMessageReferences: M, transformMessages: N, dock: P, emojis: ee, onReply: te, reply: ne, onCancelReply: re, readReceipts: ie, readReceiptsEnabled: F, unreadFrom: ae, threaded: I, postRhythm: L, onJumpToMessage: oe, highlightedMessageId: se, documentEditors: R, callParticipants: z, onJoinCall: B, onOpenDocument: ce, wrapWithNetworkShim: le, editable: ue = !0, canEdit: de, canDelete: fe, onForwardMessage: pe }) {
+function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: O, hasMore: k, loadingMore: A, composer: j, renderMessageReferences: M, transformMessages: N, dock: P, emojis: ee, onReply: te, reply: ne, onCancelReply: re, readReceipts: ie, readReceiptsEnabled: F, unreadFrom: ae, threaded: I, postRhythm: L, onJumpToMessage: oe, highlightedMessageId: se, documentEditors: ce, callParticipants: R, onJoinCall: le, onOpenDocument: ue, wrapWithNetworkShim: de, editable: z = !0, canEdit: B, canDelete: fe, onForwardMessage: pe }) {
 	let V = G(() => Dt(e.messages), [e.messages]), H = G(() => {
 		if (!t?.length) return [];
 		let e = new Set(V.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
@@ -1611,11 +1629,11 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			pinnedMessageIds: a.pinnedIds,
 			onTogglePin: je
 		} : {},
-		...ue && Me ? {
+		...z && Me ? {
 			onEditMessage: Fe,
-			...de ? { canEditMessage: de } : {}
+			...B ? { canEditMessage: B } : {}
 		} : {},
-		...ue && Ne ? {
+		...z && Ne ? {
 			onDeleteMessage: Ie,
 			...fe ? { canDeleteMessage: fe } : {}
 		} : {},
@@ -1630,10 +1648,10 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		...L ? { postRhythm: L } : {},
 		onJumpToMessage: oe,
 		highlightedMessageId: se,
-		documentEditors: R,
-		callParticipants: z,
-		onJoinCall: B,
-		onOpenDocument: ce,
+		documentEditors: ce,
+		callParticipants: R,
+		onJoinCall: le,
+		onOpenDocument: ue,
 		renderMessageReferences: M,
 		attachmentSrc: f,
 		onOpenAttachment: p,
@@ -1641,7 +1659,7 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		maxFileSize: h,
 		onFileError: g
 	});
-	return /* @__PURE__ */ Y(J, { children: Pe(Q, le) });
+	return /* @__PURE__ */ Y(J, { children: Pe(Q, de) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx
@@ -1990,7 +2008,7 @@ function yn({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 	}, u = () => {
 		o.current = !1;
 	};
-	return /* @__PURE__ */ Y(B, {
+	return /* @__PURE__ */ Y(le, {
 		...i,
 		previewActive: c !== null,
 		previewStream: s,
@@ -2065,7 +2083,7 @@ function xn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedAudioVideoSettingsForm.tsx
 function Sn({ devices: e, settings: t, cameraOn: n, ...r }) {
-	return /* @__PURE__ */ Y(ce, {
+	return /* @__PURE__ */ Y(ue, {
 		...r,
 		value: t.settings,
 		onChange: (e) => t.update(e),
@@ -2133,7 +2151,7 @@ function Dn(e) {
 }
 function On({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 	let { rooms: a, unassigned: o } = En(e.breakout, t, e.hands), s = e.breakout;
-	return /* @__PURE__ */ Y(de, {
+	return /* @__PURE__ */ Y(B, {
 		...i,
 		rooms: a,
 		phase: s.phase,
@@ -2175,7 +2193,7 @@ function On({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 function kn({ meeting: e, className: t }) {
 	if (!e.myRoom) return null;
 	let n = e.breakout;
-	return /* @__PURE__ */ Y(le, {
+	return /* @__PURE__ */ Y(de, {
 		roomName: e.myRoom.name,
 		endsAt: n.endsAt,
 		clockOffsetMs: e.clockOffsetMs,
@@ -2232,7 +2250,7 @@ function An(e, t) {
 		rooms: {
 			id: "rooms",
 			label: "Rooms",
-			icon: /* @__PURE__ */ Y(z, {}),
+			icon: /* @__PURE__ */ Y(R, {}),
 			active: t.roomsOpen,
 			onClick: t.onToggleRooms,
 			disabled: !e.ready,
@@ -2250,7 +2268,7 @@ function Mn({ roomName: e }) {
 		"aria-live": "polite",
 		"data-testid": "meeting-chat-context",
 		children: [
-			/* @__PURE__ */ Y(z, {
+			/* @__PURE__ */ Y(R, {
 				size: 14,
 				"aria-hidden": !0,
 				className: "shrink-0 text-text-secondary"

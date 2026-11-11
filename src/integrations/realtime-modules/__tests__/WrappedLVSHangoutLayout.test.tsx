@@ -345,3 +345,30 @@ describe('WrappedLVSHangoutLayout — raised hands (2.458.1)', () => {
     expect(marks).toEqual(['1', '2']);
   });
 });
+
+describe('WrappedLVSHangoutLayout — publish access', () => {
+  beforeEach(() => {
+    mockState.current = { ...mockState.current, participants: [] };
+  });
+
+  it('accessFor is keyed like handFor and marks the tile view-only', () => {
+    mockState.current = {
+      ...mockState.current,
+      participants: [
+        makeLocal(),
+        makeRemote('sfu-1', { appUserId: 'u-ana' } as Partial<HangoutParticipant>),
+        makeRemote('sfu-2'),
+      ],
+    };
+    render(<WrappedLVSHangoutLayout stageToken="t" participantId="me" accessFor={(id) => (id === 'u-ana' ? 'view-only' : undefined)} />);
+    const marks = screen.getAllByTestId('tile-access');
+    expect(marks).toHaveLength(1);
+    expect(marks[0]).toHaveAccessibleName('View only');
+  });
+
+  it('without accessFor no tile is marked', () => {
+    mockState.current = { ...mockState.current, participants: [makeLocal(), makeRemote('sfu-1')] };
+    render(<WrappedLVSHangoutLayout stageToken="t" participantId="me" />);
+    expect(screen.queryByTestId('tile-access')).toBeNull();
+  });
+});

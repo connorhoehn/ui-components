@@ -6,10 +6,18 @@
 // Raised hands (2.460.0): `raisedHandsFirst` orders the list by queue
 // position, and an organizer gets Lower per row (`onLowerHand`) and Lower all
 // in the header (`onLowerAllHands`) — the People pane's hands queue in Teams.
+//
+// Per-row actions: `rowMenu` returns the sections of a row's ⋯ menu (the same
+// contract as TreeView and PipelinesListView), so a host adds "Make view-only"
+// or "Remove" without drawing its own rows. A participant's `access` shows as
+// a chip in the row ("View only").
 
 import { useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
+import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
+import { MoreHorizontalIcon } from './MediaIcons';
+import { ParticipantAccessBadge, type ParticipantAccess } from './ParticipantAccessBadge';
 import { RaisedHandBadge } from './RaisedHandBadge';
 
 export interface RosterParticipant {
@@ -21,6 +29,8 @@ export interface RosterParticipant {
   isScreenSharing?: boolean;
   /** `true`, or the 1-based queue position (shown beside the hand since 2.458.0). */
   handRaised?: boolean | number;
+  /** Less than full access, shown as a chip in the row: `view-only` (may not publish). Absent: no chip. */
+  access?: ParticipantAccess;
 }
 
 export interface RosterPanelProps {
@@ -48,6 +58,14 @@ export interface RosterPanelProps {
   onLowerHand?: (id: string) => void;
   /** Organizer: lower every hand. Shown in the header while any hand is up. */
   onLowerAllHands?: () => void;
+  /**
+   * The row's ⋯ menu — "Make view-only", "Remove from call". Return `null` or
+   * an empty array for a row that has none; with no `rowMenu` no row has a
+   * menu button. Same contract as TreeView's and PipelinesListView's `rowMenu`.
+   */
+  rowMenu?: (participant: RosterParticipant) => DropdownMenuSection[] | null | undefined;
+  /** Accessible name of each row's menu button. Default `Actions for <displayName>`. */
+  rowMenuLabel?: (participant: RosterParticipant) => string;
   className?: string;
 }
 
@@ -82,6 +100,8 @@ export function RosterPanel({
   raisedHandsFirst = false,
   onLowerHand,
   onLowerAllHands,
+  rowMenu,
+  rowMenuLabel,
   className,
 }: RosterPanelProps) {
   const dark = tone === 'dark';
@@ -134,6 +154,7 @@ export function RosterPanel({
       <ul className="flex-1 overflow-y-auto py-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {rows.map((p) => {
           const isSpeaking = p.id === activeSpeakerId;
+          const menuSections = rowMenu?.(p)?.filter((section) => section.items.length > 0) ?? [];
           return (
             <li key={p.id} className="flex items-center" data-testid="roster-row" data-user-id={p.id}>
               <button
@@ -171,6 +192,7 @@ export function RosterPanel({
                   {p.displayName}
                   {p.isLocal && <span className={cn('ml-1 text-xs', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')}>(you)</span>}
                 </span>
+                <ParticipantAccessBadge access={p.access} tone={dark ? 'overlay' : 'chip'} data-testid="roster-access" />
                 <RaisedHandBadge raised={p.handRaised} tone={dark ? 'overlay' : 'chip'} data-testid="roster-raised-hand" />
                 {p.isMuted && (
                   <svg
@@ -195,6 +217,21 @@ export function RosterPanel({
                 >
                   Lower
                 </Button>
+              )}
+              {menuSections.length > 0 && (
+                <DropdownMenu
+                  trigger={<MoreHorizontalIcon size={18} />}
+                  triggerLabel={rowMenuLabel ? rowMenuLabel(p) : `Actions for ${p.displayName}`}
+                  triggerVariant="link"
+                  triggerClassName={cn(
+                    'mr-2 h-7 w-7 shrink-0 justify-center px-0',
+                    dark && 'text-white/70 hover:bg-white/10 hover:text-white',
+                  )}
+                  triggerTestId="roster-row-menu"
+                  align="end"
+                  sections={menuSections}
+                  data-testid={`roster-row-menu-panel-${p.id}`}
+                />
               )}
             </li>
           );

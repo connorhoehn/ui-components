@@ -113,7 +113,12 @@ Manages the ephemeral TTL for you — no `setTimeout` in app code.
 ### WrappedHangoutLayout
 
 Inject `<video>` elements keyed by `clientId`. The layout decides where to
-place each tile.
+place each tile. A participant whose `role` is `viewer` (subscribe only) is
+adapted with `access: 'view-only'`, so their tile carries the view-only eye.
+The LVS sibling, `WrappedLVSHangoutLayout`, and `ConversationCallDock` take
+`accessFor(userId)` instead (keyed like `handFor`), because `useLVSHangout`
+does not report other people's publish permission; `ConversationCallDock`
+also takes `publishDisabledReason` to disable your own mic, camera and share.
 
 ```tsx
 <WrappedHangoutLayout

@@ -124,6 +124,7 @@ function People() {
     { ...base, userId: 'u3', name: CAST.frank.name, screenSharing: true },
     { ...base, userId: 'u4', name: CAST.bob.name, cameraOn: false, audioOn: false },
     { ...base, userId: 'u5', name: 'Dan Ortiz', state: 'reconnecting' },
+    { ...base, userId: 'u5b', name: 'Jo Marsh', cameraOn: false, audioOn: false, access: 'view-only' },
     { ...base, userId: 'u6', name: CAST.carol.name, state: 'ringing' },
     { ...base, userId: 'u6b', name: 'Ivy Novak', presence: 'offline', state: 'notified' },
     { ...base, userId: 'u7', name: 'Eve Park', state: 'missed' },
@@ -132,7 +133,8 @@ function People() {
   ];
   return (
     <Card title="CallPeopleList — every sub-status">
-      <CallPeopleList people={people} count={5} followingUserId="u2" canModerate onInvite={noop} onFollow={noop} onMuteForMe={noop} onMute={noop} onRemove={noop} onMakeHost={noop} onRingAgain={noop} />
+      <CallPeopleList people={people} count={5} followingUserId="u2" canModerate onInvite={noop} onFollow={noop} onMuteForMe={noop} onMute={noop} onRemove={noop} onMakeHost={noop} onRingAgain={noop}
+        rowMenu={(p) => (p.isLocal || p.state !== 'in-call' ? null : [{ items: [{ label: p.access === 'view-only' ? 'Allow publishing' : 'Make view-only', onSelect: noop }] }])} />
     </Card>
   );
 }

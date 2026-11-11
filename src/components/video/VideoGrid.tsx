@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { ParticipantTile } from './ParticipantTile';
+import type { ParticipantAccess } from './ParticipantAccessBadge';
 
 export interface Participant {
   id: string;
@@ -9,6 +10,8 @@ export interface Participant {
   isSpeaking?: boolean;
   isMuted?: boolean;
   isLocal?: boolean;
+  /** Less than full access: `view-only` marks the tile (see ParticipantTile). */
+  access?: ParticipantAccess;
   videoElement?: ReactNode;
 }
 
@@ -49,6 +52,7 @@ export function VideoGrid({ participants, className, style }: VideoGridProps) {
           isSpeaking={p.isSpeaking}
           isMuted={p.isMuted}
           isLocal={p.isLocal}
+          access={p.access}
           videoElement={p.videoElement}
         />
       ))}

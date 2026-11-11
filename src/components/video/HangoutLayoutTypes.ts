@@ -3,6 +3,7 @@
 // to import each other through the orchestrator.
 
 import type { ReactNode } from 'react';
+import type { ParticipantAccess } from './ParticipantAccessBadge';
 
 export interface HangoutLayoutParticipant {
   id: string;
@@ -12,6 +13,8 @@ export interface HangoutLayoutParticipant {
   isLocal?: boolean;
   /** Raised hand: `true`, or the 1-based queue position. Since 2.458.0. */
   handRaised?: boolean | number;
+  /** Less than full access: `view-only` marks the tile (an eye, "View only"). */
+  access?: ParticipantAccess;
   /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
   videoElement?: ReactNode;
   /** Pre-rendered screen-share video element. When ANY participant supplies

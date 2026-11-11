@@ -1767,6 +1767,19 @@ export declare interface ConversationCallDockProps {
      * `const hands = meetingHandPositions(meeting.hands); handFor={(id) => hands.get(id)}`.
      */
     handFor?: (userId: string) => boolean | number | undefined;
+    /**
+     * A participant's standing when it is less than full access, by userId —
+     * `view-only` for someone the host stopped publishing. Marks their tile
+     * (an eye, "View only" in its accessible name). Same shape as `handFor`.
+     */
+    accessFor?: (userId: string) => ParticipantAccess | undefined;
+    /**
+     * Set while YOU may not publish (the host made you view-only): the dock's
+     * microphone, camera and share controls are disabled with this as their
+     * tooltip and accessible description. Absent: the controls are as the call
+     * reports them.
+     */
+    publishDisabledReason?: string;
     /** Name shown on the settings preview. */
     selfName?: string;
     /** 132 × 74 tiles instead of 176 × 88. */
@@ -2328,6 +2341,8 @@ declare interface HangoutLayoutParticipant {
     isLocal?: boolean;
     /** Raised hand: `true`, or the 1-based queue position. Since 2.458.0. */
     handRaised?: boolean | number;
+    /** Less than full access: `view-only` marks the tile (an eye, "View only"). */
+    access?: ParticipantAccess;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
     /** Pre-rendered screen-share video element. When ANY participant supplies
@@ -2941,6 +2956,9 @@ declare interface NotificationItem {
     /** Optional grouping / category label */
     category?: string;
 }
+
+/** A participant's standing when it is less than full access. Absent: may publish. */
+declare type ParticipantAccess = 'view-only';
 
 declare interface PinnedMessageItem {
     messageId: string;
@@ -3984,6 +4002,14 @@ declare interface RosterPanelProps {
     onLowerHand?: (id: string) => void;
     /** Organizer: lower every hand. Shown in the header while any hand is up. */
     onLowerAllHands?: () => void;
+    /**
+     * The row's ⋯ menu — "Make view-only", "Remove from call". Return `null` or
+     * an empty array for a row that has none; with no `rowMenu` no row has a
+     * menu button. Same contract as TreeView's and PipelinesListView's `rowMenu`.
+     */
+    rowMenu?: (participant: RosterParticipant) => DropdownMenuSection[] | null | undefined;
+    /** Accessible name of each row's menu button. Default `Actions for <displayName>`. */
+    rowMenuLabel?: (participant: RosterParticipant) => string;
     className?: string;
 }
 
@@ -3996,6 +4022,8 @@ declare interface RosterParticipant {
     isScreenSharing?: boolean;
     /** `true`, or the 1-based queue position (shown beside the hand since 2.458.0). */
     handRaised?: boolean | number;
+    /** Less than full access, shown as a chip in the row: `view-only` (may not publish). Absent: no chip. */
+    access?: ParticipantAccess;
 }
 
 /** Strip non-alphanumeric, lowercase, hyphenate. Mirrors typical
@@ -5330,6 +5358,14 @@ export declare interface WrappedLVSHangoutLayoutProps {
      * `handFor={(id) => hands.get(id)}`.
      */
     handFor?: (userId: string) => boolean | number | undefined;
+    /**
+     * A participant's standing when it is less than full access — `view-only`
+     * for someone the host stopped publishing — keyed like `handFor` (the app
+     * user id when the SFU carries one, else the SFU `userId`). Marks the tile
+     * (an eye, "View only"). `useLVSHangout` does not report other people's
+     * publish permission, so the host supplies it.
+     */
+    accessFor?: (userId: string) => ParticipantAccess | undefined;
     className?: string;
     'data-testid'?: string;
 }

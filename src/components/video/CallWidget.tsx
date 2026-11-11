@@ -16,6 +16,7 @@ import {
   useRef,
   useEffect,
   useMemo,
+  useId,
   type ReactNode,
   type CSSProperties,
 } from 'react';
@@ -126,6 +127,25 @@ export interface CallWidgetProps {
   onToggleCamera?: () => void;
   onToggleScreenShare?: () => void;
   onUpgradeToVideo?: () => void;
+  /**
+   * Disables the microphone toggle (the control row's and the minimized
+   * pill's). Same names as MediaControlsBar; see CallControls.
+   */
+  audioDisabled?: boolean;
+  /**
+   * Why the microphone is off-limits ("The host made you view-only").
+   * Disables the toggle on its own and is its tooltip and accessible
+   * description; the button stays focusable (`aria-disabled`).
+   */
+  audioDisabledReason?: string;
+  /** Disables the camera toggle and, in an audio call, "Switch to video". */
+  videoDisabled?: boolean;
+  /** Same as `audioDisabledReason`, for the camera toggle and "Switch to video". */
+  videoDisabledReason?: string;
+  /** Disables the screen-share toggle. */
+  screenShareDisabled?: boolean;
+  /** Same as `audioDisabledReason`, for the screen-share toggle. */
+  screenShareDisabledReason?: string;
   onAddParticipant?: (participantId: string) => void;
   /** Slot rendered IN the control row (between add-participant and End)
    *  — the collapsed-widget counterpart to MediaControlsBar's `extras`.
@@ -422,6 +442,12 @@ function ActiveCallContent({
   onToggleCamera,
   onToggleScreenShare,
   onUpgradeToVideo,
+  audioDisabled,
+  audioDisabledReason,
+  videoDisabled,
+  videoDisabledReason,
+  screenShareDisabled,
+  screenShareDisabledReason,
   onAddParticipant,
   availableParticipants,
   onOpenAddParticipant,
@@ -442,6 +468,12 @@ function ActiveCallContent({
   | 'onToggleCamera'
   | 'onToggleScreenShare'
   | 'onUpgradeToVideo'
+  | 'audioDisabled'
+  | 'audioDisabledReason'
+  | 'videoDisabled'
+  | 'videoDisabledReason'
+  | 'screenShareDisabled'
+  | 'screenShareDisabledReason'
   | 'onAddParticipant'
   | 'availableParticipants'
   | 'controlsExtras'
@@ -567,6 +599,12 @@ function ActiveCallContent({
         onToggleScreenShare={onToggleScreenShare}
         onUpgradeToVideo={onUpgradeToVideo}
         onEndCall={onEndCall}
+        audioDisabled={audioDisabled}
+        audioDisabledReason={audioDisabledReason}
+        videoDisabled={videoDisabled}
+        videoDisabledReason={videoDisabledReason}
+        screenShareDisabled={screenShareDisabled}
+        screenShareDisabledReason={screenShareDisabledReason}
         onAddParticipant={onAddParticipant}
         availableParticipants={availableParticipants}
         onOpenAddParticipant={onOpenAddParticipant}
@@ -588,6 +626,8 @@ function MinimizedPill({
   isMuted,
   callerName,
   onToggleMute,
+  audioDisabled = false,
+  audioDisabledReason,
   onEndCall,
   onExpand,
 }: {
@@ -597,9 +637,14 @@ function MinimizedPill({
   isMuted?: boolean;
   callerName?: string;
   onToggleMute?: () => void;
+  audioDisabled?: boolean;
+  audioDisabledReason?: string;
   onEndCall?: () => void;
   onExpand?: () => void;
 }) {
+  const muteReasonId = useId();
+  const muteReason = audioDisabledReason || undefined;
+  const muteOff = audioDisabled || muteReason !== undefined;
   return (
     // `onExpand` is optional, and the whole pill was `role="button"
     // tabIndex={0} aria-label="Expand call widget"` with a pointer cursor
@@ -650,13 +695,21 @@ function MinimizedPill({
           <button
             data-ui-part=""
             type="button"
-            onClick={onToggleMute}
+            onClick={muteReason !== undefined ? undefined : onToggleMute}
+            disabled={muteReason === undefined ? audioDisabled : undefined}
+            aria-disabled={muteReason !== undefined ? 'true' : undefined}
+            aria-describedby={muteReason !== undefined ? muteReasonId : undefined}
+            title={muteReason}
+            data-testid="call-pill-mute"
+            data-disabled-reason={muteReason}
             className={cn(
-              'w-6 h-6 rounded-full flex items-center justify-center border-none cursor-pointer transition-colors',
+              'w-6 h-6 rounded-full flex items-center justify-center border-none transition-colors',
               isMuted ? 'bg-danger/20 text-danger-fg' : 'bg-white/10 text-white/70 hover:text-white',
+              muteOff ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
             )}
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
+            {muteReason !== undefined && <span id={muteReasonId} hidden>{muteReason}</span>}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               {isMuted ? (
                 <>
@@ -1006,6 +1059,12 @@ export function CallWidget({
   onToggleCamera,
   onToggleScreenShare,
   onUpgradeToVideo,
+  audioDisabled = false,
+  audioDisabledReason,
+  videoDisabled = false,
+  videoDisabledReason,
+  screenShareDisabled = false,
+  screenShareDisabledReason,
   onAddParticipant,
   availableParticipants,
   controlsExtras,
@@ -1170,6 +1229,12 @@ export function CallWidget({
           onToggleCamera={onToggleCamera}
           onToggleScreenShare={onToggleScreenShare}
           onUpgradeToVideo={onUpgradeToVideo}
+          audioDisabled={audioDisabled}
+          audioDisabledReason={audioDisabledReason}
+          videoDisabled={videoDisabled}
+          videoDisabledReason={videoDisabledReason}
+          screenShareDisabled={screenShareDisabled}
+          screenShareDisabledReason={screenShareDisabledReason}
           onAddParticipant={onAddParticipant}
           availableParticipants={availableParticipants}
           onOpenAddParticipant={onOpenAddParticipant}
@@ -1342,6 +1407,8 @@ export function CallWidget({
                 isMuted={isMuted}
                 callerName={callerName}
                 onToggleMute={onToggleMute}
+                audioDisabled={audioDisabled}
+                audioDisabledReason={audioDisabledReason}
                 onEndCall={onEndCall}
                 onExpand={onMinimize}
               />

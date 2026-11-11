@@ -13,6 +13,7 @@
 
 import type { CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
+import { ParticipantAccessBadge, type ParticipantAccess } from './ParticipantAccessBadge';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -24,6 +25,8 @@ export interface CallStripParticipant {
   avatarUrl?: string;
   isMuted?: boolean;
   isSpeaking?: boolean;
+  /** Less than full access: `view-only` puts an eye on the avatar, named "View only". */
+  access?: ParticipantAccess;
 }
 
 export interface CallParticipantStripProps {
@@ -77,6 +80,7 @@ export function CallAvatar({ participant, size = 32 }: CallAvatarProps) {
       data-testid="call-avatar"
       data-speaking={participant.isSpeaking ? 'true' : undefined}
       data-muted={participant.isMuted ? 'true' : undefined}
+      data-access={participant.access}
       className="rounded-full flex items-center justify-center text-white font-semibold shrink-0 relative"
       style={{
         width: size,
@@ -100,6 +104,13 @@ export function CallAvatar({ participant, size = 32 }: CallAvatarProps) {
           className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-code-border"
         />
       )}
+      <ParticipantAccessBadge
+        access={participant.access}
+        tone="overlay"
+        iconOnly
+        className="absolute -bottom-0.5 -left-0.5 h-3.5 w-3.5 bg-call-chrome [&_svg]:h-2.5 [&_svg]:w-2.5"
+        data-testid="call-avatar-access"
+      />
       {participant.isMuted && (
         <span
           data-testid="call-avatar-muted"

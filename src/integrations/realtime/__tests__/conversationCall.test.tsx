@@ -261,3 +261,33 @@ describe('ConversationCallDock — raised hands (2.458.1)', () => {
     expect(screen.getByTestId('call-dock-tile-row').querySelector('[data-hand-raised]')).toBeNull();
   });
 });
+
+describe('ConversationCallDock — publish access', () => {
+  it('accessFor marks the matching tile view-only, in its name and data-access', () => {
+    const { Dock } = bind();
+    render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} accessFor={(id) => (id === 'u-nora' ? 'view-only' : undefined)} />);
+    const row = screen.getByTestId('call-dock-tile-row');
+    const nora = row.querySelector('[data-peer-id="u-nora"]')!;
+    expect(nora).toHaveAttribute('data-access', 'view-only');
+    expect(nora.getAttribute('aria-label')).toContain('view only');
+    expect(row.querySelector('[data-peer-id="u-vera"]')).not.toHaveAttribute('data-access');
+  });
+
+  it('publishDisabledReason disables the mic, camera and share with the reason as their tooltip', () => {
+    const { Dock } = bind();
+    render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} publishDisabledReason="The host made you view-only" />);
+    for (const id of ['call-dock-mic', 'call-dock-camera', 'call-dock-share']) {
+      const control = screen.getByTestId(id);
+      expect(control).toBeDisabled();
+      expect(control).toHaveAttribute('title', 'The host made you view-only');
+    }
+  });
+
+  it('without accessFor or publishDisabledReason nothing changes', () => {
+    const { Dock } = bind();
+    render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} />);
+    expect(screen.getByTestId('call-dock-tile-row').querySelector('[data-access]')).toBeNull();
+    expect(screen.getByTestId('call-dock-mic')).not.toBeDisabled();
+    expect(screen.getByTestId('call-dock-camera')).not.toBeDisabled();
+  });
+});

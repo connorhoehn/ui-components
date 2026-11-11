@@ -574,9 +574,10 @@ export function adaptFileUploads(uploads: RMFileUploadState[]): FileUploadSummar
 // there is no metadata field to take it from — a host that wants faces on
 // tiles has to resolve them from its own directory and pass them in.
 //
-// `videoOn` and `role` are deliberately dropped: HangoutLayoutParticipant has
-// no field for either. A camera-off tile is expressed by supplying no
-// `videoElement`, which the caller owns.
+// `role: 'viewer'` (subscribe only) becomes `access: 'view-only'`, which marks
+// the tile; `host` and `participant` publish and carry no access. `videoOn` is
+// dropped: a camera-off tile is expressed by supplying no `videoElement`,
+// which the caller owns.
 // ---------------------------------------------------------------------------
 
 export function adaptHangoutParticipant(
@@ -591,6 +592,7 @@ export function adaptHangoutParticipant(
     isMuted: !participant.audioOn,
     isLocal: localClientId != null ? participant.clientId === localClientId : undefined,
     ...(avatarUrl ? { avatarUrl } : {}),
+    ...(participant.role === 'viewer' ? { access: 'view-only' as const } : {}),
   };
 }
 

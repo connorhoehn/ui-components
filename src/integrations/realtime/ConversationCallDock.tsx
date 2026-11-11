@@ -26,6 +26,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type * as RMVideo from '@connorhoehn/realtime-modules/client/video';
 import { CallDock, type CallDockProps, type CallDockTileSize } from '../../components/video/CallDock';
+import type { ParticipantAccess } from '../../components/video/ParticipantAccessBadge';
 import { StreamVideo } from '../../components/video/StreamVideo';
 import { AudioVideoSettingsForm } from '../../components/video/AudioVideoSettingsForm';
 import InlineAlert from '../../components/shared/InlineAlert';
@@ -68,6 +69,19 @@ export interface ConversationCallDockProps {
    * `const hands = meetingHandPositions(meeting.hands); handFor={(id) => hands.get(id)}`.
    */
   handFor?: (userId: string) => boolean | number | undefined;
+  /**
+   * A participant's standing when it is less than full access, by userId —
+   * `view-only` for someone the host stopped publishing. Marks their tile
+   * (an eye, "View only" in its accessible name). Same shape as `handFor`.
+   */
+  accessFor?: (userId: string) => ParticipantAccess | undefined;
+  /**
+   * Set while YOU may not publish (the host made you view-only): the dock's
+   * microphone, camera and share controls are disabled with this as their
+   * tooltip and accessible description. Absent: the controls are as the call
+   * reports them.
+   */
+  publishDisabledReason?: string;
   /** Name shown on the settings preview. */
   selfName?: string;
   /** 132 × 74 tiles instead of 176 × 88. */
@@ -139,18 +153,23 @@ function withRingingInvitees(
   return ringing.length ? [...inCall, ...ringing] : inCall;
 }
 
-/** Raised hands onto the dock's participants; untouched objects when nobody's hand is up. */
-function withHands(
+/**
+ * Raised hands and access standings onto the dock's participants; untouched
+ * objects when nobody's hand is up and everyone has full access.
+ */
+function withHandsAndAccess(
   participants: CallDockProps['participants'],
   handFor: ConversationCallDockProps['handFor'],
+  accessFor: ConversationCallDockProps['accessFor'],
 ): CallDockProps['participants'] {
-  if (!handFor) return participants;
+  if (!handFor && !accessFor) return participants;
   let changed = false;
   const next = participants.map((p) => {
-    const hand = handFor(p.userId);
-    if (!hand) return p;
+    const hand = handFor?.(p.userId);
+    const access = accessFor?.(p.userId);
+    if (!hand && !access) return p;
     changed = true;
-    return { ...p, handRaised: hand };
+    return { ...p, ...(hand ? { handRaised: hand } : {}), ...(access ? { access } : {}) };
   });
   return changed ? next : participants;
 }
@@ -178,6 +197,8 @@ function ConversationCallDockImpl(
     tile = defaultTile,
     notice,
     handFor,
+    accessFor,
+    publishDisabledReason,
     selfName,
     compact = false,
     tileSize,
@@ -217,7 +238,14 @@ function ConversationCallDockImpl(
   if (!dock) return null;
   const dockProps: CallDockProps = {
     ...dock,
-    participants: withHands(withRingingInvitees(dock.participants as CallDockProps['participants'], call.call?.participants ?? [], dock.phase), handFor),
+    participants: withHandsAndAccess(withRingingInvitees(dock.participants as CallDockProps['participants'], call.call?.participants ?? [], dock.phase), handFor, accessFor),
+    ...(publishDisabledReason
+      ? {
+          mic: { ...dock.mic, disabledReason: publishDisabledReason },
+          camera: { ...dock.camera, disabledReason: publishDisabledReason },
+          screenShare: { ...dock.screenShare, disabledReason: publishDisabledReason },
+        }
+      : {}),
     layout,
     ...(tileSize ? { tileSize } : {}),
     ...(documents ? { documents } : {}),

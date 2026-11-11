@@ -111,68 +111,68 @@ import { n as Vm, t as Hm } from "./ObservabilityContext-DpoDrm3T.js";
 import { $ as Um, A as Wm, B as Gm, C as Km, D as qm, E as Jm, F as Ym, G as Xm, H as Zm, I as Qm, J as $m, K as eh, L as th, M as nh, N as rh, O as ih, P as ah, Q as oh, R as sh, S as ch, T as lh, U as uh, V as dh, W as fh, X as ph, Y as mh, Z as hh, _ as gh, a as _h, at as vh, b as yh, c as bh, d as xh, et as Sh, f as Ch, g as wh, h as Th, i as Eh, it as Dh, j as Oh, k as kh, l as Ah, m as jh, n as Mh, nt as Nh, o as Ph, ot as Fh, p as Ih, q as Lh, r as Rh, rt as zh, s as Bh, t as Vh, tt as Hh, u as Uh, v as Wh, w as Gh, x as Kh, y as qh, z as Jh } from "./social-DLdvs3vP.js";
 import { a as Yh, c as Xh, d as Zh, i as Qh, l as $h, n as eg, o as tg, r as ng, s as rg, t as ig, u as ag } from "./ConversationSurface-2j7dwhoR.js";
 import { a as og, c as sg, i as cg, l as lg, n as ug, o as dg, r as fg, s as pg, t as mg } from "./composerSendError-BFTLY93R.js";
-import { $ as hg, A as gg, B as _g, C as vg, D as yg, E as bg, F as xg, G as Sg, H as Cg, I as wg, J as Tg, K as Eg, L as Dg, M as Og, N as kg, O as Ag, P as jg, Q as Mg, R as Ng, S as Pg, T as Fg, U as Ig, V as Lg, W as Rg, X as zg, Y as Bg, Z as Vg, _ as Hg, _t as Ug, a as Wg, at as Gg, b as Kg, bt as qg, c as Jg, ct as Yg, d as Xg, dt as Zg, et as Qg, f as $g, ft as e_, g as t_, gt as n_, h as r_, ht as i_, i as a_, it as o_, j as s_, k as c_, l as l_, lt as u_, m as d_, mt as f_, n as p_, nt as m_, o as h_, ot as g_, p as __, pt as v_, q as y_, r as b_, rt as x_, s as S_, st as C_, t as w_, tt as T_, u as E_, ut as D_, v as O_, vt as k_, w as A_, x as j_, xt as M_, y as N_, yt as P_, z as F_ } from "./video-CJC2BM8x.js";
-import { $ as I_, A as L_, B as R_, C as z_, E as B_, F as V_, G as H_, H as U_, I as W_, J as G_, K as K_, L as q_, M as J_, N as Y_, O as X_, P as Z_, Q as Q_, R as $_, S as ev, T as tv, U as nv, V as rv, W as iv, X as av, Y as ov, Z as sv, _ as cv, a as lv, b as uv, c as dv, d as fv, f as pv, g as mv, h as hv, i as gv, j as _v, k as vv, l as yv, m as bv, n as xv, o as Sv, p as Cv, q as wv, r as Tv, s as Ev, t as Dv, u as Ov, v as kv, w as Av, x as jv, y as Mv, z as Nv } from "./BreakoutRoomsPanel-BOPDCLpb.js";
-import { n as Pv, r as Fv, t as Iv } from "./RecordingConsentNotice-DHjuRfav.js";
-import { t as Lv } from "./InlineEditableText-CKjRokmb.js";
-import { A as Rv, C as zv, D as Bv, E as Vv, O as Hv, S as Uv, T as Wv, _ as Gv, a as Kv, b as qv, c as Jv, d as Yv, f as Xv, g as Zv, h as Qv, i as $v, k as ey, l as ty, m as ny, n as ry, o as iy, p as ay, r as oy, s as sy, t as cy, u as ly, v as uy, w as dy, x as fy, y as py } from "./identity-OG_T-uJy.js";
-import { $ as my, A as hy, At as gy, B as _y, Bt as vy, C as yy, Ct as by, D as xy, Dt as Sy, E as Cy, Et as wy, F as Ty, Ft as Ey, G as Dy, H as Oy, I as ky, It as Ay, J as jy, K as My, L as Ny, Lt as Py, M as Fy, Mt as Iy, N as Ly, Nt as Ry, O as zy, Ot as By, P as Vy, Pt as Hy, Q as Uy, R as Wy, Rt as Gy, S as Ky, St as qy, T as Jy, Tt as Yy, U as Xy, V as Zy, W as Qy, X as $y, Y as eb, Z as tb, _ as nb, _t as rb, a as ib, at as ab, b as ob, bt as sb, c as cb, ct as lb, d as ub, dt as db, et as fb, f as pb, ft as mb, g as hb, gt as gb, h as _b, ht as vb, i as yb, it as bb, j as xb, jt as Sb, k as Cb, kt as wb, l as Tb, lt as Eb, m as Db, mt as Ob, n as kb, nt as Ab, o as q, ot as jb, p as Mb, pt as Nb, q as Pb, r as Fb, rt as Ib, s as Lb, st as Rb, t as zb, tt as Bb, u as Vb, ut as Hb, v as Ub, vt as Wb, w as Gb, wt as Kb, x as qb, xt as Jb, y as Yb, yt as Xb, z as Zb, zt as Qb } from "./graph-BZtupfPj.js";
-import { n as $b, t as ex } from "./WorkInspector-BT4Mx_Ul.js";
-import { a as tx, i as nx, n as rx, r as ix, t as ax } from "./composerContext-BLn1-Nao.js";
-import { Suspense as ox, createContext as sx, lazy as cx, useCallback as J, useContext as lx, useEffect as Y, useMemo as ux, useRef as X, useState as Z } from "react";
-import { Fragment as dx, jsx as Q, jsxs as $ } from "react/jsx-runtime";
-import { Outlet as fx, useLocation as px, useNavigate as mx } from "react-router";
+import { $ as hg, A as gg, B as _g, C as vg, D as yg, E as bg, F as xg, G as Sg, H as Cg, I as wg, J as Tg, K as Eg, L as Dg, M as Og, N as kg, O as Ag, P as jg, Q as Mg, R as Ng, S as Pg, T as Fg, U as Ig, V as Lg, W as Rg, X as zg, Y as Bg, Z as Vg, _ as Hg, _t as Ug, a as Wg, at as Gg, b as Kg, bt as qg, c as Jg, ct as Yg, d as Xg, dt as Zg, et as Qg, f as $g, ft as e_, g as t_, gt as n_, h as r_, ht as i_, i as a_, it as o_, j as s_, k as c_, l as l_, lt as u_, m as d_, mt as f_, n as p_, nt as m_, o as h_, ot as g_, p as __, pt as v_, q as y_, r as b_, rt as x_, s as S_, st as C_, t as w_, tt as T_, u as E_, ut as D_, v as O_, vt as k_, w as A_, x as j_, xt as M_, y as N_, yt as P_, z as F_ } from "./video-hpFYGXiK.js";
+import { $ as I_, A as L_, B as R_, C as z_, E as B_, F as V_, G as H_, H as U_, I as W_, J as G_, K as K_, L as q_, M as J_, N as Y_, O as X_, P as Z_, Q as Q_, R as $_, S as ev, T as tv, U as nv, V as rv, W as iv, X as av, Y as ov, Z as sv, _ as cv, a as lv, b as uv, c as dv, d as fv, et as pv, f as mv, g as hv, h as gv, i as _v, j as vv, k as yv, l as bv, m as xv, n as Sv, o as Cv, p as wv, q as Tv, r as Ev, s as Dv, t as Ov, tt as kv, u as Av, v as jv, w as Mv, x as Nv, y as Pv, z as Fv } from "./BreakoutRoomsPanel-CpCb172c.js";
+import { n as Iv, r as Lv, t as Rv } from "./RecordingConsentNotice-DyiDyoIm.js";
+import { t as zv } from "./InlineEditableText-CKjRokmb.js";
+import { A as Bv, C as Vv, D as Hv, E as Uv, O as Wv, S as Gv, T as Kv, _ as qv, a as Jv, b as Yv, c as Xv, d as Zv, f as Qv, g as $v, h as ey, i as ty, k as ny, l as ry, m as iy, n as ay, o as oy, p as sy, r as cy, s as ly, t as uy, u as dy, v as fy, w as py, x as my, y as hy } from "./identity-OG_T-uJy.js";
+import { $ as gy, A as _y, At as vy, B as yy, Bt as by, C as xy, Ct as Sy, D as Cy, Dt as wy, E as Ty, Et as Ey, F as Dy, Ft as Oy, G as ky, H as Ay, I as jy, It as My, J as Ny, K as Py, L as Fy, Lt as Iy, M as Ly, Mt as Ry, N as zy, Nt as By, O as Vy, Ot as Hy, P as Uy, Pt as Wy, Q as Gy, R as Ky, Rt as qy, S as Jy, St as Yy, T as Xy, Tt as Zy, U as Qy, V as $y, W as eb, X as tb, Y as nb, Z as rb, _ as ib, _t as ab, a as ob, at as sb, b as cb, bt as lb, c as ub, ct as db, d as fb, dt as pb, et as mb, f as hb, ft as gb, g as _b, gt as vb, h as yb, ht as bb, i as xb, it as Sb, j as Cb, jt as wb, k as Tb, kt as Eb, l as Db, lt as Ob, m as kb, mt as Ab, n as jb, nt as Mb, o as q, ot as Nb, p as Pb, pt as Fb, q as Ib, r as Lb, rt as Rb, s as zb, st as Bb, t as Vb, tt as Hb, u as Ub, ut as Wb, v as Gb, vt as Kb, w as qb, wt as Jb, x as Yb, xt as Xb, y as Zb, yt as Qb, z as $b, zt as ex } from "./graph-BZtupfPj.js";
+import { n as tx, t as nx } from "./WorkInspector-BT4Mx_Ul.js";
+import { a as rx, i as ix, n as ax, r as ox, t as sx } from "./composerContext-BLn1-Nao.js";
+import { Suspense as cx, createContext as lx, lazy as ux, useCallback as J, useContext as dx, useEffect as Y, useMemo as fx, useRef as X, useState as Z } from "react";
+import { Fragment as px, jsx as Q, jsxs as $ } from "react/jsx-runtime";
+import { Outlet as mx, useLocation as hx, useNavigate as gx } from "react-router";
 //#region src/contexts/ThemeContext.tsx
-var hx = sx({
+var _x = lx({
 	theme: "light",
 	toggleTheme: () => {}
-}), gx = "wsg-theme";
-function _x({ children: e }) {
+}), vx = "wsg-theme";
+function yx({ children: e }) {
 	let [t, n] = Z(() => {
 		try {
-			let e = localStorage.getItem(gx);
+			let e = localStorage.getItem(vx);
 			if (e === "dark" || e === "light") return e;
 		} catch {}
 		return "light";
 	});
 	Y(() => {
 		try {
-			localStorage.setItem(gx, t);
+			localStorage.setItem(vx, t);
 		} catch {}
 		document.documentElement.setAttribute("data-theme", t);
 	}, [t]);
 	let r = J(() => {
 		n((e) => e === "light" ? "dark" : "light");
-	}, []), i = ux(() => ({
+	}, []), i = fx(() => ({
 		theme: t,
 		toggleTheme: r
 	}), [t, r]);
-	return /* @__PURE__ */ Q(hx.Provider, {
+	return /* @__PURE__ */ Q(_x.Provider, {
 		value: i,
 		children: e
 	});
 }
-function vx() {
-	return lx(hx);
+function bx() {
+	return dx(_x);
 }
 //#endregion
 //#region src/theme/shadows.ts
-var yx = {
+var xx = {
 	sm: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)",
 	md: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)",
 	lg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
 	xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)"
-}, bx = {
+}, Sx = {
 	sticky: 20,
 	dropdown: 50,
 	modal: 100,
 	toast: 200
-}, xx = {
+}, Cx = {
 	"doc.finalize": "document.finalize",
 	"doc.comment": "document.comment",
 	"doc.add_item": "document.submit"
-}, Sx = 500;
-function Cx(e) {
+}, wx = 500;
+function Tx(e) {
 	let { triggerRun: t } = Fm(), n = X(null), r = X(!1), i = X(/* @__PURE__ */ new Map());
 	Y(() => {
 		if (e.length === 0) return;
@@ -189,14 +189,14 @@ function Cx(e) {
 		n.current = e[0].id, a.reverse();
 		let o = Cm().filter((e) => e.status === "published").map((e) => Tm(e.id)).filter((e) => e !== null);
 		for (let e of a) {
-			let n = xx[e.eventType];
+			let n = Cx[e.eventType];
 			if (!n) continue;
 			let r = e.detail ?? {}, a = typeof r.documentId == "string" ? r.documentId : void 0, s = typeof r.documentTypeId == "string" ? r.documentTypeId : void 0;
 			for (let r of o) {
 				let o = r.triggerBinding;
 				if (!o || o.event !== n || o.documentTypeId && o.documentTypeId !== s) continue;
 				let c = Date.now();
-				if (c - (i.current.get(r.id) ?? 0) < Sx) continue;
+				if (c - (i.current.get(r.id) ?? 0) < wx) continue;
 				i.current.set(r.id, c);
 				let l = {
 					event: n,
@@ -213,14 +213,14 @@ function Cx(e) {
 }
 //#endregion
 //#region src/components/pipelines/hooks/useWebhookTriggers.ts
-var wx = 500;
-function Tx() {
+var Ex = 500;
+function Dx() {
 	let { triggerRun: e } = Fm(), t = X(/* @__PURE__ */ new Map());
 	vm("pipeline.webhook.triggered", (n) => {
 		let r = n && typeof n == "object" && "webhookPath" in n ? n : n.payload;
 		if (!r || typeof r.webhookPath != "string") return;
 		let i = r.webhookPath, a = Date.now();
-		if (a - (t.current.get(i) ?? 0) < wx) return;
+		if (a - (t.current.get(i) ?? 0) < Ex) return;
 		t.current.set(i, a);
 		let o = Cm();
 		for (let t of o) {
@@ -241,13 +241,13 @@ function Tx() {
 }
 //#endregion
 //#region src/components/pipelines/hooks/usePipelineActivityRelay.ts
-var Ex = /* @__PURE__ */ new Set([
+var Ox = /* @__PURE__ */ new Set([
 	"pipeline.run.started",
 	"pipeline.run.completed",
 	"pipeline.run.failed",
 	"pipeline.approval.requested"
 ]);
-function Dx(e, t) {
+function kx(e, t) {
 	let n = t;
 	if (!n) return null;
 	switch (e) {
@@ -284,20 +284,20 @@ function Dx(e, t) {
 		default: return null;
 	}
 }
-function Ox(e) {
+function Ax(e) {
 	let { subscribe: t } = ym(), n = X(e);
 	Y(() => {
 		n.current = e;
 	}, [e]), Y(() => t("*", (e) => {
 		let t = e, r = t.eventType;
-		if (!Ex.has(r)) return;
-		let i = Dx(r, t.payload);
+		if (!Ox.has(r)) return;
+		let i = kx(r, t.payload);
 		i && n.current(r, i);
 	}), [t]);
 }
 //#endregion
 //#region src/components/observability/hooks/useAlertToasts.ts
-var kx = {
+var jx = {
 	info: {
 		type: "info",
 		durationMs: 4e3
@@ -315,19 +315,19 @@ var kx = {
 		durationMs: 1e4
 	}
 };
-function Ax(e, t) {
+function Mx(e, t) {
 	return `${e}:${t}`;
 }
-function jx() {
-	let { dashboard: e } = Vm(), { toast: t } = ut(), n = mx(), r = X(/* @__PURE__ */ new Set());
+function Nx() {
+	let { dashboard: e } = Vm(), { toast: t } = ut(), n = gx(), r = X(/* @__PURE__ */ new Set());
 	Y(() => {
 		if (!e) return;
 		let i = Array.isArray(e.alerts) ? e.alerts : [], a = /* @__PURE__ */ new Set();
 		for (let e of i) {
 			if (!e) continue;
-			let i = Ax(e.severity, e.message);
+			let i = Mx(e.severity, e.message);
 			if (a.add(i), r.current.has(i)) continue;
-			let o = kx[e.severity] ?? kx.error, s = {
+			let o = jx[e.severity] ?? jx.error, s = {
 				type: o.type,
 				durationMs: o.durationMs
 			};
@@ -342,8 +342,8 @@ function jx() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Mx = cx(() => import("./DocumentEditorPage-DfWKn6ej.js").then((e) => e.n));
-function Nx({ notifications: e, onDismiss: t, onClick: n }) {
+var Px = ux(() => import("./DocumentEditorPage-DfWKn6ej.js").then((e) => e.n));
+function Fx({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
 	return /* @__PURE__ */ Q("div", {
@@ -369,15 +369,15 @@ function Nx({ notifications: e, onDismiss: t, onClick: n }) {
 		}, e.id))
 	});
 }
-function Px(e) {
+function Ix(e) {
 	let t = zm();
 	return /* @__PURE__ */ Q(bm, {
 		channelTransport: t,
-		children: /* @__PURE__ */ Q(Am, { children: /* @__PURE__ */ Q(Hm, { children: /* @__PURE__ */ Q(Fx, { ...e }) }) })
+		children: /* @__PURE__ */ Q(Am, { children: /* @__PURE__ */ Q(Hm, { children: /* @__PURE__ */ Q(Lx, { ...e }) }) })
 	});
 }
-function Fx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReactions: r, logEntries: i, errors: a, lastError: o, activityEvents: s, activityPublish: c, defaultSidebarOpen: l = !0, identity: u, presenceUsers: d }) {
-	let { connectionState: f, sendMessage: ee, onMessage: p, ws: te, clientId: m, sessionToken: h } = qe(), ne = Se(), g = u ?? ne, _ = g?.userId ?? "", v = g?.displayName ?? "", ie = g?.userEmail ?? null, ae = g?.idToken ?? null, oe = g?.onSignOut ?? (() => {}), se = Xt(), ce = d ?? se?.presenceUsers ?? [], le = se?.currentClientId ?? null, y = mx(), b = px(), ue = ye(), { toast: de } = ut(), me = kt(n), he = X(null);
+function Lx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReactions: r, logEntries: i, errors: a, lastError: o, activityEvents: s, activityPublish: c, defaultSidebarOpen: l = !0, identity: u, presenceUsers: d }) {
+	let { connectionState: f, sendMessage: ee, onMessage: p, ws: te, clientId: m, sessionToken: h } = qe(), ne = Se(), g = u ?? ne, _ = g?.userId ?? "", v = g?.displayName ?? "", ie = g?.userEmail ?? null, ae = g?.idToken ?? null, oe = g?.onSignOut ?? (() => {}), se = Xt(), ce = d ?? se?.presenceUsers ?? [], le = se?.currentClientId ?? null, y = gx(), b = hx(), ue = ye(), { toast: de } = ut(), me = kt(n), he = X(null);
 	Y(() => {
 		let e = o ? `${o.code}@${o.timestamp}` : null;
 		o?.code === "RECONNECT_EXHAUSTED" && he.current !== e && de(o.message, {
@@ -405,7 +405,7 @@ function Fx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 		}), () => {
 			e = !0;
 		};
-	}, []), Cx(s), Tx();
+	}, []), Tx(s), Dx();
 	let { dispatchEnvelope: Oe } = ym();
 	Om({
 		channel: "pipeline:all",
@@ -413,7 +413,7 @@ function Fx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 		enabled: !0
 	});
 	let ke = Mm().length;
-	Ox(c), jx();
+	Ax(c), Nx();
 	let [j, M] = Z([]), Ae = X(S);
 	Y(() => {
 		Ae.current = S;
@@ -518,7 +518,7 @@ function Fx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 		className: "relative min-h-screen font-sans bg-surface-panel",
 		children: [
 			/* @__PURE__ */ Q(fp, { reactions: r }),
-			/* @__PURE__ */ Q(Nx, {
+			/* @__PURE__ */ Q(Fx, {
 				notifications: j,
 				onDismiss: F,
 				onClick: Ne
@@ -890,9 +890,9 @@ function Fx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 							className: "px-8 pt-4 pb-6 flex flex-col gap-4 flex-1 min-h-0",
 							children: [/* @__PURE__ */ Q(Oa, { health: ue }), /* @__PURE__ */ Q(Pc, {
 								name: "RouteContent",
-								children: /* @__PURE__ */ Q(ox, {
+								children: /* @__PURE__ */ Q(cx, {
 									fallback: /* @__PURE__ */ Q("div", { children: "Loading..." }),
-									children: /* @__PURE__ */ Q(fx, { context: {
+									children: /* @__PURE__ */ Q(mx, { context: {
 										dockedVideoDocId: E,
 										setDockedVideoDocId: D
 									} })
@@ -901,11 +901,11 @@ function Fx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						}),
 						E && b.pathname !== `/documents/${E}` && /* @__PURE__ */ Q(Pc, {
 							name: "DockedVideoEditor",
-							children: /* @__PURE__ */ Q(ox, {
+							children: /* @__PURE__ */ Q(cx, {
 								fallback: /* @__PURE__ */ Q("div", { children: "Loading..." }),
 								children: /* @__PURE__ */ Q("div", {
 									className: "hidden",
-									children: /* @__PURE__ */ Q(Mx, {
+									children: /* @__PURE__ */ Q(Px, {
 										documentId: E,
 										ws: te,
 										userId: _,
@@ -971,9 +971,9 @@ function Fx({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 }
 //#endregion
 //#region src/components/search/RecordResultList.tsx
-var Ix = (e) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
-function Lx({ group: e }) {
-	let t = `See all ${e.count}`, n = /* @__PURE__ */ $(dx, { children: [t, /* @__PURE__ */ Q(Ls, {
+var Rx = (e) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+function zx({ group: e }) {
+	let t = `See all ${e.count}`, n = /* @__PURE__ */ $(px, { children: [t, /* @__PURE__ */ Q(Ls, {
 		size: 14,
 		"aria-hidden": !0
 	})] });
@@ -981,7 +981,7 @@ function Lx({ group: e }) {
 		href: H(e.seeAllHref) ?? void 0,
 		className: "inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline",
 		onClick: (t) => {
-			e.onSeeAll && Ix(t) && (t.preventDefault(), e.onSeeAll());
+			e.onSeeAll && Rx(t) && (t.preventDefault(), e.onSeeAll());
 		},
 		children: n
 	}) : e.onSeeAll ? /* @__PURE__ */ Q(V, {
@@ -992,7 +992,7 @@ function Lx({ group: e }) {
 		children: n
 	}) : null;
 }
-function Rx({ group: e, onToggleGroup: t }) {
+function Bx({ group: e, onToggleGroup: t }) {
 	let n = e.count > e.records.length && !e.collapsed, r = /* @__PURE__ */ $(W, {
 		gap: "sm",
 		align: "baseline",
@@ -1033,7 +1033,7 @@ function Rx({ group: e, onToggleGroup: t }) {
 			"aria-label": `Show ${e.label}`,
 			className: "inline-flex items-center text-text-secondary hover:text-text-primary",
 			onClick: (t) => {
-				e.onSeeAll && Ix(t) && (t.preventDefault(), e.onSeeAll());
+				e.onSeeAll && Rx(t) && (t.preventDefault(), e.onSeeAll());
 			},
 			children: /* @__PURE__ */ Q(K, {
 				size: 14,
@@ -1066,12 +1066,12 @@ function Rx({ group: e, onToggleGroup: t }) {
 		align: "center",
 		className: "min-h-9 py-1",
 		wrap: !1,
-		children: [i, n && /* @__PURE__ */ Q(Lx, { group: e })]
+		children: [i, n && /* @__PURE__ */ Q(zx, { group: e })]
 	});
 }
-function zx({ record: e, selected: t, terms: n, onToggleSelect: r, onOpen: i, openLabel: a }) {
+function Vx({ record: e, selected: t, terms: n, onToggleSelect: r, onOpen: i, openLabel: a }) {
 	let o = e.highlights?.length ? [...n, ...e.highlights] : n, s = [e.subtitle, e.matchReason].filter(Boolean), c = a?.(e), l = (t) => {
-		t.stopPropagation(), Ix(t) && (t.preventDefault(), i(e));
+		t.stopPropagation(), Rx(t) && (t.preventDefault(), i(e));
 	};
 	return /* @__PURE__ */ $("li", {
 		className: B("group flex cursor-pointer items-start gap-3 border-b border-border px-2 py-3 last:border-b-0 hover:bg-surface-hover", t && "bg-primary/5 hover:bg-primary/10"),
@@ -1088,7 +1088,7 @@ function zx({ record: e, selected: t, terms: n, onToggleSelect: r, onOpen: i, op
 					"aria-label": `Select ${e.title}`
 				})
 			}),
-			/* @__PURE__ */ Q(yb, { record: e }),
+			/* @__PURE__ */ Q(xb, { record: e }),
 			/* @__PURE__ */ $(U, {
 				gap: "none",
 				className: "min-w-0 flex-1",
@@ -1113,7 +1113,7 @@ function zx({ record: e, selected: t, terms: n, onToggleSelect: r, onOpen: i, op
 					})
 				]
 			}),
-			e.status && /* @__PURE__ */ Q(ib, {
+			e.status && /* @__PURE__ */ Q(ob, {
 				status: e.status,
 				className: "flex h-8 shrink-0 items-center"
 			}),
@@ -1140,7 +1140,7 @@ function zx({ record: e, selected: t, terms: n, onToggleSelect: r, onOpen: i, op
 		]
 	});
 }
-function Bx({ groups: e, selectedKeys: t, onToggleSelect: n, onOpen: r, openLabel: i, highlightTerms: a = [], onToggleGroup: o, loading: s = !1, error: c, onRetry: l, emptyState: u, footer: d, hint: f, "aria-label": ee = "Search results", className: p, "data-testid": te = "record-result-list" }) {
+function Hx({ groups: e, selectedKeys: t, onToggleSelect: n, onOpen: r, openLabel: i, highlightTerms: a = [], onToggleGroup: o, loading: s = !1, error: c, onRetry: l, emptyState: u, footer: d, hint: f, "aria-label": ee = "Search results", className: p, "data-testid": te = "record-result-list" }) {
 	let m;
 	if (c) m = /* @__PURE__ */ Q(hl, {
 		title: "Search results could not be read",
@@ -1163,12 +1163,12 @@ function Bx({ groups: e, selectedKeys: t, onToggleSelect: n, onOpen: r, openLabe
 			"aria-label": e.label,
 			"data-group": e.id,
 			className: "border-b border-border last:border-b-0",
-			children: [/* @__PURE__ */ Q(Rx, {
+			children: [/* @__PURE__ */ Q(Bx, {
 				group: e,
 				onToggleGroup: o
 			}), !e.collapsed && e.records.length > 0 && /* @__PURE__ */ Q("ul", {
 				className: "m-0 list-none border-t border-border p-0",
-				children: e.records.map((e) => /* @__PURE__ */ Q(zx, {
+				children: e.records.map((e) => /* @__PURE__ */ Q(Vx, {
 					record: e,
 					selected: s.has(q(e)),
 					terms: a,
@@ -1208,17 +1208,17 @@ function Bx({ groups: e, selectedKeys: t, onToggleSelect: n, onOpen: r, openLabe
 }
 //#endregion
 //#region src/components/search/CitedRecordList.tsx
-function Vx(e) {
+function Ux(e) {
 	return e.sourceTitle ?? (e.subtitle ? `${e.title} · ${e.subtitle}` : e.title);
 }
-var Hx = [{
+var Wx = [{
 	type: "person",
 	title: "People in context"
 }, {
 	type: "work",
 	title: "Work to coordinate"
-}], Ux = (e) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
-function Wx({ numbers: e, byNumber: t, onOpen: n }) {
+}], Gx = (e) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+function Kx({ numbers: e, byNumber: t, onOpen: n }) {
 	return /* @__PURE__ */ Q(W, {
 		gap: "xs",
 		wrap: !1,
@@ -1231,7 +1231,7 @@ function Wx({ numbers: e, byNumber: t, onOpen: n }) {
 				"aria-label": `Source ${e}: ${r.title}`,
 				className: B(i, "hover:bg-primary-bg"),
 				onClick: (e) => {
-					e.stopPropagation(), Ux(e) && (e.preventDefault(), n(r));
+					e.stopPropagation(), Gx(e) && (e.preventDefault(), n(r));
 				},
 				children: [
 					"[",
@@ -1249,14 +1249,14 @@ function Wx({ numbers: e, byNumber: t, onOpen: n }) {
 		})
 	});
 }
-function Gx({ record: e, byNumber: t, onOpen: n }) {
+function qx({ record: e, byNumber: t, onOpen: n }) {
 	let r = e.type === "person", i = r ? e.description : e.subtitle;
 	return /* @__PURE__ */ $("li", {
 		className: "flex cursor-pointer items-center gap-3 border-b border-border px-3 py-2.5 last:border-b-0 hover:bg-surface-hover",
 		onClick: () => n(e),
 		"data-record-key": q(e),
 		children: [
-			/* @__PURE__ */ Q(yb, {
+			/* @__PURE__ */ Q(xb, {
 				record: e,
 				size: r ? 36 : 32
 			}),
@@ -1265,12 +1265,12 @@ function Gx({ record: e, byNumber: t, onOpen: n }) {
 				className: "min-w-0 flex-1",
 				children: [/* @__PURE__ */ $("span", {
 					className: "truncate text-sm",
-					title: Vx(e),
+					title: Ux(e),
 					children: [/* @__PURE__ */ Q("a", {
 						href: H(e.href) ?? void 0,
 						className: "font-medium text-text-primary hover:text-primary",
 						onClick: (t) => {
-							t.stopPropagation(), Ux(t) && (t.preventDefault(), n(e));
+							t.stopPropagation(), Gx(t) && (t.preventDefault(), n(e));
 						},
 						children: e.title
 					}), r && e.subtitle && /* @__PURE__ */ $("span", {
@@ -1283,11 +1283,11 @@ function Gx({ record: e, byNumber: t, onOpen: n }) {
 					children: i
 				})]
 			}),
-			!r && e.status && /* @__PURE__ */ Q(ib, {
+			!r && e.status && /* @__PURE__ */ Q(ob, {
 				status: e.status,
 				className: "shrink-0"
 			}),
-			/* @__PURE__ */ Q(Wx, {
+			/* @__PURE__ */ Q(Kx, {
 				numbers: e.citations?.length ? e.citations : [e.n],
 				byNumber: t,
 				onOpen: n
@@ -1307,7 +1307,7 @@ function Gx({ record: e, byNumber: t, onOpen: n }) {
 		]
 	});
 }
-function Kx({ records: e, sections: t = Hx, onOpen: n, onViewConnections: r, viewConnectionsLabel: i = "View these connections", sourcesLabel: a = "Sources", footnote: o, className: s, "data-testid": c = "cited-record-list" }) {
+function Jx({ records: e, sections: t = Wx, onOpen: n, onViewConnections: r, viewConnectionsLabel: i = "View these connections", sourcesLabel: a = "Sources", footnote: o, className: s, "data-testid": c = "cited-record-list" }) {
 	if (!e.length) return null;
 	let l = /* @__PURE__ */ new Map();
 	for (let t of e) l.has(t.n) || l.set(t.n, t);
@@ -1323,7 +1323,7 @@ function Kx({ records: e, sections: t = Hx, onOpen: n, onViewConnections: r, vie
 					children: t.title
 				}), /* @__PURE__ */ Q("ul", {
 					className: "m-0 list-none overflow-hidden rounded-md border border-border p-0",
-					children: r.map((e) => /* @__PURE__ */ Q(Gx, {
+					children: r.map((e) => /* @__PURE__ */ Q(qx, {
 						record: e,
 						byNumber: l,
 						onOpen: n
@@ -1358,7 +1358,7 @@ function Kx({ records: e, sections: t = Hx, onOpen: n, onViewConnections: r, vie
 								className: "gap-2",
 								onClick: () => n(e),
 								"aria-label": `Source ${e.n}: ${e.title}`,
-								title: Vx(e),
+								title: Ux(e),
 								children: [/* @__PURE__ */ Q(Ct, {
 									size: "xs",
 									tone: "neutral",
@@ -1390,7 +1390,7 @@ function Kx({ records: e, sections: t = Hx, onOpen: n, onViewConnections: r, vie
 }
 //#endregion
 //#region src/styles/tokens.ts
-var qx = {
+var Yx = {
 	primary: "#3b82f6",
 	primaryDark: "#1d4ed8",
 	primaryLight: "#93c5fd",
@@ -1412,30 +1412,30 @@ var qx = {
 	surface: "#ffffff",
 	surfaceRaised: "#ffffff",
 	surfaceOverlay: "rgba(15, 23, 42, 0.5)"
-}, Jx = {
+}, Xx = {
 	xs: 4,
 	sm: 8,
 	md: 16,
 	lg: 24,
 	xl: 32
-}, Yx = {
+}, Zx = {
 	xs: 11,
 	sm: 13,
 	md: 14,
 	lg: 16,
 	xl: 22
-}, Xx = {
+}, Qx = {
 	sm: 4,
 	md: 6,
 	lg: 8,
 	xl: 12,
 	full: 9999
-}, Zx = {
-	colors: qx,
-	spacing: Jx,
-	fontSize: Yx,
-	borderRadius: Xx
-}, Qx = {
+}, $x = {
+	colors: Yx,
+	spacing: Xx,
+	fontSize: Zx,
+	borderRadius: Qx
+}, eS = {
 	primary: G("primary"),
 	primaryDark: G("primaryDark"),
 	primaryLight: G("primaryLight"),
@@ -1457,19 +1457,19 @@ var qx = {
 	surface: G("surface"),
 	surfaceRaised: G("surfaceRaised"),
 	surfaceOverlay: G("surfaceOverlay")
-}, $x = {
+}, tS = {
 	xs: G("spaceXs"),
 	sm: G("spaceSm"),
 	md: G("spaceMd"),
 	lg: G("spaceLg"),
 	xl: G("spaceXl")
-}, eS = {
+}, nS = {
 	xs: G("fontXs"),
 	sm: G("fontSm"),
 	md: G("fontMd"),
 	lg: G("fontLg"),
 	xl: G("fontXl")
-}, tS = {
+}, rS = {
 	sm: G("radiusSm"),
 	md: G("radiusMd"),
 	lg: G("radiusLg"),
@@ -1478,7 +1478,7 @@ var qx = {
 };
 //#endregion
 //#region src/api/pipelineDLQ.ts
-async function nS(e) {
+async function iS(e) {
 	let t = new URLSearchParams();
 	e?.limit && t.set("limit", String(e.limit)), e?.cursor && t.set("cursor", e.cursor), e?.errorKind && t.set("errorKind", e.errorKind), e?.sinceMs && t.set("sinceMs", String(e.sinceMs));
 	let n = `/api/pipelines/dlq${t.toString() ? `?${t}` : ""}`, r = await fetch(n, {
@@ -1492,7 +1492,7 @@ async function nS(e) {
 	}
 	return r.json();
 }
-async function rS(e, t) {
+async function aS(e, t) {
 	let n = await fetch("/api/pipelines/dlq/redrive", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -1509,7 +1509,7 @@ async function rS(e, t) {
 	}
 	return n.json();
 }
-async function iS(e, t) {
+async function oS(e, t) {
 	let n = await fetch("/api/pipelines/dlq/purge", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -1527,25 +1527,25 @@ async function iS(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var aS = cx(() => import("./AgentComposerDock-DAeKaKVI.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
-function oS(e) {
-	return /* @__PURE__ */ Q(ox, {
-		fallback: null,
-		children: /* @__PURE__ */ Q(aS, { ...e })
-	});
-}
-//#endregion
-//#region src/components/social/ContextComposerLazy.tsx
-var sS = cx(() => import("./ContextComposer-CJGSRv8H.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var sS = ux(() => import("./AgentComposerDock-DAeKaKVI.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function cS(e) {
-	return /* @__PURE__ */ Q(ox, {
+	return /* @__PURE__ */ Q(cx, {
 		fallback: null,
 		children: /* @__PURE__ */ Q(sS, { ...e })
 	});
 }
 //#endregion
+//#region src/components/social/ContextComposerLazy.tsx
+var lS = ux(() => import("./ContextComposer-CJGSRv8H.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+function uS(e) {
+	return /* @__PURE__ */ Q(cx, {
+		fallback: null,
+		children: /* @__PURE__ */ Q(lS, { ...e })
+	});
+}
+//#endregion
 //#region src/components/ui/InlinePanel.tsx
-function lS({ children: e, variant: t = "light", className: n, "data-testid": r = "inline-panel", ref: i }) {
+function dS({ children: e, variant: t = "light", className: n, "data-testid": r = "inline-panel", ref: i }) {
 	return /* @__PURE__ */ Q("div", {
 		ref: i,
 		"data-testid": r,
@@ -1554,4 +1554,4 @@ function lS({ children: e, variant: t = "light", className: n, "data-testid": r 
 	});
 }
 //#endregion
-export { ff as ACTIVITY_RIPPLE_GRID, hf as ACTIVITY_RIPPLE_GRID_DARK, cf as AGENT_PARTICLE_COLORS, vd as AGENT_RUN_STEP_DOT, $f as AGENT_TASK_STATUS_DOT, ep as AGENT_TASK_STATUS_LABELS, ig as ALL_CONVERSATION_FEATURES, _o as APP_SHELL_FOLDED_RAIL_WIDTH, ou as AVATAR_PALETTE, Ga as AccentStripe, mr as AccessNotice, yn as ActionRowList, Gr as ActionRowPerson, ka as ActiveCallBanner, Uh as ActivePeopleGrid, Sf as ActivityFeed, Js as ActivityIcon, Af as ActivityPanel, jn as ActivityResumeChip, hi as ActivityTicker, Mh as AddPeoplePicker, Ch as AddToChatDialog, Rv as AdminDashboardPage, oS as AgentComposerDock, Ud as AgentRunCard, Bn as AgentTaskCard, Oa as ApiDegradedBanner, ya as AppBrand, Px as AppLayout, Nr as AppShell, py as ApplicationFormPage, qv as ApplicationListPage, uy as ApplicationPoolFormPage, Ls as ArrowRightIcon, Ws as ArrowUpIcon, hr as ArtifactTile, po as AssetGallery, As as AtIcon, Ui as AttachToggle, Nd as AttachmentBubble, Sv as AudioLevelMeter, j_ as AudioPlayer, gv as AudioVideoSettingsForm, ny as AuditPage, ny as IdentityAuditPage, N_ as AuthedAudio, Ng as AutoplayGate, ru as Avatar, au as AvatarGroup, at as BUTTON_WEIGHT, Ic as Badge, Lc as Banner, Bc as BarChart, hs as BellIcon, zs as BellMutedIcon, wa as BigBrotherPanel, yr as BoardColumn, Gp as BooleanEditorRenderer, Bp as BooleanReaderRenderer, Ks as BotIcon, ys as BranchIcon, Du as Breadcrumbs, xv as BreakoutRoomBanner, Dv as BreakoutRoomsPanel, Ps as BulletListIcon, V as Button, hg as CALL_CARD_WIDTH, Qg as CALL_DOCK_DRAG_TYPE, T_ as CALL_DOCK_ROW_HEIGHT, m_ as CALL_STAGE_DOCKED_WIDTH, Qn as CANVAS_PANE_RAIL_PX, vt as CODE_TONE_SOFT, ft as CODE_TONE_SOLID, xt as CODE_TONE_SOLID_BG, wt as CODE_TONE_TEXT, ax as COMPOSER_CONTEXT_KINDS, rx as COMPOSER_CONTEXT_REASONS, yy as CONNECTION_TYPE_LABELS, $l as CONTAINER_COMPACT_BELOW, Kr as CONTEXT_COLUMN_INSET_VAR, d as CUSTOM_FIELD_TYPE_STORAGE_KEY, od as CallActivityCard, l_ as CallCaptionsSettings, v_ as CallControls, jv as CallDock, t_ as CallInterruptedNotice, Rh as CallLogList, Hg as CallNoticePill, f_ as CallParticipantStrip, Xg as CallPeopleList, ha as CallPresenceIndicator, Fg as CallSettingsDialog, E_ as CallSettingsDrawer, C_ as CallSidePanel, Yg as CallSidePanelToggles, Mg as CallStartedBanner, e_ as CallStatsOverlay, Y_ as CallTileRow, x_ as CallWidget, xg as CallingStatusPill, vf as CanvasPaneInsetContext, Pa as CanvasPaneLayout, Sy as CanvasZoomControls, Ci as CapabilityDeniedFallback, br as CaptionedAvatar, Sc as CaptionsIcon, Eo as Card, Eu as CardHeader, zi as CatalogGrid, Uf as ChangeDiff, Vf as ChangeLocation, rp as ChangeReviewCard, np as ChangeReviewList, Eh as ChannelBindingStrip, ng as ChannelDocumentsPanel, Qh as ChannelFilesPanel, zd as ChannelHeader, Yh as ChannelMentionsPanel, tg as ChannelRecordingsPanel, Xs as ChartIcon, _c as ChatBubbleIcon, gh as ChatBubbleStack, Qm as ChatColumnBackdrop, Wh as ChatCommandProvider, pa as ChatComposer, op as ChatDropZone, xs as ChatIcon, th as ChatLabPill, sh as ChatLabShell, Rd as ChatPanel, Nh as ChatRoom, Yl as ChatSidePanel, Kl as ChatSidePanelFrame, Jl as ChatSidePanelProvider, ws as CheckIcon, Jf as Checkbox, mp as ChecklistEditorRenderer, Vs as ChecklistIcon, Tp as ChecklistReaderRenderer, or as ChecklistSection, K as ChevronIcon, Ct as Chip, Su as ChoiceList, bu as ChoiceOption, xu as ChoiceRow, Og as CircularIconToggle, Kx as CitedRecordList, Os as CloseIcon, Es as CloudIcon, li as CodeBlock, Zt as CodeEditor, ps as CodeIcon, Jv as CodeInput, __ as CollaboratorCheckList, Ei as CollapsedIconStrip, Wi as CollapsibleSection, ma as CollapsibleSidebar, xa as CollectionPage, ul as CollectionToolbar, pi as ColorInput, _x as ColorSchemeProvider, dn as ColumnDock, Jc as Combobox, eo as CommandPalette, Oi as CommandPaletteHint, Li as CommandPaletteProvider, Qs as CommentIcon, oa as CommentList, oh as CommentThread, oh as CommentThreadPanel, og as ComposerReferences, mg as ComposerSendError, Lr as ComposerSurface, Hc as ConfirmButton, Kc as ConfirmDialog, ub as ConnectionPathStrip, qd as ConnectionPill, qa as ConnectionStatus, ly as ConsentPage, df as ConsoleSurfaceContext, Sn as ConsultCard, In as ContextColumn, cS as ContextComposer, zh as ConversationList, Zm as ConversationRail, $m as ConversationShelf, wh as ConversationStart, eg as ConversationSurface, ic as CopyIcon, fr as CopyIdButton, bh as CreateChannelDialog, Ph as CreateTeamDialog, wi as DATA_ACCENT_SLOTS, lm as DECK_THEMES, Hx as DEFAULT_CITED_SECTIONS, fn as DEFAULT_LINK_RELATIONS, sp as DEFAULT_PICKER_EMOJIS, sn as DEFAULT_PIPELINE_ICONS, et as DENSITIES, l as DOCUMENT_TYPE_ICONS, La as DashboardPage, fl as DataTable, kp as DateEditorRenderer, Vp as DateReaderRenderer, Sd as DaySeparator, tp as DecisionPath, Pp as DecisionsEditorRenderer, Fp as DecisionsReaderRenderer, Sp as DefaultRenderer, rt as DensityProvider, Vb as DepartmentChips, Tb as DepartmentInsightStrip, _s as DesktopIcon, sr as DetailHeader, Zn as DetailPage, tn as DetailSection, vg as DeviceSettingsPanel, z_ as DeviceToggleSelect, Xv as DiagnosticsPage, Np as DiagramEditorRenderer, Mp as DiagramReaderRenderer, Vh as DialogueSegment, go as DiffViewer, Fc as Disclosure, Ra as DisconnectReconnect, Kt as Divider, Zd as DockedAside, Ni as DockedColumn, pu as DockedPanelProvider, Ha as DocsShell, Ca as DocsSidebar, Qa as DocsTopNav, dd as DocumentActivityCard, nc as DocumentAddIcon, h_ as DocumentCallPanel, Ku as DocumentChip, rs as DocumentIcon, _a as DocumentResultList, _u as DotMeter, Ro as DownloadIcon, bl as Drawer, Ol as DropdownMenu, sg as EMOJI_SHORTCODES, Di as ERROR_CODE_DESCRIPTIONS, ec as EditIcon, yl as EditableHeading, Zv as EmailTemplateFormPage, Gv as EmailTemplateListPage, O_ as EmbeddedCallPanel, ml as EmptyState, di as EntityCell, ey as EntityTable, Pc as ErrorBoundary, $a as ErrorDisplay, oy as ErrorPage, ua as ErrorPanel, hl as ErrorState, lo as EstimateRow, Si as EventLog, Tl as EventRow, bc as ExpandIcon, wg as ExpandableCallWidget, fo as ExpertCard, si as ExplorerLayout, as as ExternalLinkIcon, Ho as EyeIcon, Bo as EyeOffIcon, Xf as FILE_KIND_LABELS, Lf as FLOATING_PANEL_ANCHORS, $h as FeedRow, ip as FileInput, Yf as FileKindMark, ja as FilePickerButton, xf as FileUploadDrop, zp as FileUploadEditorRenderer, Hp as FileUploadReaderRenderer, cu as FilterChip, $o as FilterIcon, rl as FilterPopover, Jd as FloatingCard, Ff as FloatingPanel, Ns as FolderIcon, kc as FollowBanner, yf as FollowUpChips, cl as FormField, dr as FormRow, yo as FormWizard, Io as ForwardIcon, oi as FrameStrip, En as FullscreenToggle, sf as GRAPHITE_PARTICLE_COLORS, an as GenerativeImagePreview, A_ as GoLiveButton, Ms as GraphIcon, By as GraphPanelBody, _b as GraphSearchBox, Zo as GripIcon, fy as GroupFormPage, Uv as GroupListPage, ph as GroupPanel, Gt as GroupedList, Ru as HEADER_COLLAPSE_BELOW_PX, Vu as HEADER_COMPACT_BELOW_PX, Fu as HEADER_DENSITY_STORAGE_PREFIX, va as HEADER_SCROLL_COLLAPSE_PX, Ih as HISTORY_DAYS_DEFAULT, jh as HISTORY_DAYS_MAX, Th as HISTORY_DAYS_MIN, Pu as HOVER_CARD_CLOSE_MS, Nu as HOVER_CARD_OPEN_MS, Z_ as HangoutGrid, L_ as HangoutLayout, s_ as HangoutPreJoinShell, Ag as HangoutRoomHeader, _v as HangoutSpotlight, ku as HeaderCollapseToggle, zu as HeaderDescriptionInfo, Hu as HeaderPeople, Au as HeaderTrailFold, ki as Highlight, Qo as HighlighterIcon, Ea as Histogram, es as HistoryIcon, Ou as HoverCard, yg as HuddleBar, p as IDENTITY_BASE_URL, Po as IconButton, Vt as IconPicker, ry as IdentityAdminLayout, Bv as IdentityFormField, Ce as IdentityProvider, Wa as ImageCompare, cr as ImageFilmstrip, Wo as ImageIcon, Yt as ImageLightbox, $t as ImageThumbnail, nn as ImageUploader, Ac as InboxSection, Mc as InboxSectionRow, S_ as IncomingCallPopover, qo as InfoIcon, W as Inline, Tu as InlineAlert, Lv as InlineEditableText, Gn as InlineMenu, Cd as InlineMessageEditor, lS as InlinePanel, Pf as InlinePlaceholder, nl as InlinePopover, qc as Input, Df as InviteCandidateList, Ki as InviteToCallDialog, Xo as ItalicIcon, dt as JOB_TOAST_DISMISS_MS, ot as JobToast, Rm as JsonPathInput, bi as KPIGrid, pl as KeyValue, ns as KeyboardIcon, oc as LaptopIcon, no as LayerStack, Rc as LineChart, Gf as Link, Kp as LinkBlockEditorRenderer, Rp as LinkBlockReaderRenderer, dg as LinkDialog, Lo as LinkIcon, na as LinkedItemsSection, cs as ListIcon, $r as ListRailLayout, Ko as ListStyleIcon, ca as LiveRegion, Sl as LoadingState, ss as LockIcon, tf as LogStream, Yv as LoginPage, $v as LogoutPage, em as MAX_DECK_SLIDES, b_ as MEETING_TOOLBAR_BUTTON, wr as MODEL_CHANNEL_LABEL, un as MODEL_CHANNEL_ORDER, oo as MarkdownView, jr as MasterDetail, ri as MasterDetailPage, ls as MaximizeIcon, Cn as MediaCollectionCard, bg as MediaControlsBar, cv as MediaEffectsPreviewPanel, Mv as MediaEffectsTray, w_ as MediaPlaybackDock, r_ as MediaPrecheckRow, H_ as MeetingAppsIcon, K_ as MeetingHandIcon, wv as MeetingNotesIcon, G_ as MeetingReactIcon, ov as MeetingRecordingIcon, av as MeetingRoomsIcon, sv as MeetingShareIcon, Q_ as MeetingShieldIcon, p_ as MeetingStatusCluster, a_ as MeetingToolbar, I_ as MeetingViewIcon, xh as MembersPanel, Dd as MembershipNotice, Go as MenuIcon, xd as MessageActionBar, ud as MessageBody, Da as MessageBubble, Sh as MessageGroup, fd as MessageRow, Kf as MetaLine, gf as MeterRow, Kv as MfaDashboardPage, Qv as MfaManagementPage, sy as MfaSetupPage, iy as MfaVerifyPage, mc as MicIcon, cc as MicOffIcon, Yo as MinimizeIcon, Vc as Modal, Mi as ModelViewer, vc as MonitorIcon, Us as MoonIcon, Hr as MoreContextDisclosure, xc as MoreHorizontalIcon, Jo as MoreIcon, jg as MuteWhileTalkingToast, Ey as NODE_GRAPH_VIEW_WIDTH, Dr as NavRail, Co as NavRailStack, ta as NavTabs, k_ as NetworkQualityBadge, Bh as NewChatDialog, Dh as NewConversationPanel, jc as NoAccessState, Nn as NodeCard, Ay as NodeGraph, Xd as NotificationBell, Qd as NotificationCenter, Up as NumberEditorRenderer, qf as NumberInput, Ip as NumberReaderRenderer, ds as NumberedListIcon, $y as ORG_CONTROLS_SIZE, tb as ORG_FIT_ALL_MIN_ZOOM, Uy as ORG_FIT_MIN_ZOOM, Ub as ORG_LEGEND_INSET, hb as OrgGraph, Yb as OrgGraphLegend, ur as OutcomeSection, pb as PATH_TYPE_LABELS, Sb as PEOPLE_GRAPH_QUERY_NODE_ID, el as POPOVER_BOUNDARY_ATTR, tl as POPOVER_KEEPOUT_ATTR, ob as PRESENCE_DOT, vo as PROCEDURE_STEP_STATUS_LABELS, Bt as PROMPT_CONTEXT_DRAG_TYPE, It as PROMPT_CONTEXT_LIMIT, Tr as PageFrame, _r as PageFromSpec, Uu as PageHeader, No as PageSection, qn as PageSpecProvider, wo as PaneHeader, Zi as PanelsView, us as PaperclipIcon, U_ as ParticipantTile, uf as ParticlesBackground, Dm as PatchHttpError, Pm as PatchValidationRejectedError, fs as PauseCircleIcon, uc as PauseIcon, Iy as PeopleGraph, ts as PeopleIcon, vl as PermissionDeniedCard, Db as PersonDetailCard, xn as PersonHoverCard, Fo as PersonIcon, to as PersonPicker, hc as PhoneCallIcon, Cs as PhoneIcon, Cc as PhoneOffIcon, Rg as PiPButton, da as PickerDialog, Ys as PinIcon, rg as PinnedMessagesPanel, Kd as PinnedSlot, rn as PipelineEditorServicesProvider, Rs as PlayCircleIcon, dc as PlayIcon, n_ as PlaybackReactionsLayer, Gs as PlusCircleIcon, js as PlusIcon, Vv as PoolFormPage, Hv as PoolListPage, cy as PoolScopedLayout, gs as PopOutIcon, Cf as PopoverField, Of as PopoverForm, hh as PostFeed, bf as PresenceAvatars, yu as PresenceDot, ag as PresencePanel, Ut as PresenceProvider, um as PresentationEditor, Bs as PrinterIcon, vi as ProcedureSteps, Et as ProgressBar, Sa as ProjectCard, _h as PromptContextPicker, gm as ProposedEditStrip, bo as Prose, qs as PuzzleIcon, ty as QrCodeDisplay, ea as QuickPromptGrid, up as QuoteBlock, bs as QuoteIcon, zl as RAIL_CAPTION, uh as RAIL_CHANNELS_SECTION, Fl as RAIL_CURRENT_FILL, fh as RAIL_DMS_SECTION, qr as RAIL_FOLD_PRIMARY_BELOW, Ln as RAIL_FOLD_SECTION_BELOW, Ll as RAIL_GROUP_COUNT, Nl as RAIL_GROUP_LABEL, kl as RAIL_GROUP_LABEL_INK, Il as RAIL_GROUP_PAD_Y, Rl as RAIL_ITEM_COUNT, Al as RAIL_ITEM_TEXT, Pl as RAIL_ROW_PAD_Y, Bl as RAIL_ROW_PITCH, Xm as RAIL_SECTION_CONTENT_INSET, eh as RAIL_SECTION_GUTTER, Gb as RARE_SKILL_FINDINGS_PATH, Jy as RARE_SKILL_SWEEP, Cy as RARE_THRESHOLD, c_ as RECORDING_CHIP_TITLES, Iv as RECORDING_CONSENT_TITLES, _y as RECORD_GRAPH_MAX_FIT_ZOOM, Zy as RECORD_GRAPH_MIN_FIT_ZOOM, Oy as RECORD_GRAPH_NODE_HEIGHT, Xy as RECORD_GRAPH_NODE_WIDTH, Qy as RECORD_GRAPH_TYPES, Fb as RECORD_TYPE_LABELS, qb as RELATIONSHIP_STYLES, sa as REVIEW_KIND_LABELS, pn as REVIEW_KIND_TONES, Iu as RICH_HEADER_CONTENT, Ar as RUN_DRAFT_STATUS_LABELS, qt as RadioGroup, $n as RailBandProvider, jl as RailCaretIcon, kn as RailLayout, zr as RailNavList, Tn as RailSection, Zh as RailSectionHeader, nv as RaisedHandBadge, bb as RangeSlider, gd as ReactionChips, $_ as ReactionOverlay, Nv as ReactionPicker, R_ as ReactionPickerButton, ap as ReactionPickerPopover, mh as ReactionsBar, Av as ReconnectingBanner, Zb as RecordGraph, zb as RecordGraphCard, yb as RecordMark, Bx as RecordResultList, ib as RecordStatus, rd as RecordingActivityCard, gg as RecordingChip, Pv as RecordingConsentNotice, y_ as RecordingExpiryDialog, Bg as RecordingList, Vg as RecordingPlayer, zg as RecordingRow, Fs as RedoIcon, tv as RemoteTileSlot, Zs as RepeatIcon, Ss as ReplyIcon, Ii as ResumeCallDialog, d_ as ReviewDocumentList, ra as ReviewThread, hp as RichTextEditorRenderer, gp as RichTextReaderRenderer, _f as RippleGridBackground, nf as RisingParticles, Um as RoomList, Cg as RosterPanel, wu as RovingToolbar, bn as RunDraftPanel, Wm as RunPanelBody, Uc as RunProgressPanel, Oh as RunSummaryPanel, vn as SIDE_PANE_BOUNDS, om as SLIDE_LAYOUTS, fm as SLIDE_LAYOUT_LABELS, _n as STACKED_RAIL_GROUP_ACTIONS_CLASS, Ur as STACKED_RAIL_ROW_CLASS, Kn as SUBJECT_FRAME_MAX_FACTS, Ba as ScopeHeader, su as ScoreBarGauge, yc as ScreenShareIcon, gc as ScreenShareOffIcon, Ts as SearchIcon, ll as SearchInput, Nf as SectionLabel, Un as SectionLayout, ao as SectionStack, Vl as SegmentedControl, Yc as Select, Oc as SelectableCard, Pn as SelectionBar, Hs as SendIcon, pc as SettingsGearIcon, tr as SettingsLayout, zn as SettingsPage, ay as SetupGuidePage, Is as ShareIcon, Fa as ShellRailFoldProvider, ia as ShortcutsHelp, Wr as SidePane, Hn as SidePaneProvider, Br as SidePaneSplit, $d as SidebarRow, Yd as SidebarSection, Fr as SignoffPanel, lu as SkeletonCard, mn as SkipLink, Ul as Slider, ks as SlidersIcon, Ds as SmileyIcon, Fh as SocialPanel, Hh as SocialTabContent, Vi as SourceCard, ci as SourceList, ms as SparkleIcon, fc as SparklesIcon, Dl as Sparkline, sc as SpeakerIcon, aa as SpecLeaf, xl as Spinner, Qr as SplitPane, $s as SplitViewIcon, U as Stack, Ai as StackDiagram, zc as StackedAreaChart, Vn as StackedRail, Jg as StartCallDrawer, gr as StatCard, uo as StatStrip, P_ as StatsCard, Wv as StatusBadge, vu as StatusDot, Hl as StatusPill, i_ as StatusStrip, Cv as StreamAudioOnly, yv as StreamChatTicker, Ev as StreamStage, B_ as StreamVideo, kf as SubNavLayout, ir as SubjectFrame, Or as SubjectHero, An as SuggestionCard, pf as SuggestionRow, Sg as SummaryPanel, ac as SunIcon, mu as Switch, Ot as T, Na as THEME_TOKEN_ALIASES, pt as TONES, yt as TONE_BG, Tt as TONE_BORDER, mt as TONE_SOFT, ht as TONE_SOLID, St as TONE_SOLID_BG, bt as TONE_TEXT, eu as TabPanel, Ua as TabbedEventLog, Mo as Table, ko as TableBody, jo as TableHead, Oo as TableRow, Do as TableTd, Ao as TableTh, Ql as Tabs, Ht as TagEditor, Ir as TaskComposer, Qf as TaskStrip, Ep as TasksEditorRenderer, Jp as TasksReaderRenderer, Ah as TeamChannelTree, _l as TechnicalDetails, vs as TemplateIcon, ui as TenantSwitcher, ef as TerminalLog, Dt as Text, Wp as TextEditorRenderer, jp as TextReaderRenderer, hu as Textarea, Ja as ThemeModeToggle, ji as ThemeProvider, gi as ThinkingBlock, gl as ThinkingDots, Ma as ThumbnailCard, gu as TitledFrame, lt as Toast, ct as ToastProvider, Ka as ToolCallPill, Ti as ToolCallStrip, sl as Toolbar, al as ToolbarGroup, ol as ToolbarLabel, il as ToolbarSeparator, Zc as Tooltip, _i as TopNav, rc as TranscribeIcon, kg as TranscriptOverlay, Eg as TranscriptPanel, kd as TransferBubble, is as TrashIcon, ho as TreeView, Wt as TrendSparkline, Kb as TypedNodeCanvas, jd as TypingIndicator, zo as UndoIcon, tc as UploadIcon, so as UserChip, zv as UserFormPage, dy as UserListPage, Va as UserMenu, Jt as UserPicker, wc as UserPlusIcon, Ec as UsersIcon, Bf as VERDICT_GLYPH, Hf as VERDICT_LABEL, zf as VERDICT_TONE, fu as VISUALLY_HIDDEN_STYLE, Wf as VerdictChip, os as VideoCallIcon, Ug as VideoGrid, lc as VideoIcon, Tc as VideoOffIcon, F_ as VideoOverlayChip, M_ as VideoPlayer, qg as VideoPlayerModal, _g as VideoSurface, W_ as ViewerCount, Vr as ViewportFillRegion, uu as VisuallyHidden, Kg as VoicemailRecorder, lv as VolumeSlider, vb as WORK_ACTIVITY_ALL_EFFORTS, gb as WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, Nb as WORK_NODE_KIND_LABELS, Uo as WarningIcon, Je as WebSocketProvider, Vo as WhiteboardIcon, yi as Wizard, db as WorkActivityHeader, To as WorkActivityList, rr as WorkArea, Eb as WorkArtifactInspector, lb as WorkComputePane, sb as WorkEdge, $b as WorkEntityList, Ib as WorkGraph, ex as WorkInspector, vr as WorkItemMetaBar, Hb as WorkKindLegend, nr as WorkListFilters, Er as WorkListToolbar, So as WorkListView, Jb as WorkNode, ab as WorkNodePane, mb as WorkOmittedGroup, jb as WorkPaneBanner, Wb as WorkReferenceCard, Mn as WorkSearchPicker, Xb as WorkSharingControls, qy as WorkStatus, Wn as WorkTableView, Rb as WorkTranscriptPanel, Rr as Workbench, Gc as WorkflowStepper, Tf as WorkspaceRail, wf as activeNavItemClassName, Ef as activeNavItemStyle, Dn as activityAge, Qp as addSlide, cd as agentRunRefFromMetadata, qu as agentRunResultFromMetadata, Hd as agentRunTimings, Ya as applyModelChannel, Lm as applyPatch, Lh as arrangeRailSections, Lp as booleanFieldType, tS as borderRadius, Jr as boundedSidePaneRatio, Jh as buildRailSection, $g as callPersonStatus, Ad as callRefFromMetadata, u_ as callSidePanelBodyTestId, D_ as callSidePanelPlacement, Zg as callSidePanelToggleTestId, dm as canSaveDeck, Jn as canvasPaneGeometry, Km as chatChannelKindOf, Gh as chatCommandScopeHint, lh as chatCommandsToComposer, Gl as chatSidePanelKindLabel, wp as checklistFieldType, Vx as citedSourceTitle, dl as collectionToolbarFitsHeader, Qx as colors, $e as compileProgram, fg as composerCommandArgumentText, ix as composerContextPreset, tx as composerDraftOf, ug as composerSendErrorReason, Pr as confidenceNote, On as confidenceOf, Zl as containerDensity, td as conversationStamp, Ze as createArrayBuffer, wb as createGraphPanelRenderer, nh as createRunPanelRenderer, Qe as createWebGLContext, G as cssVar, xo as darkTheme, fa as dataAccentProps, xp as dateFieldType, Pd as dayKeyOf, ed as dayLabel, Zp as decisionsFieldType, la as definePage, xy as degreeMap, zy as departmentInsight, ld as describeAgentLoop, Yu as describeAgentRunFailure, Ju as describeAgentRunOp, Gu as describeMembership, Ed as describeMembershipHistory, Xu as describeOutcome, $u as describeParticipants, Vd as describeReactors, id as describeRecordingParticipants, Wg as deviceMenuSections, vp as diagramFieldType, Ji as documentAgeLabel, Fd as documentRefFromMetadata, Td as documentRefsFromMetadata, Qu as documentUnavailableLabel, af as drawnParticles, im as duplicateSlide, El as eventGlyphs, lp as excerpt, yp as fileUploadFieldType, Yr as fillHeight, Dy as filterRecordGraph, Mb as findConnectionPath, Cb as findingForSkill, hy as firstName, my as fitTransform, nb as focusOrgGraph, Wu as foldTitleIntoTrail, eS as fontSize, Sm as forceFail, fb as forceParamsFor, Pg as formatAudioTime, dp as formatBytes, nd as formatCallDuration, ev as formatCallElapsed, Zu as formatChatTime, mo as formatCompactAge, Xh as formatDuration, sd as formatElapsed, wn as formatEstimate, ad as formatLoopClock, Wc as formatRunDuration, io as formatSourceAge, $i as formatSpend, cp as formatTokens, Id as formatTypingBanner, _d as forwardAttributionLine, Md as forwardOriginLabel, Ld as forwardedFromMetadata, md as fullDateLabel, pd as fullTimestampLabel, D as fullscreenSupported, T as getApiBaseUrl, Op as getApprovalApiBase, w as getDocumentTypeApiBaseUrl, wl as getEventCategory, Cl as getEventGlyph, a as getFieldType, n as getFieldTypes, s as getPageConfig, c as getPagesView, Bm as getPipelineRun, i as getRenderer, Nm as getRunAuditLog, Gy as graphCenterNode, Py as graphGroupPalette, Qb as graphGroups, V_ as gridCols, Wd as groupReactions, kv as guardedSelection, ju as headerDefaults, Mu as headerDensityStorageKey, ba as highlightModelPart, Ri as highlightSegments, hv as hlsFailureText, ee as identityApiFetch, nx as identityDisplayName, jf as inactiveNavItemClassName, xb as indexBusFactorFindings, Xi as injectThemeVars, ar as isBuiltinLeafKind, Jm as isChatCommandInScope, wd as isImageAttachment, q_ as isKnownViewerCount, hd as isNewDay, gy as isPeopleGraphData, Rt as isPromptContextDrag, Bu as isRichHeaderContent, rh as isRunPanelLive, Xc as isTextCut, u as isValidCustomFieldType, vy as layoutGraph, My as layoutRecordGraph, Yy as layoutTypedNodes, xi as lightTheme, rb as limitWorkEfforts, _p as linkBlockFieldType, nS as listDLQEntries, xm as listPipelineRuns, t as listRegisteredRenderers, za as loadModelViewerElement, o as makeEmptyField, am as makeSlide, qp as mapStatusToDecision, cg as matchComposerCommand, Aa as matchHotkey, ga as matchTokens, Gm as matchesRailQuery, Ry as matchingTag, Fy as maxDegree, Ly as membersByDepartment, yd as membershipRefFromMetadata, qh as mergeChatCommands, o_ as modeFromMinimized, Qi as modelChannelsOf, mi as modelSceneOf, E as modelUnavailableMessage, sm as moveSlide, nu as nameToColor, tu as nameToInitials, tm as nextRevisionLabel, nm as nextSlideId, Nc as noAccessMessage, Vy as nodeRadius, be as normalizeApiHealth, pg as normalizeHref, bp as numberFieldType, Ig as orderRosterByHands, Bb as orgDepartmentCells, Ty as orgInsight, ei as paneRecordKey, qm as parseChatCommand, ky as parseFocusIds, Xr as parsePaneRecord, ah as parseRunPanelId, Mr as parseUnifiedDiff, Ky as passesPresenceFilter, Hy as peopleToGraph, Mt as pickRecordingMimeType, $c as popoverBounds, Qc as popoverFloor, Xp as postApproval, Ft as promptContextStore, pm as proposedEditPlacement, hm as proposedEditPreview, iS as purgeDLQEntries, Yn as railBand, ti as railDepth, Zr as railFoldKey, Ml as railType, iv as raisedHandLabel, wy as rankTypedNodes, Ny as rareSkillFindingsUrl, Xx as rawBorderRadius, qx as rawColors, Yx as rawFontSize, Jx as rawSpacing, Zx as rawTokens, rv as reactionEmojiName, Ap as readDocumentIdFromUrl, ii as readPaneState, Nt as readPromptContextDrag, ai as readRailFold, Rn as readSidePaneOpen, er as readSidePaneRatio, iu as readableAvatarForeground, Pb as recordForceParams, jy as recordGraphFitKeys, eb as recordGraphKey, kb as recordGraphSummary, q as recordResultKey, Lb as recordStatusLabel, cb as recordStatusTone, Od as recordingRefFromMetadata, rS as redriveDLQEntries, e as registerFieldType, kr as registerLeafKind, r as registerRenderer, rm as removeSlide, lr as renderLeaf, pr as renderLeaves, xr as renderSection, Fn as renderSections, cm as replaceSlide, Lt as resetPromptContextStores, If as resolveAnchorPosition, lf as resolveBackdropTone, Tg as resolveExpiryChoice, Rf as resolveVerdictState, jm as resumeFromStep, wm as retryFromNode, km as revertPatch, pp as richTextFieldType, Ym as runPanelId, Im as searchAudit, lg as searchEmoji, Wy as searchGraph, ve as setApiBaseUrl, Yp as setApprovalApiBase, C as setDocumentTypeApiBaseUrl, Ta as setModelWireframe, yx as shadows, Ia as sidePaneFits, ih as sidePanelFromSearch, kh as sidePanelToSearch, $x as spacing, uv as splitEffectLabel, Ov as stagePhaseIsLive, fv as stagePhaseIsShowingLiveMedia, X_ as streamHasUsableVideo, dv as streamIsAudioOnly, pv as streamStagePhase, hn as tableLeaf, Zf as taskPercent, Dp as tasksFieldType, Cp as textFieldType, Gi as themeToCssVars, Gg as toCanonicalMode, vh as toChannelName, g_ as toLegacyMode, gn as toWorkListRows, fi as tokenToCssVarName, co as toneCssVarName, _t as toneKey, gt as toneVar, Bd as truncationFromMetadata, _m as uncitedSlideIds, ce as useActivityBus, te as useApiCall, ye as useApiHealth, bv as useAudioLevel, At as useAudioRecorder, de as useAuth, Ae as useAwareness, ke as useAwarenessState, he as useCRDT, Dg as useCallWidgetPersistence, mf as useCanvasPaneInset, ie as useChat, yh as useChatCommands, Wl as useChatSidePanelRenderer, ql as useChatSidePanelRenderers, re as useClickOutside, Oe as useCollaborativeDoc, vx as useColorScheme, qi as useCommandPalette, Fe as useComments, Fv as useConsentDismissal, Xl as useContainerDensity, Tv as useCountdown, le as useCursors, v as useCustomFieldTypes, it as useDensity, tt as useDensityForm, nt as useDensitySize, Ge as useDocTypeProposals, du as useDockedPanel, A as useDocumentComments, P as useDocumentExport, je as useDocumentItems, Te as useDocumentMetadata, M as useDocumentReviews, Ke as useDocumentTypes, pe as useDocuments, Gd as useElapsedMs, of as useEnclosingConsoleSurface, kt as useEventCallback, Dc as useFollowAutoStop, Ab as useForceLayout, Ne as useFriends, xe as useFullscreen, Pe as useGroups, Yi as useHeaderDensity, mv as useHlsSource, h as useIdentityAdmin, S as useIdentityAudit, m as useIdentityClients, O as useIdentityContext, ge as useIdentityDiagnostics, _ as useIdentityEmailTemplates, _e as useIdentityGroups, x as useIdentityMfa, ne as useIdentityMfaAdmin, ae as useIdentityPools, f as useIdentityResource, oe as useIdentitySetupStatus, y as useIdentityUsers, Ee as useIdleDetector, en as useImageUrl, Xa as useInDockedColumn, z as useIngestAudit, R as useIngestDLQ, Ue as useIngestItems, Ve as useIngestProgress, Re as useIngestSources, ue as useKeyboardShortcuts, Ie as useLikes, ze as useMappingReviewQueue, Mf as useMeasuredWidth, jt as useMediaDevices, k as useMentionUsers, Lg as useMuteWhileTalking, De as useMyMentionsAndTasks, Se as useOptionalIdentityContext, Xt as useOptionalPresenceContext, Sr as usePaneState, He as usePipelineDefs, on as usePipelineEditorServices, L as usePosts, Ye as usePrefersReducedMotion, g as usePresence, Qt as usePresenceContext, zt as usePromptContext, Cr as useRailBand, ln as useRailFold, dh as useRailSectionMemory, se as useReactions, Kh as useRegisterChatCommands, Hi as useRegisterCommand, rf as useResolvedBackdropTone, fe as useRooms, Cu as useRovingToolbar, ch as useRunChatCommand, we as useSectionList, Pi as useShellRailFold, Xn as useSidePane, ni as useSidePaneHost, Le as useSocialProfile, Be as useSourceSloMetrics, J_ as useStableActiveSpeaker, We as useSyncConflicts, ro as useTheme, Bi as useThemeContext, ut as useToast, st as useToastOptional, vv as useTrackStateBump, b as useTypedDocuments, me as useUrlFilterState, N as useVersionHistory, j as useVideoCall, Me as useVideoSessions, Za as useViewportWidth, Xe as useWebGLCanvas, I as useWebSocket, qe as useWebSocketContext, F as useYjsDoc, Lu as visibleHeaderPeople, cn as visiblePaneTabs, $p as withLayoutDefaults, bd as withoutForwardAttribution, Ob as workNodeKindCounts, by as workPauseLabel, Fi as writePaneState, Pt as writePromptContextDrag, bx as zIndex };
+export { ff as ACTIVITY_RIPPLE_GRID, hf as ACTIVITY_RIPPLE_GRID_DARK, cf as AGENT_PARTICLE_COLORS, vd as AGENT_RUN_STEP_DOT, $f as AGENT_TASK_STATUS_DOT, ep as AGENT_TASK_STATUS_LABELS, ig as ALL_CONVERSATION_FEATURES, _o as APP_SHELL_FOLDED_RAIL_WIDTH, ou as AVATAR_PALETTE, Ga as AccentStripe, mr as AccessNotice, yn as ActionRowList, Gr as ActionRowPerson, ka as ActiveCallBanner, Uh as ActivePeopleGrid, Sf as ActivityFeed, Js as ActivityIcon, Af as ActivityPanel, jn as ActivityResumeChip, hi as ActivityTicker, Mh as AddPeoplePicker, Ch as AddToChatDialog, Bv as AdminDashboardPage, cS as AgentComposerDock, Ud as AgentRunCard, Bn as AgentTaskCard, Oa as ApiDegradedBanner, ya as AppBrand, Ix as AppLayout, Nr as AppShell, hy as ApplicationFormPage, Yv as ApplicationListPage, fy as ApplicationPoolFormPage, Ls as ArrowRightIcon, Ws as ArrowUpIcon, hr as ArtifactTile, po as AssetGallery, As as AtIcon, Ui as AttachToggle, Nd as AttachmentBubble, Cv as AudioLevelMeter, j_ as AudioPlayer, _v as AudioVideoSettingsForm, iy as AuditPage, iy as IdentityAuditPage, N_ as AuthedAudio, Ng as AutoplayGate, ru as Avatar, au as AvatarGroup, at as BUTTON_WEIGHT, Ic as Badge, Lc as Banner, Bc as BarChart, hs as BellIcon, zs as BellMutedIcon, wa as BigBrotherPanel, yr as BoardColumn, Gp as BooleanEditorRenderer, Bp as BooleanReaderRenderer, Ks as BotIcon, ys as BranchIcon, Du as Breadcrumbs, Sv as BreakoutRoomBanner, Ov as BreakoutRoomsPanel, Ps as BulletListIcon, V as Button, hg as CALL_CARD_WIDTH, Qg as CALL_DOCK_DRAG_TYPE, T_ as CALL_DOCK_ROW_HEIGHT, m_ as CALL_STAGE_DOCKED_WIDTH, Qn as CANVAS_PANE_RAIL_PX, vt as CODE_TONE_SOFT, ft as CODE_TONE_SOLID, xt as CODE_TONE_SOLID_BG, wt as CODE_TONE_TEXT, sx as COMPOSER_CONTEXT_KINDS, ax as COMPOSER_CONTEXT_REASONS, xy as CONNECTION_TYPE_LABELS, $l as CONTAINER_COMPACT_BELOW, Kr as CONTEXT_COLUMN_INSET_VAR, d as CUSTOM_FIELD_TYPE_STORAGE_KEY, od as CallActivityCard, l_ as CallCaptionsSettings, v_ as CallControls, Nv as CallDock, t_ as CallInterruptedNotice, Rh as CallLogList, Hg as CallNoticePill, f_ as CallParticipantStrip, Xg as CallPeopleList, ha as CallPresenceIndicator, Fg as CallSettingsDialog, E_ as CallSettingsDrawer, C_ as CallSidePanel, Yg as CallSidePanelToggles, Mg as CallStartedBanner, e_ as CallStatsOverlay, Y_ as CallTileRow, x_ as CallWidget, xg as CallingStatusPill, vf as CanvasPaneInsetContext, Pa as CanvasPaneLayout, wy as CanvasZoomControls, Ci as CapabilityDeniedFallback, br as CaptionedAvatar, Sc as CaptionsIcon, Eo as Card, Eu as CardHeader, zi as CatalogGrid, Uf as ChangeDiff, Vf as ChangeLocation, rp as ChangeReviewCard, np as ChangeReviewList, Eh as ChannelBindingStrip, ng as ChannelDocumentsPanel, Qh as ChannelFilesPanel, zd as ChannelHeader, Yh as ChannelMentionsPanel, tg as ChannelRecordingsPanel, Xs as ChartIcon, _c as ChatBubbleIcon, gh as ChatBubbleStack, Qm as ChatColumnBackdrop, Wh as ChatCommandProvider, pa as ChatComposer, op as ChatDropZone, xs as ChatIcon, th as ChatLabPill, sh as ChatLabShell, Rd as ChatPanel, Nh as ChatRoom, Yl as ChatSidePanel, Kl as ChatSidePanelFrame, Jl as ChatSidePanelProvider, ws as CheckIcon, Jf as Checkbox, mp as ChecklistEditorRenderer, Vs as ChecklistIcon, Tp as ChecklistReaderRenderer, or as ChecklistSection, K as ChevronIcon, Ct as Chip, Su as ChoiceList, bu as ChoiceOption, xu as ChoiceRow, Og as CircularIconToggle, Jx as CitedRecordList, Os as CloseIcon, Es as CloudIcon, li as CodeBlock, Zt as CodeEditor, ps as CodeIcon, Xv as CodeInput, __ as CollaboratorCheckList, Ei as CollapsedIconStrip, Wi as CollapsibleSection, ma as CollapsibleSidebar, xa as CollectionPage, ul as CollectionToolbar, pi as ColorInput, yx as ColorSchemeProvider, dn as ColumnDock, Jc as Combobox, eo as CommandPalette, Oi as CommandPaletteHint, Li as CommandPaletteProvider, Qs as CommentIcon, oa as CommentList, oh as CommentThread, oh as CommentThreadPanel, og as ComposerReferences, mg as ComposerSendError, Lr as ComposerSurface, Hc as ConfirmButton, Kc as ConfirmDialog, fb as ConnectionPathStrip, qd as ConnectionPill, qa as ConnectionStatus, dy as ConsentPage, df as ConsoleSurfaceContext, Sn as ConsultCard, In as ContextColumn, uS as ContextComposer, zh as ConversationList, Zm as ConversationRail, $m as ConversationShelf, wh as ConversationStart, eg as ConversationSurface, ic as CopyIcon, fr as CopyIdButton, bh as CreateChannelDialog, Ph as CreateTeamDialog, wi as DATA_ACCENT_SLOTS, lm as DECK_THEMES, Wx as DEFAULT_CITED_SECTIONS, fn as DEFAULT_LINK_RELATIONS, sp as DEFAULT_PICKER_EMOJIS, sn as DEFAULT_PIPELINE_ICONS, et as DENSITIES, l as DOCUMENT_TYPE_ICONS, La as DashboardPage, fl as DataTable, kp as DateEditorRenderer, Vp as DateReaderRenderer, Sd as DaySeparator, tp as DecisionPath, Pp as DecisionsEditorRenderer, Fp as DecisionsReaderRenderer, Sp as DefaultRenderer, rt as DensityProvider, Ub as DepartmentChips, Db as DepartmentInsightStrip, _s as DesktopIcon, sr as DetailHeader, Zn as DetailPage, tn as DetailSection, vg as DeviceSettingsPanel, z_ as DeviceToggleSelect, Qv as DiagnosticsPage, Np as DiagramEditorRenderer, Mp as DiagramReaderRenderer, Vh as DialogueSegment, go as DiffViewer, Fc as Disclosure, Ra as DisconnectReconnect, Kt as Divider, Zd as DockedAside, Ni as DockedColumn, pu as DockedPanelProvider, Ha as DocsShell, Ca as DocsSidebar, Qa as DocsTopNav, dd as DocumentActivityCard, nc as DocumentAddIcon, h_ as DocumentCallPanel, Ku as DocumentChip, rs as DocumentIcon, _a as DocumentResultList, _u as DotMeter, Ro as DownloadIcon, bl as Drawer, Ol as DropdownMenu, sg as EMOJI_SHORTCODES, Di as ERROR_CODE_DESCRIPTIONS, ec as EditIcon, yl as EditableHeading, $v as EmailTemplateFormPage, qv as EmailTemplateListPage, O_ as EmbeddedCallPanel, ml as EmptyState, di as EntityCell, ny as EntityTable, Pc as ErrorBoundary, $a as ErrorDisplay, cy as ErrorPage, ua as ErrorPanel, hl as ErrorState, lo as EstimateRow, Si as EventLog, Tl as EventRow, bc as ExpandIcon, wg as ExpandableCallWidget, fo as ExpertCard, si as ExplorerLayout, as as ExternalLinkIcon, Ho as EyeIcon, Bo as EyeOffIcon, Xf as FILE_KIND_LABELS, Lf as FLOATING_PANEL_ANCHORS, $h as FeedRow, ip as FileInput, Yf as FileKindMark, ja as FilePickerButton, xf as FileUploadDrop, zp as FileUploadEditorRenderer, Hp as FileUploadReaderRenderer, cu as FilterChip, $o as FilterIcon, rl as FilterPopover, Jd as FloatingCard, Ff as FloatingPanel, Ns as FolderIcon, kc as FollowBanner, yf as FollowUpChips, cl as FormField, dr as FormRow, yo as FormWizard, Io as ForwardIcon, oi as FrameStrip, En as FullscreenToggle, sf as GRAPHITE_PARTICLE_COLORS, an as GenerativeImagePreview, A_ as GoLiveButton, Ms as GraphIcon, Hy as GraphPanelBody, yb as GraphSearchBox, Zo as GripIcon, my as GroupFormPage, Gv as GroupListPage, ph as GroupPanel, Gt as GroupedList, Ru as HEADER_COLLAPSE_BELOW_PX, Vu as HEADER_COMPACT_BELOW_PX, Fu as HEADER_DENSITY_STORAGE_PREFIX, va as HEADER_SCROLL_COLLAPSE_PX, Ih as HISTORY_DAYS_DEFAULT, jh as HISTORY_DAYS_MAX, Th as HISTORY_DAYS_MIN, Pu as HOVER_CARD_CLOSE_MS, Nu as HOVER_CARD_OPEN_MS, Z_ as HangoutGrid, L_ as HangoutLayout, s_ as HangoutPreJoinShell, Ag as HangoutRoomHeader, vv as HangoutSpotlight, ku as HeaderCollapseToggle, zu as HeaderDescriptionInfo, Hu as HeaderPeople, Au as HeaderTrailFold, ki as Highlight, Qo as HighlighterIcon, Ea as Histogram, es as HistoryIcon, Ou as HoverCard, yg as HuddleBar, p as IDENTITY_BASE_URL, Po as IconButton, Vt as IconPicker, ay as IdentityAdminLayout, Hv as IdentityFormField, Ce as IdentityProvider, Wa as ImageCompare, cr as ImageFilmstrip, Wo as ImageIcon, Yt as ImageLightbox, $t as ImageThumbnail, nn as ImageUploader, Ac as InboxSection, Mc as InboxSectionRow, S_ as IncomingCallPopover, qo as InfoIcon, W as Inline, Tu as InlineAlert, zv as InlineEditableText, Gn as InlineMenu, Cd as InlineMessageEditor, dS as InlinePanel, Pf as InlinePlaceholder, nl as InlinePopover, qc as Input, Df as InviteCandidateList, Ki as InviteToCallDialog, Xo as ItalicIcon, dt as JOB_TOAST_DISMISS_MS, ot as JobToast, Rm as JsonPathInput, bi as KPIGrid, pl as KeyValue, ns as KeyboardIcon, oc as LaptopIcon, no as LayerStack, Rc as LineChart, Gf as Link, Kp as LinkBlockEditorRenderer, Rp as LinkBlockReaderRenderer, dg as LinkDialog, Lo as LinkIcon, na as LinkedItemsSection, cs as ListIcon, $r as ListRailLayout, Ko as ListStyleIcon, ca as LiveRegion, Sl as LoadingState, ss as LockIcon, tf as LogStream, Zv as LoginPage, ty as LogoutPage, em as MAX_DECK_SLIDES, b_ as MEETING_TOOLBAR_BUTTON, wr as MODEL_CHANNEL_LABEL, un as MODEL_CHANNEL_ORDER, oo as MarkdownView, jr as MasterDetail, ri as MasterDetailPage, ls as MaximizeIcon, Cn as MediaCollectionCard, bg as MediaControlsBar, cv as MediaEffectsPreviewPanel, Pv as MediaEffectsTray, w_ as MediaPlaybackDock, r_ as MediaPrecheckRow, H_ as MeetingAppsIcon, K_ as MeetingHandIcon, Tv as MeetingNotesIcon, G_ as MeetingReactIcon, ov as MeetingRecordingIcon, av as MeetingRoomsIcon, sv as MeetingShareIcon, Q_ as MeetingShieldIcon, p_ as MeetingStatusCluster, a_ as MeetingToolbar, I_ as MeetingViewIcon, xh as MembersPanel, Dd as MembershipNotice, Go as MenuIcon, xd as MessageActionBar, ud as MessageBody, Da as MessageBubble, Sh as MessageGroup, fd as MessageRow, Kf as MetaLine, gf as MeterRow, Jv as MfaDashboardPage, ey as MfaManagementPage, ly as MfaSetupPage, oy as MfaVerifyPage, mc as MicIcon, cc as MicOffIcon, Yo as MinimizeIcon, Vc as Modal, Mi as ModelViewer, vc as MonitorIcon, Us as MoonIcon, Hr as MoreContextDisclosure, xc as MoreHorizontalIcon, Jo as MoreIcon, jg as MuteWhileTalkingToast, Oy as NODE_GRAPH_VIEW_WIDTH, Dr as NavRail, Co as NavRailStack, ta as NavTabs, k_ as NetworkQualityBadge, Bh as NewChatDialog, Dh as NewConversationPanel, jc as NoAccessState, Nn as NodeCard, My as NodeGraph, Xd as NotificationBell, Qd as NotificationCenter, Up as NumberEditorRenderer, qf as NumberInput, Ip as NumberReaderRenderer, ds as NumberedListIcon, tb as ORG_CONTROLS_SIZE, rb as ORG_FIT_ALL_MIN_ZOOM, Gy as ORG_FIT_MIN_ZOOM, Gb as ORG_LEGEND_INSET, _b as OrgGraph, Zb as OrgGraphLegend, ur as OutcomeSection, hb as PATH_TYPE_LABELS, wb as PEOPLE_GRAPH_QUERY_NODE_ID, el as POPOVER_BOUNDARY_ATTR, tl as POPOVER_KEEPOUT_ATTR, cb as PRESENCE_DOT, vo as PROCEDURE_STEP_STATUS_LABELS, Bt as PROMPT_CONTEXT_DRAG_TYPE, It as PROMPT_CONTEXT_LIMIT, Tr as PageFrame, _r as PageFromSpec, Uu as PageHeader, No as PageSection, qn as PageSpecProvider, wo as PaneHeader, Zi as PanelsView, us as PaperclipIcon, pv as ParticipantAccessBadge, U_ as ParticipantTile, uf as ParticlesBackground, Dm as PatchHttpError, Pm as PatchValidationRejectedError, fs as PauseCircleIcon, uc as PauseIcon, Ry as PeopleGraph, ts as PeopleIcon, vl as PermissionDeniedCard, kb as PersonDetailCard, xn as PersonHoverCard, Fo as PersonIcon, to as PersonPicker, hc as PhoneCallIcon, Cs as PhoneIcon, Cc as PhoneOffIcon, Rg as PiPButton, da as PickerDialog, Ys as PinIcon, rg as PinnedMessagesPanel, Kd as PinnedSlot, rn as PipelineEditorServicesProvider, Rs as PlayCircleIcon, dc as PlayIcon, n_ as PlaybackReactionsLayer, Gs as PlusCircleIcon, js as PlusIcon, Uv as PoolFormPage, Wv as PoolListPage, uy as PoolScopedLayout, gs as PopOutIcon, Cf as PopoverField, Of as PopoverForm, hh as PostFeed, bf as PresenceAvatars, yu as PresenceDot, ag as PresencePanel, Ut as PresenceProvider, um as PresentationEditor, Bs as PrinterIcon, vi as ProcedureSteps, Et as ProgressBar, Sa as ProjectCard, _h as PromptContextPicker, gm as ProposedEditStrip, bo as Prose, qs as PuzzleIcon, ry as QrCodeDisplay, ea as QuickPromptGrid, up as QuoteBlock, bs as QuoteIcon, zl as RAIL_CAPTION, uh as RAIL_CHANNELS_SECTION, Fl as RAIL_CURRENT_FILL, fh as RAIL_DMS_SECTION, qr as RAIL_FOLD_PRIMARY_BELOW, Ln as RAIL_FOLD_SECTION_BELOW, Ll as RAIL_GROUP_COUNT, Nl as RAIL_GROUP_LABEL, kl as RAIL_GROUP_LABEL_INK, Il as RAIL_GROUP_PAD_Y, Rl as RAIL_ITEM_COUNT, Al as RAIL_ITEM_TEXT, Pl as RAIL_ROW_PAD_Y, Bl as RAIL_ROW_PITCH, Xm as RAIL_SECTION_CONTENT_INSET, eh as RAIL_SECTION_GUTTER, qb as RARE_SKILL_FINDINGS_PATH, Xy as RARE_SKILL_SWEEP, Ty as RARE_THRESHOLD, c_ as RECORDING_CHIP_TITLES, Rv as RECORDING_CONSENT_TITLES, yy as RECORD_GRAPH_MAX_FIT_ZOOM, $y as RECORD_GRAPH_MIN_FIT_ZOOM, Ay as RECORD_GRAPH_NODE_HEIGHT, Qy as RECORD_GRAPH_NODE_WIDTH, eb as RECORD_GRAPH_TYPES, Lb as RECORD_TYPE_LABELS, Yb as RELATIONSHIP_STYLES, sa as REVIEW_KIND_LABELS, pn as REVIEW_KIND_TONES, Iu as RICH_HEADER_CONTENT, Ar as RUN_DRAFT_STATUS_LABELS, qt as RadioGroup, $n as RailBandProvider, jl as RailCaretIcon, kn as RailLayout, zr as RailNavList, Tn as RailSection, Zh as RailSectionHeader, nv as RaisedHandBadge, Sb as RangeSlider, gd as ReactionChips, $_ as ReactionOverlay, Fv as ReactionPicker, R_ as ReactionPickerButton, ap as ReactionPickerPopover, mh as ReactionsBar, Mv as ReconnectingBanner, $b as RecordGraph, Vb as RecordGraphCard, xb as RecordMark, Hx as RecordResultList, ob as RecordStatus, rd as RecordingActivityCard, gg as RecordingChip, Iv as RecordingConsentNotice, y_ as RecordingExpiryDialog, Bg as RecordingList, Vg as RecordingPlayer, zg as RecordingRow, Fs as RedoIcon, tv as RemoteTileSlot, Zs as RepeatIcon, Ss as ReplyIcon, Ii as ResumeCallDialog, d_ as ReviewDocumentList, ra as ReviewThread, hp as RichTextEditorRenderer, gp as RichTextReaderRenderer, _f as RippleGridBackground, nf as RisingParticles, Um as RoomList, Cg as RosterPanel, wu as RovingToolbar, bn as RunDraftPanel, Wm as RunPanelBody, Uc as RunProgressPanel, Oh as RunSummaryPanel, vn as SIDE_PANE_BOUNDS, om as SLIDE_LAYOUTS, fm as SLIDE_LAYOUT_LABELS, _n as STACKED_RAIL_GROUP_ACTIONS_CLASS, Ur as STACKED_RAIL_ROW_CLASS, Kn as SUBJECT_FRAME_MAX_FACTS, Ba as ScopeHeader, su as ScoreBarGauge, yc as ScreenShareIcon, gc as ScreenShareOffIcon, Ts as SearchIcon, ll as SearchInput, Nf as SectionLabel, Un as SectionLayout, ao as SectionStack, Vl as SegmentedControl, Yc as Select, Oc as SelectableCard, Pn as SelectionBar, Hs as SendIcon, pc as SettingsGearIcon, tr as SettingsLayout, zn as SettingsPage, sy as SetupGuidePage, Is as ShareIcon, Fa as ShellRailFoldProvider, ia as ShortcutsHelp, Wr as SidePane, Hn as SidePaneProvider, Br as SidePaneSplit, $d as SidebarRow, Yd as SidebarSection, Fr as SignoffPanel, lu as SkeletonCard, mn as SkipLink, Ul as Slider, ks as SlidersIcon, Ds as SmileyIcon, Fh as SocialPanel, Hh as SocialTabContent, Vi as SourceCard, ci as SourceList, ms as SparkleIcon, fc as SparklesIcon, Dl as Sparkline, sc as SpeakerIcon, aa as SpecLeaf, xl as Spinner, Qr as SplitPane, $s as SplitViewIcon, U as Stack, Ai as StackDiagram, zc as StackedAreaChart, Vn as StackedRail, Jg as StartCallDrawer, gr as StatCard, uo as StatStrip, P_ as StatsCard, Kv as StatusBadge, vu as StatusDot, Hl as StatusPill, i_ as StatusStrip, wv as StreamAudioOnly, bv as StreamChatTicker, Dv as StreamStage, B_ as StreamVideo, kf as SubNavLayout, ir as SubjectFrame, Or as SubjectHero, An as SuggestionCard, pf as SuggestionRow, Sg as SummaryPanel, ac as SunIcon, mu as Switch, Ot as T, Na as THEME_TOKEN_ALIASES, pt as TONES, yt as TONE_BG, Tt as TONE_BORDER, mt as TONE_SOFT, ht as TONE_SOLID, St as TONE_SOLID_BG, bt as TONE_TEXT, eu as TabPanel, Ua as TabbedEventLog, Mo as Table, ko as TableBody, jo as TableHead, Oo as TableRow, Do as TableTd, Ao as TableTh, Ql as Tabs, Ht as TagEditor, Ir as TaskComposer, Qf as TaskStrip, Ep as TasksEditorRenderer, Jp as TasksReaderRenderer, Ah as TeamChannelTree, _l as TechnicalDetails, vs as TemplateIcon, ui as TenantSwitcher, ef as TerminalLog, Dt as Text, Wp as TextEditorRenderer, jp as TextReaderRenderer, hu as Textarea, Ja as ThemeModeToggle, ji as ThemeProvider, gi as ThinkingBlock, gl as ThinkingDots, Ma as ThumbnailCard, gu as TitledFrame, lt as Toast, ct as ToastProvider, Ka as ToolCallPill, Ti as ToolCallStrip, sl as Toolbar, al as ToolbarGroup, ol as ToolbarLabel, il as ToolbarSeparator, Zc as Tooltip, _i as TopNav, rc as TranscribeIcon, kg as TranscriptOverlay, Eg as TranscriptPanel, kd as TransferBubble, is as TrashIcon, ho as TreeView, Wt as TrendSparkline, Jb as TypedNodeCanvas, jd as TypingIndicator, zo as UndoIcon, tc as UploadIcon, so as UserChip, Vv as UserFormPage, py as UserListPage, Va as UserMenu, Jt as UserPicker, wc as UserPlusIcon, Ec as UsersIcon, Bf as VERDICT_GLYPH, Hf as VERDICT_LABEL, zf as VERDICT_TONE, fu as VISUALLY_HIDDEN_STYLE, Wf as VerdictChip, os as VideoCallIcon, Ug as VideoGrid, lc as VideoIcon, Tc as VideoOffIcon, F_ as VideoOverlayChip, M_ as VideoPlayer, qg as VideoPlayerModal, _g as VideoSurface, W_ as ViewerCount, Vr as ViewportFillRegion, uu as VisuallyHidden, Kg as VoicemailRecorder, lv as VolumeSlider, bb as WORK_ACTIVITY_ALL_EFFORTS, vb as WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, Fb as WORK_NODE_KIND_LABELS, Uo as WarningIcon, Je as WebSocketProvider, Vo as WhiteboardIcon, yi as Wizard, pb as WorkActivityHeader, To as WorkActivityList, rr as WorkArea, Ob as WorkArtifactInspector, db as WorkComputePane, lb as WorkEdge, tx as WorkEntityList, Rb as WorkGraph, nx as WorkInspector, vr as WorkItemMetaBar, Wb as WorkKindLegend, nr as WorkListFilters, Er as WorkListToolbar, So as WorkListView, Xb as WorkNode, sb as WorkNodePane, gb as WorkOmittedGroup, Nb as WorkPaneBanner, Kb as WorkReferenceCard, Mn as WorkSearchPicker, Qb as WorkSharingControls, Yy as WorkStatus, Wn as WorkTableView, Bb as WorkTranscriptPanel, Rr as Workbench, Gc as WorkflowStepper, Tf as WorkspaceRail, wf as activeNavItemClassName, Ef as activeNavItemStyle, Dn as activityAge, Qp as addSlide, cd as agentRunRefFromMetadata, qu as agentRunResultFromMetadata, Hd as agentRunTimings, Ya as applyModelChannel, Lm as applyPatch, Lh as arrangeRailSections, Lp as booleanFieldType, rS as borderRadius, Jr as boundedSidePaneRatio, Jh as buildRailSection, $g as callPersonStatus, Ad as callRefFromMetadata, u_ as callSidePanelBodyTestId, D_ as callSidePanelPlacement, Zg as callSidePanelToggleTestId, dm as canSaveDeck, Jn as canvasPaneGeometry, Km as chatChannelKindOf, Gh as chatCommandScopeHint, lh as chatCommandsToComposer, Gl as chatSidePanelKindLabel, wp as checklistFieldType, Ux as citedSourceTitle, dl as collectionToolbarFitsHeader, eS as colors, $e as compileProgram, fg as composerCommandArgumentText, ox as composerContextPreset, rx as composerDraftOf, ug as composerSendErrorReason, Pr as confidenceNote, On as confidenceOf, Zl as containerDensity, td as conversationStamp, Ze as createArrayBuffer, Eb as createGraphPanelRenderer, nh as createRunPanelRenderer, Qe as createWebGLContext, G as cssVar, xo as darkTheme, fa as dataAccentProps, xp as dateFieldType, Pd as dayKeyOf, ed as dayLabel, Zp as decisionsFieldType, la as definePage, Cy as degreeMap, Vy as departmentInsight, ld as describeAgentLoop, Yu as describeAgentRunFailure, Ju as describeAgentRunOp, Gu as describeMembership, Ed as describeMembershipHistory, Xu as describeOutcome, $u as describeParticipants, Vd as describeReactors, id as describeRecordingParticipants, Wg as deviceMenuSections, vp as diagramFieldType, Ji as documentAgeLabel, Fd as documentRefFromMetadata, Td as documentRefsFromMetadata, Qu as documentUnavailableLabel, af as drawnParticles, im as duplicateSlide, El as eventGlyphs, lp as excerpt, yp as fileUploadFieldType, Yr as fillHeight, ky as filterRecordGraph, Pb as findConnectionPath, Tb as findingForSkill, _y as firstName, gy as fitTransform, ib as focusOrgGraph, Wu as foldTitleIntoTrail, nS as fontSize, Sm as forceFail, mb as forceParamsFor, Pg as formatAudioTime, dp as formatBytes, nd as formatCallDuration, ev as formatCallElapsed, Zu as formatChatTime, mo as formatCompactAge, Xh as formatDuration, sd as formatElapsed, wn as formatEstimate, ad as formatLoopClock, Wc as formatRunDuration, io as formatSourceAge, $i as formatSpend, cp as formatTokens, Id as formatTypingBanner, _d as forwardAttributionLine, Md as forwardOriginLabel, Ld as forwardedFromMetadata, md as fullDateLabel, pd as fullTimestampLabel, D as fullscreenSupported, T as getApiBaseUrl, Op as getApprovalApiBase, w as getDocumentTypeApiBaseUrl, wl as getEventCategory, Cl as getEventGlyph, a as getFieldType, n as getFieldTypes, s as getPageConfig, c as getPagesView, Bm as getPipelineRun, i as getRenderer, Nm as getRunAuditLog, qy as graphCenterNode, Iy as graphGroupPalette, ex as graphGroups, V_ as gridCols, Wd as groupReactions, jv as guardedSelection, ju as headerDefaults, Mu as headerDensityStorageKey, ba as highlightModelPart, Ri as highlightSegments, gv as hlsFailureText, ee as identityApiFetch, ix as identityDisplayName, jf as inactiveNavItemClassName, Cb as indexBusFactorFindings, Xi as injectThemeVars, ar as isBuiltinLeafKind, Jm as isChatCommandInScope, wd as isImageAttachment, q_ as isKnownViewerCount, hd as isNewDay, vy as isPeopleGraphData, Rt as isPromptContextDrag, Bu as isRichHeaderContent, rh as isRunPanelLive, Xc as isTextCut, u as isValidCustomFieldType, by as layoutGraph, Py as layoutRecordGraph, Zy as layoutTypedNodes, xi as lightTheme, ab as limitWorkEfforts, _p as linkBlockFieldType, iS as listDLQEntries, xm as listPipelineRuns, t as listRegisteredRenderers, za as loadModelViewerElement, o as makeEmptyField, am as makeSlide, qp as mapStatusToDecision, cg as matchComposerCommand, Aa as matchHotkey, ga as matchTokens, Gm as matchesRailQuery, By as matchingTag, Ly as maxDegree, zy as membersByDepartment, yd as membershipRefFromMetadata, qh as mergeChatCommands, o_ as modeFromMinimized, Qi as modelChannelsOf, mi as modelSceneOf, E as modelUnavailableMessage, sm as moveSlide, nu as nameToColor, tu as nameToInitials, tm as nextRevisionLabel, nm as nextSlideId, Nc as noAccessMessage, Uy as nodeRadius, be as normalizeApiHealth, pg as normalizeHref, bp as numberFieldType, Ig as orderRosterByHands, Hb as orgDepartmentCells, Dy as orgInsight, ei as paneRecordKey, qm as parseChatCommand, jy as parseFocusIds, Xr as parsePaneRecord, ah as parseRunPanelId, Mr as parseUnifiedDiff, kv as participantAccessInfo, Jy as passesPresenceFilter, Wy as peopleToGraph, Mt as pickRecordingMimeType, $c as popoverBounds, Qc as popoverFloor, Xp as postApproval, Ft as promptContextStore, pm as proposedEditPlacement, hm as proposedEditPreview, oS as purgeDLQEntries, Yn as railBand, ti as railDepth, Zr as railFoldKey, Ml as railType, iv as raisedHandLabel, Ey as rankTypedNodes, Fy as rareSkillFindingsUrl, Qx as rawBorderRadius, Yx as rawColors, Zx as rawFontSize, Xx as rawSpacing, $x as rawTokens, rv as reactionEmojiName, Ap as readDocumentIdFromUrl, ii as readPaneState, Nt as readPromptContextDrag, ai as readRailFold, Rn as readSidePaneOpen, er as readSidePaneRatio, iu as readableAvatarForeground, Ib as recordForceParams, Ny as recordGraphFitKeys, nb as recordGraphKey, jb as recordGraphSummary, q as recordResultKey, zb as recordStatusLabel, ub as recordStatusTone, Od as recordingRefFromMetadata, aS as redriveDLQEntries, e as registerFieldType, kr as registerLeafKind, r as registerRenderer, rm as removeSlide, lr as renderLeaf, pr as renderLeaves, xr as renderSection, Fn as renderSections, cm as replaceSlide, Lt as resetPromptContextStores, If as resolveAnchorPosition, lf as resolveBackdropTone, Tg as resolveExpiryChoice, Rf as resolveVerdictState, jm as resumeFromStep, wm as retryFromNode, km as revertPatch, pp as richTextFieldType, Ym as runPanelId, Im as searchAudit, lg as searchEmoji, Ky as searchGraph, ve as setApiBaseUrl, Yp as setApprovalApiBase, C as setDocumentTypeApiBaseUrl, Ta as setModelWireframe, xx as shadows, Ia as sidePaneFits, ih as sidePanelFromSearch, kh as sidePanelToSearch, tS as spacing, uv as splitEffectLabel, Av as stagePhaseIsLive, fv as stagePhaseIsShowingLiveMedia, X_ as streamHasUsableVideo, dv as streamIsAudioOnly, mv as streamStagePhase, hn as tableLeaf, Zf as taskPercent, Dp as tasksFieldType, Cp as textFieldType, Gi as themeToCssVars, Gg as toCanonicalMode, vh as toChannelName, g_ as toLegacyMode, gn as toWorkListRows, fi as tokenToCssVarName, co as toneCssVarName, _t as toneKey, gt as toneVar, Bd as truncationFromMetadata, _m as uncitedSlideIds, ce as useActivityBus, te as useApiCall, ye as useApiHealth, xv as useAudioLevel, At as useAudioRecorder, de as useAuth, Ae as useAwareness, ke as useAwarenessState, he as useCRDT, Dg as useCallWidgetPersistence, mf as useCanvasPaneInset, ie as useChat, yh as useChatCommands, Wl as useChatSidePanelRenderer, ql as useChatSidePanelRenderers, re as useClickOutside, Oe as useCollaborativeDoc, bx as useColorScheme, qi as useCommandPalette, Fe as useComments, Lv as useConsentDismissal, Xl as useContainerDensity, Ev as useCountdown, le as useCursors, v as useCustomFieldTypes, it as useDensity, tt as useDensityForm, nt as useDensitySize, Ge as useDocTypeProposals, du as useDockedPanel, A as useDocumentComments, P as useDocumentExport, je as useDocumentItems, Te as useDocumentMetadata, M as useDocumentReviews, Ke as useDocumentTypes, pe as useDocuments, Gd as useElapsedMs, of as useEnclosingConsoleSurface, kt as useEventCallback, Dc as useFollowAutoStop, Mb as useForceLayout, Ne as useFriends, xe as useFullscreen, Pe as useGroups, Yi as useHeaderDensity, hv as useHlsSource, h as useIdentityAdmin, S as useIdentityAudit, m as useIdentityClients, O as useIdentityContext, ge as useIdentityDiagnostics, _ as useIdentityEmailTemplates, _e as useIdentityGroups, x as useIdentityMfa, ne as useIdentityMfaAdmin, ae as useIdentityPools, f as useIdentityResource, oe as useIdentitySetupStatus, y as useIdentityUsers, Ee as useIdleDetector, en as useImageUrl, Xa as useInDockedColumn, z as useIngestAudit, R as useIngestDLQ, Ue as useIngestItems, Ve as useIngestProgress, Re as useIngestSources, ue as useKeyboardShortcuts, Ie as useLikes, ze as useMappingReviewQueue, Mf as useMeasuredWidth, jt as useMediaDevices, k as useMentionUsers, Lg as useMuteWhileTalking, De as useMyMentionsAndTasks, Se as useOptionalIdentityContext, Xt as useOptionalPresenceContext, Sr as usePaneState, He as usePipelineDefs, on as usePipelineEditorServices, L as usePosts, Ye as usePrefersReducedMotion, g as usePresence, Qt as usePresenceContext, zt as usePromptContext, Cr as useRailBand, ln as useRailFold, dh as useRailSectionMemory, se as useReactions, Kh as useRegisterChatCommands, Hi as useRegisterCommand, rf as useResolvedBackdropTone, fe as useRooms, Cu as useRovingToolbar, ch as useRunChatCommand, we as useSectionList, Pi as useShellRailFold, Xn as useSidePane, ni as useSidePaneHost, Le as useSocialProfile, Be as useSourceSloMetrics, J_ as useStableActiveSpeaker, We as useSyncConflicts, ro as useTheme, Bi as useThemeContext, ut as useToast, st as useToastOptional, yv as useTrackStateBump, b as useTypedDocuments, me as useUrlFilterState, N as useVersionHistory, j as useVideoCall, Me as useVideoSessions, Za as useViewportWidth, Xe as useWebGLCanvas, I as useWebSocket, qe as useWebSocketContext, F as useYjsDoc, Lu as visibleHeaderPeople, cn as visiblePaneTabs, $p as withLayoutDefaults, bd as withoutForwardAttribution, Ab as workNodeKindCounts, Sy as workPauseLabel, Fi as writePaneState, Pt as writePromptContextDrag, Sx as zIndex };

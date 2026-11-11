@@ -268,7 +268,7 @@ export declare interface CallCaptionsSettingsProps {
     className?: string;
 }
 
-export declare function CallControls({ mode, density, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
+export declare function CallControls({ mode, density, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, audioDisabled, audioDisabledReason, videoDisabled, videoDisabledReason, screenShareDisabled, screenShareDisabledReason, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
 
 /**
  * How much of the control set the surface has room for.
@@ -300,6 +300,22 @@ export declare interface CallControlsProps {
     onToggleScreenShare?: () => void;
     onUpgradeToVideo?: () => void;
     onEndCall?: () => void;
+    /** Disables the mute toggle. Same names as MediaControlsBar. */
+    audioDisabled?: boolean;
+    /**
+     * Why the mute toggle is off-limits ("The host made you view-only").
+     * Disables it on its own and is its tooltip and accessible description;
+     * the button stays focusable (`aria-disabled`) so the reason is reachable.
+     */
+    audioDisabledReason?: string;
+    /** Disables the camera toggle and, in an audio call, "Switch to video". */
+    videoDisabled?: boolean;
+    /** Same as `audioDisabledReason`, for the camera toggle and "Switch to video". */
+    videoDisabledReason?: string;
+    /** Disables the screen-share toggle. */
+    screenShareDisabled?: boolean;
+    /** Same as `audioDisabledReason`, for the screen-share toggle. */
+    screenShareDisabledReason?: string;
     /** When provided, shows the "add participant" button + picker popover. */
     onAddParticipant?: (participantId: string) => void;
     /**
@@ -511,7 +527,7 @@ export declare interface CallParticipantStripProps {
     style?: CSSProperties;
 }
 
-export declare function CallPeopleList({ people, count, followingUserId, canModerate, onInvite, onFollow, onMuteForMe, onMute, onRemove, onMakeHost, onRingAgain, onOpenSelfSettings, onLeave, hideHeading, className, 'data-testid': testId, }: CallPeopleListProps): JSX.Element;
+export declare function CallPeopleList({ people, count, followingUserId, canModerate, onInvite, onFollow, onMuteForMe, onMute, onRemove, onMakeHost, onRingAgain, onOpenSelfSettings, onLeave, hideHeading, rowMenu, className, 'data-testid': testId, }: CallPeopleListProps): JSX.Element;
 
 export declare interface CallPeopleListProps {
     people: CallPerson[];
@@ -533,6 +549,14 @@ export declare interface CallPeopleListProps {
     onLeave?: () => void;
     /** Hide the "People N · Invite…" heading (a host that draws its own). */
     hideHeading?: boolean;
+    /**
+     * More entries for a row's ⋯ menu, as sections drawn after the built-in
+     * items ("Make view-only", "Allow publishing"). Return `null` or an empty
+     * array for a row with nothing to add. Same contract as RosterPanel's and
+     * TreeView's `rowMenu`. A row whose built-in menu is empty gets the ⋯
+     * button when this returns items.
+     */
+    rowMenu?: (person: CallPerson) => DropdownMenuSection[] | null | undefined;
     className?: string;
     'data-testid'?: string;
 }
@@ -550,12 +574,18 @@ export declare interface CallPerson {
     cameraOn: boolean;
     screenSharing: boolean;
     presenting: boolean;
+    /**
+     * Less than full access: `view-only` (the host stopped this person
+     * publishing). While in the call it is the row's sub-status, "View only",
+     * ahead of presenting / sharing / camera off. Absent: may publish.
+     */
+    access?: ParticipantAccess;
 }
 
 export declare interface CallPersonStatus {
     label: string;
     tone: 'accent' | 'muted' | 'warning';
-    kind: 'presenting' | 'sharing' | 'camera-off' | 'reconnecting' | 'ringing' | 'notified' | 'missed' | 'declined' | 'left' | 'host' | 'none';
+    kind: 'view-only' | 'presenting' | 'sharing' | 'camera-off' | 'reconnecting' | 'ringing' | 'notified' | 'missed' | 'declined' | 'left' | 'host' | 'none';
 }
 
 /** The one sub-status a row shows. Exported for hosts and tests. */
@@ -817,6 +847,8 @@ export declare interface CallStripParticipant {
     avatarUrl?: string;
     isMuted?: boolean;
     isSpeaking?: boolean;
+    /** Less than full access: `view-only` puts an eye on the avatar, named "View only". */
+    access?: ParticipantAccess;
 }
 
 /** A row participant. The extra flags are read by the `dock` and `grid` variants only. */
@@ -901,7 +933,7 @@ export declare interface CallTileRowProps {
     'data-testid'?: string;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, sidePanelWidthClassName, dockTargets, activeDockId, onDockTo, onDragStateChange, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, audioDisabled, audioDisabledReason, videoDisabled, videoDisabledReason, screenShareDisabled, screenShareDisabledReason, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, sidePanelWidthClassName, dockTargets, activeDockId, onDockTo, onDragStateChange, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 /** Canonical display mode for any call surface. */
 export declare type CallWidgetMode = 'mini' | 'window' | 'fullscreen';
@@ -927,6 +959,25 @@ export declare interface CallWidgetProps {
     onToggleCamera?: () => void;
     onToggleScreenShare?: () => void;
     onUpgradeToVideo?: () => void;
+    /**
+     * Disables the microphone toggle (the control row's and the minimized
+     * pill's). Same names as MediaControlsBar; see CallControls.
+     */
+    audioDisabled?: boolean;
+    /**
+     * Why the microphone is off-limits ("The host made you view-only").
+     * Disables the toggle on its own and is its tooltip and accessible
+     * description; the button stays focusable (`aria-disabled`).
+     */
+    audioDisabledReason?: string;
+    /** Disables the camera toggle and, in an audio call, "Switch to video". */
+    videoDisabled?: boolean;
+    /** Same as `audioDisabledReason`, for the camera toggle and "Switch to video". */
+    videoDisabledReason?: string;
+    /** Disables the screen-share toggle. */
+    screenShareDisabled?: boolean;
+    /** Same as `audioDisabledReason`, for the screen-share toggle. */
+    screenShareDisabledReason?: string;
     onAddParticipant?: (participantId: string) => void;
     /** Slot rendered IN the control row (between add-participant and End)
      *  — the collapsed-widget counterpart to MediaControlsBar's `extras`.
@@ -1077,7 +1128,7 @@ export declare function CaptionsIcon({ size, ...rest }: IconProps): JSX.Element;
  *  panel (CallSidePanel) or the settings dialog's Chat tab. */
 export declare function ChatBubbleIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function CircularIconToggle({ on, iconOn, iconOff, 'aria-label': ariaLabel, offTone, size, disabled, className, ...rest }: CircularIconToggleProps): JSX.Element;
+export declare function CircularIconToggle({ on, iconOn, iconOff, 'aria-label': ariaLabel, offTone, size, disabled, disabledReason, className, title, onClick, 'aria-describedby': describedBy, ...rest }: CircularIconToggleProps): JSX.Element;
 
 export declare interface CircularIconToggleProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
     /** Whether the underlying feature (mic / cam / share) is currently on. */
@@ -1094,6 +1145,13 @@ export declare interface CircularIconToggleProps extends Omit<ButtonHTMLAttribut
      *  match the Google Meet convention. */
     offTone?: CircularIconToggleTone;
     size?: CircularIconToggleSize;
+    /**
+     * Why the control is off-limits ("The host made you view-only"). Disables
+     * it and is its tooltip and accessible description. Unlike `disabled`
+     * alone, the button stays focusable (`aria-disabled="true"`, clicks do
+     * nothing) so a keyboard or screen-reader user can reach it and hear why.
+     */
+    disabledReason?: string;
 }
 
 export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
@@ -1563,6 +1621,8 @@ export declare interface HangoutLayoutParticipant {
     isLocal?: boolean;
     /** Raised hand: `true`, or the 1-based queue position. Since 2.458.0. */
     handRaised?: boolean | number;
+    /** Less than full access: `view-only` marks the tile (an eye, "View only"). */
+    access?: ParticipantAccess;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
     /** Pre-rendered screen-share video element. When ANY participant supplies
@@ -1975,7 +2035,7 @@ export declare function isKnownViewerCount(count: number | null | undefined): co
  */
 export declare type LegacyCallWidgetMode = 'mini' | 'docked' | 'fullscreen';
 
-export declare function MediaControlsBar({ audioOn, videoOn, screenSharing, onToggleAudio, onToggleVideo, onToggleScreenShare, onLeave, audioDisabled, videoDisabled, screenShareDisabled, extras, leaveLabel, size, className, 'data-testid': testId, }: MediaControlsBarProps): JSX.Element;
+export declare function MediaControlsBar({ audioOn, videoOn, screenSharing, onToggleAudio, onToggleVideo, onToggleScreenShare, onLeave, audioDisabled, videoDisabled, screenShareDisabled, audioDisabledReason, videoDisabledReason, screenShareDisabledReason, extras, leaveLabel, size, className, 'data-testid': testId, }: MediaControlsBarProps): JSX.Element;
 
 export declare interface MediaControlsBarProps {
     audioOn: boolean;
@@ -1990,6 +2050,17 @@ export declare interface MediaControlsBarProps {
     audioDisabled?: boolean;
     videoDisabled?: boolean;
     screenShareDisabled?: boolean;
+    /**
+     * Why the microphone toggle is off-limits ("The host made you view-only").
+     * Disables it on its own (no need to also pass `audioDisabled`) and is its
+     * tooltip and accessible description; the button stays focusable with
+     * `aria-disabled` so the reason can be reached. See CircularIconToggle.
+     */
+    audioDisabledReason?: string;
+    /** Same as `audioDisabledReason`, for the camera toggle. */
+    videoDisabledReason?: string;
+    /** Same as `audioDisabledReason`, for the screen-share toggle. */
+    screenShareDisabledReason?: string;
     /** Slot rendered between the screen-share toggle and the Leave button.
      *  Use for raise-hand, captions, chat-open, settings, etc. */
     extras?: ReactNode;
@@ -2346,8 +2417,42 @@ export declare interface Participant {
     isSpeaking?: boolean;
     isMuted?: boolean;
     isLocal?: boolean;
+    /** Less than full access: `view-only` marks the tile (see ParticipantTile). */
+    access?: ParticipantAccess;
     videoElement?: ReactNode;
 }
+
+/** A participant's standing when it is less than full access. Absent: may publish. */
+export declare type ParticipantAccess = 'view-only';
+
+export declare function ParticipantAccessBadge({ access, tone, size, iconOnly, label: labelOverride, className, 'data-testid': testId, }: ParticipantAccessBadgeProps): JSX.Element | null;
+
+export declare interface ParticipantAccessBadgeProps {
+    /** The standing to show. Absent / null renders nothing. */
+    access: ParticipantAccess | null | undefined;
+    /** `chip` (default): for light surfaces. `overlay`: on a video tile or dark call chrome. */
+    tone?: 'chip' | 'overlay';
+    size?: 'sm' | 'md';
+    /**
+     * Draw the eye alone (a tile's name strip, an avatar corner): the label is
+     * then its accessible name and tooltip. Default false: eye and label.
+     */
+    iconOnly?: boolean;
+    /** Replaces the visible label (e.g. a translation). The description stays the tooltip. */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ParticipantAccessInfo {
+    /** Short visible label: "View only". */
+    label: string;
+    /** One sentence for a tooltip or screen reader: what the standing means. */
+    description: string;
+}
+
+/** The label and description for a standing, or null for full access. */
+export declare function participantAccessInfo(access: ParticipantAccess | null | undefined): ParticipantAccessInfo | null;
 
 /**
  * Single-participant tile used in `VideoGrid` and `HangoutLayout`. Pure
@@ -2358,7 +2463,7 @@ export declare interface Participant {
  * convention (Meet/Teams/Zoom), reflowing tiles on speaker change is jarring;
  * a green border is the agreed-on cue.
  */
-export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, handRaised, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
+export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, handRaised, access, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
 
 export declare interface ParticipantTileProps {
     /** Unique identifier for keying / pin actions. */
@@ -2373,6 +2478,11 @@ export declare interface ParticipantTileProps {
     isMuted?: boolean;
     /** Raised hand: `true`, or the 1-based queue position (shown as "✋ 2" in the name chip). Since 2.458.0. */
     handRaised?: boolean | number;
+    /**
+     * Less than full access: `view-only` draws an eye in the name chip, named
+     * "View only" for screen readers, and stamps `data-access`. Absent: nothing.
+     */
+    access?: ParticipantAccess;
     /** Whether this tile represents the local user — replaces the displayName label with "You". */
     isLocal?: boolean;
     /** When true, applies the "main / spotlight" emphasis style (larger border, taller aspect). */
@@ -2767,7 +2877,7 @@ export declare interface ReviewDocumentListProps {
     rowTestIdPrefix?: string;
 }
 
-export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, className, }: RosterPanelProps): JSX.Element;
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, rowMenu, rowMenuLabel, className, }: RosterPanelProps): JSX.Element;
 
 export declare interface RosterPanelProps {
     participants: RosterParticipant[];
@@ -2794,6 +2904,14 @@ export declare interface RosterPanelProps {
     onLowerHand?: (id: string) => void;
     /** Organizer: lower every hand. Shown in the header while any hand is up. */
     onLowerAllHands?: () => void;
+    /**
+     * The row's ⋯ menu — "Make view-only", "Remove from call". Return `null` or
+     * an empty array for a row that has none; with no `rowMenu` no row has a
+     * menu button. Same contract as TreeView's and PipelinesListView's `rowMenu`.
+     */
+    rowMenu?: (participant: RosterParticipant) => DropdownMenuSection[] | null | undefined;
+    /** Accessible name of each row's menu button. Default `Actions for <displayName>`. */
+    rowMenuLabel?: (participant: RosterParticipant) => string;
     className?: string;
 }
 
@@ -2806,6 +2924,8 @@ export declare interface RosterParticipant {
     isScreenSharing?: boolean;
     /** `true`, or the 1-based queue position (shown beside the hand since 2.458.0). */
     handRaised?: boolean | number;
+    /** Less than full access, shown as a chip in the row: `view-only` (may not publish). Absent: no chip. */
+    access?: ParticipantAccess;
 }
 
 export declare function ScreenShareIcon({ size, ...rest }: IconProps): JSX.Element;

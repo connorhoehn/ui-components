@@ -186,3 +186,27 @@ export const DockedSidePanel: Story = {
   args: { state: 'active', mode: 'video', participants: [] },
   render: () => <DockedWidget />,
 };
+
+/** The local participant is view-only: the widget's mic, camera and share
+ *  controls are disabled with the reason; Bob's avatar carries the view-only eye. */
+export const PublishRevoked: Story = {
+  args: {
+    state: 'active',
+    mode: 'video',
+    participants: [{ ...bob, access: 'view-only' }],
+    localParticipant: { id: 'me', displayName: 'Me', isMuted: true },
+    duration: 65,
+    isMuted: true,
+    isCameraOn: false,
+    contained: true,
+    draggable: false,
+    position: 'bottom-right',
+    onToggleMute: () => {},
+    onToggleCamera: () => {},
+    onToggleScreenShare: () => {},
+    onEndCall: () => {},
+    audioDisabledReason: 'The host made you view-only',
+    videoDisabledReason: 'The host made you view-only',
+    screenShareDisabledReason: 'The host made you view-only',
+  },
+};

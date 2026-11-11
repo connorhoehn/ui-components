@@ -24,7 +24,7 @@ import {
 |---|---|
 | Inline player | `VideoPlayer`, `StreamVideo`, `VideoSurface`, `VideoOverlayChip`, `AutoplayGate`, `RemoteTileSlot` |
 | Tile grids | `VideoGrid`, `ParticipantTile`, `NetworkQualityBadge` |
-| Hangout-room | `HangoutLayout`, `HangoutGrid`, `HangoutSpotlight`, `RosterPanel`, `useStableActiveSpeaker` |
+| Hangout-room | `HangoutLayout`, `HangoutGrid`, `HangoutSpotlight`, `RosterPanel`, `ParticipantAccessBadge`, `useStableActiveSpeaker` |
 | Call widget | `CallWidget`, `CallControls`, `CallParticipantStrip`, `CallStatsOverlay`, `MuteWhileTalkingToast` |
 | Recordings | `RecordingPlayer`, `RecordingList`, `RecordingRow`, `TranscriptOverlay` |
 | Lifecycle banners | `CallStartedBanner`, `CallingStatusPill`, `ReconnectingBanner`, `PiPButton` |
@@ -41,6 +41,40 @@ Composition: `<CallWidget>` is built from `<CallControls>`,
 `<CallParticipantStrip>` and `<CallStatsOverlay>`; `<HangoutLayout>` is built
 from `<HangoutGrid>`, `<HangoutSpotlight>` and the `useStableActiveSpeaker`
 hysteresis hook.
+
+## Publish control (view-only participants)
+
+A host can stop someone publishing (camera, microphone, screen share) while
+they stay in the call to watch and listen. The library draws both ends:
+
+- **Who is view-only.** Set `access: 'view-only'` on the participant
+  (`RosterParticipant`, `CallPerson`, `HangoutLayoutParticipant`,
+  `CallStripParticipant`, `VideoGrid`'s `Participant`). `RosterPanel` shows a
+  "View only" chip, `CallPeopleList` makes it the row's sub-status, and tiles
+  (`ParticipantTile`, `CallTileRow`, `CallParticipantStrip`) show an eye named
+  "View only". `ParticipantAccessBadge` is the mark on its own.
+- **The host's per-row action.** `rowMenu(participant)` on `RosterPanel` and
+  `CallPeopleList` returns `DropdownMenuSection[]` for that row's ⋯ menu
+  ("Make view-only" / "Allow publishing"), as `TreeView` does.
+- **Your own controls.** `audioDisabledReason`, `videoDisabledReason` and
+  `screenShareDisabledReason` on `MediaControlsBar`, `CallControls` and
+  `CallWidget` (with the `*Disabled` booleans beside them) disable a toggle
+  and make the reason its tooltip and accessible description; the toggle
+  stays focusable (`aria-disabled`) so the reason can be read. `CallDock`
+  already takes `disabledReason` on `mic`, `camera` and `screenShare`.
+
+```tsx
+<RosterPanel
+  participants={people.map((p) => ({ ...p, access: viewOnly.has(p.id) ? 'view-only' : undefined }))}
+  rowMenu={(p) => (isHost && !p.isLocal
+    ? [{ items: [p.access ? { label: 'Allow publishing', onSelect: () => grant(p.id) }
+                          : { label: 'Make view-only', danger: true, onSelect: () => revoke(p.id) }] }]
+    : null)}
+/>
+<CallWidget {...call} audioDisabledReason={revoked ? 'The host made you view-only' : undefined}
+  videoDisabledReason={revoked ? 'The host made you view-only' : undefined}
+  screenShareDisabledReason={revoked ? 'The host made you view-only' : undefined} />
+```
 
 ## A video element a hook drives
 

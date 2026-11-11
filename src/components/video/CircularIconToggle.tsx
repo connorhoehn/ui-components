@@ -6,7 +6,7 @@
 // MediaIcons). Pressed state is reflected via `aria-pressed`; visual
 // tone flips between "active" (soft surface) and "off" (red soft).
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { useId, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 export type CircularIconToggleTone = 'neutral' | 'danger';
@@ -28,6 +28,13 @@ export interface CircularIconToggleProps
    *  match the Google Meet convention. */
   offTone?: CircularIconToggleTone;
   size?: CircularIconToggleSize;
+  /**
+   * Why the control is off-limits ("The host made you view-only"). Disables
+   * it and is its tooltip and accessible description. Unlike `disabled`
+   * alone, the button stays focusable (`aria-disabled="true"`, clicks do
+   * nothing) so a keyboard or screen-reader user can reach it and hear why.
+   */
+  disabledReason?: string;
 }
 
 const SIZE_CLASSES: Record<CircularIconToggleSize, string> = {
@@ -53,9 +60,16 @@ export function CircularIconToggle({
   offTone = 'danger',
   size = 'md',
   disabled,
+  disabledReason,
   className,
+  title,
+  onClick,
+  'aria-describedby': describedBy,
   ...rest
 }: CircularIconToggleProps) {
+  const reasonId = useId();
+  const reason = disabledReason || undefined;
+  const off = Boolean(disabled) || reason !== undefined;
   const palette = on
     ? ON_CLASSES
     : offTone === 'danger'
@@ -67,18 +81,24 @@ export function CircularIconToggle({
       type="button"
       aria-label={ariaLabel}
       aria-pressed={on}
-      disabled={disabled}
+      disabled={reason === undefined ? disabled : undefined}
+      aria-disabled={reason !== undefined ? 'true' : undefined}
+      aria-describedby={reason !== undefined ? [describedBy, reasonId].filter(Boolean).join(' ') : describedBy}
+      title={reason ?? title}
+      onClick={reason !== undefined ? undefined : onClick}
+      data-disabled-reason={reason}
       className={cn(
         'rounded-full grid place-items-center transition-colors duration-150',
         SIZE_CLASSES[size],
         palette,
-        disabled && 'opacity-40 cursor-not-allowed',
-        !disabled && 'cursor-pointer',
+        off && 'opacity-40 cursor-not-allowed',
+        !off && 'cursor-pointer',
         className,
       )}
       {...rest}
     >
       {on ? iconOn : iconOff}
+      {reason !== undefined && <span id={reasonId} hidden>{reason}</span>}
     </button>
   );
 }

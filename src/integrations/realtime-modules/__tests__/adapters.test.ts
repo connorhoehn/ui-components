@@ -362,6 +362,12 @@ describe('adaptFileUploadState', () => {
 // ---------------------------------------------------------------------------
 
 describe('adaptHangoutParticipant', () => {
+  it('maps the viewer role to view-only access, and publishing roles to none', () => {
+    expect(adaptHangoutParticipant({ ...rmParticipant, role: 'viewer' }).access).toBe('view-only');
+    expect('access' in adaptHangoutParticipant({ ...rmParticipant, role: 'participant' })).toBe(false);
+    expect('access' in adaptHangoutParticipant({ ...rmParticipant, role: 'host' })).toBe(false);
+  });
+
   it('maps clientId → id', () => {
     const result = adaptHangoutParticipant(rmParticipant);
     expect(result.id).toBe('client-abc');

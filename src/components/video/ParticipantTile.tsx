@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { ParticipantAccessBadge, type ParticipantAccess } from './ParticipantAccessBadge';
 import { RaisedHandBadge } from './RaisedHandBadge';
 
 export interface ParticipantTileProps {
@@ -15,6 +16,11 @@ export interface ParticipantTileProps {
   isMuted?: boolean;
   /** Raised hand: `true`, or the 1-based queue position (shown as "✋ 2" in the name chip). Since 2.458.0. */
   handRaised?: boolean | number;
+  /**
+   * Less than full access: `view-only` draws an eye in the name chip, named
+   * "View only" for screen readers, and stamps `data-access`. Absent: nothing.
+   */
+  access?: ParticipantAccess;
   /** Whether this tile represents the local user — replaces the displayName label with "You". */
   isLocal?: boolean;
   /** When true, applies the "main / spotlight" emphasis style (larger border, taller aspect). */
@@ -48,6 +54,7 @@ export function ParticipantTile({
   isSpeaking = false,
   isMuted = false,
   handRaised,
+  access,
   isLocal = false,
   isSpotlight = false,
   videoElement,
@@ -85,6 +92,7 @@ export function ParticipantTile({
       data-is-spotlight={isSpotlight ? 'true' : 'false'}
       data-is-muted={isMuted ? 'true' : 'false'}
       data-hand-raised={handRaised ? 'true' : undefined}
+      data-access={access}
       data-track-kind={videoElement ? 'camera' : 'avatar'}
     >
       {videoElement ?? (
@@ -118,6 +126,7 @@ export function ParticipantTile({
       <div className={cn('absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow')}>
         {isLocal && <span className={cn('text-code-blue truncate font-medium')}>You</span>}
         {!isLocal && <span className="truncate font-medium">{displayName}</span>}
+        <ParticipantAccessBadge access={access} tone="overlay" iconOnly data-testid="tile-access" />
         <RaisedHandBadge raised={handRaised} tone="overlay" data-testid="tile-raised-hand" />
         {isMuted && (
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>

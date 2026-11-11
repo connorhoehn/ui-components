@@ -44,6 +44,17 @@ export interface MediaControlsBarProps {
   audioDisabled?: boolean;
   videoDisabled?: boolean;
   screenShareDisabled?: boolean;
+  /**
+   * Why the microphone toggle is off-limits ("The host made you view-only").
+   * Disables it on its own (no need to also pass `audioDisabled`) and is its
+   * tooltip and accessible description; the button stays focusable with
+   * `aria-disabled` so the reason can be reached. See CircularIconToggle.
+   */
+  audioDisabledReason?: string;
+  /** Same as `audioDisabledReason`, for the camera toggle. */
+  videoDisabledReason?: string;
+  /** Same as `audioDisabledReason`, for the screen-share toggle. */
+  screenShareDisabledReason?: string;
 
   /** Slot rendered between the screen-share toggle and the Leave button.
    *  Use for raise-hand, captions, chat-open, settings, etc. */
@@ -82,6 +93,9 @@ export function MediaControlsBar({
   audioDisabled,
   videoDisabled,
   screenShareDisabled,
+  audioDisabledReason,
+  videoDisabledReason,
+  screenShareDisabledReason,
   extras,
   leaveLabel = 'Leave call',
   size = 'md',
@@ -101,6 +115,7 @@ export function MediaControlsBar({
         on={audioOn}
         onClick={onToggleAudio}
         disabled={audioDisabled}
+        disabledReason={audioDisabledReason}
         size={size}
         aria-label={audioOn ? 'Mute microphone' : 'Unmute microphone'}
         title={audioOn ? 'Mute microphone' : 'Unmute microphone'}
@@ -112,6 +127,7 @@ export function MediaControlsBar({
         on={videoOn}
         onClick={onToggleVideo}
         disabled={videoDisabled}
+        disabledReason={videoDisabledReason}
         size={size}
         aria-label={videoOn ? 'Turn off camera' : 'Turn on camera'}
         title={videoOn ? 'Turn off camera' : 'Turn on camera'}
@@ -124,6 +140,7 @@ export function MediaControlsBar({
           on={screenSharing}
           onClick={onToggleScreenShare}
           disabled={screenShareDisabled}
+          disabledReason={screenShareDisabledReason}
           size={size}
           offTone="neutral"
           aria-label={screenSharing ? 'Stop sharing screen' : 'Share screen'}

@@ -23,6 +23,7 @@ import { useMemo } from 'react';
 import type { HangoutParticipant, HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
 import type { RealtimeClientModules } from './modules';
 import { HangoutLayout, type HangoutLayoutParticipant, type HangoutMode } from '../../components/video/HangoutLayout';
+import type { ParticipantAccess } from '../../components/video/ParticipantAccessBadge';
 import { RemoteTileSlot } from '../../components/video/RemoteTileSlot';
 import { StreamVideo } from '../../components/video/StreamVideo';
 import { Avatar } from '../../components/shared/Avatar';
@@ -101,6 +102,14 @@ export interface WrappedLVSHangoutLayoutProps {
    * `handFor={(id) => hands.get(id)}`.
    */
   handFor?: (userId: string) => boolean | number | undefined;
+  /**
+   * A participant's standing when it is less than full access — `view-only`
+   * for someone the host stopped publishing — keyed like `handFor` (the app
+   * user id when the SFU carries one, else the SFU `userId`). Marks the tile
+   * (an eye, "View only"). `useLVSHangout` does not report other people's
+   * publish permission, so the host supplies it.
+   */
+  accessFor?: (userId: string) => ParticipantAccess | undefined;
 
   className?: string;
   'data-testid'?: string;
@@ -206,6 +215,7 @@ function WrappedLVSHangoutLayoutView(rm: WrappedLVSHangoutLayoutModules, {
   localTileLabel,
   showLocalAsTile = true,
   handFor,
+  accessFor,
   className,
   'data-testid': testId,
 }: WrappedLVSHangoutLayoutProps) {
@@ -225,11 +235,14 @@ function WrappedLVSHangoutLayoutView(rm: WrappedLVSHangoutLayoutModules, {
       .filter((p) => showLocalAsTile || !p.isLocal)
       .map((p) => {
         const tile = projectToLayoutShape(p, localTileLabel);
-        const hand = handFor?.(p.appUserId ?? p.userId);
-        return hand ? { ...tile, handRaised: hand } : tile;
+        const key = p.appUserId ?? p.userId;
+        const hand = handFor?.(key);
+        const access = accessFor?.(key);
+        if (!hand && !access) return tile;
+        return { ...tile, ...(hand ? { handRaised: hand } : {}), ...(access ? { access } : {}) };
       });
     return list;
-  }, [hangout.participants, showLocalAsTile, localTileLabel, handFor]);
+  }, [hangout.participants, showLocalAsTile, localTileLabel, handFor, accessFor]);
 
   const remoteCount = hangout.participants.filter((p) => !p.isLocal).length;
   const overlayState: WrappedHangoutState = {

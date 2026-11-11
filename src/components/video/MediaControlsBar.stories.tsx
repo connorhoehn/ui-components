@@ -126,3 +126,16 @@ export const Interactive: Story = {
     );
   },
 };
+
+/** Publishing revoked: each reason disables its toggle and is its tooltip and
+ *  accessible description; the toggles stay focusable so the reason can be read. */
+export const PublishRevoked: Story = {
+  args: {
+    audioOn: false,
+    videoOn: false,
+    audioDisabledReason: 'The host made you view-only',
+    videoDisabledReason: 'The host made you view-only',
+    screenShareDisabledReason: 'The host made you view-only',
+    onToggleScreenShare: () => {},
+  },
+};

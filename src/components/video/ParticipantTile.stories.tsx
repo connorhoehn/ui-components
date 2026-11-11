@@ -76,3 +76,9 @@ export const Clickable: Story = {
     );
   },
 };
+
+/** View only: the host stopped this person publishing. An eye in the name
+ *  chip, named "View only" for screen readers. */
+export const ViewOnly: Story = {
+  args: { id: 'dee', displayName: 'Dee Okafor', access: 'view-only', isMuted: true },
+};

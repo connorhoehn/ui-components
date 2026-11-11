@@ -103,3 +103,25 @@ export const AddParticipantPickerEmpty: Story = {
     currentParticipantIds: ROSTER.map((p) => p.id),
   },
 };
+
+/** Publishing revoked: mute, camera and share are off-limits with a reason
+ *  (their tooltip and accessible description). End call still works. */
+export const PublishRevoked: Story = {
+  args: {
+    mode: 'video',
+    isMuted: true,
+    isCameraOn: false,
+    onToggleMute: () => {},
+    onToggleCamera: () => {},
+    onToggleScreenShare: () => {},
+    onEndCall: () => {},
+    audioDisabledReason: 'The host made you view-only',
+    videoDisabledReason: 'The host made you view-only',
+    screenShareDisabledReason: 'The host made you view-only',
+  },
+};
+
+/** Compact density: the disabled share control in the More menu shows its reason under the label. */
+export const PublishRevokedCompact: Story = {
+  args: { ...PublishRevoked.args, mode: 'video', density: 'compact' },
+};

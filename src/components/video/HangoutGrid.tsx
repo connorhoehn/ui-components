@@ -85,6 +85,7 @@ export function HangoutGrid({
           isSpeaking={p.id === activeSpeakerId}
           isMuted={p.isMuted}
           handRaised={p.handRaised}
+          access={p.access}
           isLocal={p.isLocal}
           videoElement={p.videoElement}
           fillParent={fillParent}
@@ -112,6 +113,7 @@ export function HangoutGrid({
             avatarUrl={localParticipant.avatarUrl}
             isMuted={localParticipant.isMuted}
             handRaised={localParticipant.handRaised}
+            access={localParticipant.access}
             isLocal
             videoElement={localParticipant.videoElement}
           />
