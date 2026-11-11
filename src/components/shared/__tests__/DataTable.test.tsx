@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { DataTable, type DataTableColumn } from '../DataTable';
 
 interface Row {
@@ -39,6 +39,70 @@ function openSearch(): HTMLElement {
 }
 
 describe('DataTable', () => {
+  it('keeps selection display-only unless revealing is requested', () => {
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
+    render(<DataTable data={rows} columns={columns} keyField={keyField} selectedKey="d" pageSize={2} />);
+    expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent('Page 1 of 2');
+    expect(scroll).not.toHaveBeenCalled();
+    scroll.mockRestore();
+  });
+
+  it('reveals an asynchronously loaded selection on its page without taking focus or trapping pagination', async () => {
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
+    const props = { columns, keyField, selectedKey: 'd', pageSize: 2, revealSelection: true };
+    const { rerender } = render(<><button>Keep focus</button><DataTable {...props} data={[]} loading /></>);
+    const focus = screen.getByRole('button', { name: 'Keep focus' });
+    focus.focus();
+    rerender(<><button>Keep focus</button><DataTable {...props} data={rows} /></>);
+    await waitFor(() => expect(scroll).toHaveBeenCalled());
+    expect(scroll.mock.instances.at(-1)).toBe(screen.getByText('Delta').closest('tr'));
+    expect(document.activeElement).toBe(focus);
+    expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent('Page 2 of 2');
+    const calls = scroll.mock.calls.length;
+    rerender(<><button>Keep focus</button><DataTable {...props} data={[...rows]} /></>);
+    expect(scroll).toHaveBeenCalledTimes(calls);
+    fireEvent.click(screen.getByTestId('datatable-prev'));
+    expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent('Page 1 of 2');
+    expect(screen.queryByText('Delta')).not.toBeInTheDocument();
+    scroll.mockRestore();
+  });
+
+  it('reveals a newly selected row but never clears a filter to find it', async () => {
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
+    const props = { data: rows, columns, keyField, pageSize: 2, searchable: true, revealSelection: true };
+    const { rerender } = render(<DataTable {...props} selectedKey="d" />);
+    await waitFor(() => expect(scroll).toHaveBeenCalled());
+    rerender(<DataTable {...props} selectedKey="a" />);
+    await waitFor(() => expect(scroll.mock.instances.at(-1)).toBe(screen.getByText('Alpha').closest('tr')));
+    fireEvent.change(openSearch(), { target: { value: 'Bravo' } });
+    expect(screen.queryByText('Alpha')).not.toBeInTheDocument();
+    expect(screen.getByText('Bravo')).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId('datatable-search'), { target: { value: '' } });
+    await waitFor(() => expect(scroll.mock.instances.at(-1)).toBe(screen.getByText('Alpha').closest('tr')));
+    scroll.mockRestore();
+  });
+
+  it('reveals on width changes, not on height-only observations', async () => {
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
+    let resized: (() => void) | undefined;
+    vi.stubGlobal('ResizeObserver', class {
+      constructor(callback: () => void) { resized = callback; }
+      observe() {} disconnect() {}
+    });
+    try {
+      const { container } = render(<DataTable data={rows} columns={columns} keyField={keyField} selectedKey="d" revealSelection narrow />);
+      await waitFor(() => expect(scroll).toHaveBeenCalled());
+      const calls = scroll.mock.calls.length;
+      resized?.();
+      expect(scroll).toHaveBeenCalledTimes(calls);
+      Object.defineProperty(container.querySelector('[data-reveal-selection]'), 'clientWidth', { value: 390 });
+      resized?.();
+      await waitFor(() => expect(scroll.mock.calls.length).toBeGreaterThan(calls));
+    } finally {
+      scroll.mockRestore();
+      vi.unstubAllGlobals();
+    }
+  });
   it('leaves a click or key on a control inside a clickable row to that control', () => {
     const open = vi.fn();
     const tick = vi.fn();

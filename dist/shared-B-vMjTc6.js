@@ -29,7 +29,7 @@ import { t as Ve } from "./InlinePopover-BJntntHW.js";
 import { a as He, n as Ue } from "./Toolbar-C04NW-U-.js";
 import { t as We } from "./FormField-BDZIVA7n.js";
 import { t as Ge } from "./SearchInput-Dk3D9lhs.js";
-import { n as Ke, r as qe, t as Je } from "./DataTable-CnZhsNyD.js";
+import { n as Ke, r as qe, t as Je } from "./DataTable-BYIEBRlb.js";
 import { t as Ye } from "./KeyValue-Cas8iY09.js";
 import { t as Xe } from "./EmptyState-DqWgLbIq.js";
 import { n as Ze, t as Qe } from "./ThinkingDots-mwuPsKFX.js";

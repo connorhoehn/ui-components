@@ -8194,7 +8194,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, revealSelection, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8354,6 +8354,14 @@ export declare interface DataTableProps<T> {
      * (`onRowClick`).
      */
     selectedKey?: string | null;
+    /**
+     * Reveal `selectedKey` after selection or data arrival, and when the table
+     * changes width (including its card layout). Chooses the row's page without
+     * moving keyboard focus. Default false; selection otherwise only highlights.
+     * Manual scrolling and paging remain free until the selection, sort/filter
+     * result or layout changes. Applies only to the single-key selection.
+     */
+    revealSelection?: boolean;
     /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
     isRowSelected?: (row: T) => boolean;
     /**

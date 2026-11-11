@@ -182,6 +182,14 @@ export interface DataTableProps<T> {
    * (`onRowClick`).
    */
   selectedKey?: string | null;
+  /**
+   * Reveal `selectedKey` after selection or data arrival, and when the table
+   * changes width (including its card layout). Chooses the row's page without
+   * moving keyboard focus. Default false; selection otherwise only highlights.
+   * Manual scrolling and paging remain free until the selection, sort/filter
+   * result or layout changes. Applies only to the single-key selection.
+   */
+  revealSelection?: boolean;
   /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
   isRowSelected?: (row: T) => boolean;
   /**
@@ -639,6 +647,7 @@ export function DataTable<T>({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   selectedKey,
+  revealSelection = false,
   isRowSelected,
   headerCase = 'upper',
   responsiveColumns = false,
@@ -715,6 +724,11 @@ export function DataTable<T>({
   }, [filtered, columns, sortKey, sortDir]);
 
   const totalPages = pageSize && pageSize > 0 ? Math.max(1, Math.ceil(sorted.length / pageSize)) : 1;
+  const selectedIndex = revealSelection && selectedKey != null ? sorted.findIndex((row) => keyField(row) === selectedKey) : -1;
+  const selectedPage = selectedIndex < 0 ? -1 : pageSize && pageSize > 0 ? Math.floor(selectedIndex / pageSize) : 0;
+  useLayoutEffect(() => {
+    if (!loading && selectedPage >= 0) setPage(selectedPage);
+  }, [selectedKey, selectedPage, loading]);
   const safePage = Math.min(page, totalPages - 1);
   const paged = useMemo(() => {
     if (!pageSize || pageSize <= 0) return sorted;
@@ -738,6 +752,38 @@ export function DataTable<T>({
   const moreColumn = hiddenCols.length > 0;
   const labelled = narrow || stacked;
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!revealSelection || selectedKey == null || selectedPage < 0 || loading || !root) return;
+    let live = true;
+    let frame = 0;
+    const reveal = () => {
+      if (!live) return;
+      cancelAnimationFrame(frame);
+      // Let responsive columns and container queries settle before measuring
+      // the final row. No focus() call: a notification must not steal typing.
+      frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => {
+          if (live) root.querySelector<HTMLElement>('tbody > tr[data-selected]')
+            ?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'auto' });
+        });
+      });
+    };
+    reveal();
+    let width = root.clientWidth;
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => {
+      const next = root.clientWidth;
+      if (next === width) return;
+      width = next;
+      reveal();
+    });
+    observer?.observe(root);
+    if (document.fonts?.ready) void document.fonts.ready.then(reveal, () => undefined);
+    return () => { live = false; observer?.disconnect(); cancelAnimationFrame(frame); };
+    // Responsive fit resets on a data refresh. Its intermediate hidden/stacked
+    // states must not pull readers back after they have scrolled elsewhere.
+  }, [revealSelection, selectedKey, selectedPage, loading, safePage, narrow, responsiveColumns, forceStacked]);
+
   return (
     <div
       ref={rootRef}
@@ -746,6 +792,7 @@ export function DataTable<T>({
       data-responsive-columns={responsiveColumns ? '' : undefined}
       data-hidden-columns={responsiveColumns ? hiddenCols.map((c) => c.key).join(' ') : undefined}
       data-stacked={stacked ? '' : undefined}
+      data-reveal-selection={revealSelection ? '' : undefined}
       // The collection composite: an audit reads these to require activatable
       // rows unless the table says, with a reason, that its rows open nothing.
       data-collection-table=""

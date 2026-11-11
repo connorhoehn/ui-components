@@ -1,3 +1,9 @@
+## 2.522.0 — Reveal a selected table row
+
+- `DataTable` accepts opt-in `revealSelection` with `selectedKey`: it chooses the selected row’s page and scrolls it into view after loading or a width/layout change, including the card form, without changing keyboard focus.
+- A data refresh with the same selection does not pull the reader back. Manual pagination remains available, and filtering never clears itself to expose a hidden selection.
+- Existing consumers keep highlight-only selection unless they opt in. The Budgets notification destination in aws-agentcore is the first consumer.
+
 ## 2.521.0
 
 (publish control) What a call needs when a host stops someone publishing: who is view-only, the host's per-row action, and your own disabled controls with the reason. Every new prop is optional; without them every component renders exactly as before (tests compare the markup).
