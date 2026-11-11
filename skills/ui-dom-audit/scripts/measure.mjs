@@ -299,6 +299,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     return (el.getAttribute('title') ?? '').trim();
   };
   const round = v => Math.round(v * 2) / 2;
+  // Intentional layout variants are declared by their owner. CSS state stays
+  // separate from the measured display/geometry, so a broken layout still fails.
+  const profileFor = (el, profiles = []) => profiles.find(p => el?.matches(css(p.selector))
+    && (!p.when || cs(el).getPropertyValue(p.when.property).trim() === p.when.value));
   for (const name of required) if (query(name).length === 0) add({ id: 'coverage.required', selector: name }, null, 'rendered count', '>= 1', 0, 'coverage');
   for (const rule of contract.rules) {
     try {
@@ -520,17 +524,35 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         }
       }
       else if (rule.kind === 'columns') {
-        const groups = rule.children ? nodes.map(parent => [...parent.querySelectorAll(rule.children)].filter(visible).map(el => ({ name: selectorOf(el), el, box: rect(el) })))
-          : [rule.regions.flatMap(name => query(name).map(el => ({ name, el, box: rect(el) })))];
+        const groups = rule.children ? nodes.map(parent => {
+          const profile = profileFor(parent, rule.profiles);
+          return { parent, profile, items: [...parent.querySelectorAll(profile?.children ?? rule.children)].filter(visible).map(el => ({ el, box: rect(el) })) };
+        }) : [{ items: rule.regions.flatMap(name => query(name).map(el => ({ el, box: rect(el) }))) }];
         let measured = 0;
         for (const group of groups) {
-          const columns = group.sort((a, b) => a.box.left - b.box.left); measured += columns.length;
-          if (columns.length < rule.min || columns.length > rule.max) add(rule, null, 'column count', { min: rule.min, max: rule.max }, columns.length);
+          const spec = group.profile ? { ...rule, ...group.profile } : rule;
+          const stacked = spec.direction === 'rows';
+          const [start, end, crossStart, crossEnd] = stacked ? ['top', 'bottom', 'left', 'right'] : ['left', 'right', 'top', 'bottom'];
+          const columns = group.items.sort((a, b) => a.box[start] - b.box[start]); measured += columns.length;
+          if (group.profile) samples.push({ rule: rule.id, selector: selectorOf(group.parent), property: 'layout profile', actual: spec.name, expected: spec.name });
+          check({ ...rule, tolerance: 0 }, group.parent ?? columns[0]?.el ?? document.body, stacked ? 'stacked region count' : 'column count', columns.length, { min: spec.min, max: spec.max });
+          if (spec.hiddenChildren) check({ ...rule, tolerance: 0 }, group.parent, 'compact visible rails', [...group.parent.querySelectorAll(spec.hiddenChildren)].filter(visible).length, 0);
+          if (spec.replacementControl) {
+            const controls = query(spec.replacementControl).filter(el => el.matches('button, [role="button"]') && el.tabIndex >= 0 && !el.matches(':disabled, [aria-disabled="true"]')
+              && el.getAttribute('aria-haspopup') === 'menu' && accName(el) && clipped(el.getBoundingClientRect(), el));
+            check({ ...rule, tolerance: 0 }, group.parent, 'replacement navigation controls', controls.length, 1);
+          }
           for (let i = 1; i < columns.length; i++) {
             const prev = columns[i - 1], curr = columns[i];
-            check(rule, curr.el, 'column gap', curr.box.left - prev.box.right, { min: 0, max: rule.maxGap ?? 1 });
-            check(rule, curr.el, 'column top alignment', curr.box.top - prev.box.top, 0);
-            check(rule, curr.el, 'column bottom alignment', curr.box.bottom - prev.box.bottom, 0);
+            check(rule, curr.el, stacked ? 'stacked region gap' : 'column gap', curr.box[start] - prev.box[end], { min: 0, max: spec.maxGap ?? 1 });
+            check(rule, curr.el, `${stacked ? 'stacked region' : 'column'} ${crossStart} alignment`, curr.box[crossStart] - prev.box[crossStart], 0);
+            check(rule, curr.el, `${stacked ? 'stacked region' : 'column'} ${crossEnd} alignment`, curr.box[crossEnd] - prev.box[crossEnd], 0);
+          }
+          if (spec.fill && columns.length) {
+            const frame = rect(group.parent);
+            check(rule, columns[0].el, 'layout start edge', columns[0].box[start] - frame[start], 0);
+            check(rule, columns.at(-1).el, 'layout end edge', columns.at(-1).box[end] - frame[end], 0);
+            for (const column of columns) for (const edge of [crossStart, crossEnd]) check(rule, column.el, `layout ${edge} edge`, column.box[edge] - frame[edge], 0);
           }
         }
         coverage.at(-1).matched = measured;
@@ -589,8 +611,21 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         }
       }
       else if (rule.kind === 'table') for (const table of nodes) {
+        const card = profileFor(table, rule.profiles);
+        if (card) {
+          samples.push({ rule: rule.id, selector: selectorOf(table), property: 'layout profile', actual: card.name, expected: card.name });
+          check(rule, table, 'card table display', cs(table).display, 'block');
+          check({ ...rule, tolerance: 0 }, table, 'card visible headers', [...table.querySelectorAll('thead')].filter(visible).length, 0);
+        }
         const rows = [...table.querySelectorAll('tbody > tr')].filter(visible).filter(row => !row.querySelector('[colspan]'));
-        for (const row of rows) check(rule, row, 'row height', rect(row).height, rule.rowHeight);
+        for (const row of rows) {
+          check(rule, row, card ? 'card row height' : 'row height', rect(row).height, card?.rowHeight ?? rule.rowHeight);
+          if (card) {
+            check(rule, row, 'card row display', cs(row).display, 'block');
+            for (const side of ['Left', 'Right']) check(rule, row, `card row padding${side}`, cs(row)[`padding${side}`], card.rowInset);
+            for (const side of ['Top', 'Bottom']) check(rule, row, `card row padding${side}`, cs(row)[`padding${side}`], card.rowBlockInset);
+          }
+        }
         for (const th of [...table.querySelectorAll('thead th')].filter(visible)) {
           check(rule, th, 'header fontSize', getComputedStyle(th).fontSize, rule.headerFontSize);
           check(rule, th, 'header fontWeight', getComputedStyle(th).fontWeight, rule.headerFontWeight);
@@ -598,8 +633,12 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         for (const cell of [...table.querySelectorAll('tbody td:not([colspan])')].filter(visible)) {
           if (rule.bodyFontSize != null) check(rule, cell, 'cell fontSize', getComputedStyle(cell).fontSize, rule.bodyFontSize);
           if (rule.bodyFontFamily != null) check(rule, cell, 'cell fontFamily', getComputedStyle(cell).fontFamily, rule.bodyFontFamily);
-          check(rule, cell, 'cell paddingLeft', getComputedStyle(cell).paddingLeft, rule.cellInset);
-          check(rule, cell, 'cell paddingRight', getComputedStyle(cell).paddingRight, rule.cellInset);
+          check(rule, cell, 'cell paddingLeft', getComputedStyle(cell).paddingLeft, card?.cellInset ?? rule.cellInset);
+          check(rule, cell, 'cell paddingRight', getComputedStyle(cell).paddingRight, card?.cellInset ?? rule.cellInset);
+          if (card) {
+            check(rule, cell, 'card cell display', cs(cell).display, 'flex');
+            for (const side of ['Top', 'Bottom']) check(rule, cell, `card cell padding${side}`, cs(cell)[`padding${side}`], card.cellBlockInset);
+          }
         }
         coverage.at(-1).rows = (coverage.at(-1).rows ?? 0) + rows.length;
       }
@@ -1627,7 +1666,7 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             const node = walker.currentNode, el = node.parentElement, text = node.textContent.trim();
             if (!sep.test(text) || !el || el.closest('svg') || !visible(el) || faded(el)) continue;
             const range = document.createRange(); range.selectNodeContents(node);
-            const rects = [...range.getClientRects()].filter(r => r.width > 1 && r.height > 1);
+            const rects = [...range.getClientRects()].filter(r => r.width > 1 && r.height > 1).map(r => clipped(r, el)).filter(Boolean);
             if (rects.length) glyphs.push({ node, el, text, rects });
           }
         }

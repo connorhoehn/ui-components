@@ -1,3 +1,10 @@
+## 2.522.1 — Audit responsive table and navigation layouts
+
+- DataTable and SubNavLayout expose their active CSS layout mode for the DOM audit. Card rows retain explicit inset, spacing, display, header and typography checks; compact section navigation is measured as a strip above content.
+- A host can declare a menu in place of its primary rail. The audit requires one content column and a visible, enabled, named menu trigger; ordinary desktop rails remain required.
+- Leading-separator checks measure painted glyphs after ancestor clipping. A separator hidden by StatStrip's drop layout no longer fails; partly visible or unclipped leading separators still do.
+- Browser mutation fixtures cover each valid variant, broken variants and neighboring ordinary controls.
+
 ## 2.522.0 — Reveal a selected table row
 
 - `DataTable` accepts opt-in `revealSelection` with `selectedKey`: it chooses the selected row’s page and scrolls it into view after loading or a width/layout change, including the card form, without changing keyboard focus.

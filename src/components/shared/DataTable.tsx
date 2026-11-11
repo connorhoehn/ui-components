@@ -235,7 +235,7 @@ export interface DataTableProps<T> {
 }
 
 // The narrow form's classes are written out whole (Tailwind scans source text).
-const NARROW_TABLE = '@max-[40rem]:block';
+const NARROW_TABLE = '[--ui-table-layout:table] @max-[40rem]:block @max-[40rem]:[--ui-table-layout:cards]';
 const NARROW_HEAD = '@max-[40rem]:sr-only';
 const NARROW_BODY = '@max-[40rem]:block';
 const NARROW_ROW = '@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2';
@@ -292,7 +292,7 @@ const MORE_CELL_NARROW = '@max-[40rem]:hidden';
 // The stacked form forced by `responsiveColumns` (since 2.517.0): the narrow
 // form's classes without the container query, for a table whose columns no
 // longer fit even with the hideable ones gone.
-const STACK_TABLE = 'block';
+const STACK_TABLE = 'block [--ui-table-layout:cards]';
 const STACK_HEAD = 'sr-only';
 const STACK_BODY = 'block';
 const STACK_ROW = 'block px-3 py-2';
@@ -802,7 +802,7 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
+        <Table data-ui-table-rows={rowHeight} data-ui-table-cards={narrow || stacked ? '' : undefined} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
           {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {})}>
         <TableHead className={cn(narrow && NARROW_HEAD, stacked && STACK_HEAD)} data-header-case={headerCase}>
           <tr>

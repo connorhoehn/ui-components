@@ -57,7 +57,7 @@ function B({ items: e, storageKey: t, title: n, renderNavItem: r, railLabel: i }
 }
 function V({ title: t, items: n, compactHeader: r = !1, railContent: i, contentPadding: a = "default", titleAction: o, railHeader: s, railWidth: c = 220, storageKey: l = "subnav", secondaryTitle: u, secondaryItems: d, secondaryStorageKey: f, secondaryRailWidth: p = 200, renderNavItem: m, railLabel: h, contentAs: g = "main", contentLabel: _, collapsed: v = !1, narrow: y = !1, children: b }) {
 	let x = g, S = d && d.length > 0, C = y && !i, [w, T] = F(0), E = O((e) => e ? (T((e) => e + 1), () => T((e) => e - 1)) : () => {}, []), D = v && w > 0, k = /* @__PURE__ */ R("div", {
-		className: e("flex h-full min-h-0", C && "@max-[40rem]:flex-col"),
+		className: e("flex h-full min-h-0", C && "[--ui-subnav-layout:rail] @max-[40rem]:flex-col @max-[40rem]:[--ui-subnav-layout:strip]"),
 		...C ? { "data-subnav-narrow": "" } : {},
 		children: [
 			C && /* @__PURE__ */ L("nav", {

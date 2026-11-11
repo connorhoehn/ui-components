@@ -258,7 +258,7 @@ export function SubNavLayout({
   // The narrow form's classes are written out whole (`@max-[40rem]:…`) so a
   // consumer's Tailwind scan of dist finds them.
   const frame = (
-    <div className={cn('flex h-full min-h-0', narrow && '@max-[40rem]:flex-col')} {...(narrow ? { 'data-subnav-narrow': '' } : {})}>
+    <div className={cn('flex h-full min-h-0', narrow && '[--ui-subnav-layout:rail] @max-[40rem]:flex-col @max-[40rem]:[--ui-subnav-layout:strip]')} {...(narrow ? { 'data-subnav-narrow': '' } : {})}>
       {narrow && (
         <nav
           aria-label={`${railLabel ?? `${title} navigation`} (compact)`}

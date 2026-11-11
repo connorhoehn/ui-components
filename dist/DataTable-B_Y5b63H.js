@@ -141,7 +141,7 @@ function j(e) {
 }
 //#endregion
 //#region src/components/shared/DataTable.tsx
-var ne = "@max-[40rem]:block", re = "@max-[40rem]:sr-only", ie = "@max-[40rem]:block", ae = "@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2", oe = "@max-[40rem]:flex @max-[40rem]:h-auto @max-[40rem]:items-baseline @max-[40rem]:justify-between @max-[40rem]:gap-4 @max-[40rem]:whitespace-normal @max-[40rem]:px-0 @max-[40rem]:py-1 @max-[40rem]:text-right @max-[40rem]:before:shrink-0 @max-[40rem]:before:text-left @max-[40rem]:before:text-xs @max-[40rem]:before:font-semibold @max-[40rem]:before:uppercase @max-[40rem]:before:tracking-wide @max-[40rem]:before:text-text-secondary @max-[40rem]:before:content-[attr(data-label)]", se = "normal-case tracking-normal", ce = "max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:max-w-none", le = "max-w-0 overflow-hidden @max-[40rem]:max-w-none", ue = "line-clamp-2 whitespace-normal break-words";
+var ne = "[--ui-table-layout:table] @max-[40rem]:block @max-[40rem]:[--ui-table-layout:cards]", re = "@max-[40rem]:sr-only", ie = "@max-[40rem]:block", ae = "@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2", oe = "@max-[40rem]:flex @max-[40rem]:h-auto @max-[40rem]:items-baseline @max-[40rem]:justify-between @max-[40rem]:gap-4 @max-[40rem]:whitespace-normal @max-[40rem]:px-0 @max-[40rem]:py-1 @max-[40rem]:text-right @max-[40rem]:before:shrink-0 @max-[40rem]:before:text-left @max-[40rem]:before:text-xs @max-[40rem]:before:font-semibold @max-[40rem]:before:uppercase @max-[40rem]:before:tracking-wide @max-[40rem]:before:text-text-secondary @max-[40rem]:before:content-[attr(data-label)]", se = "normal-case tracking-normal", ce = "max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:max-w-none", le = "max-w-0 overflow-hidden @max-[40rem]:max-w-none", ue = "line-clamp-2 whitespace-normal break-words";
 function de(e, t, n) {
 	let r = t[e.key];
 	return !e.render && r != null && typeof r != "object" ? String(r) : typeof n == "string" || typeof n == "number" ? String(n) : e.getFilterText ? e.getFilterText(t) : M(n).replace(/\s+/g, " ").trim();
@@ -162,7 +162,7 @@ function me(e) {
 		index: t
 	})).filter((e) => e.p > 1).sort((e, t) => t.p - e.p || t.index - e.index).map((e) => e.key);
 }
-var he = "hidden", ge = "hidden @max-[40rem]:flex", _e = "@max-[40rem]:hidden", ve = "block", ye = "sr-only", be = "block", xe = "block px-3 py-2", Se = "flex h-auto max-w-none items-baseline justify-between gap-4 whitespace-normal px-0 py-1 text-right before:shrink-0 before:text-left before:text-xs before:font-semibold before:uppercase before:tracking-wide before:text-text-secondary before:content-[attr(data-label)]";
+var he = "hidden", ge = "hidden @max-[40rem]:flex", _e = "@max-[40rem]:hidden", ve = "block [--ui-table-layout:cards]", ye = "sr-only", be = "block", xe = "block px-3 py-2", Se = "flex h-auto max-w-none items-baseline justify-between gap-4 whitespace-normal px-0 py-1 text-right before:shrink-0 before:text-left before:text-xs before:font-semibold before:uppercase before:tracking-wide before:text-text-secondary before:content-[attr(data-label)]";
 function Ce(e, t, n, r, i) {
 	let a = Math.min(t, Math.floor(n / 2)), [o, s] = E(0), [c, l] = E(0), u = T(!1), d = T(i);
 	if (S(() => {
@@ -458,6 +458,7 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 			}),
 			/* @__PURE__ */ k(c, {
 				"data-ui-table-rows": t,
+				"data-ui-table-cards": M || X ? "" : void 0,
 				...j ? { size: j } : {},
 				className: e(!D && "border border-border rounded-lg overflow-hidden", M && ne, X && ve),
 				...N ? { "aria-label": N } : {},

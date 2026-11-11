@@ -93,6 +93,17 @@
     },
     {
       "id": "shell.columns",
+      "profiles": [
+        {
+          "name": "navigation-menu",
+          "fill": true,
+          "selector": "[data-ui-navigation-layout=\"menu\"] > div",
+          "reason": "A host may replace the primary rail with a header menu at its declared compact breakpoint. Exactly one content column and one visible, enabled, named menu trigger must remain.",
+          "min": 1,
+          "max": 1,
+          "replacementControl": "$compactNavigation|[data-ui-navigation-trigger]"
+        }
+      ],
       "kind": "columns",
       "selector": "$shellColumns",
       "children": ":scope > aside, :scope > nav[data-sidebar-flow=\"in-flow\"], :scope > main",
@@ -114,6 +125,23 @@
     },
     {
       "id": "subnav.columns",
+      "profiles": [
+        {
+          "name": "compact-strip",
+          "fill": true,
+          "selector": "[data-subnav-narrow]",
+          "when": {
+            "property": "--ui-subnav-layout",
+            "value": "strip"
+          },
+          "reason": "SubNavLayout narrow replaces both side rails with a scrolling navigation strip above its full-width content below the owner container breakpoint.",
+          "children": ":scope > [data-subnav-strip], :scope > [data-subnav-content]",
+          "direction": "rows",
+          "min": 2,
+          "max": 2,
+          "hiddenChildren": ":scope > aside"
+        }
+      ],
       "kind": "columns",
       "selector": "$nestedColumns",
       "children": ":scope > aside, :scope > [data-subnav-content]",
@@ -378,6 +406,26 @@
     },
     {
       "id": "table.geometry",
+      "profiles": [
+        {
+          "name": "cards",
+          "selector": "[data-ui-table-cards]",
+          "when": {
+            "property": "--ui-table-layout",
+            "value": "cards"
+          },
+          "reason": "DataTable NARROW_ROW/STACK_ROW move the 12px inset onto each block row; label/value flex cells have 0px horizontal and 4px vertical padding. Their height follows content, with the ordinary type floor retained.",
+          "rowHeight": {
+            "min": 44
+          },
+          "rowInset": {
+            "token": "--ui-table-inset"
+          },
+          "rowBlockInset": 8,
+          "cellInset": 0,
+          "cellBlockInset": 4
+        }
+      ],
       "kind": "table",
       "selector": "$tables",
       "rowHeight": {
@@ -1337,6 +1385,26 @@
     },
     {
       "id": "table.document-geometry",
+      "profiles": [
+        {
+          "name": "cards",
+          "selector": "[data-ui-table-cards]",
+          "when": {
+            "property": "--ui-table-layout",
+            "value": "cards"
+          },
+          "reason": "DataTable NARROW_ROW/STACK_ROW move the 12px inset onto each block row; label/value flex cells have 0px horizontal and 4px vertical padding. Their height follows content, with the ordinary type floor retained.",
+          "rowHeight": {
+            "min": 44
+          },
+          "rowInset": {
+            "token": "--ui-table-inset"
+          },
+          "rowBlockInset": 8,
+          "cellInset": 0,
+          "cellBlockInset": 4
+        }
+      ],
       "kind": "table",
       "selector": "table[data-ui-table-rows=\"content\"]",
       "rowHeight": {

@@ -11,6 +11,7 @@ import { parseAuditArgs } from './cli-options.mjs';
 import { measureDOM } from './measure.mjs';
 import { runAudit, summarize, validateContract, consistencyOutliers, loadContract, measureCase, isDeepRule, withRuleOptions } from './run.mjs';
 import { probes } from './probes.mjs';
+import { responsiveProfileFixtures } from './responsive-profile-fixtures.mjs';
 const project = process.argv[process.argv.indexOf('--project') + 1];
 if (!project || !process.argv.includes('--project')) throw new Error('Usage: node self-test.mjs --project <package with @playwright/test>');
 const { chromium } = createRequire(path.resolve(project, 'package.json'))('@playwright/test');
@@ -24,6 +25,8 @@ assert.ok(fullContract.rules.filter(r => DEEP_KINDS.has(r.kind)).length >= DEEP_
 assert.ok(fullContract.rules.every(r => (r.deep === true) === DEEP_KINDS.has(r.kind)), 'exactly the deep-audit rules carry deep: true');
 assert.deepEqual(loadContract().rules.length, fullContract.rules.length, 'loadContract reads the shipped contract');
 assert.throws(() => validateContract({ version: 1, rules: [{ id: 'x', kind: 'count', deep: 'yes' }] }), /deep must be boolean/);
+assert.throws(() => validateContract({ version: 1, rules: [{ id: 'x', kind: 'columns', profiles: [{ name: 'compact', selector: '.compact' }] }] }), /Undocumented layout profile/);
+assert.throws(() => validateContract({ version: 1, rules: [{ id: 'x', kind: 'table', profiles: [{ name: 'cards', selector: '.cards', reason: 'Card layout', when: {} }] }] }), /Invalid layout profile condition/);
 const selectors = {
   graphDetailLabels: '[data-ui-text="graph-detail"]', graphMetadataLabels: '[data-ui-text="graph-metadata"]', activePersonCaptions: '[data-ui-text="active-person-caption"]',
   codeLabels: 'code, input[data-ui-text="code"]', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
@@ -51,6 +54,8 @@ const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ui-dom-audit-tests-'));
 const legacyContractPath = path.join(temp, 'legacy.contract.json'); fs.writeFileSync(legacyContractPath, JSON.stringify(contract));
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await responsiveProfileFixtures(page, fullContract);
+  console.log('PASS responsive card/strip/menu profiles and painted separators: valid variants, broken variants and neighboring ordinary controls');
   const payload = { contract, selectors, required: ['$header', '$footer', '$tables', '$composers'], composerExpectation: { mode: 'required' } };
   const measure = () => page.evaluate(measureDOM, payload);
   await page.setContent(html);
@@ -1629,6 +1634,7 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     const tuned = withRuleOptions(fullContract, { 'page.vertical-budget': { maxScrollRatio: 3 } });
     await passes(budget, 'an adapter may raise the length budget', tuned);
     assert.throws(() => withRuleOptions(fullContract, { 'page.vertical-budget': { selector: 'body' } }), /only a declared threshold/);
+    assert.throws(() => withRuleOptions(fullContract, { 'table.geometry': { profiles: [] } }), /only a declared threshold/);
     assert.throws(() => withRuleOptions(fullContract, { 'page.vertical-budget': { maxStacked: 9 } }), /only a declared threshold/);
     assert.throws(() => withRuleOptions(fullContract, { 'page.nope': { maxScrollRatio: 9 } }), /unknown rule/);
 
