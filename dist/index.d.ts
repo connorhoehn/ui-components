@@ -1645,7 +1645,7 @@ declare type AssertTrue<T extends true> = T;
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit, aspect, statusPlacement, actionsLayout, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -1691,6 +1691,27 @@ export declare interface AssetGalleryProps {
      * `subject.frame`). The thumbnail carries `data-gallery-fit`.
      */
     fit?: 'cover' | 'contain';
+    /**
+     * An image tile's frame (G150-5): `landscape` (4:3, default), `portrait`
+     * (3:4: a standing character shown whole and large) or `square`. The
+     * thumbnail carries `data-gallery-aspect`. Since 2.520.0.
+     */
+    aspect?: 'landscape' | 'portrait' | 'square';
+    /**
+     * Where an image tile's `status` is drawn (G150-4): `overlay` (default, a
+     * pill over the thumbnail's top-left corner) or `caption`, a line of its own
+     * under the title and subtitle (a dot and the whole label), where it covers
+     * nothing; avatars always draw it as a caption. Since 2.520.0.
+     */
+    statusPlacement?: 'overlay' | 'caption';
+    /**
+     * The `actions` row's layout (G150-3): `wrap` (default) wraps, right-aligned;
+     * `row` keeps every card's row one shape: one line, the first action fills
+     * the row's width, the rest (More) keep their own width at its end, and a
+     * label never wraps (the host passes a label that fits: a card's short form).
+     * Since 2.520.0.
+     */
+    actionsLayout?: 'wrap' | 'row';
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
@@ -1762,10 +1783,32 @@ export declare interface AudioLevelMeterProps {
     'data-testid'?: string;
 }
 
-export declare function AudioPlayer({ src, autoPlay, onFirstPlay, onEnded, durationHint, size, className, 'data-testid': testId }: AudioPlayerProps): JSX.Element;
+export declare function AudioPlayer(props: AudioPlayerProps): JSX.Element;
+
+/** The shared player an `AudioPlayer` follows instead of owning an `<audio>`. */
+export declare interface AudioPlayerController {
+    /** This row's source is the one playing. */
+    playing: boolean;
+    /** Where the shared player is in this source (0 when it holds another). */
+    time: number;
+    /** The source's length once known; `durationHint` until then. */
+    duration?: number;
+    /** Play or pause (a row that is not the current source starts it). */
+    onToggle: () => void;
+    onSeek: (seconds: number) => void;
+}
 
 export declare interface AudioPlayerProps {
-    src: string;
+    /** The file to play. Not used with `controller`. */
+    src?: string;
+    /**
+     * Follow a shared player instead of owning one (G152-1): no `<audio>` is
+     * rendered; play, pause and seek go to `controller`, and the time, length
+     * and playing state come from it. `autoPlay` and `onEnded` belong to the
+     * shared player then; `onFirstPlay` still fires the first time `playing`
+     * turns true. Since 2.520.0.
+     */
+    controller?: AudioPlayerController;
     autoPlay?: boolean;
     /** Fires once, the first time playback starts — "mark as listened". */
     onFirstPlay?: () => void;
@@ -1996,7 +2039,7 @@ export declare interface AutoplayGateProps extends StreamVideoProps {
     wrapperClassName?: string;
 }
 
-export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
+export declare function Avatar({ name, size, initials: initialsProp, color, src, imagePosition, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
 
 /**
  * Fills for name-derived avatars. Each one carries the white initials at
@@ -2015,6 +2058,8 @@ export declare interface AvatarGroupItem {
     initials?: string;
     color?: string;
     src?: string;
+    /** The image's focal point, as `Avatar imagePosition`. Since 2.520.0 (G150-1). */
+    imagePosition?: string;
 }
 
 export declare interface AvatarGroupProps {
@@ -2049,6 +2094,13 @@ export declare interface AvatarProps {
     color?: string;
     /** Optional profile image URL. Falls back to initials if absent or load fails. */
     src?: string;
+    /**
+     * Where the image sits in the circle (CSS `object-position`, e.g.
+     * `"50% 15%"` or `"top"`). Default: centred. A full-length character
+     * picture centred in a circle loses the face; `"50% 12%"` keeps it.
+     * Since 2.520.0 (G150-1).
+     */
+    imagePosition?: string;
     /**
      * An arbitrary node in the circle instead of initials — an icon, usually.
      *
@@ -7131,6 +7183,14 @@ export declare interface ContextComposerProps {
     foldingAbove?: ReactNode;
     /** Inside the card, its first section (`RichChatComposer header`): a prompt deck. Forces the full card. Since 2.446.0. */
     header?: ReactNode;
+    /**
+     * The `header` is one line that also belongs over the idle row (a prompt
+     * deck folded to "1 question waiting · … Show"): it stays drawn, and no
+     * longer forces the full card, so a composer at rest with a question
+     * waiting is its idle row and that line, not the whole card. Default
+     * false (a header forces the full card). Since 2.520.1 (G174-3).
+     */
+    headerFolds?: boolean;
     /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
     strip?: ReactNode;
     /** A task in flight, as the `TaskStrip`. */
@@ -11104,6 +11164,9 @@ export declare function formatCallElapsed(ms: number): string;
 /** Formats an ISO timestamp string to HH:MM local time. */
 export declare function formatChatTime(isoString: string): string;
 
+/** "0:06" for 6 seconds; "1:02" past a minute. */
+export declare function formatClipTime(seconds: number): string;
+
 export declare function formatCompactAge(value: string | number | Date | null | undefined, now?: number): string | undefined;
 
 /** "12:04" / "1:02:11" — a duration people read, not a millisecond count. */
@@ -11429,7 +11492,7 @@ export declare interface FramePageSpec extends SpecHeader {
     footer?: LeafList;
 }
 
-export declare function FrameStrip({ frames, label, fps, index: indexProp, defaultIndex, onIndexChange, autoPlay, loop, contactSheet, aspect, thumbnails, className, 'data-testid': testId, }: FrameStripProps): JSX.Element | null;
+export declare function FrameStrip({ frames, label, fps, index: indexProp, defaultIndex, onIndexChange, autoPlay, loop, contactSheet, switchLabel, aspect, thumbnails, className, 'data-testid': testId, }: FrameStripProps): JSX.Element | null;
 
 export declare type FrameStripAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
@@ -11460,6 +11523,12 @@ export declare interface FrameStripProps {
         label?: string;
         alt?: string;
     };
+    /**
+     * Accessible name of that switch. Default "<label>: frames or <sheet label>"
+     * (e.g. "Motion: frames or contact sheet"), so it never collides with
+     * another "View" group on the same page. Since 2.520.0 (G150-6; was "View").
+     */
+    switchLabel?: string;
     /** The frame's aspect — same classes as ImageCompare. Default `square`. */
     aspect?: FrameStripAspect;
     /** A scrolling row of frame buttons under the player. Default true. */
@@ -11502,6 +11571,13 @@ export declare interface GalleryAsset {
     id: string;
     title: string;
     src?: string;
+    /**
+     * Where the picture sits in its tile (CSS `object-position`): the Avatar's
+     * `imagePosition` in `avatars`, the cropped img's in `images` with
+     * `fit="cover"`. A full-length character wants `"50% 12%"` (its face).
+     * Since 2.520.0 (G150-1).
+     */
+    imagePosition?: string;
     subtitle?: string;
     /**
      * Shown on the card: StatusPill props (rendered at md, 12px: the sm size is
@@ -13668,7 +13744,7 @@ export declare interface InlinePlaceholderProps {
 /** @see SurfaceTone — which colour family the placeholder paints in. */
 export declare type InlinePlaceholderTone = SurfaceTone;
 
-export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, focusOnOpen, escapeScope, trapFocus, children, }: InlinePopoverProps): ReactPortal | null;
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, focusOnOpen, escapeScope, trapFocus, panelRole, children, }: InlinePopoverProps): ReactPortal | null;
 
 export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
@@ -13730,6 +13806,16 @@ export declare interface InlinePopoverProps {
     escapeScope?: 'window' | 'inside';
     /** Keep Tab / Shift+Tab cycling inside the panel. Default true. Since 2.519.0. */
     trapFocus?: boolean;
+    /**
+     * The panel's own role. `dialog` (default): a `role="dialog"` panel named by
+     * `aria-label` / `aria-labelledby`, marked `data-ui-dialog={kind}`. `none`:
+     * a plain positioned container with no role and no `data-ui-dialog`, for
+     * content that carries its own role (a `role="menu"`): a menu is not a
+     * dialog, and a no-modal check must not count an open menu as one (G150-7).
+     * Focus, Escape, Tab cycling and outside-click dismissal are the same in
+     * both. Every panel carries `data-ui-popover={kind}`. Since 2.520.0.
+     */
+    panelRole?: 'dialog' | 'none';
     children: ReactNode;
 }
 
@@ -13913,6 +13999,13 @@ export declare function isKnownViewerCount(count: number | null | undefined): co
  * problem for every message under it.
  */
 export declare function isNewDay(current: string, previous?: string): boolean;
+
+/**
+ * Show one part alone: every mesh not under `node` (by its own or an
+ * ancestor's name) is hidden; `node = null` shows them all again. Returns the
+ * number of meshes hidden, or -1 when the scene is unreachable.
+ */
+export declare function isolateModelPart(el: unknown, node: string | null): number;
 
 export declare function isPeopleGraphData(data: GraphPanelData): data is GraphPanelPeopleData;
 
@@ -15142,7 +15235,7 @@ export declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavail
  * Source keys discard the old decoder and its events before starting another.
  * Uses the same Stack/Inline footer composition as the huddle shell, with the
  * shared button, icon, form and typography primitives throughout. */
-export declare function MediaPlaybackDock({ source, autoPlay, onClose, onPrevious, onNext, status, emptyLabel, className, 'data-testid': testId, }: MediaPlaybackDockProps): JSX.Element;
+export declare function MediaPlaybackDock({ source, autoPlay, onClose, onPrevious, onNext, status, emptyLabel, onStateChange, controlRef, className, 'data-testid': testId, }: MediaPlaybackDockProps): JSX.Element;
 
 export declare interface MediaPlaybackDockProps {
     source?: PlaybackSource | null;
@@ -15154,8 +15247,35 @@ export declare interface MediaPlaybackDockProps {
     /** Connection/freshness context. Kept separate from playback announcements. */
     status?: ReactNode;
     emptyLabel?: string;
+    /**
+     * The playback as it changes: which source, playing or not, where and how
+     * long (G152-1). With `controlRef`, what lets other views follow and drive
+     * the one player; `useMediaPlayback` wires both. Since 2.520.0.
+     */
+    onStateChange?: (state: MediaPlaybackState) => void;
+    /** Filled with play, pause, toggle and seek for the current source. Since 2.520.0. */
+    controlRef?: RefObject<MediaPlaybackHandle | null>;
     className?: string;
     'data-testid'?: string;
+}
+
+/** The dock's transport, for other views to drive it (`controlRef`). */
+export declare interface MediaPlaybackHandle {
+    play(): void;
+    pause(): void;
+    toggle(): void;
+    seek(seconds: number): void;
+}
+
+/** What the dock is doing, reported through `onStateChange`. */
+export declare interface MediaPlaybackState {
+    /** The current source's id, or null with nothing loaded. */
+    sourceId: string | null;
+    playing: boolean;
+    /** Seconds into the current source. */
+    time: number;
+    /** The current source's length in seconds, 0 until known. */
+    duration: number;
 }
 
 export declare function MediaPrecheckRow({ micOn, cameraOn, showCamera, permission, onToggleMic, onToggleCamera, onOpenSettings, testIdPrefix, settingsTestId, className, }: MediaPrecheckRowProps): JSX.Element;
@@ -15907,6 +16027,35 @@ export declare const MODEL_CHANNEL_LABEL: Record<ModelChannel, string>;
 
 export declare const MODEL_CHANNEL_ORDER: readonly ModelChannel[];
 
+/** model-viewer's public animation API — the part `ModelAnimationBar` drives. */
+export declare interface ModelAnimationLike {
+    availableAnimations?: readonly string[];
+    animationName?: string | null;
+    currentTime: number;
+    timeScale: number;
+    duration: number;
+    play(options?: {
+        repetitions?: number;
+        pingpong?: boolean;
+    }): void;
+    pause(): void;
+}
+
+export declare interface ModelAnimationOptions {
+    /** A person's name per clip (`{ 'CAST:tatter/walk': 'Walk' }`); the clip's own name otherwise. */
+    labels?: Readonly<Record<string, string>>;
+    /** A second line per clip in the clip menu (`"48 frames · 2.0 s"`). */
+    descriptions?: Readonly<Record<string, string>>;
+    defaultClip?: string;
+    /** Default true; never under prefers-reduced-motion. */
+    autoPlay?: boolean;
+    /** Frames per second the "frame N of M" readout counts in. Default 24. */
+    fps?: number;
+}
+
+/** The clips a loaded `<model-viewer>` can play (its `availableAnimations`), or none. */
+export declare function modelAnimationsOf(el: unknown): string[];
+
 export declare type ModelChannel = 'baseColor' | 'normal' | 'roughness' | 'metallic' | 'emissive';
 
 export declare interface ModelChannelMap {
@@ -16004,7 +16153,7 @@ export declare interface ModelVersion {
     current?: boolean;
 }
 
-export declare function ModelViewer({ src, poster, alt, label, reference, aspect, autoRotate, cameraControls, environment, channels, channel: channelProp, defaultChannel, onChannelChange, parts, selectedPart: selectedProp, onSelectPart, wireframe: wireframeProp, onWireframeChange, versions, onOpenVersion, onSnapshot, onLoad, onError, tone, frameless, className, 'data-testid': testId, }: ModelViewerProps): JSX.Element;
+export declare function ModelViewer({ src, poster, alt, label, reference, aspect, fit, cameraOrbit, autoRotate, cameraControls, environment, channels, channel: channelProp, defaultChannel, onChannelChange, parts, selectedPart: selectedProp, onSelectPart, isolatePart, animations, wireframe: wireframeProp, onWireframeChange, versions, onOpenVersion, onSnapshot, onLoad, onError, tone, frameless, className, 'data-testid': testId, }: ModelViewerProps): JSX.Element;
 
 export declare type ModelViewerAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
@@ -16038,6 +16187,22 @@ export declare interface ModelViewerProps {
     };
     /** The frame's aspect — same classes as ImageCompare. Default `square`. */
     aspect?: ModelViewerAspect;
+    /**
+     * How the frame gets its height. `aspect` (default): from its width, by
+     * `aspect`. `fill`: the viewer is as tall as the box its host gives it
+     * (`h-full`), the controls under the view keep their own height and the
+     * frame takes what is left, so the view and its controls are one unit
+     * that ends where the host's box ends and nothing sits below the fold.
+     * The host's box needs a height of its own (a page template's body, a
+     * `flex-1 min-h-0` cell); `aspect` is ignored. Since 2.520.1 (G174-1).
+     */
+    fit?: 'aspect' | 'fill';
+    /**
+     * model-viewer `camera-orbit`: where the camera opens (`"0deg 75deg auto"`
+     * is the model's front, its +Z; `"180deg 75deg auto"` its back). Default:
+     * model-viewer's own. Since 2.520.1 (G174-2).
+     */
+    cameraOrbit?: string;
     /** Turntable. Default true; always off under prefers-reduced-motion. */
     autoRotate?: boolean;
     /** Orbit with the pointer. Default true. */
@@ -16056,6 +16221,21 @@ export declare interface ModelViewerProps {
     /** Controlled selected part (`null` = none). */
     selectedPart?: string | null;
     onSelectPart?: (id: string | null) => void;
+    /**
+     * The selected part is shown alone: every other part's meshes are hidden
+     * until it is pressed again (`isolateModelPart`). Default false (the
+     * selected part is only highlighted). Since 2.520.0 (G151-2).
+     */
+    isolatePart?: boolean;
+    /**
+     * The model's own glTF animations, played under the view: a clip menu
+     * (two or more), play and pause, a frame back or on, the speed, and a
+     * scrubber read as "Frame N of M". `labels` names a
+     * clip for a person; `defaultClip` is the one it opens on (default the
+     * first); `autoPlay` (default true, never under prefers-reduced-motion).
+     * The turntable stops while a clip is shown. Since 2.520.0 (G151-1).
+     */
+    animations?: boolean | ModelAnimationOptions;
     /** Wireframe. Controlled when `onWireframeChange` is passed, else the initial value. */
     wireframe?: boolean;
     onWireframeChange?: (on: boolean) => void;
@@ -23457,6 +23637,11 @@ export declare interface SliderProps {
     /** Accessible name. Required when no visible label is wired up. */
     'aria-label'?: string;
     /**
+     * What the value means to a listener ("Frame 12 of 48") when the raw number
+     * does not say it. Since 2.520.0.
+     */
+    'aria-valuetext'?: string;
+    /**
      * Show the current value beside the track. Pass a formatter to control how
      * it reads (units, decimal places); `true` uses the raw number.
      * @default true
@@ -27716,6 +27901,30 @@ declare interface UseActivityBusReturn {
  export declare function useMediaDevices(): MediaDevices_2;
 
  /**
+  * One playback for a page (G152-1): the `MediaPlaybackDock` owns the only
+  * media element, and every row's `AudioPlayer` follows it through
+  * `controllerFor(source)`. A row's Play loads its source into the dock and
+  * plays it; a row's scrubber seeks the dock (loading that source first when
+  * another is current). Spread `dockProps` on the dock. Since 2.520.0.
+  */
+ export declare function useMediaPlayback(initial?: PlaybackSource | null): {
+     source: PlaybackSource | null;
+     state: MediaPlaybackState;
+     play: (next: PlaybackSource) => void;
+     load: (next: PlaybackSource) => void;
+     close: () => void;
+     controllerFor: (row: PlaybackSource) => AudioPlayerController;
+     controlRef: RefObject<MediaPlaybackHandle | null>;
+     dockProps: {
+         source: PlaybackSource | null;
+         autoPlay: boolean;
+         onStateChange: (next: MediaPlaybackState) => void;
+         controlRef: RefObject<MediaPlaybackHandle | null>;
+         onClose: () => void;
+     };
+ };
+
+ /**
   * Aggregate mention-able users from awareness (online) + user directory (offline) + groups.
   * Online users appear first, then offline users, then groups.
   */
@@ -28553,6 +28762,13 @@ declare interface UseActivityBusReturn {
   /** A camera body: start a video call. Distinct from video/MediaIcons' VideoIcon, which is a call CONTROL. */
   export declare function VideoCallIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+  /** A named span of the clip, from `start` (seconds) to the next chapter's start. */
+  export declare interface VideoChapter {
+      start: number;
+      title: string;
+      id?: string;
+  }
+
   /**
    * Static N-way grid: 1 / 2×2 / 3×3 / 4×4 column count based on participant
    * count. Tiles do NOT reflow on speaker change — speaking is indicated via
@@ -28575,6 +28791,14 @@ declare interface UseActivityBusReturn {
   }
 
   export declare function VideoIcon({ size, ...rest }: IconProps): JSX.Element;
+
+  /** A point on the clip worth a look (a review finding, a note), at `at` seconds. */
+  export declare interface VideoMarker {
+      at: number;
+      label: string;
+      tone?: 'info' | 'warning' | 'danger';
+      id?: string;
+  }
 
   export declare function VideoOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -28614,7 +28838,10 @@ declare interface UseActivityBusReturn {
       videoElement?: ReactNode;
   }
 
-  export declare function VideoPlayer({ src, stream, autoPlay, muted, loop, controls, poster, phase: controlledPhase, className, style, onPhaseChange, onTimeUpdate, }: VideoPlayerProps): JSX.Element;
+  /**
+   * A file or live-stream player with a phase overlay; with `chapters` and `markers` it lists a cut's shots and marked moments under the clip and seeks to them.
+   */
+  export declare function VideoPlayer({ src, stream, autoPlay, muted, loop, controls, poster, phase: controlledPhase, className, style, onPhaseChange, onTimeUpdate, chapters, markers, seekTo, onChapterChange, }: VideoPlayerProps): JSX.Element;
 
   export declare function VideoPlayerModal({ onClose, sources, title, subtitle, autoPlay, muted, hideDownload, header, footer, className, }: VideoPlayerModalProps): JSX.Element;
 
@@ -28659,6 +28886,23 @@ declare interface UseActivityBusReturn {
       style?: CSSProperties;
       onPhaseChange?: (phase: PlayerPhase) => void;
       onTimeUpdate?: (currentTime: number, duration: number) => void;
+      /**
+       * Chapters drawn under the clip as a list a viewer can jump through (since
+       * 2.520.0). The playing chapter is marked `aria-current`. File sources only.
+       */
+      chapters?: VideoChapter[];
+      /** Points on the clip (review findings) drawn as ticks on a track and as jump buttons (since 2.520.0). */
+      markers?: VideoMarker[];
+      /**
+       * Seek to this many seconds. Change `nonce` to seek to the same time again.
+       * The player seeks once metadata is in. Since 2.520.0.
+       */
+      seekTo?: {
+          seconds: number;
+          nonce?: number;
+      } | null;
+      /** The chapter that started playing (after a seek or as the clip plays). Since 2.520.0. */
+      onChapterChange?: (chapter: VideoChapter, index: number) => void;
   }
 
   export declare interface VideoPlayerSource {

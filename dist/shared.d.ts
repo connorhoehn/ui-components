@@ -584,7 +584,7 @@ export declare function ArtifactTile({ name, type, url }: {
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit, aspect, statusPlacement, actionsLayout, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -630,6 +630,27 @@ export declare interface AssetGalleryProps {
      * `subject.frame`). The thumbnail carries `data-gallery-fit`.
      */
     fit?: 'cover' | 'contain';
+    /**
+     * An image tile's frame (G150-5): `landscape` (4:3, default), `portrait`
+     * (3:4: a standing character shown whole and large) or `square`. The
+     * thumbnail carries `data-gallery-aspect`. Since 2.520.0.
+     */
+    aspect?: 'landscape' | 'portrait' | 'square';
+    /**
+     * Where an image tile's `status` is drawn (G150-4): `overlay` (default, a
+     * pill over the thumbnail's top-left corner) or `caption`, a line of its own
+     * under the title and subtitle (a dot and the whole label), where it covers
+     * nothing; avatars always draw it as a caption. Since 2.520.0.
+     */
+    statusPlacement?: 'overlay' | 'caption';
+    /**
+     * The `actions` row's layout (G150-3): `wrap` (default) wraps, right-aligned;
+     * `row` keeps every card's row one shape: one line, the first action fills
+     * the row's width, the rest (More) keep their own width at its end, and a
+     * label never wraps (the host passes a label that fits: a card's short form).
+     * Since 2.520.0.
+     */
+    actionsLayout?: 'wrap' | 'row';
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
@@ -656,7 +677,7 @@ export declare interface AttachToggleProps {
     'data-testid'?: string;
 }
 
-export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
+export declare function Avatar({ name, size, initials: initialsProp, color, src, imagePosition, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
 
 /**
  * Fills for name-derived avatars. Each one carries the white initials at
@@ -675,6 +696,8 @@ export declare interface AvatarGroupItem {
     initials?: string;
     color?: string;
     src?: string;
+    /** The image's focal point, as `Avatar imagePosition`. Since 2.520.0 (G150-1). */
+    imagePosition?: string;
 }
 
 export declare interface AvatarGroupProps {
@@ -709,6 +732,13 @@ export declare interface AvatarProps {
     color?: string;
     /** Optional profile image URL. Falls back to initials if absent or load fails. */
     src?: string;
+    /**
+     * Where the image sits in the circle (CSS `object-position`, e.g.
+     * `"50% 15%"` or `"top"`). Default: centred. A full-length character
+     * picture centred in a circle loses the face; `"50% 12%"` keeps it.
+     * Since 2.520.0 (G150-1).
+     */
+    imagePosition?: string;
     /**
      * An arbitrary node in the circle instead of initials — an icon, usually.
      *
@@ -4903,7 +4933,7 @@ export declare interface FramePageSpec extends SpecHeader {
     footer?: LeafList;
 }
 
-export declare function FrameStrip({ frames, label, fps, index: indexProp, defaultIndex, onIndexChange, autoPlay, loop, contactSheet, aspect, thumbnails, className, 'data-testid': testId, }: FrameStripProps): JSX.Element | null;
+export declare function FrameStrip({ frames, label, fps, index: indexProp, defaultIndex, onIndexChange, autoPlay, loop, contactSheet, switchLabel, aspect, thumbnails, className, 'data-testid': testId, }: FrameStripProps): JSX.Element | null;
 
 export declare type FrameStripAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
@@ -4934,6 +4964,12 @@ export declare interface FrameStripProps {
         label?: string;
         alt?: string;
     };
+    /**
+     * Accessible name of that switch. Default "<label>: frames or <sheet label>"
+     * (e.g. "Motion: frames or contact sheet"), so it never collides with
+     * another "View" group on the same page. Since 2.520.0 (G150-6; was "View").
+     */
+    switchLabel?: string;
     /** The frame's aspect — same classes as ImageCompare. Default `square`. */
     aspect?: FrameStripAspect;
     /** A scrolling row of frame buttons under the player. Default true. */
@@ -4961,6 +4997,13 @@ export declare interface GalleryAsset {
     id: string;
     title: string;
     src?: string;
+    /**
+     * Where the picture sits in its tile (CSS `object-position`): the Avatar's
+     * `imagePosition` in `avatars`, the cropped img's in `images` with
+     * `fit="cover"`. A full-length character wants `"50% 12%"` (its face).
+     * Since 2.520.0 (G150-1).
+     */
+    imagePosition?: string;
     subtitle?: string;
     /**
      * Shown on the card: StatusPill props (rendered at md, 12px: the sm size is
@@ -5765,7 +5808,7 @@ export declare interface InlinePlaceholderProps {
 /** @see SurfaceTone — which colour family the placeholder paints in. */
 export declare type InlinePlaceholderTone = SurfaceTone;
 
-export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, focusOnOpen, escapeScope, trapFocus, children, }: InlinePopoverProps): ReactPortal | null;
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, avoidKeepouts, focusOnOpen, escapeScope, trapFocus, panelRole, children, }: InlinePopoverProps): ReactPortal | null;
 
 export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right' | 'top-start' | 'top-end' | 'sheet';
 
@@ -5827,6 +5870,16 @@ export declare interface InlinePopoverProps {
     escapeScope?: 'window' | 'inside';
     /** Keep Tab / Shift+Tab cycling inside the panel. Default true. Since 2.519.0. */
     trapFocus?: boolean;
+    /**
+     * The panel's own role. `dialog` (default): a `role="dialog"` panel named by
+     * `aria-label` / `aria-labelledby`, marked `data-ui-dialog={kind}`. `none`:
+     * a plain positioned container with no role and no `data-ui-dialog`, for
+     * content that carries its own role (a `role="menu"`): a menu is not a
+     * dialog, and a no-modal check must not count an open menu as one (G150-7).
+     * Focus, Escape, Tab cycling and outside-click dismissal are the same in
+     * both. Every panel carries `data-ui-popover={kind}`. Since 2.520.0.
+     */
+    panelRole?: 'dialog' | 'none';
     children: ReactNode;
 }
 
@@ -5983,6 +6036,13 @@ export declare interface InviteToCallDialogProps {
 
 /** True for a kind the library renders itself. */
 export declare function isBuiltinLeafKind(kind: string): kind is BuiltinLeafKind;
+
+/**
+ * Show one part alone: every mesh not under `node` (by its own or an
+ * ancestor's name) is hidden; `node = null` shows them all again. Returns the
+ * number of meshes hidden, or -1 when the scene is unreachable.
+ */
+export declare function isolateModelPart(el: unknown, node: string | null): number;
 
 export declare function isRichHeaderContent(kind: HeaderContentKind | undefined): boolean;
 
@@ -6788,6 +6848,35 @@ export declare const MODEL_CHANNEL_LABEL: Record<ModelChannel, string>;
 
 export declare const MODEL_CHANNEL_ORDER: readonly ModelChannel[];
 
+/** model-viewer's public animation API — the part `ModelAnimationBar` drives. */
+export declare interface ModelAnimationLike {
+    availableAnimations?: readonly string[];
+    animationName?: string | null;
+    currentTime: number;
+    timeScale: number;
+    duration: number;
+    play(options?: {
+        repetitions?: number;
+        pingpong?: boolean;
+    }): void;
+    pause(): void;
+}
+
+export declare interface ModelAnimationOptions {
+    /** A person's name per clip (`{ 'CAST:tatter/walk': 'Walk' }`); the clip's own name otherwise. */
+    labels?: Readonly<Record<string, string>>;
+    /** A second line per clip in the clip menu (`"48 frames · 2.0 s"`). */
+    descriptions?: Readonly<Record<string, string>>;
+    defaultClip?: string;
+    /** Default true; never under prefers-reduced-motion. */
+    autoPlay?: boolean;
+    /** Frames per second the "frame N of M" readout counts in. Default 24. */
+    fps?: number;
+}
+
+/** The clips a loaded `<model-viewer>` can play (its `availableAnimations`), or none. */
+export declare function modelAnimationsOf(el: unknown): string[];
+
 export declare type ModelChannel = 'baseColor' | 'normal' | 'roughness' | 'metallic' | 'emissive';
 
 export declare interface ModelChannelMap {
@@ -6871,7 +6960,7 @@ export declare interface ModelVersion {
     current?: boolean;
 }
 
-export declare function ModelViewer({ src, poster, alt, label, reference, aspect, autoRotate, cameraControls, environment, channels, channel: channelProp, defaultChannel, onChannelChange, parts, selectedPart: selectedProp, onSelectPart, wireframe: wireframeProp, onWireframeChange, versions, onOpenVersion, onSnapshot, onLoad, onError, tone, frameless, className, 'data-testid': testId, }: ModelViewerProps): JSX.Element;
+export declare function ModelViewer({ src, poster, alt, label, reference, aspect, fit, cameraOrbit, autoRotate, cameraControls, environment, channels, channel: channelProp, defaultChannel, onChannelChange, parts, selectedPart: selectedProp, onSelectPart, isolatePart, animations, wireframe: wireframeProp, onWireframeChange, versions, onOpenVersion, onSnapshot, onLoad, onError, tone, frameless, className, 'data-testid': testId, }: ModelViewerProps): JSX.Element;
 
 export declare type ModelViewerAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
@@ -6905,6 +6994,22 @@ export declare interface ModelViewerProps {
     };
     /** The frame's aspect — same classes as ImageCompare. Default `square`. */
     aspect?: ModelViewerAspect;
+    /**
+     * How the frame gets its height. `aspect` (default): from its width, by
+     * `aspect`. `fill`: the viewer is as tall as the box its host gives it
+     * (`h-full`), the controls under the view keep their own height and the
+     * frame takes what is left, so the view and its controls are one unit
+     * that ends where the host's box ends and nothing sits below the fold.
+     * The host's box needs a height of its own (a page template's body, a
+     * `flex-1 min-h-0` cell); `aspect` is ignored. Since 2.520.1 (G174-1).
+     */
+    fit?: 'aspect' | 'fill';
+    /**
+     * model-viewer `camera-orbit`: where the camera opens (`"0deg 75deg auto"`
+     * is the model's front, its +Z; `"180deg 75deg auto"` its back). Default:
+     * model-viewer's own. Since 2.520.1 (G174-2).
+     */
+    cameraOrbit?: string;
     /** Turntable. Default true; always off under prefers-reduced-motion. */
     autoRotate?: boolean;
     /** Orbit with the pointer. Default true. */
@@ -6923,6 +7028,21 @@ export declare interface ModelViewerProps {
     /** Controlled selected part (`null` = none). */
     selectedPart?: string | null;
     onSelectPart?: (id: string | null) => void;
+    /**
+     * The selected part is shown alone: every other part's meshes are hidden
+     * until it is pressed again (`isolateModelPart`). Default false (the
+     * selected part is only highlighted). Since 2.520.0 (G151-2).
+     */
+    isolatePart?: boolean;
+    /**
+     * The model's own glTF animations, played under the view: a clip menu
+     * (two or more), play and pause, a frame back or on, the speed, and a
+     * scrubber read as "Frame N of M". `labels` names a
+     * clip for a person; `defaultClip` is the one it opens on (default the
+     * first); `autoPlay` (default true, never under prefers-reduced-motion).
+     * The turntable stops while a clip is shown. Since 2.520.0 (G151-1).
+     */
+    animations?: boolean | ModelAnimationOptions;
     /** Wireframe. Controlled when `onWireframeChange` is passed, else the initial value. */
     wireframe?: boolean;
     onWireframeChange?: (on: boolean) => void;
@@ -10274,6 +10394,11 @@ export declare interface SliderProps {
     step?: number;
     /** Accessible name. Required when no visible label is wired up. */
     'aria-label'?: string;
+    /**
+     * What the value means to a listener ("Frame 12 of 48") when the raw number
+     * does not say it. Since 2.520.0.
+     */
+    'aria-valuetext'?: string;
     /**
      * Show the current value beside the track. Pass a formatter to control how
      * it reads (units, decimal places); `true` uses the raw number.

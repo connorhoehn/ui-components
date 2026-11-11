@@ -5,13 +5,13 @@ import { n as o } from "../Text-XdCzxWMv.js";
 import { t as s } from "../Select-CDxAVVnW.js";
 import { t as c } from "../FormField-BDZIVA7n.js";
 import { t as l } from "../Textarea-Cf4WFXAs.js";
-import { t as u } from "../DecisionPath-BItsvKd5.js";
-import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-BFTLY93R.js";
+import { t as u } from "../DecisionPath-EmucEGVS.js";
+import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-CkZXGTCj.js";
 import { a as ee, i as v, n as y, r as b, t as x } from "../composerContext-BLn1-Nao.js";
-import { a as S, i as C, n as te, o as ne, r as w, s as T, t as re } from "../ConversationInputs-CCs-hXjV.js";
-import { a as E, c as D, d as O, i as k, l as A, n as ie, o as j, r as M, s as N, t as ae, u as oe } from "../RichChatComposer-ByfvlaEE.js";
-import { t as se } from "../ContextComposer-bwnRxbOc.js";
-import { t as P } from "../AgentComposerDock-_L4g5xaF.js";
+import { a as te, i as S, n as C, o as ne, r as w, s as T, t as re } from "../ConversationInputs-CCs-hXjV.js";
+import { a as E, c as D, d as O, i as k, l as A, n as ie, o as j, r as M, s as N, t as ae, u as oe } from "../RichChatComposer-SfF4SJhR.js";
+import { t as se } from "../ContextComposer-Dv0_1MYI.js";
+import { t as P } from "../AgentComposerDock-BvELQd-I.js";
 import { useCallback as F, useContext as ce, useEffect as I, useId as le, useMemo as L, useRef as R, useState as z } from "react";
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx
@@ -26,7 +26,7 @@ var de = {
 	review: 1,
 	done: 2
 };
-function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMessageChange: f, messageLabel: p = "Message", placeholder: m, reviewTitle: h, note: g, doneTitle: _ = "Done", doneMessage: ee = "Confirmed.", continueLabel: v = "Continue", confirmLabel: y = "Confirm", backLabel: b = "Back", doneActionLabel: x = "Back", onConfirm: S, onCancel: C, onDone: te, onStageChange: ne, path: w, autoFocus: T = !0, className: re, "data-testid": E = "composer-confirm-flow" }) {
+function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMessageChange: f, messageLabel: p = "Message", placeholder: m, reviewTitle: h, note: g, doneTitle: _ = "Done", doneMessage: ee = "Confirmed.", continueLabel: v = "Continue", confirmLabel: y = "Confirm", backLabel: b = "Back", doneActionLabel: x = "Back", onConfirm: te, onCancel: S, onDone: C, onStageChange: ne, path: w, autoFocus: T = !0, className: re, "data-testid": E = "composer-confirm-flow" }) {
 	let [D, O] = z(s), k = d !== void 0, A = k ? d : D, ie = F((e) => {
 		k || O(e), f?.(e);
 	}, [k, f]), [j, M] = z("draft"), [N, ae] = z(!1), [oe, se] = z(null), [P, ce] = z(null), L = R(!1), fe = R(null), pe = R(null), U = R(null), me = le(), he = A.trim().length > 0, W = F((e) => {
@@ -43,7 +43,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 		L.current = !0, ae(!0), se(null);
 		let e;
 		try {
-			e = await S(A);
+			e = await te(A);
 		} catch (t) {
 			e = { error: t instanceof Error && t.message ? t.message : "That could not be confirmed. Try again." };
 		} finally {
@@ -56,7 +56,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 		ce(e && "receipt" in e ? e.receipt : null), W("done");
 	}, [
 		A,
-		S,
+		te,
 		W
 	]), ve = j === "review" ? h ?? e : j === "done" ? _ : e, K = `${me}-heading`, ye = `${me}-keys`, q = ve || r ? /* @__PURE__ */ V(a, {
 		gap: "sm",
@@ -110,7 +110,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 					"data-testid": `${E}-done-message`,
 					children: P ?? ee
 				}),
-				te && /* @__PURE__ */ B(a, {
+				C && /* @__PURE__ */ B(a, {
 					gap: "sm",
 					align: "center",
 					wrap: !0,
@@ -118,7 +118,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 					children: /* @__PURE__ */ B(n, {
 						size: "sm",
 						variant: "ghost",
-						onClick: te,
+						onClick: C,
 						"data-composer-readonly-allow": "Leaves the confirmed result without changing a record or submitting an answer",
 						"data-testid": `${E}-done-action`,
 						children: x
@@ -275,11 +275,11 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 							"data-testid": `${E}-continue`,
 							children: v
 						}),
-						C && /* @__PURE__ */ B(n, {
+						S && /* @__PURE__ */ B(n, {
 							size: "sm",
 							type: "button",
 							variant: "ghost",
-							onClick: C,
+							onClick: S,
 							"data-composer-readonly-allow": "Leaves the draft without changing a record or submitting an answer",
 							"data-testid": `${E}-cancel`,
 							children: b
@@ -459,7 +459,7 @@ function De(e, t = {}) {
 		r,
 		i,
 		g
-	]), b = be(y, o), x = b >= 0 ? y[b] : null, S = u != null, C = R(!1), te = r.map((e) => e.id).join("\0");
+	]), b = be(y, o), x = b >= 0 ? y[b] : null, te = u != null, S = R(!1), C = r.map((e) => e.id).join("\0");
 	I(() => {
 		let e = ye(r, ee.current);
 		a((t) => {
@@ -469,7 +469,7 @@ function De(e, t = {}) {
 			let n = Object.entries(t).filter(([t]) => e.has(t));
 			return n.length === Object.keys(t).length ? t : Object.fromEntries(n);
 		});
-	}, [te]);
+	}, [C]);
 	let ne = y[0]?.id ?? null, w = R(/* @__PURE__ */ new Set());
 	I(() => {
 		let e = y.some((e) => !w.current.has(e.id));
@@ -477,8 +477,8 @@ function De(e, t = {}) {
 		e && l(!1);
 	}, [ne, y]);
 	let T = F(async (e, t) => {
-		if (C.current || e.readOnlyReason || e.disabledReason) return !1;
-		C.current = !0, d(e.id), p((t) => {
+		if (S.current || e.readOnlyReason || e.disabledReason) return !1;
+		S.current = !0, d(e.id), p((t) => {
 			if (!(e.id in t)) return t;
 			let { [e.id]: n, ...r } = t;
 			return r;
@@ -489,7 +489,7 @@ function De(e, t = {}) {
 		} catch (e) {
 			n = { error: e instanceof Error && e.message ? e.message : "That answer could not be taken. Try again." };
 		} finally {
-			C.current = !1, d(null);
+			S.current = !1, d(null);
 		}
 		return Te(n) ? (p((t) => ({
 			...t,
@@ -501,8 +501,8 @@ function De(e, t = {}) {
 	}, []), re = F(async (e) => {
 		let t = x;
 		if (!t || t.kind !== "compose" || t.readOnlyReason) return { error: "This question takes no message." };
-		if (C.current) return { error: "Still working on the last answer." };
-		C.current = !0, d(t.id);
+		if (S.current) return { error: "Still working on the last answer." };
+		S.current = !0, d(t.id);
 		let n;
 		try {
 			n = await t.onAnswer({
@@ -512,7 +512,7 @@ function De(e, t = {}) {
 		} catch (e) {
 			n = { error: e instanceof Error && e.message ? e.message : "That could not be confirmed. Try again." };
 		} finally {
-			C.current = !1, d(null);
+			S.current = !1, d(null);
 		}
 		return Te(n) ? n : n && "receipt" in n ? { receipt: n.receipt } : void 0;
 	}, [x]), E = x ? q(x.id, g) : null, D = F(() => {
@@ -532,8 +532,8 @@ function De(e, t = {}) {
 		if (!x) return !1;
 		let e = x.back;
 		if (!e) return x.kind !== "compose" && D();
-		if (e.disabledReason || C.current) return !1;
-		C.current = !0, d(x.id), p((e) => {
+		if (e.disabledReason || S.current) return !1;
+		S.current = !0, d(x.id), p((e) => {
 			if (!(x.id in e)) return e;
 			let { [x.id]: t, ...n } = e;
 			return n;
@@ -547,7 +547,7 @@ function De(e, t = {}) {
 				[x.id]: t
 			})), !1;
 		} finally {
-			C.current = !1, d(null);
+			S.current = !1, d(null);
 		}
 	}, [x, D]), ie = F(() => {
 		x && (a((e) => new Set(e).add(x.id)), s(null));
@@ -572,8 +572,8 @@ function De(e, t = {}) {
 				[t.id]: n
 			})), !1;
 		}
-		if (C.current) return !1;
-		C.current = !0, d(t.id), p((e) => {
+		if (S.current) return !1;
+		S.current = !0, d(t.id), p((e) => {
 			if (!(t.id in e)) return e;
 			let { [t.id]: n, ...r } = e;
 			return r;
@@ -584,7 +584,7 @@ function De(e, t = {}) {
 		} catch (e) {
 			r = { error: e instanceof Error && e.message ? e.message : "That direction could not be taken. Try again." };
 		} finally {
-			C.current = !1, d(null);
+			S.current = !1, d(null);
 		}
 		return Te(r) ? (p((e) => ({
 			...e,
@@ -603,7 +603,7 @@ function De(e, t = {}) {
 		active: x,
 		index: b,
 		collapsed: c,
-		busy: S,
+		busy: te,
 		error: x ? f[x.id] ?? null : null,
 		receipt: m,
 		visible: y.length > 0 || m != null,
@@ -639,12 +639,12 @@ function ke({ children: e }) {
 function X() {
 	return typeof navigator > "u" ? "Ctrl" : /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "⌘" : "Ctrl+";
 }
-var Ae = "max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain";
-function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReason: d, variant: f = "card", presentation: p, className: m, "data-testid": h = "composer-prompt-deck" }) {
-	let g = f === "inset", _ = ce(j), ee = p ?? _ ?? "card", v = ee === "prompt", y = De(e ? null : r, { scope: s }), b = e ?? y, x = R(null), S = le(), C = R(null), [te, ne] = z({
+var Ae = "max-h-[min(40vh,24rem)] overflow-y-auto overscroll-contain [&>:not(dl)]:shrink-0", je = "min-h-0 overflow-y-auto overscroll-contain";
+function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReason: d, variant: f = "card", presentation: p, className: m, "data-testid": h = "composer-prompt-deck" }) {
+	let g = f === "inset", _ = ce(j), ee = p ?? _ ?? "card", v = ee === "prompt", y = De(e ? null : r, { scope: s }), b = e ?? y, x = R(null), te = le(), S = R(null), [C, ne] = z({
 		id: "",
 		text: ""
-	}), { active: w, pending: T, index: re, collapsed: E, busy: D, error: O, receipt: k } = b, A = w?.inputDraft?.value ?? (te.id === w?.id ? te.text : ""), ie = !c && b.typed && !w?.readOnlyReason, M = w && !w.readOnlyReason && (d?.trim() || w.disabledReason?.trim()) || null, N = `${S}-disabled-reason`, ae = async () => {
+	}), { active: w, pending: T, index: re, collapsed: E, busy: D, error: O, receipt: k } = b, A = w?.inputDraft?.value ?? (C.id === w?.id ? C.text : ""), ie = !c && b.typed && !w?.readOnlyReason, M = w && !w.readOnlyReason && (d?.trim() || w.disabledReason?.trim()) || null, N = `${te}-disabled-reason`, ae = async () => {
 		if (M) return;
 		let e = w?.id;
 		await b.answerTyped(A) && ne((t) => t.id === e ? {
@@ -664,7 +664,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 		if (!w || E || w.readOnlyReason || w.kind === "compose") return;
 		let e = requestAnimationFrame(() => {
 			let e = document.activeElement, t = e?.closest("input,textarea,select,[contenteditable=\"true\"]"), n = oe.current.input;
-			t && !x.current?.contains(e) && !n?.contains(e) || (n ? n.focus() : C.current ? C.current.focus() : (x.current?.querySelector("[data-default=\"true\"]:not(:disabled)") ?? x.current?.querySelector("[data-composer-prompt-option]:not(:disabled)"))?.focus());
+			t && !x.current?.contains(e) && !n?.contains(e) || (n ? n.focus() : S.current ? S.current.focus() : (x.current?.querySelector("[data-default=\"true\"]:not(:disabled)") ?? x.current?.querySelector("[data-composer-prompt-option]:not(:disabled)"))?.focus());
 		});
 		return () => cancelAnimationFrame(e);
 	}, [
@@ -675,7 +675,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 	]), I(() => {
 		let e = (e) => {
 			if (e.defaultPrevented || e.isComposing || e.repeat) return;
-			let { deck: t, input: n, blockedBy: r } = oe.current, i = e.target, a = !!x.current && !!i && x.current.contains(i), o = !!n && n.contains(i), s = !!i && C.current?.contains(i), c = !a && !o && t.active?.keypad === "page" && !t.collapsed && xe(e.target);
+			let { deck: t, input: n, blockedBy: r } = oe.current, i = e.target, a = !!x.current && !!i && x.current.contains(i), o = !!n && n.contains(i), s = !!i && S.current?.contains(i), c = !a && !o && t.active?.keypad === "page" && !t.collapsed && xe(e.target);
 			if (!a && !o && !c) return;
 			let l = Se({
 				key: e.key,
@@ -694,7 +694,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 			} : {
 				prompt: t.active,
 				collapsed: t.collapsed,
-				inputEmpty: n ? n.isEmpty() : !C.current?.value.trim(),
+				inputEmpty: n ? n.isEmpty() : !S.current?.value.trim(),
 				inDeck: a && !s,
 				busy: t.busy,
 				canBack: !!t.backControl && !t.backControl.disabledReason
@@ -708,16 +708,16 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 	let se = X(), P = T.length, F = k ? /* @__PURE__ */ V(a, {
 		gap: "xs",
 		align: "center",
-		wrap: !0,
+		wrap: !1,
 		className: t("min-w-0", g && !E && w && "px-3 pb-2"),
 		"data-testid": `${h}-receipt`,
 		children: [/* @__PURE__ */ B(o, {
 			as: "p",
 			size: "xs",
 			tone: "secondary",
-			wrap: !0,
 			role: "status",
-			className: "min-w-0",
+			className: "min-w-0 flex-1 truncate",
+			title: `Answered · ${k}`,
 			children: `Answered · ${k}`
 		}), /* @__PURE__ */ B(n, {
 			variant: "link",
@@ -761,7 +761,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 			]
 		}), F]
 	});
-	let L = U(w), ue = he(w), H = w.kind === "compose" && !w.readOnlyReason, de = ge(w), pe = `${S}-title`, W = `${S}-question`, G = L.map((e, t) => me(e, t)), _e = [
+	let L = U(w), ue = he(w), H = w.kind === "compose" && !w.readOnlyReason, de = ge(w), pe = `${te}-title`, W = `${te}-question`, G = L.map((e, t) => me(e, t)), _e = [
 		L.length ? `${ue ? "Alt+" : ""}${G.filter(Boolean).length > 1 ? `${G[0]}–${G[G.length - 1]}` : G[0] ?? ""} choose` : null,
 		ue ? "type an answer · Enter answer" : de ? `Enter ${de.label}` : null,
 		P > 1 ? `${se}↓ next` : null,
@@ -910,7 +910,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 					}, `${e.label}-${n}`))
 				}),
 				w.fields && w.fields.length > 0 && !v && /* @__PURE__ */ B("dl", {
-					className: "m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5",
+					className: t("m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5", je),
 					"data-testid": `${h}-fields`,
 					children: w.fields.map((e, n) => /* @__PURE__ */ V("div", {
 						className: "flex min-w-0 max-w-full flex-col",
@@ -982,7 +982,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 								disabled: D || !!e.disabledReason || !!M,
 								title: e.disabledReason ?? M ?? e.hint,
 								"aria-keyshortcuts": a,
-								"aria-describedby": [e.hint && `${S}-hint-${t}`, M && N].filter(Boolean).join(" ") || void 0,
+								"aria-describedby": [e.hint && `${te}-hint-${t}`, M && N].filter(Boolean).join(" ") || void 0,
 								onClick: () => {
 									b.pick(e.id).then((e) => {
 										e && c?.focus();
@@ -996,7 +996,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 								size: "xs",
 								tone: "tertiary",
 								className: "hidden",
-								id: `${S}-hint-${t}`,
+								id: `${te}-hint-${t}`,
 								children: e.hint
 							})]
 						}, e.id);
@@ -1006,7 +1006,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 					gap: "sm",
 					className: "min-w-0",
 					children: [/* @__PURE__ */ B(l, {
-						ref: C,
+						ref: S,
 						"aria-label": w.title,
 						placeholder: w.placeholder ?? "Your answer",
 						value: A,
@@ -1097,7 +1097,7 @@ function je({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 		}), F]
 	});
 }
-function Me(e) {
+function Ne(e) {
 	let { capabilities: t, offline: n } = e, r = [], i = {};
 	if (e.hasChat) {
 		r.push("chat");
@@ -1115,7 +1115,7 @@ function Me(e) {
 		reasons: i
 	};
 }
-function Ne(e, t, n) {
+function Pe(e, t, n) {
 	if (t) {
 		let n = e.find((e) => e.id === t);
 		if (n) return n;
@@ -1126,16 +1126,16 @@ function Ne(e, t, n) {
 	}
 	return e.find((e) => !e.disabled) ?? null;
 }
-function Pe(e, t) {
+function Fe(e, t) {
 	return [...new Set([e, ...t.map((e) => e.channel)].filter((e) => !!e))];
 }
-function Fe(e) {
+function Ie(e) {
 	return e.replace(/<[^>]*>/g, "").trim();
 }
-function Ie(e) {
-	return e.mode === "chat" && !!e.channel && e.recipientChannel === e.channel && Fe(e.html).length > 0;
-}
 function Le(e) {
+	return e.mode === "chat" && !!e.channel && e.recipientChannel === e.channel && Ie(e.html).length > 0;
+}
+function Re(e) {
 	return {
 		displayName: e.displayName,
 		...e.reply ? { replyTo: e.reply } : {},
@@ -1146,11 +1146,11 @@ function Le(e) {
 		...e.attachments?.length ? { attachments: [...e.attachments] } : {}
 	};
 }
-function Re(e) {
+function ze(e) {
 	let t = e.trim();
 	return /^\/agent\s+/i.test(t) ? t.replace(/^\/agent\s+/i, "") : t;
 }
-function ze(e, t) {
+function Be(e, t) {
 	let n = e.trim(), r = n.toLowerCase();
 	for (let e of t) {
 		let t = e.trigger.toLowerCase();
@@ -1161,38 +1161,38 @@ function ze(e, t) {
 	}
 	return null;
 }
-var Be = "ui.conversation-draft:";
-function Ve(e) {
-	return `${Be}${e}`;
+var Ve = "ui.conversation-draft:";
+function Z(e) {
+	return `${Ve}${e}`;
 }
 function He(e, t) {
 	try {
-		let n = e?.getItem(Ve(t));
+		let n = e?.getItem(Z(t));
 		if (!n) return null;
 		let r = JSON.parse(n);
-		return r && typeof r.html == "string" && Fe(r.html) ? r.html : null;
+		return r && typeof r.html == "string" && Ie(r.html) ? r.html : null;
 	} catch {
 		return null;
 	}
 }
 function Ue(e, t, n) {
 	try {
-		Fe(n) ? e?.setItem(Ve(t), JSON.stringify({ html: n })) : e?.removeItem(Ve(t));
+		Ie(n) ? e?.setItem(Z(t), JSON.stringify({ html: n })) : e?.removeItem(Z(t));
 	} catch {}
 }
-var Z = "Conversation changed; draft retained.";
-function We(e) {
+var We = "Conversation changed; draft retained.";
+function Ge(e) {
 	return `Upload failed: ${(e ?? "").replace(/^upload failed:?\s*/i, "").trim() || "unknown error"}`;
 }
-function Ge(e) {
+function Ke(e) {
 	return e.map((e) => e.name).join(", ");
 }
-var Ke = class {
+var qe = class {
 	pending = /* @__PURE__ */ new Map();
 	wait(e, t, n) {
 		return new Promise((r, i) => {
 			let a = setTimeout(() => {
-				this.pending.delete(e) && i(Error(We(`timed out (${n})`)));
+				this.pending.delete(e) && i(Error(Ge(`timed out (${n})`)));
 			}, t);
 			this.pending.set(e, {
 				resolve: r,
@@ -1212,11 +1212,11 @@ var Ke = class {
 	get size() {
 		return this.pending.size;
 	}
-}, qe = "Message sent. Your current draft has been kept.", Je = "This destination is no longer available. Choose a current destination.", Ye = "This view has no page to attach.";
-function Xe(e, t) {
+}, Je = "Message sent. Your current draft has been kept.", Ye = "This destination is no longer available. Choose a current destination.", Xe = "This view has no page to attach.";
+function Ze(e, t) {
 	typeof e == "function" ? e(t) : e && (e.current = t);
 }
-function Ze(e, t) {
+function Qe(e, t) {
 	if (!t) return e;
 	let n = Object.keys(t).filter((n) => !e.modes.includes(n) && t[n]);
 	return n.length ? {
@@ -1228,16 +1228,16 @@ function Ze(e, t) {
 		}
 	} : e;
 }
-function Qe() {
+function $e() {
 	try {
 		return typeof window > "u" ? null : window.localStorage;
 	} catch {
 		return null;
 	}
 }
-function $e(e, t, n, r = 6e4) {
-	let i = R(new Ke()), a = R(t);
-	a.current = t, I(() => () => i.current.rejectAll(Z), [t]);
+function et(e, t, n, r = 6e4) {
+	let i = R(new qe()), a = R(t);
+	a.current = t, I(() => () => i.current.rejectAll(We), [t]);
 	let { upload: o } = e.useFileUpload(t ?? "chat:no-conversation", {
 		displayName: n,
 		onComplete: (e) => {
@@ -1258,20 +1258,20 @@ function $e(e, t, n, r = 6e4) {
 		try {
 			n = await o(e);
 		} catch (e) {
-			throw new _(We(e instanceof Error ? e.message : String(e)));
+			throw new _(Ge(e instanceof Error ? e.message : String(e)));
 		}
-		if (a.current !== t) throw Error(Z);
-		if (n.status === "failed") throw new _(We(n.error));
-		if (!n.transferId) throw new _(We(`no transfer id for ${e.name}`));
+		if (a.current !== t) throw Error(We);
+		if (n.status === "failed") throw new _(Ge(n.error));
+		if (!n.transferId) throw new _(Ge(`no transfer id for ${e.name}`));
 		try {
 			return await i.current.wait(n.transferId, r, e.name);
 		} catch (e) {
-			throw e instanceof Error && e.message === "Conversation changed; draft retained." ? e : new _(e instanceof Error ? e.message : We(void 0));
+			throw e instanceof Error && e.message === "Conversation changed; draft retained." ? e : new _(e instanceof Error ? e.message : Ge(void 0));
 		}
 	}, [o, r]);
 	return F((e) => Promise.all(e.map(s)), [s]);
 }
-function et({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: i, disabled: c, "data-testid": l }) {
+function tt({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: i, disabled: c, "data-testid": l }) {
 	let u = n.filter((e) => !e.group).map((e) => ({
 		value: e.id,
 		label: e.label,
@@ -1312,16 +1312,16 @@ function et({ id: e, value: t, recipients: n, onChange: r, readOnlyWayOut: i, di
 		})]
 	});
 }
-function tt(e) {
+function nt(e) {
 	function t(t) {
-		return /* @__PURE__ */ B(nt, {
+		return /* @__PURE__ */ B(rt, {
 			rm: e,
 			...t
 		});
 	}
 	return t.displayName = "ConversationComposer", t;
 }
-function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity: f, offline: p, recipients: m, defaultRecipient: h, recipient: g, onRecipientChange: v, commands: y = [], onAgent: b, callBlock: x, reply: C, mode: te, onModeChange: ne, defaultMode: T, draftKey: re, persistDraft: E = !0, claim: D = !1, answersFocus: O = !1, onReveal: k, disabled: A, offModes: ie, prompts: j, promptScope: M, composerRef: N, onDraftChange: ae, defaultDraft: oe, draft: P, above: ce, foldRecipients: le = !1, modeRowEnd: ue, references: H, onRemoveReference: de, modePlaceholders: fe, contextChip: pe, sendWithReferencesOnly: U, console: me, submitDisabledReason: he, "data-testid": W = "conversation-composer", ...G }) {
+function rt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity: f, offline: p, recipients: m, defaultRecipient: h, recipient: g, onRecipientChange: v, commands: y = [], onAgent: b, callBlock: x, reply: S, mode: C, onModeChange: ne, defaultMode: T, draftKey: re, persistDraft: E = !0, claim: D = !1, answersFocus: O = !1, onReveal: k, disabled: A, offModes: ie, prompts: j, promptScope: M, composerRef: N, onDraftChange: ae, defaultDraft: oe, draft: P, above: ce, foldRecipients: le = !1, modeRowEnd: ue, references: H, onRemoveReference: de, modePlaceholders: fe, contextChip: pe, sendWithReferencesOnly: U, console: me, submitDisabledReason: he, "data-testid": W = "conversation-composer", ...G }) {
 	let _e = e() === "compact", ve = f?.displayName || "You", K = re ?? s ?? `${l.kind}:${l.id}`, ye = u.readOnlyReason || "You can read this conversation but not post to it.", q = L(() => {
 		let e = m ?? (s ? [{
 			id: "discussion",
@@ -1344,30 +1344,30 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		id: Se,
 		label: "Previous destination",
 		disabled: !0,
-		unavailableReason: Je
-	} : Ne(q, Se, h), we = q.filter((e) => !e.disabled && !e.unavailableReason).length, Te = q.length > 0, Y = Ze(Me({
+		unavailableReason: Ye
+	} : Pe(q, Se, h), we = q.filter((e) => !e.disabled && !e.unavailableReason).length, Te = q.length > 0, Y = Qe(Ne({
 		capabilities: u,
 		hasChat: Te,
 		choosable: we,
 		offline: p ?? null,
 		chatOffReason: J?.unavailableReason ?? null
-	}), ie), Ee = T && Y.modes.includes(T) ? T : Y.modes.find((e) => !Y.disabledModes.includes(e)) ?? Y.modes[0] ?? "chat", [Oe, ke] = z(Ee), X = te ?? Oe, Ae = F((e) => {
-		te === void 0 && ke(e), ne?.(e);
-	}, [te, ne]), Fe = `${Y.modes.join(",")}|${Y.disabledModes.join(",")}`;
+	}), ie), Ee = T && Y.modes.includes(T) ? T : Y.modes.find((e) => !Y.disabledModes.includes(e)) ?? Y.modes[0] ?? "chat", [Oe, ke] = z(Ee), X = C ?? Oe, Ae = F((e) => {
+		C === void 0 && ke(e), ne?.(e);
+	}, [C, ne]), je = `${Y.modes.join(",")}|${Y.disabledModes.join(",")}`;
 	I(() => {
 		if (Y.modes.includes(X) && !Y.disabledModes.includes(X)) return;
 		let e = Y.modes.find((e) => !Y.disabledModes.includes(e));
 		e && e !== X && Ae(e);
 	}, [
-		Fe,
+		je,
 		X,
 		Ae
 	]);
-	let [Be, Ve] = z(!0), Z = l.reference ?? null;
+	let [Ie, Ve] = z(!0), Z = l.reference ?? null;
 	I(() => {
 		Ve(!0);
 	}, [Z?.id]);
-	let We = !!J && J.carriesReference !== !1, Ke = !!Z && !Z.page, tt = !!J && J.channel !== s, nt = !!Z && Be && !(X === "chat" && (!We || Ke && tt)), at = X === "chat" && We && Be && !(Ke && tt) ? Z : null, ot = R(0), st = P !== void 0, ct = f?.userId?.trim() || null, Q = ct ? JSON.stringify([
+	let We = !!J && J.carriesReference !== !1, Ge = !!Z && !Z.page, qe = !!J && J.channel !== s, nt = !!Z && Ie && !(X === "chat" && (!We || Ge && qe)), rt = X === "chat" && We && Ie && !(Ge && qe) ? Z : null, ot = R(0), st = P !== void 0, ct = f?.userId?.trim() || null, Q = ct ? JSON.stringify([
 		"actor",
 		ct,
 		K
@@ -1387,7 +1387,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 	ft.current = P;
 	let pt = L(() => {
 		if (st || !E || !Q) return oe;
-		let e = He(Qe(), Q);
+		let e = He($e(), Q);
 		return e ? {
 			html: e,
 			files: []
@@ -1397,7 +1397,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		st,
 		E
 	]), mt = R(""), ht = F((e, t) => {
-		ot.current += 1, mt.current = e.html, E && !st && Q && Ue(Qe(), Q, e.html), c?.setTyping?.(Ie({
+		ot.current += 1, mt.current = e.html, E && !st && Q && Ue($e(), Q, e.html), c?.setTyping?.(Le({
 			html: e.html,
 			mode: X,
 			recipientChannel: J?.channel,
@@ -1405,7 +1405,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		}));
 		let n = gt.current;
 		if (n && n.value !== void 0) {
-			let t = St.current?.editor?.getText() ?? rt(e.html);
+			let t = St.current?.editor?.getText() ?? it(e.html);
 			t !== n.lastSent && (n.lastSent = t, n.onChange(t));
 		}
 		ae?.(e, t);
@@ -1420,7 +1420,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		ae
 	]), gt = R(null);
 	I(() => {
-		Ie({
+		Le({
 			html: mt.current,
 			mode: X,
 			recipientChannel: J?.channel,
@@ -1431,8 +1431,8 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		J?.channel,
 		s
 	]);
-	let _t = X === "chat" && u.mayAttach && J?.attachments && J.channel ? J.channel : null, vt = $e(n, _t, ve), [yt, bt] = z(null), xt = r(), St = R(null), Ct = F((e) => {
-		St.current = e, Xe(N, e);
+	let _t = X === "chat" && u.mayAttach && J?.attachments && J.channel ? J.channel : null, vt = et(n, _t, ve), [yt, bt] = z(null), xt = r(), St = R(null), Ct = F((e) => {
+		St.current = e, Ze(N, e);
 	}, [N]), wt = F(() => {
 		k?.();
 		let e = 20, t = () => {
@@ -1480,7 +1480,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		xe(e), v?.(e), ot.current += 1, bt(null), q.find((t) => t.id === e)?.onSelect?.();
 	}, [q, v]), Ft = q.filter((e) => e.claim !== !1);
 	w({
-		channels: D ? Pe(u.maySend || m === void 0 ? s : null, Ft) : [],
+		channels: D ? Fe(u.maySend || m === void 0 ? s : null, Ft) : [],
 		label: D ? D.label : "",
 		replies: D ? !!D.replies : !1,
 		enabled: !!D && D.enabled !== !1,
@@ -1505,7 +1505,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		s,
 		Pt
 	]);
-	S(It, O);
+	te(It, O);
 	let Lt = L(() => y.filter((e) => !e.modes || e.modes.includes(X)), [y, X]), Rt = L(() => Lt.map((e) => ({
 		trigger: e.trigger,
 		label: e.label,
@@ -1520,18 +1520,18 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 	}, Bt = async (e, t) => {
 		if (bt(null), $.typed) {
 			let t = await $.answerTyped(e.text);
-			return t && E && !st && Q && Ue(Qe(), Q, ""), t;
+			return t && E && !st && Q && Ue($e(), Q, ""), t;
 		}
 		if (Ot) {
 			let t = await $.answerDirection(e.text);
-			return t && E && !st && Q && Ue(Qe(), Q, ""), t;
+			return t && E && !st && Q && Ue($e(), Q, ""), t;
 		}
 		let n = (n, r, i) => ({
 			trigger: r,
 			text: n,
 			argumentText: i,
 			mode: t,
-			reference: at ?? (Be ? Z : null),
+			reference: rt ?? (Ie ? Z : null),
 			recipientId: J?.id ?? null,
 			message: e,
 			...e.command?.argument ? { argument: {
@@ -1543,9 +1543,9 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 			if (!u.agent?.allowed || p) return !1;
 			let t = e.text.trim();
 			if (!t) return !1;
-			let r = y.filter((e) => !e.modes || e.modes.includes("agent")), i = Re(t), a = ze(t, r) ?? (i === t ? null : ze(i, r));
+			let r = y.filter((e) => !e.modes || e.modes.includes("agent")), i = ze(t), a = Be(t, r) ?? (i === t ? null : Be(i, r));
 			if (a) {
-				let e = ze(t, [a.command]) ? t : i;
+				let e = Be(t, [a.command]) ? t : i;
 				return !a.command.disabled && zt(await a.command.run(n(e, a.command.trigger, a.argumentText)));
 			}
 			if (!i) return !1;
@@ -1554,26 +1554,26 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 			return o ? zt(await o.run(n(`/agent ${i}`, "/agent", i))) : !1;
 		}
 		if (!e.files.length) {
-			let t = ze(e.text, y.filter((e) => !e.modes || e.modes.includes("chat")));
+			let t = Be(e.text, y.filter((e) => !e.modes || e.modes.includes("chat")));
 			if (t) return !t.command.disabled && (c?.setTyping?.(!1), zt(await t.command.run(n(e.text.trim(), t.command.trigger, t.argumentText))));
 		}
 		if (!J || J.disabled || J.unavailableReason || p) return !1;
-		let r = e.text.trim(), i = !r && !e.files.length && !!U && (!!at || (H?.length ?? 0) > 0);
+		let r = e.text.trim(), i = !r && !e.files.length && !!U && (!!rt || (H?.length ?? 0) > 0);
 		if (!r && !e.files.length && !i || e.files.length && !_t) return !1;
 		c?.setTyping?.(!1);
-		let a = ot.current, o = dt.current, l = e.files.length ? await vt(e.files) : [], d = !!J.channel && J.channel === s, f = Le({
+		let a = ot.current, o = dt.current, l = e.files.length ? await vt(e.files) : [], d = !!J.channel && J.channel === s, f = Re({
 			displayName: ve,
-			reply: d ? C?.reply ?? null : null,
-			reference: at,
+			reply: d ? S?.reply ?? null : null,
+			reference: rt,
 			attachments: l
-		}), m = r || Ge(l), h = {
+		}), m = r || Ke(l), h = {
 			text: m,
 			html: e.html,
 			files: e.files,
 			metadata: f,
-			reference: at
+			reference: rt
 		}, g;
-		return J.send ? g = await J.send(h) : c ? (c.sendMessage(m, f), g = !0) : g = !1, g ? ot.current !== a || ft.current !== P ? (dt.current === o && xt?.toast(qe, { type: "success" }), !1) : (d && C?.clear(), E && !st && Q && Ue(Qe(), Q, ""), !0) : !1;
+		return J.send ? g = await J.send(h) : c ? (c.sendMessage(m, f), g = !0) : g = !1, g ? ot.current !== a || ft.current !== P ? (dt.current === o && xt?.toast(Je, { type: "success" }), !1) : (d && S?.clear(), E && !st && Q && Ue($e(), Q, ""), !0) : !1;
 	}, Vt = !!u.pending, Ht = X === "chat" && (!J || !!J.unavailableReason || !!J.disabled), Ut = Ht && !$.typed && !Ot && !A && !p && !Vt, Wt = nt && Z ? /* @__PURE__ */ B(d, {
 		references: [{
 			id: Z.id,
@@ -1587,7 +1587,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		size: "md",
 		className: "min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0",
 		"data-testid": "rich-chat-composer-references"
-	}) : null, Gt = Ce && J ? [...q, J] : q, Kt = X === "chat" && Gt.length > 1, qt = X === "chat" && Be && Ke && tt && We, Jt = X === "chat" && Gt.length > 1 && !Vt ? J?.unavailableReason ?? (J ? null : "Choose a destination.") : null, Yt = X === "chat" ? J?.error ?? null : null, Xt = le && Kt && !Jt && !yt && !qt && !Yt && (ce == null || ce === !1), Zt = Kt || Jt || yt || qt || Yt || ce != null && ce !== !1 ? /* @__PURE__ */ V(i, {
+	}) : null, Gt = Ce && J ? [...q, J] : q, Kt = X === "chat" && Gt.length > 1, qt = X === "chat" && Ie && Ge && qe && We, Jt = X === "chat" && Gt.length > 1 && !Vt ? J?.unavailableReason ?? (J ? null : "Choose a destination.") : null, Yt = X === "chat" ? J?.error ?? null : null, Xt = le && Kt && !Jt && !yt && !qt && !Yt && (ce == null || ce === !1), Zt = Kt || Jt || yt || qt || Yt || ce != null && ce !== !1 ? /* @__PURE__ */ V(i, {
 		gap: "xs",
 		children: [
 			ce,
@@ -1597,7 +1597,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 				wrap: !1,
 				className: "min-w-0",
 				"data-composer-recipient-row": "",
-				children: [Kt && /* @__PURE__ */ B(et, {
+				children: [Kt && /* @__PURE__ */ B(tt, {
 					id: `${K}-recipient`,
 					value: J?.id ?? null,
 					recipients: Gt,
@@ -1621,7 +1621,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
-				children: Ye
+				children: Xe
 			}),
 			yt && /* @__PURE__ */ B(o, {
 				size: "xs",
@@ -1653,7 +1653,7 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 	}, nn = {
 		...fe,
 		...X === "chat" && J?.placeholder ? { chat: J.placeholder } : {},
-		...!$.collapsed && $.active && !$.active.readOnlyReason && $.active.kind !== "compose" ? { [X]: $.typed ? $.active.placeholder ?? "Type your answer and press Enter" : Et ? $.active.placeholder ?? it($.direction, ge($.active)?.label) : "Choose an answer above, or press its number" } : {}
+		...!$.collapsed && $.active && !$.active.readOnlyReason && $.active.kind !== "compose" ? { [X]: $.typed ? $.active.placeholder ?? "Type your answer and press Enter" : Et ? $.active.placeholder ?? at($.direction, ge($.active)?.label) : "Choose an answer above, or press its number" } : {}
 	}, rn = Ut ? Jt ? we > 0 ? "Read only. Choose another destination in To: to post." : "Read only" : J?.unavailableReason ?? (J ? ye : "Choose a destination.") : null, an = $.typed || Ot ? $.active?.disabledReason ?? null : he ?? null;
 	return /* @__PURE__ */ B(se, {
 		collapsible: !0,
@@ -1673,21 +1673,22 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		chatAvailable: Te && !Y.reasons.chat,
 		contextChip: pe ?? (!Z && void 0),
 		...!Tt && Xt ? { foldingAbove: Zt } : { above: Tt ? ce : Zt },
-		...Dt ? { header: /* @__PURE__ */ B(je, {
+		...Dt ? { header: /* @__PURE__ */ B(Me, {
 			deck: $,
 			input: Nt,
 			variant: "inset",
 			presentation: "prompt",
 			"data-testid": `${W}-prompts`
-		}) } : Tt ? { replacement: /* @__PURE__ */ B(je, {
+		}) } : Tt ? { replacement: /* @__PURE__ */ B(Me, {
 			deck: $,
 			"data-testid": `${W}-prompts`
-		}) } : $.visible ? { header: /* @__PURE__ */ B(je, {
+		}) } : $.visible ? { header: /* @__PURE__ */ B(Me, {
 			deck: $,
 			input: Nt,
 			variant: "inset",
 			"data-testid": `${W}-prompts`
 		}) } : {},
+		headerFolds: $.collapsed && !!$.active,
 		...$t ? { modeRowEnd: $t } : {},
 		...en ? {
 			references: en,
@@ -1695,12 +1696,12 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		} : {},
 		modePlaceholders: nn,
 		commands: Rt,
-		reply: X === "chat" && C?.reply && J?.channel === s ? {
-			author: C.reply.author,
-			quote: C.reply.text,
-			messageId: C.reply.messageId,
-			...C.reply.timestamp ? { timestamp: C.reply.timestamp } : {},
-			onDismiss: C.clear
+		reply: X === "chat" && S?.reply && J?.channel === s ? {
+			author: S.reply.author,
+			quote: S.reply.text,
+			messageId: S.reply.messageId,
+			...S.reply.timestamp ? { timestamp: S.reply.timestamp } : {},
+			onDismiss: S.clear
 		} : null,
 		allowAttachments: !!_t,
 		...U === void 0 ? {} : { sendWithReferencesOnly: U },
@@ -1715,11 +1716,11 @@ function nt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		className: t(G.className)
 	});
 }
-function rt(e) {
+function it(e) {
 	return e.replace(/<br\s*\/?>/gi, "\n").replace(/<\/p>\s*<p[^>]*>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&");
 }
-function it(e, t) {
+function at(e, t) {
 	return e ? t ? `Type a change, or press Enter to ${t}` : "Type a change, or choose an answer above" : t ? `Press Enter to ${t}, or choose an answer above` : "Choose an answer above";
 }
 //#endregion
-export { P as AgentComposerDock, ae as COMPOSER_BREAKPOINTS, x as COMPOSER_CONTEXT_KINDS, y as COMPOSER_CONTEXT_REASONS, ie as COMPOSER_MODE_ORDER, pe as CONFIRM_OPTIONS, N as CommandSuggestions, O as ComposerAttachments, fe as ComposerConfirmFlow, j as ComposerPresentationContext, je as ComposerPromptDeck, d as ComposerReferences, _ as ComposerSendError, se as ContextComposer, re as ConversationInputProvider, A as DocumentSuggestions, f as EMOJI_SHORTCODES, D as EmojiSuggestions, oe as MentionSuggestions, M as RichChatComposer, te as ThreadInputHandoff, G as answerForOption, Ge as attachmentOnlyText, g as composerCommandArgumentText, b as composerContextPreset, ee as composerDraftOf, h as composerSendErrorReason, k as composerSizeFor, tt as createConversationComposer, Se as deckKeyAction, ge as defaultOption, v as identityDisplayName, p as matchComposerCommand, E as matchesModeTrigger, xe as pageKeypadTarget, _e as parseTypedAnswer, U as promptOptions, Ee as promptsInScope, m as searchEmoji, W as takesDirection, he as takesTypedAnswer, C as useComposerFocus, ne as useComposerFocusReveal, De as useComposerPromptDeck, $e as useConversationUploads, T as useThreadInput };
+export { P as AgentComposerDock, ae as COMPOSER_BREAKPOINTS, x as COMPOSER_CONTEXT_KINDS, y as COMPOSER_CONTEXT_REASONS, ie as COMPOSER_MODE_ORDER, pe as CONFIRM_OPTIONS, N as CommandSuggestions, O as ComposerAttachments, fe as ComposerConfirmFlow, j as ComposerPresentationContext, Me as ComposerPromptDeck, d as ComposerReferences, _ as ComposerSendError, se as ContextComposer, re as ConversationInputProvider, A as DocumentSuggestions, f as EMOJI_SHORTCODES, D as EmojiSuggestions, oe as MentionSuggestions, M as RichChatComposer, C as ThreadInputHandoff, G as answerForOption, Ke as attachmentOnlyText, g as composerCommandArgumentText, b as composerContextPreset, ee as composerDraftOf, h as composerSendErrorReason, k as composerSizeFor, nt as createConversationComposer, Se as deckKeyAction, ge as defaultOption, v as identityDisplayName, p as matchComposerCommand, E as matchesModeTrigger, xe as pageKeypadTarget, _e as parseTypedAnswer, U as promptOptions, Ee as promptsInScope, m as searchEmoji, W as takesDirection, he as takesTypedAnswer, S as useComposerFocus, ne as useComposerFocusReveal, De as useComposerPromptDeck, et as useConversationUploads, T as useThreadInput };

@@ -1,3 +1,31 @@
+## 2.524.0
+
+The Storymaker Studio's open gaps from rows 150 to 154 (shipped to one application as builds numbered 2.520.0 and 2.520.1), released here under one number, with three source fixes from an older uncommitted salvage. The application's 2.515.9 build (narrow tab rows, `SettingsLayout narrow`, `DataTable` name and selected row) was checked against main and is already here under 2.515.10 to 2.516.2; nothing of it is repeated. New props default to the old behaviour; the changed defaults are listed first.
+
+Changed defaults:
+
+- `DropdownMenu`: the menu panel and each submenu flyout are a plain positioned container around the `role="menu"`, no longer `role="dialog"` with `data-ui-dialog="popover"`, so an open menu is not counted as a dialog. Focus on open, arrow keys, Escape, Tab cycling and outside-click are unchanged. The panels carry `data-ui-popover="menu"`; an audit that bound menus through `[data-ui-dialog="popover"]` should add `[data-ui-popover]`.
+- `FrameStrip` `contactSheet`: the Frames / Contact sheet switch is named "<label>: frames or <sheet label>", was "View". New `switchLabel` overrides it.
+- `DetailSection` `variant="heading"` at `sm` / `md`: 4px under the title row, was 2px. `lg` unchanged.
+- `MediaPlaybackDock`: under 42rem Close shares the title line and the transport wraps below it. `status` is now wrapped in a `span`. Markers `data-playback-title`, `data-playback-close`.
+- `CodeBlock`: highlighting runs in one pass over the source, so a rule never colours markup an earlier rule inserted (the word `class` in a `tok-` span used to be matched as a keyword). The `tok-*` classes and escaping are unchanged.
+- `ComposerPromptDeck`: the deck's cap is `min(40vh, 24rem)` (was 18rem) and only the facts list scrolls, so the title, question navigation, answers and key hints keep their size.
+- `TaskStrip`: a live strip is tinted (`bg-primary-bg`) and a running task's dot has a ring radiating from it (`data-testid` `<id>-dot`, `<id>-pulse`), hidden under reduced motion.
+
+New props and exports:
+
+- `InlinePopover` `panelRole?: 'dialog' | 'none'`; every panel carries `data-ui-popover={kind}`.
+- `Avatar` `imagePosition`, `AvatarGroupItem.imagePosition`, `GalleryAsset.imagePosition`: the image's CSS `object-position`.
+- `AssetGallery` `actionsLayout?: 'wrap' | 'row'`, `statusPlacement?: 'overlay' | 'caption'`, `aspect?: 'landscape' | 'portrait' | 'square'`.
+- `ModelViewer` `animations?: boolean | ModelAnimationOptions` (clip menu, Play / Pause, frame step, speed, scrubber), `isolatePart?: boolean`, with helpers `modelAnimationsOf(el)` and `isolateModelPart(el, node)`; `fit?: 'aspect' | 'fill'` (`fill` takes the height its host's box gives it), `cameraOrbit?: string` (model-viewer `camera-orbit`). Its listeners now follow the element when a reference makes it another node.
+- `VideoPlayer` `chapters`, `markers`, `seekTo`, `onChapterChange`; `formatClipTime`. With chapters or markers the root becomes a wrapper (`data-video-timed`).
+- `AudioPlayer` `controller?: AudioPlayerController`, so a row follows a shared player; `src` is optional with a controller.
+- `MediaPlaybackDock` `onStateChange` and `controlRef`; `useMediaPlayback()` wires a dock and any number of rows (`dockProps`, `controllerFor(source)`).
+- `ContextComposer` and `ConversationComposer` `headerFolds?: boolean`: a one-line `header` (a deck folded to "1 question waiting") rides the idle row without forcing the full card.
+- `Slider` `aria-valuetext`.
+
+Not carried: `WorkflowStepper wrap`, the `StepThread` title wrapping and the ui-dom-audit hash-aware `urlKey` from the salvage were already on main.
+
 ## 2.523.0
 
 Three DataTable and audit additions that shipped to the portal as vendored 2.522.0 to 2.522.2 builds and are released here under one number. All are backwards compatible.

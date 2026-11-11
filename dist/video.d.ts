@@ -24,10 +24,32 @@ export declare interface AudioLevelMeterProps {
     'data-testid'?: string;
 }
 
-export declare function AudioPlayer({ src, autoPlay, onFirstPlay, onEnded, durationHint, size, className, 'data-testid': testId }: AudioPlayerProps): JSX.Element;
+export declare function AudioPlayer(props: AudioPlayerProps): JSX.Element;
+
+/** The shared player an `AudioPlayer` follows instead of owning an `<audio>`. */
+export declare interface AudioPlayerController {
+    /** This row's source is the one playing. */
+    playing: boolean;
+    /** Where the shared player is in this source (0 when it holds another). */
+    time: number;
+    /** The source's length once known; `durationHint` until then. */
+    duration?: number;
+    /** Play or pause (a row that is not the current source starts it). */
+    onToggle: () => void;
+    onSeek: (seconds: number) => void;
+}
 
 export declare interface AudioPlayerProps {
-    src: string;
+    /** The file to play. Not used with `controller`. */
+    src?: string;
+    /**
+     * Follow a shared player instead of owning one (G152-1): no `<audio>` is
+     * rendered; play, pause and seek go to `controller`, and the time, length
+     * and playing state come from it. `autoPlay` and `onEnded` belong to the
+     * shared player then; `onFirstPlay` still fires the first time `playing`
+     * turns true. Since 2.520.0.
+     */
+    controller?: AudioPlayerController;
     autoPlay?: boolean;
     /** Fires once, the first time playback starts — "mark as listened". */
     onFirstPlay?: () => void;
@@ -1503,6 +1525,9 @@ export declare function formatAudioTime(seconds: number): string;
 /** "09:41", or "1:02:03" past an hour. */
 export declare function formatCallElapsed(ms: number): string;
 
+/** "0:06" for 6 seconds; "1:02" past a minute. */
+export declare function formatClipTime(seconds: number): string;
+
 export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, streamReady, connection, channelName, error, endHint, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
 
 export declare interface GoLiveButtonProps {
@@ -2205,7 +2230,7 @@ export declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavail
  * Source keys discard the old decoder and its events before starting another.
  * Uses the same Stack/Inline footer composition as the huddle shell, with the
  * shared button, icon, form and typography primitives throughout. */
-export declare function MediaPlaybackDock({ source, autoPlay, onClose, onPrevious, onNext, status, emptyLabel, className, 'data-testid': testId, }: MediaPlaybackDockProps): JSX.Element;
+export declare function MediaPlaybackDock({ source, autoPlay, onClose, onPrevious, onNext, status, emptyLabel, onStateChange, controlRef, className, 'data-testid': testId, }: MediaPlaybackDockProps): JSX.Element;
 
 export declare interface MediaPlaybackDockProps {
     source?: PlaybackSource | null;
@@ -2217,8 +2242,35 @@ export declare interface MediaPlaybackDockProps {
     /** Connection/freshness context. Kept separate from playback announcements. */
     status?: ReactNode;
     emptyLabel?: string;
+    /**
+     * The playback as it changes: which source, playing or not, where and how
+     * long (G152-1). With `controlRef`, what lets other views follow and drive
+     * the one player; `useMediaPlayback` wires both. Since 2.520.0.
+     */
+    onStateChange?: (state: MediaPlaybackState) => void;
+    /** Filled with play, pause, toggle and seek for the current source. Since 2.520.0. */
+    controlRef?: RefObject<MediaPlaybackHandle | null>;
     className?: string;
     'data-testid'?: string;
+}
+
+/** The dock's transport, for other views to drive it (`controlRef`). */
+export declare interface MediaPlaybackHandle {
+    play(): void;
+    pause(): void;
+    toggle(): void;
+    seek(seconds: number): void;
+}
+
+/** What the dock is doing, reported through `onStateChange`. */
+export declare interface MediaPlaybackState {
+    /** The current source's id, or null with nothing loaded. */
+    sourceId: string | null;
+    playing: boolean;
+    /** Seconds into the current source. */
+    time: number;
+    /** The current source's length in seconds, 0 until known. */
+    duration: number;
 }
 
 export declare function MediaPrecheckRow({ micOn, cameraOn, showCamera, permission, onToggleMic, onToggleCamera, onOpenSettings, testIdPrefix, settingsTestId, className, }: MediaPrecheckRowProps): JSX.Element;
@@ -3567,6 +3619,30 @@ export declare interface UseHlsSourceState {
     retry: () => void;
 }
 
+/**
+ * One playback for a page (G152-1): the `MediaPlaybackDock` owns the only
+ * media element, and every row's `AudioPlayer` follows it through
+ * `controllerFor(source)`. A row's Play loads its source into the dock and
+ * plays it; a row's scrubber seeks the dock (loading that source first when
+ * another is current). Spread `dockProps` on the dock. Since 2.520.0.
+ */
+export declare function useMediaPlayback(initial?: PlaybackSource | null): {
+    source: PlaybackSource | null;
+    state: MediaPlaybackState;
+    play: (next: PlaybackSource) => void;
+    load: (next: PlaybackSource) => void;
+    close: () => void;
+    controllerFor: (row: PlaybackSource) => AudioPlayerController;
+    controlRef: RefObject<MediaPlaybackHandle | null>;
+    dockProps: {
+        source: PlaybackSource | null;
+        autoPlay: boolean;
+        onStateChange: (next: MediaPlaybackState) => void;
+        controlRef: RefObject<MediaPlaybackHandle | null>;
+        onClose: () => void;
+    };
+};
+
 export declare function useMuteWhileTalking({ localStream, isMuted, threshold, triggerMs, cooldownMs, }: UseMuteWhileTalkingOptions): boolean;
 
 declare interface UseMuteWhileTalkingOptions {
@@ -3603,6 +3679,13 @@ export declare function useStableActiveSpeaker(activeSpeakerId: string | null | 
 
 export declare function useTrackStateBump(stream: MediaStream | undefined | null, participantLabel: string): number;
 
+/** A named span of the clip, from `start` (seconds) to the next chapter's start. */
+export declare interface VideoChapter {
+    start: number;
+    title: string;
+    id?: string;
+}
+
 /**
  * Static N-way grid: 1 / 2×2 / 3×3 / 4×4 column count based on participant
  * count. Tiles do NOT reflow on speaker change — speaking is indicated via
@@ -3625,6 +3708,14 @@ export declare interface VideoGridProps {
 }
 
 export declare function VideoIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** A point on the clip worth a look (a review finding, a note), at `at` seconds. */
+export declare interface VideoMarker {
+    at: number;
+    label: string;
+    tone?: 'info' | 'warning' | 'danger';
+    id?: string;
+}
 
 export declare function VideoOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -3652,7 +3743,10 @@ export declare interface VideoOverlayChipProps {
 
 export declare type VideoOverlayChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info';
 
-export declare function VideoPlayer({ src, stream, autoPlay, muted, loop, controls, poster, phase: controlledPhase, className, style, onPhaseChange, onTimeUpdate, }: VideoPlayerProps): JSX.Element;
+/**
+ * A file or live-stream player with a phase overlay; with `chapters` and `markers` it lists a cut's shots and marked moments under the clip and seeks to them.
+ */
+export declare function VideoPlayer({ src, stream, autoPlay, muted, loop, controls, poster, phase: controlledPhase, className, style, onPhaseChange, onTimeUpdate, chapters, markers, seekTo, onChapterChange, }: VideoPlayerProps): JSX.Element;
 
 export declare function VideoPlayerModal({ onClose, sources, title, subtitle, autoPlay, muted, hideDownload, header, footer, className, }: VideoPlayerModalProps): JSX.Element;
 
@@ -3697,6 +3791,23 @@ export declare interface VideoPlayerProps {
     style?: CSSProperties;
     onPhaseChange?: (phase: PlayerPhase) => void;
     onTimeUpdate?: (currentTime: number, duration: number) => void;
+    /**
+     * Chapters drawn under the clip as a list a viewer can jump through (since
+     * 2.520.0). The playing chapter is marked `aria-current`. File sources only.
+     */
+    chapters?: VideoChapter[];
+    /** Points on the clip (review findings) drawn as ticks on a track and as jump buttons (since 2.520.0). */
+    markers?: VideoMarker[];
+    /**
+     * Seek to this many seconds. Change `nonce` to seek to the same time again.
+     * The player seeks once metadata is in. Since 2.520.0.
+     */
+    seekTo?: {
+        seconds: number;
+        nonce?: number;
+    } | null;
+    /** The chapter that started playing (after a seek or as the clip plays). Since 2.520.0. */
+    onChapterChange?: (chapter: VideoChapter, index: number) => void;
 }
 
 export declare interface VideoPlayerSource {
