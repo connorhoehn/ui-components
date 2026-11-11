@@ -108,6 +108,22 @@ export interface ModelViewerProps {
   reference?: { src: string; label?: string; alt?: string };
   /** The frame's aspect — same classes as ImageCompare. Default `square`. */
   aspect?: ModelViewerAspect;
+  /**
+   * How the frame gets its height. `aspect` (default): from its width, by
+   * `aspect`. `fill`: the viewer is as tall as the box its host gives it
+   * (`h-full`), the controls under the view keep their own height and the
+   * frame takes what is left, so the view and its controls are one unit
+   * that ends where the host's box ends and nothing sits below the fold.
+   * The host's box needs a height of its own (a page template's body, a
+   * `flex-1 min-h-0` cell); `aspect` is ignored. Since 2.520.1 (G174-1).
+   */
+  fit?: 'aspect' | 'fill';
+  /**
+   * model-viewer `camera-orbit`: where the camera opens (`"0deg 75deg auto"`
+   * is the model's front, its +Z; `"180deg 75deg auto"` its back). Default:
+   * model-viewer's own. Since 2.520.1 (G174-2).
+   */
+  cameraOrbit?: string;
   /** Turntable. Default true; always off under prefers-reduced-motion. */
   autoRotate?: boolean;
   /** Orbit with the pointer. Default true. */
@@ -679,6 +695,8 @@ export function ModelViewer({
   label = '3D model',
   reference,
   aspect = 'square',
+  fit = 'aspect',
+  cameraOrbit,
   autoRotate = true,
   cameraControls = true,
   environment = 'neutral',
@@ -736,11 +754,12 @@ export function ModelViewer({
     return () => { live = false; };
   }, [fail]);
 
-  // A new src starts over.
+  // A new src starts over; so does a new element (see `hasReference` below).
+  const hasReference = !!reference;
   useEffect(() => {
     setState('loading');
     setError(null);
-  }, [src]);
+  }, [src, hasReference]);
 
   useEffect(() => {
     const el = ref.current;
@@ -758,7 +777,10 @@ export function ModelViewer({
       el.removeEventListener('load', handleLoad);
       el.removeEventListener('error', handleError);
     };
-  }, [fail]);
+    // `hasReference`: with a reference the view sits in a figure, so the
+    // element is another node when the reference comes or goes; listen on
+    // the one drawn now, and start over (it loads its file again). G174-4.
+  }, [fail, hasReference]);
 
   // Callers pass `channels` inline; key it by content so a re-render with an
   // equal object does not re-apply textures.
@@ -845,9 +867,11 @@ export function ModelViewer({
   };
 
   const activeOption = options.find((o) => o.value === channel);
+  const fill = fit === 'fill';
   const frameClass = cn(
     'relative block w-full overflow-hidden',
-    ASPECT[aspect],
+    // `fill`: the frame takes the height the controls leave; never under 8rem.
+    fill ? 'min-h-32 flex-1' : ASPECT[aspect],
     TONE[tone],
     !frameless && 'rounded-lg border border-border',
   );
@@ -882,6 +906,7 @@ export function ModelViewer({
         alt,
         className: 'block h-full w-full',
         'camera-controls': cameraControls ? '' : undefined,
+        'camera-orbit': cameraOrbit,
         'auto-rotate': rotate ? '' : undefined,
         'environment-image': environment,
         'interaction-prompt': 'none',
@@ -921,15 +946,16 @@ export function ModelViewer({
       data-model-viewer-part={selected ?? ''}
       data-model-viewer-isolated={isolateNode ?? ''}
       data-testid={testId}
-      className={cn('@container flex min-w-0 flex-col gap-3', className)}
+      data-model-viewer-fit={fit}
+      className={cn('@container flex min-w-0 flex-col gap-3', fill && 'h-full min-h-0', className)}
     >
       {reference ? (
-        <div className="grid min-w-0 grid-cols-1 gap-3 @md:grid-cols-2">
-          <figure className="m-0 flex min-w-0 flex-col gap-1.5">
+        <div className={cn('grid min-w-0 grid-cols-1 gap-3 @md:grid-cols-2', fill && 'min-h-0 flex-1')}>
+          <figure className={cn('m-0 flex min-w-0 flex-col gap-1.5', fill && 'min-h-0')}>
             {view}
             <figcaption className="truncate text-sm font-medium text-text-primary">{label}</figcaption>
           </figure>
-          <figure data-model-viewer-reference className="m-0 flex min-w-0 flex-col gap-1.5">
+          <figure data-model-viewer-reference className={cn('m-0 flex min-w-0 flex-col gap-1.5', fill && 'min-h-0')}>
             <span className={frameClass}>
               <img
                 src={reference.src}

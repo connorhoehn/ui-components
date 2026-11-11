@@ -260,6 +260,14 @@ export interface ContextComposerProps {
   foldingAbove?: ReactNode;
   /** Inside the card, its first section (`RichChatComposer header`): a prompt deck. Forces the full card. Since 2.446.0. */
   header?: ReactNode;
+  /**
+   * The `header` is one line that also belongs over the idle row (a prompt
+   * deck folded to "1 question waiting · … Show"): it stays drawn, and no
+   * longer forces the full card, so a composer at rest with a question
+   * waiting is its idle row and that line, not the whole card. Default
+   * false (a header forces the full card). Since 2.520.1 (G174-3).
+   */
+  headerFolds?: boolean;
   /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
   strip?: ReactNode;
   /** A task in flight, as the `TaskStrip`. */
@@ -469,6 +477,7 @@ export function ContextComposerBase({
   above,
   foldingAbove,
   header,
+  headerFolds = false,
   strip,
   task,
   reply,
@@ -768,7 +777,7 @@ export function ContextComposerBase({
   // Host content the composer cannot see forces the full card (never the
   // dock: a call shelf over an idle row is the resting state).
   const hasHeader = header != null && header !== false;
-  const forceExpanded = !!expanded || hasAbove || hasHeader || stripRow != null;
+  const forceExpanded = !!expanded || hasAbove || (hasHeader && !headerFolds) || stripRow != null;
 
   const chatOnlyAttachments = f.attachments === 'chat-only' && mode !== 'chat';
   const placeholders: Partial<Record<ComposerMode, string>> = {

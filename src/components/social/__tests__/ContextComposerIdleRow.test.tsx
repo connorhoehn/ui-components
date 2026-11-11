@@ -114,3 +114,20 @@ describe('composer placeholder stylesheet', () => {
     }
   });
 });
+
+describe('ContextComposer idle row — a header that folds (G174-3)', () => {
+  const context = { kind: 'document', id: 'doc-1', title: 'Roadmap' } as const;
+
+  it('a header forces the full card', () => {
+    render(<ContextComposer context={context} onSend={vi.fn(() => true)} composerTestId="c" header={<p>1 question waiting</p>} />);
+    expect(screen.getByTestId('c')).toHaveAttribute('data-collapsed', 'false');
+  });
+
+  it('headerFolds keeps the idle row and draws the header line over it', () => {
+    render(<ContextComposer context={context} onSend={vi.fn(() => true)} composerTestId="c" header={<p>1 question waiting</p>} headerFolds />);
+    const root = screen.getByTestId('c');
+    expect(root).toHaveAttribute('data-collapsed', 'true');
+    expect(within(root).getByTestId('c-header')).toHaveTextContent('1 question waiting');
+    expect(within(root).getByTestId('c-body')).toHaveAttribute('data-idle-row', 'true');
+  });
+});
