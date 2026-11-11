@@ -10,6 +10,8 @@ import {
   ModelViewer,
   applyModelChannel,
   highlightModelPart,
+  isolateModelPart,
+  modelAnimationsOf,
   modelChannelsOf,
   modelSceneOf,
   setModelWireframe,
@@ -168,6 +170,20 @@ describe('scene access (parts, wireframe)', () => {
     expect(body.material).toBe(originalBody);
   });
 
+  it('isolates one part by hiding every other mesh, and shows them all again', () => {
+    const { element, scene, body, legsMesh } = sceneElement();
+    expect(isolateModelPart({}, 'legs')).toBe(-1);
+    expect(isolateModelPart(element, 'legs')).toBe(1);
+    expect((body as { visible?: boolean }).visible).toBe(false);
+    expect((legsMesh as { visible?: boolean }).visible).not.toBe(false);
+    expect(scene.queueRender).toHaveBeenCalled();
+    expect(isolateModelPart(element, 'body')).toBe(1);
+    expect((body as { visible?: boolean }).visible).toBe(true);
+    expect((legsMesh as { visible?: boolean }).visible).toBe(false);
+    expect(isolateModelPart(element, null)).toBe(0);
+    expect((legsMesh as { visible?: boolean }).visible).toBe(true);
+  });
+
   it('sets wireframe on every mesh material', () => {
     const { element, body, legsMesh } = sceneElement();
     expect(setModelWireframe(element, true)).toBe(true);
@@ -229,6 +245,78 @@ describe('ModelViewer', () => {
     expect(onSelectPart).toHaveBeenLastCalledWith(null);
     expect(body).toHaveAttribute('aria-pressed', 'false');
     expect(root(container)).toHaveAttribute('data-model-viewer-part', '');
+  });
+
+  it('isolatePart: the selected part is shown alone until it is pressed again', () => {
+    const { container } = render(<ModelViewer src="/cube.glb" parts={parts} isolatePart />);
+    load(viewerElement(container));
+    fireEvent.click(screen.getByRole('button', { name: 'Legs' }));
+    expect(root(container)).toHaveAttribute('data-model-viewer-isolated', 'legs');
+    fireEvent.click(screen.getByRole('button', { name: 'Legs' }));
+    expect(root(container)).toHaveAttribute('data-model-viewer-isolated', '');
+  });
+
+  it('isolatePart turned off shows every part again (G151-2)', () => {
+    const color = () => ({ value: '', set: vi.fn() });
+    const mat = (name: string) => ({ name, wireframe: false, emissive: color(), clone() { return { ...this, emissive: color(), clone: this.clone }; } });
+    const body: Record<string, unknown> = { name: 'body', isMesh: true, material: mat('body'), parent: null };
+    const legsMesh: Record<string, unknown> = { name: 'legs_mesh', isMesh: true, material: mat('legs'), parent: null };
+    const legs = { name: 'legs', children: [legsMesh] };
+    legsMesh.parent = legs;
+    const all = [body, legs, legsMesh];
+    const scene = { traverse: (fn: (o: unknown) => void) => all.forEach(fn), queueRender: vi.fn() };
+    const { container, rerender } = render(<ModelViewer src="/cube.glb" parts={parts} selectedPart="legs" isolatePart />);
+    const node = viewerElement(container) as unknown as Record<symbol, unknown> & HTMLElement & ModelViewerElementLike;
+    node[Symbol('scene')] = scene;
+    load(node);
+    expect(root(container)).toHaveAttribute('data-model-viewer-isolated', 'legs');
+    expect(body.visible).toBe(false);
+    rerender(<ModelViewer src="/cube.glb" parts={parts} selectedPart="legs" />);
+    expect(root(container)).toHaveAttribute('data-model-viewer-isolated', '');
+    expect(body.visible).toBe(true);
+  });
+
+  it('animations: the clips the model carries, play and pause, a scrubber and the speed; the turntable stops', () => {
+    expect(modelAnimationsOf({ availableAnimations: ['a', 3, 'b'] })).toEqual(['a', 'b']);
+    expect(modelAnimationsOf(null)).toEqual([]);
+    const { container } = render(
+      <ModelViewer src="/rig.glb" animations={{ labels: { 'CAST:tatter/walk': 'Walk' }, autoPlay: false }} data-testid="mv" />,
+    );
+    const node = viewerElement(container) as HTMLElement & Record<string, unknown>;
+    expect(node).toHaveAttribute('auto-rotate');
+    const play = vi.fn();
+    const pause = vi.fn();
+    Object.assign(node, { availableAnimations: ['Range of motion', 'CAST:tatter/walk'], animationName: null, currentTime: 0, timeScale: 1, duration: 2, play, pause });
+    load(node);
+    expect(node).not.toHaveAttribute('auto-rotate');
+    const bar = container.querySelector('[data-model-viewer-animations]') as HTMLElement;
+    expect(bar).toHaveAttribute('data-clip', 'Range of motion');
+    expect(node.animationName).toBe('Range of motion');
+    expect(pause).toHaveBeenCalled();
+    fireEvent.click(within(bar).getByRole('button', { name: 'Play' }));
+    expect(play).toHaveBeenCalledTimes(1);
+    // Choosing a clip plays it (a menu: it fits a narrow inspector).
+    fireEvent.click(within(bar).getByRole('combobox', { name: 'Clip' }));
+    fireEvent.mouseDown(within(screen.getByRole('listbox')).getByRole('option', { name: /Walk/ }));
+    expect(node.animationName).toBe('CAST:tatter/walk');
+    expect(play).toHaveBeenCalledTimes(2);
+    // The label says what a press does; no aria-pressed on top of a changing label.
+    expect(within(bar).getByRole('button', { name: 'Pause' })).not.toHaveAttribute('aria-pressed');
+    const scrubber = within(bar).getByRole('slider', { name: 'Where Walk is' });
+    expect(scrubber).toHaveAttribute('aria-valuetext', expect.stringMatching(/^Frame \d+ of 49$/));
+    fireEvent.change(scrubber, { target: { value: '1' } });
+    expect(node.currentTime).toBe(1);
+    expect(bar).toHaveAttribute('data-playing', 'false');
+    fireEvent.click(within(bar).getByRole('radio', { name: '½×' }));
+    expect(node.timeScale).toBe(0.5);
+    // A frame on and back, paused; the last frame is held short of the end.
+    fireEvent.click(within(bar).getByRole('button', { name: 'On a frame' }));
+    expect(node.currentTime).toBeCloseTo(1 + 1 / 24);
+    fireEvent.click(within(bar).getByRole('button', { name: 'Back a frame' }));
+    expect(node.currentTime).toBeCloseTo(1);
+    node.currentTime = 2;
+    fireEvent.click(within(bar).getByRole('button', { name: 'On a frame' }));
+    expect(node.currentTime).toBeCloseTo(1.999);
   });
 
   it('honours a controlled selectedPart', () => {

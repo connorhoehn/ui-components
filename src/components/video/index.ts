@@ -1,5 +1,5 @@
-export { VideoPlayer } from './VideoPlayer';
-export type { VideoPlayerProps, PlayerPhase } from './VideoPlayer';
+export { VideoPlayer, formatClipTime } from './VideoPlayer';
+export type { VideoPlayerProps, PlayerPhase, VideoChapter, VideoMarker } from './VideoPlayer';
 
 export { VideoPlayerModal } from './VideoPlayerModal';
 export type { VideoPlayerModalProps, VideoPlayerSource } from './VideoPlayerModal';
@@ -288,7 +288,7 @@ export type { EmbeddedCallPanelProps } from './EmbeddedCallPanel';
 export { RecordingChip, RECORDING_CHIP_TITLES } from './RecordingChip';
 export type { RecordingChipProps, RecordingChipState } from './RecordingChip';
 export { AudioPlayer, formatAudioTime } from './AudioPlayer';
-export type { AudioPlayerProps } from './AudioPlayer';
+export type { AudioPlayerProps, AudioPlayerController } from './AudioPlayer';
 // One-line in-call notices with an inline action; the widget-scale answer to a page Banner.
 export { CallNoticePill } from './CallNoticePill';
 export type { CallNoticePillProps } from './CallNoticePill';
@@ -368,5 +368,5 @@ export {
   MeetingShieldIcon,
   MeetingShareIcon,
 } from './MeetingIcons';
-export { MediaPlaybackDock } from './MediaPlaybackDock';
-export type { MediaPlaybackDockProps, PlaybackSource } from './MediaPlaybackDock';
+export { MediaPlaybackDock, useMediaPlayback } from './MediaPlaybackDock';
+export type { MediaPlaybackDockProps, PlaybackSource, MediaPlaybackState, MediaPlaybackHandle } from './MediaPlaybackDock';

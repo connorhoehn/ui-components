@@ -71,7 +71,8 @@ export function DetailSection({
         {!first && <Divider spacing="md" />}
         {/* A fixed 24px row: a hover action may be taller, but never pushes
             the body down (the mockup's heading → text pitch is 24px). */}
-        <div className={cn('flex items-center gap-2', lg ? 'h-7' : 'h-6', lg ? (hasDescription ? 'mb-0' : 'mb-2') : 'mb-0.5')}>
+        {/* sm / md: 4px under the title row (2px before 2.520.0, G129-1: off the 4px scale). */}
+        <div className={cn('flex items-center gap-2', lg ? 'h-7' : 'h-6', lg ? (hasDescription ? 'mb-0' : 'mb-2') : 'mb-1')} data-detail-section-title-row="">
           <Heading className={cn('m-0 font-semibold text-text-primary', lg ? 'text-[19px] leading-7' : sm ? 'text-sm leading-5' : 'text-base leading-6')}>{title}</Heading>
           {hint != null && <span className={cn('min-w-0 truncate text-text-tertiary', sm ? 'text-xs' : 'text-[13px]')}>{hint}</span>}
           {actions != null && (

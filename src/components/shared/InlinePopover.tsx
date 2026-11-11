@@ -95,6 +95,16 @@ export interface InlinePopoverProps {
   escapeScope?: 'window' | 'inside';
   /** Keep Tab / Shift+Tab cycling inside the panel. Default true. Since 2.519.0. */
   trapFocus?: boolean;
+  /**
+   * The panel's own role. `dialog` (default): a `role="dialog"` panel named by
+   * `aria-label` / `aria-labelledby`, marked `data-ui-dialog={kind}`. `none`:
+   * a plain positioned container with no role and no `data-ui-dialog`, for
+   * content that carries its own role (a `role="menu"`): a menu is not a
+   * dialog, and a no-modal check must not count an open menu as one (G150-7).
+   * Focus, Escape, Tab cycling and outside-click dismissal are the same in
+   * both. Every panel carries `data-ui-popover={kind}`. Since 2.520.0.
+   */
+  panelRole?: 'dialog' | 'none';
   children: ReactNode;
 }
 
@@ -272,6 +282,7 @@ export function InlinePopover({
   focusOnOpen = 'first',
   escapeScope = 'window',
   trapFocus = true,
+  panelRole = 'dialog',
   children,
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -550,12 +561,13 @@ export function InlinePopover({
   return createPortal(
     <div
       ref={panelRef}
-      role="dialog"
-      aria-label={ariaLabel}
-      aria-labelledby={ariaLabelledBy}
+      role={panelRole === 'dialog' ? 'dialog' : undefined}
+      aria-label={panelRole === 'dialog' ? ariaLabel : undefined}
+      aria-labelledby={panelRole === 'dialog' ? ariaLabelledBy : undefined}
       data-testid={testId}
       data-placement={placement}
-      data-ui-dialog={kind}
+      data-ui-dialog={panelRole === 'dialog' ? kind : undefined}
+      data-ui-popover={kind}
       data-uic-popover-seq={seqRef.current || undefined}
       className={cn(
         // `bg-surface`, NOT `bg-white`. This panel is PORTALLED to

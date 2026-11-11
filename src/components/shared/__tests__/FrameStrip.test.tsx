@@ -97,7 +97,7 @@ describe('FrameStrip', () => {
 
   it('the contact sheet switch swaps the player for the sheet image', () => {
     const { container } = render(<FrameStrip frames={frames} contactSheet={{ src: '/sheet.png' }} />);
-    const group = screen.getByRole('radiogroup', { name: 'View' });
+    const group = screen.getByRole('radiogroup', { name: 'Frames: frames or contact sheet' });
     fireEvent.click(screen.getByRole('radio', { name: 'Contact sheet' }));
     expect(group).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Contact sheet' })).toHaveAttribute('src', '/sheet.png');
@@ -105,6 +105,14 @@ describe('FrameStrip', () => {
     expect(strip(container)).toHaveAttribute('data-frame-strip-view', 'sheet');
     fireEvent.click(screen.getByRole('radio', { name: 'Frames' }));
     expect(current(container)).toHaveAttribute('src', '/f1.png');
+  });
+
+  it('the switch is named after the strip, never a bare "View"; switchLabel overrides', () => {
+    const { rerender } = render(<FrameStrip frames={frames} label="Motion" contactSheet={{ src: '/sheet.png' }} />);
+    expect(screen.getByRole('radiogroup', { name: 'Motion: frames or contact sheet' })).toBeInTheDocument();
+    expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
+    rerender(<FrameStrip frames={frames} label="Motion" switchLabel="Motion frames" contactSheet={{ src: '/sheet.png' }} />);
+    expect(screen.getByRole('radiogroup', { name: 'Motion frames' })).toBeInTheDocument();
   });
 
   it('a thumbnail click jumps to that frame; a controlled index wins', () => {

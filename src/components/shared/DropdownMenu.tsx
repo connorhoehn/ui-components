@@ -10,6 +10,9 @@
 // Built on InlinePopover (portal positioning, outside-click + Escape
 // dismiss, focus capture/restore, Tab cycling); adds menu semantics
 // (role="menu"/"menuitem") and ArrowUp/ArrowDown/Home/End focus movement.
+// The panel and each submenu flyout are InlinePopover `panelRole="none"`
+// (since 2.520.0, G150-7): a plain positioned container around the
+// `role="menu"`, so an open menu is never also a dialog.
 
 import { useCallback, useRef, useState, type KeyboardEvent, type ReactNode, useEffect, useId } from 'react';
 import { BUTTON_WEIGHT } from '../ui/Button';
@@ -225,6 +228,8 @@ export function DropdownMenu({
         placement={align === 'end' ? 'bottom-end' : 'bottom-start'}
         className={cn('min-w-[180px] p-0 overflow-hidden rounded-lg', className)}
         data-testid={testId}
+        panelRole="none"
+        kind="menu"
       >
         <div
           ref={menuRef}
@@ -384,6 +389,8 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
         offset={2}
         className="min-w-[200px] p-0 overflow-hidden rounded-lg"
         data-testid={`${testId}-submenu`}
+        panelRole="none"
+        kind="menu"
       >
         <div
           ref={flyRef}

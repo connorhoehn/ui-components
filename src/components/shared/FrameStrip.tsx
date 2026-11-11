@@ -47,6 +47,12 @@ export interface FrameStripProps {
   loop?: boolean;
   /** One image of every frame; adds a "Frames | Contact sheet" switch. */
   contactSheet?: { src: string; label?: string; alt?: string };
+  /**
+   * Accessible name of that switch. Default "<label>: frames or <sheet label>"
+   * (e.g. "Motion: frames or contact sheet"), so it never collides with
+   * another "View" group on the same page. Since 2.520.0 (G150-6; was "View").
+   */
+  switchLabel?: string;
   /** The frame's aspect — same classes as ImageCompare. Default `square`. */
   aspect?: FrameStripAspect;
   /** A scrolling row of frame buttons under the player. Default true. */
@@ -74,6 +80,7 @@ export function FrameStrip({
   autoPlay = false,
   loop = true,
   contactSheet,
+  switchLabel,
   aspect = 'square',
   thumbnails = true,
   className,
@@ -187,7 +194,7 @@ export function FrameStrip({
       {contactSheet && (
         <SegmentedControl
           size="sm"
-          aria-label="View"
+          aria-label={switchLabel ?? `${label}: frames or ${(contactSheet.label ?? 'Contact sheet').toLowerCase()}`}
           value={view}
           onChange={(v) => { setView(v as 'frames' | 'sheet'); setPlaying(false); }}
           options={[{ value: 'frames', label: 'Frames' }, { value: 'sheet', label: contactSheet.label ?? 'Contact sheet' }]}

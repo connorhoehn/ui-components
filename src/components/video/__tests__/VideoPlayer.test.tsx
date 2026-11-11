@@ -132,4 +132,47 @@ describe('VideoPlayer', () => {
     expect(screen.getByText('Connecting…')).toBeInTheDocument();
     expect(container.querySelector('[data-video-player]')).toHaveAttribute('data-source', 'stream');
   });
+
+  describe('chapters and markers (G154-1, 2.520.0)', () => {
+    const chapters = [
+      { start: 0, title: 'Walks in', id: 'a' },
+      { start: 6, title: 'Stops at the puddle', id: 'b' },
+      { start: 9, title: 'Waves', id: 'c' },
+    ];
+    it('draws the chapters as a list and jumps to one when pressed', () => {
+      const { container } = render(<VideoPlayer src="clip.mp4" chapters={chapters} />);
+      const video = getVideo(container);
+      Object.defineProperty(video, 'readyState', { value: 4, configurable: true });
+      const list = screen.getByRole('list', { name: 'Chapters' });
+      expect(list.querySelectorAll('button')).toHaveLength(3);
+      expect(screen.getByText('0:06')).toBeInTheDocument();
+      act(() => { screen.getByText('Stops at the puddle').click(); });
+      expect(video.currentTime).toBe(6);
+      expect(container.querySelector('[data-video-chapter="b"]')?.getAttribute('aria-current')).toBe('true');
+    });
+    it('marks findings on a track and jumps to them', () => {
+      const onChapterChange = vi.fn();
+      const { container } = render(
+        <VideoPlayer src="clip.mp4" chapters={chapters} markers={[{ at: 9, label: 'Nobody moves', id: 'f1', tone: 'danger' }]} onChapterChange={onChapterChange} />,
+      );
+      const video = getVideo(container);
+      Object.defineProperty(video, 'readyState', { value: 4, configurable: true });
+      expect(container.querySelector('[data-video-marker-tick="f1"]')).not.toBeNull();
+      act(() => { screen.getByText('Nobody moves').click(); });
+      expect(video.currentTime).toBe(9);
+      expect(onChapterChange).toHaveBeenLastCalledWith(chapters[2], 2);
+    });
+    it('seeks when seekTo changes', () => {
+      const { container, rerender } = render(<VideoPlayer src="clip.mp4" chapters={chapters} />);
+      const video = getVideo(container);
+      Object.defineProperty(video, 'readyState', { value: 4, configurable: true });
+      rerender(<VideoPlayer src="clip.mp4" chapters={chapters} seekTo={{ seconds: 6 }} />);
+      expect(video.currentTime).toBe(6);
+    });
+    it('keeps the plain player unwrapped without chapters or markers', () => {
+      const { container } = render(<VideoPlayer src="clip.mp4" className="x" />);
+      expect(container.querySelector('[data-video-timed]')).toBeNull();
+      expect((container.firstChild as HTMLElement).className).toContain('x');
+    });
+  });
 });
