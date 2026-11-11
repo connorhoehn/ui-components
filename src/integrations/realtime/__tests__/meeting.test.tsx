@@ -49,6 +49,11 @@ function world(config: ConstructorParameters<typeof MeetingService>[0]['config']
       sendToChannel: (ch, m) => { for (const [c, s] of subs) if (s.has(ch)) deliver(c, m); },
       subscribeToChannel: (c, ch) => { const s = subs.get(c) ?? new Set<string>(); s.add(ch); subs.set(c, s); return true; },
       unsubscribeFromChannel: (c, ch) => { subs.get(c)?.delete(ch); },
+      // realtime-modules 0.147+ fails closed: MeetingService refuses a router
+      // without `checkChannel`. A real host supplies its own authorization here;
+      // an allow-all is right only because this is a unit test of one room's
+      // frames with no tenant or channel policy to enforce.
+      checkChannel: async () => true,
       getUserIdForClient: (c) => users.get(c),
       getClientData: (c) => ({ userContext: { userId: users.get(c), displayName: PEOPLE.find((p) => p.userId === users.get(c))?.displayName } }),
     },
