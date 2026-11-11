@@ -35,8 +35,11 @@ describe('DeviceToggleSelect', () => {
     const onToggle = vi.fn();
     render(<DeviceToggleSelect kind="microphone" on onToggle={onToggle} devices={MICS} onSelectDevice={() => {}} permission="denied" data-testid="mic" />);
     const btn = screen.getByTestId('mic') as HTMLButtonElement;
-    expect(btn.disabled).toBe(true);
-    expect(btn.title).toBe('Microphone blocked in the browser');
+    // Focusable, so a keyboard user can reach it and hear why.
+    expect(btn).toHaveAttribute('aria-disabled', 'true');
+    expect(btn.disabled).toBe(false);
+    expect(btn).toHaveAccessibleDescription('Microphone blocked in the browser');
+    expect(btn).not.toHaveAttribute('title');
     fireEvent.click(btn);
     expect(onToggle).not.toHaveBeenCalled();
   });

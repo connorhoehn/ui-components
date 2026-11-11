@@ -182,8 +182,12 @@
      darks (#0f0f0f, #1a1a2e, #0a1020). */
   --color-video-stage: #0f0f0f;
   --color-video-tile: #1a1a2e;
-  /* A camera-off tile in the call dock (2.391.1): the mockup's soft grey, the
-     same in both themes like the rest of the video family. */
+  /* A camera-off tile in the call dock (2.391.1): the mockup's soft grey in
+     light. The one video token that follows the theme: the dock sits in the
+     page, so a light-grey slab in a dark page read as a fault. The dark block
+     re-points it at the raised dark surface (--color-surface-emphasis). The
+     tile's name strip carries its own dark scrim, so the white label clears
+     4.5:1 on either. */
   --color-video-tile-off: #b0b6bd;
 
   /* Call-chrome surfaces — the docked/expanded call card, its side panel,
@@ -358,6 +362,8 @@
   --color-border-subtle: #293548;
 
   --color-surface-emphasis: #334155;
+  /* The camera-off dock tile: the raised dark surface, not the light grey. */
+  --color-video-tile-off: var(--color-surface-emphasis);
 
   /* Inverse pair flips: "inverse" panels read light-on-dark chrome. */
   --color-surface-inverse: #f8fafc;

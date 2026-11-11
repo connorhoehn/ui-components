@@ -436,3 +436,22 @@ export const SoloGallery: Story = {
   args: base({ layout: 'stage', participants: [base().participants[0]!], participantCount: 1 }),
   decorators: [themed('light')],
 };
+
+/** The host made you view-only: your camera is off (the camera-off tile, the
+ *  raised dark surface in dark mode), and mic, camera and Share are held by
+ *  the reason. They stay in the tab order; focus or hover shows the reason. */
+const VIEW_ONLY = 'The host made you view-only';
+export const PublishRevoked: Story = {
+  args: base({
+    participants: [
+      person('connor', { cameraOn: false, audioOn: false, videoElement: undefined, access: 'view-only' }),
+      ...PEOPLE.slice(1, 3),
+    ],
+    participantCount: 3,
+    mic: { ...base().mic, on: false, disabledReason: VIEW_ONLY },
+    camera: { ...base().camera, on: false, disabledReason: VIEW_ONLY },
+    screenShare: { on: false, onToggle: noop, disabledReason: VIEW_ONLY },
+  }),
+  decorators: [themed('light')],
+};
+export const PublishRevokedDark: Story = { ...PublishRevoked, decorators: [themed('dark')] };

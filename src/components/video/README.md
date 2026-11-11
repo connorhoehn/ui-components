@@ -59,9 +59,20 @@ they stay in the call to watch and listen. The library draws both ends:
 - **Your own controls.** `audioDisabledReason`, `videoDisabledReason` and
   `screenShareDisabledReason` on `MediaControlsBar`, `CallControls` and
   `CallWidget` (with the `*Disabled` booleans beside them) disable a toggle
-  and make the reason its tooltip and accessible description; the toggle
-  stays focusable (`aria-disabled`) so the reason can be read. `CallDock`
-  already takes `disabledReason` on `mic`, `camera` and `screenShare`.
+  and make the reason its tooltip and accessible description. `CallDock`
+  takes `disabledReason` on `mic`, `camera` and `screenShare`
+  (`DeviceToggleSelect` underneath). Every one of them behaves the same way:
+  the control stays in the tab order (`aria-disabled`, a press does nothing),
+  draws its focus ring, and shows the reason in the library `Tooltip` on
+  hover AND on keyboard focus (never a native `title`, which a keyboard never
+  sees). The ▾ device menus beside mic and camera stay usable.
+- **Room for the row.** `RosterPanel` folds a row's "View only" chip to its
+  eye whenever the label would cut the name (`accessBadge`, default `auto`);
+  "(you)" is never dropped and a cut name shows in full on hover, so a
+  narrow roster (`className="w-48"` beside the tiles) needs no forced widths.
+- **The notice.** `CallNoticePill` wraps to two lines (`maxLines`) and past
+  that puts the full text in a tooltip that hover and Tab both reach, so a
+  host's reason can be passed as written.
 
 ```tsx
 <RosterPanel

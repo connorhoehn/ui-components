@@ -46,6 +46,7 @@ import { memo, useCallback, useRef, useState, type ReactNode } from 'react';
 import { noteCallDockRender } from './callDockRenderProbe';
 import { cn } from '../../lib/cn';
 import { Badge } from '../shared/Badge';
+import { DISABLED_REASON_DIM, DisabledReasonTooltip, useDisabledReason } from '../shared/DisabledReason';
 import Banner from '../shared/Banner';
 import { InlinePopover } from '../shared/InlinePopover';
 import SkeletonCard from '../shared/SkeletonCard';
@@ -317,6 +318,10 @@ export function CallDock({
   const tileClickRef = useRef(onTileClick);
   tileClickRef.current = onTileClick;
   const stableTileClick = useCallback((userId: string) => tileClickRef.current?.(userId), []);
+  // Share is held by a reason in every state that disables it, so it stays
+  // focusable and says why (before: the native attribute and a title).
+  const shareReason = phase === 'calling' ? 'You can share once someone joins' : phase === 'connecting' ? 'Connecting…' : screenShare.disabledReason;
+  const shareHeld = useDisabledReason(shareReason, false);
 
   if (phase === 'error' && error) {
     return (
@@ -375,7 +380,6 @@ export function CallDock({
   const grid = layout === 'grid' || stage;
   const stack = layout === 'stack' || compactDock || (stage && size === 'sm');
   // `stack`: what the wide bar draws inline, as menu rows (mic, camera and Leave stay on the bar).
-  const shareReason = calling ? 'You can share once someone joins' : connecting ? 'Connecting…' : screenShare.disabledReason;
   const stackMenuItems: DropdownMenuItem[] = [
     { label: screenShare.on ? 'Stop sharing' : 'Share your screen', icon: <ScreenShareIcon size={16} />, onSelect: screenShare.onToggle,
       ...(shareReason ? { disabled: true, disabledReason: shareReason } : {}), 'data-testid': 'call-dock-share' },
@@ -510,24 +514,27 @@ export function CallDock({
           <DeviceToggleSelect kind="microphone" {...mic} data-testid="call-dock-mic" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
           <DeviceToggleSelect kind="camera" {...camera} data-testid="call-dock-camera" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
           {!stack && (<>
+          <DisabledReasonTooltip reason={shareHeld.reason}>
           <Button
             variant={screenShare.on ? 'danger' : 'ghost'}
             size="sm"
-            onClick={screenShare.onToggle}
-            disabled={connecting || calling || Boolean(screenShare.disabledReason)}
-            title={
-              calling
-                ? 'You can share once someone joins'
-                : (screenShare.disabledReason ?? (screenShare.on ? 'Stop sharing' : 'Share your screen'))
-            }
+            onClick={shareHeld.guard(screenShare.onToggle)}
+            {...shareHeld.buttonProps}
+            title={shareHeld.reason === undefined ? (screenShare.on ? 'Stop sharing' : 'Share your screen') : undefined}
             aria-label={screenShare.on ? 'Stop sharing' : 'Share'}
             aria-pressed={screenShare.on}
             data-testid="call-dock-share"
-            className="inline-flex h-8 items-center gap-1.5 bg-surface"
+            className={cn(
+              'inline-flex h-8 items-center gap-1.5 bg-surface',
+              // Held: no hover tint (it does nothing); the icon and label dim, not the focus outline.
+              shareHeld.reason !== undefined && cn(DISABLED_REASON_DIM, 'aria-disabled:hover:bg-surface aria-disabled:hover:text-text-primary'),
+            )}
           >
             <ScreenShareIcon size={16} />
             <span className="hidden @min-[860px]:inline">{screenShare.on ? 'Stop sharing' : 'Share'}</span>
+            {shareHeld.description}
           </Button>
+          </DisabledReasonTooltip>
           <Button
             variant={peopleOpen ? 'secondary' : 'ghost'}
             size="sm"

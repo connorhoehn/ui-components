@@ -6,8 +6,9 @@
 // MediaIcons). Pressed state is reflected via `aria-pressed`; visual
 // tone flips between "active" (soft surface) and "off" (red soft).
 
-import { useId, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { DISABLED_REASON_DIM, DisabledReasonTooltip, useDisabledReason } from '../shared/DisabledReason';
 
 export type CircularIconToggleTone = 'neutral' | 'danger';
 export type CircularIconToggleSize = 'sm' | 'md' | 'lg';
@@ -30,9 +31,10 @@ export interface CircularIconToggleProps
   size?: CircularIconToggleSize;
   /**
    * Why the control is off-limits ("The host made you view-only"). Disables
-   * it and is its tooltip and accessible description. Unlike `disabled`
-   * alone, the button stays focusable (`aria-disabled="true"`, clicks do
-   * nothing) so a keyboard or screen-reader user can reach it and hear why.
+   * it and is its tooltip (the library's `Tooltip`, on hover and on keyboard
+   * focus) and accessible description. Unlike `disabled` alone, the button
+   * stays focusable (`aria-disabled="true"`, clicks do nothing) so a keyboard
+   * or screen-reader user can reach it and hear why.
    */
   disabledReason?: string;
 }
@@ -52,6 +54,15 @@ const OFF_NEUTRAL =
 const OFF_DANGER =
   'bg-danger-bg text-danger-fg hover:bg-danger-bg';
 
+/**
+ * Held by a reason: the same fills, faded through their alpha rather than the
+ * button's `opacity`, so the focus outline drawn around it stays at full
+ * strength. No hover change: the control does nothing.
+ */
+const HELD_ON = 'bg-surface-emphasis/50 text-text-primary';
+const HELD_OFF_NEUTRAL = 'bg-surface-hover/60 text-neutral';
+const HELD_OFF_DANGER = 'bg-danger-bg/60 text-danger-fg';
+
 export function CircularIconToggle({
   on,
   iconOn,
@@ -67,39 +78,42 @@ export function CircularIconToggle({
   'aria-describedby': describedBy,
   ...rest
 }: CircularIconToggleProps) {
-  const reasonId = useId();
-  const reason = disabledReason || undefined;
-  const off = Boolean(disabled) || reason !== undefined;
-  const palette = on
-    ? ON_CLASSES
-    : offTone === 'danger'
-      ? OFF_DANGER
-      : OFF_NEUTRAL;
+  const held = useDisabledReason(disabledReason, disabled, describedBy);
+  const reason = held.reason;
+  const palette = reason !== undefined
+    ? on ? HELD_ON : offTone === 'danger' ? HELD_OFF_DANGER : HELD_OFF_NEUTRAL
+    : on
+      ? ON_CLASSES
+      : offTone === 'danger'
+        ? OFF_DANGER
+        : OFF_NEUTRAL;
   return (
-    <button
-      data-ui-part=""
-      type="button"
-      aria-label={ariaLabel}
-      aria-pressed={on}
-      disabled={reason === undefined ? disabled : undefined}
-      aria-disabled={reason !== undefined ? 'true' : undefined}
-      aria-describedby={reason !== undefined ? [describedBy, reasonId].filter(Boolean).join(' ') : describedBy}
-      title={reason ?? title}
-      onClick={reason !== undefined ? undefined : onClick}
-      data-disabled-reason={reason}
-      className={cn(
-        'rounded-full grid place-items-center transition-colors duration-150',
-        SIZE_CLASSES[size],
-        palette,
-        off && 'opacity-40 cursor-not-allowed',
-        !off && 'cursor-pointer',
-        className,
-      )}
-      {...rest}
-    >
-      {on ? iconOn : iconOff}
-      {reason !== undefined && <span id={reasonId} hidden>{reason}</span>}
-    </button>
+    <DisabledReasonTooltip reason={reason}>
+      <button
+        data-ui-part=""
+        type="button"
+        aria-label={ariaLabel}
+        aria-pressed={on}
+        {...held.buttonProps}
+        // The reason is the Tooltip; a native title would draw a second one.
+        title={reason === undefined ? title : undefined}
+        onClick={held.guard(onClick)}
+        className={cn(
+          'rounded-full grid place-items-center transition-colors duration-150',
+          'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+          SIZE_CLASSES[size],
+          palette,
+          reason !== undefined && DISABLED_REASON_DIM,
+          reason === undefined && held.off && 'opacity-40 cursor-not-allowed',
+          !held.off && 'cursor-pointer',
+          className,
+        )}
+        {...rest}
+      >
+        {on ? iconOn : iconOff}
+        {held.description}
+      </button>
+    </DisabledReasonTooltip>
   );
 }
 

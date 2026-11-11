@@ -14,7 +14,8 @@ describe('CircularIconToggle — disabledReason', () => {
     const button = screen.getByRole('button', { name: 'Unmute microphone' });
     expect(button).not.toHaveAttribute('disabled');
     expect(button).toHaveAttribute('aria-disabled', 'true');
-    expect(button).toHaveAttribute('title', REASON);
+    // The reason is the library Tooltip, not a native title (which shows on hover only).
+    expect(button).not.toHaveAttribute('title');
     expect(button).toHaveAccessibleDescription(REASON);
     button.focus();
     expect(button).toHaveFocus();
@@ -52,7 +53,8 @@ describe('MediaControlsBar — disabled reasons', () => {
     const share = screen.getByTestId('media-controls-screenshare');
     expect(mic).toHaveAttribute('aria-disabled', 'true');
     expect(mic).toHaveAccessibleDescription(REASON);
-    expect(cam).toHaveAttribute('title', REASON);
+    expect(cam).toHaveAccessibleDescription(REASON);
+    expect(cam).not.toHaveAttribute('title');
     expect(share).toHaveAccessibleDescription('Ana is sharing');
     fireEvent.click(mic);
     fireEvent.click(cam);
@@ -81,7 +83,7 @@ describe('CallControls — disabled props', () => {
       const button = screen.getByTestId(id);
       expect(button).toHaveAttribute('aria-disabled', 'true');
       expect(button).not.toHaveAttribute('disabled');
-      expect(button).toHaveAttribute('title', REASON);
+      expect(button).not.toHaveAttribute('title');
       expect(button).toHaveAccessibleDescription(REASON);
       fireEvent.click(button);
     }
@@ -152,7 +154,7 @@ describe('CallWidget — disabled publish controls', () => {
     );
     expect(screen.getByTestId('mute-button')).toHaveAccessibleDescription(REASON);
     expect(screen.getByTestId('camera-button')).toHaveAttribute('aria-disabled', 'true');
-    expect(screen.getByTestId('screenshare-button')).toHaveAttribute('title', REASON);
+    expect(screen.getByTestId('screenshare-button')).toHaveAccessibleDescription(REASON);
     fireEvent.click(screen.getByTestId('mute-button'));
     expect(onToggleMute).not.toHaveBeenCalled();
   });

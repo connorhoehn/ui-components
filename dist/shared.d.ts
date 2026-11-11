@@ -12117,6 +12117,10 @@ export declare interface TooltipProps {
     /**
      * Classes for the wrapping span, in place of its default `inline-flex`
      * (narrow batch, 2.518.0) — `block min-w-0` around a cell's cut text.
+     * `contents` leaves the trigger's layout exactly as it was without the
+     * tooltip (the trigger stays its parent's flex or grid item); the tooltip
+     * is then placed against the trigger itself, since a `contents` span has
+     * no box of its own.
      */
     triggerClassName?: string;
     /**

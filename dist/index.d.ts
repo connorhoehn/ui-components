@@ -2995,7 +2995,7 @@ export declare interface CallLogListProps {
 
 export declare type CallMode = 'audio' | 'video';
 
-export declare function CallNoticePill({ show, tone, message, actions, className, 'data-testid': testId }: CallNoticePillProps): JSX.Element | null;
+export declare function CallNoticePill({ show, tone, message, actions, maxLines, className, 'data-testid': testId }: CallNoticePillProps): JSX.Element | null;
 
 export declare interface CallNoticePillProps {
     show: boolean;
@@ -3004,6 +3004,12 @@ export declare interface CallNoticePillProps {
     message: ReactNode;
     /** Small buttons, rendered inline after the message. */
     actions?: ReactNode;
+    /**
+     * Lines the message may wrap to before it is cut with an ellipsis (and its
+     * full text moves to a tooltip). Default 2. `1` is the single truncating
+     * line the pill drew before.
+     */
+    maxLines?: 1 | 2 | 3;
     className?: string;
     'data-testid'?: string;
 }
@@ -5517,9 +5523,10 @@ export declare interface CircularIconToggleProps extends Omit<ButtonHTMLAttribut
     size?: CircularIconToggleSize;
     /**
      * Why the control is off-limits ("The host made you view-only"). Disables
-     * it and is its tooltip and accessible description. Unlike `disabled`
-     * alone, the button stays focusable (`aria-disabled="true"`, clicks do
-     * nothing) so a keyboard or screen-reader user can reach it and hear why.
+     * it and is its tooltip (the library's `Tooltip`, on hover and on keyboard
+     * focus) and accessible description. Unlike `disabled` alone, the button
+     * stays focusable (`aria-disabled="true"`, clicks do nothing) so a keyboard
+     * or screen-reader user can reach it and hear why.
      */
     disabledReason?: string;
 }
@@ -8895,7 +8902,14 @@ export declare interface DeviceToggleSelectProps {
     showLabel?: boolean;
     /** Extra menu rows after the device list, e.g. "Blur background…". */
     extraItems?: DropdownMenuItem[];
-    /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
+    /**
+     * Disables the toggle with this reason (e.g. "The host made you view-only").
+     * The toggle stays focusable (`aria-disabled="true"`, a press does nothing)
+     * and shows the reason in a `Tooltip` on hover and keyboard focus; it is
+     * also the toggle's accessible description. A blocked or missing device
+     * gets its own reason ("Microphone blocked in the browser") the same way.
+     * The ▾ device menu stays usable: picking a device is not publishing.
+     */
     disabledReason?: string;
     /**
      * Draw the device caret and its menu. Default true. `false` gives a bare
@@ -21599,7 +21613,7 @@ export declare interface RoomMemberItem {
 
 export declare type RoomsOnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
-export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, rowMenu, rowMenuLabel, className, }: RosterPanelProps): JSX.Element;
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, rowMenu, rowMenuLabel, accessBadge, className, }: RosterPanelProps): JSX.Element;
 
 export declare interface RosterPanelProps {
     participants: RosterParticipant[];
@@ -21634,6 +21648,14 @@ export declare interface RosterPanelProps {
     rowMenu?: (participant: RosterParticipant) => DropdownMenuSection[] | null | undefined;
     /** Accessible name of each row's menu button. Default `Actions for <displayName>`. */
     rowMenuLabel?: (participant: RosterParticipant) => string;
+    /**
+     * How a row draws its access chip. `auto` (default): the eye and "View
+     * only", collapsing to the eye alone whenever the label would cut the
+     * person's name (measured per row, so a narrow panel or a long name both
+     * fold it). `label`: always the eye and the label. `icon`: always the eye
+     * alone. The collapsed eye keeps "View only" as its accessible name.
+     */
+    accessBadge?: 'auto' | 'label' | 'icon';
     className?: string;
 }
 
@@ -26117,6 +26139,10 @@ export declare interface TooltipProps {
     /**
      * Classes for the wrapping span, in place of its default `inline-flex`
      * (narrow batch, 2.518.0) — `block min-w-0` around a cell's cut text.
+     * `contents` leaves the trigger's layout exactly as it was without the
+     * tooltip (the trigger stays its parent's flex or grid item); the tooltip
+     * is then placed against the trigger itself, since a `contents` span has
+     * no box of its own.
      */
     triggerClassName?: string;
     /**

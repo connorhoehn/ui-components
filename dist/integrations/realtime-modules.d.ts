@@ -2038,7 +2038,14 @@ declare interface DeviceToggleSelectProps {
     showLabel?: boolean;
     /** Extra menu rows after the device list, e.g. "Blur background…". */
     extraItems?: DropdownMenuItem[];
-    /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
+    /**
+     * Disables the toggle with this reason (e.g. "The host made you view-only").
+     * The toggle stays focusable (`aria-disabled="true"`, a press does nothing)
+     * and shows the reason in a `Tooltip` on hover and keyboard focus; it is
+     * also the toggle's accessible description. A blocked or missing device
+     * gets its own reason ("Microphone blocked in the browser") the same way.
+     * The ▾ device menu stays usable: picking a device is not publishing.
+     */
     disabledReason?: string;
     /**
      * Draw the device caret and its menu. Default true. `false` gives a bare
@@ -4010,6 +4017,14 @@ declare interface RosterPanelProps {
     rowMenu?: (participant: RosterParticipant) => DropdownMenuSection[] | null | undefined;
     /** Accessible name of each row's menu button. Default `Actions for <displayName>`. */
     rowMenuLabel?: (participant: RosterParticipant) => string;
+    /**
+     * How a row draws its access chip. `auto` (default): the eye and "View
+     * only", collapsing to the eye alone whenever the label would cut the
+     * person's name (measured per row, so a narrow panel or a long name both
+     * fold it). `label`: always the eye and the label. `icon`: always the eye
+     * alone. The collapsed eye keeps "View only" as its accessible name.
+     */
+    accessBadge?: 'auto' | 'label' | 'icon';
     className?: string;
 }
 

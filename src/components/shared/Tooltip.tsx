@@ -41,6 +41,10 @@ export interface TooltipProps {
   /**
    * Classes for the wrapping span, in place of its default `inline-flex`
    * (narrow batch, 2.518.0) — `block min-w-0` around a cell's cut text.
+   * `contents` leaves the trigger's layout exactly as it was without the
+   * tooltip (the trigger stays its parent's flex or grid item); the tooltip
+   * is then placed against the trigger itself, since a `contents` span has
+   * no box of its own.
    */
   triggerClassName?: string;
   /**
@@ -57,6 +61,28 @@ export function isTextCut(el: HTMLElement | null): boolean {
   const box = (el?.firstElementChild as HTMLElement | null) ?? el;
   if (!box) return false;
   return box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1;
+}
+
+/**
+ * The tooltip's layer: 9500, or one above the trigger's highest positioned
+ * ancestor when that is higher. Portalling to <body> drops the trigger's
+ * stacking context, so a tooltip on a control inside a floating call widget
+ * (z 9999) or a modal used to paint underneath it. Same rule as InlinePopover.
+ */
+function layerAbove(el: HTMLElement): number {
+  let z = 9500;
+  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+    const value = Number.parseInt(window.getComputedStyle(node).zIndex, 10);
+    if (Number.isFinite(value)) z = Math.max(z, value + 1);
+  }
+  return z;
+}
+
+/** The wrapper's box, or its first child's when the wrapper draws none (`display: contents`). */
+function anchorRect(el: HTMLElement): DOMRect {
+  const own = el.getBoundingClientRect();
+  if (own.width > 0 || own.height > 0) return own;
+  return (el.firstElementChild as HTMLElement | null)?.getBoundingClientRect() ?? own;
 }
 
 function computePosition(anchor: DOMRect, tip: DOMRect, placement: TooltipPlacement): CSSProperties {
@@ -106,7 +132,7 @@ export function Tooltip({
   const recompute = useCallback(() => {
     const el = triggerRef.current;
     if (!el || !tipRef.current) return;
-    setPosition(computePosition(el.getBoundingClientRect(), tipRef.current.getBoundingClientRect(), placement));
+    setPosition({ ...computePosition(anchorRect(el), tipRef.current.getBoundingClientRect(), placement), zIndex: layerAbove(el) });
   }, [placement]);
 
   useLayoutEffect(() => {
@@ -156,12 +182,13 @@ export function Tooltip({
         onKeyDownCapture={(event) => {
           if (['Escape', 'Enter', ' '].includes(event.key)) closeNow();
         }}
-        aria-describedby={open ? tooltipId : undefined}
+        aria-describedby={open && !disabled ? tooltipId : undefined}
       >
         {children}
       </span>
 
       {open &&
+        !disabled &&
         typeof document !== 'undefined' &&
         createPortal(
           <div
@@ -174,8 +201,8 @@ export function Tooltip({
               className,
             )}
             // Position only — placement is measured from the trigger's
-            // getBoundingClientRect at open time and cannot be a class. The
-            // stacking order was a static literal and is now `z-[9500]`.
+            // getBoundingClientRect at open time and cannot be a class; so is
+            // the layer (`layerAbove`), which the `z-[9500]` class floors.
             style={position || { position: 'fixed', visibility: 'hidden' }}
           >
             {content}

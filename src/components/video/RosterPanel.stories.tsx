@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { RosterPanel, type RosterParticipant } from './RosterPanel';
+import { RosterPanel, type RosterPanelProps, type RosterParticipant } from './RosterPanel';
 import { Button } from '../ui/Button';
 
 const PEOPLE: RosterParticipant[] = [
@@ -137,4 +137,29 @@ export const ViewOnlyDark: Story = {
     tone: 'dark',
     rowMenu: (p) => (p.isLocal ? null : [{ items: [{ label: 'Make view-only', onSelect: () => {} }] }]),
   },
+};
+
+const VIEW_ONLY_ROWS: RosterParticipant[] = [
+  { id: 'me', displayName: 'Alice Chen', isLocal: true, access: 'view-only', isMuted: true },
+  { id: 'bob', displayName: 'Bob Martinez', access: 'view-only' },
+  { id: 'carol', displayName: 'Carol Johnson' },
+  { id: 'bart', displayName: 'Bartholomew Featherstonehaugh', access: 'view-only', handRaised: 1 },
+];
+const hostMenu: RosterPanelProps['rowMenu'] = (p) => (p.isLocal ? null : [{ items: [{ label: p.access ? 'Allow publishing' : 'Make view-only', onSelect: () => {} }] }]);
+
+/** The default 256px panel: a "View only" chip that would cut a name folds to
+ *  its eye (still named "View only"); "(you)" stays; a name that is still cut
+ *  ends in an ellipsis and shows in full on hover. */
+export const ViewOnlyRowFit: Story = {
+  args: { participants: VIEW_ONLY_ROWS, rowMenu: hostMenu },
+};
+
+/** The same rows in the narrow roster a hangout shows beside its tiles at N≥5 (192px), on call chrome. */
+export const ViewOnlyRowFitNarrowDark: Story = {
+  args: { participants: VIEW_ONLY_ROWS, rowMenu: hostMenu, tone: 'dark', className: 'w-48' },
+};
+
+/** A wide panel has room for every chip's label. */
+export const ViewOnlyRowFitWide: Story = {
+  args: { participants: VIEW_ONLY_ROWS, rowMenu: hostMenu, className: 'w-96' },
 };

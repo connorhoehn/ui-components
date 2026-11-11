@@ -451,7 +451,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `CallDock` | `@connorhoehn/ui-components/video` | The in-call dock under a document: one header row — the call's title, "4 people · 09:41", the review-document chips, then mic ▾, camera ▾, Share, People N, Documents N, settings, pop-out and Leave — over a row of vide… | `video-document-calls-calldock` |  |
 | `CallingStatusPill` | `@connorhoehn/ui-components/video` | "Calling Alice…" overlay shown above a HangoutLayout while a targeted call is ringing and no callee has joined yet. | `video-callingstatuspill` |  |
 | `CallInterruptedNotice` | `@connorhoehn/ui-components/video` | The call stopped, and only the person can decide what happens next. |  |  |
-| `CallNoticePill` | `@connorhoehn/ui-components/video` | Something the person on a call must know, said in one line. |  |  |
+| `CallNoticePill` | `@connorhoehn/ui-components/video` | Something the person on a call must know, said in one line. | `video-callnoticepill` |  |
 | `CallParticipantStrip` | `@connorhoehn/ui-components/video` | Compact avatar strip rendering the people currently in a call. | `video-callparticipantstrip` |  |
 | `CallPeopleList` | `@connorhoehn/ui-components/video` | Everyone on (or rung for) a call, one 64px row each: avatar with presence, name, one sub-status, their mic state and a ⋯ menu. |  |  |
 | `CallPresenceIndicator` | `@connorhoehn/ui-components/shared` | "who's on the call right now", for the app shell. |  |  |

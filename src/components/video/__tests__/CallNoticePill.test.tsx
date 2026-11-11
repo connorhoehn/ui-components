@@ -11,7 +11,8 @@ describe('CallNoticePill', () => {
       <CallNoticePill show message="Your media stopped" actions={<button type="button" onClick={onRejoin}>Rejoin</button>} />,
     );
     const pill = screen.getByTestId('call-notice');
-    expect(pill.className).toContain('rounded-full');
+    expect(pill.className).toContain('rounded-2xl');
+    expect(pill.dataset.maxLines).toBe('2');
     expect(pill.dataset.tone).toBe('warning');
     fireEvent.click(screen.getByText('Rejoin'));
     expect(onRejoin).toHaveBeenCalledTimes(1);

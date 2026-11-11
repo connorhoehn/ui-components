@@ -12,6 +12,7 @@
 import type { ReactNode } from 'react';
 import { BUTTON_WEIGHT } from '../ui/Button';
 import { cn } from '../../lib/cn';
+import { DISABLED_REASON_DIM, DisabledReasonTooltip, useDisabledReason } from '../shared/DisabledReason';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
 import { ChevronIcon } from '../ui/Icons';
 import { MicIcon, MicOffIcon, VideoIcon, VideoOffIcon } from './MediaIcons';
@@ -40,7 +41,14 @@ export interface DeviceToggleSelectProps {
   showLabel?: boolean;
   /** Extra menu rows after the device list, e.g. "Blur background…". */
   extraItems?: DropdownMenuItem[];
-  /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
+  /**
+   * Disables the toggle with this reason (e.g. "The host made you view-only").
+   * The toggle stays focusable (`aria-disabled="true"`, a press does nothing)
+   * and shows the reason in a `Tooltip` on hover and keyboard focus; it is
+   * also the toggle's accessible description. A blocked or missing device
+   * gets its own reason ("Microphone blocked in the browser") the same way.
+   * The ▾ device menu stays usable: picking a device is not publishing.
+   */
   disabledReason?: string;
   /**
    * Draw the device caret and its menu. Default true. `false` gives a bare
@@ -81,7 +89,8 @@ export function DeviceToggleSelect({
   const reason =
     disabledReason ??
     (permission === 'denied' ? BLOCKED[kind] : permission === 'unavailable' ? NONE[kind] : undefined);
-  const disabled = Boolean(reason) || blocked;
+  const held = useDisabledReason(reason, blocked);
+  const disabled = held.off;
   const isOn = on && !disabled;
   const speaking = kind === 'microphone' && isOn && (level ?? 0) > 0.08;
 
@@ -119,20 +128,24 @@ export function DeviceToggleSelect({
       data-on={isOn ? 'true' : 'false'}
       data-permission={permission}
     >
+      <DisabledReasonTooltip reason={held.reason}>
       <button
         data-ui-part=""
         type="button"
         onClick={disabled ? undefined : onToggle}
-        disabled={disabled}
+        {...held.buttonProps}
         aria-pressed={isOn}
         aria-label={showLabel ? undefined : actionLabel}
-        title={reason ?? actionLabel}
+        // With a reason the Tooltip says it; a native title would draw a second one.
+        title={held.reason === undefined ? actionLabel : undefined}
         data-testid={testId}
         className={cn(
           'inline-flex cursor-pointer items-center gap-2 border-none bg-transparent font-[inherit] text-sm',
           deviceMenu ? 'rounded-l-md' : 'rounded-md',
           BUTTON_WEIGHT,
-          'hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50',
+          // The inset outline stays inside the split button's shared border.
+          'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
+          held.reason === undefined ? 'hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50' : DISABLED_REASON_DIM,
           size === 'md' ? 'px-2.5' : 'px-2',
           showLabel && 'min-w-0 flex-1 justify-start gap-1.5 pr-2',
           offTone,
@@ -140,7 +153,9 @@ export function DeviceToggleSelect({
       >
         {icon}
         {showLabel && <span className="min-w-0 truncate whitespace-nowrap">{stateLabel}</span>}
+        {held.description}
       </button>
+      </DisabledReasonTooltip>
       {deviceMenu && (
         <DropdownMenu
           trigger={<ChevronIcon size={14} />}

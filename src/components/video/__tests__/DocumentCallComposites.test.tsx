@@ -600,8 +600,9 @@ describe('CallDock calling (A11)', () => {
     expect((screen.getByTestId('call-dock-mic') as HTMLButtonElement).disabled).toBe(false);
     expect((screen.getByTestId('call-dock-camera') as HTMLButtonElement).disabled).toBe(false);
     const share = screen.getByTestId('call-dock-share') as HTMLButtonElement;
-    expect(share.disabled).toBe(true);
-    expect(share.title).toBe('You can share once someone joins');
+    expect(share).toHaveAttribute('aria-disabled', 'true');
+    expect(share.disabled).toBe(false);
+    expect(share).toHaveAccessibleDescription('You can share once someone joins');
     expect((screen.getByTestId('call-dock-people') as HTMLButtonElement).disabled).toBe(false);
     expect((screen.getByTestId('call-dock-documents') as HTMLButtonElement).disabled).toBe(false);
     const leave = screen.getByTestId('call-dock-leave');

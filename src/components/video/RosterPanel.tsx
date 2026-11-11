@@ -11,14 +11,24 @@
 // contract as TreeView and PipelinesListView), so a host adds "Make view-only"
 // or "Remove" without drawing its own rows. A participant's `access` shows as
 // a chip in the row ("View only").
+//
+// The row gives the name priority. Avatar, "(you)", the chips, the mute mark
+// and the ⋯ button never shrink; the name is the one thing that gives way, and
+// it does so last: with `accessBadge="auto"` (default) a "View only" chip
+// first collapses to its eye (still named "View only") whenever the full chip
+// would cut the name, and comes back when the row is wide enough for both.
+// A name that is still cut ends with an ellipsis and shows in full as a
+// tooltip. The row button clips its own content, so nothing can run under
+// the ⋯ button beside it.
 
-import { useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import { MoreHorizontalIcon } from './MediaIcons';
 import { ParticipantAccessBadge, type ParticipantAccess } from './ParticipantAccessBadge';
 import { RaisedHandBadge } from './RaisedHandBadge';
+import { Tooltip } from '../shared/Tooltip';
 
 export interface RosterParticipant {
   id: string;
@@ -66,6 +76,14 @@ export interface RosterPanelProps {
   rowMenu?: (participant: RosterParticipant) => DropdownMenuSection[] | null | undefined;
   /** Accessible name of each row's menu button. Default `Actions for <displayName>`. */
   rowMenuLabel?: (participant: RosterParticipant) => string;
+  /**
+   * How a row draws its access chip. `auto` (default): the eye and "View
+   * only", collapsing to the eye alone whenever the label would cut the
+   * person's name (measured per row, so a narrow panel or a long name both
+   * fold it). `label`: always the eye and the label. `icon`: always the eye
+   * alone. The collapsed eye keeps "View only" as its accessible name.
+   */
+  accessBadge?: 'auto' | 'label' | 'icon';
   className?: string;
 }
 
@@ -102,6 +120,7 @@ export function RosterPanel({
   onLowerAllHands,
   rowMenu,
   rowMenuLabel,
+  accessBadge = 'auto',
   className,
 }: RosterPanelProps) {
   const dark = tone === 'dark';
@@ -157,55 +176,14 @@ export function RosterPanel({
           const menuSections = rowMenu?.(p)?.filter((section) => section.items.length > 0) ?? [];
           return (
             <li key={p.id} className="flex items-center" data-testid="roster-row" data-user-id={p.id}>
-              <button
-                data-ui-part=""
-                type="button"
-                onClick={onParticipantClick ? () => onParticipantClick(p.id) : undefined}
-                className={cn(
-                  'min-w-0 flex-1 flex items-center gap-3 px-4 py-2 text-left transition-colors',
-                  'hover:bg-white/[0.03]',
-                  isSpeaking && 'bg-white/[0.04]',
-                  onParticipantClick ? 'cursor-pointer' : 'cursor-default',
-                )}
-                disabled={!onParticipantClick}
-              >
-                <div
-                  className={cn(
-                    'relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium shrink-0',
-                    'bg-[var(--color-primary)] text-white',
-                    isSpeaking && 'ring-2 ring-success ring-offset-2 ring-offset-[var(--color-surface)]',
-                  )}
-                >
-                  {p.avatarUrl ? (
-                    <img src={p.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    <span>{initials(p.displayName)}</span>
-                  )}
-                  {p.isScreenSharing && (
-                    <span
-                      title="Sharing screen"
-                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-info border border-[var(--color-surface)]"
-                    />
-                  )}
-                </div>
-                <span className={cn('flex-1 truncate text-sm', dark ? 'text-white/90' : 'text-[var(--color-text-primary)]')}>
-                  {p.displayName}
-                  {p.isLocal && <span className={cn('ml-1 text-xs', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')}>(you)</span>}
-                </span>
-                <ParticipantAccessBadge access={p.access} tone={dark ? 'overlay' : 'chip'} data-testid="roster-access" />
-                <RaisedHandBadge raised={p.handRaised} tone={dark ? 'overlay' : 'chip'} data-testid="roster-raised-hand" />
-                {p.isMuted && (
-                  <svg
-                    width="14" height="14" viewBox="0 0 16 16"
-                    className={dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]'} aria-label="Muted"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M8 1a3 3 0 00-3 3v4a3 3 0 006 0V4a3 3 0 00-3-3zM3 9a5 5 0 0010 0h-1a4 4 0 01-8 0H3zm5 4a3 3 0 01-3-3H4a4 4 0 008 0h-1a3 3 0 01-3 3zm4-13l-12 12 0.7 0.7 12-12L12 0z"
-                    />
-                  </svg>
-                )}
-              </button>
+              <RosterRowButton
+                participant={p}
+                speaking={isSpeaking}
+                dark={dark}
+                accessBadge={accessBadge}
+                trailing={menuSections.length > 0 || Boolean(onLowerHand && p.handRaised)}
+                {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
+              />
               {onLowerHand && p.handRaised && (
                 <Button
                   variant="ghost"
@@ -243,6 +221,131 @@ export function RosterPanel({
         </div>
       )}
     </aside>
+  );
+}
+
+interface RosterRowButtonProps {
+  participant: RosterParticipant;
+  speaking: boolean;
+  dark: boolean;
+  accessBadge: 'auto' | 'label' | 'icon';
+  /** A Lower button or ⋯ menu follows the row button: tighter right padding. */
+  trailing: boolean;
+  onClick?: () => void;
+}
+
+/** True when the element's text runs past its box. */
+function cutText(el: HTMLElement): boolean {
+  return el.scrollWidth > el.clientWidth + 1;
+}
+
+/**
+ * The row's main button: avatar, name (+ "(you)"), the access chip, a raised
+ * hand and the mute mark. In `auto` the access chip folds to its eye while
+ * the full chip would cut the name. The rule has hysteresis: it folds when
+ * the name is cut, and unfolds only when the name block has spare room for
+ * the label it would gain back, so the row never flips back and forth.
+ */
+function RosterRowButton({ participant: p, speaking, dark, accessBadge, trailing, onClick }: RosterRowButtonProps) {
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const blockRef = useRef<HTMLSpanElement | null>(null);
+  const nameRef = useRef<HTMLSpanElement | null>(null);
+  const youRef = useRef<HTMLSpanElement | null>(null);
+  const chipRef = useRef<HTMLSpanElement | null>(null);
+  const labelChipWidth = useRef(0);
+  const [folded, setFolded] = useState(false);
+  const measured = accessBadge === 'auto' && p.access != null;
+
+  useLayoutEffect(() => {
+    if (!measured) { setFolded(false); return; }
+    const button = buttonRef.current;
+    const fit = () => {
+      const block = blockRef.current, name = nameRef.current, chip = chipRef.current;
+      // Zero on the BUTTON means not laid out (a hidden subtree); zero on the
+      // name block is real (the label squeezed it away) and must fold.
+      if (!button || !block || !name || !chip || button.clientWidth === 0) return;
+      if (!folded) {
+        labelChipWidth.current = chip.offsetWidth;
+        if (cutText(name)) setFolded(true);
+        return;
+      }
+      const gained = labelChipWidth.current - chip.offsetWidth;
+      const used = name.scrollWidth + (youRef.current ? youRef.current.offsetWidth + 4 : 0);
+      if (block.clientWidth - used >= gained) setFolded(false);
+    };
+    fit();
+    if (!button || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(fit);
+    observer.observe(button);
+    return () => observer.disconnect();
+  }, [measured, folded, p.displayName, p.isLocal, p.access]);
+
+  const iconOnly = accessBadge === 'icon' || (measured && folded);
+  return (
+    <button
+      ref={buttonRef}
+      data-ui-part=""
+      type="button"
+      onClick={onClick}
+      className={cn(
+        // overflow-hidden: whatever happens inside, nothing paints under the
+        // ⋯ button that follows. The focus outline is inset for the same reason.
+        'min-w-0 flex-1 flex items-center gap-2.5 overflow-hidden py-2 pl-4 text-left transition-colors',
+        trailing ? 'pr-1' : 'pr-4',
+        'hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
+        speaking && 'bg-white/[0.04]',
+        onClick ? 'cursor-pointer' : 'cursor-default',
+      )}
+      disabled={!onClick}
+      data-access-badge={p.access ? (iconOnly ? 'icon' : 'label') : undefined}
+    >
+      <div
+        className={cn(
+          'relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium shrink-0',
+          'bg-[var(--color-primary)] text-white',
+          speaking && 'ring-2 ring-success ring-offset-2 ring-offset-[var(--color-surface)]',
+        )}
+      >
+        {p.avatarUrl ? (
+          <img src={p.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
+        ) : (
+          <span>{initials(p.displayName)}</span>
+        )}
+        {p.isScreenSharing && (
+          <span
+            title="Sharing screen"
+            className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-info border border-[var(--color-surface)]"
+          />
+        )}
+      </div>
+      {/* The block shrinks (min-w-0) and clips (overflow-hidden), so "(you)"
+          never paints under the chips; inside it only the name gives way. */}
+      <span ref={blockRef} className={cn('flex min-w-0 flex-1 items-baseline gap-1 overflow-hidden text-sm', dark ? 'text-white/90' : 'text-[var(--color-text-primary)]')} data-testid="roster-name">
+        <Tooltip content={p.displayName} onlyWhenTruncated triggerClassName="flex min-w-0" data-testid="roster-name-tooltip">
+          <span ref={nameRef} className="min-w-0 truncate">{p.displayName}</span>
+        </Tooltip>
+        {p.isLocal && (
+          <span ref={youRef} className={cn('shrink-0 text-xs', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')} data-testid="roster-you">(you)</span>
+        )}
+      </span>
+      {p.access && (
+        <span ref={chipRef} className="inline-flex shrink-0">
+          <ParticipantAccessBadge access={p.access} tone={dark ? 'overlay' : 'chip'} iconOnly={iconOnly} data-testid="roster-access" />
+        </span>
+      )}
+      <RaisedHandBadge raised={p.handRaised} tone={dark ? 'overlay' : 'chip'} data-testid="roster-raised-hand" />
+      {p.isMuted && (
+        <svg
+          width="14" height="14" viewBox="0 0 16 16"
+          className={cn('shrink-0', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')} aria-label="Muted"
+        >
+          <path
+            fill="currentColor"
+            d="M8 1a3 3 0 00-3 3v4a3 3 0 006 0V4a3 3 0 00-3-3zM3 9a5 5 0 0010 0h-1a4 4 0 01-8 0H3zm5 4a3 3 0 01-3-3H4a4 4 0 008 0h-1a3 3 0 01-3 3zm4-13l-12 12 0.7 0.7 12-12L12 0z"
+          />
+        </svg>
+      )}
+    </button>
   );
 }
 

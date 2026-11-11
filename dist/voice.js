@@ -7,7 +7,7 @@ import { a as c, i as l, t as u, u as d } from "./MediaIcons-_ai5Til2.js";
 import { t as f } from "./Input-DiOEvL5h.js";
 import { t as p } from "./InlinePopover-BJntntHW.js";
 import { t as m } from "./DropdownMenu-DsOGcoH4.js";
-import { t as h } from "./SegmentedControl-n6nEQjaK.js";
+import { t as h } from "./SegmentedControl-CO8w_o0t.js";
 import { t as g } from "./StatusPill-AqmSksrZ.js";
 import { t as _ } from "./Switch-CRiY_kzy.js";
 import { t as v } from "./DotMeter-DJzl5dNX.js";

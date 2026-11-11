@@ -495,8 +495,8 @@ function DockTileImpl({
       className={cn(
         'relative shrink-0 overflow-hidden rounded-md text-white',
         fluid && 'aspect-video w-full',
-        // Camera off: the soft grey tile with initials (mockup 02); a live
-        // frame sits on the dark video tile.
+        // Camera off: the soft grey tile with initials (mockup 02), the raised
+        // dark surface in dark mode; a live frame sits on the dark video tile.
         p.videoElement && !p.cameraOff ? 'bg-video-tile' : 'bg-video-tile-off',
         '[&_video]:h-full [&_video]:w-full [&_video]:object-cover',
         onClick && 'cursor-pointer',
@@ -549,7 +549,10 @@ function DockTileImpl({
       {p.reconnecting && (
         <div className="absolute inset-0 bg-surface-inverse/40" data-testid={`${testId}-reconnecting`} aria-hidden="true" />
       )}
-      <div className="absolute inset-x-0 bottom-0 flex items-center gap-1 bg-gradient-to-t from-black/70 to-transparent px-1.5 pb-1 pt-3 text-xs">
+      {/* The scrim is solid (black/75) behind the whole text line and fades
+          only above it, so the white name clears WCAG AA (4.5:1) over any
+          frame: a white video, the light camera-off grey, the dark one. */}
+      <div className="absolute inset-x-0 bottom-0 flex items-center gap-1 bg-gradient-to-t from-black/75 from-65% to-transparent px-1.5 pb-1 pt-3 text-xs" data-tile-label="">
         <span className="min-w-0 flex-1 truncate font-medium">{name}</span>
         {p.ringing ? (
           <span className="shrink-0 text-white/80" data-testid={`${testId}-ringing`}>Ringing…</span>

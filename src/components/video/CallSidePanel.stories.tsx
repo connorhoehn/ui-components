@@ -194,3 +194,24 @@ export const DockedInFullscreenMode: Story = {
 export const OverlaySheetInMiniMode: Story = {
   render: () => <DockHarness mode="mini" />,
 };
+
+/** Five destinations in the 320px column: the tabs that do not fit beside the
+ *  ✕ move into "More ▾" (the selected one always stays in the row). Pick
+ *  Captions from More and it takes a place in the row. */
+export const ManyTabsFold: Story = {
+  render: () => {
+    const [active, setActive] = useState<string | null>('people');
+    const tabs: CallSidePanelTab[] = [
+      ...dockTabs().slice(0, 2),
+      { id: 'effects', label: 'Effects', content: <p className="m-0 p-3 text-[13px] text-white/80">Background blur and filters.</p> },
+      { id: 'devices', label: 'Devices', content: <p className="m-0 p-3 text-[13px] text-white/80">Microphone, camera and speaker.</p> },
+      dockTabs()[2]!,
+    ];
+    return (
+      <div className="flex h-[480px] overflow-hidden rounded-lg border border-white/10">
+        <FakeStage />
+        <CallSidePanel tabs={tabs} activeTab={active} onTabChange={setActive} />
+      </div>
+    );
+  },
+};

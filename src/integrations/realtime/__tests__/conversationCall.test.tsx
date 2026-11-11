@@ -278,8 +278,10 @@ describe('ConversationCallDock — publish access', () => {
     render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} publishDisabledReason="The host made you view-only" />);
     for (const id of ['call-dock-mic', 'call-dock-camera', 'call-dock-share']) {
       const control = screen.getByTestId(id);
-      expect(control).toBeDisabled();
-      expect(control).toHaveAttribute('title', 'The host made you view-only');
+      // Held by the reason: focusable, aria-disabled, the reason its description.
+      expect(control).toHaveAttribute('aria-disabled', 'true');
+      expect(control).not.toHaveAttribute('disabled');
+      expect(control).toHaveAccessibleDescription('The host made you view-only');
     }
   });
 

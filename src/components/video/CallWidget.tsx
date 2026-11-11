@@ -16,11 +16,11 @@ import {
   useRef,
   useEffect,
   useMemo,
-  useId,
   type ReactNode,
   type CSSProperties,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { DISABLED_REASON_DIM, DisabledReasonTooltip, useDisabledReason } from '../shared/DisabledReason';
 import { onActivationKey } from '../../lib/activationKey';
 import { CallAvatar, type CallStripParticipant } from './CallParticipantStrip';
 import { CallParticipantStrip } from './CallParticipantStrip';
@@ -642,9 +642,8 @@ function MinimizedPill({
   onEndCall?: () => void;
   onExpand?: () => void;
 }) {
-  const muteReasonId = useId();
-  const muteReason = audioDisabledReason || undefined;
-  const muteOff = audioDisabled || muteReason !== undefined;
+  const mute = useDisabledReason(audioDisabledReason, audioDisabled);
+  const muteReason = mute.reason;
   return (
     // `onExpand` is optional, and the whole pill was `role="button"
     // tabIndex={0} aria-label="Expand call widget"` with a pointer cursor
@@ -692,24 +691,22 @@ function MinimizedPill({
       {/* Quick actions */}
       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
         {state === 'active' && onToggleMute && (
+          <DisabledReasonTooltip reason={muteReason} placement="bottom">
           <button
             data-ui-part=""
             type="button"
-            onClick={muteReason !== undefined ? undefined : onToggleMute}
-            disabled={muteReason === undefined ? audioDisabled : undefined}
-            aria-disabled={muteReason !== undefined ? 'true' : undefined}
-            aria-describedby={muteReason !== undefined ? muteReasonId : undefined}
-            title={muteReason}
+            onClick={mute.guard(onToggleMute)}
+            {...mute.buttonProps}
             data-testid="call-pill-mute"
-            data-disabled-reason={muteReason}
             className={cn(
               'w-6 h-6 rounded-full flex items-center justify-center border-none transition-colors',
-              isMuted ? 'bg-danger/20 text-danger-fg' : 'bg-white/10 text-white/70 hover:text-white',
-              muteOff ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
+              'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80',
+              isMuted ? 'bg-danger/20 text-danger-fg' : cn('bg-white/10 text-white/70', muteReason === undefined && 'hover:text-white'),
+              muteReason !== undefined ? DISABLED_REASON_DIM : mute.off ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
             )}
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
-            {muteReason !== undefined && <span id={muteReasonId} hidden>{muteReason}</span>}
+            {mute.description}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               {isMuted ? (
                 <>
@@ -726,6 +723,7 @@ function MinimizedPill({
               )}
             </svg>
           </button>
+          </DisabledReasonTooltip>
         )}
         {/* Same optional-handler shape as the mute button above, which is
             already gated: without `onEndCall` this rendered a red hang-up

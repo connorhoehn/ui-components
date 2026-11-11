@@ -41,14 +41,25 @@
 // When no tab is active the panel renders nothing, so the video layout
 // reflows to full width.
 //
+// ── Tabs that do not fit ──────────────────────────────────────────────
+// The header row is the tab list and the ✕. When the tabs are wider than
+// the room beside the ✕ (four or five destinations in a 320px column), the
+// ones that do not fit move into a "More ▾" menu at the end of the row —
+// the measured form of `Tabs`' fold. The selected tab always stays in the
+// row; the rest keep their order. Each tab's width is read from an
+// invisible copy of the row, so the fold never depends on what is drawn.
+// Before, the row scrolled with its scrollbar hidden and cut the last label
+// ("Captio") at the ✕ with nothing saying more was there.
+//
 // ── Back-compat ───────────────────────────────────────────────────────
 // The pre-2.107 single-panel API (`open` / `onClose` / `title` /
 // `children`) still works unchanged: it is treated as a one-tab dock.
 
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
 import { cn } from '../../lib/cn';
 import { DockedPanelProvider } from '../shared/DockedPanelContext';
+import { DropdownMenu } from '../shared/DropdownMenu';
 import { CaptionsIcon, ChatBubbleIcon, SettingsGearIcon, UsersIcon } from './MediaIcons';
 import type { CallWidgetMode } from './callWidgetMode';
 
@@ -257,6 +268,11 @@ export interface CallSidePanelProps {
 
 const LEGACY_TAB_ID = '__legacy__';
 
+/** One tab in the header row (and its measuring copy): a pill, never wrapping. */
+const RAIL_ITEM = 'shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-[13px] leading-5 font-medium';
+/** `gap-1` between rail items, in px, for the fit. */
+const RAIL_GAP = 4;
+
 export function CallSidePanel({
   tabs,
   activeTab,
@@ -271,6 +287,9 @@ export function CallSidePanel({
   'data-testid': testId = 'call-side-panel',
 }: CallSidePanelProps) {
   const tabbed = Array.isArray(tabs);
+  const railRef = useRef<HTMLDivElement | null>(null);
+  const measureRef = useRef<HTMLDivElement | null>(null);
+  const [foldedIds, setFoldedIds] = useState<readonly string[]>([]);
 
   // Normalize both APIs onto one shape. The legacy props become a
   // single unnamed tab so there is exactly one render path below.
@@ -280,13 +299,57 @@ export function CallSidePanel({
 
   const activeId = tabbed ? (activeTab ?? null) : open ? LEGACY_TAB_ID : null;
   const active = resolvedTabs.find((t) => t.id === activeId) ?? null;
+  const showTabRail = tabbed && resolvedTabs.length > 1 && active !== null;
+  const tabSignature = resolvedTabs.map((t) => `${t.id}\u0000${t.label}`).join('\u0001');
+
+  // Which tabs fit beside the ✕. Measured from the invisible copy of the row
+  // whenever the rail's width, the tabs or the selection change.
+  useLayoutEffect(() => {
+    if (!showTabRail) { setFoldedIds((prev) => (prev.length ? [] : prev)); return; }
+    const rail = railRef.current;
+    const fit = () => {
+      const measure = measureRef.current;
+      if (!rail || !measure) return;
+      const room = rail.clientWidth;
+      if (room === 0) return; // not laid out (a hidden subtree): keep what we had
+      const widths = new Map<string, number>();
+      measure.querySelectorAll<HTMLElement>('[data-measure-tab]').forEach((el) => widths.set(el.dataset.measureTab ?? '', el.offsetWidth));
+      const more = measure.querySelector<HTMLElement>('[data-measure-more]')?.offsetWidth ?? 0;
+      const ids = resolvedTabs.map((t) => t.id);
+      const width = (id: string) => widths.get(id) ?? 0;
+      const all = ids.reduce((sum, id, i) => sum + width(id) + (i > 0 ? RAIL_GAP : 0), 0);
+      let next: string[] = [];
+      if (all > room) {
+        // Room for the selected tab and the More trigger first, then every
+        // other tab in order until one does not fit; it and the rest fold.
+        let used = more + width(activeId ?? '');
+        const shown = new Set<string>([activeId ?? '']);
+        for (const id of ids) {
+          if (id === activeId) continue;
+          if (used + RAIL_GAP + width(id) > room) break;
+          used += RAIL_GAP + width(id);
+          shown.add(id);
+        }
+        next = ids.filter((id) => !shown.has(id));
+      }
+      setFoldedIds((prev) => (prev.length === next.length && prev.every((id, i) => id === next[i]) ? prev : next));
+    };
+    fit();
+    if (!rail || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(fit);
+    observer.observe(rail);
+    return () => observer.disconnect();
+    // `resolvedTabs` is rebuilt every render; its ids and labels are the signature.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showTabRail, tabSignature, activeId]);
 
   // Closed → render nothing at all, so a docked flex sibling reflows to
   // full width and an overlay stops covering the stage.
   if (!active) return null;
 
   const placement = callSidePanelPlacement(mode);
-  const showTabRail = tabbed && resolvedTabs.length > 1;
+  const folded = resolvedTabs.filter((t) => foldedIds.includes(t.id) && t.id !== active.id);
+  const shownTabs = resolvedTabs.filter((t) => !folded.includes(t));
 
   const close = () => {
     onTabChange?.(null);
@@ -316,14 +379,16 @@ export function CallSidePanel({
       {/* The dock's ONE header. `py-3 px-4` plus a body that drew its own
           card left a dead strip above the first row of content; this row
           is deliberately tight. */}
-      <header className="flex shrink-0 items-center justify-between gap-2 border-b border-call-chrome-border px-2 py-2">
-        {showTabRail ? (
+      <header className="relative flex shrink-0 items-center justify-between gap-2 border-b border-call-chrome-border px-2 py-2">
+        {showTabRail ? (<>
+          {/* The rail is the room beside the ✕; the tablist and More sit in it. */}
+          <div ref={railRef} className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden" data-testid="call-side-panel-rail" data-tabs-hidden={folded.length || undefined}>
           <div
             role="tablist"
             aria-label="Call side panel sections"
-            className="flex min-w-0 items-center gap-1 overflow-x-auto"
+            className="flex min-w-0 items-center gap-1"
           >
-            {resolvedTabs.map((tab) => {
+            {shownTabs.map((tab) => {
               const isActive = tab.id === active.id;
               return (
                 <button
@@ -336,7 +401,8 @@ export function CallSidePanel({
                   onClick={() => onTabChange?.(tab.id)}
                   data-testid={`call-side-panel-tab-${tab.id}`}
                   className={cn(
-                    'shrink-0 rounded-full px-3 py-1 text-[13px] font-medium transition-colors',
+                    RAIL_ITEM,
+                    'transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white/80',
                     isActive
                       ? 'bg-white/15 text-white'
                       : 'text-white/60 hover:bg-white/10 hover:text-white/90',
@@ -348,7 +414,36 @@ export function CallSidePanel({
               );
             })}
           </div>
-        ) : (
+          {folded.length > 0 && (
+            <DropdownMenu
+              trigger={<span className="inline-flex items-center gap-1">More<span aria-hidden="true" className="text-[10px] leading-none">▾</span></span>}
+              triggerLabel={`More sections: ${folded.map((t) => t.label).join(', ')}`}
+              triggerVariant="link"
+              triggerClassName={cn(RAIL_ITEM, 'text-white/60 hover:bg-white/10 hover:text-white/90 aria-expanded:bg-white/10 aria-expanded:text-white')}
+              triggerTestId="call-side-panel-more"
+              align="end"
+              data-testid="call-side-panel-more-menu"
+              sections={[{
+                items: folded.map((tab) => ({
+                  label: tab.label,
+                  onSelect: () => onTabChange?.(tab.id),
+                  ...(tab.badgeCount ? { trailing: tab.badgeCount > 99 ? '99+' : String(tab.badgeCount) } : {}),
+                  ...(tab.disabled ? { disabled: true } : {}),
+                  'data-testid': `call-side-panel-tab-${tab.id}`,
+                })),
+              }]}
+            />
+          )}
+          </div>
+          {/* An invisible copy of the row: what each tab and More would measure. */}
+          <div ref={measureRef} aria-hidden="true" className="pointer-events-none invisible absolute left-0 top-0 flex whitespace-nowrap" data-testid="call-side-panel-rail-measure">
+            {/* Labels as generated content, so the copy adds no text to the page (find-by-text sees each tab once). */}
+            {resolvedTabs.map((tab) => (
+              <span key={tab.id} data-measure-tab={tab.id} data-label={tab.label} className={cn(RAIL_ITEM, 'before:content-[attr(data-label)]')} />
+            ))}
+            <span data-measure-more="" className={cn(RAIL_ITEM, "inline-flex items-center gap-1 before:content-['More']")}><span className="text-[10px] leading-none before:content-['▾']" /></span>
+          </div>
+        </>) : (
           <h2 className="m-0 truncate text-sm font-semibold text-white">{active.label}</h2>
         )}
         <button

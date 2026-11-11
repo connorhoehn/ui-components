@@ -19,6 +19,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { DISABLED_REASON_DIM, DisabledReasonTooltip, useDisabledReason } from '../shared/DisabledReason';
 import { CallAvatar, type CallStripParticipant } from './CallParticipantStrip';
 
 // ---------------------------------------------------------------------------
@@ -204,35 +205,38 @@ function ControlButton({
   expanded,
   buttonRef,
 }: ControlButtonProps) {
-  const reasonId = useId();
-  const reason = disabledReason || undefined;
-  const off = disabled || reason !== undefined;
+  const held = useDisabledReason(disabledReason, disabled);
+  const reason = held.reason;
   return (
-    <button
-      data-ui-part=""
-      ref={buttonRef}
-      type="button"
-      title={reason ?? label}
-      aria-label={label}
-      aria-haspopup={expanded === undefined ? undefined : 'menu'}
-      aria-expanded={expanded}
-      disabled={reason === undefined ? disabled : undefined}
-      aria-disabled={reason !== undefined ? 'true' : undefined}
-      aria-describedby={reason !== undefined ? reasonId : undefined}
-      onClick={reason !== undefined ? undefined : onClick}
-      data-testid={testId}
-      data-disabled-reason={reason}
-      className={cn(
-        'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
-        danger && 'bg-danger text-white hover:bg-danger',
-        active && !danger && 'bg-white/20 text-white',
-        !active && !danger && 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white',
-        off && 'opacity-40 cursor-not-allowed',
-      )}
-    >
-      {icon}
-      {reason !== undefined && <span id={reasonId} hidden>{reason}</span>}
-    </button>
+    <DisabledReasonTooltip reason={reason}>
+      <button
+        data-ui-part=""
+        ref={buttonRef}
+        type="button"
+        // With a reason, the Tooltip shows it; a native title would draw a second one.
+        title={reason === undefined ? label : undefined}
+        aria-label={label}
+        aria-haspopup={expanded === undefined ? undefined : 'menu'}
+        aria-expanded={expanded}
+        {...held.buttonProps}
+        onClick={held.guard(onClick)}
+        data-testid={testId}
+        className={cn(
+          'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
+          'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80',
+          danger && 'bg-danger text-white hover:bg-danger',
+          active && !danger && 'bg-white/20 text-white',
+          // Held by a reason: a fainter fill and no hover, the icon dimmed
+          // rather than the button, so the focus outline stays visible.
+          !active && !danger && (reason !== undefined ? 'bg-white/5 text-white/80' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'),
+          reason !== undefined && DISABLED_REASON_DIM,
+          reason === undefined && held.off && 'opacity-40 cursor-not-allowed',
+        )}
+      >
+        {icon}
+        {held.description}
+      </button>
+    </DisabledReasonTooltip>
   );
 }
 
