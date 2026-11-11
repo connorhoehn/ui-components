@@ -394,6 +394,14 @@
       "id": "toolbar.inset",
       "kind": "style",
       "selector": "[data-toolbar-variant=\"collection\"]:not([data-collection-layout=\"cards\"])",
+      "profiles": [
+        {
+          "name": "page-header",
+          "selector": "[data-testid=\"page-header\"] [data-collection-placement=\"header\"]",
+          "reason": "CollectionPage places compact controls inside PageHeader, whose reading gutter supplies the inset. CollectionToolbar placement=header uses px-0 to avoid adding a second gutter; the ordinary band retains its table inset.",
+          "properties": { "paddingLeft": 0, "paddingRight": 0 }
+        }
+      ],
       "properties": {
         "paddingLeft": {
           "token": "--ui-table-inset"

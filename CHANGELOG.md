@@ -3,6 +3,7 @@
 - DataTable and SubNavLayout expose their active CSS layout mode for the DOM audit. Card rows retain explicit inset, spacing, display, header and typography checks; compact section navigation is measured as a strip above content.
 - A host can declare a menu in place of its primary rail. The audit requires one content column and a visible, enabled, named menu trigger; ordinary desktop rails remain required.
 - Leading-separator checks measure painted glyphs after ancestor clipping. A separator hidden by StatStrip's drop layout no longer fails; partly visible or unclipped leading separators still do.
+- CollectionToolbar controls inside PageHeader use an explicit zero-inset audit profile, since the header supplies their reading gutter. Ordinary toolbar bands retain their table inset.
 - Browser mutation fixtures cover each valid variant, broken variants and neighboring ordinary controls.
 
 ## 2.522.0 — Reveal a selected table row

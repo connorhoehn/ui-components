@@ -19,6 +19,17 @@ export async function responsiveProfileFixtures(page, contract) {
     await page.locator(selector).evaluate((el, [prop, value]) => el.style.setProperty(prop, value), [prop, previous]);
   };
 
+  // CollectionPage embeds compact controls in PageHeader's existing gutter.
+  // The declared placement is scoped to that owner, not an inset exemption.
+  await page.setContent(`${base}<style>[data-toolbar-variant]{padding:0 12px}#header-toolbar{padding:0}</style>
+    <header data-testid="page-header"><div id="header-toolbar" data-toolbar-variant="collection" data-collection-placement="header">Filters</div></header>
+    <div id="band-toolbar" data-toolbar-variant="collection">Filters</div>`);
+  await clean(['toolbar.inset'], {}, 'header controls and ordinary toolbar band');
+  await mutation(['toolbar.inset'], {}, '#header-toolbar', 'padding-left', '12px', 'header controls must not double their parent gutter');
+  await mutation(['toolbar.inset'], {}, '#band-toolbar', 'padding-right', '0px', 'ordinary toolbar neighbors retain their inset');
+  await page.locator('#header-toolbar').evaluate(el => document.body.append(el));
+  assert.ok((await judge(['toolbar.inset'])).issues.length, 'header placement outside PageHeader does not waive the band inset');
+
   // Matches DataTable's NARROW/STACK classes: row inset, flex label/value
   // cells, content height, and an accessible but visually hidden header.
   const row = '<thead><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>Record</td><td>Ready</td></tr></tbody>';

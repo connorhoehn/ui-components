@@ -384,7 +384,8 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
       }
       else if (rule.kind === 'style' || rule.kind === 'box') for (const el of nodes) {
         const values = rule.kind === 'style' ? getComputedStyle(el) : rect(el);
-        for (const [property, expected] of Object.entries(rule.properties)) check(rule, el, property, values[property], expected);
+        const profile = profileFor(el, rule.profiles);
+        for (const [property, expected] of Object.entries({ ...rule.properties, ...profile?.properties })) check(rule, el, property, values[property], expected);
       }
       else if (rule.kind === 'count') {
         samples.push({ rule: rule.id, selector: css(rule.selector), property: 'count', actual: nodes.length, expected: rule.expected });
