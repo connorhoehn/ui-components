@@ -88,4 +88,29 @@ describe('CodeBlock', () => {
     );
     expect(container.querySelector('code')!.innerHTML).not.toContain('<span');
   });
+
+  it('colours each token once and never highlights its own markup', () => {
+    const cases: [string, 'json' | 'ts' | 'bash'][] = [
+      ['{\n  "schema": "x/1",\n  "count": 12,\n  "ok": true,\n  "tag": "a#b"\n}', 'json'],
+      ['const a = "b"; // 42 "c"\nlet n = 3;', 'ts'],
+      ['echo "$HOME" # 2 "x"\ngit status', 'bash'],
+    ];
+    for (const [code, language] of cases) {
+      const { container, unmount } = render(
+        <CodeBlock code={code} language={language} copyButton={false} />,
+      );
+      const node = container.querySelector('code')!;
+      expect(node.textContent).toBe(code);
+      expect(node.querySelectorAll('span span')).toHaveLength(0);
+      unmount();
+    }
+  });
+
+  it('colours a JSON key as a property and its value as a string', () => {
+    const { container } = render(
+      <CodeBlock code={'{"id": "g1", "n": -2.5e3}'} language="json" copyButton={false} />,
+    );
+    const spans = [...container.querySelectorAll('code span')].map((s) => s.textContent);
+    expect(spans).toEqual(['"id"', '"g1"', '"n"', '-2.5e3']);
+  });
 });

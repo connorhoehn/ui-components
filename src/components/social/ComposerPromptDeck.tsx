@@ -460,9 +460,13 @@ function modKey(): string {
   return /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? '⌘' : 'Ctrl+';
 }
 
-// The deck never takes more than this of the screen: past it the card scrolls
-// inside itself, and the content column above keeps the rest.
-const DECK_MAX = 'max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain';
+// The deck never takes more than this of the screen, and the content column
+// above keeps the rest. Past it only the facts list scrolls: the path, title
+// and question navigation above it and the question, answers and key hints
+// below it keep their size, so focusing an answer never scrolls the header
+// out of view. The card itself scrolls only when those alone are too tall.
+const DECK_MAX = 'max-h-[min(40vh,24rem)] overflow-y-auto overscroll-contain [&>:not(dl)]:shrink-0';
+const FIELDS_SCROLL = 'min-h-0 overflow-y-auto overscroll-contain';
 
 export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = null, submitDisabledReason, variant = 'card', presentation: presentationProp, className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
   const inset = variant === 'inset';
@@ -544,8 +548,10 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
   const count = pending.length;
 
   const receiptRow = receipt ? (
-    <Inline gap="xs" align="center" wrap className={cn('min-w-0', inset && !collapsed && active && 'px-3 pb-2')} data-testid={`${testId}-receipt`}>
-      <Text as="p" size="xs" tone="secondary" wrap role="status" className="min-w-0">
+    // One line under the card: a long answer is truncated here (its full text
+    // is the title and the live region's), never a second copy of the answer.
+    <Inline gap="xs" align="center" wrap={false} className={cn('min-w-0', inset && !collapsed && active && 'px-3 pb-2')} data-testid={`${testId}-receipt`}>
+      <Text as="p" size="xs" tone="secondary" role="status" className="min-w-0 flex-1 truncate" title={`Answered · ${receipt}`}>
         {`Answered · ${receipt}`}
       </Text>
       <Button variant="link" size="sm" onClick={deck.dismissReceipt} data-composer-readonly-allow="Dismisses the local answer receipt without changing a record or submitting an answer">Dismiss</Button>
@@ -652,7 +658,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
         {active.fields && active.fields.length > 0 && !plain && (
           // Facts flow in a wrapping row, each as wide as its value (a repo, a
           // forecast range) up to the card: nothing is clipped, a long value wraps.
-          <dl className="m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5" data-testid={`${testId}-fields`}>
+          <dl className={cn('m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5', FIELDS_SCROLL)} data-testid={`${testId}-fields`}>
             {active.fields.map((field, i) => (
               <div key={`${field.label}-${i}`} className="flex min-w-0 max-w-full flex-col">
                 <dt className="m-0 text-xs font-normal text-text-tertiary">{field.label}</dt>

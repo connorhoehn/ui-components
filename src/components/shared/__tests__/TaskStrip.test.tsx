@@ -75,3 +75,15 @@ describe('TaskStrip', () => {
     expect(screen.getByTestId('task-strip').className).toContain('h-[30px]');
   });
 });
+
+it('tints a live strip and radiates a ring from the dot while running (reduced motion hides it)', () => {
+  const { rerender } = render(<TaskStrip label="Suggesting ideas" status="running" phase="Drafting choices" />);
+  const strip = screen.getByTestId('task-strip');
+  expect(strip.className).toContain('bg-primary-bg');
+  expect(screen.getByTestId('task-strip-pulse').className).toContain('animate-ping');
+  expect(screen.getByTestId('task-strip-pulse').className).toContain('motion-reduce:hidden');
+  rerender(<TaskStrip label="Suggesting ideas" status="done" />);
+  expect(screen.getByTestId('task-strip').className).toContain('bg-surface');
+  expect(screen.queryByTestId('task-strip-pulse')).toBeNull();
+});
+

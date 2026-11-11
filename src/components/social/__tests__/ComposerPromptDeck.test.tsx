@@ -154,6 +154,27 @@ describe('ComposerPromptDeck', () => {
     expect(deck().getAttribute('data-deck-variant')).toBe('inset');
   });
 
+  it('past the cap only the facts list scrolls: the header and the answers keep their size', () => {
+    render(<ComposerPromptDeck prompts={prompts()} />);
+    const card = screen.getByTestId('composer-prompt-deck-card');
+    const facts = screen.getByTestId('composer-prompt-deck-fields');
+    // Every other child of the card is shrink-0 through the card's child variant.
+    expect(card.className).toContain('[&>:not(dl)]:shrink-0');
+    expect(facts.tagName).toBe('DL');
+    expect(facts.parentElement).toBe(card);
+    expect(facts.className).toContain('min-h-0');
+    expect(facts.className).toContain('overflow-y-auto');
+  });
+
+  it('the answer receipt is one truncated line with the full text as its title', async () => {
+    render(<ComposerPromptDeck prompts={prompts()} />);
+    screen.getByTestId('composer-prompt-deck-option-dispatch').focus();
+    await act(async () => { key('2'); });
+    const line = screen.getByRole('status');
+    expect(line.className).toContain('truncate');
+    expect(line.getAttribute('title')).toMatch(/^Answered · /);
+  });
+
   it('a read-only prompt can disclose its facts without offering or submitting answers', () => {
     const onAnswer = vi.fn();
     const p = prompts(onAnswer);

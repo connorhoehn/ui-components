@@ -127,11 +127,22 @@ export function TaskStrip({
       data-status={status}
       aria-busy={status === 'running' || status === 'queued' || undefined}
       className={cn(
-        'flex h-[30px] min-w-0 items-center gap-2 rounded-t-lg border border-b-0 border-border bg-surface px-2 text-xs',
+        'flex h-[30px] min-w-0 items-center gap-2 rounded-t-lg border border-b-0 border-border px-2 text-xs',
+        // A live strip is tinted so the eye finds the work in progress; a
+        // finished one sits on the plain surface.
+        live ? 'bg-primary-bg' : 'bg-surface',
         className,
       )}
     >
-      {icon ?? <span aria-hidden="true" className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', AGENT_TASK_STATUS_DOT[status])} />}
+      {icon ?? (
+        <span aria-hidden="true" className="relative inline-flex h-1.5 w-1.5 shrink-0" data-testid={`${testId}-dot`}>
+          {status === 'running' && (
+            // A ring that radiates from the dot while the task runs.
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-info opacity-75 motion-reduce:hidden" data-testid={`${testId}-pulse`} />
+          )}
+          <span className={cn('relative inline-block h-1.5 w-1.5 rounded-full', AGENT_TASK_STATUS_DOT[status])} />
+        </span>
+      )}
       {/* One polite live region for the words: the phase changing IS the news. */}
       <p role="status" aria-live="polite" className="m-0 flex min-w-0 shrink items-center gap-1 truncate" data-testid={`${testId}-label`}>
         <span className="truncate font-semibold text-text-primary">{label}</span>

@@ -48,62 +48,79 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function highlightTs(escaped: string): string {
-  let out = escaped.replace(/(\/\/.*?)(\n|$)/g, `<span class="tok-comment">$1</span>$2`);
-  out = out.replace(/(\/\*[\s\S]*?\*\/)/g, `<span class="tok-comment">$1</span>`);
-  out = out.replace(
-    /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g,
-    `<span class="tok-string">$1</span>`,
-  );
-  const kw = new RegExp(`\\b(${KEYWORDS_JS.join('|')})\\b`, 'g');
-  out = out.replace(kw, `<span class="tok-keyword">$1</span>`);
-  out = out.replace(/\b(\d+(?:\.\d+)?)\b/g, `<span class="tok-number">$1</span>`);
-  return out;
+// One pass over the raw source: every rule is an alternative of one regex, so
+// a token is coloured once and no rule ever matches markup a previous rule
+// inserted (sequential replaces used to highlight the `class` in
+// `<span class="tok-comment">` itself). Text between tokens is escaped here.
+type TokenClass = 'comment' | 'string' | 'keyword' | 'number' | 'property' | 'builtin' | 'variable';
+type Rule = [source: string, token: TokenClass];
+
+function tokenize(code: string, rules: Rule[]): string {
+  const pattern = new RegExp(rules.map(([source]) => `(${source})`).join('|'), 'g');
+  let out = '';
+  let last = 0;
+  for (const match of code.matchAll(pattern)) {
+    const index = match.index ?? 0;
+    if (!match[0]) continue;
+    const rule = match.slice(1).findIndex((group) => group !== undefined);
+    out += escapeHtml(code.slice(last, index));
+    out += `<span class="tok-${rules[rule][1]}">${escapeHtml(match[0])}</span>`;
+    last = index + match[0].length;
+  }
+  return out + escapeHtml(code.slice(last));
 }
 
-function highlightJson(escaped: string): string {
-  let out = escaped.replace(
-    /("(?:[^"\\]|\\.)*")(\s*:)/g,
-    `<span class="tok-property">$1</span>$2`,
-  );
-  out = out.replace(/("(?:[^"\\]|\\.)*")/g, `<span class="tok-string">$1</span>`);
-  out = out.replace(/\b(true|false|null)\b/g, `<span class="tok-keyword">$1</span>`);
-  out = out.replace(/\b(-?\d+(?:\.\d+)?)\b/g, `<span class="tok-number">$1</span>`);
-  return out;
+const words = (list: string[]) => `\\b(?:${list.join('|')})\\b`;
+
+function highlightTs(code: string): string {
+  return tokenize(code, [
+    ['\\/\\/[^\\n]*', 'comment'],
+    ['\\/\\*[\\s\\S]*?\\*\\/', 'comment'],
+    ['"(?:[^"\\\\\\n]|\\\\.)*"|\'(?:[^\'\\\\\\n]|\\\\.)*\'|`(?:[^`\\\\]|\\\\.)*`', 'string'],
+    [words(KEYWORDS_JS), 'keyword'],
+    ['\\b\\d+(?:\\.\\d+)?\\b', 'number'],
+  ]);
 }
 
-function highlightBash(escaped: string): string {
-  let out = escaped.replace(/(#.*?)(\n|$)/g, `<span class="tok-comment">$1</span>$2`);
-  out = out.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, `<span class="tok-string">$1</span>`);
-  const kw = new RegExp(`\\b(${KEYWORDS_BASH.join('|')})\\b`, 'g');
-  out = out.replace(kw, `<span class="tok-keyword">$1</span>`);
-  const builtins = new RegExp(`\\b(${BASH_BUILTINS.join('|')})\\b`, 'g');
-  out = out.replace(builtins, `<span class="tok-builtin">$1</span>`);
-  out = out.replace(/(\$\w+|\$\{[^}]+\})/g, `<span class="tok-variable">$1</span>`);
-  return out;
+function highlightJson(code: string): string {
+  return tokenize(code, [
+    ['"(?:[^"\\\\]|\\\\.)*"(?=\\s*:)', 'property'],
+    ['"(?:[^"\\\\]|\\\\.)*"', 'string'],
+    [words(['true', 'false', 'null']), 'keyword'],
+    ['-?\\b\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\b', 'number'],
+  ]);
+}
+
+function highlightBash(code: string): string {
+  return tokenize(code, [
+    ['(?<![\\w$])#[^\\n]*', 'comment'],
+    ['"(?:[^"\\\\]|\\\\.)*"|\'[^\']*\'', 'string'],
+    ['\\$\\w+|\\$\\{[^}]+\\}', 'variable'],
+    [words(KEYWORDS_BASH), 'keyword'],
+    [words(BASH_BUILTINS), 'builtin'],
+  ]);
 }
 
 /**
  * Emits `<span class="tok-…">` only; the colours live in styles.css under
  * `[data-code-palette]`, so the markup carries no `style=` attribute and a
- * strict `style-src` CSP does not block it. Input is HTML-escaped first.
+ * strict `style-src` CSP does not block it. The source is escaped as it is tokenized.
  */
 function highlight(code: string, language: CodeBlockLanguage): string {
-  const escaped = escapeHtml(code);
   switch (language) {
     case 'json':
-      return highlightJson(escaped);
+      return highlightJson(code);
     case 'bash':
     case 'sh':
-      return highlightBash(escaped);
+      return highlightBash(code);
     case 'text':
-      return escaped;
+      return escapeHtml(code);
     case 'tsx':
     case 'ts':
     case 'jsx':
     case 'js':
     default:
-      return highlightTs(escaped);
+      return highlightTs(code);
   }
 }
 
