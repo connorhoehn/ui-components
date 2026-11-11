@@ -112,6 +112,13 @@ export interface AvatarProps {
   /** Optional profile image URL. Falls back to initials if absent or load fails. */
   src?: string;
   /**
+   * Where the image sits in the circle (CSS `object-position`, e.g.
+   * `"50% 15%"` or `"top"`). Default: centred. A full-length character
+   * picture centred in a circle loses the face; `"50% 12%"` keeps it.
+   * Since 2.520.0 (G150-1).
+   */
+  imagePosition?: string;
+  /**
    * An arbitrary node in the circle instead of initials — an icon, usually.
    *
    * Exists because not every avatar-shaped thing is a person. A channel row
@@ -184,6 +191,7 @@ export function Avatar({
   initials: initialsProp,
   color,
   src,
+  imagePosition,
   icon,
   glyph,
   foreground,
@@ -236,6 +244,7 @@ export function Avatar({
           height={size}
           onError={() => setFailedSrc(src ?? null)}
           className="w-full h-full object-cover"
+          {...(imagePosition ? { style: { objectPosition: imagePosition } } : {})}
         />
       ) : icon !== undefined ? (
         <span className="inline-flex items-center justify-center leading-none" aria-hidden="true">
@@ -256,6 +265,8 @@ export interface AvatarGroupItem {
   initials?: string;
   color?: string;
   src?: string;
+  /** The image's focal point, as `Avatar imagePosition`. Since 2.520.0 (G150-1). */
+  imagePosition?: string;
 }
 
 export interface AvatarGroupProps {
@@ -300,6 +311,7 @@ export function AvatarGroup({
           initials={person.initials}
           color={person.color}
           src={person.src}
+          imagePosition={person.imagePosition}
           size={size}
           className="border-2 border-white"
           style={{ marginLeft: index > 0 ? overlap : 0 }}

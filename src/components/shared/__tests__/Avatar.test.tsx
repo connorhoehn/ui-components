@@ -179,3 +179,17 @@ describe('Avatar foreground and title opt-out', () => {
     expect(screen.getByTitle('+2 more')).toHaveStyle({ fontSize: '12px' });
   });
 });
+
+describe('Avatar imagePosition (G150-1)', () => {
+  it('sets object-position on the image when given, and leaves it centred otherwise', () => {
+    const { rerender } = render(<Avatar name="Mina" src="https://example.com/m.png" imagePosition="50% 12%" />);
+    expect((screen.getByAltText('Mina') as HTMLImageElement).style.objectPosition).toBe('50% 12%');
+    rerender(<Avatar name="Mina" src="https://example.com/m.png" />);
+    expect((screen.getByAltText('Mina') as HTMLImageElement).style.objectPosition).toBe('');
+  });
+  it('AvatarGroup passes each item\'s focal point to its avatar', () => {
+    render(<AvatarGroup items={[{ name: 'Mina', src: 'https://example.com/m.png', imagePosition: '50% 12%' }, { name: 'Toby', src: 'https://example.com/t.png' }]} />);
+    expect((screen.getByAltText('Mina') as HTMLImageElement).style.objectPosition).toBe('50% 12%');
+    expect((screen.getByAltText('Toby') as HTMLImageElement).style.objectPosition).toBe('');
+  });
+});

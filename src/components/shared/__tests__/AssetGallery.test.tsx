@@ -129,3 +129,42 @@ describe('AssetGallery avatars status and placeholder (2.512.0)', () => {
     expect(screen.getByRole('img')).toHaveAttribute('src', '/m.png');
   });
 });
+describe('AssetGallery imagePosition (G150-1)', () => {
+  it('passes the focal point to the avatar and to a cropped image', () => {
+    const items = [{ id: 'mina', title: 'Mina', src: '/mina.png', imagePosition: '50% 12%' }];
+    const { unmount } = render(<AssetGallery label="Cast" variant="avatars" items={items} onOpen={() => {}} />);
+    expect((screen.getByAltText('Mina') as HTMLImageElement).style.objectPosition).toBe('50% 12%');
+    unmount();
+    render(<AssetGallery label="Cast" items={items} onOpen={() => {}} />);
+    expect((screen.getByAltText('Mina') as HTMLImageElement).style.objectPosition).toBe('50% 12%');
+  });
+});
+describe('AssetGallery card shape (G150-3, G150-4, G150-5)', () => {
+  const items = [
+    { id: 'mina', title: 'Mina', subtitle: 'Lead', src: '/mina.png', status: { tone: 'warning' as const, label: 'Rig · needs you' } },
+    { id: 'toby', title: 'Toby', subtitle: 'No role yet', src: '/toby.png', status: { tone: 'info' as const, label: 'Concept' } },
+  ];
+  it('draws a portrait frame, the status as a caption line, and one action row whose first action fills it', () => {
+    const { container } = render(
+      <AssetGallery label="Cast" items={items} onOpen={() => {}} aspect="portrait" statusPlacement="caption" actionsLayout="row" actionsVisibility="always"
+        actions={(item) => (<><button type="button">Draw {item.title}</button><button type="button">More</button></>)} />,
+    );
+    const thumbs = container.querySelectorAll('[data-gallery-thumbnail]');
+    expect(thumbs[0].getAttribute('data-gallery-aspect')).toBe('portrait');
+    expect(thumbs[0].className).toContain('aspect-[3/4]');
+    // The status is a line inside the card's caption, not a pill over the picture.
+    expect(container.querySelectorAll('[data-gallery-status="line"]')).toHaveLength(2);
+    expect(container.querySelector('[data-gallery-status=""]')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Inspect Mina' })).toHaveAccessibleDescription('Rig · needs you');
+    const rows = container.querySelectorAll('[data-gallery-actions-layout="row"]');
+    expect(rows).toHaveLength(2);
+    expect(rows[0].className).toContain('flex-nowrap');
+    expect(rows[0].className).toContain('[&>*:first-child]:flex-1');
+  });
+  it('keeps the defaults: landscape frame, overlay status, wrapping actions', () => {
+    const { container } = render(<AssetGallery label="Cast" items={items} onOpen={() => {}} actions={() => <button type="button">Go</button>} />);
+    expect(container.querySelector('[data-gallery-thumbnail]')!.className).toContain('aspect-[4/3]');
+    expect(container.querySelectorAll('[data-gallery-status=""]')).toHaveLength(2);
+    expect(container.querySelector('[data-gallery-actions-layout]')!.getAttribute('data-gallery-actions-layout')).toBe('wrap');
+  });
+});

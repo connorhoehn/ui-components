@@ -20,6 +20,11 @@ export interface SliderProps {
   /** Accessible name. Required when no visible label is wired up. */
   'aria-label'?: string;
   /**
+   * What the value means to a listener ("Frame 12 of 48") when the raw number
+   * does not say it. Since 2.520.0.
+   */
+  'aria-valuetext'?: string;
+  /**
    * Show the current value beside the track. Pass a formatter to control how
    * it reads (units, decimal places); `true` uses the raw number.
    * @default true
@@ -38,6 +43,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
     max = 100,
     step = 1,
     'aria-label': ariaLabel,
+    'aria-valuetext': ariaValueText,
     readout = true,
     disabled = false,
     className,
@@ -62,6 +68,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
         value={value}
         disabled={disabled}
         aria-label={ariaLabel}
+        aria-valuetext={ariaValueText}
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className="flex-1 w-full min-w-0 accent-primary cursor-pointer disabled:cursor-not-allowed"
         data-testid={testId}

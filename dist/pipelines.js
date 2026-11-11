@@ -5,7 +5,7 @@ import { d as n, n as r, o as i } from "./Button-DQoeE5dN.js";
 import { r as a } from "./ToastProvider-BU9h6ZJU.js";
 import { i as o, r as s, s as c, t as l } from "./safeHref-CSAycLWi.js";
 import { t as u } from "./useEventCallback-Cwx9QVSi.js";
-import { A as d, B as f, C as p, D as m, E as h, F as g, I as _, L as v, N as y, O as b, P as x, R as S, S as C, T as w, V as T, _ as E, a as D, b as O, c as ee, d as k, f as A, g as j, h as te, i as M, j as ne, k as re, l as N, m as ie, n as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he } from "./GenerativeImagePreview-9ukTYc74.js";
+import { A as d, B as f, C as p, D as m, E as h, F as g, I as _, L as v, N as y, O as b, P as x, R as S, S as C, T as w, V as T, _ as E, a as D, b as O, c as ee, d as k, f as A, g as j, h as te, i as M, j as ne, k as re, l as N, m as ie, n as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he } from "./GenerativeImagePreview-DFHC88GN.js";
 import { t as ge } from "./IconButton-BgM9MvwA.js";
 import { t as _e } from "./Banner-DPR4sIxI.js";
 import { n as ve, t as ye } from "./Chart-DlsE1y7i.js";
@@ -13,19 +13,19 @@ import { t as be } from "./Modal-C88cabjQ.js";
 import { t as xe } from "./ConfirmDialog-DaIkb8ho.js";
 import { t as P } from "./Input-DiOEvL5h.js";
 import { t as Se } from "./Select-CDxAVVnW.js";
-import { a as Ce, t as we } from "./Toolbar-C04NW-U-.js";
+import { a as Ce, t as we } from "./Toolbar-tUFXj6Bc.js";
 import { t as Te } from "./SearchInput-Dk3D9lhs.js";
 import { t as Ee } from "./EmptyState-DqWgLbIq.js";
 import { t as De } from "./LoadingState-BQlqtSB5.js";
 import { i as Oe, t as ke } from "./focusTrap-CmWJlptm.js";
-import { t as Ae } from "./DropdownMenu-DsOGcoH4.js";
-import { t as je } from "./StatusPill-AqmSksrZ.js";
-import { t as Me } from "./Slider-DuMQEWA1.js";
+import { t as Ae } from "./Slider-COaaKXgy.js";
+import { t as je } from "./DropdownMenu-LFtIWj5Y.js";
+import { t as Me } from "./StatusPill-AqmSksrZ.js";
 import { n as Ne, t as Pe } from "./FilterChip-B_C799Tq.js";
 import { t as Fe } from "./SkeletonCard-BryltcC7.js";
 import { t as Ie } from "./Switch-CRiY_kzy.js";
 import { t as Le } from "./Textarea-Cf4WFXAs.js";
-import { t as Re } from "./PageHeader-iTKOjEaf.js";
+import { t as Re } from "./PageHeader-B9JJoFDa.js";
 import { t as F } from "./NumberInput-pHxC7Spt.js";
 import { t as ze } from "./Checkbox-DgSkOMOT.js";
 import { n as Be } from "./FileKindMark-BcwT0tiz.js";
@@ -8007,7 +8007,7 @@ function ko({ data: e, onChange: t, nodeId: n }) {
 				/* @__PURE__ */ U(X, {
 					label: "Temperature",
 					help: "0 = deterministic, 1 = creative.",
-					children: /* @__PURE__ */ U(Me, {
+					children: /* @__PURE__ */ U(Ae, {
 						min: 0,
 						max: 1,
 						step: .1,
@@ -8488,7 +8488,7 @@ function Uo({ data: e, onChange: t }) {
 		required: !0,
 		help: `Between ${Bo} and ${Vo} parallel branches.`,
 		controlId: `${n}-branch-count`,
-		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(Me, {
+		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(Ae, {
 			min: Bo,
 			max: Vo,
 			step: 1,
@@ -10304,7 +10304,7 @@ function Qs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				"data-testid": `layer-kind-select-${t}`,
 				className: "shrink-0"
 			}),
-			/* @__PURE__ */ U(Me, {
+			/* @__PURE__ */ U(Ae, {
 				min: a.min,
 				max: a.max,
 				step: a.step,
@@ -14373,7 +14373,7 @@ function hl({ selectedIds: e }) {
 							/* @__PURE__ */ W("div", {
 								className: "flex items-center gap-2",
 								children: [
-									/* @__PURE__ */ U(je, {
+									/* @__PURE__ */ U(Me, {
 										state: ll[_.status],
 										label: _.status,
 										size: "sm",
@@ -23280,7 +23280,7 @@ function gp(e, t, n = {}) {
 					variant: "plain"
 				}),
 				title: e.name,
-				pill: /* @__PURE__ */ U(je, {
+				pill: /* @__PURE__ */ U(Me, {
 					variant: "text",
 					...t,
 					"data-testid": `${u}-pill-${e.id}`
@@ -23376,7 +23376,7 @@ function _p({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: c
 					children: y ?? ae.length
 				}),
 				actions: de ? /* @__PURE__ */ W(H, { children: [
-					!!b?.length && /* @__PURE__ */ U(Ae, {
+					!!b?.length && /* @__PURE__ */ U(je, {
 						trigger: /* @__PURE__ */ U("span", {
 							"aria-hidden": "true",
 							className: "text-base leading-none",

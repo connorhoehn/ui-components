@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-996 components across 21 entry points; 847 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+996 components across 21 entry points; 848 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -526,7 +526,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `TranscriptOverlay` | `@connorhoehn/ui-components/video` | Bottom-of-call live caption display. | `video-transcriptoverlay` |  |
 | `TranscriptPanel` | `@connorhoehn/ui-components/video` | Speaker-attributed transcript display with optional time-aligned highlighting. | `video-transcriptpanel` |  |
 | `VideoGrid` | `@connorhoehn/ui-components/video` | Static N-way grid: 1 / 2×2 / 3×3 / 4×4 column count based on participant count. | `video-videogrid` |  |
-| `VideoPlayer` | `@connorhoehn/ui-components/video` | — | `video-videoplayer` |  |
+| `VideoPlayer` | `@connorhoehn/ui-components/video` | A file or live-stream player with a phase overlay; with `chapters` and `markers` it lists a cut's shots and marked moments under the clip and seeks to them. | `video-videoplayer` |  |
 | `VideoPlayerModal` | `@connorhoehn/ui-components/video` | Modal video player for raw MP4 / WebM segments. | `video-videoplayermodal` |  |
 | `ViewerCount` | `@connorhoehn/ui-components/video` | How many people are watching, or nothing at all. | `video-viewercount` |  |
 | `VoiceActivityRing` | `@connorhoehn/ui-components/voice` | The "it is active" visualization for a voice session. |  |  |

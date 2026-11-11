@@ -28,6 +28,10 @@ import { createElement, useCallback, useEffect, useMemo, useRef, useState } from
 import { cn } from '../../lib/cn';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import { Button } from '../ui/Button';
+import { Slider } from '../forms/Slider';
+import { Select } from '../forms/Select';
+import { IconButton } from '../ui/IconButton';
+import { ChevronIcon } from '../ui/Icons';
 import ErrorState from './ErrorState';
 import { GroupedList, type GroupedListRow } from './GroupedList';
 import { SegmentedControl } from './SegmentedControl';
@@ -65,6 +69,29 @@ export interface ModelVersion {
 
 export type ModelViewerAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
+export interface ModelAnimationOptions {
+  /** A person's name per clip (`{ 'CAST:tatter/walk': 'Walk' }`); the clip's own name otherwise. */
+  labels?: Readonly<Record<string, string>>;
+  /** A second line per clip in the clip menu (`"48 frames · 2.0 s"`). */
+  descriptions?: Readonly<Record<string, string>>;
+  defaultClip?: string;
+  /** Default true; never under prefers-reduced-motion. */
+  autoPlay?: boolean;
+  /** Frames per second the "frame N of M" readout counts in. Default 24. */
+  fps?: number;
+}
+
+/** model-viewer's public animation API — the part `ModelAnimationBar` drives. */
+export interface ModelAnimationLike {
+  availableAnimations?: readonly string[];
+  animationName?: string | null;
+  currentTime: number;
+  timeScale: number;
+  duration: number;
+  play(options?: { repetitions?: number; pingpong?: boolean }): void;
+  pause(): void;
+}
+
 export interface ModelViewerProps {
   /** GLB/glTF URL. */
   src: string;
@@ -99,6 +126,21 @@ export interface ModelViewerProps {
   /** Controlled selected part (`null` = none). */
   selectedPart?: string | null;
   onSelectPart?: (id: string | null) => void;
+  /**
+   * The selected part is shown alone: every other part's meshes are hidden
+   * until it is pressed again (`isolateModelPart`). Default false (the
+   * selected part is only highlighted). Since 2.520.0 (G151-2).
+   */
+  isolatePart?: boolean;
+  /**
+   * The model's own glTF animations, played under the view: a clip menu
+   * (two or more), play and pause, a frame back or on, the speed, and a
+   * scrubber read as "Frame N of M". `labels` names a
+   * clip for a person; `defaultClip` is the one it opens on (default the
+   * first); `autoPlay` (default true, never under prefers-reduced-motion).
+   * The turntable stops while a clip is shown. Since 2.520.0 (G151-1).
+   */
+  animations?: boolean | ModelAnimationOptions;
   /** Wireframe. Controlled when `onWireframeChange` is passed, else the initial value. */
   wireframe?: boolean;
   onWireframeChange?: (on: boolean) => void;
@@ -449,6 +491,144 @@ export function highlightModelPart(el: unknown, node: string | null, color?: str
   return count;
 }
 
+// The visibility every mesh had before an isolation hid it.
+const ISOLATED = new WeakMap<object, Map<ObjectLike3, boolean>>();
+
+/**
+ * Show one part alone: every mesh not under `node` (by its own or an
+ * ancestor's name) is hidden; `node = null` shows them all again. Returns the
+ * number of meshes hidden, or -1 when the scene is unreachable.
+ */
+export function isolateModelPart(el: unknown, node: string | null): number {
+  const scene = modelSceneOf(el);
+  if (!scene) return -1;
+  const prev = ISOLATED.get(scene) ?? new Map<ObjectLike3, boolean>();
+  ISOLATED.set(scene, prev);
+  for (const [mesh, visible] of prev) (mesh as { visible?: boolean }).visible = visible;
+  prev.clear();
+  let hidden = 0;
+  if (node) {
+    for (const mesh of meshesOf(scene)) {
+      if (underNode(mesh, node)) continue;
+      const m = mesh as { visible?: boolean };
+      prev.set(mesh, m.visible ?? true);
+      m.visible = false;
+      hidden += 1;
+    }
+  }
+  scene.queueRender?.();
+  return hidden;
+}
+
+/** The clips a loaded `<model-viewer>` can play (its `availableAnimations`), or none. */
+export function modelAnimationsOf(el: unknown): string[] {
+  const list = (el as ModelAnimationLike | null)?.availableAnimations;
+  return Array.isArray(list) ? list.filter((n): n is string => typeof n === 'string') : [];
+}
+
+const SPEEDS = [
+  { value: '0.25', label: '¼×' },
+  { value: '0.5', label: '½×' },
+  { value: '1', label: '1×' },
+];
+
+/** The clip switch, play and pause, the scrubber and the speed under a ModelViewer. */
+function ModelAnimationBar({
+  el,
+  clips,
+  options,
+  reducedMotion,
+  testId,
+}: {
+  el: ModelAnimationLike;
+  clips: readonly string[];
+  options: ModelAnimationOptions;
+  reducedMotion: boolean;
+  testId?: string;
+}) {
+  const [clip, setClip] = useState(options.defaultClip && clips.includes(options.defaultClip) ? options.defaultClip : clips[0]);
+  const [playing, setPlaying] = useState((options.autoPlay ?? true) && !reducedMotion);
+  const [speed, setSpeed] = useState('1');
+  const [time, setTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const fps = options.fps ?? 24;
+
+  useEffect(() => {
+    el.animationName = clip;
+    el.currentTime = 0;
+    setDuration(el.duration || 0);
+  }, [el, clip]);
+  useEffect(() => { el.timeScale = Number(speed); }, [el, speed]);
+  useEffect(() => {
+    if (playing) el.play();
+    else el.pause();
+  }, [el, playing, clip]);
+  useEffect(() => {
+    if (!playing) return;
+    let frame = 0;
+    const tick = () => {
+      setTime(el.currentTime || 0);
+      setDuration(el.duration || 0);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [el, playing]);
+
+  const seek = (t: number) => {
+    setPlaying(false);
+    el.pause();
+    el.currentTime = t;
+    setTime(t);
+  };
+  // A frame back or on, paused. The last frame is held just short of the end:
+  // model-viewer wraps a looped clip set to its duration back to 0.
+  const step = (frames: number) => {
+    const d = el.duration || 0;
+    seek(Math.min(Math.max(0, (el.currentTime || 0) + frames / fps), Math.max(0, d - 0.001)));
+  };
+  const total = Math.max(1, Math.round(duration * fps) + 1);
+  const current = Math.min(total, Math.round(time * fps) + 1);
+  const labelOf = (name: string) => options.labels?.[name] ?? name;
+  const where = `Frame ${current} of ${total}`;
+  return (
+    <div data-model-viewer-animations data-clip={clip} data-playing={playing ? 'true' : 'false'} className="flex min-w-0 flex-col gap-2">
+      {/* A menu, not a segmented row: three clip names overflow a narrow
+          inspector, and a menu fits any width. */}
+      {clips.length > 1 && (
+        <Select
+          size="sm"
+          aria-label="Clip"
+          value={clip}
+          onChange={(e) => { setClip(e.target.value); setPlaying(!reducedMotion); }}
+          options={clips.map((c) => ({ value: c, label: labelOf(c), description: options.descriptions?.[c] }))}
+          data-testid={testId ? `${testId}-clip` : undefined}
+        />
+      )}
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <Button size="sm" variant="secondary" onClick={() => setPlaying((p) => !p)} data-model-viewer-play>
+          {playing ? 'Pause' : 'Play'}
+        </Button>
+        <IconButton size="sm" variant="ghost" aria-label="Back a frame" icon={<ChevronIcon dir="left" />} onClick={() => step(-1)} data-testid={testId ? `${testId}-back` : undefined} />
+        <IconButton size="sm" variant="ghost" aria-label="On a frame" icon={<ChevronIcon dir="right" />} onClick={() => step(1)} data-testid={testId ? `${testId}-on` : undefined} />
+        <SegmentedControl size="sm" aria-label="Speed" value={speed} onChange={setSpeed} options={SPEEDS} data-testid={testId ? `${testId}-speed` : undefined} />
+      </div>
+      <Slider
+        aria-label={`Where ${labelOf(clip)} is`}
+        aria-valuetext={where}
+        min={0}
+        max={duration || 0}
+        step={1 / fps}
+        value={Math.min(time, duration)}
+        onChange={seek}
+        readout={() => where}
+        className="min-w-0"
+        data-testid={testId ? `${testId}-scrubber` : undefined}
+      />
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // The custom element loader
 // ---------------------------------------------------------------------------
@@ -509,6 +689,8 @@ export function ModelViewer({
   parts,
   selectedPart: selectedProp,
   onSelectPart,
+  isolatePart = false,
+  animations,
   wireframe: wireframeProp,
   onWireframeChange,
   versions,
@@ -618,6 +800,25 @@ export function ModelViewer({
       .catch(() => { /* a failed texture leaves the previous view; the toggle stays usable */ });
   }, [state, loadCount, channel, channelsKey, wireframe, highlightNode, highlightColor]);
 
+  // The selected part alone (isolatePart): hover still only highlights.
+  const selectedPartRow = parts?.find((p) => p.id === selected) ?? null;
+  const isolateNode = isolatePart && selectedPartRow ? selectedPartRow.node ?? selectedPartRow.id : null;
+  // Turning `isolatePart` off (or choosing no part) shows every mesh again;
+  // a viewer that never isolated never touches visibility.
+  const isolatedRef = useRef(false);
+  useEffect(() => {
+    if (state !== 'ready') return;
+    if (!isolateNode && !isolatedRef.current) return;
+    isolateModelPart(ref.current, isolateNode);
+    isolatedRef.current = isolateNode != null;
+  }, [state, loadCount, isolateNode]);
+
+  const clips = useMemo(
+    () => (animations && state === 'ready' ? modelAnimationsOf(ref.current) : []),
+    [animations, state, loadCount],
+  );
+  const animationOptions: ModelAnimationOptions = typeof animations === 'object' ? animations : {};
+
   const chooseChannel = (next: string) => {
     const c = next as ModelChannelView;
     if (channelProp === undefined) setChannelState(c);
@@ -650,7 +851,7 @@ export function ModelViewer({
     TONE[tone],
     !frameless && 'rounded-lg border border-border',
   );
-  const rotate = autoRotate && !reducedMotion;
+  const rotate = autoRotate && !reducedMotion && clips.length === 0;
   const showControls = options.length > 0 || state === 'ready' || onSnapshot;
 
   const versionRows: GroupedListRow[] = (versions ?? []).map((v) => ({
@@ -718,6 +919,7 @@ export function ModelViewer({
       data-model-viewer-channel={channel}
       data-model-viewer-wireframe={wireframe ? 'true' : 'false'}
       data-model-viewer-part={selected ?? ''}
+      data-model-viewer-isolated={isolateNode ?? ''}
       data-testid={testId}
       className={cn('@container flex min-w-0 flex-col gap-3', className)}
     >
@@ -779,6 +981,17 @@ export function ModelViewer({
             )}
           </span>
         </div>
+      )}
+
+      {clips.length > 0 && ref.current && (
+        <ModelAnimationBar
+          key={`${src}#${loadCount}`}
+          el={ref.current as unknown as ModelAnimationLike}
+          clips={clips}
+          options={animationOptions}
+          reducedMotion={reducedMotion}
+          testId={testId}
+        />
       )}
 
       {parts && parts.length > 0 && (

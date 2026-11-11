@@ -1,3 +1,27 @@
+## 2.520.0
+
+The Storymaker Studio's open gaps from rows 150, 151, 152 and 154 (G150-1, G150-3..7, G151-1..2, G152-1..2, G154-1) and G129-1. New props default to the old behaviour; the changed defaults are listed before → after.
+
+Changed defaults:
+
+- `DropdownMenu` (G150-7): the menu panel and each submenu flyout are a plain positioned container around the `role="menu"`, no longer `role="dialog"` with `data-ui-dialog="popover"`, so an open menu (and its submenu) is not counted as a dialog. Focus on open, arrow keys, Escape with focus back to the trigger, Tab cycling and outside-click are unchanged. The panels carry `data-ui-popover="menu"`. An audit that bound menus through `[data-ui-dialog="popover"]` (aws-agentcore's `popover.fit` `$popovers`) should add `[data-ui-popover]` to keep measuring them.
+- `FrameStrip` `contactSheet` (G150-6): the Frames / Contact sheet switch is named "<label>: frames or <sheet label>" ("Motion: frames or contact sheet"), was "View". New `switchLabel` overrides it.
+- `DetailSection` `variant="heading"` at `sm` / `md` (G129-1): 4px under the title row (`mb-1`), was 2px. `lg` unchanged. Marker `data-detail-section-title-row`.
+- `MediaPlaybackDock` (G152-2): the controls row is a container; under 42rem (a phone) Close shares the title line and the transport, scrubber, volume and status wrap below it (Close used to wrap to a line of its own at 390px). Wider rows are unchanged. `status` is now wrapped in a `span`. Marker `data-playback-title`, `data-playback-close`.
+
+New props and exports:
+
+- `InlinePopover` `panelRole?: 'dialog' | 'none'` (G150-7): default `dialog` (unchanged); `none` drops the role, its name and `data-ui-dialog`. Every panel now carries `data-ui-popover={kind}`.
+- `Avatar` `imagePosition`, `AvatarGroupItem.imagePosition` and `GalleryAsset.imagePosition` (G150-1): the image's CSS `object-position` (`"50% 12%"` keeps a full-length character's face in a round or cropped tile).
+- `AssetGallery` `actionsLayout?: 'wrap' | 'row'` (G150-3): `row` is one line per card, the first action filling it and the rest (More) at its end, labels unwrapped. `statusPlacement?: 'overlay' | 'caption'` (G150-4): `caption` draws an image tile's status as a line under the title and subtitle instead of a pill over the picture. `aspect?: 'landscape' | 'portrait' | 'square'` (G150-5) for image tiles (default `landscape`, 4:3). Markers `data-gallery-actions-layout`, `data-gallery-status="line"`, `data-gallery-aspect`.
+- `ModelViewer` `animations?: boolean | ModelAnimationOptions` (G151-1): the model's glTF clips under the view: a clip menu (`labels`, `descriptions`, `defaultClip`), Play / Pause, a frame back or on, ¼× ½× 1×, and a scrubber read as "Frame N of M" (`fps`, default 24); `autoPlay` default true, never under reduced motion; the turntable stops while a clip shows. `isolatePart?: boolean` (G151-2): the selected part is shown alone until pressed again, and turning it off shows every part. Helpers `modelAnimationsOf(el)` and `isolateModelPart(el, node)`.
+- `VideoPlayer` (G154-1): `chapters` (`{start, title, id?}[]`, a list under the clip, the playing one `aria-current`), `markers` (`{at, label, tone?, id?}[]`, ticks on a track and jump buttons), `seekTo` (`{seconds, nonce?}`) and `onChapterChange`; `formatClipTime`. With chapters or markers the root becomes a wrapper (`data-video-timed`) that takes `className` and `style`; without them the player renders exactly as before.
+- `AudioPlayer` `controller?: AudioPlayerController` (G152-1): `{playing, time, duration?, onToggle, onSeek}`; the player then owns no `<audio>` and follows a shared player. `src` is optional with a controller.
+- `MediaPlaybackDock` `onStateChange` (`{sourceId, playing, time, duration}`) and `controlRef` (`{play, pause, toggle, seek}`) (G152-1). `useMediaPlayback()` wires a dock and any number of rows: `dockProps` for the dock, `controllerFor(source)` for each `AudioPlayer`; a row's Play loads its source into the dock and plays it, its scrubber seeks the dock.
+- `Slider` `aria-valuetext`.
+
+Not in this release: G133a (`useActivity` `enabled`) belongs to `@connorhoehn/realtime-modules`, not this library. G151-3 (`onLoad(el)` / a forwarded ref) is not added: `animations` and `isolatePart` remove the need. G159-1 (reframing the camera on an isolated part) and G159-2 (`SegmentedControl` overflow) are not in the gap list.
+
 ## 2.519.0
 
 (composer + focus batch) Two bugs and three small props found by a headless walk of the agent portal.
