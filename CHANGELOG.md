@@ -1,3 +1,8 @@
+## 2.522.2 — Keep a chosen table column visible
+
+- DataTable's hidden-column chooser now protects the selected column during fitting. If swapping the remaining secondary columns cannot make room, the table shows all fields as cards; the requested column never silently disappears again.
+- A wider table returns to ordinary rows. A regression test covers a chosen column wider than the column it replaces and the subsequent resize.
+
 ## 2.522.1 — Audit responsive table and navigation layouts
 
 - DataTable and SubNavLayout expose their active CSS layout mode for the DOM audit. Card rows retain explicit inset, spacing, display, header and typography checks; compact section navigation is measured as a strip above content.

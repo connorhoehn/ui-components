@@ -292,6 +292,25 @@ describe('DataTable hiddenColumnsControl="header" (2.519.0)', () => {
     expect(hiddenKeys()).toBe('');
   });
 
+  it('a wider chosen column stays visible when swapping another column cannot make it fit', () => {
+    const previous = WIDTH.date;
+    WIDTH.date = 250;
+    try {
+      renderTable({ hiddenColumnsControl: 'header' });
+      resize(560);
+      expect(hiddenKeys()).toBe('date');
+      fireEvent.click(screen.getByTestId('datatable-more-header-control'));
+      fireEvent.click(screen.getByTestId('datatable-more-header-show-date'));
+      // Name + Amount + Date + More = 630px: hiding Owner is not enough.
+      // The requested field must not silently rejoin the hidden set.
+      expect(screen.getByTestId('dt')).toHaveAttribute('data-stacked');
+      expect(hiddenKeys()).toBe('');
+      resize(1000);
+      expect(screen.getByTestId('dt')).not.toHaveAttribute('data-stacked');
+      expect(headerTexts()).toEqual(['Name', 'Amount', 'Owner', 'Date']);
+    } finally { WIDTH.date = previous; }
+  });
+
   it('the default stays "row": a "+N columns" link per row and a plain "More" header', () => {
     renderTable();
     resize(560);

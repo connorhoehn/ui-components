@@ -675,15 +675,15 @@ export function DataTable<T>({
 
   const rootRef = useRef<HTMLDivElement>(null);
   // `hiddenColumnsControl="header"`: the column the reader chose to show
-  // moves to the end of the hide order, so it is the last to hide and the
-  // lowest-priority shown column takes its place. `forceStacked`: they chose
+  // stays out of the hide order, so another secondary column takes its
+  // place or the fit switches to cards. `forceStacked`: they chose
   // the card form because nothing shown was left to swap out.
   const [shownByChoice, setShownByChoice] = useState<string | null>(null);
   const [forceStacked, setForceStacked] = useState(false);
   const order = useMemo(() => {
     if (!responsiveColumns) return [];
     const base = hideOrder(columns);
-    return shownByChoice && base.includes(shownByChoice) ? [...base.filter((k) => k !== shownByChoice), shownByChoice] : base;
+    return shownByChoice ? base.filter((k) => k !== shownByChoice) : base;
   }, [responsiveColumns, columns, shownByChoice]);
   const columnKeys = columns.map((c) => c.key).join('|');
 

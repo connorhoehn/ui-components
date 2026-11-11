@@ -343,7 +343,7 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 	let Re = Ne === "sentence", ze = P !== void 0 || !!Me, Be = (e) => P === void 0 ? !!Me?.(e) : P !== null && d(e) === P, Ve = Array.isArray(n) ? n : [], L = Array.isArray(u) ? u : [], [R, He] = E(null), [Ue, We] = E("asc"), [z, Ge] = E(""), [Ke, B] = E(0), qe = T(null), [V, Je] = E(null), [Ye, Xe] = E(!1), H = w(() => {
 		if (!I) return [];
 		let e = me(L);
-		return V && e.includes(V) ? [...e.filter((e) => e !== V), V] : e;
+		return V ? e.filter((e) => e !== V) : e;
 	}, [
 		I,
 		L,

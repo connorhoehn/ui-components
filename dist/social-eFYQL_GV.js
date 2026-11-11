@@ -12,7 +12,7 @@ import { t as A } from "./Input-DiOEvL5h.js";
 import { t as j } from "./Select-CDxAVVnW.js";
 import { t as M } from "./InlinePopover-BJntntHW.js";
 import { t as N } from "./SearchInput-Dk3D9lhs.js";
-import { t as P } from "./DataTable-B_Y5b63H.js";
+import { t as P } from "./DataTable-HRQL185o.js";
 import { t as F } from "./EmptyState-DqWgLbIq.js";
 import { t as ee } from "./DropdownMenu-DsOGcoH4.js";
 import { l as I } from "./railType-OvWDaK-G.js";
