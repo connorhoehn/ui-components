@@ -76,6 +76,16 @@ For nested shells, measure primary/main at the outer level and secondary/content
 right at the workspace/split level. The same contract covers a four-column
 layout without assuming every route always has four visible columns.
 
+### Responsive layout profiles
+
+`table`, `columns`, `style` and `box` rules may declare named `profiles`, each with a selector and a source-backed reason. Style/box profiles override only the listed `properties`; remaining properties keep their base checks. Optional `when: { property, value }` activates a profile from a computed CSS property. The owner emits this state separately from the measured display and geometry: broken display, spacing or missing regions must still fail. Counts use zero tolerance; pixel tolerances never excuse a missing region.
+
+- `DataTable` emits `data-ui-table-cards` when it supports cards, and `--ui-table-layout: cards` only in its active card mode (container query or forced stack). The `cards` profile on both ordinary and content-height tables checks block rows, 12px row insets, 8px vertical row padding, flex cells with 0px/4px padding, hidden visual headers and the ordinary 14px body type. Rows may grow with their content. Wide tables keep the original geometry checks even when they are card-capable.
+- `SubNavLayout narrow` emits `--ui-subnav-layout: strip` below its container breakpoint. Its `compact-strip` profile checks exactly two stacked regions (navigation and content), matching edges, no gap and no visible side rails. A missing strip fails.
+- A host using a header menu in place of a primary rail marks its shell wrapper `data-ui-navigation-layout="menu"`. The `navigation-menu` profile requires exactly one content column and one visible, enabled, accessible menu button. Bind `compactNavigation` in the adapter, or mark the trigger `data-ui-navigation-trigger`. This declaration must track the host's actual responsive breakpoint; it does not hide the rail itself.
+
+The fixtures in `scripts/responsive-profile-fixtures.mjs` run through `self-test.mjs`. They mutate the intentional variants and neighboring ordinary tables/rails. The separator fixture also proves that ancestor-clipped glyphs are not painted while partially visible bullets still fail; it does not exempt a StatStrip by name.
+
 Properties accept exact strings, numbers (pixel values), arrays of allowed values,
 `{"min":40,"max":56}`, `{"token":"--ui-control-sm"}` for px/rem geometry,
 `{"contains":"monospace"}` for a font-family constraint, or `{"from":"body","property":"fontFamily"}` for a canonical rendered reference.

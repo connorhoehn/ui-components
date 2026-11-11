@@ -182,6 +182,14 @@ export interface DataTableProps<T> {
    * (`onRowClick`).
    */
   selectedKey?: string | null;
+  /**
+   * Reveal `selectedKey` after selection or data arrival, and when the table
+   * changes width (including its card layout). Chooses the row's page without
+   * moving keyboard focus. Default false; selection otherwise only highlights.
+   * Manual scrolling and paging remain free until the selection, sort/filter
+   * result or layout changes. Applies only to the single-key selection.
+   */
+  revealSelection?: boolean;
   /** The predicate form of `selectedKey`, for more than one selected row (since 2.515.10). `selectedKey` wins when both are given. */
   isRowSelected?: (row: T) => boolean;
   /**
@@ -227,7 +235,7 @@ export interface DataTableProps<T> {
 }
 
 // The narrow form's classes are written out whole (Tailwind scans source text).
-const NARROW_TABLE = '@max-[40rem]:block';
+const NARROW_TABLE = '[--ui-table-layout:table] @max-[40rem]:block @max-[40rem]:[--ui-table-layout:cards]';
 const NARROW_HEAD = '@max-[40rem]:sr-only';
 const NARROW_BODY = '@max-[40rem]:block';
 const NARROW_ROW = '@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2';
@@ -284,7 +292,7 @@ const MORE_CELL_NARROW = '@max-[40rem]:hidden';
 // The stacked form forced by `responsiveColumns` (since 2.517.0): the narrow
 // form's classes without the container query, for a table whose columns no
 // longer fit even with the hideable ones gone.
-const STACK_TABLE = 'block';
+const STACK_TABLE = 'block [--ui-table-layout:cards]';
 const STACK_HEAD = 'sr-only';
 const STACK_BODY = 'block';
 const STACK_ROW = 'block px-3 py-2';
@@ -639,6 +647,7 @@ export function DataTable<T>({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   selectedKey,
+  revealSelection = false,
   isRowSelected,
   headerCase = 'upper',
   responsiveColumns = false,
@@ -666,15 +675,15 @@ export function DataTable<T>({
 
   const rootRef = useRef<HTMLDivElement>(null);
   // `hiddenColumnsControl="header"`: the column the reader chose to show
-  // moves to the end of the hide order, so it is the last to hide and the
-  // lowest-priority shown column takes its place. `forceStacked`: they chose
+  // stays out of the hide order, so another secondary column takes its
+  // place or the fit switches to cards. `forceStacked`: they chose
   // the card form because nothing shown was left to swap out.
   const [shownByChoice, setShownByChoice] = useState<string | null>(null);
   const [forceStacked, setForceStacked] = useState(false);
   const order = useMemo(() => {
     if (!responsiveColumns) return [];
     const base = hideOrder(columns);
-    return shownByChoice && base.includes(shownByChoice) ? [...base.filter((k) => k !== shownByChoice), shownByChoice] : base;
+    return shownByChoice ? base.filter((k) => k !== shownByChoice) : base;
   }, [responsiveColumns, columns, shownByChoice]);
   const columnKeys = columns.map((c) => c.key).join('|');
 
@@ -715,6 +724,11 @@ export function DataTable<T>({
   }, [filtered, columns, sortKey, sortDir]);
 
   const totalPages = pageSize && pageSize > 0 ? Math.max(1, Math.ceil(sorted.length / pageSize)) : 1;
+  const selectedIndex = revealSelection && selectedKey != null ? sorted.findIndex((row) => keyField(row) === selectedKey) : -1;
+  const selectedPage = selectedIndex < 0 ? -1 : pageSize && pageSize > 0 ? Math.floor(selectedIndex / pageSize) : 0;
+  useLayoutEffect(() => {
+    if (!loading && selectedPage >= 0) setPage(selectedPage);
+  }, [selectedKey, selectedPage, loading]);
   const safePage = Math.min(page, totalPages - 1);
   const paged = useMemo(() => {
     if (!pageSize || pageSize <= 0) return sorted;
@@ -738,6 +752,38 @@ export function DataTable<T>({
   const moreColumn = hiddenCols.length > 0;
   const labelled = narrow || stacked;
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!revealSelection || selectedKey == null || selectedPage < 0 || loading || !root) return;
+    let live = true;
+    let frame = 0;
+    const reveal = () => {
+      if (!live) return;
+      cancelAnimationFrame(frame);
+      // Let responsive columns and container queries settle before measuring
+      // the final row. No focus() call: a notification must not steal typing.
+      frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => {
+          if (live) root.querySelector<HTMLElement>('tbody > tr[data-selected]')
+            ?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'auto' });
+        });
+      });
+    };
+    reveal();
+    let width = root.clientWidth;
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => {
+      const next = root.clientWidth;
+      if (next === width) return;
+      width = next;
+      reveal();
+    });
+    observer?.observe(root);
+    if (document.fonts?.ready) void document.fonts.ready.then(reveal, () => undefined);
+    return () => { live = false; observer?.disconnect(); cancelAnimationFrame(frame); };
+    // Responsive fit resets on a data refresh. Its intermediate hidden/stacked
+    // states must not pull readers back after they have scrolled elsewhere.
+  }, [revealSelection, selectedKey, selectedPage, loading, safePage, narrow, responsiveColumns, forceStacked]);
+
   return (
     <div
       ref={rootRef}
@@ -746,6 +792,7 @@ export function DataTable<T>({
       data-responsive-columns={responsiveColumns ? '' : undefined}
       data-hidden-columns={responsiveColumns ? hiddenCols.map((c) => c.key).join(' ') : undefined}
       data-stacked={stacked ? '' : undefined}
+      data-reveal-selection={revealSelection ? '' : undefined}
       // The collection composite: an audit reads these to require activatable
       // rows unless the table says, with a reason, that its rows open nothing.
       data-collection-table=""
@@ -755,7 +802,7 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
+        <Table data-ui-table-rows={rowHeight} data-ui-table-cards={narrow || stacked ? '' : undefined} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
           {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {})}>
         <TableHead className={cn(narrow && NARROW_HEAD, stacked && STACK_HEAD)} data-header-case={headerCase}>
           <tr>

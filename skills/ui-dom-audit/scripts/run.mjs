@@ -15,6 +15,10 @@ export function validateContract(contract) {
     ids.add(rule.id);
     if ((rule.exclude ?? []).some(e => !e.reason || !e.selector)) throw new Error(`Undocumented exclusion: ${rule.id}`);
     if (rule.deep !== undefined && typeof rule.deep !== 'boolean') throw new Error(`deep must be boolean: ${rule.id}`);
+    for (const profile of rule.profiles ?? []) {
+      if (!profile.name || !profile.selector || !profile.reason) throw new Error(`Undocumented layout profile: ${rule.id}`);
+      if (profile.when && (!profile.when.property || typeof profile.when.value !== 'string')) throw new Error(`Invalid layout profile condition: ${rule.id}`);
+    }
   }
 }
 export function summarize(cases) {
@@ -43,7 +47,7 @@ export function withRuleOptions(contract, ruleOptions) {
   const rules = contract.rules.map(r => {
     const o = ruleOptions[r.id];
     if (!o) return r;
-    for (const key of Object.keys(o)) if (['id', 'kind', 'deep', 'exclude', 'selector'].includes(key) || !(key in r)) throw new Error(`ruleOptions.${r.id}.${key}: only a declared threshold may be tuned`);
+    for (const key of Object.keys(o)) if (['id', 'kind', 'deep', 'exclude', 'selector', 'profiles'].includes(key) || !(key in r)) throw new Error(`ruleOptions.${r.id}.${key}: only a declared threshold may be tuned`);
     return { ...r, ...o };
   });
   const out = { ...contract, rules }; validateContract(out); return out;

@@ -9,7 +9,7 @@ import { t as ie } from "./QuoteBlock-Dks53Idi.js";
 import { i as ae } from "./composerSendError-BFTLY93R.js";
 import { a as oe, i as se, r as s } from "./composerContext-BLn1-Nao.js";
 import { i as ce, t as le } from "./FloatingComposerDock-DbxmNCal.js";
-import { r as ue } from "./RichChatComposer-99zbhKET.js";
+import { r as ue } from "./RichChatComposer-ByfvlaEE.js";
 import { useCallback as c, useId as de, useMemo as fe, useRef as pe, useState as l } from "react";
 import { Fragment as u, jsx as d, jsxs as f } from "react/jsx-runtime";
 //#region src/components/social/ContextComposer.tsx

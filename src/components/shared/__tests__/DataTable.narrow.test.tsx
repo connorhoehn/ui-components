@@ -26,6 +26,8 @@ describe('DataTable narrow', () => {
     expect((container.firstElementChild as HTMLElement).className).toContain('@container');
     expect(container.querySelector('thead')!.className).toContain('@max-[40rem]:sr-only');
     expect(container.querySelector('tbody tr')!.className).toContain('@max-[40rem]:block');
+    expect(container.querySelector('table')).toHaveAttribute('data-ui-table-cards');
+    expect(container.querySelector('table')!.className).toContain('@max-[40rem]:[--ui-table-layout:cards]');
     expect(container.querySelector('td')!.className).toContain('before:content-[attr(data-label)]');
   });
 
@@ -34,5 +36,6 @@ describe('DataTable narrow', () => {
     expect((container.firstElementChild as HTMLElement).className).not.toContain('@container');
     expect(container.querySelector('td')!.hasAttribute('data-label')).toBe(false);
     expect(container.innerHTML).not.toContain('@max-[40rem]');
+    expect(container.querySelector('table')).not.toHaveAttribute('data-ui-table-cards');
   });
 });

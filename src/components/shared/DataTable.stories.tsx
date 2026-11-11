@@ -91,6 +91,19 @@ export const Paginated: Story = {
   },
 };
 
+/** A notification can reveal a record on a later page without moving focus. */
+export const RevealSelection: Story = {
+  args: {
+    data: RUNS,
+    columns,
+    keyField: (r: Run) => r.id,
+    pageSize: 3,
+    selectedKey: 'r-007',
+    revealSelection: true,
+    narrow: true,
+  },
+};
+
 export const SearchableAndPaginated: Story = {
   args: {
     data: RUNS,

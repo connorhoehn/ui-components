@@ -1,3 +1,11 @@
+## 2.523.0
+
+Three DataTable and audit additions that shipped to the portal as vendored 2.522.0 to 2.522.2 builds and are released here under one number. All are backwards compatible.
+
+- `DataTable` selected-row reveal: opt-in `revealSelection` with `selectedKey` chooses the selected row's page and scrolls it into view after loading or a width/layout change, including the card form, without moving keyboard focus. A refresh with the same selection does not pull the reader back; manual pagination stays available and filtering never clears itself to expose a hidden selection. Without the opt-in, selection stays highlight-only.
+- Responsive audit profiles: `DataTable` and `SubNavLayout` expose their active CSS layout mode for the DOM audit, so card rows keep explicit inset, spacing, display, header and typography checks and compact section navigation is measured as a strip above content. A host can declare a menu in place of its primary rail; the audit then requires one content column and a visible, enabled, named menu trigger. Leading-separator checks measure painted glyphs after ancestor clipping, and `CollectionToolbar` controls inside `PageHeader` use a zero-inset audit profile because the header supplies the gutter. Browser mutation fixtures cover each valid and broken variant.
+- `DataTable` hidden-column choice (bug): the chooser now protects the selected column during fitting. If swapping the remaining secondary columns cannot make room, the table shows all fields as cards instead of silently dropping the requested column, and a wider table returns to ordinary rows. A regression test covers a chosen column wider than the one it replaces and the following resize.
+
 ## 2.522.0
 
 (call controls a11y) Six defects found when the call UI was first looked at in a browser, fixed in the library. Every prop is backwards compatible; the visible changes are listed per component.

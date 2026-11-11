@@ -1,9 +1,9 @@
 import { d as e, t } from "./Button-DQoeE5dN.js";
 import { n } from "./Text-XdCzxWMv.js";
 import { t as r } from "./IconButton-BgM9MvwA.js";
-import { B as i, D as a, E as o, S as s, U as c, V as l, X as u, _ as d, _t as f, ct as p, d as m, ft as h, gt as g, h as _, m as v, n as y, pt as b, r as x, st as S } from "./Icons-CqVFbuiZ.js";
-import { t as C } from "./DropdownMenu-DsOGcoH4.js";
-import { i as ee, n as te, r as ne } from "./Tabs-GZcuU5Qk.js";
+import { B as i, D as a, E as o, S as s, U as c, V as l, X as u, _ as d, _t as f, ct as p, d as m, ft as h, gt as g, h as _, m as v, n as y, pt as b, r as x, st as ee } from "./Icons-CqVFbuiZ.js";
+import { t as S } from "./DropdownMenu-DsOGcoH4.js";
+import { i as C, n as te, r as ne } from "./Tabs-GZcuU5Qk.js";
 import { n as re } from "./Avatar-KvxS_RDw.js";
 import { t as ie } from "./RovingToolbar-C8vF753M.js";
 import { a as ae, i as oe, n as se, o as ce, s as le } from "./backdropTone-DokCqPDL.js";
@@ -133,38 +133,38 @@ var j = (e, t, n, r, i) => e.ta(t, n, r, i), M = (e, t, n, r, i) => e.tr(t, n, r
 	UWORD: mt,
 	WORD: pt,
 	WS: Ct
-}), mn = /[a-z]/, hn = /\p{L}/u, gn = /\p{Emoji}/u, I = /\d/, _n = /\s/, vn = "\r", yn = "\n", L = "️", bn = "‍", xn = "￼", Sn = null, Cn = null;
-function wn(e = []) {
+}), mn = /[a-z]/, hn = /\p{L}/u, gn = /\p{Emoji}/u, _n = /\d/, vn = /\s/, yn = "\r", bn = "\n", I = "️", xn = "‍", Sn = "￼", Cn = null, wn = null;
+function Tn(e = []) {
 	let t = {};
 	A.groups = t;
 	let n = new A();
-	Sn ??= Tn(Ze), Cn ??= Tn(Qe), N(n, "'", Vt), N(n, "{", Tt), N(n, "}", P), N(n, "[", Et), N(n, "]", Dt), N(n, "(", Ot), N(n, ")", kt), N(n, "<", At), N(n, ">", jt), N(n, "（", Mt), N(n, "）", Nt), N(n, "「", Pt), N(n, "」", Ft), N(n, "『", It), N(n, "』", Lt), N(n, "＜", Rt), N(n, "＞", zt), N(n, "&", Bt), N(n, "*", Ht), N(n, "@", Ut), N(n, "`", Gt), N(n, "^", Kt), N(n, ":", F), N(n, ",", qt), N(n, "$", Jt), N(n, ".", Yt), N(n, "=", Xt), N(n, "!", Zt), N(n, "-", Qt), N(n, "%", $t), N(n, "|", en), N(n, "+", tn), N(n, "#", nn), N(n, "?", rn), N(n, "\"", an), N(n, "/", cn), N(n, ";", sn), N(n, "~", ln), N(n, "_", un), N(n, "\\", Wt), N(n, "・", on);
-	let r = M(n, I, St, { [$e]: !0 });
-	M(r, I, r);
+	Cn ??= En(Ze), wn ??= En(Qe), N(n, "'", Vt), N(n, "{", Tt), N(n, "}", P), N(n, "[", Et), N(n, "]", Dt), N(n, "(", Ot), N(n, ")", kt), N(n, "<", At), N(n, ">", jt), N(n, "（", Mt), N(n, "）", Nt), N(n, "「", Pt), N(n, "」", Ft), N(n, "『", It), N(n, "』", Lt), N(n, "＜", Rt), N(n, "＞", zt), N(n, "&", Bt), N(n, "*", Ht), N(n, "@", Ut), N(n, "`", Gt), N(n, "^", Kt), N(n, ":", F), N(n, ",", qt), N(n, "$", Jt), N(n, ".", Yt), N(n, "=", Xt), N(n, "!", Zt), N(n, "-", Qt), N(n, "%", $t), N(n, "|", en), N(n, "+", tn), N(n, "#", nn), N(n, "?", rn), N(n, "\"", an), N(n, "/", cn), N(n, ";", sn), N(n, "~", ln), N(n, "_", un), N(n, "\\", Wt), N(n, "・", on);
+	let r = M(n, _n, St, { [$e]: !0 });
+	M(r, _n, r);
 	let i = M(r, mn, ht, { [nt]: !0 }), a = M(r, hn, gt, { [rt]: !0 }), o = M(n, mn, pt, { [et]: !0 });
-	M(o, I, i), M(o, mn, o), M(i, I, i), M(i, mn, i);
+	M(o, _n, i), M(o, mn, o), M(i, _n, i), M(i, mn, i);
 	let s = M(n, hn, mt, { [tt]: !0 });
-	M(s, mn), M(s, I, a), M(s, hn, s), M(a, I, a), M(a, mn), M(a, hn, a);
-	let c = N(n, yn, wt, { [ct]: !0 }), l = N(n, vn, Ct, { [ct]: !0 }), u = M(n, _n, Ct, { [ct]: !0 });
-	N(n, xn, u), N(l, yn, c), N(l, xn, u), M(l, _n, u), N(u, vn), N(u, yn), M(u, _n, u), N(u, xn, u);
+	M(s, mn), M(s, _n, a), M(s, hn, s), M(a, _n, a), M(a, mn), M(a, hn, a);
+	let c = N(n, bn, wt, { [ct]: !0 }), l = N(n, yn, Ct, { [ct]: !0 }), u = M(n, vn, Ct, { [ct]: !0 });
+	N(n, Sn, u), N(l, bn, c), N(l, Sn, u), M(l, vn, u), N(u, yn), N(u, bn), M(u, vn, u), N(u, Sn, u);
 	let d = M(n, gn, dn, { [at]: !0 });
-	N(d, "#"), M(d, gn, d), N(d, L, d);
-	let f = N(d, bn);
+	N(d, "#"), M(d, gn, d), N(d, I, d);
+	let f = N(d, xn);
 	N(f, "#"), M(f, gn, d);
-	let p = [[mn, o], [I, i]], m = [
+	let p = [[mn, o], [_n, i]], m = [
 		[mn, null],
 		[hn, s],
-		[I, a]
+		[_n, a]
 	];
-	for (let e = 0; e < Sn.length; e++) B(n, Sn[e], vt, pt, p);
-	for (let e = 0; e < Cn.length; e++) B(n, Cn[e], yt, mt, m);
+	for (let e = 0; e < Cn.length; e++) z(n, Cn[e], vt, pt, p);
+	for (let e = 0; e < wn.length; e++) z(n, wn[e], yt, mt, m);
 	ut(vt, {
 		tld: !0,
 		ascii: !0
 	}, t), ut(yt, {
 		utld: !0,
 		alpha: !0
-	}, t), B(n, "file", bt, pt, p), B(n, "mailto", bt, pt, p), B(n, "http", xt, pt, p), B(n, "https", xt, pt, p), B(n, "ftp", xt, pt, p), B(n, "ftps", xt, pt, p), ut(bt, {
+	}, t), z(n, "file", bt, pt, p), z(n, "mailto", bt, pt, p), z(n, "http", xt, pt, p), z(n, "https", xt, pt, p), z(n, "ftp", xt, pt, p), z(n, "ftps", xt, pt, p), ut(bt, {
 		scheme: !0,
 		ascii: !0
 	}, t), ut(xt, {
@@ -173,15 +173,15 @@ function wn(e = []) {
 	}, t), e = e.sort((e, t) => e[0] > t[0] ? 1 : -1);
 	for (let t = 0; t < e.length; t++) {
 		let r = e[t][0], i = e[t][1] ? { [ot]: !0 } : { [st]: !0 };
-		r.indexOf("-") >= 0 ? i[it] = !0 : mn.test(r) ? I.test(r) ? i[nt] = !0 : i[et] = !0 : i[$e] = !0, ft(n, r, r, i);
+		r.indexOf("-") >= 0 ? i[it] = !0 : mn.test(r) ? _n.test(r) ? i[nt] = !0 : i[et] = !0 : i[$e] = !0, ft(n, r, r, i);
 	}
 	return ft(n, "localhost", _t, { ascii: !0 }), n.jd = new A(fn), {
 		start: n,
 		tokens: Object.assign({ groups: t }, pn)
 	};
 }
-function R(e, t) {
-	let n = z(t.replace(/[A-Z]/g, (e) => e.toLowerCase())), r = n.length, i = [], a = 0, o = 0;
+function L(e, t) {
+	let n = R(t.replace(/[A-Z]/g, (e) => e.toLowerCase())), r = n.length, i = [], a = 0, o = 0;
 	for (; o < r;) {
 		let s = e, c = null, l = 0, u = null, d = -1, f = -1;
 		for (; o < r && (c = s.go(n[o]));) s = c, s.accepts() ? (d = 0, f = 0, u = s) : d >= 0 && (d += n[o].length, f++), l += n[o].length, a += n[o].length, o++;
@@ -194,7 +194,7 @@ function R(e, t) {
 	}
 	return i;
 }
-function z(e) {
+function R(e) {
 	let t = [], n = e.length, r = 0;
 	for (; r < n;) {
 		let i = e.charCodeAt(r), a, o = i < 55296 || i > 56319 || r + 1 === n || (a = e.charCodeAt(r + 1)) < 56320 || a > 57343 ? e[r] : e.slice(r, r + 2);
@@ -202,7 +202,7 @@ function z(e) {
 	}
 	return t;
 }
-function B(e, t, n, r, i) {
+function z(e, t, n, r, i) {
 	let a, o = t.length;
 	for (let n = 0; n < o - 1; n++) {
 		let o = t[n];
@@ -210,7 +210,7 @@ function B(e, t, n, r, i) {
 	}
 	return a = new A(n), a.jr = i.slice(), e.j[t[o - 1]] = a, a;
 }
-function Tn(e) {
+function En(e) {
 	let t = [], n = [], r = 0;
 	for (; r < e.length;) {
 		let i = 0;
@@ -223,11 +223,11 @@ function Tn(e) {
 	}
 	return t;
 }
-var En = {
+var Dn = {
 	defaultProtocol: "http",
 	events: null,
-	format: On,
-	formatHref: On,
+	format: kn,
+	formatHref: kn,
 	nl2br: !1,
 	tagName: "a",
 	target: null,
@@ -239,15 +239,15 @@ var En = {
 	ignoreTags: [],
 	render: null
 };
-function Dn(e, t = null) {
-	let n = Object.assign({}, En);
-	e && (n = Object.assign(n, e instanceof Dn ? e.o : e));
+function On(e, t = null) {
+	let n = Object.assign({}, Dn);
+	e && (n = Object.assign(n, e instanceof On ? e.o : e));
 	let r = n.ignoreTags, i = [];
 	for (let e = 0; e < r.length; e++) i.push(r[e].toUpperCase());
 	this.o = n, t && (this.defaultRender = t), this.ignoreTags = i;
 }
-Dn.prototype = {
-	o: En,
+On.prototype = {
+	o: Dn,
 	ignoreTags: [],
 	defaultRender(e) {
 		return e;
@@ -257,7 +257,7 @@ Dn.prototype = {
 	},
 	get(e, t, n) {
 		let r = t != null, i = this.o[e];
-		return i && (typeof i == "object" ? (i = n.t in i ? i[n.t] : En[e], typeof i == "function" && r && (i = i(t, n))) : typeof i == "function" && r && (i = i(t, n.t, n)), i);
+		return i && (typeof i == "object" ? (i = n.t in i ? i[n.t] : Dn[e], typeof i == "function" && r && (i = i(t, n))) : typeof i == "function" && r && (i = i(t, n.t, n)), i);
 	},
 	getObj(e, t, n) {
 		let r = this.o[e];
@@ -268,13 +268,13 @@ Dn.prototype = {
 		return (this.get("render", null, e) || this.defaultRender)(t, e.t, e);
 	}
 };
-function On(e) {
+function kn(e) {
 	return e;
 }
-function kn(e, t) {
+function An(e, t) {
 	this.t = "token", this.v = e, this.tk = t;
 }
-kn.prototype = {
+An.prototype = {
 	isLink: !1,
 	toString() {
 		return this.v;
@@ -295,7 +295,7 @@ kn.prototype = {
 	endIndex() {
 		return this.tk[this.tk.length - 1].e;
 	},
-	toObject(e = En.defaultProtocol) {
+	toObject(e = Dn.defaultProtocol) {
 		return {
 			type: this.t,
 			value: this.toString(),
@@ -328,8 +328,8 @@ kn.prototype = {
 		};
 	}
 };
-function An(e, t) {
-	class n extends kn {
+function jn(e, t) {
+	class n extends An {
 		constructor(t, n) {
 			super(t, n), this.t = e;
 		}
@@ -337,21 +337,21 @@ function An(e, t) {
 	for (let e in t) n.prototype[e] = t[e];
 	return n.t = e, n;
 }
-var jn = An("email", {
+var Mn = jn("email", {
 	isLink: !0,
 	toHref() {
 		return "mailto:" + this.toString();
 	}
-}), Mn = An("text"), Nn = An("nl"), Pn = An("url", {
+}), Nn = jn("text"), Pn = jn("nl"), Fn = jn("url", {
 	isLink: !0,
-	toHref(e = En.defaultProtocol) {
+	toHref(e = Dn.defaultProtocol) {
 		return this.hasProtocol() ? this.v : `${e}://${this.v}`;
 	},
 	hasProtocol() {
 		let e = this.tk;
 		return e.length >= 2 && e[0].t !== _t && e[1].t === F;
 	}
-}), Fn = (e) => new A(e);
+}), B = (e) => new A(e);
 function In({ groups: e }) {
 	let t = e.domain.concat([
 		Bt,
@@ -419,33 +419,33 @@ function In({ groups: e }) {
 		fn,
 		ln,
 		un
-	], i = Fn(), a = N(i, ln);
+	], i = B(), a = N(i, ln);
 	j(a, r, a), j(a, e.domain, a);
-	let o = Fn(), s = Fn(), c = Fn();
+	let o = B(), s = B(), c = B();
 	j(i, e.domain, o), j(i, e.scheme, s), j(i, e.slashscheme, c), j(o, r, a), j(o, e.domain, o);
 	let l = N(o, Ut);
 	N(a, Ut, l), N(s, Ut, l), N(c, Ut, l);
 	let u = N(a, Yt);
 	j(u, r, a), j(u, e.domain, a);
-	let d = Fn();
+	let d = B();
 	j(l, e.domain, d), j(d, e.domain, d);
 	let f = N(d, Yt);
 	j(f, e.domain, d);
-	let p = Fn(jn);
+	let p = B(Mn);
 	j(f, e.tld, p), j(f, e.utld, p), N(l, _t, p);
 	let m = N(d, Qt);
 	N(m, Qt, m), j(m, e.domain, d), j(p, e.domain, d), N(p, Yt, f), N(p, Qt, m);
 	let h = N(o, Qt), g = N(o, Yt);
 	N(h, Qt, h), j(h, e.domain, o), j(g, r, a), j(g, e.domain, o);
-	let _ = Fn(Pn);
+	let _ = B(Fn);
 	j(g, e.tld, _), j(g, e.utld, _), j(_, e.domain, o), j(_, r, a), N(_, Yt, g), N(_, Qt, h), N(_, Ut, l);
-	let v = N(_, F), y = Fn(Pn);
+	let v = N(_, F), y = B(Fn);
 	j(v, e.numeric, y);
-	let b = Fn(Pn), x = Fn();
+	let b = B(Fn), x = B();
 	j(b, t, b), j(b, n, x), j(x, t, b), j(x, n, x), N(_, cn, b), N(y, cn, b);
-	let S = N(s, F), C = N(N(N(c, F), cn), cn);
-	j(s, e.domain, o), N(s, Yt, g), N(s, Qt, h), j(c, e.domain, o), N(c, Yt, g), N(c, Qt, h), j(S, e.domain, b), N(S, cn, b), N(S, rn, b), j(C, e.domain, b), j(C, t, b), N(C, cn, b);
-	let ee = [
+	let ee = N(s, F), S = N(N(N(c, F), cn), cn);
+	j(s, e.domain, o), N(s, Yt, g), N(s, Qt, h), j(c, e.domain, o), N(c, Yt, g), N(c, Qt, h), j(ee, e.domain, b), N(ee, cn, b), N(ee, rn, b), j(S, e.domain, b), j(S, t, b), N(S, cn, b);
+	let C = [
 		[Tt, P],
 		[Et, Dt],
 		[Ot, kt],
@@ -455,15 +455,15 @@ function In({ groups: e }) {
 		[It, Lt],
 		[Rt, zt]
 	];
-	for (let e = 0; e < ee.length; e++) {
-		let [r, i] = ee[e], a = N(b, r);
+	for (let e = 0; e < C.length; e++) {
+		let [r, i] = C[e], a = N(b, r);
 		N(x, r, a);
-		let o = Fn(Pn);
+		let o = B(Fn);
 		j(a, t, o);
-		let s = Fn();
+		let s = B();
 		j(a, n, s), N(a, i, b), j(o, t, o), j(o, n, s), j(s, t, o), j(s, n, s), N(o, i, b), N(s, i, b);
 	}
-	return N(i, _t, _), N(i, wt, Nn), {
+	return N(i, _t, _), N(i, wt, Pn), {
 		start: i,
 		tokens: pn
 	};
@@ -476,12 +476,12 @@ function Ln(e, t, n) {
 		for (; i < r && (l = c || s.go(n[i].t));) c = null, s = l, s.accepts() ? (f = 0, d = s) : f >= 0 && f++, i++, u++;
 		if (f < 0) i -= u, i < r && (o.push(n[i]), i++);
 		else {
-			o.length > 0 && (a.push(Rn(Mn, t, o)), o = []), i -= f, u -= f;
+			o.length > 0 && (a.push(Rn(Nn, t, o)), o = []), i -= f, u -= f;
 			let e = d.t, r = n.slice(i - u, i);
 			a.push(Rn(e, t, r));
 		}
 	}
-	return o.length > 0 && a.push(Rn(Mn, t, o)), a;
+	return o.length > 0 && a.push(Rn(Nn, t, o)), a;
 }
 function Rn(e, t, n) {
 	let r = n[0].s, i = n[n.length - 1].e;
@@ -503,7 +503,7 @@ function Hn(e, t = !1) {
 	V.customSchemes.push([e, t]);
 }
 function Un() {
-	V.scanner = wn(V.customSchemes);
+	V.scanner = Tn(V.customSchemes);
 	for (let e = 0; e < V.tokenQueue.length; e++) V.tokenQueue[e][1]({ scanner: V.scanner });
 	V.parser = In(V.scanner.tokens);
 	for (let e = 0; e < V.pluginQueue.length; e++) V.pluginQueue[e][1]({
@@ -513,15 +513,15 @@ function Un() {
 	return V.initialized = !0, V;
 }
 function Wn(e) {
-	return V.initialized || Un(), Ln(V.parser.start, e, R(V.scanner.start, e));
+	return V.initialized || Un(), Ln(V.parser.start, e, L(V.scanner.start, e));
 }
-Wn.scan = R;
+Wn.scan = L;
 function Gn(e, t = null, n = null) {
 	if (t && typeof t == "object") {
 		if (n) throw Error(`linkifyjs: Invalid link type ${t}; must be a string`);
 		n = t, t = null;
 	}
-	let r = new Dn(n), i = Wn(e), a = [];
+	let r = new On(n), i = Wn(e), a = [];
 	for (let e = 0; e < i.length; e++) {
 		let n = i[e];
 		n.isLink && (!t || n.t === t) && r.check(n) && a.push(n.toFormattedObject(r));
@@ -1105,16 +1105,16 @@ var Lr = 50, Rr = async (e, t, n) => {
 			if ((n = i.arrow) != null && n.alignmentOffset) return {};
 			let g = gr(r), _ = br(o), v = gr(o) === o, y = await (s.isRTL == null ? void 0 : s.isRTL(c.floating)), b = d || (v || !m ? [jr(o)] : Cr(o)), x = p !== "none";
 			!d && x && b.push(...Ar(o, m, p, y));
-			let S = [o, ...b], C = await s.detectOverflow(t, h), ee = [], te = i.flip?.overflows || [];
-			if (l && ee.push(C[g]), u) {
+			let ee = [o, ...b], S = await s.detectOverflow(t, h), C = [], te = i.flip?.overflows || [];
+			if (l && C.push(S[g]), u) {
 				let e = Sr(r, a, y);
-				ee.push(C[e[0]], C[e[1]]);
+				C.push(S[e[0]], S[e[1]]);
 			}
 			if (te = [...te, {
 				placement: r,
-				overflows: ee
-			}], !ee.every((e) => e <= 0)) {
-				let e = (i.flip?.index || 0) + 1, t = S[e];
+				overflows: C
+			}], !C.every((e) => e <= 0)) {
+				let e = (i.flip?.index || 0) + 1, t = ee[e];
 				if (t && (u !== "alignment" || _ === br(t) || te.every((e) => br(e.placement) !== _ || e.overflows[0] > 0))) return {
 					data: {
 						index: e,
@@ -1656,20 +1656,15 @@ function Wi({ pluginKey: e, decorationTag: t, decorationClass: n, decorationCont
 		handleKeyDown(t, n) {
 			var r;
 			let i = e.getState(t.state);
-			if (!i.active) return !1;
-			if (n.key === "Escape" || n.key === "Esc") {
-				var s;
-				return a == null || (s = a.onKeyDown) == null || s.call(a, {
-					view: t,
-					event: n,
-					range: i.range
-				}), o(t), !0;
-			}
-			return (a == null || (r = a.onKeyDown) == null ? void 0 : r.call(a, {
+			return i.active ? n.key === "Escape" || n.key === "Esc" ? ((r = a?.onKeyDown) == null || r.call(a, {
 				view: t,
 				event: n,
 				range: i.range
-			})) || !1;
+			}), o(t), !0) : (a?.onKeyDown)?.call(a, {
+				view: t,
+				event: n,
+				range: i.range
+			}) || !1 : !1;
 		},
 		decorations(a) {
 			let { active: o, range: s, decorationId: c, query: l } = e.getState(a);
@@ -1778,15 +1773,14 @@ function Ki({ editor: e, items: t }) {
 	};
 }
 function qi({ placement: e, offset: t, flip: n, floatingUi: r }) {
-	var i;
-	let a = [Fi({
+	let i = [Fi({
 		mainAxis: t.mainAxis ?? 4,
 		crossAxis: t.crossAxis ?? 0
 	})];
-	return n && a.push(Ii()), r != null && (i = r.middleware) != null && i.length && a.push(...r.middleware), {
+	return n && i.push(Ii()), r?.middleware?.length && i.push(...r.middleware), {
 		placement: e,
 		strategy: r?.strategy ?? "absolute",
-		middleware: a
+		middleware: i
 	};
 }
 function Ji(e) {
@@ -1847,44 +1841,42 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 		floatingUi: d
 	});
 	function y(e, t) {
+		var n, i, a;
 		switch (e) {
 			case "started":
-				var n;
-				r == null || (n = r.onStart) == null || n.call(r, t);
+				(n = r?.onStart) == null || n.call(r, t);
 				break;
 			case "updated":
-				var i;
-				r == null || (i = r.onUpdate) == null || i.call(r, t);
+				(i = r?.onUpdate) == null || i.call(r, t);
 				break;
-			case "stopped":
-				var a;
-				r == null || (a = r.onExit) == null || a.call(r, t);
+			case "stopped": (a = r?.onExit) == null || a.call(r, t);
 		}
 	}
 	return {
 		update: async (n, d) => {
-			let b = t.getState(d), x = t.getState(n.state);
-			if (!b || !x) return;
-			let S = null, C = b.query !== x.query, ee = b.text !== x.text, te = b.range.from !== x.range.from || b.range.to !== x.range.to, ne = C || ee || te;
-			if (!b.active && x.active) S = "started";
-			else if (b.active && !x.active) S = "stopped";
-			else if (x.active && ne) S = "updated";
+			var b, x;
+			let ee = t.getState(d), S = t.getState(n.state);
+			if (!ee || !S) return;
+			let C = null, te = ee.query !== S.query, ne = ee.text !== S.text, re = ee.range.from !== S.range.from || ee.range.to !== S.range.to, ie = te || ne || re;
+			if (!ee.active && S.active) C = "started";
+			else if (ee.active && !S.active) C = "stopped";
+			else if (S.active && ie) C = "updated";
 			else return;
-			let re = S === "stopped" ? b : x, ie = n.dom.querySelector(`[data-decoration-id="${re.decorationId}"]`), ae = m(n, ie), oe = i === 0 || (re.query ? re.query.length >= i : !1), se = (S === "started" || S === "updated") && oe;
+			let ae = C === "stopped" ? ee : S, oe = n.dom.querySelector(`[data-decoration-id="${ae.decorationId}"]`), se = m(n, oe), ce = i === 0 || (ae.query ? ae.query.length >= i : !1), le = (C === "started" || C === "updated") && ce;
 			if (g = {
 				editor: e,
-				range: re.range,
-				query: re.query || "",
-				text: re.text || "",
+				range: ae.range,
+				query: ae.query || "",
+				text: ae.text || "",
 				items: o ?? [],
 				command: (t) => p({
 					editor: e,
-					range: re.range,
+					range: ae.range,
 					props: t
 				}),
-				decorationNode: ie,
-				clientRect: ae,
-				loading: se,
+				decorationNode: oe,
+				clientRect: se,
+				loading: le,
 				placement: s,
 				offset: {
 					mainAxis: c.mainAxis ?? 4,
@@ -1894,23 +1886,15 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 				flip: u,
 				floatingUi: v,
 				mount: Yi({
-					getReferenceRect: ae,
+					getReferenceRect: se,
 					contextElement: n.dom,
 					config: v,
 					container: l,
 					dismissOnOutsideClick: f,
 					dismiss: () => h(e.view)
 				})
-			}, S === "started") {
-				var ce;
-				r == null || (ce = r.onBeforeStart) == null || ce.call(r, g);
-			}
-			if (S === "updated") {
-				var le;
-				r == null || (le = r.onBeforeUpdate) == null || le.call(r, g);
-			}
-			if (S === "started" && y(S, g), S === "started" || S === "updated") {
-				if (!se) _.abort(), g = {
+			}, C === "started" && ((b = r?.onBeforeStart) == null || b.call(r, g)), C === "updated" && ((x = r?.onBeforeUpdate) == null || x.call(r, g)), C === "started" && y(C, g), C === "started" || C === "updated") {
+				if (!le) _.abort(), g = {
 					...g,
 					items: o ?? [],
 					loading: !1
@@ -1920,8 +1904,8 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 						...g,
 						items: o ?? [],
 						loading: !0
-					}, S = "updated", y(S, g);
-					let e = await _.fetch(re.query || "", a);
+					}, C = "updated", y(C, g);
+					let e = await _.fetch(ae.query || "", a);
 					if (e.status === "aborted") return;
 					if (!t.getState(n.state)?.active) {
 						_.abort();
@@ -1937,21 +1921,21 @@ function Xi({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 					};
 				}
 			}
-			if (S === "stopped") {
-				_.abort(), y(S, g), g = void 0;
+			if (C === "stopped") {
+				_.abort(), y(C, g), g = void 0;
 				return;
 			}
-			S === "updated" && y(S, g);
+			C === "updated" && y(C, g);
 		},
 		destroy: () => {
 			var e;
-			_.abort(), g && (r == null || (e = r.onExit) == null || e.call(r, g));
+			_.abort(), g && ((e = r?.onExit) == null || e.call(r, g));
 		}
 	};
 }
 var Zi = new Ke("suggestion");
-function Qi({ pluginKey: e = Zi, editor: t, char: n = "@", allowSpaces: r = !1, allowToIncludeChar: i = !1, allowedPrefixes: a = [" "], startOfLine: o = !1, decorationTag: s = "span", decorationClass: c = "suggestion", decorationContent: l = "", decorationEmptyClass: u = "is-empty", command: d = () => null, items: f = () => [], minQueryLength: p = 0, debounce: m = 0, initialItems: h, placement: g = "bottom-start", offset: _ = {}, container: v, flip: y = !0, floatingUi: b, dismissOnOutsideClick: x = !0, render: S = () => ({}), allow: C = () => !0, findSuggestionMatch: ee = Ri, shouldShow: te, shouldResetDismissed: ne }) {
-	let re = S?.(), ie = r && !i, ae = (n, r) => Vi(t, n, r, e);
+function Qi({ pluginKey: e = Zi, editor: t, char: n = "@", allowSpaces: r = !1, allowToIncludeChar: i = !1, allowedPrefixes: a = [" "], startOfLine: o = !1, decorationTag: s = "span", decorationClass: c = "suggestion", decorationContent: l = "", decorationEmptyClass: u = "is-empty", command: d = () => null, items: f = () => [], minQueryLength: p = 0, debounce: m = 0, initialItems: h, placement: g = "bottom-start", offset: _ = {}, container: v, flip: y = !0, floatingUi: b, dismissOnOutsideClick: x = !0, render: ee = () => ({}), allow: S = () => !0, findSuggestionMatch: C = Ri, shouldShow: te, shouldResetDismissed: ne }) {
+	let re = ee?.(), ie = r && !i, ae = (n, r) => Vi(t, n, r, e);
 	function oe(e) {
 		return Hi({
 			...e,
@@ -1991,8 +1975,8 @@ function Qi({ pluginKey: e = Zi, editor: t, char: n = "@", allowSpaces: r = !1, 
 			allowToIncludeChar: i,
 			allowedPrefixes: a,
 			startOfLine: o,
-			findSuggestionMatch: ee,
-			allow: C,
+			findSuggestionMatch: C,
+			allow: S,
 			shouldShow: te,
 			shouldKeepDismissed: oe,
 			pluginKey: e
@@ -2401,7 +2385,7 @@ var ua = xe(function({ items: t, command: n, label: r = "Commands", draft: i, wi
 	wide: ne.pane
 };
 function pa(e) {
-	return e === null ? "wide" : e < fa.narrow ? "narrow" : ee(e, fa.wide) === "compact" ? "medium" : "wide";
+	return e === null ? "wide" : e < fa.narrow ? "narrow" : C(e, fa.wide) === "compact" ? "medium" : "wide";
 }
 var ma = {
 	none: "0px",
@@ -2422,7 +2406,7 @@ var ma = {
 	terminal: "Terminal"
 }, _a = {
 	chat: /* @__PURE__ */ D(m, { size: 13 }),
-	agent: /* @__PURE__ */ D(S, { size: 13 }),
+	agent: /* @__PURE__ */ D(ee, { size: 13 }),
 	terminal: /* @__PURE__ */ D("span", {
 		className: "font-mono text-[11px]",
 		children: ">_"
@@ -2585,7 +2569,7 @@ function za(e, t, n = !1) {
 		}
 	};
 }
-var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onCommandPick: ne, onSearchPeople: re, mentionMembers: ye, onMentionNonMember: be, onSearchDocuments: xe, allowAttachments: Pe = !1, allowEmoji: Fe = !1, onRequestLink: Ie, placeholder: Le = "Write a message…", inputLabel: Re, commands: ze, privacy: Be = "visible", onPrivacyChange: Ve, privacyLabels: He, disabled: Ue = !1, readOnly: We, references: k, onRemoveReference: Ze, toolbarExtras: Qe, foldedMenu: $e, foldedMenuLabel: et, toolbar: tt = "full", moreActions: nt, moreActionsLabel: rt = "More actions", processes: it, mode: at = "chat", onModeChange: ot, fixedMode: st, modePlaceholders: ct, hints: lt, onQuickOpen: ut, sendOptions: dt, onSendOption: A, onShellCommand: j, modeControl: M = "tabs", modeShortcuts: ft = !1, modeTriggers: N, disabledModes: pt, modes: mt, modeUnavailableReasons: ht, modeHints: gt, submitLead: _t, submitLabel: vt, submitDisabledReason: yt, radius: bt, backdropTone: xt = "auto", working: St, maxInputHeight: Ct, layout: wt = "auto", density: Tt = "comfortable", status: P, suggestions: Et, onSuggestion: Dt, suggestionsVisible: Ot = "focused", modeRowEnd: kt, hideModeMenu: At = !1, singleModeLabel: jt = !1, referencesAction: Mt, referencesPlacement: Nt = "end", referenceDrop: Pt, collapseWhenIdle: Ft = !1, responsive: It, expanded: Lt = !1, onIdleFoldChange: Rt, documentMenu: zt, modeRowStart: Bt, header: Vt, sendWithReferencesOnly: Ht = !1, sendShortcut: Ut = "enter", defaultCommand: Wt, presentation: Gt = "card", className: Kt, "data-testid": F = "rich-chat-composer" }, qt) {
+var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: C, onCommandPick: ne, onSearchPeople: re, mentionMembers: ye, onMentionNonMember: be, onSearchDocuments: xe, allowAttachments: Pe = !1, allowEmoji: Fe = !1, onRequestLink: Ie, placeholder: Le = "Write a message…", inputLabel: Re, commands: ze, privacy: Be = "visible", onPrivacyChange: Ve, privacyLabels: He, disabled: Ue = !1, readOnly: We, references: k, onRemoveReference: Ze, toolbarExtras: Qe, foldedMenu: $e, foldedMenuLabel: et, toolbar: tt = "full", moreActions: nt, moreActionsLabel: rt = "More actions", processes: it, mode: at = "chat", onModeChange: ot, fixedMode: st, modePlaceholders: ct, hints: lt, onQuickOpen: ut, sendOptions: dt, onSendOption: A, onShellCommand: j, modeControl: M = "tabs", modeShortcuts: ft = !1, modeTriggers: N, disabledModes: pt, modes: mt, modeUnavailableReasons: ht, modeHints: gt, submitLead: _t, submitLabel: vt, submitDisabledReason: yt, radius: bt, backdropTone: xt = "auto", working: St, maxInputHeight: Ct, layout: wt = "auto", density: Tt = "comfortable", status: P, suggestions: Et, onSuggestion: Dt, suggestionsVisible: Ot = "focused", modeRowEnd: kt, hideModeMenu: At = !1, singleModeLabel: jt = !1, referencesAction: Mt, referencesPlacement: Nt = "end", referenceDrop: Pt, collapseWhenIdle: Ft = !1, responsive: It, expanded: Lt = !1, onIdleFoldChange: Rt, documentMenu: zt, modeRowStart: Bt, header: Vt, sendWithReferencesOnly: Ht = !1, sendShortcut: Ut = "enter", defaultCommand: Wt, presentation: Gt = "card", className: Kt, "data-testid": F = "rich-chat-composer" }, qt) {
 	let Jt = T(() => {}), Yt = T(Ut);
 	Yt.current = Ut;
 	let Xt = T(zt);
@@ -2608,17 +2592,17 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 	w(() => (mn.current = !0, () => {
 		mn.current = !1;
 	}), []);
-	let [hn, gn] = E(!1), [I, _n] = E(!1), vn = We != null && We !== !1, yn = We === !0 ? "Read only" : We, L = Ue || vn || hn, bn = Ue || vn, [xn, Sn] = E(!0), Cn = Pe && !L, wn = !!ot || !!st, R = mt?.length ? ga.filter((e) => mt.includes(e)) : ga, z = st ?? (wn ? R.includes(at) ? at : R[0] ?? "chat" : "chat"), B = z === "terminal", Tn = wn && z !== "chat", En = vn ? "" : ct?.[z] ?? (z === "chat" ? Le : xa[z]), Dn = !!ot && !st, On = jt && wn && !st && R.length === 1, kn = T(null), An = T(!1), [jn, Mn] = E(null), Nn = (e) => !!pt?.includes(e), Pn = vn && !R.some((e) => e !== z && !Nn(e)), Fn = vn && !Pn ? { "data-composer-readonly-allow": "Switch to a mode you can use" } : void 0, In = (e) => !Dn || !R.includes(e) ? !1 : Nn(e) ? (Mn(ht?.[e] ?? `${$[e]} is not available here`), !1) : (Mn(null), e !== z && (An.current = !0, ot?.(e)), !0), Ln = N && Dn ? {
+	let [hn, gn] = E(!1), [_n, vn] = E(!1), yn = We != null && We !== !1, bn = We === !0 ? "Read only" : We, I = Ue || yn || hn, xn = Ue || yn, [Sn, Cn] = E(!0), wn = Pe && !I, Tn = !!ot || !!st, L = mt?.length ? ga.filter((e) => mt.includes(e)) : ga, R = st ?? (Tn ? L.includes(at) ? at : L[0] ?? "chat" : "chat"), z = R === "terminal", En = Tn && R !== "chat", Dn = yn ? "" : ct?.[R] ?? (R === "chat" ? Le : xa[R]), On = !!ot && !st, kn = jt && Tn && !st && L.length === 1, An = T(null), jn = T(!1), [Mn, Nn] = E(null), Pn = (e) => !!pt?.includes(e), Fn = yn && !L.some((e) => e !== R && !Pn(e)), B = yn && !Fn ? { "data-composer-readonly-allow": "Switch to a mode you can use" } : void 0, In = (e) => !On || !L.includes(e) ? !1 : Pn(e) ? (Nn(ht?.[e] ?? `${$[e]} is not available here`), !1) : (Nn(null), e !== R && (jn.current = !0, ot?.(e)), !0), Ln = N && On ? {
 		terminal: (typeof N == "object" ? N.terminalPrefix : void 0) ?? va,
 		agent: (typeof N == "object" ? N.agentPrefix : void 0) ?? ya
 	} : null, Rn = T(() => !1);
 	Rn.current = (e) => {
-		if (!Ln) return jn && Mn(null), !1;
+		if (!Ln) return Mn && Nn(null), !1;
 		let t = e.getText(), n = null;
-		return z !== "terminal" && R.includes("terminal") && ba(t, Ln.terminal) ? n = "terminal" : z !== "agent" && R.includes("agent") && ba(t, Ln.agent) && (n = "agent"), n ? In(n) ? (e.commands.clearContent(!0), !0) : !1 : (jn && Mn(null), !1);
+		return R !== "terminal" && L.includes("terminal") && ba(t, Ln.terminal) ? n = "terminal" : R !== "agent" && L.includes("agent") && ba(t, Ln.agent) && (n = "agent"), n ? In(n) ? (e.commands.clearContent(!0), !0) : !1 : (Mn && Nn(null), !1);
 	};
-	let zn = T(En);
-	zn.current = En;
+	let zn = T(Dn);
+	zn.current = Dn;
 	let Bn = T(ze);
 	Bn.current = ze;
 	let V = T(re);
@@ -2629,8 +2613,8 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 	Hn.current = be;
 	let Un = !!re, Wn = T(xe);
 	Wn.current = xe;
-	let Gn = !!xe, Kn = T(ee);
-	Kn.current = ee;
+	let Gn = !!xe, Kn = T(C);
+	Kn.current = C;
 	let qn = T(null), Jn = T(!1), H = T(h?.command?.argument ? {
 		trigger: h.command.trigger,
 		item: h.command.argument
@@ -2919,7 +2903,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		...Re ? { "aria-label": Re } : {},
 		class: "chat-composer-input",
 		"data-testid": `${F}-input`,
-		...vn ? {
+		...yn ? {
 			"aria-readonly": "true",
 			"aria-disabled": "true",
 			"aria-describedby": `${F}-readonly-note`
@@ -2927,46 +2911,46 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 	}), [
 		Re,
 		F,
-		vn
+		yn
 	]), sr = T(or), W = Ae({
 		extensions: ar,
 		content: h?.html ?? "",
-		editable: !L,
+		editable: !I,
 		onUpdate: ({ editor: e }) => {
 			if (Rn.current(e)) return;
-			Sn(e.isEmpty), ir.current = e;
+			Cn(e.isEmpty), ir.current = e;
 			let t = e.getText(), n = me(t, Bn.current);
 			Yn((e) => e?.trigger === n?.trigger ? e : n), Qn(!n || ve(t, n).trim() === ""), H.current && H.current.trigger !== n?.trigger && (H.current = null), er(Fa(H.current, n, t)), nr(rr(e)), fn.current(e);
 		},
 		editorProps: { attributes: or }
 	}, [ar]);
 	w(() => {
-		W?.setEditable(!L);
-	}, [W, L]), w(() => {
+		W?.setEditable(!I);
+	}, [W, I]), w(() => {
 		!W || W.isDestroyed || sr.current === or || (sr.current = or, W.view.setProps({ attributes: or }));
 	}, [W, or]), w(() => {
 		!W || W.isDestroyed || W.view.dispatch(W.state.tr);
 	}, [
 		W,
-		z,
-		wn,
-		En
+		R,
+		Tn,
+		Dn
 	]), w(() => {
-		An.current && (An.current = !1, z === "terminal" ? kn.current?.focus() : W && !W.isDestroyed && W.commands.focus("end"));
-	}, [z, W]);
+		jn.current && (jn.current = !1, R === "terminal" ? An.current?.focus() : W && !W.isDestroyed && W.commands.focus("end"));
+	}, [R, W]);
 	let [lr, ur] = E(""), [dr, fr] = E([]), [pr, mr] = E(-1), hr = Se(() => {
 		let e = lr.trim();
-		!e || L || !j || yt?.trim() || (fr((t) => t[t.length - 1] === e ? t : [...t, e]), ur(""), mr(-1), j(e));
+		!e || I || !j || yt?.trim() || (fr((t) => t[t.length - 1] === e ? t : [...t, e]), ur(""), mr(-1), j(e));
 	}, [
 		lr,
-		L,
+		I,
 		j,
 		yt
 	]), gr = Se((e) => {
 		if (!dr.length) return;
 		let t = Math.min(dr.length - 1, Math.max(-1, pr + e));
 		mr(t), ur(t < 0 ? "" : dr[dr.length - 1 - t] ?? "");
-	}, [dr, pr]), _r = R.includes("terminal"), vr = Ee(() => gt?.[z] || lt || (!ot && !ut ? [] : [
+	}, [dr, pr]), _r = L.includes("terminal"), vr = Ee(() => gt?.[R] || lt || (!ot && !ut ? [] : [
 		{
 			key: "/",
 			label: "for commands"
@@ -2986,9 +2970,9 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		ot,
 		ut,
 		gt,
-		z,
+		R,
 		_r
-	]), yr = (typeof vt == "string" ? vt : vt?.[z]) ?? (B ? "Run" : "Send"), br = yt?.trim() || null, xr = !br && (B ? !L && !!j && lr.trim().length > 0 : !L && (!xn || ln.length > 0 || Ht && !!k?.length)), Sr = `${Ce()}-submit-reason`, Cr = br ? {
+	]), yr = (typeof vt == "string" ? vt : vt?.[R]) ?? (z ? "Run" : "Send"), br = yt?.trim() || null, xr = !br && (z ? !I && !!j && lr.trim().length > 0 : !I && (!Sn || ln.length > 0 || Ht && !!k?.length)), Sr = `${Ce()}-submit-reason`, Cr = br ? {
 		"aria-describedby": Sr,
 		title: br
 	} : {};
@@ -3049,7 +3033,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		}
 		ir.current = W;
 		let t = W.getText();
-		Sn(W.isEmpty);
+		Cn(W.isEmpty);
 		let n = me(t, Bn.current);
 		H.current && H.current.trigger !== n?.trigger && (H.current = null), Yn(n), Qn(!n || ve(t, n).trim() === ""), er(Fa(H.current, n, t)), nr(rr(W));
 	}, [
@@ -3076,8 +3060,8 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 			text: ""
 		});
 	}, [W]), kr = Se(() => {
-		if (!W || !xr || B || pn.current) return;
-		let e = W.getText(), t = z === "agent" && !st && e.trim() && !/^\s*\/agent\b/i.test(e) ? `/agent ${e.trim()}` : e, n = me(t, Bn.current), r = H.current, i;
+		if (!W || !xr || z || pn.current) return;
+		let e = W.getText(), t = R === "agent" && !st && e.trim() && !/^\s*\/agent\b/i.test(e) ? `/agent ${e.trim()}` : e, n = me(t, Bn.current), r = H.current, i;
 		n && (i = { trigger: n.trigger }, r && r.trigger === n.trigger && ve(t, n).includes(r.item.label) && (i.argument = r.item));
 		let a = Da(W), o = {
 			html: W.isEmpty ? "" : W.getHTML(),
@@ -3087,23 +3071,23 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 			files: ln.map((e) => e.file),
 			...a.length > 0 ? { documents: a } : {},
 			...i ? { command: i } : {},
-			...wn ? { mode: z } : {}
+			...Tn ? { mode: R } : {}
 		}, c = an.current, l = cn.current, u = (e) => {
 			e !== !1 && (!mn.current || W.isDestroyed ? l?.({
 				html: "",
 				files: []
-			}, c) : an.current === c && (H.current = null, dn.current = [], un([]), W.commands.clearContent(!0), an.current === c && fn.current(W), Sn(!0)));
+			}, c) : an.current === c && (H.current = null, dn.current = [], un([]), W.commands.clearContent(!0), an.current === c && fn.current(W), Cn(!0)));
 		};
-		pn.current = !0, _n(!1);
+		pn.current = !0, vn(!1);
 		try {
 			let e = s(o);
 			e && typeof e == "object" && "then" in e ? (gn(!0), e.then(u, (e) => {
-				mn.current && !W.isDestroyed && _n(ge(e) ?? !0);
+				mn.current && !W.isDestroyed && vn(ge(e) ?? !0);
 			}).finally(() => {
 				pn.current = !1, mn.current && !W.isDestroyed && gn(!1);
 			})) : (u(e), pn.current = !1);
 		} catch (e) {
-			pn.current = !1, _n(ge(e) ?? !0);
+			pn.current = !1, vn(ge(e) ?? !0);
 		}
 	}, [
 		W,
@@ -3111,15 +3095,15 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		s,
 		ln,
 		Be,
-		B,
 		z,
-		wn,
+		R,
+		Tn,
 		st
 	]);
 	Jt.current = kr, qn.current = ne ? (e) => {
-		_n(!1);
+		vn(!1);
 		let t = (e) => {
-			mn.current && _n(ge(e) ?? !0);
+			mn.current && vn(ge(e) ?? !0);
 		};
 		try {
 			let n = ne(e);
@@ -3152,11 +3136,11 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		}
 	}), [W]);
 	let Mr = Se((e) => {
-		!Cn || e.length === 0 || wr([...dn.current, ...e.map((e) => ({
+		!wn || e.length === 0 || wr([...dn.current, ...e.map((e) => ({
 			id: `staged-${ja++}`,
 			file: e
 		}))]);
-	}, [Cn, W]), [Nr, Pr] = E(null), Fr = T(null), Ir = T({}), Lr = T(pa(null)), Rr = Se((e) => {
+	}, [wn, W]), [Nr, Pr] = E(null), Fr = T(null), Ir = T({}), Lr = T(pa(null)), Rr = Se((e) => {
 		if (!(e > 0)) {
 			Ir.current = {}, Pr(null);
 			return;
@@ -3180,7 +3164,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		let t = e.getBoundingClientRect().width;
 		t > 0 && t !== Nr && Rr(t), Br && Kr.current === null && typeof document < "u" && (!document.activeElement || document.activeElement === document.body) && (Vr(!1), Gr(!1));
 	}), Lr.current = pa(Nr);
-	let Yr = wt === "auto" ? Lr.current : wt, K = Yr === "wide", Xr = Yr === "narrow", q = It === "pane" && !K, Zr = Tt === "compact", Qr = wn && !st && (M === "compact" || M === "menu" || Xr), J = Qr && M === "menu" && !Xr && !q, Y = J && (tt === "editor" || tt === "prompt" || tt === "prompt-card" || tt === "basic"), $r = Y && tt === "prompt-card", X = Gt === "prompt", ei = Y && (tt === "basic" || tt === "prompt" && !X), ti = Y ? "inline-flex items-center gap-1 px-2.5 py-1 text-xs" : J ? "px-3 py-1.5 text-sm" : "px-2.5 py-1 text-xs", ni = X ? /* @__PURE__ */ D(De, { children: yr }) : /* @__PURE__ */ O(De, { children: [
+	let Yr = wt === "auto" ? Lr.current : wt, K = Yr === "wide", Xr = Yr === "narrow", q = It === "pane" && !K, Zr = Tt === "compact", Qr = Tn && !st && (M === "compact" || M === "menu" || Xr), J = Qr && M === "menu" && !Xr && !q, Y = J && (tt === "editor" || tt === "prompt" || tt === "prompt-card" || tt === "basic"), $r = Y && tt === "prompt-card", X = Gt === "prompt", ei = Y && (tt === "basic" || tt === "prompt" && !X), ti = Y ? "inline-flex items-center gap-1 px-2.5 py-1 text-xs" : J ? "px-3 py-1.5 text-sm" : "px-2.5 py-1 text-xs", ni = X ? /* @__PURE__ */ D(De, { children: yr }) : /* @__PURE__ */ O(De, { children: [
 		ei && /* @__PURE__ */ D(b, {
 			size: 12,
 			"aria-hidden": "true"
@@ -3202,11 +3186,11 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		J,
 		Y
 	]);
-	let ri = Qr && (Zr || J) || X && !q, ii = Qr || X, ai = K && !Zr && M !== "menu", oi = !!Et?.length && !!Dt, si = oi && K && xn && (Ot === "empty" ? !(Ft && !G && !Lt) : Br && !(Ft && !G)), ci = oi && !K, Z = Ft && !Lt && !G && xn && !P && !it?.length && !ln.length && !U && !I && !jn && !B && !nn.open && !(Ve && Be === "hidden"), li = T(Rt);
+	let ri = Qr && (Zr || J) || X && !q, ii = Qr || X, ai = K && !Zr && M !== "menu", oi = !!Et?.length && !!Dt, si = oi && K && Sn && (Ot === "empty" ? !(Ft && !G && !Lt) : Br && !(Ft && !G)), ci = oi && !K, Z = Ft && !Lt && !G && Sn && !P && !it?.length && !ln.length && !U && !_n && !Mn && !z && !nn.open && !(Ve && Be === "hidden"), li = T(Rt);
 	li.current = Rt, w(() => {
 		li.current?.(Z);
 	}, [Z]);
-	let ui = Ft && "motion-safe:[animation:composerReveal_140ms_ease-out]", [di, fi] = E(!1), Q = (Xr || q) && !di || Z, pi = Z && (Xr || !!k?.length && Nr !== null && Nr > 0 && Nr < 640), mi = q || pi, hi = wn && !X, gi = Br || !xn, _i = tt === "compact", vi = tt === "basic", yi = tt === "prompt" || tt === "prompt-card", bi = tt === "editor" || yi || vi, xi = !_i && !bi, Si = K && xi, Ci = K && !_i, wi = K && xi, Ti = K && !_i && !vi, Ei = K && !vi, Di = K && !xi && !yi, Oi = Cn || Fe && !!W || !!Ve, ki = Oi || Qe != null, Ai = !!nt?.length && (!Y || On || X), ji = !!$e?.length && Q && !K && !B, Mi = et ?? $e?.[0]?.label ?? "More", Ni = !Z && !Y && (!q || gi) && (!ai && !!vr.length || ci || Di && !!W), Pi = Y && !!U && !Z && !B, Fi = $r && !Z && !B ? U ?? (Wt ? ze?.find((e) => e.trigger === Wt) ?? null : null) : null, Ii = Y ? [...nt ?? [], ...vr.length ? [{
+	let ui = Ft && "motion-safe:[animation:composerReveal_140ms_ease-out]", [di, fi] = E(!1), Q = (Xr || q) && !di || Z, pi = Z && (Xr || !!k?.length && Nr !== null && Nr > 0 && Nr < 640), mi = q || pi, hi = Tn && !X, gi = Br || !Sn, _i = tt === "compact", vi = tt === "basic", yi = tt === "prompt" || tt === "prompt-card", bi = tt === "editor" || yi || vi, xi = !_i && !bi, Si = K && xi, Ci = K && !_i, wi = K && xi, Ti = K && !_i && !vi, Ei = K && !vi, Di = K && !xi && !yi, Oi = wn || Fe && !!W || !!Ve, ki = Oi || Qe != null, Ai = !!nt?.length && (!Y || kn || X), ji = !!$e?.length && Q && !K && !z, Mi = et ?? $e?.[0]?.label ?? "More", Ni = !Z && !Y && (!q || gi) && (!ai && !!vr.length || ci || Di && !!W), Pi = Y && !!U && !Z && !z, Fi = $r && !Z && !z ? U ?? (Wt ? ze?.find((e) => e.trigger === Wt) ?? null : null) : null, Ii = Y ? [...nt ?? [], ...vr.length ? [{
 		label: "Keys",
 		items: vr.map((e) => ({
 			label: e.label,
@@ -3216,7 +3200,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 			}),
 			...e.onSelect ? { onSelect: e.onSelect } : {}
 		}))
-	}] : []] : [], Li = ae(zr, xt, Tn), Ri = oe(), zi = Tn && Li !== "none" && !(Z && !Ri?.painting), Bi = zi && !!Ri?.painting, Vi = zi && !Bi, Hi = St ?? Ri?.working ?? !1, Ui = {};
+	}] : []] : [], Li = ae(zr, xt, En), Ri = oe(), zi = En && Li !== "none" && !(Z && !Ri?.painting), Bi = zi && !!Ri?.painting, Vi = zi && !Bi, Hi = St ?? Ri?.working ?? !1, Ui = {};
 	bt && (Ui["--composer-radius"] = ma[bt]), Ct !== void 0 && (Ui["--composer-input-max"] = typeof Ct == "number" ? `${Ct}px` : Ct);
 	let Wi = Hi ? 30 : 22, Gi = (t, n, r, i, a, o) => /* @__PURE__ */ D("button", {
 		"data-ui-part": "",
@@ -3225,8 +3209,8 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		"aria-label": t,
 		"aria-pressed": n,
 		title: t,
-		disabled: L,
-		"aria-disabled": bn ? "true" : void 0,
+		disabled: I,
+		"aria-disabled": xn ? "true" : void 0,
 		"data-testid": o,
 		onMouseDown: (e) => {
 			e.preventDefault(), r();
@@ -3234,25 +3218,25 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 		onClick: (e) => {
 			e.detail === 0 && r();
 		},
-		className: e("grid shrink-0 place-items-center rounded leading-none", Y ? "h-9 w-9 text-xs" : "h-7 w-7 text-sm", n ? "bg-surface-hover text-text-primary" : e(Y ? "text-text-primary" : "text-text-secondary", "hover:bg-surface-hover"), bn && "cursor-not-allowed bg-transparent text-text-disabled hover:bg-transparent"),
+		className: e("grid shrink-0 place-items-center rounded leading-none", Y ? "h-9 w-9 text-xs" : "h-7 w-7 text-sm", n ? "bg-surface-hover text-text-primary" : e(Y ? "text-text-primary" : "text-text-secondary", "hover:bg-surface-hover"), xn && "cursor-not-allowed bg-transparent text-text-disabled hover:bg-transparent"),
 		children: i
 	}, o ?? t);
 	return /* @__PURE__ */ D(fe, {
 		onFiles: Mr,
-		disabled: !Cn,
+		disabled: !wn,
 		className: e("min-w-0", Kt),
 		children: /* @__PURE__ */ O("div", {
 			"data-testid": F,
 			"data-suggestion-boundary": Tt,
 			"data-command": U?.trigger,
-			"data-mode": wn ? z : void 0,
+			"data-mode": Tn ? R : void 0,
 			"data-console": zi ? "true" : void 0,
 			"data-composer-size": Yr,
 			"data-responsive": q ? "pane" : void 0,
 			"data-backdrop-tone": zi ? Li : void 0,
 			"data-console-sky": zi ? Bi ? "inherited" : "own" : void 0,
 			"data-working": Hi ? "true" : void 0,
-			"data-composer-readonly": vn ? "" : void 0,
+			"data-composer-readonly": yn ? "" : void 0,
 			"data-presentation": X ? "prompt" : void 0,
 			ref: Jr,
 			"data-density": Tt,
@@ -3284,14 +3268,14 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 				}
 			} : {},
 			"data-reference-drop": Pt ? Hr > 0 ? "over" : "ready" : void 0,
-			...ft && Dn ? { onKeyDownCapture: (e) => {
+			...ft && On ? { onKeyDownCapture: (e) => {
 				if (!e.altKey || e.ctrlKey || e.metaKey) return;
 				let t = [
 					"Digit1",
 					"Digit2",
 					"Digit3"
 				].indexOf(e.code);
-				t < 0 || t >= R.length || (e.preventDefault(), e.stopPropagation(), In(R[t]));
+				t < 0 || t >= L.length || (e.preventDefault(), e.stopPropagation(), In(L[t]));
 			} } : {},
 			className: e("uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none", zi && "uic-chat-console", Bi && "bg-surface-inset", U ? U.disabled ? "border-warning focus-within:border-warning focus-within:ring-warning" : "border-info focus-within:border-info focus-within:ring-info" : "border-border focus-within:border-primary focus-within:ring-primary", Y && "rounded-lg focus-within:ring-0", q && "focus-within:ring-0", Y && !U?.disabled && (U ? "border-primary/25 focus-within:border-primary/35" : "focus-within:border-primary/35"), Hr > 0 && "border-primary bg-primary-bg ring-2 ring-primary/40"),
 			children: [
@@ -3323,11 +3307,11 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 						children: Vt
 					})
 				}),
-				I && /* @__PURE__ */ D("p", {
+				_n && /* @__PURE__ */ D("p", {
 					role: "alert",
 					"data-testid": `${F}-send-error`,
 					className: "px-2 py-1 text-sm text-danger-fg",
-					children: typeof I == "string" ? `${/[.!?]$/.test(I) ? I : `${I}.`} Your draft and attachments are saved.` : "Unable to send. Your draft and attachments are saved. Try again."
+					children: typeof _n == "string" ? `${/[.!?]$/.test(_n) ? _n : `${_n}.`} Your draft and attachments are saved.` : "Unable to send. Your draft and attachments are saved. Try again."
 				}),
 				U && !J && /* @__PURE__ */ O("div", {
 					role: "status",
@@ -3356,7 +3340,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 				Ve && Be === "hidden" && /* @__PURE__ */ O("div", {
 					role: "status",
 					"data-testid": `${F}-privacy-hint`,
-					className: e("flex items-center gap-1.5 bg-neutral-bg px-2 py-1 text-[11px] text-neutral-fg", !I && !U && "rounded-t-[calc(var(--composer-radius,12px)-1px)]"),
+					className: e("flex items-center gap-1.5 bg-neutral-bg px-2 py-1 text-[11px] text-neutral-fg", !_n && !U && "rounded-t-[calc(var(--composer-radius,12px)-1px)]"),
 					children: [/* @__PURE__ */ D(a, { size: 13 }), /* @__PURE__ */ D("span", { children: "Only you can see this" })]
 				}),
 				!ri && !Z && !q && /* @__PURE__ */ D(pe, {
@@ -3433,22 +3417,22 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 							"data-testid": `${F}-mode-row-start`,
 							children: Bt
 						}),
-						X ? null : On ? /* @__PURE__ */ O("span", {
+						X ? null : kn ? /* @__PURE__ */ O("span", {
 							className: e("flex items-center gap-1.5 px-1.5 py-0.5 text-text-primary", ei ? "gap-2 font-medium" : "font-semibold", Y ? "text-xs" : "text-sm"),
 							"data-testid": `${F}-mode-pill`,
 							"data-single-mode": "true",
 							children: [!ei && /* @__PURE__ */ D("span", {
 								"aria-hidden": "true",
 								className: e("flex justify-center text-primary", Y ? "w-5" : "w-4"),
-								children: Y && z === "agent" ? /* @__PURE__ */ D(f, { size: 18 }) : _a[z]
+								children: Y && R === "agent" ? /* @__PURE__ */ D(f, { size: 18 }) : _a[R]
 							}), /* @__PURE__ */ D("span", {
 								"data-testid": `${F}-mode-label`,
-								children: $[z]
+								children: $[R]
 							})]
 						}) : J ? At && Y ? null : /* @__PURE__ */ O("span", {
 							className: "group/modemenu flex min-w-0 items-center gap-1.5",
 							"data-testid": `${F}-mode-control`,
-							children: [/* @__PURE__ */ D(C, {
+							children: [/* @__PURE__ */ D(S, {
 								trigger: /* @__PURE__ */ O("span", {
 									className: e("flex items-center gap-1.5 text-text-primary", ei ? "gap-2 font-medium" : "font-semibold", Y ? "text-xs" : "text-sm"),
 									"data-testid": `${F}-mode-label`,
@@ -3456,9 +3440,9 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 										!ei && /* @__PURE__ */ D("span", {
 											"aria-hidden": "true",
 											className: e("flex justify-center text-primary", Y ? "w-5" : "w-4"),
-											children: Y && z === "agent" ? /* @__PURE__ */ D(f, { size: 18 }) : _a[z]
+											children: Y && R === "agent" ? /* @__PURE__ */ D(f, { size: 18 }) : _a[R]
 										}),
-										$[z],
+										$[R],
 										Y ? /* @__PURE__ */ D(v, {
 											size: 14,
 											"aria-hidden": "true",
@@ -3470,20 +3454,20 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 										})
 									]
 								}),
-								triggerLabel: `Composer mode: ${$[z]}`,
+								triggerLabel: `Composer mode: ${$[R]}`,
 								triggerTitle: "Composer mode",
 								triggerTestId: `${F}-mode-menu`,
-								disabled: Pn,
-								...Fn ? { triggerAttributes: Fn } : {},
+								disabled: Fn,
+								...B ? { triggerAttributes: B } : {},
 								"data-testid": `${F}-mode-menu-list`,
 								align: "start",
 								triggerClassName: ei ? "h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover" : "rounded-md border-0 bg-transparent hover:bg-surface-hover",
-								sections: [{ items: R.map((e, t) => {
-									let n = Nn(e) ? ht?.[e] : void 0;
+								sections: [{ items: L.map((e, t) => {
+									let n = Pn(e) ? ht?.[e] : void 0;
 									return {
 										label: $[e],
 										icon: Y && e === "agent" ? /* @__PURE__ */ D(f, { size: 13 }) : _a[e],
-										active: e === z,
+										active: e === R,
 										...n ? { description: n } : {},
 										...ft ? { trailing: /* @__PURE__ */ O("kbd", {
 											className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
@@ -3498,7 +3482,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 								className: e("hidden bg-surface-inset font-mono text-text-secondary group-hover/modemenu:inline-block group-focus-within/modemenu:inline-block", Y ? "rounded-md px-1.5 py-0.5 text-xs" : "rounded border border-border px-1 py-0.5 text-[11px]"),
 								"data-testid": `${F}-mode-kbd`,
 								"data-reveal": "hover-focus",
-								children: ["⌥", R.indexOf(z) + 1]
+								children: ["⌥", L.indexOf(R) + 1]
 							})]
 						}) : /* @__PURE__ */ O("span", {
 							className: "flex items-center gap-1 font-semibold text-text-primary",
@@ -3506,33 +3490,33 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 							children: [/* @__PURE__ */ D("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center text-text-secondary",
-								children: _a[z]
-							}), $[z]]
+								children: _a[R]
+							}), $[R]]
 						}),
-						!J && !On && !X && /* @__PURE__ */ D("span", {
+						!J && !kn && !X && /* @__PURE__ */ D("span", {
 							role: "group",
 							"aria-label": "Composer mode",
 							className: "flex items-center gap-0.5",
-							children: R.map((t, n) => {
-								let i = Nn(t), a = i ? ht?.[t] : void 0;
+							children: L.map((t, n) => {
+								let i = Pn(t), a = i ? ht?.[t] : void 0;
 								return /* @__PURE__ */ D(r, {
 									size: "sm",
 									"aria-label": $[t],
-									"aria-pressed": t === z,
+									"aria-pressed": t === R,
 									"aria-keyshortcuts": ft ? `Alt+${n + 1}` : void 0,
 									title: `${$[t]}${ft ? ` (⌥${n + 1})` : ""}${a ? ` — ${a}` : ""}`,
-									disabled: i || L,
+									disabled: i || I,
 									onClick: () => In(t),
 									"data-testid": `${F}-mode-${t}`,
-									className: e("h-5 w-5 text-xs font-semibold tabular-nums", t === z ? "bg-info-bg text-info-fg hover:bg-info-bg" : "text-text-tertiary", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
+									className: e("h-5 w-5 text-xs font-semibold tabular-nums", t === R ? "bg-info-bg text-info-fg hover:bg-info-bg" : "text-text-tertiary", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 									children: n + 1
 								}, t);
 							})
 						}),
-						ft && !Xr && !On && !J && !X && /* @__PURE__ */ O("kbd", {
+						ft && !Xr && !kn && !J && !X && /* @__PURE__ */ O("kbd", {
 							className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
 							"data-testid": `${F}-mode-kbd`,
-							children: ["⌥", R.indexOf(z) + 1]
+							children: ["⌥", L.indexOf(R) + 1]
 						}),
 						ri && !!k?.length && /* @__PURE__ */ D(pe, {
 							references: k,
@@ -3594,7 +3578,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 						]
 					})
 				}),
-				wn && !st && !Qr && !Z && !q && /* @__PURE__ */ D("div", {
+				Tn && !st && !Qr && !Z && !q && /* @__PURE__ */ D("div", {
 					className: e("flex items-center gap-2 px-2 pt-1.5", ui),
 					"data-testid": `${F}-modes`,
 					children: /* @__PURE__ */ D("div", {
@@ -3609,7 +3593,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 								{
 									id: "agent",
 									label: "Agent",
-									icon: /* @__PURE__ */ D(S, { size: 13 })
+									icon: /* @__PURE__ */ D(ee, { size: 13 })
 								},
 								{
 									id: "terminal",
@@ -3620,8 +3604,8 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 										children: ">_"
 									})
 								}
-							].filter((e) => R.includes(e.id)),
-							value: z,
+							].filter((e) => L.includes(e.id)),
+							value: R,
 							onValueChange: (e) => ot?.(e),
 							variant: "segmented",
 							size: "sm",
@@ -3630,11 +3614,11 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 						})
 					})
 				}),
-				jn && /* @__PURE__ */ D("p", {
+				Mn && /* @__PURE__ */ D("p", {
 					role: "status",
 					className: "m-0 px-2 pt-1 text-[11px] text-warning-fg",
 					"data-testid": `${F}-mode-notice`,
-					children: jn
+					children: Mn
 				}),
 				si && /* @__PURE__ */ D("div", {
 					className: e("flex flex-wrap items-center gap-1 px-2 pt-1", ui),
@@ -3659,59 +3643,59 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 							"data-testid": `${F}-mode-row-start`,
 							children: Bt
 						}),
-						Z && !mi && On && !X && /* @__PURE__ */ O("span", {
-							title: $[z],
+						Z && !mi && kn && !X && /* @__PURE__ */ O("span", {
+							title: $[R],
 							"data-testid": `${F}-mode-pill`,
 							"data-single-mode": "true",
 							className: "ml-1.5 flex shrink-0 items-center gap-1 rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary",
 							children: [/* @__PURE__ */ D("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center",
-								children: _a[z]
-							}), $[z]]
+								children: _a[R]
+							}), $[R]]
 						}),
-						Z && !mi && wn && !st && !On && !X && /* @__PURE__ */ O("button", {
+						Z && !mi && Tn && !st && !kn && !X && /* @__PURE__ */ O("button", {
 							"data-ui-part": "",
 							type: "button",
 							onClick: () => W?.commands.focus(),
-							title: `${$[z]} — click to write`,
+							title: `${$[R]} — click to write`,
 							"data-testid": `${F}-mode-pill`,
 							className: "ml-1.5 flex shrink-0 items-center gap-1 rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary hover:text-text-primary",
 							children: [/* @__PURE__ */ D("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center",
-								children: _a[z]
-							}), $[z]]
+								children: _a[R]
+							}), $[R]]
 						}),
 						mi && (hi || !!k?.length) && /* @__PURE__ */ O("span", {
 							"data-testid": `${F}-context-chip`,
 							"data-folded": pi || void 0,
-							title: [hi ? $[z] : null, ...(k ?? []).map((e) => e.title ?? e.label)].filter(Boolean).join(" · "),
+							title: [hi ? $[R] : null, ...(k ?? []).map((e) => e.title ?? e.label)].filter(Boolean).join(" · "),
 							className: "group/chip ml-1.5 flex min-w-0 max-w-[min(45%,calc(100%-14rem))] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary",
-							children: [hi && (Dn && R.length > 1 ? /* @__PURE__ */ D(C, {
+							children: [hi && (On && L.length > 1 ? /* @__PURE__ */ D(S, {
 								trigger: /* @__PURE__ */ O("span", {
 									className: "flex items-center gap-1 font-semibold text-text-primary",
 									"data-testid": `${F}-mode-label`,
 									children: [/* @__PURE__ */ D("span", {
 										"aria-hidden": "true",
 										className: "flex w-3.5 justify-center",
-										children: _a[z]
-									}), $[z]]
+										children: _a[R]
+									}), $[R]]
 								}),
-								triggerLabel: `Composer mode: ${$[z]}`,
+								triggerLabel: `Composer mode: ${$[R]}`,
 								triggerTitle: "Composer mode",
 								triggerTestId: `${F}-mode-menu`,
-								disabled: Pn,
-								...Fn ? { triggerAttributes: Fn } : {},
+								disabled: Fn,
+								...B ? { triggerAttributes: B } : {},
 								"data-testid": `${F}-mode-menu-list`,
 								align: "start",
 								triggerClassName: "h-auto shrink-0 rounded border-0 bg-transparent p-0 text-xs leading-4 hover:bg-transparent",
-								sections: [{ items: R.map((e) => {
-									let t = Nn(e) ? ht?.[e] : void 0;
+								sections: [{ items: L.map((e) => {
+									let t = Pn(e) ? ht?.[e] : void 0;
 									return {
 										label: $[e],
 										icon: _a[e],
-										active: e === z,
+										active: e === R,
 										...t ? { description: t } : {},
 										onSelect: () => {
 											In(e);
@@ -3733,8 +3717,8 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 								children: [/* @__PURE__ */ D("span", {
 									"aria-hidden": "true",
 									className: "flex w-3.5 justify-center",
-									children: _a[z]
-								}), $[z]]
+									children: _a[R]
+								}), $[R]]
 							})), !!k?.length && !(pi && hi) && (() => {
 								let e = k[0].label, t = e.length > 18 ? e.slice(-12) : "";
 								return /* @__PURE__ */ O(De, { children: [
@@ -3781,7 +3765,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 							className: Pi || Fi ? "flex min-w-0 items-start" : "contents",
 							"data-testid": `${F}-input-line`,
 							children: [
-								Fi && /* @__PURE__ */ D(C, {
+								Fi && /* @__PURE__ */ D(S, {
 									trigger: /* @__PURE__ */ O("span", {
 										className: "inline-flex items-center gap-1.5",
 										"data-testid": `${F}-command`,
@@ -3837,9 +3821,9 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 									className: e((Q || Pi || Fi) && "min-w-0 flex-1", q && "min-w-[6rem]", Y && "uic-composer-docked-input", ei && !Q && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
 									"data-basic-well": ei || void 0,
 									"data-testid": `${F}-input-box`,
-									...vn ? typeof yn == "string" ? { title: yn } : {} : xn && En ? { title: En } : {},
-									...B ? { hidden: !0 } : {},
-									children: [vn && /* @__PURE__ */ O("p", {
+									...yn ? typeof bn == "string" ? { title: bn } : {} : Sn && Dn ? { title: Dn } : {},
+									...z ? { hidden: !0 } : {},
+									children: [yn && /* @__PURE__ */ O("p", {
 										id: `${F}-readonly-note`,
 										className: e("m-0 flex min-w-0 items-start gap-1.5 text-text-tertiary", Y ? "px-3 py-2 text-xs" : "px-2 py-1.5 text-xs"),
 										"data-composer-readonly-note": "",
@@ -3850,16 +3834,16 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 											className: "mt-0.5 shrink-0"
 										}), /* @__PURE__ */ D("span", {
 											className: "min-w-0",
-											children: yn
+											children: bn
 										})]
 									}), /* @__PURE__ */ D(Oe, {
 										editor: W,
-										className: vn ? "cursor-not-allowed opacity-60" : void 0
+										className: yn ? "cursor-not-allowed opacity-60" : void 0
 									})]
 								})
 							]
 						}),
-						B && /* @__PURE__ */ O("div", {
+						z && /* @__PURE__ */ O("div", {
 							className: e("flex items-center gap-2 px-2 py-2", Q && "min-w-0 flex-1"),
 							"data-testid": `${F}-shell`,
 							children: [/* @__PURE__ */ D("span", {
@@ -3868,12 +3852,12 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 								children: "$"
 							}), /* @__PURE__ */ D("input", {
 								"data-ui-part": "",
-								ref: kn,
+								ref: An,
 								type: "text",
 								value: lr,
-								disabled: L,
-								placeholder: En,
-								"aria-label": En,
+								disabled: I,
+								placeholder: Dn,
+								"aria-label": Dn,
 								"data-testid": `${F}-shell-input`,
 								onChange: (e) => {
 									ur(e.target.value), mr(-1);
@@ -3929,7 +3913,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 							className: e(Q && "order-last basis-full"),
 							children: /* @__PURE__ */ D(ra, {
 								files: ln,
-								disabled: L,
+								disabled: I,
 								onRemove: (e) => wr(dn.current.filter((t) => t.id !== e))
 							})
 						}),
@@ -3946,7 +3930,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 									label: "Prompt tools",
 									className: "min-w-0 gap-2",
 									"data-testid": `${F}-prompt-toolbar`,
-									children: [!!ze?.length && /* @__PURE__ */ D(C, {
+									children: [!!ze?.length && /* @__PURE__ */ D(S, {
 										trigger: /* @__PURE__ */ O("span", {
 											className: "inline-flex items-center gap-1.5",
 											children: [/* @__PURE__ */ D("span", {
@@ -3974,7 +3958,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 										"data-ui-part": "",
 										type: "button",
 										onClick: jr,
-										disabled: L,
+										disabled: I,
 										"data-testid": `${F}-context-button`,
 										className: e("inline-flex h-7 items-center gap-1.5 rounded-md border border-border bg-surface-inset px-2.5 text-xs text-text-secondary hover:bg-surface-hover hover:text-text-primary disabled:opacity-40", "font-semibold"),
 										children: [/* @__PURE__ */ D("span", {
@@ -4017,7 +4001,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 												children: "1."
 											})),
 											Ti && Gi("Quote", W.isActive("blockquote"), () => W.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ D(p, { size: Y ? 18 : 16 })),
-											!K && /* @__PURE__ */ D(C, {
+											!K && /* @__PURE__ */ D(S, {
 												trigger: /* @__PURE__ */ D("span", {
 													"aria-hidden": "true",
 													className: "text-sm leading-none",
@@ -4025,7 +4009,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 												}),
 												triggerLabel: "More formatting",
 												triggerTitle: "More formatting",
-												disabled: L,
+												disabled: I,
 												triggerTabIndex: -1,
 												triggerTestId: `${F}-format-more`,
 												"data-testid": `${F}-format-more-menu`,
@@ -4059,7 +4043,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 												] }]
 											}, "format-more")
 										],
-										(Fe || Cn || !!Ve) && xi && /* @__PURE__ */ D("span", {
+										(Fe || wn || !!Ve) && xi && /* @__PURE__ */ D("span", {
 											"aria-hidden": !0,
 											className: "mx-1 h-4 w-px shrink-0 bg-border"
 										}),
@@ -4074,7 +4058,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 												}
 											})]
 										}),
-										Cn && /* @__PURE__ */ O(De, { children: [Gi("Attach files", !1, () => Qt.current?.click(), /* @__PURE__ */ D(u, { size: Y ? 18 : 16 })), /* @__PURE__ */ D(ue, {
+										wn && /* @__PURE__ */ O(De, { children: [Gi("Attach files", !1, () => Qt.current?.click(), /* @__PURE__ */ D(u, { size: Y ? 18 : 16 })), /* @__PURE__ */ D(ue, {
 											ref: Qt,
 											multiple: !0,
 											"data-testid": `${F}-file-input`,
@@ -4096,12 +4080,12 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 									]
 								}),
 								!Z && K && !!ze?.length && !$r && !X && /* @__PURE__ */ D("span", {
-									className: e("shrink-0 select-none", bn ? "text-text-disabled" : "text-text-tertiary", Y ? "ml-3 text-xs" : "ml-1 border-l border-border pl-2 text-xs"),
-									"aria-disabled": bn ? "true" : void 0,
+									className: e("shrink-0 select-none", xn ? "text-text-disabled" : "text-text-tertiary", Y ? "ml-3 text-xs" : "ml-1 border-l border-border pl-2 text-xs"),
+									"aria-disabled": xn ? "true" : void 0,
 									"data-testid": `${F}-commands-hint`,
 									children: "/ commands"
 								}),
-								Ni ? /* @__PURE__ */ D(C, {
+								Ni ? /* @__PURE__ */ D(S, {
 									trigger: /* @__PURE__ */ D("span", {
 										"aria-hidden": "true",
 										className: e("leading-none", ji ? "text-sm" : "text-xs font-semibold"),
@@ -4166,7 +4150,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 										}] : []
 									]
 								}) : null,
-								ji && !Ni && /* @__PURE__ */ D(C, {
+								ji && !Ni && /* @__PURE__ */ D(S, {
 									trigger: /* @__PURE__ */ D("span", {
 										"aria-hidden": "true",
 										className: "text-sm leading-none",
@@ -4178,7 +4162,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 									triggerAttributes: { "data-folded-menu": "" },
 									"data-testid": `${F}-folded-menu-list`,
 									align: "end",
-									disabled: L,
+									disabled: I,
 									triggerClassName: "grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover hover:text-text-primary border-0 p-0",
 									sections: [...$e]
 								}),
@@ -4190,7 +4174,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 								Ai && !Z && (!q || gi) && /* @__PURE__ */ D("span", {
 									className: "ml-auto flex shrink-0 items-center pr-1",
 									"data-testid": `${F}-more-actions`,
-									children: /* @__PURE__ */ D(C, {
+									children: /* @__PURE__ */ D(S, {
 										trigger: /* @__PURE__ */ D("span", {
 											"aria-hidden": "true",
 											className: "text-sm leading-none",
@@ -4215,13 +4199,13 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 									children: [/* @__PURE__ */ D("button", {
 										"data-ui-part": "",
 										type: "button",
-										onClick: B ? hr : kr,
+										onClick: z ? hr : kr,
 										disabled: !xr,
 										...Cr,
 										"data-testid": `${F}-send`,
 										className: e(`shrink-0 rounded-l-md rounded-r-none bg-primary ${t} text-on-primary disabled:opacity-40`, ti),
 										children: ni
-									}), /* @__PURE__ */ D(C, {
+									}), /* @__PURE__ */ D(S, {
 										trigger: /* @__PURE__ */ D("span", {
 											"aria-hidden": "true",
 											className: "text-xs leading-none",
@@ -4254,7 +4238,7 @@ var Ba = xe(function({ onSend: s, draft: h, onDraftChange: _, onCommand: ee, onC
 								}) : /* @__PURE__ */ D("button", {
 									"data-ui-part": "",
 									type: "button",
-									onClick: B ? hr : kr,
+									onClick: z ? hr : kr,
 									disabled: !xr,
 									"data-testid": `${F}-send`,
 									...q ? {
