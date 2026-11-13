@@ -215,7 +215,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `MeterRow` | `@connorhoehn/ui-components/shared` | A dense, clickable list row that lays a label against a trailing meter: "this name, this strong". | `shared-meterrow` |  |
 | `QuickPromptGrid` | `@connorhoehn/ui-components/shared` | Empty-state grid of prompt suggestion cards. | `shared-quickpromptgrid` |  |
 | `RailNavList` | `@connorhoehn/ui-components/shared` | A short list of scopes at the top of a rail: "All initiatives / My initiatives / Sprints". |  |  |
-| `RecordResultList` | `@connorhoehn/ui-components` | A search workspace's Results tab: typed org records (people, initiatives, work, decisions, knowledge, agent-library assets) grouped by type, each group headed "People 3" with a trailing "See all N →" when the host hol… | `search-recordresultlist` |  |
+| `RecordResultList` | `@connorhoehn/ui-components` | A search workspace's Results tab: typed org records (people, initiatives, work, decisions, knowledge, agent-library assets, run reports, runbook proposals) grouped by type, each group headed "People 3" with a trailing… | `search-recordresultlist` |  |
 | `RovingToolbar` | `@connorhoehn/ui-components/shared` | A group of related controls that costs ONE tab stop. |  |  |
 | `SourceList` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `SuggestionRow` | `@connorhoehn/ui-components/shared` | One option in an inline autocomplete list: a primary line and a muted second line, as a full-width row. | `shared-suggestionrow` |  |
@@ -778,7 +778,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `PipelinesPage` | `@connorhoehn/ui-components/pipelines` | List view for pipelines (route `/pipelines`). |  |  |
 | `PipelineStatsPage` | `@connorhoehn/ui-components/pipelines` | /pipelines/:pipelineId/stats — per-pipeline execution stats dashboard. |  |  |
 | `PolicyNode` | `@connorhoehn/ui-components/pipelines` | — |  |  |
-| `RecordGraph` | `@connorhoehn/ui-components/graph` | A search result set drawn as a typed record graph: people, initiatives, work, decisions, knowledge and agent-library assets as avatar-style nodes, joined by labelled, directed relationships. | `graph-recordgraph` |  |
+| `RecordGraph` | `@connorhoehn/ui-components/graph` | A search result set drawn as a typed record graph: people, initiatives, work, decisions, knowledge, agent-library assets, run reports and runbook proposals as avatar-style nodes, joined by labelled, directed relations… | `graph-recordgraph` |  |
 | `ResizeConfig` | `@connorhoehn/ui-components/pipelines` | Config panel for the image:resize node. |  |  |
 | `ResizeNode` | `@connorhoehn/ui-components/pipelines` | Image:resize node — resizes an image via sharp.resize(). |  |  |
 | `SamplePills` | `@connorhoehn/ui-components/pipelines` | One-click suggestions under a path input — the upstream image refs or context paths that are actually available at this node, so an author can pick one instead of typing a JSONPath from memory and getting it subtly wr… |  |  |

@@ -8,7 +8,7 @@
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY } from 'd3-force';
 import { clearOfOverlays, reserveCorner, type FitBounds, type FitInset, type ScreenRect } from './org/fitTransform';
 
-export type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset';
+export type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset' | 'run' | 'proposal';
 export type RecordGraphLayout = 'force' | 'radial' | 'hierarchy';
 
 /** One typed org record — the same shape a search read model returns. */
@@ -102,7 +102,7 @@ const DEFAULT_CANVAS = { width: 1160, height: 420 };
 
 /** Column order for the hierarchy's by-type fallback. */
 const TYPE_RANK: Record<RecordGraphType, number> = {
-  person: 0, initiative: 1, work: 2, decision: 2, knowledge: 2, recording: 2, asset: 2,
+  person: 0, initiative: 1, work: 2, decision: 2, knowledge: 2, recording: 2, asset: 2, run: 2, proposal: 2,
 };
 
 export interface RecordGraphLayoutOptions {
@@ -197,6 +197,7 @@ export const RECORD_GRAPH_TYPES: { value: RecordGraphType; label: string }[] = [
   { value: 'person', label: 'People' }, { value: 'initiative', label: 'Initiatives' },
   { value: 'work', label: 'Work' }, { value: 'decision', label: 'Decisions' },
   { value: 'knowledge', label: 'Knowledge' }, { value: 'recording', label: 'Recordings' }, { value: 'asset', label: 'Agent library' },
+  { value: 'run', label: 'Runs' }, { value: 'proposal', label: 'Runbook proposals' },
 ];
 
 /** The key a node and a selection hold: `${type}:${id}`. */

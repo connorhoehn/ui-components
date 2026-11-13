@@ -3,7 +3,7 @@
 Root import: `import { RecordGraph } from '@connorhoehn/ui-components'` (also `/graph`).
 
 A search result set as a typed record graph: people, initiatives, work,
-decisions, knowledge and agent-library assets as avatar-style nodes joined by
+decisions, knowledge, agent-library assets, run reports and runbook proposals as avatar-style nodes joined by
 labelled, directed relationships. It replaces the aws-agentcore portal's
 `SearchConnections` + `searchConnections.css`; the props map one-to-one.
 
@@ -39,7 +39,7 @@ Force scales its link distance and charge to the record count and canvas
 (`recordForceParams(count, width, height)`; collide follows the node box, the
 x/y pulls the aspect ratio). Radial rings are ellipses shaped to the canvas,
 filled by arc length. Hierarchy ranks by longest path from the roots, falls
-back to columns by type (person → initiative → work/decision/knowledge/asset)
+back to columns by type (person → initiative → work/decision/knowledge/asset/run/proposal)
 when nothing forms a directed chain, and wraps a rank taller than the canvas
 into side-by-side columns. The fit never goes below
 `RECORD_GRAPH_MIN_FIT_ZOOM` (0.8 since 2.403.4, was 0.7) nor above 100%: a larger graph overflows and

@@ -64,6 +64,16 @@ function setup(overrides: Partial<RecordGraphProps> = {}) {
 }
 
 describe('RecordGraph', () => {
+  it('draws run and runbook proposal records as their own types', () => {
+    const run: RecordGraphRecord = { id: 'r-1', type: 'run', title: 'Nightly reconcile', href: '/runs/r-1' };
+    const proposal: RecordGraphRecord = { id: 'q-1', type: 'proposal', title: 'Retry the export step', href: '/runbooks/proposals/q-1' };
+    setup({ records: [...records, run, proposal] });
+    expect(screen.getByTestId('record-graph-legend')).toHaveTextContent('Runs');
+    expect(screen.getByTestId('record-graph-legend')).toHaveTextContent('Runbook proposals');
+    expect(screen.getByRole('button', { name: 'Run: Nightly reconcile' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Runbook proposal: Retry the export step' })).toBeInTheDocument();
+  });
+
   it('selects and opens an attached recording without converting it to knowledge', () => {
     const recording: RecordGraphRecord = { id: 'rec-7', type: 'recording', title: 'Auth Migration huddle', href: '/iq/projects/auth?tab=docs&recording=rec-7' };
     const onSelectionChange = vi.fn(), onOpenRecord = vi.fn();

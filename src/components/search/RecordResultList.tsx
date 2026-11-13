@@ -1,5 +1,5 @@
 // RecordResultList — a search workspace's Results tab: typed org records
-// (people, initiatives, work, decisions, knowledge, agent-library assets)
+// (people, initiatives, work, decisions, knowledge, agent-library assets, run reports, runbook proposals)
 // grouped by type, each group headed "People 3" with a trailing "See all N →"
 // when the host holds more than it shows. Rows are selectable (a checkbox,
 // tinted when selected) so the host can ask about, or graph, a selection.

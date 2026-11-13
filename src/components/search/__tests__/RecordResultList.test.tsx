@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RecordResultList, type RecordResultListProps } from '../RecordResultList';
-import type { RecordResultItem } from '../recordMarks';
+import { RECORD_TYPE_LABELS, type RecordResultItem } from '../recordMarks';
 
 afterEach(cleanup);
 
@@ -39,6 +39,21 @@ describe('RecordResultList', () => {
     expect(props.onOpen).toHaveBeenCalledWith(recording);
     fireEvent.click(screen.getByLabelText('Select Auth Migration huddle'));
     expect(props.onToggleSelect).toHaveBeenCalledWith(recording);
+  });
+
+  it('draws a run report and a runbook proposal as their own typed groups', () => {
+    const run: RecordResultItem = { id: 'r-1', type: 'run', title: 'Nightly reconcile', status: 'failed', href: '/runs/r-1' };
+    const proposal: RecordResultItem = { id: 'q-1', type: 'proposal', title: 'Retry the export step', href: '/runbooks/proposals/q-1' };
+    setup({ groups: [
+      { id: 'run', label: RECORD_TYPE_LABELS.run, count: 1, records: [run] },
+      { id: 'proposal', label: RECORD_TYPE_LABELS.proposal, count: 1, records: [proposal] },
+    ] });
+    expect(RECORD_TYPE_LABELS.run).toBe('Runs');
+    expect(RECORD_TYPE_LABELS.proposal).toBe('Runbook proposals');
+    expect(screen.getByRole('region', { name: 'Runs' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Runbook proposals' })).toBeInTheDocument();
+    expect(document.querySelector('[data-record-mark="run"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-record-mark="proposal"]')).toBeInTheDocument();
   });
 
   it('draws group headings with counts and a See all when the host holds more', () => {

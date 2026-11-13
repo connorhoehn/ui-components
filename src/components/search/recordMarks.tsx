@@ -7,9 +7,9 @@ import type { ReactNode } from 'react';
 import { Avatar } from '../shared/Avatar';
 import { StatusDot } from '../shared/StatusDot';
 import { toneVar, type Tone } from '../shared/tones';
-import { BranchIcon, ChecklistIcon, DocumentIcon, FolderIcon, PlayCircleIcon, SparkleIcon, WarningIcon } from '../ui/Icons';
+import { ActivityIcon, BranchIcon, ChecklistIcon, DocumentIcon, EditIcon, FolderIcon, PlayCircleIcon, SparkleIcon, WarningIcon } from '../ui/Icons';
 
-export type RecordResultType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset';
+export type RecordResultType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset' | 'run' | 'proposal';
 
 /** One typed org record, as a search read model returns it. */
 export interface RecordResultItem {
@@ -41,6 +41,8 @@ export const RECORD_TYPE_LABELS: Record<RecordResultType, string> = {
   knowledge: 'Knowledge',
   recording: 'Recordings',
   asset: 'Agent library',
+  run: 'Runs',
+  proposal: 'Runbook proposals',
 };
 
 const DANGER = new Set(['blocked', 'failed', 'at_risk', 'error', 'cancelled', 'canceled']);
@@ -67,6 +69,8 @@ const KIND: Record<Exclude<RecordResultType, 'person'>, { tone: Tone; icon: (siz
   knowledge: { tone: 'accent', icon: (s) => <DocumentIcon size={s} /> },
   recording: { tone: 'info', icon: (s) => <PlayCircleIcon size={s} /> },
   asset: { tone: 'success', icon: (s) => <SparkleIcon size={s} /> },
+  run: { tone: 'success', icon: (s) => <ActivityIcon size={s} /> },
+  proposal: { tone: 'caution', icon: (s) => <EditIcon size={s} /> },
 };
 
 /** The row's leading mark. Decorative: the title beside it is the accessible name. */

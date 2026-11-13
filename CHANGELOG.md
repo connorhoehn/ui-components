@@ -1,3 +1,11 @@
+## 2.525.0
+
+Two more record types for the search domain: `run` (a run report) and `proposal` (a runbook proposal), so a host can give each its own tab instead of redrawing them as documents.
+
+- `RecordResultType` and `RecordGraphType` gain `'run'` and `'proposal'`. Labels: `RECORD_TYPE_LABELS` and `RECORD_GRAPH_TYPES` read "Runs" and "Runbook proposals"; `RecordGraph` names a node "Run" or "Runbook proposal".
+- Marks: a run is a success-tinted `ActivityIcon`, a proposal a caution-tinted `EditIcon`; `RecordGraph` paints them with the same tones. Both rank with work in the hierarchy layout.
+- No change to any existing type or prop.
+
 ## 2.524.0
 
 The Storymaker Studio's open gaps from rows 150 to 154 (shipped to one application as builds numbered 2.520.0 and 2.520.1), released here under one number, with three source fixes from an older uncommitted salvage. The application's 2.515.9 build (narrow tab rows, `SettingsLayout narrow`, `DataTable` name and selected row) was checked against main and is already here under 2.515.10 to 2.516.2; nothing of it is repeated. New props default to the old behaviour; the changed defaults are listed first.

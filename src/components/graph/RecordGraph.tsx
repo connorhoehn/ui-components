@@ -1,5 +1,5 @@
 // RecordGraph — a search result set drawn as a typed record graph: people,
-// initiatives, work, decisions, knowledge and agent-library assets as
+// initiatives, work, decisions, knowledge, agent-library assets, run reports and runbook proposals as
 // avatar-style nodes, joined by labelled, directed relationships. Since
 // 2.400.0; replaces the aws-agentcore portal's `SearchConnections` (the props
 // map one-to-one).
@@ -79,7 +79,7 @@ import { StatusDot } from '../shared/StatusDot';
 import { T } from '../shared/Text';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
-import { CheckIcon, DocumentIcon, PlayCircleIcon, SparkleIcon, WarningIcon } from '../ui/Icons';
+import { ActivityIcon, CheckIcon, DocumentIcon, EditIcon, PlayCircleIcon, SparkleIcon, WarningIcon } from '../ui/Icons';
 import { Inline, Stack } from '../ui/Stack';
 import { CanvasZoomControls } from './CanvasZoomControls';
 import {
@@ -195,7 +195,7 @@ const DEFAULT_EMPTY_LABEL = 'No recorded connections — search, or select relat
 
 /** Singular labels for a node's accessible name and its fallback subtitle. */
 const TYPE_SINGULAR: Record<RecordGraphType, string> = {
-  person: 'Person', initiative: 'Initiative', work: 'Work', decision: 'Decision', knowledge: 'Knowledge', recording: 'Recording', asset: 'Agent library',
+  person: 'Person', initiative: 'Initiative', work: 'Work', decision: 'Decision', knowledge: 'Knowledge', recording: 'Recording', asset: 'Agent library', run: 'Run', proposal: 'Runbook proposal',
 };
 
 /** Per-type circle paint: soft fill, readable ink, and the legend swatch. */
@@ -207,6 +207,8 @@ const TYPE_PAINT: Record<RecordGraphType, { bg: string; fg: string; swatch: stri
   knowledge: { bg: 'var(--color-info-bg)', fg: 'var(--color-info-fg)', swatch: 'var(--color-info)' },
   recording: { bg: 'var(--color-info-bg)', fg: 'var(--color-info-fg)', swatch: 'var(--color-info)' },
   asset: { bg: 'var(--color-neutral-bg)', fg: 'var(--color-neutral-fg)', swatch: 'var(--color-neutral)' },
+  run: { bg: 'var(--color-success-bg)', fg: 'var(--color-success-fg)', swatch: 'var(--color-success)' },
+  proposal: { bg: 'var(--color-caution-bg)', fg: 'var(--color-caution-fg)', swatch: 'var(--color-caution)' },
 };
 const DANGER_PAINT = { bg: 'var(--color-danger-bg)', fg: 'var(--color-danger-fg)', swatch: 'var(--color-danger)' };
 
@@ -259,7 +261,7 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
   const paint = blocked && record.type !== 'person' ? DANGER_PAINT : TYPE_PAINT[record.type];
   const icon = record.type === 'person'
     ? undefined
-    : blocked ? <WarningIcon size={22} /> : record.type === 'asset' ? <SparkleIcon size={22} /> : record.type === 'recording' ? <PlayCircleIcon size={22} /> : <DocumentIcon size={22} />;
+    : blocked ? <WarningIcon size={22} /> : record.type === 'asset' ? <SparkleIcon size={22} /> : record.type === 'recording' ? <PlayCircleIcon size={22} /> : record.type === 'run' ? <ActivityIcon size={22} /> : record.type === 'proposal' ? <EditIcon size={22} /> : <DocumentIcon size={22} />;
   const statusText = record.status ? statusLabel(record.status) : record.subtitle || TYPE_SINGULAR[record.type];
   const dotted = !!record.status && (record.type === 'work' || record.type === 'decision');
   return (

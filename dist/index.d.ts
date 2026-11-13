@@ -20436,7 +20436,7 @@ export declare interface RecordGraphRecord {
 /** "25 records · 31 connections". Exported for hosts that echo it. */
 export declare function recordGraphSummary(records: number, connections: number): string;
 
-export declare type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset';
+export declare type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset' | 'run' | 'proposal';
 
 /** A pan/zoom viewport in xyflow's terms: screen = flow × zoom + (x, y). */
 export declare interface RecordGraphViewport {
@@ -20797,7 +20797,7 @@ export declare interface RecordResultListProps {
     'data-testid'?: string;
 }
 
-export declare type RecordResultType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset';
+export declare type RecordResultType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset' | 'run' | 'proposal';
 
 /** Status dot + label, toned by `recordStatusTone`. */
 export declare function RecordStatus({ status, className }: {
