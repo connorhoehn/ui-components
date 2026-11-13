@@ -20,14 +20,14 @@ import { t as x } from "./SkeletonCard-BryltcC7.js";
 import { t as S } from "./Switch-CRiY_kzy.js";
 import { t as C } from "./Textarea-Cf4WFXAs.js";
 import { t as w } from "./InlineAlert-Cpf1ooBU.js";
-import { $ as T, Q as E, t as D } from "./ChatPanel-CxeKeAVi.js";
+import { $ as T, Q as E, t as D } from "./ChatPanel-n5eGdypv.js";
 import { c as O, i as k, n as A, o as j, s as M, t as N } from "./SidebarRow-DwF1_Mii.js";
 import { t as P } from "./PresenceAvatars-Dw8HVI_h.js";
 import { t as ee } from "./FileUploadDrop-Da3teuhw.js";
-import { t as te } from "./ActivityFeed-BkwPJ1hJ.js";
-import { t as ne } from "./ReactionsOverlay-XR_TNH6f.js";
-import { d as re, n as ie, t as F, u as ae } from "./ConversationSurface-BHety1I5.js";
-import { $ as I, A as L, E as oe, H as se, T as ce, Y as R, Z as z, _ as le, i as ue, n as de, s as B, t as fe, w as pe, x as V, y as H } from "./BreakoutRoomsPanel-DFI0aXXk.js";
+import { t as F } from "./ActivityFeed-BkwPJ1hJ.js";
+import { t as te } from "./ReactionsOverlay-XR_TNH6f.js";
+import { d as ne, n as re, t as I, u as ie } from "./ConversationSurface-CDRV7wMW.js";
+import { $ as L, A as R, E as ae, H as oe, T as z, Y as B, Z as V, _ as se, i as ce, n as le, s as ue, t as de, w as fe, x as H, y as pe } from "./BreakoutRoomsPanel-DFI0aXXk.js";
 import { t as me } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as he, o as ge, s as _e } from "./useDocumentImageUpload-CzkKVL2u.js";
 import { Component as ve, createContext as ye, createElement as be, useCallback as U, useContext as xe, useEffect as W, useId as Se, useMemo as G, useRef as K, useState as q } from "react";
@@ -36,11 +36,11 @@ import * as Ce from "yjs";
 //#region src/integrations/realtime/HangoutRoomRow.tsx
 function we(e) {
 	function t(t) {
-		return Z(e, t);
+		return Te(e, t);
 	}
 	return t;
 }
-function Z(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoomsIndex: a, onClick: o, onContextMenu: s, onOpenConversation: c, kebab: l, className: d, "data-testid": f = "room-row" }) {
+function Te(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoomsIndex: a, onClick: o, onContextMenu: s, onOpenConversation: c, kebab: l, className: d, "data-testid": f = "room-row" }) {
 	let p = e.useRoomOccupancy(a ? t : null, { subscribeRoomsIndex: a }), m = a ? p.occupancy ?? null : i ?? null, h = m?.count ?? 0, g = m?.members ?? [], _ = G(() => r ? g.some((e) => e.participantId === r) : !1, [g, r]), v = _, y = G(() => g.slice(0, 3).map((e) => ({
 		id: e.participantId,
 		name: e.displayName || e.userId,
@@ -105,13 +105,13 @@ function Z(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRooms
 }
 //#endregion
 //#region src/integrations/realtime-modules/NewHangoutRoomDialog.tsx
-var Te = 3, Ee = 48;
+var Ee = 3, Z = 48;
 function De(e) {
 	return e.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
 }
 function Oe(e) {
 	let t = e.trim();
-	return t.length === 0 ? "Name is required." : t.length < Te ? `Name must be at least ${Te} characters.` : t.length > Ee ? `Name must be at most ${Ee} characters.` : null;
+	return t.length === 0 ? "Name is required." : t.length < Ee ? `Name must be at least ${Ee} characters.` : t.length > Z ? `Name must be at most ${Z} characters.` : null;
 }
 function ke({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility: a, title: o = "New room", submitLabel: s = "Create room" }) {
 	let c = Se(), [l, u] = q(""), [d, p] = q(""), [g, _] = q(!1), [v, y] = q(!1), [b, x] = q(!1), [T, E] = q(null);
@@ -326,7 +326,7 @@ function je(e, { rooms: n, occupancyFor: r, occupancyAdapter: i, participantId: 
 		"data-testid": "rooms-section",
 		"data-collapsed": m ? "true" : "false",
 		className: "flex flex-col",
-		children: [/* @__PURE__ */ Y(re, {
+		children: [/* @__PURE__ */ Y(ne, {
 			label: f,
 			presentational: !1,
 			collapsed: m,
@@ -410,7 +410,7 @@ function Ne({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i,
 		children: [/* @__PURE__ */ Y("div", {
 			className: "opacity-60 pointer-events-none",
 			children: n
-		}), /* @__PURE__ */ Y(pe, {
+		}), /* @__PURE__ */ Y(fe, {
 			show: !0,
 			label: i
 		})]
@@ -533,17 +533,17 @@ var Ue = {
 	mentions: "conversation.mentions",
 	calls: "conversation.calls"
 };
-function We(e = F, t = {}) {
+function We(e = I, t = {}) {
 	return e.filter((e) => e !== "chat" && e !== "members").map((e) => t[e] ?? Ue[e]);
 }
 function Ge(e) {
 	return (t) => Ke(e, t);
 }
 function Ke(e, t) {
-	let { channel: n = null, hasDocuments: r = !0, from: i = F } = t;
+	let { channel: n = null, hasDocuments: r = !0, from: i = I } = t;
 	return i.filter((t) => t === "mentions" ? !1 : t === "documents" ? r : t !== "calls" || !!e.lobbyForChannel(n));
 }
-function qe({ declare: e = F, capabilities: t, capabilitiesError: n, capabilityNames: r = {}, children: i, ...a }) {
+function qe({ declare: e = I, capabilities: t, capabilitiesError: n, capabilityNames: r = {}, children: i, ...a }) {
 	let o = G(() => {
 		let i = r;
 		return e.filter((e) => e === "chat" || e === "members" || !t || n ? !0 : t[i[e] ?? Ue[e]] === !0);
@@ -553,7 +553,7 @@ function qe({ declare: e = F, capabilities: t, capabilitiesError: n, capabilityN
 		n,
 		r
 	]);
-	return /* @__PURE__ */ Y(ie, {
+	return /* @__PURE__ */ Y(re, {
 		...a,
 		features: o,
 		children: i
@@ -582,7 +582,7 @@ function Je(e, { channelArn: t, excludeParticipantId: n, getAuthToken: r, baseUr
 		c,
 		s.error,
 		a
-	]), /* @__PURE__ */ Y(B, {
+	]), /* @__PURE__ */ Y(ue, {
 		...o,
 		live: c,
 		stream: s.stream,
@@ -605,7 +605,7 @@ function Ye(e, { channelArn: t, playbackToken: n, baseUrl: r, onStatusChange: i,
 			live: o.ready,
 			error: null
 		});
-	}, [o.ready, i]), /* @__PURE__ */ Y(B, {
+	}, [o.ready, i]), /* @__PURE__ */ Y(ue, {
 		...a,
 		live: o.ready,
 		playlistUrl: o.playlistUrl,
@@ -648,11 +648,11 @@ function Qe(e, t) {
 	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ Y(Ze, {
 		stream: i,
 		displayName: r
-	}) : /* @__PURE__ */ Y(ce, {
+	}) : /* @__PURE__ */ Y(z, {
 		stream: i,
 		displayName: r,
 		cameraOn: e.hasVideo
-	}), s = a ? /* @__PURE__ */ Y(oe, {
+	}), s = a ? /* @__PURE__ */ Y(ae, {
 		stream: a,
 		muted: n,
 		className: "w-full h-full object-contain bg-black"
@@ -700,7 +700,7 @@ function et(e, { stageToken: t, participantId: n, userId: r, localClientId: i, g
 	return /* @__PURE__ */ X("div", {
 		"data-testid": g,
 		className: `relative flex-1 min-h-0 ${h ?? ""}`,
-		children: [/* @__PURE__ */ Y(L, {
+		children: [/* @__PURE__ */ Y(R, {
 			participants: v,
 			localParticipant: null,
 			mode: l,
@@ -857,9 +857,9 @@ function mt(e) {
 			ws: k,
 			onMessage: k.onMessage,
 			onUnpersistedChanges: A.retain
-		}), M = e.useCanvasDocument({ ydoc: j.ydoc }), N = k.connectionState === "connected", P = u && d && j.synced && N, te = K(P);
-		te.current = P;
-		let [ne, re] = q(!1), [ie, F] = q(null), [ae, I] = q(!1), [L, oe] = q(!1), [se, ce] = q(null), R = K(null), z = G(() => ({
+		}), M = e.useCanvasDocument({ ydoc: j.ydoc }), N = k.connectionState === "connected", P = u && d && j.synced && N, F = K(P);
+		F.current = P;
+		let [te, ne] = q(!1), [re, I] = q(null), [ie, L] = q(!1), [R, ae] = q(!1), [oe, z] = q(null), B = K(null), V = G(() => ({
 			name: c,
 			color: l
 		}), [c, l]);
@@ -877,12 +877,12 @@ function mt(e) {
 			b?.(j.pendingUpdateCount);
 		}, [j.pendingUpdateCount, b]), W(() => {
 			j.provider?.awareness.setLocalStateField("user", {
-				...z,
+				...V,
 				id: s
 			});
 		}, [
 			j.provider,
-			z,
+			V,
 			s
 		]), W(() => {
 			if (j.pendingUpdateCount === 0) return;
@@ -891,26 +891,26 @@ function mt(e) {
 			};
 			return window.addEventListener("beforeunload", e), () => window.removeEventListener("beforeunload", e);
 		}, [j.pendingUpdateCount]), W(() => k.onMessage((e) => {
-			e.channel === `doc:${a}` && (e.type === "crdt:error" && F(typeof e.error == "string" ? e.error : "The document operation was refused."), e.type === "crdt:snapshot" && F(null));
+			e.channel === `doc:${a}` && (e.type === "crdt:error" && I(typeof e.error == "string" ? e.error : "The document operation was refused."), e.type === "crdt:snapshot" && I(null));
 		}), [k.onMessage, a]);
-		let le = async (e) => {
-			let t = R.current;
-			if (!(!y || !t || t.isDestroyed || !te.current || L)) {
-				oe(!0), ce(null);
+		let se = async (e) => {
+			let t = B.current;
+			if (!(!y || !t || t.isDestroyed || !F.current || R)) {
+				ae(!0), z(null);
 				try {
 					let n = await y(e);
-					if (R.current !== t || t.isDestroyed || !te.current) throw Error("The document is no longer editable. The image was not inserted.");
+					if (B.current !== t || t.isDestroyed || !F.current) throw Error("The document is no longer editable. The image was not inserted.");
 					t.chain().focus().setImage({
 						src: n,
 						alt: e.name
-					}).run(), I(!1);
+					}).run(), L(!1);
 				} catch (e) {
-					ce(e instanceof Error ? e.message : "The image could not be uploaded.");
+					z(e instanceof Error ? e.message : "The image could not be uploaded.");
 				} finally {
-					oe(!1);
+					ae(!1);
 				}
 			}
-		}, ue = dt(j.persistenceState, j.pendingUpdateCount, N, j.retryPersistence), de = {
+		}, ce = dt(j.persistenceState, j.pendingUpdateCount, N, j.retryPersistence), le = {
 			editable: P,
 			online: N,
 			synced: j.synced,
@@ -919,7 +919,7 @@ function mt(e) {
 			docVersion: j.docVersion,
 			ydoc: j.ydoc,
 			exportMarkdown: M.exportMarkdown
-		}, B = /* @__PURE__ */ X(J, { children: [
+		}, ue = /* @__PURE__ */ X(J, { children: [
 			x,
 			A.recovered && /* @__PURE__ */ Y(w, {
 				tone: "warning",
@@ -939,7 +939,7 @@ function mt(e) {
 								size: "sm",
 								variant: "secondary",
 								disabled: !j.synced || !N || j.pendingUpdateCount > 0,
-								onClick: () => re(!0),
+								onClick: () => ne(!0),
 								children: "Recover changes…"
 							}),
 							/* @__PURE__ */ Y(t, {
@@ -965,59 +965,59 @@ function mt(e) {
 					})]
 				})
 			}),
-			ie && /* @__PURE__ */ Y(w, {
+			re && /* @__PURE__ */ Y(w, {
 				tone: "error",
-				children: ie
+				children: re
 			})
-		] }), fe = j.synced && !!j.ydoc && !!M.body, pe = /* @__PURE__ */ X(J, { children: [
+		] }), de = j.synced && !!j.ydoc && !!M.body, fe = /* @__PURE__ */ X(J, { children: [
 			S,
 			/* @__PURE__ */ Y(p, {
-				open: ne,
-				onCancel: () => re(!1),
+				open: te,
+				onCancel: () => ne(!1),
 				title: "Recover earlier changes?",
 				tone: "caution",
 				body: "This explicitly merges the recovered document with the current version. It can bring back content removed by a version restore. Download the recovery first if you want to keep a separate copy.",
 				confirmLabel: "Recover changes",
 				onConfirm: () => {
-					j.ydoc && u && N && j.pendingUpdateCount === 0 && A.restore(j.ydoc), re(!1);
+					j.ydoc && u && N && j.pendingUpdateCount === 0 && A.restore(j.ydoc), ne(!1);
 				}
 			}),
 			y && /* @__PURE__ */ Y(f, {
-				open: ae,
+				open: ie,
 				onClose: () => {
-					L || I(!1);
+					R || L(!1);
 				},
 				title: "Insert image",
 				children: /* @__PURE__ */ X(r, {
 					gap: "sm",
-					children: [se && /* @__PURE__ */ Y(w, {
+					children: [oe && /* @__PURE__ */ Y(w, {
 						tone: "error",
-						children: se
+						children: oe
 					}), /* @__PURE__ */ Y(ee, {
 						accept: "image/*",
 						maxSize: 10485760,
-						disabled: L || !P,
-						label: L ? "Uploading image…" : "Choose an image or drop it here",
+						disabled: R || !P,
+						label: R ? "Uploading image…" : "Choose an image or drop it here",
 						onFiles: (e) => {
-							e[0] && le(e[0]);
+							e[0] && se(e[0]);
 						}
 					})]
 				})
 			})
-		] }), V = (e, t = null, n = null) => D ? D({
-			notices: B,
+		] }), H = (e, t = null, n = null) => D ? D({
+			notices: ue,
 			canvas: e,
 			toolbar: t,
 			ruler: n,
-			saveState: ue,
-			state: de
-		}) : /* @__PURE__ */ X(J, { children: [B, e] });
-		if (!fe) return V(/* @__PURE__ */ Y(v, { label: E }));
-		if (!M.isCanvas) return V(/* @__PURE__ */ Y(_, {
+			saveState: ce,
+			state: le
+		}) : /* @__PURE__ */ X(J, { children: [ue, e] });
+		if (!de) return H(/* @__PURE__ */ Y(v, { label: E }));
+		if (!M.isCanvas) return H(/* @__PURE__ */ Y(_, {
 			title: "Document migration is incomplete",
 			body: "The server has not supplied a rich document snapshot. No changes have been made."
 		}));
-		let H = (e) => /* @__PURE__ */ X(ge, {
+		let pe = (e) => /* @__PURE__ */ X(ge, {
 			loadImage: h,
 			...g ? { requiresAuthentication: g } : {},
 			children: [/* @__PURE__ */ be(he, {
@@ -1028,28 +1028,28 @@ function mt(e) {
 				body: M.body,
 				ydoc: j.ydoc,
 				provider: j.provider,
-				user: z,
+				user: V,
 				editable: P,
 				extensions: m,
 				...y && P ? { onInsertImage: () => {
-					ce(null), I(!0);
+					z(null), L(!0);
 				} } : {},
 				...e ? { renderFrame: ({ toolbar: t, ruler: n, surface: r }) => e(t, n, r) } : {},
 				onEditorReady: (e) => {
-					R.current = e, T?.(e);
+					B.current = e, T?.(e);
 				}
-			}), pe]
+			}), fe]
 		});
-		return D ? H((e, t, n) => V(/* @__PURE__ */ Y(r, {
+		return D ? pe((e, t, n) => H(/* @__PURE__ */ Y(r, {
 			gap: "none",
 			className: "min-h-0 flex-1",
 			"data-testid": "document-canvas-slot",
 			children: n
-		}), e, t)) : V(/* @__PURE__ */ Y(r, {
+		}), e, t)) : H(/* @__PURE__ */ Y(r, {
 			gap: "none",
 			className: "min-h-0 flex-1",
 			"data-testid": "document-canvas-slot",
-			children: H()
+			children: pe()
 		}));
 	};
 }
@@ -1063,7 +1063,7 @@ function ht(e, t) {
 }
 //#endregion
 //#region src/integrations/realtime/ConversationCallDock.tsx
-var gt = (e) => e.stream ? /* @__PURE__ */ Y(oe, {
+var gt = (e) => e.stream ? /* @__PURE__ */ Y(ae, {
 	stream: e.stream,
 	muted: e.isLocal
 }) : void 0, _t = () => typeof HTMLMediaElement < "u" && "setSinkId" in HTMLMediaElement.prototype;
@@ -1159,12 +1159,12 @@ function xt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 			onDismiss: () => A(O),
 			children: [O, " You can keep listening. Check browser device access, then turn the device on to retry."]
 		}) : null,
-		/* @__PURE__ */ Y(V, { ...P }),
+		/* @__PURE__ */ Y(H, { ...P }),
 		!a && /* @__PURE__ */ Y(f, {
 			open: E,
 			onClose: () => D(!1),
 			title: "Call devices",
-			children: /* @__PURE__ */ Y(ue, {
+			children: /* @__PURE__ */ Y(ce, {
 				"data-testid": `${T}-settings`,
 				value: j.settings,
 				onChange: (e) => {
@@ -1516,10 +1516,10 @@ function Qt(e) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: O, hasMore: k, loadingMore: A, composer: j, renderMessageReferences: M, transformMessages: N, dock: P, emojis: ee, onReply: te, reply: ne, onCancelReply: re, readReceipts: ie, readReceiptsEnabled: F, unreadFrom: ae, threaded: I, postRhythm: L, onJumpToMessage: oe, highlightedMessageId: se, documentEditors: ce, callParticipants: R, onJoinCall: z, onOpenDocument: le, wrapWithNetworkShim: ue, editable: de = !0, canEdit: B, canDelete: fe, onForwardMessage: pe }) {
-	let V = G(() => Dt(e.messages), [e.messages]), H = G(() => {
+function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: O, hasMore: k, loadingMore: A, composer: j, renderMessageReferences: M, renderSystemMessage: N, renderMessageBody: P, transformMessages: ee, dock: F, emojis: te, onReply: ne, reply: re, onCancelReply: I, readReceipts: ie, readReceiptsEnabled: L, unreadFrom: R, threaded: ae, postRhythm: oe, onJumpToMessage: z, highlightedMessageId: B, documentEditors: V, callParticipants: se, onJoinCall: ce, onOpenDocument: le, wrapWithNetworkShim: ue, editable: de = !0, canEdit: fe, canDelete: H, onForwardMessage: pe }) {
+	let me = G(() => Dt(e.messages), [e.messages]), he = G(() => {
 		if (!t?.length) return [];
-		let e = new Set(V.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
+		let e = new Set(me.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
 		for (let i of t) if (i.body !== void 0) {
 			if (i.id) {
 				if (e.has(i.id) || n.has(i.id)) continue;
@@ -1537,44 +1537,44 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			});
 		}
 		return r;
-	}, [V, t]), me = G(() => {
-		let e = V;
+	}, [me, t]), ge = G(() => {
+		let e = me;
 		if (!t?.length) return e;
 		let n = new Set(e.flatMap((e) => e.id ? [e.id] : [])), r = t.filter((e) => e.body === void 0 && (!e.id || !n.has(e.id)));
 		return r.length === 0 ? e : [...e, ...r].map((e, t) => ({
 			m: e,
 			i: t
 		})).sort((e, t) => Date.parse(e.m.timestamp) - Date.parse(t.m.timestamp) || e.i - t.i).map(({ m: e }) => e);
-	}, [V, t]), he = v ?? n?.roster.filter((e) => {
+	}, [me, t]), _e = v ?? n?.roster.filter((e) => {
 		if (e.metadata?.isTyping !== !0) return !1;
 		let t = e.metadata?.userId;
 		return s && typeof t == "string" ? t !== s : !o || e.clientId !== o;
-	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], ge = e.sendMessage, _e = U((e) => {
+	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], ve = e.sendMessage, ye = U((e) => {
 		let t = { ...u ?? {} };
-		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? ge(e, t) : ge(e);
+		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? ve(e, t) : ve(e);
 	}, [
-		ge,
+		ve,
 		u,
 		c,
 		l
-	]), ve = n?.updateMetadata, ye = (d ?? !0) && !!ve, be = U((e) => ve?.({ isTyping: e }), [ve]), xe = e.loadHistory, [Se, X] = q(T), [Ce, we] = q(!1), Z = e.messages.length, Te = K(Z);
+	]), be = n?.updateMetadata, xe = (d ?? !0) && !!be, Se = U((e) => be?.({ isTyping: e }), [be]), X = e.loadHistory, [Ce, we] = q(T), [Te, Ee] = q(!1), Z = e.messages.length, De = K(Z);
 	W(() => {
-		Z !== Te.current && (Te.current = Z, we(!1));
+		Z !== De.current && (De.current = Z, Ee(!1));
 	}, [Z]);
-	let Ee = K(Se);
-	Ee.current = Se;
-	let De = U(() => {
-		let e = Ee.current + E;
-		Ee.current = e, X(e), we(!0), xe(e);
-	}, [xe, E]), Oe = O ? {
+	let Oe = K(Ce);
+	Oe.current = Ce;
+	let ke = U(() => {
+		let e = Oe.current + E;
+		Oe.current = e, we(e), Ee(!0), X(e);
+	}, [X, E]), Ae = O ? {
 		onLoadMore: O,
 		hasMore: k,
 		loadingMore: A
 	} : w ? {
-		onLoadMore: De,
-		hasMore: k ?? Z >= Se,
-		loadingMore: A ?? Ce
-	} : {}, ke = G(() => i ? (e) => Lt(i, e) : void 0, [i]), Ae = G(() => {
+		onLoadMore: ke,
+		hasMore: k ?? Z >= Ce,
+		loadingMore: A ?? Te
+	} : {}, je = G(() => i ? (e) => Lt(i, e) : void 0, [i]), Me = G(() => {
 		if (!i || !s) return;
 		let { toggle: e, react: t, unreact: n } = i;
 		return e ? (t, n) => e(n, {
@@ -1583,7 +1583,7 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		}) : (e, r) => {
 			Lt(i, e).some((e) => e.emoji === r && e.userId === s) && n ? n(r, { targetId: e }) : t(r, { targetId: e });
 		};
-	}, [i, s]), je = U((e) => {
+	}, [i, s]), Ne = U((e) => {
 		if (!a) return;
 		let t = e.id ?? "";
 		t && (a.pinnedIds.has(t) ? a.unpin(t) : a.pin({
@@ -1591,29 +1591,29 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			text: e.content,
 			author: e.displayName ?? "Unknown"
 		}));
-	}, [a]), Me = e.editMessage, Ne = e.deleteMessage, Fe = U((e, t) => {
+	}, [a]), Fe = e.editMessage, Ie = e.deleteMessage, Q = U((e, t) => {
 		let n = t.trim();
 		if (!e.id || !n) return;
 		let r = `<p>${n.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</p>`;
-		Me?.(e.id, n, { html: r });
-	}, [Me]), Ie = U((e) => {
-		e.id && Ne?.(e.id);
-	}, [Ne]), Q = /* @__PURE__ */ Y(D, {
-		messages: N ? N(me) : me,
-		...H.length ? { localMessages: H } : {},
-		...P === void 0 ? {} : { dock: P },
-		onSend: _e,
+		Fe?.(e.id, n, { html: r });
+	}, [Fe]), Le = U((e) => {
+		e.id && Ie?.(e.id);
+	}, [Ie]), Re = /* @__PURE__ */ Y(D, {
+		messages: ee ? ee(ge) : ge,
+		...he.length ? { localMessages: he } : {},
+		...F === void 0 ? {} : { dock: F },
+		onSend: ye,
 		disabled: _,
-		typingUsers: he,
+		typingUsers: _e,
 		tone: y,
 		fill: b,
 		flushComposer: x,
 		contentAlign: S,
 		showHeader: C,
 		composer: j,
-		emojis: ee,
-		...Oe,
-		...ye ? { onTyping: be } : {},
+		emojis: te,
+		...Ae,
+		...xe ? { onTyping: Se } : {},
 		...r ? {
 			onSendFiles: (e) => {
 				for (let t of e) r.upload(t);
@@ -1623,43 +1623,45 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		} : {},
 		currentActor: o,
 		currentUserId: s,
-		reactionsFor: ke,
-		onToggleReaction: Ae,
+		reactionsFor: je,
+		onToggleReaction: Me,
 		...a ? {
 			pinnedMessageIds: a.pinnedIds,
-			onTogglePin: je
+			onTogglePin: Ne
 		} : {},
-		...de && Me ? {
-			onEditMessage: Fe,
-			...B ? { canEditMessage: B } : {}
+		...de && Fe ? {
+			onEditMessage: Q,
+			...fe ? { canEditMessage: fe } : {}
 		} : {},
-		...de && Ne ? {
-			onDeleteMessage: Ie,
-			...fe ? { canDeleteMessage: fe } : {}
+		...de && Ie ? {
+			onDeleteMessage: Le,
+			...H ? { canDeleteMessage: H } : {}
 		} : {},
 		onForwardMessage: pe,
-		onReply: te,
-		reply: ne,
-		onCancelReply: re,
+		onReply: ne,
+		reply: re,
+		onCancelReply: I,
 		readReceipts: ie,
-		readReceiptsEnabled: F,
-		unreadFrom: ae,
-		threaded: I,
-		...L ? { postRhythm: L } : {},
-		onJumpToMessage: oe,
-		highlightedMessageId: se,
-		documentEditors: ce,
-		callParticipants: R,
-		onJoinCall: z,
+		readReceiptsEnabled: L,
+		unreadFrom: R,
+		threaded: ae,
+		...oe ? { postRhythm: oe } : {},
+		onJumpToMessage: z,
+		highlightedMessageId: B,
+		documentEditors: V,
+		callParticipants: se,
+		onJoinCall: ce,
 		onOpenDocument: le,
 		renderMessageReferences: M,
+		renderSystemMessage: N,
+		renderMessageBody: P,
 		attachmentSrc: f,
 		onOpenAttachment: p,
 		acceptFiles: m,
 		maxFileSize: h,
 		onFileError: g
 	});
-	return /* @__PURE__ */ Y(J, { children: Pe(Q, ue) });
+	return /* @__PURE__ */ Y(J, { children: Pe(Re, ue) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx
@@ -1706,7 +1708,7 @@ function rn({ presence: e, currentClientId: t, perConnection: n = !1, wrapWithNe
 		t,
 		n
 	]);
-	return /* @__PURE__ */ Y(J, { children: Pe(/* @__PURE__ */ Y(ae, {
+	return /* @__PURE__ */ Y(J, { children: Pe(/* @__PURE__ */ Y(ie, {
 		users: i,
 		currentClientId: t
 	}), r) });
@@ -1720,7 +1722,7 @@ function on({ activity: e, mode: t = "ticker", lines: n = 50, visibleCount: r, r
 		l,
 		u
 	]);
-	return /* @__PURE__ */ Y(te, {
+	return /* @__PURE__ */ Y(F, {
 		items: d,
 		visibleCount: l ? Math.max(1, d.length) : r,
 		rotateMs: l ? 0 : i,
@@ -1816,7 +1818,7 @@ function ln({ reactions: e, ttlMs: t = 2500 }) {
 		return () => {
 			e.forEach((e) => clearTimeout(e)), e.clear();
 		};
-	}, []), /* @__PURE__ */ Y(ne, { reactions: n });
+	}, []), /* @__PURE__ */ Y(te, { reactions: n });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedFileUploadDrop.tsx
@@ -1895,7 +1897,7 @@ function pn({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 			videoElement: n[e.id] ?? e.videoElement
 		})) : e;
 	}
-	return /* @__PURE__ */ Y(L, {
+	return /* @__PURE__ */ Y(R, {
 		participants: f(d),
 		localParticipant: u ? f([u])[0] : null,
 		mode: r,
@@ -1951,7 +1953,7 @@ function _n({ capability: e, loading: t, fallback: n, children: r }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsTray.tsx
 function vn({ controller: e, ...t }) {
-	return /* @__PURE__ */ Y(H, {
+	return /* @__PURE__ */ Y(pe, {
 		filters: e.filters.map(({ id: e, label: t, cssFilter: n }) => ({
 			id: e,
 			label: t,
@@ -2008,7 +2010,7 @@ function yn({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 	}, u = () => {
 		o.current = !1;
 	};
-	return /* @__PURE__ */ Y(le, {
+	return /* @__PURE__ */ Y(se, {
 		...i,
 		previewActive: c !== null,
 		previewStream: s,
@@ -2083,7 +2085,7 @@ function xn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedAudioVideoSettingsForm.tsx
 function Sn({ devices: e, settings: t, cameraOn: n, ...r }) {
-	return /* @__PURE__ */ Y(ue, {
+	return /* @__PURE__ */ Y(ce, {
 		...r,
 		value: t.settings,
 		onChange: (e) => t.update(e),
@@ -2151,7 +2153,7 @@ function Dn(e) {
 }
 function On({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 	let { rooms: a, unassigned: o } = En(e.breakout, t, e.hands), s = e.breakout;
-	return /* @__PURE__ */ Y(fe, {
+	return /* @__PURE__ */ Y(de, {
 		...i,
 		rooms: a,
 		phase: s.phase,
@@ -2193,7 +2195,7 @@ function On({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 function kn({ meeting: e, className: t }) {
 	if (!e.myRoom) return null;
 	let n = e.breakout;
-	return /* @__PURE__ */ Y(de, {
+	return /* @__PURE__ */ Y(le, {
 		roomName: e.myRoom.name,
 		endsAt: n.endsAt,
 		clockOffsetMs: e.clockOffsetMs,
@@ -2227,9 +2229,9 @@ function An(e, t) {
 		...r ? { react: {
 			id: "react",
 			label: "React",
-			icon: /* @__PURE__ */ Y(z, {}),
+			icon: /* @__PURE__ */ Y(V, {}),
 			popoverLabel: "Send a reaction",
-			popover: (e) => /* @__PURE__ */ Y(se, {
+			popover: (e) => /* @__PURE__ */ Y(oe, {
 				tone: "surface",
 				emojis: t.reactions,
 				onReact: (t) => {
@@ -2241,7 +2243,7 @@ function An(e, t) {
 			id: "raise",
 			label: n ? "Lower" : "Raise",
 			title: n ? `Lower your hand (${e.myHandPosition} in line)` : "Raise your hand",
-			icon: /* @__PURE__ */ Y(R, {}),
+			icon: /* @__PURE__ */ Y(B, {}),
 			...e.myHandPosition === null ? {} : { count: e.myHandPosition },
 			pressed: n,
 			onClick: e.toggleHand,
@@ -2250,7 +2252,7 @@ function An(e, t) {
 		rooms: {
 			id: "rooms",
 			label: "Rooms",
-			icon: /* @__PURE__ */ Y(I, {}),
+			icon: /* @__PURE__ */ Y(L, {}),
 			active: t.roomsOpen,
 			onClick: t.onToggleRooms,
 			disabled: !e.ready,
@@ -2268,7 +2270,7 @@ function Mn({ roomName: e }) {
 		"aria-live": "polite",
 		"data-testid": "meeting-chat-context",
 		children: [
-			/* @__PURE__ */ Y(I, {
+			/* @__PURE__ */ Y(L, {
 				size: 14,
 				"aria-hidden": !0,
 				className: "shrink-0 text-text-secondary"

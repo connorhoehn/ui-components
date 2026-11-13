@@ -1437,6 +1437,20 @@ declare interface ChatPanelProps {
      */
     renderMessageReferences?: (message: ChatMessage) => ReactNode;
     /**
+     * A host-drawn system line. When it returns a node for a message, that node
+     * replaces the WHOLE row (no avatar, author line or bubble) and is laid out
+     * like the built-in notices: centred, small, tertiary text. Return null to
+     * fall through to the normal rendering. Not asked of deleted messages.
+     */
+    renderSystemMessage?: (message: ChatMessage) => ReactNode | null;
+    /**
+     * A host-drawn body. When it returns a node for a message, that node stands
+     * in for the message text inside the normal row (author, time, actions stay),
+     * so a card does not sit under a bubble that repeats it. Return null to keep
+     * the built-in body. Not asked of deleted messages.
+     */
+    renderMessageBody?: (message: ChatMessage) => ReactNode | null;
+    /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without
      * it a jump scrolls and leaves you to guess. The caller clears it; the
@@ -3984,6 +3998,23 @@ export declare interface RMWorkGraphState {
 
 declare type RoomsIndexSubscriber_2 = NonNullable<HangoutRoomsSectionProps['occupancyAdapter']>;
 
+/**
+ * An entry in the roster that is NOT a media participant: an assistant, a
+ * recorder, a bot. Drawn after the people with a square (not round) mark so
+ * it never reads as a person, never as a video tile, and never counted unless
+ * `countExtraEntries` is set (2.526.0).
+ */
+declare interface RosterExtraEntry {
+    id: string;
+    name: string;
+    /** Small kind label beside the name, e.g. "Assistant". */
+    label?: string;
+    /** Status text under the name, e.g. "listening". */
+    status?: string;
+    /** The mark. Default: the bot glyph. */
+    icon?: ReactNode;
+}
+
 declare interface RosterPanelProps {
     participants: RosterParticipant[];
     activeSpeakerId?: string | null;
@@ -4025,6 +4056,10 @@ declare interface RosterPanelProps {
      * alone. The collapsed eye keeps "View only" as its accessible name.
      */
     accessBadge?: 'auto' | 'label' | 'icon';
+    /** Non-media entries listed after the people (an assistant, a recorder). */
+    extraEntries?: RosterExtraEntry[];
+    /** Add `extraEntries.length` to the header count when `count` is not given. Default false. */
+    countExtraEntries?: boolean;
     className?: string;
 }
 
@@ -4946,7 +4981,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, postRhythm, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, renderSystemMessage, renderMessageBody, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, postRhythm, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -5069,6 +5104,8 @@ export declare interface WrappedChatPanelProps {
     composer?: ReactNode;
     /** Host-resolved references rendered after each adapted message. */
     renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
+    renderSystemMessage?: ChatPanelProps['renderSystemMessage'];
+    renderMessageBody?: ChatPanelProps['renderMessageBody'];
     /**
      * Last word on the thread's messages after they are adapted (2.477.0): a
      * host merges its own entries in, e.g. a meeting's announcements with

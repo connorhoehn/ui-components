@@ -289,6 +289,20 @@ export interface ChatPanelProps {
    */
   renderMessageReferences?: (message: ChatMessage) => ReactNode;
   /**
+   * A host-drawn system line. When it returns a node for a message, that node
+   * replaces the WHOLE row (no avatar, author line or bubble) and is laid out
+   * like the built-in notices: centred, small, tertiary text. Return null to
+   * fall through to the normal rendering. Not asked of deleted messages.
+   */
+  renderSystemMessage?: (message: ChatMessage) => ReactNode | null;
+  /**
+   * A host-drawn body. When it returns a node for a message, that node stands
+   * in for the message text inside the normal row (author, time, actions stay),
+   * so a card does not sit under a bubble that repeats it. Return null to keep
+   * the built-in body. Not asked of deleted messages.
+   */
+  renderMessageBody?: (message: ChatMessage) => ReactNode | null;
+  /**
    * The message a jump just landed on. Highlighted so arriving somewhere in
    * the middle of a transcript says WHICH message you were sent to — without
    * it a jump scrolls and leaves you to guess. The caller clears it; the
@@ -1459,6 +1473,8 @@ export function ChatPanel({
   recordingStatus,
   onOpenDocument,
   renderMessageReferences,
+  renderSystemMessage,
+  renderMessageBody,
   tone = 'light',
   showHeader,
   fill,
@@ -2106,7 +2122,7 @@ export function ChatPanel({
   // same documents as things you can open.
   const docRefs = documentRefsFromMetadata(message.metadata);
 
-  const body = agentRef ? (
+  const builtInBody = agentRef ? (
     <AgentRunCard
       runId={agentRef.runId}
       instruction={agentRef.instruction || message.content.replace(/^\/doc\s*/i, '')}
@@ -2215,6 +2231,12 @@ export function ChatPanel({
         ))}
       </>
     );
+  // A host card standing in for the text. Not asked of a deleted message,
+  // which keeps its own tombstone.
+  const hostBody = message.deletedAt || message.metadata?.deleted === true
+    ? null
+    : (renderMessageBody?.(message) ?? null);
+  const body = hostBody ?? builtInBody;
   const messageId = message.id ?? '';
   const reactions = messageId && reactionsFor ? reactionsFor(messageId) : [];
   const quoted = message.metadata?.replyTo as
@@ -2271,7 +2293,7 @@ export function ChatPanel({
   // separate from `isCard` rather than folded into it: `isCard` also gates
   // edit/delete/forward eligibility, and an attachment IS forwardable
   // (`canForward` already excludes it on its own `files.length === 0` check).
-  const hasCardBody = !!(agentRef || recordingRef || callRef || docRef || files.length > 0);
+  const hasCardBody = hostBody != null || !!(agentRef || recordingRef || callRef || docRef || files.length > 0);
   // Own, plain, still there: the only messages a person may edit or delete.
   const editableShape = !isDeleted && !isActivityNotice && !isCard && !!messageId;
   const canEditOnly = editableShape && (canEditMessage ? canEditMessage(message) : isMine);
@@ -2290,6 +2312,8 @@ export function ChatPanel({
     && !isCard
     && files.length === 0
     && !!message.content.trim();
+  // A host line replaces the whole row: no avatar, author or bubble.
+  const hostSystemLine = isDeleted ? null : (renderSystemMessage?.(message) ?? null);
   const editing = canEditOnly && !!onEditMessage && editingId === messageId;
 
   // The quote, the message, its reactions — one unit. Rendering
@@ -2368,6 +2392,23 @@ export function ChatPanel({
       )}
     </>
   );
+
+  if (hostSystemLine != null) {
+    return (
+      <Fragment key={message.id ?? index}>
+        {daySeparator}
+        {unreadSeparator}
+        <div
+          role="status"
+          data-testid="chat-system-line"
+          data-message-id={messageId || undefined}
+          className="flex items-center justify-center gap-2 px-3 py-1.5 text-center text-xs text-text-tertiary"
+        >
+          {hostSystemLine}
+        </div>
+      </Fragment>
+    );
+  }
 
   if (membershipRef) {
     return (

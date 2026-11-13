@@ -217,3 +217,31 @@ describe('RosterPanel — raised hands queue', () => {
     expect(screen.queryByTestId('roster-lower-hand')).toBeNull();
   });
 });
+
+describe('RosterPanel extraEntries', () => {
+  const people: RosterParticipant[] = [{ id: 'a', displayName: 'Ada Lovelace' }];
+  const extra = [{ id: 'nova', name: 'Nova', label: 'Assistant', status: 'listening' }];
+
+  it('lists a non-media entry after the people with label and status, uncounted', () => {
+    render(<RosterPanel participants={people} extraEntries={extra} />);
+    const rows = screen.getAllByTestId('roster-row');
+    expect(rows).toHaveLength(1);
+    const entry = screen.getByTestId('roster-extra-entry');
+    expect(entry).toHaveTextContent('Nova');
+    expect(screen.getByTestId('roster-extra-label')).toHaveTextContent('Assistant');
+    expect(screen.getByTestId('roster-extra-status')).toHaveTextContent('listening');
+    expect(entry.querySelector('button')).toBeNull();
+    expect(entry.compareDocumentPosition(rows[0]!) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+    expect(screen.getByRole('complementary')).toHaveTextContent(/Participants1/);
+  });
+
+  it('counts the entry only when asked', () => {
+    render(<RosterPanel participants={people} extraEntries={extra} countExtraEntries />);
+    expect(screen.getByRole('complementary')).toHaveTextContent(/Participants2/);
+  });
+
+  it('renders nothing extra by default', () => {
+    render(<RosterPanel participants={people} />);
+    expect(screen.queryByTestId('roster-extra-entry')).toBeNull();
+  });
+});

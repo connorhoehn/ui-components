@@ -40,3 +40,43 @@ describe('ChatPanel viewer-scoped message references', () => {
     expect(screen.queryByTestId('resolved-reference')).not.toBeInTheDocument();
   });
 });
+
+describe('ChatPanel host system lines and bodies', () => {
+  const note: ChatMessage = { ...message, id: 'm-note', metadata: { kind: 'assistant-notice' } };
+
+  it('renderSystemMessage replaces the whole row, with no author or bubble', () => {
+    render(
+      <ChatPanel
+        messages={[note, { ...message, id: 'm-plain' }]}
+        onSend={() => {}}
+        renderSystemMessage={(m) => (m.id === 'm-note' ? <span>Nova joined</span> : null)}
+      />,
+    );
+    const line = screen.getByTestId('chat-system-line');
+    expect(line).toHaveTextContent('Nova joined');
+    expect(line).toHaveAttribute('role', 'status');
+    expect(screen.getAllByTestId('chat-message')).toHaveLength(1);
+    expect(screen.queryByText('Look at this work.', { selector: '[data-message-id="m-note"] *' })).toBeNull();
+  });
+
+  it('renderMessageBody stands in for the text and null keeps it', () => {
+    render(
+      <ChatPanel
+        messages={[note, { ...message, id: 'm-plain' }]}
+        onSend={() => {}}
+        renderMessageBody={(m) => (m.id === 'm-note' ? <div data-testid="card">card</div> : null)}
+      />,
+    );
+    const rows = screen.getAllByTestId('chat-message');
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toContainElement(screen.getByTestId('card'));
+    expect(rows[0]).not.toHaveTextContent('Look at this work.');
+    expect(rows[1]).toHaveTextContent('Look at this work.');
+  });
+
+  it('is unchanged when neither prop is given', () => {
+    render(<ChatPanel messages={[note]} onSend={() => {}} />);
+    expect(screen.queryByTestId('chat-system-line')).toBeNull();
+    expect(screen.getByTestId('chat-message')).toHaveTextContent('Look at this work.');
+  });
+});

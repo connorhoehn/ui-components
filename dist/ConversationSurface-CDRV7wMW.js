@@ -6,7 +6,7 @@ import { t as p } from "./EmptyState-DqWgLbIq.js";
 import { a as m, d as h, i as g } from "./railType-OvWDaK-G.js";
 import { n as _ } from "./Tabs-C__jThyK.js";
 import { n as v } from "./Avatar-CNZ7AQ8M.js";
-import { $ as y, Q as b, X as x, h as S, tt as ee } from "./ChatPanel-CxeKeAVi.js";
+import { $ as y, Q as b, X as x, h as S, tt as ee } from "./ChatPanel-n5eGdypv.js";
 import { t as te } from "./formatBytes-05ivRSJY.js";
 import { useState as ne } from "react";
 import { Fragment as C, jsx as w, jsxs as T } from "react/jsx-runtime";

@@ -71,3 +71,50 @@ describe('useConsentDismissal', () => {
     expect(screen.queryByTestId('recording-consent')).toBeNull();
   });
 });
+
+describe('RecordingConsentNotice custom wording and actions', () => {
+  it('overrides title and sentence and runs both actions', () => {
+    const onAcknowledge = vi.fn();
+    const onSecondary = vi.fn();
+    render(
+      <RecordingConsentNotice
+        open
+        kind="transcription"
+        onDismiss={() => {}}
+        title="Nova is listening"
+        description="Nova transcribes this call."
+        acknowledgeLabel="Got it"
+        onAcknowledge={onAcknowledge}
+        secondaryLabel="Turn off"
+        onSecondary={onSecondary}
+      />,
+    );
+    const notice = screen.getByRole('status', { name: 'Nova is listening' });
+    expect(notice).toHaveTextContent('Nova transcribes this call.');
+    expect(notice).not.toHaveTextContent('By attending');
+    fireEvent.click(screen.getByRole('button', { name: 'Got it' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Turn off' }));
+    expect(onAcknowledge).toHaveBeenCalledTimes(1);
+    expect(onSecondary).toHaveBeenCalledTimes(1);
+  });
+
+  it('puts the primary action before the dismiss control and does not take focus', () => {
+    render(<RecordingConsentNotice open kind="both" onDismiss={() => {}} onAcknowledge={() => {}} acknowledgeLabel="OK" />);
+    const buttons = screen.getAllByRole('button');
+    expect(buttons.map((b) => b.getAttribute('data-testid'))).toEqual(['recording-consent-acknowledge', 'recording-consent-dismiss']);
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  it('shows no action buttons when none are given', () => {
+    render(<RecordingConsentNotice open kind="both" onDismiss={() => {}} />);
+    expect(screen.queryByTestId('recording-consent-acknowledge')).toBeNull();
+    expect(screen.queryByTestId('recording-consent-secondary')).toBeNull();
+  });
+
+  it('carries actions on the line placement too', () => {
+    const onAcknowledge = vi.fn();
+    render(<RecordingConsentNotice open kind="both" placement="line" description="Heard by Nova" onDismiss={() => {}} onAcknowledge={onAcknowledge} acknowledgeLabel="OK" />);
+    fireEvent.click(screen.getByTestId('recording-consent-acknowledge'));
+    expect(onAcknowledge).toHaveBeenCalled();
+  });
+});

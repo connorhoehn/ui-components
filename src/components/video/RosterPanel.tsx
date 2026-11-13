@@ -29,6 +29,7 @@ import { MoreHorizontalIcon } from './MediaIcons';
 import { ParticipantAccessBadge, type ParticipantAccess } from './ParticipantAccessBadge';
 import { RaisedHandBadge } from './RaisedHandBadge';
 import { Tooltip } from '../shared/Tooltip';
+import { BotIcon } from '../ui/Icons';
 
 export interface RosterParticipant {
   id: string;
@@ -41,6 +42,23 @@ export interface RosterParticipant {
   handRaised?: boolean | number;
   /** Less than full access, shown as a chip in the row: `view-only` (may not publish). Absent: no chip. */
   access?: ParticipantAccess;
+}
+
+/**
+ * An entry in the roster that is NOT a media participant: an assistant, a
+ * recorder, a bot. Drawn after the people with a square (not round) mark so
+ * it never reads as a person, never as a video tile, and never counted unless
+ * `countExtraEntries` is set (2.526.0).
+ */
+export interface RosterExtraEntry {
+  id: string;
+  name: string;
+  /** Small kind label beside the name, e.g. "Assistant". */
+  label?: string;
+  /** Status text under the name, e.g. "listening". */
+  status?: string;
+  /** The mark. Default: the bot glyph. */
+  icon?: ReactNode;
 }
 
 export interface RosterPanelProps {
@@ -84,6 +102,10 @@ export interface RosterPanelProps {
    * alone. The collapsed eye keeps "View only" as its accessible name.
    */
   accessBadge?: 'auto' | 'label' | 'icon';
+  /** Non-media entries listed after the people (an assistant, a recorder). */
+  extraEntries?: RosterExtraEntry[];
+  /** Add `extraEntries.length` to the header count when `count` is not given. Default false. */
+  countExtraEntries?: boolean;
   className?: string;
 }
 
@@ -121,10 +143,12 @@ export function RosterPanel({
   rowMenu,
   rowMenuLabel,
   accessBadge = 'auto',
+  extraEntries,
+  countExtraEntries = false,
   className,
 }: RosterPanelProps) {
   const dark = tone === 'dark';
-  const total = count ?? participants.length;
+  const total = count ?? participants.length + (countExtraEntries ? (extraEntries?.length ?? 0) : 0);
   const rows = raisedHandsFirst ? orderRosterByHands(participants) : participants;
   const handsUp = participants.filter((p) => p.handRaised).length;
   const panelRef = useRef<HTMLElement>(null);
@@ -214,6 +238,30 @@ export function RosterPanel({
             </li>
           );
         })}
+        {extraEntries?.map((e) => (
+          <li key={e.id} className="flex items-center gap-2.5 py-2 pl-4 pr-4" data-testid="roster-extra-entry" data-entry-id={e.id}>
+            <span
+              aria-hidden
+              className={cn(
+                'flex h-8 w-8 shrink-0 items-center justify-center rounded-md border',
+                dark ? 'border-white/20 bg-white/10 text-white/80' : 'border-border bg-surface-inset text-text-secondary',
+              )}
+            >
+              {e.icon ?? <BotIcon size={16} />}
+            </span>
+            <span className="flex min-w-0 flex-1 flex-col text-sm">
+              <span className="flex min-w-0 items-baseline gap-1.5">
+                <span className={cn('min-w-0 truncate', dark ? 'text-white/90' : 'text-text-primary')}>{e.name}</span>
+                {e.label && (
+                  <span className={cn('shrink-0 text-xs', dark ? 'text-white/50' : 'text-text-secondary')} data-testid="roster-extra-label">{e.label}</span>
+                )}
+              </span>
+              {e.status && (
+                <span className={cn('truncate text-xs', dark ? 'text-white/50' : 'text-text-tertiary')} data-testid="roster-extra-status">{e.status}</span>
+              )}
+            </span>
+          </li>
+        ))}
       </ul>
       {footer && (
         <div className="border-t border-[var(--color-border)] p-3">

@@ -130,3 +130,7 @@ to enable blur, backgrounds and appearance filters. Preview and outgoing video u
 separate media engines with shared preferences; closing the dialog cannot end the
 call's camera stream. Applications supply identity and page title through the host,
 without defining tenant-specific copies of the dialog.
+
+## Non-media roster entries, consent wording (2.526.0)
+
+`RosterPanel` `extraEntries={[{ id, name, label: 'Assistant', status: 'listening' }]}` lists something that is not a participant (an assistant, a recorder) after the people, with a square mark instead of an avatar. It has no tile and is not counted unless `countExtraEntries`. `RecordingConsentNotice` takes `title`, `description`, `acknowledgeLabel` + `onAcknowledge` and `secondaryLabel` + `onSecondary` for a notice that is not the recording sentence.

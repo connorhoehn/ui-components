@@ -4718,7 +4718,7 @@ export declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, postRhythm, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, postRhythm, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, renderSystemMessage, renderMessageBody, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -4939,6 +4939,20 @@ export declare interface ChatPanelProps {
      * for the current reader and return unavailable placeholders after revoke.
      */
     renderMessageReferences?: (message: ChatMessage) => ReactNode;
+    /**
+     * A host-drawn system line. When it returns a node for a message, that node
+     * replaces the WHOLE row (no avatar, author line or bubble) and is laid out
+     * like the built-in notices: centred, small, tertiary text. Return null to
+     * fall through to the normal rendering. Not asked of deleted messages.
+     */
+    renderSystemMessage?: (message: ChatMessage) => ReactNode | null;
+    /**
+     * A host-drawn body. When it returns a node for a message, that node stands
+     * in for the message text inside the normal row (author, time, actions stay),
+     * so a card does not sit under a bubble that repeats it. Return null to keep
+     * the built-in body. Not asked of deleted messages.
+     */
+    renderMessageBody?: (message: ChatMessage) => ReactNode | null;
     /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without
@@ -20602,7 +20616,7 @@ export declare interface RecordingChipState {
 
 export declare type RecordingConsentKind = 'recording' | 'transcription' | 'both';
 
-export declare function RecordingConsentNotice({ open, kind, startedBy, privacyHref, privacyLabel, onDismiss, placement, className, 'data-testid': testId, }: RecordingConsentNoticeProps): JSX.Element | null;
+export declare function RecordingConsentNotice({ open, kind, startedBy, privacyHref, privacyLabel, onDismiss, title: titleOverride, description, acknowledgeLabel, onAcknowledge, secondaryLabel, onSecondary, placement, className, 'data-testid': testId, }: RecordingConsentNoticeProps): JSX.Element | null;
 
 export declare interface RecordingConsentNoticeProps {
     open: boolean;
@@ -20612,6 +20626,16 @@ export declare interface RecordingConsentNoticeProps {
     privacyHref?: string;
     privacyLabel?: string;
     onDismiss: () => void;
+    /** Replaces the fixed heading ("Recording", "Transcription"...). */
+    title?: string;
+    /** Replaces the fixed sentence ("Started by X. By attending ..."). */
+    description?: ReactNode;
+    /** A primary action beside the sentence; shown when `onAcknowledge` is given. */
+    acknowledgeLabel?: string;
+    onAcknowledge?: () => void;
+    /** A second, quieter action; shown when `onSecondary` and a label are given. */
+    secondaryLabel?: string;
+    onSecondary?: () => void;
     /**
      * `overlay` (default) floats over the stage; `inline` sits in the flow;
      * `line` is one compact text line (a red dot, "Recording · by attending you
@@ -21801,7 +21825,24 @@ export declare interface RoomMemberItem {
 
 export declare type RoomsOnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
-export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, rowMenu, rowMenuLabel, accessBadge, className, }: RosterPanelProps): JSX.Element;
+/**
+ * An entry in the roster that is NOT a media participant: an assistant, a
+ * recorder, a bot. Drawn after the people with a square (not round) mark so
+ * it never reads as a person, never as a video tile, and never counted unless
+ * `countExtraEntries` is set (2.526.0).
+ */
+export declare interface RosterExtraEntry {
+    id: string;
+    name: string;
+    /** Small kind label beside the name, e.g. "Assistant". */
+    label?: string;
+    /** Status text under the name, e.g. "listening". */
+    status?: string;
+    /** The mark. Default: the bot glyph. */
+    icon?: ReactNode;
+}
+
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, rowMenu, rowMenuLabel, accessBadge, extraEntries, countExtraEntries, className, }: RosterPanelProps): JSX.Element;
 
 export declare interface RosterPanelProps {
     participants: RosterParticipant[];
@@ -21844,6 +21885,10 @@ export declare interface RosterPanelProps {
      * alone. The collapsed eye keeps "View only" as its accessible name.
      */
     accessBadge?: 'auto' | 'label' | 'icon';
+    /** Non-media entries listed after the people (an assistant, a recorder). */
+    extraEntries?: RosterExtraEntry[];
+    /** Add `extraEntries.length` to the header count when `count` is not given. Default false. */
+    countExtraEntries?: boolean;
     className?: string;
 }
 

@@ -60,7 +60,7 @@ import { t as Et } from "./InlineAlert-Cpf1ooBU.js";
 import "./CardHeader-DDkwr0A5.js";
 import { t as Dt } from "./Breadcrumbs-D2qqIALK.js";
 import { a as Ot, d as kt, f as At, o as jt, p as Mt, t as Nt, u as Pt } from "./PageHeader-ChMX4BhO.js";
-import { $ as Ft, Q as It, et as Lt, t as Rt } from "./ChatPanel-CxeKeAVi.js";
+import { $ as Ft, Q as It, et as Lt, t as Rt } from "./ChatPanel-n5eGdypv.js";
 import { c as zt } from "./SidebarRow-DwF1_Mii.js";
 import "./LogStream-WjbAlUsk.js";
 import "./RisingParticles-BkeXugHs.js";

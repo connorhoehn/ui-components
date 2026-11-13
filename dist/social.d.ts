@@ -1059,7 +1059,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, postRhythm, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, postRhythm, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, renderSystemMessage, renderMessageBody, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1280,6 +1280,20 @@ export declare interface ChatPanelProps {
      * for the current reader and return unavailable placeholders after revoke.
      */
     renderMessageReferences?: (message: ChatMessage) => ReactNode;
+    /**
+     * A host-drawn system line. When it returns a node for a message, that node
+     * replaces the WHOLE row (no avatar, author line or bubble) and is laid out
+     * like the built-in notices: centred, small, tertiary text. Return null to
+     * fall through to the normal rendering. Not asked of deleted messages.
+     */
+    renderSystemMessage?: (message: ChatMessage) => ReactNode | null;
+    /**
+     * A host-drawn body. When it returns a node for a message, that node stands
+     * in for the message text inside the normal row (author, time, actions stay),
+     * so a card does not sit under a bubble that repeats it. Return null to keep
+     * the built-in body. Not asked of deleted messages.
+     */
+    renderMessageBody?: (message: ChatMessage) => ReactNode | null;
     /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without

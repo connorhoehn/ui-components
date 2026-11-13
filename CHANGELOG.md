@@ -1,3 +1,11 @@
+## 2.526.0
+
+Three gaps a meeting assistant exposed: a system line and a card body that a host draws, a consent notice with its own wording and actions, and a roster entry for something that is not a participant. Every new prop is optional; with none given the output is unchanged.
+
+- `ChatPanel` `renderSystemMessage?: (message) => ReactNode | null`: a node replaces the whole row (no avatar, author or bubble), laid out like the built-in notices (`data-testid="chat-system-line"`, `role="status"`). Null falls through. `ChatPanel` `renderMessageBody?: (message) => ReactNode | null`: a node stands in for the message text inside the normal row, so a card does not sit under a bubble that repeats it. Neither is asked of a deleted message. `WrappedChatPanel` passes both through.
+- `RecordingConsentNotice` `title?`, `description?` (replace the fixed heading and sentence), `acknowledgeLabel?` + `onAcknowledge?` (a primary action, label default "OK"), `secondaryLabel?` + `onSecondary?` (a quieter second action). The actions sit before the dismiss control in tab order, on every placement; the notice is still `role="status"` and takes no focus on open.
+- `RosterPanel` `extraEntries?: RosterExtraEntry[]` (`{ id, name, label?, status?, icon? }`), listed after the people with a square mark (the bot glyph by default), the label ("Assistant") and the status ("listening"); no button, no tile. Not counted in the header unless `countExtraEntries` is set. `RosterExtraEntry` is exported.
+
 ## 2.525.0
 
 Two more record types for the search domain: `run` (a run report) and `proposal` (a runbook proposal), so a host can give each its own tab instead of redrawing them as documents.

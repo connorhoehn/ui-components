@@ -4,9 +4,10 @@
 // dismissible, anchored over the stage. A pill (CallNoticePill) is too small
 // for a consent sentence and a link.
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { T } from '../shared/Text';
+import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import { CloseIcon } from '../ui/Icons';
 import { Link } from '../shared/Link';
@@ -22,6 +23,16 @@ export interface RecordingConsentNoticeProps {
   privacyHref?: string;
   privacyLabel?: string;
   onDismiss: () => void;
+  /** Replaces the fixed heading ("Recording", "Transcription"...). */
+  title?: string;
+  /** Replaces the fixed sentence ("Started by X. By attending ..."). */
+  description?: ReactNode;
+  /** A primary action beside the sentence; shown when `onAcknowledge` is given. */
+  acknowledgeLabel?: string;
+  onAcknowledge?: () => void;
+  /** A second, quieter action; shown when `onSecondary` and a label are given. */
+  secondaryLabel?: string;
+  onSecondary?: () => void;
   /**
    * `overlay` (default) floats over the stage; `inline` sits in the flow;
    * `line` is one compact text line (a red dot, "Recording · by attending you
@@ -46,14 +57,36 @@ export function RecordingConsentNotice({
   privacyHref,
   privacyLabel = 'Privacy policy',
   onDismiss,
+  title: titleOverride,
+  description,
+  acknowledgeLabel = 'OK',
+  onAcknowledge,
+  secondaryLabel,
+  onSecondary,
   placement = 'overlay',
   className,
   'data-testid': testId = 'recording-consent',
 }: RecordingConsentNoticeProps) {
   if (!open) return null;
-  const title = RECORDING_CONSENT_TITLES[kind];
+  const title = titleOverride ?? RECORDING_CONSENT_TITLES[kind];
+  const actions = (onAcknowledge || (onSecondary && secondaryLabel)) ? (
+    <>
+      {onAcknowledge && (
+        <Button size="sm" variant="primary" onClick={onAcknowledge} data-testid={`${testId}-acknowledge`}>
+          {acknowledgeLabel}
+        </Button>
+      )}
+      {onSecondary && secondaryLabel && (
+        <Button size="sm" variant="ghost" onClick={onSecondary} data-testid={`${testId}-secondary`}>
+          {secondaryLabel}
+        </Button>
+      )}
+    </>
+  ) : null;
   if (placement === 'line') {
-    const sentence = `${title}${startedBy ? ` by ${startedBy}` : ''} · by attending you agree to be included`;
+    const sentence = typeof description === 'string'
+      ? `${title} · ${description}`
+      : `${title}${startedBy ? ` by ${startedBy}` : ''} · by attending you agree to be included`;
     return (
       <div role="status" aria-live="polite" aria-label={title} data-testid={testId} data-kind={kind} data-placement="line"
         title={sentence}
@@ -67,6 +100,7 @@ export function RecordingConsentNotice({
             </Link>
           </T>
         )}
+ {actions && <span className="flex shrink-0 items-center gap-1">{actions}</span>}
         <IconButton aria-label="Dismiss recording note" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismiss}
           className="h-6 w-6 shrink-0" data-testid={`${testId}-dismiss`} />
       </div>
@@ -91,8 +125,12 @@ export function RecordingConsentNotice({
         <div className="min-w-0 flex-1">
           <T as="p" size="sm" weight="semibold">{title}</T>
           <T as="p" size="sm" tone="secondary" className="mt-1 block">
-            {startedBy ? `Started by ${startedBy}. ` : 'Started. '}
-            By attending this meeting, you agree to being included.
+            {description ?? (
+              <>
+                {startedBy ? `Started by ${startedBy}. ` : 'Started. '}
+                By attending this meeting, you agree to being included.
+              </>
+            )}
             {privacyHref && (
               <>
                 {' '}
@@ -102,6 +140,7 @@ export function RecordingConsentNotice({
               </>
             )}
           </T>
+          {actions && <div className="mt-3 flex items-center gap-2">{actions}</div>}
         </div>
         <IconButton aria-label="Dismiss" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismiss} data-testid={`${testId}-dismiss`} />
       </div>

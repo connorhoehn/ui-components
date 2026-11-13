@@ -197,6 +197,8 @@ export interface WrappedChatPanelProps {
   composer?: ReactNode;
   /** Host-resolved references rendered after each adapted message. */
   renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
+  renderSystemMessage?: ChatPanelProps['renderSystemMessage'];
+  renderMessageBody?: ChatPanelProps['renderMessageBody'];
   /**
    * Last word on the thread's messages after they are adapted (2.477.0): a
    * host merges its own entries in, e.g. a meeting's announcements with
@@ -291,6 +293,8 @@ export function WrappedChatPanel({
   loadingMore,
   composer,
   renderMessageReferences,
+  renderSystemMessage,
+  renderMessageBody,
   transformMessages,
   dock,
   emojis,
@@ -552,6 +556,8 @@ export function WrappedChatPanel({
       onJoinCall={onJoinCall}
       onOpenDocument={onOpenDocument}
       renderMessageReferences={renderMessageReferences}
+      renderSystemMessage={renderSystemMessage}
+      renderMessageBody={renderMessageBody}
       attachmentSrc={attachmentSrc}
       onOpenAttachment={onOpenAttachment}
       acceptFiles={acceptFiles}
