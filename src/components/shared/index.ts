@@ -577,6 +577,7 @@ export type { PageGutter, PageTemplateHeaderProps, PageTemplateTrailProps } from
 export * from './page-spec';
 export * from './ActivityResumeChip';
 export * from './ComposerSurface';
+export * from './AmbientSurface';
 export { AssetGallery } from './AssetGallery';
 export type { AssetGalleryProps, GalleryAsset, GalleryAssetStatus } from './AssetGallery';
 

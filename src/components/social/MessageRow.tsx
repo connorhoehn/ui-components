@@ -77,11 +77,10 @@ export interface MessageRowProps {
    */
   contentLayout?: 'inline' | 'block';
   /**
-   * An assistant wrote this row (a bot that speaks in the thread). Its words
-   * read as one voice, apart from people's: the author name takes the accent
-   * ink and inline text sits on the accent-tinted surface, at the left like
-   * any incoming message. A `'block'` body (a card) is drawn as given; give
-   * the card the same surface with `<Card tone="assistant">`. Since 2.527.0.
+   * An assistant wrote this row (a bot that speaks in the thread): the author
+   * name takes the accent ink, and `avatar` carries its mark. Its plain text
+   * stays an ordinary incoming row, so the cards it posts
+   * (`<Card tone="assistant">`) stand out against its replies. Since 2.527.0.
    */
   assistant?: boolean;
   /** Replaces the initials avatar, e.g. an `<AssistantMark />`. Since 2.527.0. */
@@ -215,12 +214,6 @@ export function MessageRow({
             // full-width band with a tint.
             mine && contentLayout === 'inline' && 'max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right',
             mine && contentLayout === 'inline' && (dark ? 'bg-white/15' : 'bg-primary-bg'),
-            // An assistant's text takes its own tint, at the left: the mirror
-            // of an own bubble in the accent family, so a reader tells "the
-            // assistant said" from "a person said" without reading the name.
-            // `self-start` keeps it shrink-to-fit in the column.
-            assistant && !mine && contentLayout === 'inline' && 'max-w-[85%] self-start rounded-lg rounded-tl-sm border px-3 py-1.5',
-            assistant && !mine && contentLayout === 'inline' && (dark ? 'border-accent/40 bg-accent/20' : 'border-accent/25 bg-accent/8'),
             // A card body (AgentRunCard, document/deck preview, attachment)
             // sizes itself to ITS CONTAINER rather than its content, so the
             // shrink-to-fit inline bubble above gives it 0px to work with.

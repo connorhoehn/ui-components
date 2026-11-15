@@ -1759,13 +1759,13 @@ declare interface ChatPanelProps {
     renderMessageBody?: (message: ChatMessage) => ReactNode | null;
     /**
      * Which messages an assistant wrote (a bot that speaks in the thread).
-     * Each such row takes the assistant look, so all of its output reads as
-     * one voice, apart from people's: `assistantMark` in the avatar slot, the
-     * author name in the accent ink, and its text on the accent-tinted
-     * surface (`MessageRow` `assistant`). A `renderSystemMessage` line for one
-     * of them is laid out at the start under the same mark, in a muted tinted
-     * pill, instead of centred grey text. A `renderMessageBody` card is drawn
-     * as given; put it on the same surface with `<Card tone="assistant">`.
+     * Each such row says so before it is read: `assistantMark` in the avatar
+     * slot and the author name in the accent ink (`MessageRow` `assistant`);
+     * its plain text stays an ordinary incoming row. A `renderSystemMessage`
+     * line for one of them is laid out at the start under the same mark, in a
+     * muted tinted pill, instead of centred grey text. A `renderMessageBody`
+     * card is drawn as given; give it the assistant's tint with
+     * `<Card tone="assistant">`, so its cards stand out against its replies.
      * Since 2.527.0.
      */
     isAssistantMessage?: (message: ChatMessage) => boolean;

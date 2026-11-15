@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/composerSurface.css";
+@import "./styles/ambientSurface.css";
 
 @theme {
   /* #5a61ff, not #646cff: white text on the old value measured 4.09:1 —

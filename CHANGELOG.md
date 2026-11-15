@@ -1,12 +1,13 @@
 ## 2.527.0
 
-An assistant's messages in a chat read as one voice, apart from people's. The assistant surface is the accent token at 8% with its border at 25%, so it follows the theme. Every new prop is optional; with none given the output is unchanged.
+An assistant in a chat is recognisable at a glance, its cards stand out against its replies, and a panel can read as its own place. Every new prop is optional; with none given the output is unchanged.
 
-- `ChatPanel` `isAssistantMessage?: (message) => boolean` and `assistantMark?: ReactNode`. A row it marks shows the mark in the avatar slot (default `<AssistantMark />`), the author name in the accent ink and its text on the accent-tinted surface (`data-voice="assistant"` on the row). A `renderSystemMessage` line for such a message sits at the start under the same mark in a muted tinted pill (`data-testid="chat-assistant-notice"`) instead of centred grey text; a `renderMessageBody` card is drawn as given. `WrappedChatPanel` passes both through.
+- `ChatPanel` `isAssistantMessage?: (message) => boolean` and `assistantMark?: ReactNode`. A row it marks shows the mark in the avatar slot (default `<AssistantMark />`) and the author name in the accent ink (`data-voice="assistant"` on the row); its plain text stays an ordinary incoming row. A `renderSystemMessage` line for such a message sits at the start under the same mark in a muted tinted pill (`data-testid="chat-assistant-notice"`) instead of centred grey text; a `renderMessageBody` card is drawn as given. `WrappedChatPanel` passes both through.
 - `ChatPanel`: a message under a host system line always states its author; it no longer continues the run of the row above, which the line drew without one.
-- `MessageRow` `assistant?: boolean` (the accent author ink, and the tinted left-hand bubble for inline text) and `avatar?: ReactNode` (replaces the initials avatar).
-- `Card` `tone?: 'default' | 'assistant'`: `'assistant'` puts the card on the same accent-tinted surface (`data-tone="assistant"`), so an assistant's action and proposal cards read in the same voice as its replies.
+- `MessageRow` `assistant?: boolean` (the accent author ink) and `avatar?: ReactNode` (replaces the initials avatar).
+- `Card` `tone?: 'default' | 'assistant'`: `'assistant'` puts the card on the assistant's tint (the accent token at 8%, its border at 25%, `data-tone="assistant"`), so an assistant's action, proposal and summary cards stand out in the thread. The system-line pill uses the same tint.
 - `AssistantMark` (social): the square mark, `icon?`, `size?` (16, 20, 24, 32), `label?` (decorative without one).
+- `AmbientSurface` (shared): a region that reads as its own place. `tone?: 'muted' | 'plain'` (default `'muted'`: slightly grey in the light theme, recessed in the dark one), `effect?: 'drift' | 'dots' | 'none'` (default `'drift'`: a faint field of soft dots drifting about a pixel a second behind the content), `paused?`. The field is `aria-hidden`, takes no pointer events, sits under the content and is clipped to the box; the drift is one compositor transform, stops under `prefers-reduced-motion` and with `paused`, and runs no frames while the surface is hidden or the tab is not visible. Styles in `styles.css` (`styles/ambientSurface.css`).
 
 ## 2.526.0
 

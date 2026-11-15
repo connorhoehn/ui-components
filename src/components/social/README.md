@@ -27,7 +27,7 @@ import {
 | `ChatPanel` | Top-level chat surface: header, message list, composer, optional roster. Its public props are a contract. |
 | `ChatRoom` + `RoomList` | Multi-room chat shell. |
 | `MessageRow` + `MessageGroup` | Row-level primitives extracted from ChatPanel for alternate layouts. |
-| `AssistantMark` | The square mark an assistant wears in a thread (bot glyph on the accent tint). `ChatPanel` `isAssistantMessage` gives an assistant's rows this mark, the accent author ink and the tinted text surface; `Card tone="assistant"` puts its cards on the same surface. |
+| `AssistantMark` | The square mark an assistant wears in a thread (bot glyph on the accent tint). `ChatPanel` `isAssistantMessage` gives an assistant's rows this mark and the accent author ink; `Card tone="assistant"` gives its cards the assistant's tint, so they stand out against its replies. |
 | `ReactionsBar` + `ReactionPickerPopover` | Per-message reaction chip bar + cmdk-driven picker. |
 | `PresencePanel` | Live presence list (driven by `usePresence` in consumer apps or by `<WrappedPresencePanel>` in `/integrations`). |
 | `ActivityPanel` | Activity-feed surface. |

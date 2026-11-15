@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1000 components across 21 entry points; 852 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1001 components across 21 entry points; 853 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -62,7 +62,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (10)
-- [Other](#other) (82)
+- [Other](#other) (83)
 - [Icons](#icons) (112)
 
 ## Page templates
@@ -952,6 +952,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 |---|---|---|---|---|
 | `AccentStripe` | `@connorhoehn/ui-components/shared` | The full-height coloured edge of a card (`<Card className="flex overflow-hidden">`). |  |  |
 | `ActionRowPerson` | `@connorhoehn/ui-components/shared` | The person cell of an `ActionRowList` column — a 28px avatar then the name, truncating inside the column's width. |  |  |
+| `AmbientSurface` | `@connorhoehn/ui-components/shared` | A region that reads as its own place: a quiet surface (slightly grey, recessed in the dark theme) and, behind its content, a faint field of soft dots that drifts very slowly. |  |  |
 | `ArtifactTile` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `AssetGallery` | `@connorhoehn/ui-components/shared` | Borderless collection: fixed thumbnail ratio, concise captions, shared Avatar identity. | `shared-assetgallery` |  |
 | `CanvasDocumentPane` | `@connorhoehn/ui-components/integrations/realtime-modules` | The shared canvas-document assembly bound to the canonical `@connorhoehn/realtime-modules` hooks. |  |  |

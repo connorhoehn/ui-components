@@ -1,0 +1,46 @@
+/* AmbientSurface (2.527.0): a region that reads as its own place, with a faint
+   field of soft dots drifting behind its content. Low contrast everywhere so
+   text over it keeps its contrast; the field never takes a pointer event. */
+.uic-ambient-surface {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+}
+/* Between the panel and workspace tokens: slightly grey in the light theme,
+   recessed in the dark one, so the region reads as apart from the page. */
+.uic-ambient-surface[data-tone="muted"] {
+  background: color-mix(in srgb, var(--color-workspace) 50%, var(--color-surface-panel));
+}
+/* Under the content (the surface is an isolated stacking context) and clipped
+   to its box: the drift moves the pattern layer, never the page's width. */
+.uic-ambient-field {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.uic-ambient-dots {
+  position: absolute;
+  inset: -48px;
+  background-image:
+    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--color-primary) 22%, transparent) 1.2px, transparent 2.6px),
+    radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--color-primary) 16%, transparent) 1px, transparent 2.2px),
+    radial-gradient(circle, color-mix(in srgb, var(--color-text-tertiary) 16%, transparent) .7px, transparent 1.2px);
+  background-size: 113px 89px, 167px 131px, 18px 18px;
+  mask-image: radial-gradient(ellipse at 50% 40%, #000 35%, #0006 100%);
+}
+/* One compositor transform, about a pixel a second: presence, not motion. */
+.uic-ambient-surface[data-effect="drift"] .uic-ambient-dots {
+  will-change: transform;
+  animation: uic-ambient-drift 40s ease-in-out infinite alternate;
+}
+.uic-ambient-surface[data-paused] .uic-ambient-dots { animation-play-state: paused; }
+@keyframes uic-ambient-drift {
+  from { transform: translate3d(-24px, 14px, 0); }
+  to { transform: translate3d(24px, -14px, 0); }
+}
+/* As specific as the drift rule and after it, so it wins. */
+@media (prefers-reduced-motion: reduce) {
+  .uic-ambient-surface[data-effect] .uic-ambient-dots { animation: none; will-change: auto; }
+}

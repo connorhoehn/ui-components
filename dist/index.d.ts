@@ -1303,6 +1303,18 @@ export declare interface AgUiToolCallStartEvent extends AgUiEventBase {
 
 export declare const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[];
 
+export declare function AmbientSurface({ tone, effect, paused, className, children, ref, ...rest }: AmbientSurfaceProps): JSX.Element;
+
+export declare interface AmbientSurfaceProps extends HTMLAttributes<HTMLDivElement> {
+    /** `'muted'` (default): the slightly grey surface between the panel and workspace tokens. `'plain'`: no surface of its own. */
+    tone?: 'muted' | 'plain';
+    /** `'drift'` (default): soft dots drifting slowly. `'dots'`: the same field, still. `'none'`: the surface alone. */
+    effect?: 'drift' | 'dots' | 'none';
+    /** Hold the drift where it is (an inactive panel, a host's own motion setting). */
+    paused?: boolean;
+    ref?: Ref<HTMLDivElement>;
+}
+
 export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
 
 declare interface ApiCallState<T> {
@@ -4974,13 +4986,13 @@ export declare interface ChatPanelProps {
     renderMessageBody?: (message: ChatMessage) => ReactNode | null;
     /**
      * Which messages an assistant wrote (a bot that speaks in the thread).
-     * Each such row takes the assistant look, so all of its output reads as
-     * one voice, apart from people's: `assistantMark` in the avatar slot, the
-     * author name in the accent ink, and its text on the accent-tinted
-     * surface (`MessageRow` `assistant`). A `renderSystemMessage` line for one
-     * of them is laid out at the start under the same mark, in a muted tinted
-     * pill, instead of centred grey text. A `renderMessageBody` card is drawn
-     * as given; put it on the same surface with `<Card tone="assistant">`.
+     * Each such row says so before it is read: `assistantMark` in the avatar
+     * slot and the author name in the accent ink (`MessageRow` `assistant`);
+     * its plain text stays an ordinary incoming row. A `renderSystemMessage`
+     * line for one of them is laid out at the start under the same mark, in a
+     * muted tinted pill, instead of centred grey text. A `renderMessageBody`
+     * card is drawn as given; give it the assistant's tint with
+     * `<Card tone="assistant">`, so its cards stand out against its replies.
      * Since 2.527.0.
      */
     isAssistantMessage?: (message: ChatMessage) => boolean;
@@ -15794,11 +15806,10 @@ export declare interface MessageRowProps {
      */
     contentLayout?: 'inline' | 'block';
     /**
-     * An assistant wrote this row (a bot that speaks in the thread). Its words
-     * read as one voice, apart from people's: the author name takes the accent
-     * ink and inline text sits on the accent-tinted surface, at the left like
-     * any incoming message. A `'block'` body (a card) is drawn as given; give
-     * the card the same surface with `<Card tone="assistant">`. Since 2.527.0.
+     * An assistant wrote this row (a bot that speaks in the thread): the author
+     * name takes the accent ink, and `avatar` carries its mark. Its plain text
+     * stays an ordinary incoming row, so the cards it posts
+     * (`<Card tone="assistant">`) stand out against its replies. Since 2.527.0.
      */
     assistant?: boolean;
     /** Replaces the initials avatar, e.g. an `<AssistantMark />`. Since 2.527.0. */

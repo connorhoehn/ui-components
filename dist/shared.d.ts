@@ -415,6 +415,18 @@ export declare interface AgentTaskCardProps {
 /** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
 export declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
 
+export declare function AmbientSurface({ tone, effect, paused, className, children, ref, ...rest }: AmbientSurfaceProps): JSX.Element;
+
+export declare interface AmbientSurfaceProps extends HTMLAttributes<HTMLDivElement> {
+    /** `'muted'` (default): the slightly grey surface between the panel and workspace tokens. `'plain'`: no surface of its own. */
+    tone?: 'muted' | 'plain';
+    /** `'drift'` (default): soft dots drifting slowly. `'dots'`: the same field, still. `'none'`: the surface alone. */
+    effect?: 'drift' | 'dots' | 'none';
+    /** Hold the drift where it is (an inactive panel, a host's own motion setting). */
+    paused?: boolean;
+    ref?: Ref<HTMLDivElement>;
+}
+
 export declare function ApiDegradedBanner({ health }: ApiDegradedBannerProps): JSX.Element | null;
 
 declare interface ApiDegradedBannerProps {
