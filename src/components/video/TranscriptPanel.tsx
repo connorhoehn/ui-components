@@ -7,10 +7,11 @@
 // player's `onTimeUpdate` callback, converted to ms) and the active
 // segment gets visually highlighted.
 
-import { useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import TechnicalDetails from '../shared/TechnicalDetails';
 import { onActivationKey } from '../../lib/activationKey';
+import { Avatar } from '../shared/Avatar';
 
 export interface TranscriptSegment {
   startMs: number;
@@ -25,6 +26,10 @@ export interface TranscriptSegment {
   speakerId?: string;
   /** Display name for the speaker. Optional for the same reason. */
   speakerLabel?: string;
+  /** The speaker's portrait. When ANY segment carries the field (null included), every row shows a small portrait, initials where there is no picture. Since 2.530.0. */
+  speakerAvatarUrl?: string | null;
+  /** A stable key for the row (a stored line's seq). Lets a host prepend earlier rows without remounting the rest. Since 2.530.0. */
+  id?: string;
   text: string;
   avgLogprob?: number;
   noSpeechProb?: number;
@@ -59,8 +64,33 @@ export interface TranscriptPanelProps {
   pendingMessage?: string;
   /** Render-prop slot for the empty/idle state. */
   idleState?: ReactNode;
+  /**
+   * Live following (since 2.530.0): the list keeps the newest segment in view while the reader is at the bottom; once they
+   * scroll up it stops following and offers one "Jump to latest" control (`data-testid="transcript-jump-latest"`), which
+   * scrolls back down and follows again. For a transcript that grows while it is open (live captions).
+   */
+  follow?: boolean;
+  /** The jump control's label. Default "Jump to latest". */
+  jumpLabel?: string;
+  /** Replaces the header's "N segments" count (a live state, say). Since 2.530.0. */
+  headerMeta?: ReactNode;
+  /** Drawn at the end of the header row (a way back, say). Since 2.530.0. */
+  headerActions?: ReactNode;
+  /** Drawn inside the scrolling list, above the first segment ("Load earlier", a note). Since 2.530.0. */
+  beforeSegments?: ReactNode;
+  /** With `status="ready"` and no segments, replaces "No audible speech was captured in this recording." Since 2.530.0. */
+  emptyMessage?: ReactNode;
+  /**
+   * `fill` (since 2.530.0): no frame of its own and no 60vh cap; the panel fills its parent's height (a flex column) and
+   * only the list scrolls. For a panel that is a pane's whole body. Default `card`: today's bordered card.
+   */
+  frame?: 'card' | 'fill';
   className?: string;
+  'data-testid'?: string;
 }
+
+/** How close to the bottom (px) still counts as "at the bottom" for `follow`. */
+const FOLLOW_SLACK_PX = 24;
 
 function formatTimestamp(ms: number): string {
   const totalSec = Math.floor(ms / 1000);
@@ -112,9 +142,49 @@ export function TranscriptPanel({
   errorDetail,
   pendingMessage,
   idleState,
+  follow = false,
+  jumpLabel = 'Jump to latest',
+  headerMeta,
+  headerActions,
+  beforeSegments,
+  emptyMessage,
+  frame = 'card',
   className,
+  'data-testid': testId,
 }: TranscriptPanelProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  // Following: true while the reader is at the bottom. A scroll the panel makes itself lands at the bottom, so it keeps following.
+  const following = useRef(true);
+  const [detached, setDetached] = useState(false);
+  const onScroll = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!follow || !el) return;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight <= FOLLOW_SLACK_PX;
+    following.current = atBottom;
+    setDetached(!atBottom);
+  }, [follow]);
+  const newest = segments?.length ? `${segments.length}:${segments[segments.length - 1]!.id ?? segments[segments.length - 1]!.startMs}` : '';
+  useLayoutEffect(() => {
+    const el = scrollerRef.current;
+    if (!follow || !el || !following.current) return;
+    el.scrollTop = el.scrollHeight;
+  }, [follow, newest]);
+  const jump = () => {
+    const el = scrollerRef.current;
+    following.current = true; setDetached(false);
+    if (el) el.scrollTop = el.scrollHeight;
+  };
+  const fill = frame === 'fill';
+  const frameClass = fill ? 'flex min-h-0 flex-1 flex-col bg-surface' : 'rounded-lg border border-border bg-surface';
+  const header = (meta: ReactNode) => (headerActions !== undefined || headerMeta !== undefined || fill)
+    ? (
+      <header className={cn('flex shrink-0 items-center gap-2 text-sm font-medium text-text-secondary', fill ? 'px-3 py-2 border-b border-border' : 'px-4 py-3 border-b border-border')}>
+        <span className="shrink-0">{title}</span>
+        <span className="min-w-0 flex-1 truncate text-xs font-normal text-text-tertiary">{headerMeta ?? meta}</span>
+        {headerActions}
+      </header>
+    )
+    : null;
 
   const activeIndex = useMemo(() => {
     if (!segments || currentTimeMs == null) return -1;
@@ -180,6 +250,20 @@ export function TranscriptPanel({
   }
 
   // status === 'ready'
+  if ((!segments || segments.length === 0) && (fill || emptyMessage !== undefined || headerActions !== undefined || beforeSegments !== undefined)) {
+    return (
+      <section data-ui-part="" data-testid={testId} className={cn(frameClass, className)}>
+        {header(null) ?? <header className="text-sm font-medium text-text-secondary px-4 pt-4 mb-2">{title}</header>}
+        <div className={cn('min-h-0 overflow-y-auto', fill ? 'flex-1 px-3 py-2 space-y-2' : 'px-4 pb-4 space-y-2')}>
+          {beforeSegments}
+          <div className="text-sm text-text-tertiary" data-testid={testId ? `${testId}-empty` : undefined}>
+            {emptyMessage ?? 'No audible speech was captured in this recording.'}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (!segments || segments.length === 0) {
     return (
       <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface p-4', className)}>
@@ -191,22 +275,28 @@ export function TranscriptPanel({
     );
   }
 
+  const portraits = segments.some((seg) => seg.speakerAvatarUrl !== undefined);
   return (
-    <section data-ui-part="" className={cn('rounded-lg border border-border bg-surface flex flex-col', className)}>
-      <header className="text-sm font-medium text-text-secondary px-4 py-3 border-b border-border">
-        {title}
-        <span className="ml-2 text-xs font-normal text-text-tertiary">
-          {segments.length} segments
-        </span>
-      </header>
-      <div ref={scrollerRef} className="flex-1 overflow-y-auto max-h-[60vh] p-4 space-y-2">
+    <section data-ui-part="" data-testid={testId} data-follow={follow ? (detached ? 'detached' : 'following') : undefined}
+      className={cn(fill ? frameClass : 'rounded-lg border border-border bg-surface flex flex-col', follow && 'relative', className)}>
+      {header(`${segments.length} segments`) ?? (
+        <header className="text-sm font-medium text-text-secondary px-4 py-3 border-b border-border">
+          {title}
+          <span className="ml-2 text-xs font-normal text-text-tertiary">
+            {segments.length} segments
+          </span>
+        </header>
+      )}
+      <div ref={scrollerRef} onScroll={follow ? onScroll : undefined}
+        className={cn('flex-1 overflow-y-auto space-y-2', fill ? 'min-h-0 px-3 py-2' : 'max-h-[60vh] p-4')}>
+        {beforeSegments}
         {segments.map((seg, i) => {
           const isActive = i === activeIndex;
           const color = speakerColor(seg);
           const seekable = !!onSeek;
           return (
             <div
-              key={`${seg.startMs}-${seg.speakerId ?? ''}-${i}`}
+              key={seg.id ?? `${seg.startMs}-${seg.speakerId ?? ''}-${i}`}
               data-seg-index={i}
               className={cn(
                 'rounded-md px-3 py-2 transition-colors',
@@ -221,7 +311,8 @@ export function TranscriptPanel({
               tabIndex={seekable ? 0 : undefined}
               aria-label={seekable ? `Seek to ${formatTimestamp(seg.startMs)} — ${seg.speakerLabel ?? UNKNOWN_SPEAKER}` : undefined}
             >
-              <div className="flex items-baseline gap-2 mb-1">
+              <div className={cn('flex gap-2 mb-1', portraits ? 'items-center' : 'items-baseline')}>
+                {portraits && <Avatar name={seg.speakerLabel ?? UNKNOWN_SPEAKER} src={seg.speakerAvatarUrl ?? undefined} size={20} showTitle={false} />}
                 <span
                   className={cn('text-xs font-semibold', !color && 'text-text-secondary')}
                   {...(color ? { style: { color } } : {})}
@@ -239,6 +330,12 @@ export function TranscriptPanel({
           );
         })}
       </div>
+      {follow && detached && (
+        <button type="button" onClick={jump} data-testid="transcript-jump-latest"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-text-primary shadow-md hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+          {jumpLabel}
+        </button>
+      )}
     </section>
   );
 }

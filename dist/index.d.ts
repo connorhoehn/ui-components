@@ -26572,7 +26572,7 @@ export declare interface TranscriptOverlayProps {
     className?: string;
 }
 
-export declare function TranscriptPanel({ status, segments, currentTimeMs, onSeek, title, errorMessage, errorDetail, pendingMessage, idleState, className, }: TranscriptPanelProps): JSX.Element;
+export declare function TranscriptPanel({ status, segments, currentTimeMs, onSeek, title, errorMessage, errorDetail, pendingMessage, idleState, follow, jumpLabel, headerMeta, headerActions, beforeSegments, emptyMessage, frame, className, 'data-testid': testId, }: TranscriptPanelProps): JSX.Element;
 
 export declare interface TranscriptPanelProps {
     status: TranscriptStatus;
@@ -26596,7 +26596,29 @@ export declare interface TranscriptPanelProps {
     pendingMessage?: string;
     /** Render-prop slot for the empty/idle state. */
     idleState?: ReactNode;
+    /**
+     * Live following (since 2.530.0): the list keeps the newest segment in view while the reader is at the bottom; once they
+     * scroll up it stops following and offers one "Jump to latest" control (`data-testid="transcript-jump-latest"`), which
+     * scrolls back down and follows again. For a transcript that grows while it is open (live captions).
+     */
+    follow?: boolean;
+    /** The jump control's label. Default "Jump to latest". */
+    jumpLabel?: string;
+    /** Replaces the header's "N segments" count (a live state, say). Since 2.530.0. */
+    headerMeta?: ReactNode;
+    /** Drawn at the end of the header row (a way back, say). Since 2.530.0. */
+    headerActions?: ReactNode;
+    /** Drawn inside the scrolling list, above the first segment ("Load earlier", a note). Since 2.530.0. */
+    beforeSegments?: ReactNode;
+    /** With `status="ready"` and no segments, replaces "No audible speech was captured in this recording." Since 2.530.0. */
+    emptyMessage?: ReactNode;
+    /**
+     * `fill` (since 2.530.0): no frame of its own and no 60vh cap; the panel fills its parent's height (a flex column) and
+     * only the list scrolls. For a panel that is a pane's whole body. Default `card`: today's bordered card.
+     */
+    frame?: 'card' | 'fill';
     className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface TranscriptSegment {
@@ -26612,6 +26634,10 @@ export declare interface TranscriptSegment {
     speakerId?: string;
     /** Display name for the speaker. Optional for the same reason. */
     speakerLabel?: string;
+    /** The speaker's portrait. When ANY segment carries the field (null included), every row shows a small portrait, initials where there is no picture. Since 2.530.0. */
+    speakerAvatarUrl?: string | null;
+    /** A stable key for the row (a stored line's seq). Lets a host prepend earlier rows without remounting the rest. Since 2.530.0. */
+    id?: string;
     text: string;
     avgLogprob?: number;
     noSpeechProb?: number;

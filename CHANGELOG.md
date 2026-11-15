@@ -1,3 +1,12 @@
+## 2.530.0
+
+A transcript can be read live, while it grows. Every new prop is optional; with none given the output is unchanged.
+
+- `TranscriptPanel` `follow?: boolean`: keeps the newest segment in view while the reader is at the bottom; once they scroll up it stops following and offers one "Jump to latest" control (`jumpLabel?`, `data-testid="transcript-jump-latest"`), which scrolls down and follows again. The section carries `data-follow="following|detached"`.
+- `TranscriptPanel` `frame?: 'card' | 'fill'`: `'fill'` drops the card frame and the 60vh cap so the panel is a pane's whole body and only the list scrolls.
+- `TranscriptPanel` `headerMeta?` (replaces the "N segments" count), `headerActions?` (end of the header row), `beforeSegments?` (inside the list, above the first segment: "Load earlier", a note), `emptyMessage?` (the ready-but-empty sentence; the header and its actions stay), `data-testid?`.
+- `TranscriptSegment` `speakerAvatarUrl?: string | null` (when any segment carries the field, each row shows a 20px portrait, initials without a picture) and `id?: string` (a stable row key, so earlier rows can be prepended without remounting the rest).
+
 ## 2.529.0
 
 The call block shows everyone in the call, and its recording warning no longer takes a line of its own. New props are optional; the banner forms of `RecordingConsentNotice` are unchanged.
