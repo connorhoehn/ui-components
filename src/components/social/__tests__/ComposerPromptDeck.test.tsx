@@ -82,6 +82,39 @@ describe('ComposerPromptDeck', () => {
     } finally { unmount(); input.remove(); }
   });
 
+  it('focusOnArrive: false leaves focus where it was, announces the card politely, and keeps the deck keypad', async () => {
+    const onAnswer = vi.fn();
+    const control = document.createElement('button'); control.textContent = 'Mute'; document.body.append(control); control.focus();
+    const quiet = prompts(onAnswer).map(p => ({ ...p, focusOnArrive: false }));
+    const { rerender, unmount } = render(<ComposerPromptDeck prompts={quiet} />);
+    try {
+      await act(async () => { await new Promise(resolve => requestAnimationFrame(resolve)); });
+      expect(control).toHaveFocus();
+      const arrival = screen.getByTestId('composer-prompt-deck-arrival');
+      expect(arrival).toHaveAttribute('aria-live', 'polite');
+      expect(arrival).toHaveAttribute('role', 'status');
+      expect(arrival).toHaveTextContent('New question: Fix token refresh');
+      // A key pressed on the focused control is not an answer: the default keypad listens only in the deck.
+      fireEvent.keyDown(control, { key: '1' });
+      fireEvent.keyDown(control, { key: 'Enter' });
+      expect(onAnswer).not.toHaveBeenCalled();
+      rerender(<ComposerPromptDeck prompts={quiet.map(p => ({ ...p, id: `${p.id}:new` }))} />);
+      await act(async () => { await new Promise(resolve => requestAnimationFrame(resolve)); });
+      expect(control).toHaveFocus();
+      // In the deck the keys still answer.
+      screen.getByTestId('composer-prompt-deck-option-dispatch').focus();
+      key('1');
+      await waitFor(() => expect(onAnswer).toHaveBeenCalledWith('dispatch', expect.objectContaining({ optionId: 'dispatch' })));
+    } finally { unmount(); control.remove(); }
+  });
+
+  it('a card that takes focus on arrival has no arrival announcement', async () => {
+    render(<ComposerPromptDeck prompts={prompts()} />);
+    await act(async () => { await new Promise(resolve => requestAnimationFrame(resolve)); });
+    expect(screen.queryByTestId('composer-prompt-deck-arrival')).toBeNull();
+    expect(screen.getByTestId('composer-prompt-deck-option-dispatch')).toHaveFocus();
+  });
+
   it('prints the actual Alt shortcut on typed-answer options', () => {
     render(<ComposerPromptDeck prompts={[{ id: 'number', title: 'Amount', question: 'How much?', kind: 'number', options: [{ id: 'none', label: 'None' }], onAnswer: vi.fn() }]} />);
     const option = screen.getByTestId('composer-prompt-deck-option-none');

@@ -500,8 +500,10 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
   state.current = { deck, input, blockedBy };
   // A new question puts the caret where its keyboard hints apply. Do not
   // interrupt another editor or take focus from a compose prompt's own flow.
+  // `focusOnArrive: false` (2.528.0): an unasked card never takes focus; the
+  // live region below announces it instead.
   useEffect(() => {
-    if (!active || collapsed || active.readOnlyReason || active.kind === 'compose') return;
+    if (!active || collapsed || active.readOnlyReason || active.kind === 'compose' || active.focusOnArrive === false) return;
     const frame = requestAnimationFrame(() => {
       const current = document.activeElement;
       const otherEditor = current?.closest('input,textarea,select,[contenteditable="true"]');
@@ -512,7 +514,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
       else (root.current?.querySelector<HTMLElement>('[data-default="true"]:not(:disabled)') ?? root.current?.querySelector<HTMLElement>('[data-composer-prompt-option]:not(:disabled)'))?.focus();
     });
     return () => cancelAnimationFrame(frame);
-  }, [active?.id, collapsed, active?.kind, active?.readOnlyReason]);
+  }, [active?.id, collapsed, active?.kind, active?.readOnlyReason, active?.focusOnArrive]);
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing || event.repeat) return;
@@ -594,6 +596,9 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
 
   return (
     <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border', className)} data-composer-prompt-deck="expanded" data-composer-dialogue={input ? undefined : active.kind} data-deck-variant={variant} data-presentation={presentation} data-testid={testId} ref={root}>
+      {active.focusOnArrive === false && (
+        <span role="status" aria-live="polite" className="sr-only" data-testid={`${testId}-arrival`}>{`New question: ${active.title}`}</span>
+      )}
       <section
         data-ui-part=""
         role="group"

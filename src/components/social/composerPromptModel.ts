@@ -197,6 +197,17 @@ export interface ComposerPrompt {
    */
   keypad?: 'deck' | 'page';
   /**
+   * Whether the deck moves keyboard focus to this card when it arrives
+   * (since 2.528.0). `true` (default): a new card puts the caret on its
+   * answer field or default option, unless another editor has focus.
+   * `false`: focus stays where it is — a card that arrives unasked (a
+   * proposal in a call) must never turn the next Enter or Space into an
+   * answer — and the card is announced through a polite live region
+   * instead ("New question: <title>"). Tab, the keypad in the deck, and
+   * Show still reach it as usual.
+   */
+  focusOnArrive?: boolean;
+  /**
    * The decision path drawn above the card's header (2.482.0): `Choose →
    * Draft request → Confirm → Done` with `current` at this question's step.
    * On a compose prompt `current` is the drafting step; the flow advances it

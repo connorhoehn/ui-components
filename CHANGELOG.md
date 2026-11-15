@@ -1,3 +1,9 @@
+## 2.528.0
+
+A prompt that arrives unasked no longer moves keyboard focus. The new option is optional; with none given the output is unchanged.
+
+- `ComposerPrompt` `focusOnArrive?: boolean` (default `true`). With `false` the deck leaves focus where it was when the card arrives (a person on a call control keeps it, so their next Enter or Space is not an answer) and announces the card through a polite live region instead (`role="status"`, `aria-live="polite"`, "New question: <title>", `data-testid="<testId>-arrival"`). Tab, the deck's own keypad and Show reach it as before. Pair it with `keypad: 'deck'` (the default) so digits act only while focus is in the deck.
+
 ## 2.527.0
 
 An assistant in a chat is recognisable at a glance, its cards stand out against its replies, and a panel can read as its own place. Every new prop is optional; with none given the output is unchanged.

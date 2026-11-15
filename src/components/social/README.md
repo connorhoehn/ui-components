@@ -81,6 +81,11 @@ resolve `{ next: ComposerPrompt }` to route to a follow-up in the same card
 editable message, its review and its done state, with no modal and no toolbar.
 `ComposerConfirmFlow` is also exported on its own.
 
+`ComposerPrompt.focusOnArrive` (2.528.0, default `true`): `false` keeps
+focus where it was when the card arrives and announces it through a polite
+live region instead — for a card nobody asked for, such as a proposal in a
+call, where moving focus would turn the next Enter into an answer.
+
 `ComposerPrompt.back` (2.510.0, `{ label?, onBack, disabledReason? }`) draws a
 ghost Back in the card header, on a one-prompt deck too; a `{ next }`
 follow-up without one gets a Back to the question it followed. Alt+Backspace

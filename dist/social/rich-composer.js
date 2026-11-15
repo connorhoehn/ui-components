@@ -661,7 +661,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 		input: c,
 		blockedBy: M
 	}, I(() => {
-		if (!w || E || w.readOnlyReason || w.kind === "compose") return;
+		if (!w || E || w.readOnlyReason || w.kind === "compose" || w.focusOnArrive === !1) return;
 		let e = requestAnimationFrame(() => {
 			let e = document.activeElement, t = e?.closest("input,textarea,select,[contenteditable=\"true\"]"), n = oe.current.input;
 			t && !x.current?.contains(e) && !n?.contains(e) || (n ? n.focus() : S.current ? S.current.focus() : (x.current?.querySelector("[data-default=\"true\"]:not(:disabled)") ?? x.current?.querySelector("[data-composer-prompt-option]:not(:disabled)"))?.focus());
@@ -671,7 +671,8 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 		w?.id,
 		E,
 		w?.kind,
-		w?.readOnlyReason
+		w?.readOnlyReason,
+		w?.focusOnArrive
 	]), I(() => {
 		let e = (e) => {
 			if (e.defaultPrevented || e.isComposing || e.repeat) return;
@@ -777,324 +778,334 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 		"data-presentation": ee,
 		"data-testid": h,
 		ref: x,
-		children: [/* @__PURE__ */ V("section", {
-			"data-ui-part": "",
-			role: "group",
-			"aria-labelledby": pe,
-			"aria-describedby": W,
-			"aria-busy": D || void 0,
-			className: t("flex min-w-0 flex-col gap-2 px-3 py-2.5", Ae, !g && "rounded-lg border border-border bg-surface"),
-			"data-composer-prompt": w.id,
-			"data-composer-prompt-kind": w.kind,
-			"data-testid": `${h}-card`,
-			children: [
-				w.path && !H && /* @__PURE__ */ B(u, {
-					steps: w.path.steps,
-					current: w.path.current,
-					"data-testid": `${h}-path`
-				}),
-				/* @__PURE__ */ V(a, {
-					gap: "sm",
-					align: "center",
-					wrap: !1,
-					className: "min-w-0",
-					children: [
-						/* @__PURE__ */ V(i, {
-							gap: "none",
-							className: "min-w-0 flex-1",
-							children: [w.eyebrow && /* @__PURE__ */ B(o, {
-								size: "xs",
-								tone: "tertiary",
-								className: "truncate",
-								children: w.eyebrow
-							}), /* @__PURE__ */ B(o, {
-								as: "p",
-								size: "sm",
-								weight: "semibold",
-								tone: "primary",
-								className: "min-w-0 truncate",
-								id: pe,
-								title: w.title,
-								children: w.title
-							})]
-						}),
-						b.backControl && /* @__PURE__ */ B(n, {
-							variant: "ghost",
-							size: "sm",
-							className: "shrink-0",
-							"aria-keyshortcuts": "Alt+Backspace",
-							disabled: D || !!b.backControl.disabledReason,
-							title: b.backControl.disabledReason,
-							onClick: () => {
-								b.goBack();
-							},
-							"data-composer-prompt-back": "",
-							"data-composer-readonly-allow": "Returns to the previous step without submitting an answer",
-							"data-testid": `${h}-back`,
-							children: b.backControl.label
-						}),
-						P > 1 && /* @__PURE__ */ V(a, {
-							gap: "xs",
-							align: "center",
-							wrap: !1,
-							className: "shrink-0",
-							children: [
-								/* @__PURE__ */ B(o, {
-									size: "xs",
-									tone: "secondary",
-									tabular: !0,
-									"data-testid": `${h}-position`,
-									children: `${re + 1} of ${P}`
-								}),
-								/* @__PURE__ */ B(n, {
-									variant: "ghost",
-									size: "sm",
-									"aria-label": "Previous question",
-									"aria-keyshortcuts": "Control+ArrowUp Meta+ArrowUp",
-									onClick: () => b.page(-1),
-									"data-composer-readonly-allow": "Reads the previous prompt without changing a record or submitting an answer",
-									"data-testid": `${h}-previous`,
-									children: "‹"
-								}),
-								/* @__PURE__ */ B(n, {
-									variant: "ghost",
-									size: "sm",
-									"aria-label": "Next question",
-									"aria-keyshortcuts": "Control+ArrowDown Meta+ArrowDown",
-									onClick: () => b.page(1),
-									"data-composer-readonly-allow": "Reads the next prompt without changing a record or submitting an answer",
-									"data-testid": `${h}-next`,
-									children: "›"
-								})
-							]
-						}),
-						/* @__PURE__ */ B(n, {
-							variant: "ghost",
-							size: "sm",
-							className: "shrink-0",
-							"aria-keyshortcuts": "Escape",
-							onClick: () => {
-								b.setCollapsed(!0), c?.focus();
-							},
-							"data-composer-readonly-allow": "Hides the prompt's existing facts without changing a record or submitting an answer",
-							"data-testid": `${h}-hide`,
-							children: "Hide"
-						})
-					]
-				}),
-				P > 1 && /* @__PURE__ */ B(a, {
-					gap: "xs",
-					wrap: !1,
-					"aria-hidden": !0,
-					className: "min-w-0",
-					"data-testid": `${h}-progress`,
-					children: T.map((e, n) => /* @__PURE__ */ B(i, {
-						gap: "none",
-						className: t("h-1 min-w-0 flex-1 rounded-full", n === re ? "bg-primary" : "bg-border")
-					}, e.id))
-				}),
-				w.fields && w.fields.length > 0 && v && /* @__PURE__ */ B("dl", {
-					className: "m-0 flex min-w-0 flex-col gap-0.5",
-					"data-testid": `${h}-fields`,
-					children: w.fields.map((e, n) => /* @__PURE__ */ V("div", {
-						className: "flex min-w-0 items-baseline gap-2",
-						"data-composer-prompt-field": "",
-						children: [/* @__PURE__ */ B("dt", {
-							className: "m-0 shrink-0 text-xs font-normal text-text-tertiary",
-							children: e.label
-						}), /* @__PURE__ */ B("dd", {
-							className: t("m-0 min-w-0 flex-1 truncate text-xs font-normal", Oe[e.tone ?? "neutral"], e.mono && "tabular-nums"),
-							...typeof e.value == "string" || typeof e.value == "number" ? { title: String(e.value) } : {},
-							children: e.value
-						})]
-					}, `${e.label}-${n}`))
-				}),
-				w.fields && w.fields.length > 0 && !v && /* @__PURE__ */ B("dl", {
-					className: t("m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5", je),
-					"data-testid": `${h}-fields`,
-					children: w.fields.map((e, n) => /* @__PURE__ */ V("div", {
-						className: "flex min-w-0 max-w-full flex-col",
-						children: [/* @__PURE__ */ B("dt", {
-							className: "m-0 text-xs font-normal text-text-tertiary",
-							children: e.label
-						}), /* @__PURE__ */ B("dd", {
-							className: t("m-0 min-w-0 break-words text-xs font-normal", Oe[e.tone ?? "neutral"], e.mono && "tabular-nums"),
-							...typeof e.value == "string" ? { title: e.value } : {},
-							children: e.value
-						})]
-					}, `${e.label}-${n}`))
-				}),
-				/* @__PURE__ */ B(o, {
-					as: "p",
-					size: "sm",
-					tone: "primary",
-					wrap: !0,
-					id: W,
-					className: "min-w-0",
-					children: w.question
-				}),
-				w.readOnlyReason ? /* @__PURE__ */ B(o, {
-					as: "p",
-					size: "xs",
-					tone: "secondary",
-					wrap: !0,
-					"data-testid": `${h}-read-only`,
-					children: w.readOnlyReason
-				}) : H ? /* @__PURE__ */ B(fe, {
-					recipient: w.compose?.recipient,
-					defaultMessage: w.compose?.initialMessage,
-					messageLabel: w.compose?.messageLabel,
-					placeholder: w.compose?.placeholder,
-					reviewTitle: w.compose?.reviewTitle,
-					note: w.compose?.note,
-					doneTitle: w.compose?.doneTitle,
-					doneMessage: w.compose?.doneMessage,
-					continueLabel: w.compose?.continueLabel,
-					confirmLabel: w.compose?.confirmLabel,
-					backLabel: w.compose?.backLabel,
-					doneActionLabel: w.compose?.doneActionLabel,
-					path: w.path,
-					onConfirm: (e) => b.answerCompose(e),
-					onCancel: b.isFollowUp ? () => {
-						b.back();
-					} : w.compose?.onCancel ? () => {
-						w.compose?.onCancel?.(), b.finish();
-					} : void 0,
-					onDone: () => {
-						b.finish(), c?.focus();
-					},
-					"data-testid": `${h}-compose`
-				}, w.id) : L.length > 0 && /* @__PURE__ */ B(a, {
-					gap: "xs",
-					wrap: !0,
-					className: "min-w-0",
-					role: "list",
-					"aria-label": "Answers",
-					children: L.map((e, t) => {
-						let r = G[t], a = r ? `${ue ? "Alt+" : ""}${r}` : void 0;
-						return /* @__PURE__ */ V(i, {
-							gap: "none",
-							role: "listitem",
-							className: "min-w-0",
-							children: [/* @__PURE__ */ V(n, {
-								size: "sm",
-								variant: e.emphasis === "primary" ? "primary" : e.emphasis === "danger" ? "danger" : "secondary",
-								disabled: D || !!e.disabledReason || !!M,
-								title: e.disabledReason ?? M ?? e.hint,
-								"aria-keyshortcuts": a,
-								"aria-describedby": [e.hint && `${te}-hint-${t}`, M && N].filter(Boolean).join(" ") || void 0,
-								onClick: () => {
-									b.pick(e.id).then((e) => {
-										e && c?.focus();
-									});
-								},
-								"data-composer-prompt-option": e.id,
-								"data-default": de?.id === e.id || void 0,
-								"data-testid": `${h}-option-${e.id}`,
-								children: [a && !v && /* @__PURE__ */ B(ke, { children: a }), e.label]
-							}), e.hint && /* @__PURE__ */ B(o, {
-								size: "xs",
-								tone: "tertiary",
-								className: "hidden",
-								id: `${te}-hint-${t}`,
-								children: e.hint
-							})]
-						}, e.id);
-					})
-				}),
-				ie && /* @__PURE__ */ V(i, {
-					gap: "sm",
-					className: "min-w-0",
-					children: [/* @__PURE__ */ B(l, {
-						ref: S,
-						"aria-label": w.title,
-						placeholder: w.placeholder ?? "Your answer",
-						value: A,
-						disabled: D || !!M,
-						autoResize: !0,
-						minRows: w.kind === "number" ? 1 : 2,
-						inputMode: w.kind === "number" ? "decimal" : void 0,
-						onChange: (e) => w.inputDraft ? w.inputDraft.onChange(e.target.value) : ne({
-							id: w.id,
-							text: e.target.value
-						}),
-						onKeyDown: (e) => {
-							e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && !e.repeat && (e.preventDefault(), !D && !M && ae());
-						},
-						"data-testid": `${h}-answer`
-					}), /* @__PURE__ */ V(a, {
+		children: [
+			w.focusOnArrive === !1 && /* @__PURE__ */ B("span", {
+				role: "status",
+				"aria-live": "polite",
+				className: "sr-only",
+				"data-testid": `${h}-arrival`,
+				children: `New question: ${w.title}`
+			}),
+			/* @__PURE__ */ V("section", {
+				"data-ui-part": "",
+				role: "group",
+				"aria-labelledby": pe,
+				"aria-describedby": W,
+				"aria-busy": D || void 0,
+				className: t("flex min-w-0 flex-col gap-2 px-3 py-2.5", Ae, !g && "rounded-lg border border-border bg-surface"),
+				"data-composer-prompt": w.id,
+				"data-composer-prompt-kind": w.kind,
+				"data-testid": `${h}-card`,
+				children: [
+					w.path && !H && /* @__PURE__ */ B(u, {
+						steps: w.path.steps,
+						current: w.path.current,
+						"data-testid": `${h}-path`
+					}),
+					/* @__PURE__ */ V(a, {
 						gap: "sm",
 						align: "center",
-						justify: M ? "between" : "end",
 						wrap: !1,
 						className: "min-w-0",
-						children: [M && /* @__PURE__ */ B(o, {
-							as: "p",
-							size: "xs",
-							tone: "secondary",
-							id: N,
-							title: M,
-							className: "min-w-0",
-							"data-testid": `${h}-disabled-reason`,
-							children: /* @__PURE__ */ B("span", {
-								className: "truncate",
-								children: M
+						children: [
+							/* @__PURE__ */ V(i, {
+								gap: "none",
+								className: "min-w-0 flex-1",
+								children: [w.eyebrow && /* @__PURE__ */ B(o, {
+									size: "xs",
+									tone: "tertiary",
+									className: "truncate",
+									children: w.eyebrow
+								}), /* @__PURE__ */ B(o, {
+									as: "p",
+									size: "sm",
+									weight: "semibold",
+									tone: "primary",
+									className: "min-w-0 truncate",
+									id: pe,
+									title: w.title,
+									children: w.title
+								})]
+							}),
+							b.backControl && /* @__PURE__ */ B(n, {
+								variant: "ghost",
+								size: "sm",
+								className: "shrink-0",
+								"aria-keyshortcuts": "Alt+Backspace",
+								disabled: D || !!b.backControl.disabledReason,
+								title: b.backControl.disabledReason,
+								onClick: () => {
+									b.goBack();
+								},
+								"data-composer-prompt-back": "",
+								"data-composer-readonly-allow": "Returns to the previous step without submitting an answer",
+								"data-testid": `${h}-back`,
+								children: b.backControl.label
+							}),
+							P > 1 && /* @__PURE__ */ V(a, {
+								gap: "xs",
+								align: "center",
+								wrap: !1,
+								className: "shrink-0",
+								children: [
+									/* @__PURE__ */ B(o, {
+										size: "xs",
+										tone: "secondary",
+										tabular: !0,
+										"data-testid": `${h}-position`,
+										children: `${re + 1} of ${P}`
+									}),
+									/* @__PURE__ */ B(n, {
+										variant: "ghost",
+										size: "sm",
+										"aria-label": "Previous question",
+										"aria-keyshortcuts": "Control+ArrowUp Meta+ArrowUp",
+										onClick: () => b.page(-1),
+										"data-composer-readonly-allow": "Reads the previous prompt without changing a record or submitting an answer",
+										"data-testid": `${h}-previous`,
+										children: "‹"
+									}),
+									/* @__PURE__ */ B(n, {
+										variant: "ghost",
+										size: "sm",
+										"aria-label": "Next question",
+										"aria-keyshortcuts": "Control+ArrowDown Meta+ArrowDown",
+										onClick: () => b.page(1),
+										"data-composer-readonly-allow": "Reads the next prompt without changing a record or submitting an answer",
+										"data-testid": `${h}-next`,
+										children: "›"
+									})
+								]
+							}),
+							/* @__PURE__ */ B(n, {
+								variant: "ghost",
+								size: "sm",
+								className: "shrink-0",
+								"aria-keyshortcuts": "Escape",
+								onClick: () => {
+									b.setCollapsed(!0), c?.focus();
+								},
+								"data-composer-readonly-allow": "Hides the prompt's existing facts without changing a record or submitting an answer",
+								"data-testid": `${h}-hide`,
+								children: "Hide"
 							})
-						}), /* @__PURE__ */ B(n, {
-							variant: "primary",
-							size: "sm",
-							className: "shrink-0",
-							disabled: D || !!M || !A.trim(),
-							...M ? {
-								title: M,
-								"aria-describedby": N
-							} : {},
-							onClick: () => {
-								ae();
+						]
+					}),
+					P > 1 && /* @__PURE__ */ B(a, {
+						gap: "xs",
+						wrap: !1,
+						"aria-hidden": !0,
+						className: "min-w-0",
+						"data-testid": `${h}-progress`,
+						children: T.map((e, n) => /* @__PURE__ */ B(i, {
+							gap: "none",
+							className: t("h-1 min-w-0 flex-1 rounded-full", n === re ? "bg-primary" : "bg-border")
+						}, e.id))
+					}),
+					w.fields && w.fields.length > 0 && v && /* @__PURE__ */ B("dl", {
+						className: "m-0 flex min-w-0 flex-col gap-0.5",
+						"data-testid": `${h}-fields`,
+						children: w.fields.map((e, n) => /* @__PURE__ */ V("div", {
+							className: "flex min-w-0 items-baseline gap-2",
+							"data-composer-prompt-field": "",
+							children: [/* @__PURE__ */ B("dt", {
+								className: "m-0 shrink-0 text-xs font-normal text-text-tertiary",
+								children: e.label
+							}), /* @__PURE__ */ B("dd", {
+								className: t("m-0 min-w-0 flex-1 truncate text-xs font-normal", Oe[e.tone ?? "neutral"], e.mono && "tabular-nums"),
+								...typeof e.value == "string" || typeof e.value == "number" ? { title: String(e.value) } : {},
+								children: e.value
+							})]
+						}, `${e.label}-${n}`))
+					}),
+					w.fields && w.fields.length > 0 && !v && /* @__PURE__ */ B("dl", {
+						className: t("m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5", je),
+						"data-testid": `${h}-fields`,
+						children: w.fields.map((e, n) => /* @__PURE__ */ V("div", {
+							className: "flex min-w-0 max-w-full flex-col",
+							children: [/* @__PURE__ */ B("dt", {
+								className: "m-0 text-xs font-normal text-text-tertiary",
+								children: e.label
+							}), /* @__PURE__ */ B("dd", {
+								className: t("m-0 min-w-0 break-words text-xs font-normal", Oe[e.tone ?? "neutral"], e.mono && "tabular-nums"),
+								...typeof e.value == "string" ? { title: e.value } : {},
+								children: e.value
+							})]
+						}, `${e.label}-${n}`))
+					}),
+					/* @__PURE__ */ B(o, {
+						as: "p",
+						size: "sm",
+						tone: "primary",
+						wrap: !0,
+						id: W,
+						className: "min-w-0",
+						children: w.question
+					}),
+					w.readOnlyReason ? /* @__PURE__ */ B(o, {
+						as: "p",
+						size: "xs",
+						tone: "secondary",
+						wrap: !0,
+						"data-testid": `${h}-read-only`,
+						children: w.readOnlyReason
+					}) : H ? /* @__PURE__ */ B(fe, {
+						recipient: w.compose?.recipient,
+						defaultMessage: w.compose?.initialMessage,
+						messageLabel: w.compose?.messageLabel,
+						placeholder: w.compose?.placeholder,
+						reviewTitle: w.compose?.reviewTitle,
+						note: w.compose?.note,
+						doneTitle: w.compose?.doneTitle,
+						doneMessage: w.compose?.doneMessage,
+						continueLabel: w.compose?.continueLabel,
+						confirmLabel: w.compose?.confirmLabel,
+						backLabel: w.compose?.backLabel,
+						doneActionLabel: w.compose?.doneActionLabel,
+						path: w.path,
+						onConfirm: (e) => b.answerCompose(e),
+						onCancel: b.isFollowUp ? () => {
+							b.back();
+						} : w.compose?.onCancel ? () => {
+							w.compose?.onCancel?.(), b.finish();
+						} : void 0,
+						onDone: () => {
+							b.finish(), c?.focus();
+						},
+						"data-testid": `${h}-compose`
+					}, w.id) : L.length > 0 && /* @__PURE__ */ B(a, {
+						gap: "xs",
+						wrap: !0,
+						className: "min-w-0",
+						role: "list",
+						"aria-label": "Answers",
+						children: L.map((e, t) => {
+							let r = G[t], a = r ? `${ue ? "Alt+" : ""}${r}` : void 0;
+							return /* @__PURE__ */ V(i, {
+								gap: "none",
+								role: "listitem",
+								className: "min-w-0",
+								children: [/* @__PURE__ */ V(n, {
+									size: "sm",
+									variant: e.emphasis === "primary" ? "primary" : e.emphasis === "danger" ? "danger" : "secondary",
+									disabled: D || !!e.disabledReason || !!M,
+									title: e.disabledReason ?? M ?? e.hint,
+									"aria-keyshortcuts": a,
+									"aria-describedby": [e.hint && `${te}-hint-${t}`, M && N].filter(Boolean).join(" ") || void 0,
+									onClick: () => {
+										b.pick(e.id).then((e) => {
+											e && c?.focus();
+										});
+									},
+									"data-composer-prompt-option": e.id,
+									"data-default": de?.id === e.id || void 0,
+									"data-testid": `${h}-option-${e.id}`,
+									children: [a && !v && /* @__PURE__ */ B(ke, { children: a }), e.label]
+								}), e.hint && /* @__PURE__ */ B(o, {
+									size: "xs",
+									tone: "tertiary",
+									className: "hidden",
+									id: `${te}-hint-${t}`,
+									children: e.hint
+								})]
+							}, e.id);
+						})
+					}),
+					ie && /* @__PURE__ */ V(i, {
+						gap: "sm",
+						className: "min-w-0",
+						children: [/* @__PURE__ */ B(l, {
+							ref: S,
+							"aria-label": w.title,
+							placeholder: w.placeholder ?? "Your answer",
+							value: A,
+							disabled: D || !!M,
+							autoResize: !0,
+							minRows: w.kind === "number" ? 1 : 2,
+							inputMode: w.kind === "number" ? "decimal" : void 0,
+							onChange: (e) => w.inputDraft ? w.inputDraft.onChange(e.target.value) : ne({
+								id: w.id,
+								text: e.target.value
+							}),
+							onKeyDown: (e) => {
+								e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && !e.repeat && (e.preventDefault(), !D && !M && ae());
 							},
-							"data-testid": `${h}-submit`,
-							children: "Answer"
+							"data-testid": `${h}-answer`
+						}), /* @__PURE__ */ V(a, {
+							gap: "sm",
+							align: "center",
+							justify: M ? "between" : "end",
+							wrap: !1,
+							className: "min-w-0",
+							children: [M && /* @__PURE__ */ B(o, {
+								as: "p",
+								size: "xs",
+								tone: "secondary",
+								id: N,
+								title: M,
+								className: "min-w-0",
+								"data-testid": `${h}-disabled-reason`,
+								children: /* @__PURE__ */ B("span", {
+									className: "truncate",
+									children: M
+								})
+							}), /* @__PURE__ */ B(n, {
+								variant: "primary",
+								size: "sm",
+								className: "shrink-0",
+								disabled: D || !!M || !A.trim(),
+								...M ? {
+									title: M,
+									"aria-describedby": N
+								} : {},
+								onClick: () => {
+									ae();
+								},
+								"data-testid": `${h}-submit`,
+								children: "Answer"
+							})]
 						})]
-					})]
-				}),
-				M && !H && !ie && /* @__PURE__ */ B(o, {
-					as: "p",
-					size: "xs",
-					tone: "secondary",
-					wrap: !0,
-					id: N,
-					className: "min-w-0",
-					"data-testid": `${h}-disabled-reason`,
-					children: M
-				}),
-				O && !H && /* @__PURE__ */ B(o, {
-					as: "p",
-					size: "xs",
-					wrap: !0,
-					role: "alert",
-					className: "text-danger-fg",
-					"data-testid": `${h}-error`,
-					children: O
-				}),
-				D && !H && /* @__PURE__ */ B(o, {
-					as: "p",
-					size: "xs",
-					tone: "secondary",
-					role: "status",
-					"data-testid": `${h}-busy`,
-					children: "Working…"
-				}),
-				!v && !w.readOnlyReason && !H && /* @__PURE__ */ B(o, {
-					as: "p",
-					size: "xs",
-					tone: "tertiary",
-					wrap: !0,
-					className: "min-w-0",
-					"data-testid": `${h}-keys`,
-					children: _e
-				})
-			]
-		}), F]
+					}),
+					M && !H && !ie && /* @__PURE__ */ B(o, {
+						as: "p",
+						size: "xs",
+						tone: "secondary",
+						wrap: !0,
+						id: N,
+						className: "min-w-0",
+						"data-testid": `${h}-disabled-reason`,
+						children: M
+					}),
+					O && !H && /* @__PURE__ */ B(o, {
+						as: "p",
+						size: "xs",
+						wrap: !0,
+						role: "alert",
+						className: "text-danger-fg",
+						"data-testid": `${h}-error`,
+						children: O
+					}),
+					D && !H && /* @__PURE__ */ B(o, {
+						as: "p",
+						size: "xs",
+						tone: "secondary",
+						role: "status",
+						"data-testid": `${h}-busy`,
+						children: "Working…"
+					}),
+					!v && !w.readOnlyReason && !H && /* @__PURE__ */ B(o, {
+						as: "p",
+						size: "xs",
+						tone: "tertiary",
+						wrap: !0,
+						className: "min-w-0",
+						"data-testid": `${h}-keys`,
+						children: _e
+					})
+				]
+			}),
+			F
+		]
 	});
 }
 function Ne(e) {
