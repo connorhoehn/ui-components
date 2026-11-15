@@ -173,3 +173,19 @@ describe('formatChatTime', () => {
     expect(formatChatTime('')).toBe('');
   });
 });
+
+describe('MessageRow — assistant', () => {
+  it('an assistant row takes the accent author ink, the tinted text surface and the given avatar', () => {
+    render(<MessageRow author="Nova" content="On it." timestamp="2026-09-19T12:00:00.000Z" assistant avatar={<span data-testid="mark" />} />);
+    expect(screen.getByTestId('message-row')).toHaveAttribute('data-voice', 'assistant');
+    expect(screen.getByTestId('mark')).toBeInTheDocument();
+    expect(screen.getByTestId('message-row-author').className).toContain('text-accent-fg');
+    expect(screen.getByTestId('message-row-content').className).toContain('bg-accent-callout');
+  });
+
+  it('a card body on an assistant row gets no bubble around it', () => {
+    render(<MessageRow author="Nova" content={<div />} timestamp="2026-09-19T12:00:00.000Z" assistant contentLayout="block" />);
+    expect(screen.getByTestId('message-row-content').className).not.toContain('bg-accent-callout');
+    expect(screen.getByTestId('message-row-content').className).toContain('max-w-[30rem]');
+  });
+});

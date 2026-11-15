@@ -76,6 +76,16 @@ export interface MessageRowProps {
    * cap shrinks the card to fit.
    */
   contentLayout?: 'inline' | 'block';
+  /**
+   * An assistant wrote this row (a bot that speaks in the thread). Its words
+   * read as one voice, apart from people's: the author name takes the accent
+   * ink and inline text sits on the accent-tinted surface, at the left like
+   * any incoming message. A `'block'` body (a card) is drawn as given; give
+   * the card the same surface with `<Card tone="assistant">`. Since 2.527.0.
+   */
+  assistant?: boolean;
+  /** Replaces the initials avatar, e.g. an `<AssistantMark />`. Since 2.527.0. */
+  avatar?: ReactNode;
   className?: string;
 }
 
@@ -106,6 +116,8 @@ export function MessageRow({
   tone = 'light',
   editedAt,
   contentLayout = 'inline',
+  assistant = false,
+  avatar,
   className,
 }: MessageRowProps) {
   const dark = tone === 'dark';
@@ -130,6 +142,7 @@ export function MessageRow({
     <div
       data-testid="message-row"
       data-mine={mine ? 'true' : 'false'}
+      data-voice={assistant ? 'assistant' : undefined}
       className={cn(
         'flex items-start gap-2 py-1',
         // Own messages run the other way: avatar last, content pushed right.
@@ -138,7 +151,7 @@ export function MessageRow({
       )}
     >
       <div className="w-5 shrink-0 mt-0.5">
-        {menuActions && !metaVisible ? actionTrigger : !hideAvatar && <Avatar name={author} src={avatarUrl} size={20} />}
+        {menuActions && !metaVisible ? actionTrigger : !hideAvatar && (avatar ?? <Avatar name={author} src={avatarUrl} size={20} />)}
       </div>
       <div className={cn('flex grow flex-col min-w-0', mine && 'items-end')}>
         {metaVisible && (
@@ -153,7 +166,7 @@ export function MessageRow({
                   data-testid="message-row-author"
                   className={cn(
                     'text-xs font-semibold truncate',
-                    dark ? 'text-white/70' : 'text-text-secondary',
+                    dark ? 'text-white/70' : assistant ? 'text-accent-fg' : 'text-text-secondary',
                   )}
                 >
                   {author}
@@ -202,6 +215,12 @@ export function MessageRow({
             // full-width band with a tint.
             mine && contentLayout === 'inline' && 'max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right',
             mine && contentLayout === 'inline' && (dark ? 'bg-white/15' : 'bg-primary-bg'),
+            // An assistant's text takes its own tint, at the left: the mirror
+            // of an own bubble in the accent family, so a reader tells "the
+            // assistant said" from "a person said" without reading the name.
+            // `self-start` keeps it shrink-to-fit in the column.
+            assistant && !mine && contentLayout === 'inline' && 'max-w-[85%] self-start rounded-lg rounded-tl-sm border px-3 py-1.5',
+            assistant && !mine && contentLayout === 'inline' && (dark ? 'border-accent/40 bg-accent/20' : 'border-accent-callout-border bg-accent-callout'),
             // A card body (AgentRunCard, document/deck preview, attachment)
             // sizes itself to ITS CONTAINER rather than its content, so the
             // shrink-to-fit inline bubble above gives it 0px to work with.

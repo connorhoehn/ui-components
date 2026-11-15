@@ -1262,7 +1262,7 @@ export declare interface CaptionedAvatarProps {
     'data-testid'?: string;
 }
 
-export declare function Card({ children, padding, className, ref, ...rest }: CardProps): JSX.Element;
+export declare function Card({ children, padding, tone, className, ref, ...rest }: CardProps): JSX.Element;
 
 export declare function CardHeader({ title, as: Heading, subtitle, meta, action, inset, className }: CardHeaderProps): default_2.JSX.Element;
 
@@ -1291,6 +1291,13 @@ export declare type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
     children?: ReactNode;
     padding?: CardPadding;
+    /**
+     * The surface the card sits on. `'default'`: the plain surface and border.
+     * `'assistant'`: the accent-tinted surface an assistant's chat text sits on
+     * (`MessageRow` `assistant`), so a card it posts reads in the same voice as
+     * its replies. Both follow the theme. Since 2.527.0.
+     */
+    tone?: 'default' | 'assistant';
     /**
      * The underlying `<div>`. A plain prop, not `forwardRef` — see the note on
      * `StackProps.ref`; React 19 passes `ref` through as an ordinary prop and

@@ -199,6 +199,8 @@ export interface WrappedChatPanelProps {
   renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
   renderSystemMessage?: ChatPanelProps['renderSystemMessage'];
   renderMessageBody?: ChatPanelProps['renderMessageBody'];
+  isAssistantMessage?: ChatPanelProps['isAssistantMessage'];
+  assistantMark?: ChatPanelProps['assistantMark'];
   /**
    * Last word on the thread's messages after they are adapted (2.477.0): a
    * host merges its own entries in, e.g. a meeting's announcements with
@@ -295,6 +297,8 @@ export function WrappedChatPanel({
   renderMessageReferences,
   renderSystemMessage,
   renderMessageBody,
+  isAssistantMessage,
+  assistantMark,
   transformMessages,
   dock,
   emojis,
@@ -558,6 +562,8 @@ export function WrappedChatPanel({
       renderMessageReferences={renderMessageReferences}
       renderSystemMessage={renderSystemMessage}
       renderMessageBody={renderMessageBody}
+      isAssistantMessage={isAssistantMessage}
+      assistantMark={assistantMark}
       attachmentSrc={attachmentSrc}
       onOpenAttachment={onOpenAttachment}
       acceptFiles={acceptFiles}

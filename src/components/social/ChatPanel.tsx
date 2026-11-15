@@ -38,6 +38,7 @@ import { DaySeparator } from './DaySeparator';
 import { isNewDay, fullTimestampLabel } from './dayBoundary';
 import { TypingIndicator } from '../shared/TypingIndicator';
 import { Avatar } from '../shared/Avatar';
+import { AssistantMark } from './AssistantMark';
 import { VISUALLY_HIDDEN_STYLE } from '../shared/VisuallyHidden';
 
 // ---------------------------------------------------------------------------
@@ -302,6 +303,20 @@ export interface ChatPanelProps {
    * the built-in body. Not asked of deleted messages.
    */
   renderMessageBody?: (message: ChatMessage) => ReactNode | null;
+  /**
+   * Which messages an assistant wrote (a bot that speaks in the thread).
+   * Each such row takes the assistant look, so all of its output reads as
+   * one voice, apart from people's: `assistantMark` in the avatar slot, the
+   * author name in the accent ink, and its text on the accent-tinted
+   * surface (`MessageRow` `assistant`). A `renderSystemMessage` line for one
+   * of them is laid out at the start under the same mark, in a muted tinted
+   * pill, instead of centred grey text. A `renderMessageBody` card is drawn
+   * as given; put it on the same surface with `<Card tone="assistant">`.
+   * Since 2.527.0.
+   */
+  isAssistantMessage?: (message: ChatMessage) => boolean;
+  /** The assistant's mark in the avatar slot. Default `<AssistantMark />` (the bot glyph on the accent tint). Since 2.527.0. */
+  assistantMark?: ReactNode;
   /**
    * The message a jump just landed on. Highlighted so arriving somewhere in
    * the middle of a transcript says WHICH message you were sent to — without
@@ -1475,6 +1490,8 @@ export function ChatPanel({
   renderMessageReferences,
   renderSystemMessage,
   renderMessageBody,
+  isAssistantMessage,
+  assistantMark,
   tone = 'light',
   showHeader,
   fill,
@@ -1988,7 +2005,12 @@ export function ChatPanel({
   // rather than to the message above it — and this is precisely the row the
   // reader is being sent to, which is the worst possible one to leave
   // unattributed.
-  const continues = !unreadSeparator && continuesRun(previousInRun, entry);
+  // A host system line drew the row above as a notice, with no author: a
+  // message under it must state who it is from, or it reads as the notice's.
+  const previousIsHostLine = !!renderSystemMessage && previousInRun?.kind === 'message'
+    && !previousInRun.message.deletedAt && previousInRun.message.metadata?.deleted !== true
+    && renderSystemMessage(previousInRun.message) != null;
+  const continues = !unreadSeparator && !previousIsHostLine && continuesRun(previousInRun, entry);
   // A date heading opens each new local day — including the first
   // row on screen, whose date is otherwise stated nowhere. Keyed
   // off the PREVIOUS row rather than a running variable so a
@@ -2314,6 +2336,9 @@ export function ChatPanel({
     && !!message.content.trim();
   // A host line replaces the whole row: no avatar, author or bubble.
   const hostSystemLine = isDeleted ? null : (renderSystemMessage?.(message) ?? null);
+  // The assistant's voice (see `isAssistantMessage`); a deleted row keeps the plain tombstone.
+  const assistantRow = !isDeleted && isAssistantMessage?.(message) === true;
+  const mark = assistantMark ?? <AssistantMark />;
   const editing = canEditOnly && !!onEditMessage && editingId === messageId;
 
   // The quote, the message, its reactions — one unit. Rendering
@@ -2393,6 +2418,36 @@ export function ChatPanel({
     </>
   );
 
+  if (hostSystemLine != null && assistantRow) {
+    // Left-aligned like the assistant's other rows: the mark in the avatar
+    // gutter (`px-2` + `w-5` + `gap-2`, as MessageRow), the line in a muted
+    // tinted pill. A state change reads as the assistant speaking, quietly.
+    return (
+      <Fragment key={message.id ?? index}>
+        {daySeparator}
+        {unreadSeparator}
+        <div
+          role="status"
+          data-testid="chat-system-line"
+          data-voice="assistant"
+          data-message-id={messageId || undefined}
+          className="flex items-start gap-2 px-2 py-1 text-xs"
+        >
+          <span className="mt-0.5 flex w-5 shrink-0 justify-center">{mark}</span>
+          <div
+            data-testid="chat-assistant-notice"
+            className={cn(
+              'min-w-0 max-w-[30rem] break-words rounded-xl border px-2.5 py-1',
+              tone === 'dark' ? 'border-accent/40 bg-accent/20 text-white/80' : 'border-accent-callout-border bg-accent-callout text-text-secondary',
+            )}
+          >
+            {hostSystemLine}
+          </div>
+        </div>
+      </Fragment>
+    );
+  }
+
   if (hostSystemLine != null) {
     return (
       <Fragment key={message.id ?? index}>
@@ -2432,6 +2487,7 @@ export function ChatPanel({
     <div
       data-testid="chat-message"
       data-message-id={messageId || undefined}
+      data-voice={assistantRow ? 'assistant' : undefined}
       data-continues={continues ? 'true' : undefined}
       // A continued row drops the whole meta line, timestamp included, so the
       // native tooltip is where its time went. The full local
@@ -2467,6 +2523,8 @@ export function ChatPanel({
         timestamp={continues ? '' : message.timestamp}
         editedAt={isDeleted ? undefined : message.editedAt}
         avatarUrl={message.avatarUrl}
+        assistant={assistantRow}
+        avatar={assistantRow ? mark : undefined}
         // The avatar slot keeps its width when hidden, so a continued line
         // starts under the first row's text rather than under its avatar.
         hideAvatar={continues}

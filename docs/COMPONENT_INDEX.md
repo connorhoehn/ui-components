@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-999 components across 21 entry points; 851 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1000 components across 21 entry points; 852 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -54,7 +54,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Forms](#forms) (30)
 - [Buttons & actions](#buttons--actions) (19)
 - [Feedback & states](#feedback--states) (27)
-- [Chat & social](#chat--social) (109)
+- [Chat & social](#chat--social) (110)
 - [Video](#video) (111)
 - [Docs & editor](#docs--editor) (138)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
@@ -334,6 +334,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `AgentComposerDock` | `@connorhoehn/ui-components` | — |  |  |
 | `AgentComposerDock` | `@connorhoehn/ui-components/social/rich-composer` | The agent composer a page docks under its content: the Initiative Work page's composer, as one composite. | `social-agentcomposerdock` | deprecated |
 | `AgentRunCard` | `@connorhoehn/ui-components/social` | A "/doc …" command in the thread, and what became of it. | `social-agentruncard-agent-loop` |  |
+| `AssistantMark` | `@connorhoehn/ui-components/social` | The small square an assistant wears in a thread, where a person has their initials or photo. |  |  |
 | `AttachmentBubble` | `@connorhoehn/ui-components/social` | — |  |  |
 | `Avatar` | `@connorhoehn/ui-components/shared` | — | `shared-avatar` |  |
 | `AvatarGroup` | `@connorhoehn/ui-components/shared` | — |  |  |

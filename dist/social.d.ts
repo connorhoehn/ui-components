@@ -383,6 +383,18 @@ export declare const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[];
  */
 export declare function arrangeRailSections(defaultOrder: readonly string[], stored: readonly string[] | null | undefined): string[];
 
+export declare function AssistantMark({ icon, size, label, className }: AssistantMarkProps): JSX.Element;
+
+export declare interface AssistantMarkProps {
+    /** The glyph inside the square. Default: the bot glyph. */
+    icon?: ReactNode;
+    /** Edge length in px. Default 20, the chat row's avatar size. */
+    size?: 16 | 20 | 24 | 32;
+    /** Spoken name; omit when the author's name is printed beside the mark. */
+    label?: string;
+    className?: string;
+}
+
 export declare function AttachmentBubble({ attachment, src, onOpen, className }: AttachmentBubbleProps): JSX.Element;
 
 export declare interface AttachmentBubbleProps {
@@ -1059,7 +1071,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, postRhythm, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, renderSystemMessage, renderMessageBody, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, postRhythm, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, renderSystemMessage, renderMessageBody, isAssistantMessage, assistantMark, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1294,6 +1306,20 @@ export declare interface ChatPanelProps {
      * the built-in body. Not asked of deleted messages.
      */
     renderMessageBody?: (message: ChatMessage) => ReactNode | null;
+    /**
+     * Which messages an assistant wrote (a bot that speaks in the thread).
+     * Each such row takes the assistant look, so all of its output reads as
+     * one voice, apart from people's: `assistantMark` in the avatar slot, the
+     * author name in the accent ink, and its text on the accent-tinted
+     * surface (`MessageRow` `assistant`). A `renderSystemMessage` line for one
+     * of them is laid out at the start under the same mark, in a muted tinted
+     * pill, instead of centred grey text. A `renderMessageBody` card is drawn
+     * as given; put it on the same surface with `<Card tone="assistant">`.
+     * Since 2.527.0.
+     */
+    isAssistantMessage?: (message: ChatMessage) => boolean;
+    /** The assistant's mark in the avatar slot. Default `<AssistantMark />` (the bot glyph on the accent tint). Since 2.527.0. */
+    assistantMark?: ReactNode;
     /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without
@@ -3261,7 +3287,7 @@ export declare interface MessageReaction {
     displayName?: string;
 }
 
-export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, actions, actionsLayout, tone, editedAt, contentLayout, className, }: MessageRowProps): JSX.Element;
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, actions, actionsLayout, tone, editedAt, contentLayout, assistant, avatar, className, }: MessageRowProps): JSX.Element;
 
 export declare interface MessageRowProps {
     /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -3330,6 +3356,16 @@ export declare interface MessageRowProps {
      * cap shrinks the card to fit.
      */
     contentLayout?: 'inline' | 'block';
+    /**
+     * An assistant wrote this row (a bot that speaks in the thread). Its words
+     * read as one voice, apart from people's: the author name takes the accent
+     * ink and inline text sits on the accent-tinted surface, at the left like
+     * any incoming message. A `'block'` body (a card) is drawn as given; give
+     * the card the same surface with `<Card tone="assistant">`. Since 2.527.0.
+     */
+    assistant?: boolean;
+    /** Replaces the initials avatar, e.g. an `<AssistantMark />`. Since 2.527.0. */
+    avatar?: ReactNode;
     className?: string;
 }
 

@@ -1758,6 +1758,20 @@ declare interface ChatPanelProps {
      */
     renderMessageBody?: (message: ChatMessage) => ReactNode | null;
     /**
+     * Which messages an assistant wrote (a bot that speaks in the thread).
+     * Each such row takes the assistant look, so all of its output reads as
+     * one voice, apart from people's: `assistantMark` in the avatar slot, the
+     * author name in the accent ink, and its text on the accent-tinted
+     * surface (`MessageRow` `assistant`). A `renderSystemMessage` line for one
+     * of them is laid out at the start under the same mark, in a muted tinted
+     * pill, instead of centred grey text. A `renderMessageBody` card is drawn
+     * as given; put it on the same surface with `<Card tone="assistant">`.
+     * Since 2.527.0.
+     */
+    isAssistantMessage?: (message: ChatMessage) => boolean;
+    /** The assistant's mark in the avatar slot. Default `<AssistantMark />` (the bot glyph on the accent tint). Since 2.527.0. */
+    assistantMark?: ReactNode;
+    /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without
      * it a jump scrolls and leaves you to guess. The caller clears it; the
@@ -4722,7 +4736,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, renderSystemMessage, renderMessageBody, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, postRhythm, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, renderSystemMessage, renderMessageBody, isAssistantMessage, assistantMark, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, postRhythm, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -4847,6 +4861,8 @@ export declare interface WrappedChatPanelProps {
     renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
     renderSystemMessage?: ChatPanelProps['renderSystemMessage'];
     renderMessageBody?: ChatPanelProps['renderMessageBody'];
+    isAssistantMessage?: ChatPanelProps['isAssistantMessage'];
+    assistantMark?: ChatPanelProps['assistantMark'];
     /**
      * Last word on the thread's messages after they are adapted (2.477.0): a
      * host merges its own entries in, e.g. a meeting's announcements with

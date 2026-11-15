@@ -18,6 +18,8 @@ export { DaySeparator } from './DaySeparator';
 export type { DaySeparatorProps } from './DaySeparator';
 export { dayKeyOf, dayLabel, isNewDay, fullDateLabel, fullTimestampLabel, conversationStamp } from './dayBoundary';
 export type { MessageRowProps } from './MessageRow';
+export { AssistantMark } from './AssistantMark';
+export type { AssistantMarkProps } from './AssistantMark';
 export { MessageGroup } from './MessageGroup';
 export type { MessageGroupProps, MessageGroupItem } from './MessageGroup';
 export { ChatRoom } from './ChatRoom';

@@ -8,7 +8,7 @@ import { n as x, t as S } from "./Stack-CE1FjEn8.js";
 import { n as C, t as w } from "./Text-XdCzxWMv.js";
 import { c as T } from "./usePromptContext-CUNhKC01.js";
 import { I as E, L as D, O, R as k, j as A } from "./GenerativeImagePreview-DFHC88GN.js";
-import { t as j } from "./Card-D4k-Buoz.js";
+import { t as j } from "./Card-D_qO7mT_.js";
 import { a as M, i as N, n as P, o as F, r as I, t as L } from "./Table-DIDqq2Q1.js";
 import { t as ee } from "./PageSection-CXvor0c6.js";
 import { t as R } from "./IconButton-BgM9MvwA.js";
@@ -20,7 +20,7 @@ import { t as je } from "./Banner-DPR4sIxI.js";
 import "./Chart-DlsE1y7i.js";
 import { t as Me } from "./overlayStack-BFH9XXvN.js";
 import { t as Ne } from "./Modal-C88cabjQ.js";
-import { i as Pe, t as Fe } from "./WorkflowStepper-B6rZO5mk.js";
+import { i as Pe, t as Fe } from "./WorkflowStepper-C_7EiWrQ.js";
 import { t as Ie } from "./ConfirmDialog-DaIkb8ho.js";
 import { t as Le } from "./Input-DiOEvL5h.js";
 import { n as Re, t as ze } from "./Select-CDxAVVnW.js";
@@ -60,9 +60,9 @@ import { t as Et } from "./InlineAlert-Cpf1ooBU.js";
 import "./CardHeader-DDkwr0A5.js";
 import { t as Dt } from "./Breadcrumbs-D2qqIALK.js";
 import { a as Ot, d as kt, f as At, o as jt, p as Mt, t as Nt, u as Pt } from "./PageHeader-ChMX4BhO.js";
-import { $ as Ft, Q as It, et as Lt, t as Rt } from "./ChatPanel-n5eGdypv.js";
+import { $ as Ft, et as It, t as Lt, tt as Rt } from "./ChatPanel-PnUhfWTe.js";
 import { c as zt } from "./SidebarRow-DwF1_Mii.js";
-import "./LogStream-WjbAlUsk.js";
+import "./LogStream-JVBHHVz9.js";
 import "./RisingParticles-BkeXugHs.js";
 import "./backdropTone-DokCqPDL.js";
 import { t as Bt } from "./canvasPaneInset-D2oCiCnp.js";
@@ -70,7 +70,7 @@ import "./FollowUpChips-DiWiWsSm.js";
 import { t as Vt } from "./PresenceAvatars-Dw8HVI_h.js";
 import "./FileUploadDrop-Da3teuhw.js";
 import { t as Ht } from "./ActivityFeed-BkwPJ1hJ.js";
-import { i as Ut, n as Wt, r as Gt, s as Kt, t as qt } from "./ActivityPanel-BkTs0I_Y.js";
+import { i as Ut, n as Wt, r as Gt, s as Kt, t as qt } from "./ActivityPanel-Do3S1whQ.js";
 import { t as Jt } from "./useMeasuredWidth-eJuNMFY2.js";
 import "./SectionLabel-B60gea5o.js";
 import "./InlinePlaceholder-CKUJyqFh.js";
@@ -10606,7 +10606,7 @@ function Il({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 				className: "pointer-events-none absolute left-2 top-2 max-w-[calc(100%-1rem)]",
 				children: T
 			}),
-			S && /* @__PURE__ */ Z(Lt, {
+			S && /* @__PURE__ */ Z(Rt, {
 				label: `${e.title} actions`,
 				actions: s,
 				"data-testid": `gallery-tile-actions-${e.id}`,
@@ -11174,7 +11174,7 @@ function cu({ connectionState: e, onDisconnect: t, onReconnect: n, onCollapse: r
 					}), /* @__PURE__ */ Q("div", {
 						className: "flex flex-col gap-0.5",
 						children: [a.map((e) => {
-							let t = e.metadata.displayName ?? e.clientId.slice(0, 8), n = e.clientId === o, r = It(e.metadata.email ?? e.clientId), a = Ft(t);
+							let t = e.metadata.displayName ?? e.clientId.slice(0, 8), n = e.clientId === o, r = Ft(e.metadata.email ?? e.clientId), a = It(t);
 							return /* @__PURE__ */ Q("div", {
 								"data-testid": "presence-avatar",
 								"data-presence-user": t,
@@ -15534,7 +15534,7 @@ function Pf({ cursors: e, localCursor: t, onMouseMove: n, width: r = 600, height
 				});
 			})(),
 			Array.from(e.values()).map((e) => {
-				let t = e.position.x, n = e.position.y, r = It(e.metadata.displayName ?? e.clientId), i = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2));
+				let t = e.position.x, n = e.position.y, r = Ft(e.metadata.displayName ?? e.clientId), i = It(e.metadata.displayName ?? e.clientId.slice(0, 2));
 				return /* @__PURE__ */ Z("div", {
 					className: "absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-md z-10 pointer-events-none select-none",
 					style: {
@@ -15591,7 +15591,7 @@ function Lf({ cursors: e, localCursor: t, onCellClick: n }) {
 						className: "absolute -top-2.5 right-0 text-[10px] bg-info text-white px-1 py-px rounded-[3px] pointer-events-none z-[19] whitespace-nowrap",
 						children: "You"
 					})] }), s.map((e, t) => {
-						let n = It(e.metadata.displayName ?? e.clientId), r = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2)), i = 3 - Math.min(t, 1);
+						let n = Ft(e.metadata.displayName ?? e.clientId), r = It(e.metadata.displayName ?? e.clientId.slice(0, 2)), i = 3 - Math.min(t, 1);
 						return /* @__PURE__ */ Q("div", { children: [/* @__PURE__ */ Z("div", {
 							className: "absolute inset-0 rounded pointer-events-none",
 							style: {
@@ -15684,7 +15684,7 @@ function Hf({ cursors: e, localCursor: t, onPositionChange: n }) {
 	let c = [], l = [];
 	e.forEach((e) => {
 		if (e.metadata.mode !== "text") return;
-		let t = It(e.metadata.displayName ?? e.clientId), n = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2)), r = e.position;
+		let t = Ft(e.metadata.displayName ?? e.clientId), n = It(e.metadata.displayName ?? e.clientId.slice(0, 2)), r = e.position;
 		r.position != null && c.push({
 			cursor: e,
 			position: r.position,
@@ -15926,7 +15926,7 @@ function Kf({ cursors: e, localCursor: t, onMouseMove: n, width: r = 600, height
 				});
 			})(),
 			v.map((e) => {
-				let t = e.position.x, n = e.position.y, r = It(e.metadata.displayName ?? e.clientId), i = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2)), a = e.metadata.tool ?? "brush", o = e.metadata.size ?? 5;
+				let t = e.position.x, n = e.position.y, r = Ft(e.metadata.displayName ?? e.clientId), i = It(e.metadata.displayName ?? e.clientId.slice(0, 2)), a = e.metadata.tool ?? "brush", o = e.metadata.size ?? 5;
 				return /* @__PURE__ */ Z(qf, {
 					x: t,
 					y: n,
@@ -16139,7 +16139,7 @@ function Qf({ connectionState: e, onReact: t, chatMessages: n, onChatSend: r, cu
 			children: [/* @__PURE__ */ Z("p", {
 				className: "text-xs font-semibold uppercase tracking-wide text-text-secondary m-0 mb-3",
 				children: "Chat"
-			}), /* @__PURE__ */ Z(Rt, {
+			}), /* @__PURE__ */ Z(Lt, {
 				messages: n,
 				onSend: r,
 				disabled: e !== "connected",

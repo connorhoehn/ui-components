@@ -20,16 +20,16 @@ import { t as x } from "./SkeletonCard-BryltcC7.js";
 import { t as S } from "./Switch-CRiY_kzy.js";
 import { t as C } from "./Textarea-Cf4WFXAs.js";
 import { t as w } from "./InlineAlert-Cpf1ooBU.js";
-import { $ as T, Q as E, t as D } from "./ChatPanel-n5eGdypv.js";
+import { $ as T, et as E, t as D } from "./ChatPanel-PnUhfWTe.js";
 import { c as O, i as k, n as A, o as j, s as M, t as N } from "./SidebarRow-DwF1_Mii.js";
 import { t as P } from "./PresenceAvatars-Dw8HVI_h.js";
 import { t as ee } from "./FileUploadDrop-Da3teuhw.js";
-import { t as F } from "./ActivityFeed-BkwPJ1hJ.js";
-import { t as te } from "./ReactionsOverlay-XR_TNH6f.js";
-import { d as ne, n as re, t as I, u as ie } from "./ConversationSurface-CDRV7wMW.js";
-import { $ as L, A as R, E as ae, H as oe, T as z, Y as B, Z as V, _ as se, i as ce, n as le, s as ue, t as de, w as fe, x as H, y as pe } from "./BreakoutRoomsPanel-DFI0aXXk.js";
-import { t as me } from "./useActiveSpeaker-BGKJU3Lb.js";
-import { c as he, o as ge, s as _e } from "./useDocumentImageUpload-CzkKVL2u.js";
+import { t as te } from "./ActivityFeed-BkwPJ1hJ.js";
+import { t as ne } from "./ReactionsOverlay-XR_TNH6f.js";
+import { d as F, n as re, t as I, u as ie } from "./ConversationSurface-8ivhjWw0.js";
+import { $ as L, A as R, E as ae, H as oe, T as se, Y as z, Z as ce, _ as le, i as ue, n as de, s as fe, t as pe, w as me, x as B, y as V } from "./BreakoutRoomsPanel-DFI0aXXk.js";
+import { t as he } from "./useActiveSpeaker-BGKJU3Lb.js";
+import { c as ge, o as H, s as _e } from "./useDocumentImageUpload-CzkKVL2u.js";
 import { Component as ve, createContext as ye, createElement as be, useCallback as U, useContext as xe, useEffect as W, useId as Se, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 import * as Ce from "yjs";
@@ -105,20 +105,20 @@ function Te(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoom
 }
 //#endregion
 //#region src/integrations/realtime-modules/NewHangoutRoomDialog.tsx
-var Ee = 3, Z = 48;
-function De(e) {
+var Ee = 3, De = 48;
+function Oe(e) {
 	return e.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
 }
-function Oe(e) {
+function Z(e) {
 	let t = e.trim();
-	return t.length === 0 ? "Name is required." : t.length < Ee ? `Name must be at least ${Ee} characters.` : t.length > Z ? `Name must be at most ${Z} characters.` : null;
+	return t.length === 0 ? "Name is required." : t.length < Ee ? `Name must be at least ${Ee} characters.` : t.length > De ? `Name must be at most ${De} characters.` : null;
 }
 function ke({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility: a, title: o = "New room", submitLabel: s = "Create room" }) {
 	let c = Se(), [l, u] = q(""), [d, p] = q(""), [g, _] = q(!1), [v, y] = q(!1), [b, x] = q(!1), [T, E] = q(null);
 	W(() => {
 		e && (u(""), p(""), _(!1), y(!1), x(!1), E(null));
 	}, [e]);
-	let D = G(() => Oe(l), [l]), O = G(() => De(l), [l]), k = !D && !b;
+	let D = G(() => Z(l), [l]), O = G(() => Oe(l), [l]), k = !D && !b;
 	async function A(e) {
 		if (e.preventDefault(), k) {
 			x(!0), E(null);
@@ -326,7 +326,7 @@ function je(e, { rooms: n, occupancyFor: r, occupancyAdapter: i, participantId: 
 		"data-testid": "rooms-section",
 		"data-collapsed": m ? "true" : "false",
 		className: "flex flex-col",
-		children: [/* @__PURE__ */ Y(ne, {
+		children: [/* @__PURE__ */ Y(F, {
 			label: f,
 			presentational: !1,
 			collapsed: m,
@@ -410,7 +410,7 @@ function Ne({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i,
 		children: [/* @__PURE__ */ Y("div", {
 			className: "opacity-60 pointer-events-none",
 			children: n
-		}), /* @__PURE__ */ Y(fe, {
+		}), /* @__PURE__ */ Y(me, {
 			show: !0,
 			label: i
 		})]
@@ -582,7 +582,7 @@ function Je(e, { channelArn: t, excludeParticipantId: n, getAuthToken: r, baseUr
 		c,
 		s.error,
 		a
-	]), /* @__PURE__ */ Y(ue, {
+	]), /* @__PURE__ */ Y(fe, {
 		...o,
 		live: c,
 		stream: s.stream,
@@ -605,7 +605,7 @@ function Ye(e, { channelArn: t, playbackToken: n, baseUrl: r, onStatusChange: i,
 			live: o.ready,
 			error: null
 		});
-	}, [o.ready, i]), /* @__PURE__ */ Y(ue, {
+	}, [o.ready, i]), /* @__PURE__ */ Y(fe, {
 		...a,
 		live: o.ready,
 		playlistUrl: o.playlistUrl,
@@ -648,7 +648,7 @@ function Qe(e, t) {
 	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ Y(Ze, {
 		stream: i,
 		displayName: r
-	}) : /* @__PURE__ */ Y(z, {
+	}) : /* @__PURE__ */ Y(se, {
 		stream: i,
 		displayName: r,
 		cameraOn: e.hasVideo
@@ -857,9 +857,9 @@ function mt(e) {
 			ws: k,
 			onMessage: k.onMessage,
 			onUnpersistedChanges: A.retain
-		}), M = e.useCanvasDocument({ ydoc: j.ydoc }), N = k.connectionState === "connected", P = u && d && j.synced && N, F = K(P);
-		F.current = P;
-		let [te, ne] = q(!1), [re, I] = q(null), [ie, L] = q(!1), [R, ae] = q(!1), [oe, z] = q(null), B = K(null), V = G(() => ({
+		}), M = e.useCanvasDocument({ ydoc: j.ydoc }), N = k.connectionState === "connected", P = u && d && j.synced && N, te = K(P);
+		te.current = P;
+		let [ne, F] = q(!1), [re, I] = q(null), [ie, L] = q(!1), [R, ae] = q(!1), [oe, se] = q(null), z = K(null), ce = G(() => ({
 			name: c,
 			color: l
 		}), [c, l]);
@@ -877,12 +877,12 @@ function mt(e) {
 			b?.(j.pendingUpdateCount);
 		}, [j.pendingUpdateCount, b]), W(() => {
 			j.provider?.awareness.setLocalStateField("user", {
-				...V,
+				...ce,
 				id: s
 			});
 		}, [
 			j.provider,
-			V,
+			ce,
 			s
 		]), W(() => {
 			if (j.pendingUpdateCount === 0) return;
@@ -893,24 +893,24 @@ function mt(e) {
 		}, [j.pendingUpdateCount]), W(() => k.onMessage((e) => {
 			e.channel === `doc:${a}` && (e.type === "crdt:error" && I(typeof e.error == "string" ? e.error : "The document operation was refused."), e.type === "crdt:snapshot" && I(null));
 		}), [k.onMessage, a]);
-		let se = async (e) => {
-			let t = B.current;
-			if (!(!y || !t || t.isDestroyed || !F.current || R)) {
-				ae(!0), z(null);
+		let le = async (e) => {
+			let t = z.current;
+			if (!(!y || !t || t.isDestroyed || !te.current || R)) {
+				ae(!0), se(null);
 				try {
 					let n = await y(e);
-					if (B.current !== t || t.isDestroyed || !F.current) throw Error("The document is no longer editable. The image was not inserted.");
+					if (z.current !== t || t.isDestroyed || !te.current) throw Error("The document is no longer editable. The image was not inserted.");
 					t.chain().focus().setImage({
 						src: n,
 						alt: e.name
 					}).run(), L(!1);
 				} catch (e) {
-					z(e instanceof Error ? e.message : "The image could not be uploaded.");
+					se(e instanceof Error ? e.message : "The image could not be uploaded.");
 				} finally {
 					ae(!1);
 				}
 			}
-		}, ce = dt(j.persistenceState, j.pendingUpdateCount, N, j.retryPersistence), le = {
+		}, ue = dt(j.persistenceState, j.pendingUpdateCount, N, j.retryPersistence), de = {
 			editable: P,
 			online: N,
 			synced: j.synced,
@@ -919,7 +919,7 @@ function mt(e) {
 			docVersion: j.docVersion,
 			ydoc: j.ydoc,
 			exportMarkdown: M.exportMarkdown
-		}, ue = /* @__PURE__ */ X(J, { children: [
+		}, fe = /* @__PURE__ */ X(J, { children: [
 			x,
 			A.recovered && /* @__PURE__ */ Y(w, {
 				tone: "warning",
@@ -939,7 +939,7 @@ function mt(e) {
 								size: "sm",
 								variant: "secondary",
 								disabled: !j.synced || !N || j.pendingUpdateCount > 0,
-								onClick: () => ne(!0),
+								onClick: () => F(!0),
 								children: "Recover changes…"
 							}),
 							/* @__PURE__ */ Y(t, {
@@ -969,17 +969,17 @@ function mt(e) {
 				tone: "error",
 				children: re
 			})
-		] }), de = j.synced && !!j.ydoc && !!M.body, fe = /* @__PURE__ */ X(J, { children: [
+		] }), pe = j.synced && !!j.ydoc && !!M.body, me = /* @__PURE__ */ X(J, { children: [
 			S,
 			/* @__PURE__ */ Y(p, {
-				open: te,
-				onCancel: () => ne(!1),
+				open: ne,
+				onCancel: () => F(!1),
 				title: "Recover earlier changes?",
 				tone: "caution",
 				body: "This explicitly merges the recovered document with the current version. It can bring back content removed by a version restore. Download the recovery first if you want to keep a separate copy.",
 				confirmLabel: "Recover changes",
 				onConfirm: () => {
-					j.ydoc && u && N && j.pendingUpdateCount === 0 && A.restore(j.ydoc), ne(!1);
+					j.ydoc && u && N && j.pendingUpdateCount === 0 && A.restore(j.ydoc), F(!1);
 				}
 			}),
 			y && /* @__PURE__ */ Y(f, {
@@ -999,28 +999,28 @@ function mt(e) {
 						disabled: R || !P,
 						label: R ? "Uploading image…" : "Choose an image or drop it here",
 						onFiles: (e) => {
-							e[0] && se(e[0]);
+							e[0] && le(e[0]);
 						}
 					})]
 				})
 			})
-		] }), H = (e, t = null, n = null) => D ? D({
-			notices: ue,
+		] }), B = (e, t = null, n = null) => D ? D({
+			notices: fe,
 			canvas: e,
 			toolbar: t,
 			ruler: n,
-			saveState: ce,
-			state: le
-		}) : /* @__PURE__ */ X(J, { children: [ue, e] });
-		if (!de) return H(/* @__PURE__ */ Y(v, { label: E }));
-		if (!M.isCanvas) return H(/* @__PURE__ */ Y(_, {
+			saveState: ue,
+			state: de
+		}) : /* @__PURE__ */ X(J, { children: [fe, e] });
+		if (!pe) return B(/* @__PURE__ */ Y(v, { label: E }));
+		if (!M.isCanvas) return B(/* @__PURE__ */ Y(_, {
 			title: "Document migration is incomplete",
 			body: "The server has not supplied a rich document snapshot. No changes have been made."
 		}));
-		let pe = (e) => /* @__PURE__ */ X(ge, {
+		let V = (e) => /* @__PURE__ */ X(H, {
 			loadImage: h,
 			...g ? { requiresAuthentication: g } : {},
-			children: [/* @__PURE__ */ be(he, {
+			children: [/* @__PURE__ */ be(ge, {
 				...pt,
 				...C,
 				key: j.docVersion,
@@ -1028,28 +1028,28 @@ function mt(e) {
 				body: M.body,
 				ydoc: j.ydoc,
 				provider: j.provider,
-				user: V,
+				user: ce,
 				editable: P,
 				extensions: m,
 				...y && P ? { onInsertImage: () => {
-					z(null), L(!0);
+					se(null), L(!0);
 				} } : {},
 				...e ? { renderFrame: ({ toolbar: t, ruler: n, surface: r }) => e(t, n, r) } : {},
 				onEditorReady: (e) => {
-					B.current = e, T?.(e);
+					z.current = e, T?.(e);
 				}
-			}), fe]
+			}), me]
 		});
-		return D ? pe((e, t, n) => H(/* @__PURE__ */ Y(r, {
+		return D ? V((e, t, n) => B(/* @__PURE__ */ Y(r, {
 			gap: "none",
 			className: "min-h-0 flex-1",
 			"data-testid": "document-canvas-slot",
 			children: n
-		}), e, t)) : H(/* @__PURE__ */ Y(r, {
+		}), e, t)) : B(/* @__PURE__ */ Y(r, {
 			gap: "none",
 			className: "min-h-0 flex-1",
 			"data-testid": "document-canvas-slot",
-			children: pe()
+			children: V()
 		}));
 	};
 }
@@ -1108,7 +1108,7 @@ function xt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 	W(() => {
 		O || A(null);
 	}, [O]);
-	let j = e.useAudioVideoSettings({ preview: E }), { activeSpeakerId: M } = me({ participants: bt(t.call) }), N = e.conversationCallDockProps(t, {
+	let j = e.useAudioVideoSettings({ preview: E }), { activeSpeakerId: M } = he({ participants: bt(t.call) }), N = e.conversationCallDockProps(t, {
 		title: n,
 		onOpenPeople: r,
 		...i === void 0 ? {} : { peopleOpen: i },
@@ -1159,12 +1159,12 @@ function xt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 			onDismiss: () => A(O),
 			children: [O, " You can keep listening. Check browser device access, then turn the device on to retry."]
 		}) : null,
-		/* @__PURE__ */ Y(H, { ...P }),
+		/* @__PURE__ */ Y(B, { ...P }),
 		!a && /* @__PURE__ */ Y(f, {
 			open: E,
 			onClose: () => D(!1),
 			title: "Call devices",
-			children: /* @__PURE__ */ Y(ce, {
+			children: /* @__PURE__ */ Y(ue, {
 				"data-testid": `${T}-settings`,
 				value: j.settings,
 				onChange: (e) => {
@@ -1516,10 +1516,10 @@ function Qt(e) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: O, hasMore: k, loadingMore: A, composer: j, renderMessageReferences: M, renderSystemMessage: N, renderMessageBody: P, transformMessages: ee, dock: F, emojis: te, onReply: ne, reply: re, onCancelReply: I, readReceipts: ie, readReceiptsEnabled: L, unreadFrom: R, threaded: ae, postRhythm: oe, onJumpToMessage: z, highlightedMessageId: B, documentEditors: V, callParticipants: se, onJoinCall: ce, onOpenDocument: le, wrapWithNetworkShim: ue, editable: de = !0, canEdit: fe, canDelete: H, onForwardMessage: pe }) {
-	let me = G(() => Dt(e.messages), [e.messages]), he = G(() => {
+function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: O, hasMore: k, loadingMore: A, composer: j, renderMessageReferences: M, renderSystemMessage: N, renderMessageBody: P, isAssistantMessage: ee, assistantMark: te, transformMessages: ne, dock: F, emojis: re, onReply: I, reply: ie, onCancelReply: L, readReceipts: R, readReceiptsEnabled: ae, unreadFrom: oe, threaded: se, postRhythm: z, onJumpToMessage: ce, highlightedMessageId: le, documentEditors: ue, callParticipants: de, onJoinCall: fe, onOpenDocument: pe, wrapWithNetworkShim: me, editable: B = !0, canEdit: V, canDelete: he, onForwardMessage: ge }) {
+	let H = G(() => Dt(e.messages), [e.messages]), _e = G(() => {
 		if (!t?.length) return [];
-		let e = new Set(me.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
+		let e = new Set(H.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
 		for (let i of t) if (i.body !== void 0) {
 			if (i.id) {
 				if (e.has(i.id) || n.has(i.id)) continue;
@@ -1537,44 +1537,44 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			});
 		}
 		return r;
-	}, [me, t]), ge = G(() => {
-		let e = me;
+	}, [H, t]), ve = G(() => {
+		let e = H;
 		if (!t?.length) return e;
 		let n = new Set(e.flatMap((e) => e.id ? [e.id] : [])), r = t.filter((e) => e.body === void 0 && (!e.id || !n.has(e.id)));
 		return r.length === 0 ? e : [...e, ...r].map((e, t) => ({
 			m: e,
 			i: t
 		})).sort((e, t) => Date.parse(e.m.timestamp) - Date.parse(t.m.timestamp) || e.i - t.i).map(({ m: e }) => e);
-	}, [me, t]), _e = v ?? n?.roster.filter((e) => {
+	}, [H, t]), ye = v ?? n?.roster.filter((e) => {
 		if (e.metadata?.isTyping !== !0) return !1;
 		let t = e.metadata?.userId;
 		return s && typeof t == "string" ? t !== s : !o || e.clientId !== o;
-	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], ve = e.sendMessage, ye = U((e) => {
+	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], be = e.sendMessage, xe = U((e) => {
 		let t = { ...u ?? {} };
-		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? ve(e, t) : ve(e);
+		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? be(e, t) : be(e);
 	}, [
-		ve,
+		be,
 		u,
 		c,
 		l
-	]), be = n?.updateMetadata, xe = (d ?? !0) && !!be, Se = U((e) => be?.({ isTyping: e }), [be]), X = e.loadHistory, [Ce, we] = q(T), [Te, Ee] = q(!1), Z = e.messages.length, De = K(Z);
+	]), Se = n?.updateMetadata, X = (d ?? !0) && !!Se, Ce = U((e) => Se?.({ isTyping: e }), [Se]), we = e.loadHistory, [Te, Ee] = q(T), [De, Oe] = q(!1), Z = e.messages.length, ke = K(Z);
 	W(() => {
-		Z !== De.current && (De.current = Z, Ee(!1));
+		Z !== ke.current && (ke.current = Z, Oe(!1));
 	}, [Z]);
-	let Oe = K(Ce);
-	Oe.current = Ce;
-	let ke = U(() => {
-		let e = Oe.current + E;
-		Oe.current = e, we(e), Ee(!0), X(e);
-	}, [X, E]), Ae = O ? {
+	let Ae = K(Te);
+	Ae.current = Te;
+	let je = U(() => {
+		let e = Ae.current + E;
+		Ae.current = e, Ee(e), Oe(!0), we(e);
+	}, [we, E]), Me = O ? {
 		onLoadMore: O,
 		hasMore: k,
 		loadingMore: A
 	} : w ? {
-		onLoadMore: ke,
-		hasMore: k ?? Z >= Ce,
-		loadingMore: A ?? Te
-	} : {}, je = G(() => i ? (e) => Lt(i, e) : void 0, [i]), Me = G(() => {
+		onLoadMore: je,
+		hasMore: k ?? Z >= Te,
+		loadingMore: A ?? De
+	} : {}, Ne = G(() => i ? (e) => Lt(i, e) : void 0, [i]), Fe = G(() => {
 		if (!i || !s) return;
 		let { toggle: e, react: t, unreact: n } = i;
 		return e ? (t, n) => e(n, {
@@ -1583,7 +1583,7 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		}) : (e, r) => {
 			Lt(i, e).some((e) => e.emoji === r && e.userId === s) && n ? n(r, { targetId: e }) : t(r, { targetId: e });
 		};
-	}, [i, s]), Ne = U((e) => {
+	}, [i, s]), Ie = U((e) => {
 		if (!a) return;
 		let t = e.id ?? "";
 		t && (a.pinnedIds.has(t) ? a.unpin(t) : a.pin({
@@ -1591,29 +1591,29 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			text: e.content,
 			author: e.displayName ?? "Unknown"
 		}));
-	}, [a]), Fe = e.editMessage, Ie = e.deleteMessage, Q = U((e, t) => {
+	}, [a]), Q = e.editMessage, Le = e.deleteMessage, Re = U((e, t) => {
 		let n = t.trim();
 		if (!e.id || !n) return;
 		let r = `<p>${n.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</p>`;
-		Fe?.(e.id, n, { html: r });
-	}, [Fe]), Le = U((e) => {
-		e.id && Ie?.(e.id);
-	}, [Ie]), Re = /* @__PURE__ */ Y(D, {
-		messages: ee ? ee(ge) : ge,
-		...he.length ? { localMessages: he } : {},
+		Q?.(e.id, n, { html: r });
+	}, [Q]), ze = U((e) => {
+		e.id && Le?.(e.id);
+	}, [Le]), Be = /* @__PURE__ */ Y(D, {
+		messages: ne ? ne(ve) : ve,
+		..._e.length ? { localMessages: _e } : {},
 		...F === void 0 ? {} : { dock: F },
-		onSend: ye,
+		onSend: xe,
 		disabled: _,
-		typingUsers: _e,
+		typingUsers: ye,
 		tone: y,
 		fill: b,
 		flushComposer: x,
 		contentAlign: S,
 		showHeader: C,
 		composer: j,
-		emojis: te,
-		...Ae,
-		...xe ? { onTyping: Se } : {},
+		emojis: re,
+		...Me,
+		...X ? { onTyping: Ce } : {},
 		...r ? {
 			onSendFiles: (e) => {
 				for (let t of e) r.upload(t);
@@ -1623,45 +1623,47 @@ function $t({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		} : {},
 		currentActor: o,
 		currentUserId: s,
-		reactionsFor: je,
-		onToggleReaction: Me,
+		reactionsFor: Ne,
+		onToggleReaction: Fe,
 		...a ? {
 			pinnedMessageIds: a.pinnedIds,
-			onTogglePin: Ne
+			onTogglePin: Ie
 		} : {},
-		...de && Fe ? {
-			onEditMessage: Q,
-			...fe ? { canEditMessage: fe } : {}
+		...B && Q ? {
+			onEditMessage: Re,
+			...V ? { canEditMessage: V } : {}
 		} : {},
-		...de && Ie ? {
-			onDeleteMessage: Le,
-			...H ? { canDeleteMessage: H } : {}
+		...B && Le ? {
+			onDeleteMessage: ze,
+			...he ? { canDeleteMessage: he } : {}
 		} : {},
-		onForwardMessage: pe,
-		onReply: ne,
-		reply: re,
-		onCancelReply: I,
-		readReceipts: ie,
-		readReceiptsEnabled: L,
-		unreadFrom: R,
-		threaded: ae,
-		...oe ? { postRhythm: oe } : {},
-		onJumpToMessage: z,
-		highlightedMessageId: B,
-		documentEditors: V,
-		callParticipants: se,
-		onJoinCall: ce,
-		onOpenDocument: le,
+		onForwardMessage: ge,
+		onReply: I,
+		reply: ie,
+		onCancelReply: L,
+		readReceipts: R,
+		readReceiptsEnabled: ae,
+		unreadFrom: oe,
+		threaded: se,
+		...z ? { postRhythm: z } : {},
+		onJumpToMessage: ce,
+		highlightedMessageId: le,
+		documentEditors: ue,
+		callParticipants: de,
+		onJoinCall: fe,
+		onOpenDocument: pe,
 		renderMessageReferences: M,
 		renderSystemMessage: N,
 		renderMessageBody: P,
+		isAssistantMessage: ee,
+		assistantMark: te,
 		attachmentSrc: f,
 		onOpenAttachment: p,
 		acceptFiles: m,
 		maxFileSize: h,
 		onFileError: g
 	});
-	return /* @__PURE__ */ Y(J, { children: Pe(Re, ue) });
+	return /* @__PURE__ */ Y(J, { children: Pe(Be, me) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx
@@ -1722,7 +1724,7 @@ function on({ activity: e, mode: t = "ticker", lines: n = 50, visibleCount: r, r
 		l,
 		u
 	]);
-	return /* @__PURE__ */ Y(F, {
+	return /* @__PURE__ */ Y(te, {
 		items: d,
 		visibleCount: l ? Math.max(1, d.length) : r,
 		rotateMs: l ? 0 : i,
@@ -1755,7 +1757,7 @@ function sn({ cursors: t, coordinates: n = "pixels", onMove: r, children: i, cla
 			"data-testid": "cursor-overlay-layer",
 			children: t.map((e) => {
 				if (!Number.isFinite(e.x) || !Number.isFinite(e.y)) return null;
-				let t = e.label ?? e.clientId, n = e.color ?? E(t);
+				let t = e.label ?? e.clientId, n = e.color ?? T(t);
 				return /* @__PURE__ */ X("div", {
 					"data-testid": "cursor-overlay-pointer",
 					"data-client-id": e.clientId,
@@ -1781,7 +1783,7 @@ function sn({ cursors: t, coordinates: n = "pixels", onMove: r, children: i, cla
 						title: t,
 						className: "ml-3 -mt-1 inline-block max-w-[10rem] truncate rounded px-1.5 py-0.5 text-[10px] font-medium text-white shadow",
 						style: { background: n },
-						children: e.label ? e.label : T(e.clientId)
+						children: e.label ? e.label : E(e.clientId)
 					})]
 				}, e.clientId);
 			})
@@ -1818,7 +1820,7 @@ function ln({ reactions: e, ttlMs: t = 2500 }) {
 		return () => {
 			e.forEach((e) => clearTimeout(e)), e.clear();
 		};
-	}, []), /* @__PURE__ */ Y(te, { reactions: n });
+	}, []), /* @__PURE__ */ Y(ne, { reactions: n });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedFileUploadDrop.tsx
@@ -1953,7 +1955,7 @@ function _n({ capability: e, loading: t, fallback: n, children: r }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsTray.tsx
 function vn({ controller: e, ...t }) {
-	return /* @__PURE__ */ Y(pe, {
+	return /* @__PURE__ */ Y(V, {
 		filters: e.filters.map(({ id: e, label: t, cssFilter: n }) => ({
 			id: e,
 			label: t,
@@ -2010,7 +2012,7 @@ function yn({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 	}, u = () => {
 		o.current = !1;
 	};
-	return /* @__PURE__ */ Y(se, {
+	return /* @__PURE__ */ Y(le, {
 		...i,
 		previewActive: c !== null,
 		previewStream: s,
@@ -2074,7 +2076,7 @@ function xn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 		n,
 		r
 	]);
-	return /* @__PURE__ */ Y(he, {
+	return /* @__PURE__ */ Y(ge, {
 		...i,
 		isCanvas: e.isCanvas,
 		body: e.body,
@@ -2085,7 +2087,7 @@ function xn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedAudioVideoSettingsForm.tsx
 function Sn({ devices: e, settings: t, cameraOn: n, ...r }) {
-	return /* @__PURE__ */ Y(ce, {
+	return /* @__PURE__ */ Y(ue, {
 		...r,
 		value: t.settings,
 		onChange: (e) => t.update(e),
@@ -2153,7 +2155,7 @@ function Dn(e) {
 }
 function On({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 	let { rooms: a, unassigned: o } = En(e.breakout, t, e.hands), s = e.breakout;
-	return /* @__PURE__ */ Y(de, {
+	return /* @__PURE__ */ Y(pe, {
 		...i,
 		rooms: a,
 		phase: s.phase,
@@ -2195,7 +2197,7 @@ function On({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 function kn({ meeting: e, className: t }) {
 	if (!e.myRoom) return null;
 	let n = e.breakout;
-	return /* @__PURE__ */ Y(le, {
+	return /* @__PURE__ */ Y(de, {
 		roomName: e.myRoom.name,
 		endsAt: n.endsAt,
 		clockOffsetMs: e.clockOffsetMs,
@@ -2229,7 +2231,7 @@ function An(e, t) {
 		...r ? { react: {
 			id: "react",
 			label: "React",
-			icon: /* @__PURE__ */ Y(V, {}),
+			icon: /* @__PURE__ */ Y(ce, {}),
 			popoverLabel: "Send a reaction",
 			popover: (e) => /* @__PURE__ */ Y(oe, {
 				tone: "surface",
@@ -2243,7 +2245,7 @@ function An(e, t) {
 			id: "raise",
 			label: n ? "Lower" : "Raise",
 			title: n ? `Lower your hand (${e.myHandPosition} in line)` : "Raise your hand",
-			icon: /* @__PURE__ */ Y(B, {}),
+			icon: /* @__PURE__ */ Y(z, {}),
 			...e.myHandPosition === null ? {} : { count: e.myHandPosition },
 			pressed: n,
 			onClick: e.toggleHand,
@@ -2383,4 +2385,4 @@ function Fn(e, t) {
 	};
 }
 //#endregion
-export { ut as $, Ut as A, Zt as B, un as C, De as Ct, on as D, an as E, qt as F, Wt as G, Mt as H, Jt as I, St as J, wt as K, Yt as L, Et as M, Dt as N, rn as O, Kt as P, dt as Q, Lt as R, pn as S, ke as St, cn as T, Ft as U, At as V, It as W, mt as X, ht as Y, ft as Z, vn as _, Fe as _t, En as a, ot as at, hn as b, Me as bt, Cn as c, Ue as ct, Fn as d, Ge as dt, st as et, wn as f, Q as ft, bn as g, Ve as gt, yn as h, ze as ht, On as i, tt as it, Gt as j, $t as k, Tn as l, qe as lt, xn as m, Le as mt, Nn as n, ct as nt, Dn as o, $e as ot, Sn as p, He as pt, Ct as q, kn as r, at as rt, jn as s, Xe as st, Mn as t, lt as tt, An as u, We as ut, _n as v, Pe as vt, ln as w, we as wt, mn as x, Ae as xt, gn as y, Ne as yt, Xt as z };
+export { ut as $, Ut as A, Zt as B, un as C, Oe as Ct, on as D, an as E, qt as F, Wt as G, Mt as H, Jt as I, St as J, wt as K, Yt as L, Et as M, Dt as N, rn as O, Kt as P, dt as Q, Lt as R, pn as S, ke as St, cn as T, Ft as U, At as V, It as W, mt as X, ht as Y, ft as Z, vn as _, Fe as _t, En as a, ot as at, hn as b, Me as bt, Cn as c, Ue as ct, Fn as d, Ge as dt, st as et, wn as f, Q as ft, bn as g, Ve as gt, yn as h, ze as ht, On as i, tt as it, Gt as j, $t as k, Tn as l, qe as lt, xn as m, Le as mt, Nn as n, ct as nt, Dn as o, $e as ot, Sn as p, He as pt, Ct as q, kn as r, at as rt, jn as s, Xe as st, Mn as t, lt as tt, An as u, We as ut, _n as v, Pe as vt, ln as w, we as wt, mn as x, Ae as xt, gn as y, Ne as yt, Xt as z };
