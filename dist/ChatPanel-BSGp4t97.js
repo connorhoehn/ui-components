@@ -354,7 +354,7 @@ function _e({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a =
 					}),
 					/* @__PURE__ */ V("span", {
 						"data-testid": "message-row-content",
-						className: e("text-sm min-w-0 break-words whitespace-pre-wrap", v ? "text-white/90" : "text-text-primary", c && m === "inline" && "max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right", c && m === "inline" && (v ? "bg-white/15" : "bg-primary-bg"), h && !c && m === "inline" && "max-w-[85%] self-start rounded-lg rounded-tl-sm border px-3 py-1.5", h && !c && m === "inline" && (v ? "border-accent/40 bg-accent/20" : "border-accent-callout-border bg-accent-callout"), m === "block" && "w-full max-w-[30rem]"),
+						className: e("text-sm min-w-0 break-words whitespace-pre-wrap", v ? "text-white/90" : "text-text-primary", c && m === "inline" && "max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right", c && m === "inline" && (v ? "bg-white/15" : "bg-primary-bg"), h && !c && m === "inline" && "max-w-[85%] self-start rounded-lg rounded-tl-sm border px-3 py-1.5", h && !c && m === "inline" && (v ? "border-accent/40 bg-accent/20" : "border-accent/25 bg-accent/8"), m === "block" && "w-full max-w-[30rem]"),
 						children: n
 					}),
 					l && /* @__PURE__ */ V("div", {
@@ -2629,7 +2629,7 @@ function Xt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					children: ot
 				}), /* @__PURE__ */ V("div", {
 					"data-testid": "chat-assistant-notice",
-					className: e("min-w-0 max-w-[30rem] break-words rounded-xl border px-2.5 py-1", G === "dark" ? "border-accent/40 bg-accent/20 text-white/80" : "border-accent-callout-border bg-accent-callout text-text-secondary"),
+					className: e("min-w-0 max-w-[30rem] break-words rounded-xl border px-2.5 py-1", G === "dark" ? "border-accent/40 bg-accent/20 text-white/80" : "border-accent/25 bg-accent/8 text-text-secondary"),
 					children: Qe
 				})]
 			})

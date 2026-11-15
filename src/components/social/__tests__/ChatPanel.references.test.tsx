@@ -95,10 +95,10 @@ describe('ChatPanel assistant voice', () => {
     expect(reply.querySelector('[data-testid="assistant-mark"]')).not.toBeNull();
     expect(reply.querySelector('[data-testid="message-row-author"]')).toHaveTextContent('Nova');
     expect(reply.querySelector('[data-testid="message-row-author"]')?.className).toContain('text-accent-fg');
-    expect(reply.querySelector('[data-testid="message-row-content"]')?.className).toContain('bg-accent-callout');
+    expect(reply.querySelector('[data-testid="message-row-content"]')?.className).toContain('bg-accent/8');
     expect(person).not.toHaveAttribute('data-voice');
     expect(person.querySelector('[data-testid="assistant-mark"]')).toBeNull();
-    expect(person.querySelector('[data-testid="message-row-content"]')?.className).not.toContain('bg-accent-callout');
+    expect(person.querySelector('[data-testid="message-row-content"]')?.className).not.toContain('bg-accent/8');
   });
 
   it('a host system line for the assistant sits at the start under its mark in a tinted pill; a person-less line stays centred', () => {
@@ -134,7 +134,7 @@ describe('ChatPanel assistant voice', () => {
     expect(first.querySelector('[data-testid="message-row-author"]')).toHaveTextContent('Nova');
     // Two replies in a row still collapse into one run, and the second keeps the tinted surface.
     expect(second).toHaveAttribute('data-continues', 'true');
-    expect(second.querySelector('[data-testid="message-row-content"]')?.className).toContain('bg-accent-callout');
+    expect(second.querySelector('[data-testid="message-row-content"]')?.className).toContain('bg-accent/8');
   });
 
   it('a host body on an assistant row is drawn as given, without a bubble around it, and a custom mark replaces the default', () => {
@@ -150,7 +150,7 @@ describe('ChatPanel assistant voice', () => {
     const row = screen.getByTestId('chat-message');
     expect(row).toContainElement(screen.getByTestId('custom-mark'));
     expect(row.querySelector('[data-testid="assistant-mark"]')).toBeNull();
-    expect(row.querySelector('[data-testid="message-row-content"]')?.className).not.toContain('bg-accent-callout');
+    expect(row.querySelector('[data-testid="message-row-content"]')?.className).not.toContain('bg-accent/8');
   });
 
   it('is unchanged without isAssistantMessage', () => {

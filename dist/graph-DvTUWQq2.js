@@ -3,7 +3,7 @@ import { d as t, n, o as r } from "./Button-DQoeE5dN.js";
 import { g as i, m as a, p as o, r as s } from "./safeHref-CSAycLWi.js";
 import { n as c, t as l } from "./Stack-CE1FjEn8.js";
 import { n as u, t as d } from "./Text-XdCzxWMv.js";
-import { t as f } from "./Card-D_qO7mT_.js";
+import { t as f } from "./Card-j0qB4VOx.js";
 import { t as p } from "./IconButton-BgM9MvwA.js";
 import { Et as m, S as h, T as g, _t as _, c as v, d as y, f as b, h as x, j as S, k as C, m as w, nt as T, p as E, t as D, w as O } from "./Icons-CqVFbuiZ.js";
 import { t as k } from "./Input-DiOEvL5h.js";
@@ -24,7 +24,7 @@ import { t as U } from "./TitledFrame-DGQy0mBU.js";
 import { t as W } from "./StatusDot-DAok6F5B.js";
 import { t as ne } from "./InlineAlert-Cpf1ooBU.js";
 import { t as re } from "./CardHeader-DDkwr0A5.js";
-import { t as ie } from "./LogStream-JVBHHVz9.js";
+import { t as ie } from "./LogStream-DIt-Xde3.js";
 import { a as ae, o as oe, s as se } from "./backdropTone-DokCqPDL.js";
 import { a as ce, i as le, n as ue, o as de, r as fe, s as pe } from "./canvasPaneInset-D2oCiCnp.js";
 import { t as me } from "./useMeasuredWidth-eJuNMFY2.js";
@@ -3388,7 +3388,7 @@ function Jn({ node: e, artifact: r, selection: i, onSelectionChange: a, onOpen: 
 }
 //#endregion
 //#region src/components/graph/work/WorkComputePane.tsx
-var Yn = De(() => import("./ChatLabTerminal-C1bBVQNZ.js")), Xn = {
+var Yn = De(() => import("./ChatLabTerminal-CJ7UEFUN.js")), Xn = {
 	planning: {
 		label: "PLANNING",
 		pill: "info",

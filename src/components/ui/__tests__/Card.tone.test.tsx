@@ -15,8 +15,8 @@ describe('Card tone', () => {
     render(<Card data-testid="c" tone="assistant" padding="sm">x</Card>);
     const card = screen.getByTestId('c');
     expect(card).toHaveAttribute('data-tone', 'assistant');
-    expect(card.className).toContain('bg-accent-callout');
-    expect(card.className).toContain('border-accent-callout-border');
+    expect(card.className).toContain('bg-accent/8');
+    expect(card.className).toContain('border-accent/25');
     expect(card.className).not.toContain('bg-surface');
     expect(card.className).toContain('p-4');
   });

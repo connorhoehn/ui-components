@@ -2438,7 +2438,7 @@ export function ChatPanel({
             data-testid="chat-assistant-notice"
             className={cn(
               'min-w-0 max-w-[30rem] break-words rounded-xl border px-2.5 py-1',
-              tone === 'dark' ? 'border-accent/40 bg-accent/20 text-white/80' : 'border-accent-callout-border bg-accent-callout text-text-secondary',
+              tone === 'dark' ? 'border-accent/40 bg-accent/20 text-white/80' : 'border-accent/25 bg-accent/8 text-text-secondary',
             )}
           >
             {hostSystemLine}

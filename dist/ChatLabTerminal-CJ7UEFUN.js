@@ -1,4 +1,4 @@
-import { l as e, t } from "./ComputeContext-DD3Ng10N.js";
+import { l as e, t } from "./ComputeContext-BfEXhfGK.js";
 import { useMemo as n } from "react";
 import { jsx as r } from "react/jsx-runtime";
 //#region src/components/social/ChatLabTerminal.tsx

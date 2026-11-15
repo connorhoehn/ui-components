@@ -220,7 +220,7 @@ export function MessageRow({
             // assistant said" from "a person said" without reading the name.
             // `self-start` keeps it shrink-to-fit in the column.
             assistant && !mine && contentLayout === 'inline' && 'max-w-[85%] self-start rounded-lg rounded-tl-sm border px-3 py-1.5',
-            assistant && !mine && contentLayout === 'inline' && (dark ? 'border-accent/40 bg-accent/20' : 'border-accent-callout-border bg-accent-callout'),
+            assistant && !mine && contentLayout === 'inline' && (dark ? 'border-accent/40 bg-accent/20' : 'border-accent/25 bg-accent/8'),
             // A card body (AgentRunCard, document/deck preview, attachment)
             // sizes itself to ITS CONTAINER rather than its content, so the
             // shrink-to-fit inline bubble above gives it 0px to work with.

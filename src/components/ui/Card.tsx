@@ -47,7 +47,7 @@ export function Card({
       data-tone={tone === 'assistant' ? 'assistant' : undefined}
       className={cn(
         'border rounded-lg overflow-hidden',
-        tone === 'assistant' ? 'border-accent-callout-border bg-accent-callout' : 'border-border bg-surface',
+        tone === 'assistant' ? 'border-accent/25 bg-accent/8' : 'border-border bg-surface',
         paddingClasses[padding],
         className,
       )}

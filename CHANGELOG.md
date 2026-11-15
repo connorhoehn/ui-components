@@ -1,6 +1,6 @@
 ## 2.527.0
 
-An assistant's messages in a chat read as one voice, apart from people's. Every new prop is optional; with none given the output is unchanged.
+An assistant's messages in a chat read as one voice, apart from people's. The assistant surface is the accent token at 8% with its border at 25%, so it follows the theme. Every new prop is optional; with none given the output is unchanged.
 
 - `ChatPanel` `isAssistantMessage?: (message) => boolean` and `assistantMark?: ReactNode`. A row it marks shows the mark in the avatar slot (default `<AssistantMark />`), the author name in the accent ink and its text on the accent-tinted surface (`data-voice="assistant"` on the row). A `renderSystemMessage` line for such a message sits at the start under the same mark in a muted tinted pill (`data-testid="chat-assistant-notice"`) instead of centred grey text; a `renderMessageBody` card is drawn as given. `WrappedChatPanel` passes both through.
 - `ChatPanel`: a message under a host system line always states its author; it no longer continues the run of the row above, which the line drew without one.

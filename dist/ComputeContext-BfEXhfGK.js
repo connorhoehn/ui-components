@@ -5,7 +5,7 @@ import { t as c } from "./SearchInput-Dk3D9lhs.js";
 import { t as l } from "./DropdownMenu-LFtIWj5Y.js";
 import { t as u } from "./StatusDot-DAok6F5B.js";
 import { t as d } from "./InlineAlert-Cpf1ooBU.js";
-import { t as f } from "./LogStream-JVBHHVz9.js";
+import { t as f } from "./LogStream-DIt-Xde3.js";
 import { t as p } from "./RisingParticles-BkeXugHs.js";
 import { t as m } from "./Link-Dv9PR9D2.js";
 import { i as h, r as g } from "./useComputeProjects-ZSazDRet.js";

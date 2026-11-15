@@ -12,7 +12,7 @@ function r({ children: r, padding: i = "none", tone: a = "default", className: o
 		ref: s,
 		"data-ui-card": "",
 		"data-tone": a === "assistant" ? "assistant" : void 0,
-		className: e("border rounded-lg overflow-hidden", a === "assistant" ? "border-accent-callout-border bg-accent-callout" : "border-border bg-surface", n[i], o),
+		className: e("border rounded-lg overflow-hidden", a === "assistant" ? "border-accent/25 bg-accent/8" : "border-border bg-surface", n[i], o),
 		...c,
 		children: r
 	});
