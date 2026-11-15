@@ -708,8 +708,21 @@ declare interface CallDockProps {
      * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
      * to a row. For a conversation composer in a side pane.
      */
-    /** `compact`: a small preview beside call details and controls; wraps controls below on narrow hosts. */
+    /**
+     * `compact`: the call block — a gallery of every person's tile side by
+     * side (one fixed size, the viewer first as "You", the speaking ring on
+     * whoever speaks; it wraps to a second line rather than hide anyone, and
+     * only a seventh person turns the sixth tile's corner into `+N`), with the
+     * title, meta line and controls beside it, or under it when the block is
+     * narrow (2.529.0; before, one tile with a `+N` badge for everyone else).
+     */
     layout?: 'shelf' | 'grid' | 'stack' | 'stage' | 'compact';
+    /**
+     * Drawn inline at the end of the meta line ("3 people · 00:53 ●"), e.g.
+     * `<RecordingConsentNotice placement="indicator">` (2.529.0). Not drawn by
+     * `layout="grid"`, which has no meta line.
+     */
+    metaAside?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -801,6 +814,12 @@ export declare interface CallHostValue<C extends CallBlockCall> {
      * outlet draws it above the shelf when no meeting stage holds it.
      */
     recordingNote: ReactNode | null;
+    /**
+     * The same recording as a small red dot for a dock's meta line (2.529.0,
+     * `RecordingConsentNotice placement="indicator"`): drawn for as long as the
+     * recording lasts, whether or not `recordingNote` was dismissed.
+     */
+    recordingIndicator: ReactNode | null;
     /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
     lobby: CallLobby | null;
     /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
@@ -2094,6 +2113,8 @@ export declare interface ConversationCallDockProps {
     tile?: (p: RMConversationCallParticipant) => ReactNode | undefined;
     /** An info line above the shelf while the call is on (e.g. who the call could not ring). */
     notice?: ReactNode;
+    /** Inline at the end of the dock's meta line, e.g. the recording indicator (CallDock `metaAside`, 2.529.0). */
+    metaAside?: ReactNode;
     /**
      * Raised hand per call participant (2.458.1), by userId: `true`, a 1-based
      * queue position, or undefined. Bind to realtime-modules' useMeeting with

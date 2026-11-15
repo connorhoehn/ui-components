@@ -63,6 +63,8 @@ export interface ConversationCallDockProps {
   tile?: (p: RMConversationCallParticipant) => ReactNode | undefined;
   /** An info line above the shelf while the call is on (e.g. who the call could not ring). */
   notice?: ReactNode;
+  /** Inline at the end of the dock's meta line, e.g. the recording indicator (CallDock `metaAside`, 2.529.0). */
+  metaAside?: ReactNode;
   /**
    * Raised hand per call participant (2.458.1), by userId: `true`, a 1-based
    * queue position, or undefined. Bind to realtime-modules' useMeeting with
@@ -196,6 +198,7 @@ function ConversationCallDockImpl(
     cameraMenuItems,
     tile = defaultTile,
     notice,
+    metaAside,
     handFor,
     accessFor,
     publishDisabledReason,
@@ -253,6 +256,7 @@ function ConversationCallDockImpl(
     ...(documentsOpen !== undefined ? { documentsOpen } : {}),
     ...(onDocumentClick ? { onDocumentClick } : {}),
     ...(className ? { className } : {}),
+    ...(metaAside != null ? { metaAside } : {}),
   };
 
   return (

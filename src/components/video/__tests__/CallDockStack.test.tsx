@@ -73,7 +73,13 @@ describe('CallDock tileSize', () => {
     expect(screen.getByTestId('call-dock')).toHaveAttribute('data-layout', 'compact');
     const row = screen.getByTestId('call-dock-tile-row');
     expect(row).toHaveAttribute('data-variant', 'dock');
-    expect((row.querySelector('[data-peer-id]') as HTMLElement).style.height).toBe('74px');
+    // 2.529.0: a gallery of every person (four here), one fixed 120 × 68 size, the viewer first; no +N for four.
+    expect(row).toHaveAttribute('data-wrap', 'true');
+    const tiles = [...row.querySelectorAll<HTMLElement>('[data-peer-id]')];
+    expect(tiles.map((t) => t.getAttribute('data-peer-id'))).toEqual(['me', 'vera', 'nora', 'nd']);
+    expect(tiles[0]).toHaveAttribute('aria-label', 'You');
+    for (const t of tiles) { expect(t.style.width).toBe('120px'); expect(t.style.height).toBe('68px'); }
+    expect(screen.queryByTestId('call-tile-wrapped')).toBeNull();
     fireEvent.click(screen.getByTestId('call-dock-mic'));
     expect(onMute).toHaveBeenCalledOnce();
     fireEvent.click(screen.getByTestId('call-dock-more'));
@@ -124,5 +130,20 @@ describe('CallTileRow maxColumns', () => {
     render(<CallTileRow variant="grid" maxColumns={2} participants={remotes} localParticipant={{ id: 'me', displayName: 'Me', isLocal: true }} />);
     expect(screen.getByTestId('call-tile-row')).toHaveAttribute('data-columns', '2');
     expect(screen.getByTestId('call-tile-row').className).toContain('grid-cols-2');
+  });
+});
+
+describe('CallDock metaAside (2.529.0)', () => {
+  it.each(['compact', 'shelf', 'stack'] as const)('%s: draws it inline at the end of the meta line', (layout) => {
+    render(<CallDock {...props({ layout, metaAside: <span data-testid="aside">●</span> })} />);
+    const line = screen.getByTestId('call-dock-meta-line');
+    expect(within(line).getByTestId('call-dock-meta')).toHaveTextContent('4 people · 09:41');
+    expect(within(line).getByTestId('aside')).toBeInTheDocument();
+  });
+
+  it('without it the meta line is unchanged', () => {
+    render(<CallDock {...props({ layout: 'compact' })} />);
+    expect(screen.queryByTestId('call-dock-meta-line')).toBeNull();
+    expect(screen.getByTestId('call-dock-meta')).toHaveTextContent('4 people · 09:41');
   });
 });

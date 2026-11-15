@@ -1,3 +1,13 @@
+## 2.529.0
+
+The call block shows everyone in the call, and its recording warning no longer takes a line of its own. New props are optional; the banner forms of `RecordingConsentNotice` are unchanged.
+
+- `CallDock layout="compact"` (the call block above a composer, in a side pane or a page): a gallery of every person's tile side by side, each the same fixed 120 × 68 so the block does not jump when someone joins or leaves, the viewer first as "You", the speaking ring on whoever speaks, a camera-off person as their avatar. It wraps to a second line in a narrow column instead of clipping people behind a `+N` badge; `+N` appears only past six people, on the sixth tile. The title, meta line and controls sit beside the gallery and move under it when the block is narrow (before: one 132 × 74 tile with `+N` for everyone else).
+- `CallTileRow` `wrap?: boolean` (`variant="dock"`): fixed-size tiles that wrap instead of clipping; past `maxVisible` the last tile shown carries a `+N` badge (`data-testid="<prefix>-wrapped"`, named "N more: …") and the folded people's media stays mounted.
+- `RecordingConsentNotice` `placement="indicator"`: a red dot with no line of its own, focusable (`tabIndex=0`, `role="img"`), its tooltip and accessible name the whole sentence ("Recording. By attending you agree to be included.", or "Recording, started by X. …"), announced once through a polite live region after it first shows (`<testId>-announce`). No close mark, actions or privacy link are drawn; it shows while the recording lasts. `onDismiss` is now optional (the indicator has nothing to close).
+- `CallDock` `metaAside?: ReactNode` (and `ConversationCallDock` `metaAside`): drawn inline at the end of the meta line (`data-testid="call-dock-meta-line"`); not drawn by `layout="grid"`.
+- `CallBlockHost`: the host value gains `recordingIndicator`. `CallMediaOutlet` puts it on the dock's meta line (`data-testid="call-recording-indicator"`) for every layout with one (compact, shelf, stack) and no longer draws the recording note in the blue info line above the block. The grid and the stage, which have no meta line, keep the one-line note; `recordingNote` and its per-session dismissal are unchanged for a host that places it.
+
 ## 2.528.0
 
 A prompt that arrives unasked no longer moves keyboard focus. The new option is optional; with none given the output is unchanged.

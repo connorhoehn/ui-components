@@ -118,3 +118,38 @@ describe('RecordingConsentNotice custom wording and actions', () => {
     expect(onAcknowledge).toHaveBeenCalled();
   });
 });
+
+describe('RecordingConsentNotice placement="indicator" (2.529.0)', () => {
+  it('is a focusable dot whose name and tooltip carry the whole sentence, with no line, close mark or actions', () => {
+    render(<RecordingConsentNotice open kind="recording" placement="indicator" onDismiss={() => {}} onAcknowledge={() => {}} privacyHref="https://example.test/privacy" />);
+    const wrap = screen.getByTestId('recording-consent');
+    expect(wrap).toHaveAttribute('data-placement', 'indicator');
+    const dot = screen.getByRole('img', { name: 'Recording. By attending you agree to be included.' });
+    expect(dot).toHaveAttribute('tabindex', '0');
+    expect(screen.queryByTestId('recording-consent-dismiss')).toBeNull();
+    expect(screen.queryByTestId('recording-consent-acknowledge')).toBeNull();
+    expect(screen.queryByTestId('recording-consent-privacy')).toBeNull();
+    expect(wrap.querySelector('section')).toBeNull();
+    act(() => { dot.focus(); });
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Recording. By attending you agree to be included.');
+  });
+
+  it('announces the sentence once through a polite live region, after it first shows', () => {
+    const { rerender } = render(<RecordingConsentNotice open kind="recording" placement="indicator" startedBy="Rowan Ellery" />);
+    const region = screen.getByTestId('recording-consent-announce').querySelector('[aria-live]')!;
+    expect(region).toHaveAttribute('aria-live', 'polite');
+    expect(region.textContent).toBe('Recording, started by Rowan Ellery. By attending you agree to be included.');
+    rerender(<RecordingConsentNotice open kind="recording" placement="indicator" startedBy="Someone Else" />);
+    // Said once: a later prop change does not announce again.
+    expect(region.textContent).toBe('Recording, started by Rowan Ellery. By attending you agree to be included.');
+    expect(screen.getByRole('img')).toHaveAccessibleName('Recording, started by Someone Else. By attending you agree to be included.');
+  });
+
+  it('the default placement is unchanged: the banner with its close mark', () => {
+    const onDismiss = vi.fn();
+    render(<RecordingConsentNotice open kind="recording" onDismiss={onDismiss} />);
+    expect(screen.getByTestId('recording-consent').tagName).toBe('SECTION');
+    fireEvent.click(screen.getByTestId('recording-consent-dismiss'));
+    expect(onDismiss).toHaveBeenCalledOnce();
+  });
+});

@@ -8,6 +8,7 @@ import { SparklesIcon } from './MediaIcons';
 import { CallSidePanelToggles } from './CallSidePanel';
 import { ReactionPickerButton } from './ReactionOverlay';
 import { RecordingChip } from './RecordingChip';
+import { RecordingConsentNotice } from './RecordingConsentNotice';
 import { CAST, DEVICES, REVIEW_DOCS, fakeCameraStream, noop, themed } from './documentCallStoryKit';
 
 // The in-call dock under a document (mockup 02). Stories render it at the
@@ -117,7 +118,7 @@ export const Compact: Story = {
 };
 export const CompactDark: Story = { ...Compact, decorators: [themed('dark')] };
 
-/** The same small shelf above a composer and in the shell when the page has no composer. */
+/** The call block above a composer and in the shell when the page has no composer: one person. */
 export const CompactColumns: Story = {
   args: base({ layout: 'compact', documents: [], participants: PEOPLE.slice(0, 1), participantCount: 1 }),
   decorators: [themed('light')],
@@ -126,6 +127,27 @@ export const CompactColumnsDark: Story = { ...CompactColumns, decorators: [theme
 export const CompactColumnsNarrow: Story = {
   ...CompactColumns,
   render: args => <div className="w-[320px]"><Interactive {...args} /></div>,
+};
+
+/** 2.529.0: three people, three tiles side by side (no +2), and the recording as a dot on the meta line. */
+export const CompactGallery: Story = {
+  args: base({ layout: 'compact', documents: [], participants: PEOPLE.slice(0, 3), participantCount: 3,
+    metaAside: <RecordingConsentNotice open kind="recording" placement="indicator" /> }),
+  decorators: [themed('light')],
+  render: (args) => <div className="w-[760px] border border-border"><Interactive {...args} /></div>,
+};
+export const CompactGalleryDark: Story = { ...CompactGallery, decorators: [themed('dark')] };
+/** The same three in a narrow column: the title and controls move under the gallery. */
+export const CompactGalleryNarrow: Story = {
+  ...CompactGallery,
+  render: (args) => <div className="w-[420px] border border-border"><Interactive {...args} /></div>,
+};
+/** Eight people: six tiles, wrapping in a narrow column, the sixth carrying +2. */
+export const CompactGalleryCrowded: Story = {
+  args: base({ layout: 'compact', documents: [], participantCount: 8,
+    participants: [...PEOPLE, ...PEOPLE.map((p) => ({ ...p, id: `${p.id}-2`, userId: `${p.userId}-2`, displayName: `${p.displayName} II` }))].slice(0, 8) }),
+  decorators: [themed('light')],
+  render: (args) => <div className="w-[520px] border border-border"><Interactive {...args} /></div>,
 };
 
 export const Connecting: Story = { args: base({ phase: 'connecting', participantCount: 1 }), decorators: [themed('light')] };

@@ -186,6 +186,12 @@ export interface CallHostValue<C extends CallBlockCall> {
    * outlet draws it above the shelf when no meeting stage holds it.
    */
   recordingNote: ReactNode | null;
+  /**
+   * The same recording as a small red dot for a dock's meta line (2.529.0,
+   * `RecordingConsentNotice placement="indicator"`): drawn for as long as the
+   * recording lasts, whether or not `recordingNote` was dismissed.
+   */
+  recordingIndicator: ReactNode | null;
   /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
   lobby: CallLobby | null;
   /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
@@ -629,10 +635,13 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       ? <RecordingConsentNotice open kind="recording" placement="line" onDismiss={consent.dismiss}
           {...(privacyHref ? { privacyHref } : {})} {...(privacyLabel ? { privacyLabel } : {})} />
       : null), [recording?.enabled, consent.dismissed, consent.dismiss, privacyHref, privacyLabel]);
+    const recordingIndicator = useMemo(() => (recording?.enabled
+      ? <RecordingConsentNotice open kind="recording" placement="indicator" data-testid="call-recording-indicator" />
+      : null), [recording?.enabled]);
     const value = useMemo<CallHostValue<Call>>(() => ({
-      call, recordingNote, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
+      call, recordingNote, recordingIndicator, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
       gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting,
-    }), [call, recordingNote, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting]);
+    }), [call, recordingNote, recordingIndicator, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting]);
 
     const head = rings.rings[0] ?? null;
     return (
@@ -826,7 +835,12 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     // The recording note: in the meeting stage's own row when a stage header holds it, else above the shelf.
     // Only while the header is actually drawn: a page holds the dock (the footer shelf draws no header).
     const stageHoldsNote = !!target && header !== undefined && header !== null && !!host?.meeting;
-    const consentNotice = recordingConsent === false || stageHoldsNote ? null : host?.recordingNote ?? null;
+    // A dock with a meta line (compact, shelf, stack) carries the recording as
+    // a dot on that line (2.529.0): no line of its own above the block. Only
+    // the media panel's grid and the stage, which draw no meta line, keep the one-line note.
+    const metaLine = layout !== 'grid' && layout !== 'stage';
+    const consentNotice = recordingConsent === false || stageHoldsNote || metaLine ? null : host?.recordingNote ?? null;
+    const recordingIndicator = recordingConsent === false || !metaLine ? null : host?.recordingIndicator ?? null;
     const shownNotice = consentNotice && notice !== undefined ? <Stack gap="xs">{consentNotice}{notice}</Stack> : consentNotice ?? notice;
     const dock = draw && lobby && host ? <ConversationCallDock
       call={host.call}
@@ -843,6 +857,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       {...(handFor ? { handFor } : {})}
       {...(extras !== undefined ? { extras } : {})}
       {...(shownNotice !== undefined && shownNotice !== null ? { notice: shownNotice } : {})}
+      {...(recordingIndicator ? { metaAside: recordingIndicator } : {})}
       data-testid={dockTestId ? dockTestId(lobby, host.tenant) : 'conversation-call-dock'}
     /> : null;
     if (!dock) return null;

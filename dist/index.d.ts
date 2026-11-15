@@ -2889,7 +2889,7 @@ export declare interface CallControlsProps {
     className?: string;
 }
 
-export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, tileSize, layout, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
+export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, tileSize, layout, metaAside, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
 
 /** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
 export declare interface CallDockDragPayload {
@@ -3004,8 +3004,21 @@ export declare interface CallDockProps {
      * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
      * to a row. For a conversation composer in a side pane.
      */
-    /** `compact`: a small preview beside call details and controls; wraps controls below on narrow hosts. */
+    /**
+     * `compact`: the call block — a gallery of every person's tile side by
+     * side (one fixed size, the viewer first as "You", the speaking ring on
+     * whoever speaks; it wraps to a second line rather than hide anyone, and
+     * only a seventh person turns the sixth tile's corner into `+N`), with the
+     * title, meta line and controls beside it, or under it when the block is
+     * narrow (2.529.0; before, one tile with a `+N` badge for everyone else).
+     */
     layout?: 'shelf' | 'grid' | 'stack' | 'stage' | 'compact';
+    /**
+     * Drawn inline at the end of the meta line ("3 people · 00:53 ●"), e.g.
+     * `<RecordingConsentNotice placement="indicator">` (2.529.0). Not drawn by
+     * `layout="grid"`, which has no meta line.
+     */
+    metaAside?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -3495,7 +3508,7 @@ export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     ringing?: boolean;
 }
 
-export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, maxColumns, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
+export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, maxColumns, wrap, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
 
 export declare interface CallTileRowProps {
     participants: CallTileParticipant[];
@@ -3550,6 +3563,14 @@ export declare interface CallTileRowProps {
     variant?: 'floating' | 'bar' | 'dock' | 'grid' | 'gallery';
     /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
     maxColumns?: number;
+    /**
+     * `dock` only (2.529.0): a gallery that WRAPS. Every tile is the same
+     * `tileWidth` × `tileHeight`, side by side, onto a second line when the
+     * row is narrow — nobody is clipped off its edge. Past `maxVisible`
+     * people (under `overflow="collapse"`) the last tile shown carries a `+N`
+     * badge naming the rest, whose media keeps playing.
+     */
+    wrap?: boolean;
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
@@ -20679,7 +20700,8 @@ export declare interface RecordingConsentNoticeProps {
     startedBy?: string;
     privacyHref?: string;
     privacyLabel?: string;
-    onDismiss: () => void;
+    /** Called by the close mark. Optional for `placement="indicator"`, which has none. */
+    onDismiss?: () => void;
     /** Replaces the fixed heading ("Recording", "Transcription"...). */
     title?: string;
     /** Replaces the fixed sentence ("Started by X. By attending ..."). */
@@ -20695,8 +20717,16 @@ export declare interface RecordingConsentNoticeProps {
      * `line` is one compact text line (a red dot, "Recording · by attending you
      * agree to be included", the dismiss inline) that truncates rather than
      * wraps, for a call's stage header row (2.480.2).
+     *
+     * `indicator` (2.529.0) takes no line of its own: a small red recording dot
+     * for a call's meta line ("3 people · 00:53 ●"), focusable, whose tooltip
+     * and accessible name carry the whole sentence ("Recording. By attending
+     * you agree to be included."). It announces that sentence once, politely,
+     * when it first shows. It has no close mark and no actions — it is the
+     * recording's state, shown while the recording lasts — so `onDismiss`,
+     * `onAcknowledge`, `onSecondary` and `privacyHref` are not drawn.
      */
-    placement?: 'overlay' | 'inline' | 'line';
+    placement?: 'overlay' | 'inline' | 'line' | 'indicator';
     className?: string;
     'data-testid'?: string;
 }

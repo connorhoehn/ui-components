@@ -4,13 +4,15 @@
 // dismissible, anchored over the stage. A pill (CallNoticePill) is too small
 // for a consent sentence and a link.
 
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { T } from '../shared/Text';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import { CloseIcon } from '../ui/Icons';
 import { Link } from '../shared/Link';
+import LiveRegion from '../shared/LiveRegion';
+import { Tooltip } from '../shared/Tooltip';
 import { MeetingRecordingIcon } from './MeetingIcons';
 
 export type RecordingConsentKind = 'recording' | 'transcription' | 'both';
@@ -22,7 +24,8 @@ export interface RecordingConsentNoticeProps {
   startedBy?: string;
   privacyHref?: string;
   privacyLabel?: string;
-  onDismiss: () => void;
+  /** Called by the close mark. Optional for `placement="indicator"`, which has none. */
+  onDismiss?: () => void;
   /** Replaces the fixed heading ("Recording", "Transcription"...). */
   title?: string;
   /** Replaces the fixed sentence ("Started by X. By attending ..."). */
@@ -38,8 +41,16 @@ export interface RecordingConsentNoticeProps {
    * `line` is one compact text line (a red dot, "Recording · by attending you
    * agree to be included", the dismiss inline) that truncates rather than
    * wraps, for a call's stage header row (2.480.2).
+   *
+   * `indicator` (2.529.0) takes no line of its own: a small red recording dot
+   * for a call's meta line ("3 people · 00:53 ●"), focusable, whose tooltip
+   * and accessible name carry the whole sentence ("Recording. By attending
+   * you agree to be included."). It announces that sentence once, politely,
+   * when it first shows. It has no close mark and no actions — it is the
+   * recording's state, shown while the recording lasts — so `onDismiss`,
+   * `onAcknowledge`, `onSecondary` and `privacyHref` are not drawn.
    */
-  placement?: 'overlay' | 'inline' | 'line';
+  placement?: 'overlay' | 'inline' | 'line' | 'indicator';
   className?: string;
   'data-testid'?: string;
 }
@@ -69,6 +80,12 @@ export function RecordingConsentNotice({
 }: RecordingConsentNoticeProps) {
   if (!open) return null;
   const title = titleOverride ?? RECORDING_CONSENT_TITLES[kind];
+  if (placement === 'indicator') {
+    const sentence = typeof description === 'string'
+      ? `${title}. ${description}`
+      : `${title}${startedBy ? `, started by ${startedBy}` : ''}. By attending you agree to be included.`;
+    return <RecordingConsentIndicator kind={kind} sentence={sentence} testId={testId} {...(className ? { className } : {})} />;
+  }
   const actions = (onAcknowledge || (onSecondary && secondaryLabel)) ? (
     <>
       {onAcknowledge && (
@@ -101,7 +118,7 @@ export function RecordingConsentNotice({
           </T>
         )}
  {actions && <span className="flex shrink-0 items-center gap-1">{actions}</span>}
-        <IconButton aria-label="Dismiss recording note" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismiss}
+        <IconButton aria-label="Dismiss recording note" variant="ghost" size="sm" icon={<CloseIcon />} onClick={() => onDismiss?.()}
           className="h-6 w-6 shrink-0" data-testid={`${testId}-dismiss`} />
       </div>
     );
@@ -142,9 +159,37 @@ export function RecordingConsentNotice({
           </T>
           {actions && <div className="mt-3 flex items-center gap-2">{actions}</div>}
         </div>
-        <IconButton aria-label="Dismiss" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismiss} data-testid={`${testId}-dismiss`} />
+        <IconButton aria-label="Dismiss" variant="ghost" size="sm" icon={<CloseIcon />} onClick={() => onDismiss?.()} data-testid={`${testId}-dismiss`} />
       </div>
     </section>
+  );
+}
+
+/**
+ * The `indicator` form: a red dot on a call's meta line. The sentence is its
+ * tooltip and its accessible name, and a polite live region says it once —
+ * set after the first paint, because a region born with its text is often
+ * not read.
+ */
+function RecordingConsentIndicator({ kind, sentence, testId, className }: { kind: RecordingConsentKind; sentence: string; testId: string; className?: string }) {
+  const [said, setSaid] = useState('');
+  const first = useRef(sentence);
+  useEffect(() => { setSaid(first.current); }, []);
+  return (
+    <span className={cn('inline-flex shrink-0 items-center', className)} data-testid={testId} data-kind={kind} data-placement="indicator">
+      <Tooltip content={sentence} placement="top" data-testid={`${testId}-tooltip`}>
+        <span
+          role="img"
+          tabIndex={0}
+          aria-label={sentence}
+          className="inline-flex h-4 w-4 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          data-testid={`${testId}-dot`}
+        >
+          <span aria-hidden className="h-2 w-2 rounded-full bg-danger" />
+        </span>
+      </Tooltip>
+      <LiveRegion message={said} role="none" data-testid={`${testId}-announce`} />
+    </span>
   );
 }
 

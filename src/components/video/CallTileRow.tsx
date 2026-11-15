@@ -103,6 +103,14 @@ export interface CallTileRowProps {
   variant?: 'floating' | 'bar' | 'dock' | 'grid' | 'gallery';
   /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
   maxColumns?: number;
+  /**
+   * `dock` only (2.529.0): a gallery that WRAPS. Every tile is the same
+   * `tileWidth` × `tileHeight`, side by side, onto a second line when the
+   * row is narrow — nobody is clipped off its edge. Past `maxVisible`
+   * people (under `overflow="collapse"`) the last tile shown carries a `+N`
+   * badge naming the rest, whose media keeps playing.
+   */
+  wrap?: boolean;
   className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
@@ -123,6 +131,7 @@ export function CallTileRow({
   tileHeight = 84,
   tileTestIdPrefix = 'call-tile',
   maxColumns,
+  wrap = false,
   className,
   style,
   'data-testid': testId = 'call-tile-row',
@@ -155,6 +164,25 @@ export function CallTileRow({
           />
         ))}
       </div>
+    );
+  }
+
+  if (variant === 'dock' && wrap) {
+    return (
+      <DockGallery
+        all={localParticipant ? [localParticipant, ...participants] : participants}
+        activeSpeakerId={activeSpeakerId ?? null}
+        highlightedId={highlightedId}
+        tileWidth={tileWidth}
+        tileHeight={tileHeight}
+        maxVisible={overflow === 'collapse' ? maxVisible : Number.POSITIVE_INFINITY}
+        tileTestIdPrefix={tileTestIdPrefix}
+        title={title}
+        {...(onParticipantClick ? { onParticipantClick } : {})}
+        {...(className ? { className } : {})}
+        {...(style ? { style } : {})}
+        testId={testId}
+      />
     );
   }
 
@@ -424,6 +452,66 @@ function DockRow({ all, activeSpeakerId, highlightedId, tileWidth, tileHeight, o
           +{fold.hidden}
         </span>
       )}
+    </div>
+  );
+}
+
+/**
+ * The `dock` variant with `wrap` (2.529.0): every person's tile side by side,
+ * one fixed size, wrapping rather than clipping. Only past `maxVisible` does
+ * the last tile carry `+N`; the folded people's media stays mounted.
+ */
+function DockGallery({ all, activeSpeakerId, highlightedId, tileWidth, tileHeight, maxVisible, tileTestIdPrefix, title, onParticipantClick, className, style, testId }: Omit<DockRowProps, 'overflow'>) {
+  const shown = all.length > maxVisible ? all.slice(0, Math.max(1, maxVisible)) : all;
+  const folded = all.slice(shown.length);
+  const foldedNames = folded.map((p) => p.displayName).join(', ');
+  return (
+    <div
+      className={cn('flex min-w-0 max-w-full flex-wrap items-center gap-2', className)}
+      style={style}
+      role="group"
+      aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
+      data-testid={testId}
+      data-variant="dock"
+      data-wrap="true"
+      data-tile-count={all.length}
+      data-hidden-count={folded.length}
+    >
+      {shown.map((p, index) => {
+        const tile = (
+          <DockTile
+            key={p.id}
+            participant={p}
+            width={tileWidth}
+            height={tileHeight}
+            speaking={p.id === activeSpeakerId}
+            highlighted={p.id === highlightedId}
+            testId={`${tileTestIdPrefix}-${p.id}`}
+            {...(onParticipantClick ? { onParticipantClick } : {})}
+          />
+        );
+        if (index !== shown.length - 1 || folded.length === 0) return tile;
+        return (
+          <div key={p.id} className="relative shrink-0">
+            {tile}
+            <span
+              className="pointer-events-none absolute right-1 top-1 z-20 rounded-full bg-surface-inverse/70 px-2 py-0.5 text-xs font-medium text-white"
+              title={foldedNames}
+              aria-label={`${folded.length} more: ${foldedNames}`}
+              data-testid={`${tileTestIdPrefix}-wrapped`}
+            >
+              +{folded.length}
+            </span>
+            {/* Folded people keep playing: their voice rides the same stream as their video. */}
+            {folded.map((f) => (f.videoElement != null || f.audioElement != null) && (
+              <div key={f.id} className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true" data-testid={`${tileTestIdPrefix}-${f.id}-media-sink`}>
+                {f.videoElement}
+                {f.audioElement}
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }

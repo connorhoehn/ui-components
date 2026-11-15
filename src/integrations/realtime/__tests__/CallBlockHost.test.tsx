@@ -344,22 +344,26 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
     expect(seen.every((id) => id === null)).toBe(true);
   });
 
-  it('the outlet shows recording consent while the session records, until dismissed for that session (2.480.1)', async () => {
-    // No meeting on this lobby, so no stage holds the note: the dock draws it.
+  it('the block carries the recording as a dot on its meta line, no banner line above it, while the session records (2.529.0)', async () => {
+    // No meeting on this lobby, so no stage holds the note: the dock draws the recording itself.
     const always = () => false;
     phase = 'idle';
     const r = render(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
     phase = 'live'; recordingNow = { enabled: true, reason: 'default', sessionId: 'sess-consent-1' };
     r.rerender(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
     await act(async () => {});
-    expect(screen.getByTestId('recording-consent')).toBeInTheDocument();
-    await act(async () => { screen.getByTestId('recording-consent-dismiss').click(); });
+    const indicator = screen.getByTestId('call-recording-indicator');
+    expect(indicator).toHaveAttribute('data-placement', 'indicator');
+    expect(screen.getByTestId('call-dock-meta-line')).toContainElement(indicator);
+    expect(screen.getByRole('img', { name: 'Recording. By attending you agree to be included.' })).toHaveAttribute('tabindex', '0');
     expect(screen.queryByTestId('recording-consent')).toBeNull();
+    expect(screen.queryByTestId('conversation-call-dock-notice')).toBeNull();
+    expect(screen.queryByText(/by attending you agree to be included/)).toBeNull();
     // A session that does not record shows nothing.
     recordingNow = { enabled: false, reason: 'document-call-not-recorded', sessionId: 'sess-consent-2' };
     r.rerender(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
     await act(async () => {});
-    expect(screen.queryByTestId('recording-consent')).toBeNull();
+    expect(screen.queryByTestId('call-recording-indicator')).toBeNull();
     recordingNow = null;
   });
 
@@ -374,7 +378,9 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
         platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={{ send: vi.fn(), onMessage: () => () => {} }}
         gatewayConfigured connectionState="connected" meeting={{ enabledFor: always }}>
         {children}
-        <gated.CallMediaOutlet header={<NoteInStage />} />
+        {/* The host's note, read where a stage row would place it (2.529.0: the dock itself draws only the dot). */}
+        <NoteInStage />
+        <gated.CallMediaOutlet header={<span data-testid="stage-header" />} />
       </gated.CallHostProvider>;
     }
     phase = 'idle';
@@ -386,6 +392,10 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
     expect(notes).toHaveLength(1);
     expect(notes[0]!.getAttribute('data-placement')).toBe('line');
     expect(notes[0]!.textContent).toContain('Recording · by attending you agree to be included');
+    // The line's close mark still records the dismissal for this session; the dot stays while it records.
+    await act(async () => { screen.getByTestId('recording-consent-dismiss').click(); });
+    expect(screen.queryByTestId('recording-consent')).toBeNull();
+    expect(screen.getByTestId('call-recording-indicator')).toBeInTheDocument();
     recordingNow = null;
   });
 

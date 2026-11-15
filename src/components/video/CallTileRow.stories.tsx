@@ -41,6 +41,11 @@ export const DockCompact: Story = {
   args: { variant: 'dock', highlightedId: CAST.alice.userId, tileWidth: 132, tileHeight: 74 },
   decorators: [themed('light')],
 };
+/** 2.529.0: the call block's gallery — every person side by side at one size, wrapping in a narrow column. */
+export const DockWrap: Story = {
+  args: { variant: 'dock', wrap: true, activeSpeakerId: CAST.frank.userId, tileWidth: 120, tileHeight: 68, maxVisible: 6, className: 'max-w-[400px]' },
+  decorators: [themed('light')],
+};
 /** Nine people, six tiles: the last is +4. */
 export const DockOverflowCollapse: Story = {
   args: { variant: 'dock', participants: MANY, tileWidth: 176, tileHeight: 88, overflow: 'collapse', maxVisible: 6 },

@@ -120,3 +120,44 @@ it('gallery keeps every media sink mounted across participant and camera changes
   expect(screen.getByTestId('gallery-media')).toBe(media);
   expect(screen.queryByTestId('call-tile-overflow')).toBeNull();
 });
+
+describe('CallTileRow dock wrap (2.529.0)', () => {
+  const people = (n: number) => Array.from({ length: n }, (_, i) => p(`r${i}`, `Person ${i}`));
+
+  it('draws every person side by side at one fixed size, the viewer first as You, with no +N and nothing clipped', () => {
+    render(<CallTileRow variant="dock" wrap participants={people(2)} localParticipant={p('me', 'Me', { isLocal: true })}
+      activeSpeakerId="r1" tileWidth={120} tileHeight={68} data-testid="row" />);
+    const row = screen.getByTestId('row');
+    expect(row).toHaveAttribute('data-wrap', 'true');
+    expect(row.className).toContain('flex-wrap');
+    expect(row.className).not.toContain('overflow-hidden');
+    const tiles = [...row.querySelectorAll<HTMLElement>('[data-peer-id]')];
+    expect(tiles.map((t) => t.getAttribute('data-peer-id'))).toEqual(['me', 'r0', 'r1']);
+    expect(tiles[0]).toHaveAttribute('aria-label', 'You');
+    for (const t of tiles) { expect(t.style.width).toBe('120px'); expect(t.style.height).toBe('68px'); }
+    expect(screen.getByTestId('call-tile-r1-ring')).toHaveAttribute('data-ring', 'speaking');
+    expect(screen.queryByTestId('call-tile-wrapped')).toBeNull();
+    expect(screen.queryByTestId('call-tile-overflow')).toBeNull();
+    expect(row).toHaveAttribute('data-hidden-count', '0');
+  });
+
+  it('a camera-off person is their avatar, never an empty box', () => {
+    render(<CallTileRow variant="dock" wrap participants={[p('r0', 'Vera Green')]} tileWidth={120} tileHeight={68} />);
+    const tile = screen.getByTestId('call-tile-r0');
+    expect(tile).toHaveAttribute('data-track-kind', 'avatar');
+    expect(tile.textContent).toContain('VG');
+  });
+
+  it('past maxVisible the last tile shown carries +N naming the rest, whose media stays mounted', () => {
+    const rest = [...people(6), p('r6', 'Late Joiner', { audioElement: <audio data-testid="late-audio" /> })];
+    render(<CallTileRow variant="dock" wrap participants={rest} localParticipant={p('me', 'Me', { isLocal: true })}
+      maxVisible={6} tileWidth={120} tileHeight={68} data-testid="row" />);
+    const row = screen.getByTestId('row');
+    expect(row.querySelectorAll('[data-peer-id]')).toHaveLength(6);
+    const badge = screen.getByTestId('call-tile-wrapped');
+    expect(badge).toHaveTextContent('+2');
+    expect(badge).toHaveAttribute('aria-label', '2 more: Person 5, Late Joiner');
+    expect(badge.parentElement).toContainElement(screen.getByTestId('call-tile-r4'));
+    expect(screen.getByTestId('late-audio')).toBeInTheDocument();
+  });
+});
