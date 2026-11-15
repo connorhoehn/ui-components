@@ -428,7 +428,8 @@ export function CallDock({
           Reconnecting…
         </div>
       )}
-      {connecting ? (
+      {/* The call block shows the people already in the call while its media connects (their avatars), not a grey box. */}
+      {connecting && !(compactDock && participants.length > 0) ? (
         <div className="flex gap-2" data-testid="call-dock-connecting">
           <div
             className={cn(

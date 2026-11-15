@@ -33,8 +33,8 @@ import { n as ke } from "./RovingToolbar-C8vF753M.js";
 import { t as Ae } from "./PresenceAvatars-Dw8HVI_h.js";
 import { t as je } from "./Checkbox-DgSkOMOT.js";
 import { t as Me } from "./activationKey-CjbL3LUv.js";
-import { C as Ne, D as Pe, E as Fe, G as Ie, K as Le, L as Re, R as ze, S as Be, V as Ve, it as He, rt as Ue, tt as We } from "./BreakoutRoomsPanel-C7i_9DZb.js";
-import "./RecordingConsentNotice-CQQxSHA6.js";
+import { C as Ne, D as Pe, E as Fe, G as Ie, K as Le, L as Re, R as ze, S as Be, V as Ve, it as He, rt as Ue, tt as We } from "./BreakoutRoomsPanel-B3Yx7O_P.js";
+import "./RecordingConsentNotice-Ch6V6Yj9.js";
 import { useCallback as W, useEffect as G, useId as Ge, useImperativeHandle as Ke, useLayoutEffect as qe, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx

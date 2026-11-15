@@ -27,7 +27,7 @@ import { t as ee } from "./FileUploadDrop-Da3teuhw.js";
 import { t as F } from "./ActivityFeed-BkwPJ1hJ.js";
 import { t as te } from "./ReactionsOverlay-XR_TNH6f.js";
 import { d as I, n as ne, t as L, u as re } from "./ConversationSurface-CeoSRl4b.js";
-import { $ as R, A as z, E as ie, H as ae, T as oe, Y as B, Z as se, _ as ce, i as le, n as ue, s as V, t as de, w as fe, x as H, y as pe } from "./BreakoutRoomsPanel-C7i_9DZb.js";
+import { $ as R, A as z, E as ie, H as ae, T as oe, Y as B, Z as se, _ as ce, i as le, n as ue, s as V, t as de, w as fe, x as H, y as pe } from "./BreakoutRoomsPanel-B3Yx7O_P.js";
 import { t as me } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as he, o as ge, s as _e } from "./useDocumentImageUpload-CzkKVL2u.js";
 import { Component as ve, createContext as ye, createElement as be, useCallback as U, useContext as xe, useEffect as W, useId as Se, useMemo as G, useRef as K, useState as q } from "react";

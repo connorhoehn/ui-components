@@ -147,3 +147,20 @@ describe('CallDock metaAside (2.529.0)', () => {
     expect(screen.getByTestId('call-dock-meta')).toHaveTextContent('4 people · 09:41');
   });
 });
+
+describe('CallDock compact while connecting (2.529.0)', () => {
+  it('shows the people already in the call as avatar tiles, not a grey skeleton', () => {
+    render(<CallDock {...props({ layout: 'compact', phase: 'connecting',
+      participants: [person('me', 'Connor'), { ...person('vera', 'Vera Green'), cameraOn: false }] })} />);
+    expect(screen.queryByTestId('call-dock-connecting')).toBeNull();
+    const tiles = [...screen.getByTestId('call-dock-tile-row').querySelectorAll('[data-peer-id]')];
+    expect(tiles.map((t) => t.getAttribute('data-peer-id'))).toEqual(['me', 'vera']);
+    expect(tiles[1]).toHaveAttribute('data-track-kind', 'avatar');
+  });
+
+  it('the shelf keeps its skeleton while connecting', () => {
+    render(<CallDock {...props({ phase: 'connecting' })} />);
+    expect(screen.getByTestId('call-dock-connecting')).toBeInTheDocument();
+  });
+});
+

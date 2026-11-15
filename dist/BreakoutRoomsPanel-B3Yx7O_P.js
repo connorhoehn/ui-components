@@ -1594,7 +1594,7 @@ function ft({ title: n, participantCount: r, elapsedMs: a, phase: c, callingTo: 
 			role: "status",
 			"data-testid": "call-dock-reconnecting",
 			children: "Reconnecting…"
-		}), X ? /* @__PURE__ */ U("div", {
+		}), X && !(Q && d.length > 0) ? /* @__PURE__ */ U("div", {
 			className: "flex gap-2",
 			"data-testid": "call-dock-connecting",
 			children: /* @__PURE__ */ U("div", {
