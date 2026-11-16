@@ -1006,7 +1006,9 @@ function Row({ row, current, currentStyle, rowStyle, columns, testId, size, tabb
             <span data-ui-text={railRow ? 'rail-item' : undefined} className={cn('truncate text-text-primary', railRow ? RAIL_ITEM_TEXT : 'text-[14px] font-medium leading-5')} title={row.title}>
               {row.title}
             </span>
-            {row.pill && <span className="flex shrink-0 items-center">{row.pill}</span>}
+            {/* The pill keeps its own width up to 60% of the row, past that its label ellipsizes (2.531.0): a
+                sentence-long state label squeezed the title to nothing, and a short one ("Ready") stays whole. */}
+            {row.pill && <span className="flex max-w-[60%] shrink-0 items-center [&>*]:min-w-0" data-ui-row-pill="">{row.pill}</span>}
           </span>
           {hasMeta && (
             <span

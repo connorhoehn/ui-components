@@ -764,7 +764,8 @@ function pe({ row: e, current: t, currentStyle: r, rowStyle: i, columns: o, test
 									title: e.title,
 									children: e.title
 								}), e.pill && /* @__PURE__ */ j("span", {
-									className: "flex shrink-0 items-center",
+									className: "flex max-w-[60%] shrink-0 items-center [&>*]:min-w-0",
+									"data-ui-row-pill": "",
 									children: e.pill
 								})]
 							}),

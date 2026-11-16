@@ -531,6 +531,19 @@ describe('DataTable size="sm" (2.434.0)', () => {
     expect(td[1]!.className).toContain('tabular-nums');
   });
 
+  it('right-aligns a flex child (Text) in numeric and align="right" cells, centres one in align="center" (2.531.0)', () => {
+    const cols: DataTableColumn<Row>[] = [
+      { key: 'name', header: 'Name', align: 'center' },
+      { key: 'count', header: 'Count', numeric: true },
+      { key: 'other', header: 'Other', align: 'right', render: (r) => r.name },
+    ];
+    const { container } = render(<DataTable data={rows} columns={cols} keyField={(r) => r.id} size="sm" />);
+    const td = container.querySelector('tbody tr')!.querySelectorAll('td');
+    expect(td[0]!.className).toContain('[&>*]:justify-center');
+    expect(td[1]!.className).toContain('[&>*]:justify-end');
+    expect(td[2]!.className).toContain('[&>*]:justify-end');
+  });
+
   it('keeps the md cell by default', () => {
     const { container } = render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} />);
     expect(container.querySelector('table')?.hasAttribute('data-size')).toBe(false);

@@ -185,7 +185,9 @@ export function TableTd({ children, numeric, className, ...rest }: TableTdProps)
         size === 'sm'
           ? 'h-[var(--ui-table-row,2.75rem)] px-[var(--ui-table-inset,0.75rem)] py-0 text-sm leading-5 text-text-primary align-middle whitespace-nowrap'
           : 'px-4 py-3 text-sm text-text-primary align-middle',
-        numeric && 'text-right tabular-nums',
+        // `[&>*]:justify-end`: a flex child (`Text`/`Inline` render as flex rows) fills the cell and
+        // ignores text-align, so a number in one sat at the cell's left edge (2.531.0).
+        numeric && 'text-right tabular-nums [&>*]:justify-end',
         className,
       )}
       {...rest}

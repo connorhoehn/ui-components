@@ -1,3 +1,10 @@
+## 2.531.0
+
+Right- and centre-aligned table cells align what they hold, and a list row's pill gives way before its title. No prop changes.
+
+- `TableTd` `numeric` and `DataTable` columns with `align: 'right'` / `'center'` now also justify a flex child (`[&>*]:justify-end` / `justify-center`). `Text` and `Inline` render as flex rows that fill the cell and ignore `text-align`, so a number written with `<Text>` sat at the cell's left edge under a right-aligned header. Non-flex children are unaffected.
+- `GroupedList` rows: the pill keeps its own width up to `max-w-[60%]` of the row and lets its child shrink below its content, so a sentence-long state label ellipsizes instead of squeezing the row title to nothing; a short pill stays whole.
+
 ## 2.530.0
 
 A transcript can be read live, while it grows. Every new prop is optional; with none given the output is unchanged.

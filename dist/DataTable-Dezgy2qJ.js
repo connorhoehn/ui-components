@@ -1,6 +1,6 @@
 import { d as e, n as t } from "./Button-DQoeE5dN.js";
 import { n } from "./Stack-CE1FjEn8.js";
-import { a as r, i, n as a, o, r as s, t as c } from "./Table-DIDqq2Q1.js";
+import { a as r, i, n as a, o, r as s, t as c } from "./Table-B3hr3Qau.js";
 import { t as l } from "./IconButton-BgM9MvwA.js";
 import { I as u, h as d, m as f, ut as p } from "./Icons-CqVFbuiZ.js";
 import { t as m } from "./Select-CDxAVVnW.js";
@@ -336,8 +336,8 @@ function ke(e, t, n) {
 	return r != null && typeof r != "object" && typeof r != "function" ? String(r) : e.render ? M(e.render(t, n)) : (process.env.NODE_ENV !== "production" && !N.has(e.key) && (N.add(e.key), console.warn(`[DataTable] Column "${e.key}" is searchable but its value lives in neither a primitive row value nor getFilterText, and it has no render function to fall back on — it will never match a search query. Add getFilterText, add render, or set filterable={false}.`)), String(r ?? ""));
 }
 function Ae(e) {
-	if (e === "right") return "text-right";
-	if (e === "center") return "text-center";
+	if (e === "right") return "text-right [&>*]:justify-end";
+	if (e === "center") return "text-center [&>*]:justify-center";
 }
 function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowClick: p, rowActions: m, rowActionsHeader: g = "Actions", rowActionsHeaderHidden: ee = !1, searchable: _ = !1, searchPlaceholder: te = "Search…", pageSize: v, emptyMessage: y = "No records.", loading: b = !1, loadingRows: x = 5, frameless: D = !1, size: j, striped: Ee = !0, narrow: M = !1, "aria-label": N, "aria-labelledby": je, selectedKey: P, revealSelection: F = !1, isRowSelected: Me, headerCase: Ne = "upper", responsiveColumns: I = !1, hiddenColumnsControl: Pe = "row", className: Fe, "data-testid": Ie, staticRows: Le }) {
 	let Re = Ne === "sentence", ze = P !== void 0 || !!Me, Be = (e) => P === void 0 ? !!Me?.(e) : P !== null && d(e) === P, Ve = Array.isArray(n) ? n : [], L = Array.isArray(u) ? u : [], [R, He] = E(null), [Ue, We] = E("asc"), [z, Ge] = E(""), [Ke, B] = E(0), qe = T(null), [V, Je] = E(null), [Ye, Xe] = E(!1), H = w(() => {

@@ -620,8 +620,9 @@ function filterTextForColumn<T>(col: DataTableColumn<T>, row: T, rowIndex: numbe
 }
 
 function alignClass(a?: 'left' | 'right' | 'center'): string | undefined {
-  if (a === 'right') return 'text-right';
-  if (a === 'center') return 'text-center';
+  // The justify utilities align a flex child (`Text`, `Inline`), which text-align does not move (2.531.0).
+  if (a === 'right') return 'text-right [&>*]:justify-end';
+  if (a === 'center') return 'text-center [&>*]:justify-center';
   return undefined;
 }
 

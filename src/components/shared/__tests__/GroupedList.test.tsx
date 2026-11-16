@@ -439,6 +439,16 @@ describe('GroupedList semantic rail typography', () => {
   });
 });
 
+describe('GroupedList row pill (2.531.0)', () => {
+  it('caps the pill at 60% of the row and lets its child shrink below its content', () => {
+    const row: GroupedListRow = { ...ROWS[0], pill: <span>A state label as long as a sentence</span> };
+    render(<GroupedList groups={GROUPS} rows={[row]} />);
+    const wrap = screen.getByText('A state label as long as a sentence').closest('[data-ui-row-pill]')!;
+    expect(wrap.className).toContain('max-w-[60%]');
+    expect(wrap.className).toContain('[&>*]:min-w-0');
+  });
+});
+
 describe('GroupedList row actions (2.509.0)', () => {
   const groups: GroupedListGroup[] = [{ id: 'review', title: 'Needs review' }];
   const rowsWith = (onApprove = () => {}): GroupedListRow[] => [

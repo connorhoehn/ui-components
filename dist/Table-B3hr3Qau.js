@@ -65,7 +65,7 @@ function m({ children: t, sortable: n, sortDirection: s, numeric: c, className: 
 function h({ children: t, numeric: n, className: a, ...s }) {
 	let c = r(o);
 	return /* @__PURE__ */ i("td", {
-		className: e(c === "sm" ? "h-[var(--ui-table-row,2.75rem)] px-[var(--ui-table-inset,0.75rem)] py-0 text-sm leading-5 text-text-primary align-middle whitespace-nowrap" : "px-4 py-3 text-sm text-text-primary align-middle", n && "text-right tabular-nums", a),
+		className: e(c === "sm" ? "h-[var(--ui-table-row,2.75rem)] px-[var(--ui-table-inset,0.75rem)] py-0 text-sm leading-5 text-text-primary align-middle whitespace-nowrap" : "px-4 py-3 text-sm text-text-primary align-middle", n && "text-right tabular-nums [&>*]:justify-end", a),
 		...s,
 		children: t
 	});
