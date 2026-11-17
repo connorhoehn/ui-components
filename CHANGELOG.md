@@ -1,3 +1,14 @@
+## NEXT (ui-r4-lib4)
+
+Gaps the Candidates tenant's builders found. Every new prop is optional; with none given, output is unchanged. Doc comments say "since NEXT": replace with the release version.
+
+- `DataTable` `DataTableColumn.minWidth?: string`: the narrowest a column draws in the table form, as a CSS length. Set as `min-width` on the column's header cell (`data-min-width` on it, `data-min-width-columns` on the `<table>`), so when the minimums add up to more than the box the table scrolls sideways in its own scroller instead of squeezing every column until its text wraps, and `stickyFirstColumn` has something to pin against. Ignored in the stacked card form.
+- `DetailSection` `actionsVisibility?: 'hover' | 'always'` (`DetailSectionActionsVisibility`, default `hover`): `always` keeps a `heading` section's `actions` shown, for a section that holds the page's primary action. `data-actions-visibility` on the actions span. The `label` variant already always showed its actions.
+- `CodePlayback`: markers that would touch stack into rows instead of overlapping (a paste and a run a second apart). The strip measures its width; each stop takes the first row whose last stop is at least 24px (a stop plus 4px) to its left, else a new 24px-lower row, and the strip grows to fit (`data-row` on each stop, `data-rows` on the strip). Spaced markers stay on one row as before, and every stop is still its own button in time order for Tab and the arrow keys. `codePlaybackMarkerRows(centresPx, pitchPx = 24): number[]` is the rule, exported from `./code-pad`.
+- `GroupedList` `scrollCurrentIntoView?: boolean` (default false): scrolls the current row (`currentId` or `row.current`) into view (`block: 'nearest'`) when the list mounts and whenever the current row changes, waiting for a row that is drawn later; it never moves focus and leaves the reader's own scroll alone until the current row changes. For a record frame's list rail (a `ListRailLayout` list body) opened on a record far down the list.
+- `WorkflowStepper` `currentTone?: 'info' | 'primary'` (`WorkflowStepperCurrentTone`, default `info`): `primary` draws the current step's ring, fill and dot with the brand token (`--color-primary`, which the host sets per tenant) instead of the library's blue, in both orientations. `data-current-tone="primary"` on the root.
+- `ComposerPromptField` `line?: 'wrap' | 'one-line'` and `fullText?: string`: a `one-line` fact in the card presentation draws on one line cut with an ellipsis, with its full text as the value's `title` (`fullText`, else a string or number value); `data-composer-prompt-field-line="one"` on the fact. `wrap` (default) is unchanged. Under `presentation="prompt"` a fact's tooltip now also uses `fullText` when given.
+
 ## 2.537.2
 
 - `DataTable` `rowHeight="content"`: a small table's content cell pads 8px top and bottom (was 10px, off the 4px spacing scale the page audits check).
