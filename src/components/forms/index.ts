@@ -32,3 +32,9 @@ export type { InlineEditableTextProps } from './InlineEditableText';
 
 export { ColorInput } from './ColorInput';
 export type { ColorInputProps } from './ColorInput';
+
+export { DateTimeField } from './DateTimeField';
+export type { DateTimeFieldProps } from './DateTimeField';
+
+export { RatingInput } from './RatingInput';
+export type { RatingInputProps, RatingOption } from './RatingInput';
