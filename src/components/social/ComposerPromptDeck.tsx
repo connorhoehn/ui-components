@@ -468,6 +468,12 @@ function modKey(): string {
 const DECK_MAX = 'max-h-[min(40vh,24rem)] overflow-y-auto overscroll-contain [&>:not(dl)]:shrink-0';
 const FIELDS_SCROLL = 'min-h-0 overflow-y-auto overscroll-contain';
 
+/** A fact's tooltip text: `fullText`, else a string or number value. */
+function fieldFullText(field: { value: ReactNode; fullText?: string }): string | undefined {
+  if (field.fullText != null) return field.fullText;
+  return typeof field.value === 'string' || typeof field.value === 'number' ? String(field.value) : undefined;
+}
+
 export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = null, submitDisabledReason, variant = 'card', presentation: presentationProp, className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
   const inset = variant === 'inset';
   const enclosing = useContext(ComposerPresentationContext);
@@ -654,7 +660,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
               <div key={`${field.label}-${i}`} className="flex min-w-0 items-baseline gap-2" data-composer-prompt-field="">
                 <dt className="m-0 shrink-0 text-xs font-normal text-text-tertiary">{field.label}</dt>
                 <dd className={cn('m-0 min-w-0 flex-1 truncate text-xs font-normal', FIELD_TONE[field.tone ?? 'neutral'], field.mono && 'tabular-nums')}
-                  {...(typeof field.value === 'string' || typeof field.value === 'number' ? { title: String(field.value) } : {})}>{field.value}</dd>
+                  {...(fieldFullText(field) != null ? { title: fieldFullText(field) } : {})}>{field.value}</dd>
               </div>
             ))}
           </dl>
@@ -665,11 +671,20 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, scope, input = nul
           // forecast range) up to the card: nothing is clipped, a long value wraps.
           <dl className={cn('m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5', FIELDS_SCROLL)} data-testid={`${testId}-fields`}>
             {active.fields.map((field, i) => (
+              field.line === 'one-line' ? (
+                // A one-line fact: cut with an ellipsis, its full text the tooltip.
+                <div key={`${field.label}-${i}`} className="flex min-w-0 max-w-full flex-col" data-composer-prompt-field-line="one">
+                  <dt className="m-0 text-xs font-normal text-text-tertiary">{field.label}</dt>
+                  <dd className={cn('m-0 min-w-0 truncate text-xs font-normal', FIELD_TONE[field.tone ?? 'neutral'], field.mono && 'tabular-nums')}
+                    {...(fieldFullText(field) != null ? { title: fieldFullText(field) } : {})}>{field.value}</dd>
+                </div>
+              ) : (
               <div key={`${field.label}-${i}`} className="flex min-w-0 max-w-full flex-col">
                 <dt className="m-0 text-xs font-normal text-text-tertiary">{field.label}</dt>
                 <dd className={cn('m-0 min-w-0 break-words text-xs font-normal', FIELD_TONE[field.tone ?? 'neutral'], field.mono && 'tabular-nums')}
                   {...(typeof field.value === 'string' ? { title: field.value } : {})}>{field.value}</dd>
               </div>
+              )
             ))}
           </dl>
         )}

@@ -229,3 +229,19 @@ export const BudgetRequest: Story = {
     return <ComposerPromptDeck key={rev} prompts={[funding]} />;
   },
 };
+
+/** A fact with `line: 'one-line'` (since NEXT): one truncating line in the card, its full text as the tooltip. */
+export const OneLineFact: Story = {
+  args: {
+    prompts: [{
+      id: 'round:start', title: 'Start the technical round', kind: 'confirm',
+      fields: [
+        { label: 'Candidate', value: 'Sam Rivera' },
+        { label: 'Résumé', value: 'Backend engineer, eight years on payments systems, led a ledger rewrite and mentors two junior engineers.', line: 'one-line' },
+      ],
+      question: 'Start the round now?',
+      options: [{ id: 'start', label: 'Start', emphasis: 'primary' }, { id: 'later', label: 'Later' }],
+      onAnswer: () => ({ receipt: 'Round started' }),
+    }],
+  },
+};
