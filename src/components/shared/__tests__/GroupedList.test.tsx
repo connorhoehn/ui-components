@@ -602,3 +602,43 @@ describe('GroupedList trailingLayout="columns" (2.513.0)', () => {
     expect(screen.getByTestId('grouped-list-row-a')).not.toHaveClass('grid-cols-subgrid');
   });
 });
+
+describe('GroupedList — scrollCurrentIntoView', () => {
+  const original = HTMLElement.prototype.scrollIntoView;
+  afterEach(() => {
+    HTMLElement.prototype.scrollIntoView = original;
+  });
+
+  const spyScroll = () => {
+    const calls: string[] = [];
+    HTMLElement.prototype.scrollIntoView = vi.fn(function (this: HTMLElement) {
+      calls.push(this.closest('[data-row-id]')?.getAttribute('data-row-id') ?? '');
+    });
+    return calls;
+  };
+
+  it('scrolls the current row into view on mount and when it changes, once each', () => {
+    const calls = spyScroll();
+    const { rerender } = render(<GroupedList groups={GROUPS} rows={ROWS} currentId="b" scrollCurrentIntoView />);
+    expect(calls).toEqual(['b']);
+    rerender(<GroupedList groups={GROUPS} rows={[...ROWS]} currentId="b" scrollCurrentIntoView />);
+    expect(calls).toEqual(['b']);
+    rerender(<GroupedList groups={GROUPS} rows={ROWS} currentId="c" scrollCurrentIntoView />);
+    expect(calls).toEqual(['b', 'c']);
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenLastCalledWith({ block: 'nearest', inline: 'nearest' });
+  });
+
+  it('waits for a current row that is drawn later', () => {
+    const calls = spyScroll();
+    const { rerender } = render(<GroupedList groups={GROUPS} rows={[]} currentId="c" scrollCurrentIntoView />);
+    expect(calls).toEqual([]);
+    rerender(<GroupedList groups={GROUPS} rows={ROWS} currentId="c" scrollCurrentIntoView />);
+    expect(calls).toEqual(['c']);
+  });
+
+  it('does not scroll by default', () => {
+    const calls = spyScroll();
+    render(<GroupedList groups={GROUPS} rows={ROWS} currentId="b" />);
+    expect(calls).toEqual([]);
+  });
+});

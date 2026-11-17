@@ -280,6 +280,16 @@ export interface GroupedListProps {
    * 2.513.0.
    */
   trailingLayout?: 'inline' | 'columns';
+  /**
+   * Scroll the current row (`currentId`, or a row with `current`) into view in
+   * the list's scroller when the list mounts and whenever the current row
+   * changes (since NEXT), with `block: 'nearest'`, so a record opened from a
+   * link or a search shows its row in a long rail. Waits for the row to be
+   * drawn (rows that load later, a group that opens); the reader's own scroll
+   * is left alone until the current row changes again. Never moves focus.
+   * Default false.
+   */
+  scrollCurrentIntoView?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -395,6 +405,7 @@ export function GroupedList({
   groupCountAlign = 'inline',
   rowStyle = 'ruled',
   trailingLayout = 'inline',
+  scrollCurrentIntoView = false,
   className,
   'data-testid': testId = 'grouped-list',
 }: GroupedListProps) {
@@ -538,6 +549,21 @@ export function GroupedList({
     if (currentKey && focusOrder.includes(currentKey)) return currentKey;
     return focusOrder[0] ?? null;
   }, [focused, focusOrder, rows, currentId]);
+
+  // `scrollCurrentIntoView`: once per current row, as soon as it is drawn.
+  const currentRowId = rows.find((r) => r.current || r.id === currentId)?.id ?? null;
+  const scrolledTo = useRef<string | null>(null);
+  useEffect(() => {
+    if (!scrollCurrentIntoView || currentRowId == null) {
+      scrolledTo.current = null;
+      return;
+    }
+    if (scrolledTo.current === currentRowId) return;
+    const el = rootRef.current?.querySelector<HTMLElement>(`[data-focus-key="${cssEscape(`r:${currentRowId}`)}"]`);
+    if (!el) return;
+    scrolledTo.current = currentRowId;
+    if (typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [scrollCurrentIntoView, currentRowId, focusOrder]);
 
   const focusKey = useCallback((key: FocusKey) => {
     const el = rootRef.current?.querySelector<HTMLElement>(`[data-focus-key="${cssEscape(key)}"]`);

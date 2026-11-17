@@ -292,3 +292,20 @@ export const SharedTrailingColumns: Story = {
     </div>
   ),
 };
+
+const LONG_GROUPS: GroupedListGroup[] = [{ id: 'all', title: 'Candidates' }];
+const LONG_ROWS: GroupedListRow[] = Array.from({ length: 40 }, (_, i) => ({ id: `c${i + 1}`, groupId: 'all', title: `Candidate ${i + 1}` }));
+
+/** `scrollCurrentIntoView` (since NEXT): a long rail opened on row 32 scrolls it into view, and again when the current row changes. */
+export const ScrollCurrentIntoView: Story = {
+  args: { groups: LONG_GROUPS, rows: LONG_ROWS },
+  render: function Render() {
+    const [current, setCurrent] = useState('c32');
+    return (
+      <div className="h-[320px] w-[280px] overflow-y-auto border border-border">
+        <GroupedList groups={LONG_GROUPS} rows={LONG_ROWS} currentId={current} currentStyle="bar" scrollCurrentIntoView
+          onOpenRow={(row) => setCurrent(row.id)} />
+      </div>
+    );
+  },
+};
