@@ -14,8 +14,12 @@ function s({ value: s, max: c = 100, color: l, size: u = "md", completeTone: d, 
 		style: _,
 		children: [f != null && /* @__PURE__ */ a("div", {
 			className: e("flex items-center justify-between mb-1 text-[12px] text-[var(--color-text-secondary)]", h),
-			children: [/* @__PURE__ */ i("span", { children: f }), /* @__PURE__ */ i("span", {
-				className: e("tabular-nums", C ? t[C] : "text-[var(--color-text-tertiary)]"),
+			children: [/* @__PURE__ */ i("span", {
+				className: "min-w-0 truncate",
+				title: typeof f == "string" ? f : void 0,
+				children: f
+			}), /* @__PURE__ */ i("span", {
+				className: e("shrink-0 pl-2 tabular-nums", C ? t[C] : "text-[var(--color-text-tertiary)]"),
 				children: p ?? (m ? `${x}/${b}` : `${Math.round(S)}%`)
 			})]
 		}), /* @__PURE__ */ i("div", {

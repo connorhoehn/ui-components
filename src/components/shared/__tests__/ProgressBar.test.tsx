@@ -3,6 +3,15 @@ import { describe, it, expect } from 'vitest';
 import { ProgressBar } from '../ProgressBar';
 
 describe('ProgressBar', () => {
+  it('cuts a long text label to one line and keeps it whole as the title', () => {
+    const long = 'Draw the rig sheet: the body front, side and back with the arms out and the hands open';
+    render(<ProgressBar value={4} max={100} label={long} />);
+    const span = screen.getByText(long);
+    expect(span.className).toContain('truncate');
+    expect(span.className).toContain('min-w-0');
+    expect(span.getAttribute('title')).toBe(long);
+  });
+
   it('exposes a progressbar with clamped value and max', () => {
     render(<ProgressBar value={150} max={100} aria-label="Upload" />);
     const bar = screen.getByRole('progressbar', { name: 'Upload' });

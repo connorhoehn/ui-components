@@ -1,7 +1,7 @@
 import { t as e } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { d as t } from "./Button-DQoeE5dN.js";
 import { t as n } from "./Chip-BtSN-nsV.js";
-import { t as r } from "./ProgressBar-CsULEkih.js";
+import { t as r } from "./ProgressBar-DkPTqZyz.js";
 import { n as i, t as a } from "./Stack-CE1FjEn8.js";
 import { t as o } from "./Text-XdCzxWMv.js";
 import { n as s } from "./safeHref-dF2rw8EK.js";

@@ -1,3 +1,7 @@
+## 2.538.3
+
+- `ProgressBar`: a label longer than the bar is cut to one line (a text label keeps its whole text as the title) instead of running past the bar over neighbouring cells; the value label never shrinks.
+
 ## 2.538.2
 
 - `ActivityFeed` cuts only a surname to its initial ("Alex Chen" -> "Alex C."); a lower-case role such as "Local worker" reads whole instead of "Local w.".

@@ -1,5 +1,5 @@
 import { d as e, n as t } from "./Button-DQoeE5dN.js";
-import { t as n } from "./ProgressBar-CsULEkih.js";
+import { t as n } from "./ProgressBar-DkPTqZyz.js";
 import { n as r } from "./Text-XdCzxWMv.js";
 import { t as i } from "./IconButton-BgM9MvwA.js";
 import { h as a } from "./Icons-CNCMF52q.js";

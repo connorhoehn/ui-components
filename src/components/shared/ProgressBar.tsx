@@ -80,10 +80,14 @@ export function ProgressBar({
             labelClassName,
           )}
         >
-          <span>{label}</span>
+          {/* Since 2.538.3: a label longer than the bar is cut to one line (whole as the span's title when it is
+              text) instead of running out of the bar's box over its neighbours; the value never shrinks. */}
+          <span className="min-w-0 truncate" title={typeof label === 'string' ? label : undefined}>
+            {label}
+          </span>
           <span
             className={cn(
-              'tabular-nums',
+              'shrink-0 pl-2 tabular-nums',
               completeKey
                 ? TONE_TEXT[completeKey]
                 : 'text-[var(--color-text-tertiary)]',

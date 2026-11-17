@@ -2,7 +2,7 @@ import { r as e } from "./IdentityContext-CQM1qwH6.js";
 import "./WebSocketContext-DUvjGLFq.js";
 import { t } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { d as n, n as r, o as i } from "./Button-DQoeE5dN.js";
-import { r as a } from "./ToastProvider-C9YxktnJ.js";
+import { r as a } from "./ToastProvider-sYH17V34.js";
 import { a as o, n as s, t as c } from "./Chip-BtSN-nsV.js";
 import { t as l } from "./safeHref-dF2rw8EK.js";
 import { t as u } from "./useEventCallback-Cwx9QVSi.js";
