@@ -1,3 +1,7 @@
+## 2.535.3
+
+- `PageHeader` (compact) and `DetailPage` lay their title cell out at a 12rem basis (was 8rem): the actions wrap under the title before it truncates, so "Voices & sound" no longer reads "Voices & so…" beside two actions at 390px. Wide headers are unchanged.
+
 ## 2.535.2
 
 - `NavTabs` and `TopNav` items keep their label on one line (`shrink-0 whitespace-nowrap`); a `NavTabs` strip wider than its column scrolls sideways, its rule drawn as an inset shadow the active underline paints over ("At a glance" wrapped to two lines at 390px).

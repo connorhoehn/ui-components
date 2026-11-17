@@ -182,8 +182,9 @@ function PageHeader({
     return (
       <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-page-header="" data-density="compact" data-collapsed="false">
         {trail}
-        {/* The row wraps (since 2.515.7): the title cell is laid out at an
-            8rem basis, so when the title's 8rem, the gap and the actions do not
+        {/* The row wraps (since 2.515.7): the title cell is laid out at a
+            12rem basis (8rem until 2.535.2, which cut "Voices & sound" to
+            "Voices & so…" beside two actions at 390px), so when the title's 12rem, the gap and the actions do not
             fit the header's width, the actions take their own row under the
             title instead of squeezing it to nothing (a 302px column with four
             header actions used to lose its h1). Wide headers are unchanged:
@@ -192,7 +193,7 @@ function PageHeader({
             in any host, including one that sizes the header to its content. */}
         <div className="flex min-h-7 min-w-0 flex-wrap items-center gap-x-3 gap-y-1" data-testid={`${testId}-row`} data-page-header-row="">
           {compactBack}
-          <div className="flex min-w-0 flex-1 basis-32 items-center gap-2" data-page-header-title-cell="">
+          <div className="flex min-w-0 flex-1 basis-48 items-center gap-2" data-page-header-title-cell="">
             <Heading className={cn('m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]', size === 'sm' ? 'text-sm leading-5' : 'text-xl leading-7')} title={title} data-title-size={size} data-page-header-title="">
               {title}
             </Heading>

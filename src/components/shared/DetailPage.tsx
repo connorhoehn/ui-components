@@ -126,7 +126,7 @@ export function DetailPage({
               header's 8rem basis and the actions do not fit, the actions take
               their own row under it instead of squeezing the title away. */}
           <div className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2" data-detail-page-row="">
-            <DetailHeader title={title} as={titleAs} titleSize="page" className="min-w-0 flex-1 basis-32"
+            <DetailHeader title={title} as={titleAs} titleSize="page" className="min-w-0 flex-1 basis-48"
               {...(badge != null ? { badge } : {})} {...(description != null ? { description } : {})} {...(meta != null ? { meta } : {})} />
             {actions != null && <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2" data-detail-page-actions="">{actions}</div>}
           </div>

@@ -17,11 +17,11 @@ function expectWrappingRow(heading: HTMLElement) {
   const row = heading.closest('[data-page-header-row]') as HTMLElement;
   expect(cell).not.toBeNull();
   expect(row).not.toBeNull();
-  // The row wraps and has no fixed height; the title cell lays out at an 8rem basis.
+  // The row wraps and has no fixed height; the title cell lays out at a 12rem basis (2.535.2).
   expect(row.className).toContain('flex-wrap');
   expect(row.className).not.toMatch(/(^|\s)h-7(\s|$)/);
   expect(row.className).toContain('min-h-7');
-  expect(cell.className).toContain('basis-32');
+  expect(cell.className).toContain('basis-48');
   expect(cell.className).toContain('flex-1');
   const acts = row.querySelector('[data-page-header-actions]') as HTMLElement;
   expect(acts).not.toBeNull();
@@ -62,7 +62,7 @@ describe('narrow compact headers (2.515.7)', () => {
     const { container } = render(<DetailPage title="Episode 3" actions={actions}>body</DetailPage>);
     const row = container.querySelector('[data-detail-page-row]') as HTMLElement;
     expect(row.className).toContain('flex-wrap');
-    expect(row.firstElementChild!.className).toContain('basis-32');
+    expect(row.firstElementChild!.className).toContain('basis-48');
     expect(container.querySelector('[data-detail-page-actions]')!.className).toContain('max-w-full');
   });
 

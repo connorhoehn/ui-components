@@ -376,7 +376,7 @@ function B({ title: n, as: i = "h1", description: a, actions: c, back: u, badge:
 				children: [
 					V,
 					/* @__PURE__ */ x("div", {
-						className: "flex min-w-0 flex-1 basis-32 items-center gap-2",
+						className: "flex min-w-0 flex-1 basis-48 items-center gap-2",
 						"data-page-header-title-cell": "",
 						children: [
 							/* @__PURE__ */ b(i, {

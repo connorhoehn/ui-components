@@ -63,7 +63,7 @@ import "./RovingToolbar-eUKIxXK4.js";
 import { t as Tt } from "./InlineAlert-BMRUWJjD.js";
 import "./CardHeader-DDkwr0A5.js";
 import { t as Et } from "./Breadcrumbs-Bafkh5Fe.js";
-import { a as Dt, d as Ot, f as kt, o as At, p as jt, t as Mt, u as Nt } from "./PageHeader-CLGobyFG.js";
+import { a as Dt, d as Ot, f as kt, o as At, p as jt, t as Mt, u as Nt } from "./PageHeader-DuNABBvw.js";
 import { t as Pt } from "./ThinkingDots-BhOnjzvM.js";
 import { $ as Ft, et as It, t as Lt, tt as Rt } from "./ChatPanel-uBZbC-Ms.js";
 import { c as zt } from "./SidebarRow-Bct1cKL-.js";
@@ -9116,7 +9116,7 @@ function Cc({ title: e, badge: t, description: n, meta: r, actions: a, breadcrum
 						title: e,
 						as: s,
 						titleSize: "page",
-						className: "min-w-0 flex-1 basis-32",
+						className: "min-w-0 flex-1 basis-48",
 						...t == null ? {} : { badge: t },
 						...n == null ? {} : { description: n },
 						...r == null ? {} : { meta: r }
