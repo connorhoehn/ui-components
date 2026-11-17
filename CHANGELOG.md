@@ -1,3 +1,7 @@
+## 2.537.1
+
+- `RichChatComposer`'s context chip: a long label with no short " · " scope keeps its last 12 characters from a word start ("Ep 11: The Next Tier" keeps " Next Tier", not "he Next Tier"), and the label clips inside the chip so its tail never runs into the input.
+
 ## 2.537.0
 
 Wide tables group their columns, pin their first column and wrap prose; the side pane keeps its minimum as the window narrows; guest and step pages get a centred column; and the call's word reaches every device check. Every new prop is optional; with none given, output is unchanged. Doc comments say "since NEXT": replace with the release version.

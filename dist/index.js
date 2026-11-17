@@ -109,7 +109,7 @@ import { n as _p, t as vp } from "./QuoteBlock-Dks53Idi.js";
 import { t as yp } from "./formatBytes-05ivRSJY.js";
 import { t as bp } from "./ReactionsOverlay-XR_TNH6f.js";
 import { B as xp, C as Sp, D as Cp, E as wp, F as Tp, I as Ep, L as Dp, M as Op, N as kp, O as Ap, P as jp, R as Mp, S as Np, T as Pp, V as Fp, _ as Ip, a as Lp, b as Rp, c as zp, d as Bp, f as Vp, g as Hp, h as Up, i as Wp, j as Gp, l as Kp, m as qp, n as Jp, o as Yp, p as Xp, r as Zp, s as Qp, t as $p, u as em, v as tm, w as nm, x as rm, y as im, z as am } from "./renderers-Bj_R7kXH.js";
-import { A as om, B as sm, C as cm, F as lm, I as um, L as dm, M as fm, N as pm, O as mm, P as hm, R as gm, h as _m, i as vm, j as ym, k as bm, n as xm, q as Sm, r as Cm, t as wm, z as Tm } from "./ProposedEditStrip-B_OowilT.js";
+import { A as om, B as sm, C as cm, F as lm, I as um, L as dm, M as fm, N as pm, O as mm, P as hm, R as gm, h as _m, i as vm, j as ym, k as bm, n as xm, q as Sm, r as Cm, t as wm, z as Tm } from "./ProposedEditStrip-BDL_jfmv.js";
 import { n as Em, r as Dm, t as Om } from "./EventStreamContext-CLzG8O5_.js";
 import { B as km, G as Am, I as jm, K as Mm, L as Nm, O as Pm, a as Fm, b as Im, c as Lm, d as Rm, i as zm, l as Bm, n as Vm, o as Hm, p as Um, r as Wm, s as Gm, t as Km, v as qm, z as Jm } from "./JsonPathInput-B7l3Ihg9.js";
 import { n as Ym, t as Xm } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1532,7 +1532,7 @@ async function SS(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var CS = Tx(() => import("./AgentComposerDock-NLkxj23U.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var CS = Tx(() => import("./AgentComposerDock-BkbsDTDF.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function wS(e) {
 	return /* @__PURE__ */ Z(Cx, {
 		fallback: null,
@@ -1541,7 +1541,7 @@ function wS(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var TS = Tx(() => import("./ContextComposer-oRXeUbe5.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var TS = Tx(() => import("./ContextComposer-gP3u6k98.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function ES(e) {
 	return /* @__PURE__ */ Z(Cx, {
 		fallback: null,

@@ -49,7 +49,7 @@ describe('RichChatComposer responsive="pane"', () => {
     renderComposer('medium', { onRemoveReference: remove });
     const label = screen.getByTestId('c-context-label');
     expect(label.children).toHaveLength(2);
-    expect(label.lastElementChild?.textContent).toBe('ion Platform');
+    expect(label.lastElementChild?.textContent).toBe(' Platform');
     fireEvent.click(screen.getByRole('button', { name: /Remove Org › Initiatives › LLM Application Platform/ }));
     expect(remove).toHaveBeenCalledWith('initiative:p-llm');
   });

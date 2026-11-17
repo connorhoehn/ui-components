@@ -127,13 +127,19 @@ import { ArrowRightIcon, ArrowUpIcon, SendIcon, ChatIcon, ChevronIcon, CodeIcon,
 
 /**
  * The end of a long context label that stays whole while the rest truncates (middle truncation): from the last
- * " · " when that names a short scope ("Second Look · catalog" keeps " · catalog"), else the last 12 characters.
+ * " · " when that names a short scope ("Second Look · catalog" keeps " · catalog"), else the last 12 characters
+ * from a word start.
  * Labels of 18 characters or fewer are not split.
  */
 export function contextLabelTail(label: string): string {
   if (label.length <= 18) return '';
   const sep = label.lastIndexOf(' · ');
-  return sep > 0 && label.length - sep <= 16 ? label.slice(sep) : label.slice(-12);
+  if (sep > 0 && label.length - sep <= 16) return label.slice(sep);
+  // Otherwise the last 12 characters, from a word start when one falls inside them ("Ep 11: The Next Tier" keeps
+  // " Next Tier", not "he Next Tier").
+  const end = label.slice(-12);
+  const space = end.indexOf(' ');
+  return space > 0 && space < end.length - 1 ? end.slice(space) : end;
 }
 
 export type { MentionCandidate, DocumentCandidate, DocumentMenuPanel };
@@ -3279,7 +3285,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               return (
                 <>
                   {chipModes && <span aria-hidden="true" className="shrink-0 text-text-tertiary">·</span>}
-                  <span className="flex min-w-0 items-center" data-testid={`${testId}-context-label`}>
+                  <span className="flex min-w-0 items-center overflow-hidden" data-testid={`${testId}-context-label`}>
                     {/* min-w: the head always has room for a letter and its ellipsis (2.535.2: at 390px it shrank to a
                         sliver of a glyph, ":Look · Audio") */}
                     <span className="min-w-[1.75em] truncate">{tail ? label.slice(0, -tail.length) : label}</span>
