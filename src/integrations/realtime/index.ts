@@ -271,6 +271,7 @@ export type {
   CallBlockPlacement,
   CallBlockClaimPlacement,
   CallBlockDocument,
+  CallBlockFit,
   PreJoinChoice,
   PreJoinKind,
 } from './callBlockModel';

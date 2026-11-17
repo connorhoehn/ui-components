@@ -399,6 +399,30 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
     recordingNow = null;
   });
 
+  it('CallBlock fit="contain" travels through the pane claim to the grid dock; without it the dock is unchanged', async () => {
+    function PanePage({ fit }: { fit?: 'width' | 'contain' }) {
+      gated.useCallBlock('orgiq:initiative:p-auth', { enabled: false, bind: { title: 'Huddle' } });
+      return <gated.CallBlock placement="pane" className="h-full min-h-0" {...(fit ? { fit } : {})} />;
+    }
+    phase = 'idle';
+    const r = render(<GatedShell enabledFor={() => false}><PanePage fit="contain" /></GatedShell>);
+    phase = 'live';
+    r.rerender(<GatedShell enabledFor={() => false}><PanePage fit="contain" /></GatedShell>);
+    await act(async () => {});
+    const pane = screen.getByTestId('call-block-pane');
+    const dock = screen.getByTestId('conversation-call-dock');
+    expect(pane).toContainElement(dock);
+    expect(dock).toHaveAttribute('data-layout', 'grid');
+    expect(dock).toHaveAttribute('data-fit', 'contain');
+    expect(dock.className).toContain('flex-1');
+    const media = pane.querySelector('[data-testid="shell-call-media"]')!;
+    expect(media.className).toContain('flex-1');
+    r.rerender(<GatedShell enabledFor={() => false}><PanePage /></GatedShell>);
+    await act(async () => {});
+    expect(screen.getByTestId('conversation-call-dock')).not.toHaveAttribute('data-fit');
+    expect(screen.getByTestId('call-block-pane').querySelector('[data-testid="shell-call-media"]')!.className).not.toContain('flex-1');
+  });
+
   it('the outlet draws its header above the dock only while a page holds it', async () => {
     phase = 'idle';
     const r = render(<GatedShell enabledFor={() => true}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);

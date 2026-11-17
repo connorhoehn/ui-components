@@ -55,6 +55,8 @@ import { IconButton } from '../ui/IconButton';
 import { DocumentIcon, MoreIcon } from '../ui/Icons';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
 import { CallTileRow, type CallTileParticipant } from './CallTileRow';
+import { gridFit } from './gridFit';
+import { useContainerDensity } from '../shared/ContainerDensity';
 import { DeviceToggleSelect, type DeviceToggleSelectProps } from './DeviceToggleSelect';
 import {
   ExpandIcon,
@@ -150,8 +152,11 @@ export interface CallDockProps {
    * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
    * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
    * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
-   * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
-   * its badge; the ended and error phases render as they do for `shelf`.
+   * camera and Leave. Connecting draws the tiles, the viewer first as "You",
+   * once the viewer's own participant is in `participants` (one fluid
+   * skeleton before that); reconnecting keeps its badge; the ended and error
+   * phases render as they do for `shelf`. `fit="contain"` fits the tiles to
+   * the block's width and height instead of its width alone.
    * `stack` (2.432.0): the narrow form of `shelf` — the header (title, meta,
    * mic ▾, camera ▾, a "⋯" menu holding Share, People, Documents, settings
    * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
@@ -172,6 +177,19 @@ export interface CallDockProps {
    * `layout="grid"`, which has no meta line.
    */
   metaAside?: ReactNode;
+  /**
+   * `layout="grid"` only: how the tiles take the block's room. `width`
+   * (default): fluid 16:9 tiles as wide as their columns, the markup of
+   * every earlier release. `contain`: the tiles fit the block's measured
+   * width AND height — the column count that gives the largest 16:9 tile
+   * with every tile visible and nothing scrolling (`gridFit`), the grid
+   * centred in what is left (`data-fit="contain"`). The dock then grows to
+   * fill a flex column (`min-h-0 flex-1`), so give the host a height
+   * (`<CallBlock placement="pane" fit="contain" className="h-full min-h-0">`).
+   * It re-fits on resize and when someone joins or leaves without remounting
+   * a tile; before the first measurement it draws the `width` layout.
+   */
+  fit?: CallDockFit;
   className?: string;
   'data-testid'?: string;
 }
@@ -259,6 +277,8 @@ const CallDockTiles = memo(function CallDockTiles({
   gallery = false,
   wrap = false,
   maxColumns,
+  fitWidth = 0,
+  fitHeight = 0,
   onTileClick,
   title,
 }: {
@@ -273,6 +293,9 @@ const CallDockTiles = memo(function CallDockTiles({
   /** The compact block's wrapping gallery of `COMPACT_GALLERY_TILE` tiles. */
   wrap?: boolean;
   maxColumns?: number;
+  /** `fit="contain"`: the measured box (0 before the first measurement). Numbers, so the memo holds. */
+  fitWidth?: number;
+  fitHeight?: number;
   onTileClick: ((userId: string) => void) | undefined;
   title: string;
 }) {
@@ -291,12 +314,16 @@ const CallDockTiles = memo(function CallDockTiles({
       maxVisible={wrap ? COMPACT_GALLERY_TILE.visible : TILE_PX[size].visible}
       {...(wrap ? { wrap: true } : {})}
       {...(maxColumns ? { maxColumns } : {})}
+      {...(fitWidth > 0 && fitHeight > 0 ? { fitBox: { width: fitWidth, height: fitHeight } } : {})}
       {...(onTileClick ? { onParticipantClick: onTileClick } : {})}
       title={title}
       data-testid="call-dock-tile-row"
     />
   );
 });
+
+/** How `CallDock layout="grid"` sizes its tiles: by width (fluid columns) or to fit the block's width and height. */
+export type CallDockFit = 'width' | 'contain';
 
 export function CallDock({
   title,
@@ -332,6 +359,7 @@ export function CallDock({
   tileSize,
   layout = 'shelf',
   metaAside,
+  fit = 'width',
   className,
   'data-testid': testId = 'call-dock',
 }: CallDockProps) {
@@ -347,6 +375,12 @@ export function CallDock({
   // focusable and says why (before: the native attribute and a title).
   const shareReason = phase === 'calling' ? 'You can share once someone joins' : phase === 'connecting' ? 'Connecting…' : screenShare.disabledReason;
   const shareHeld = useDisabledReason(shareReason, false);
+  // `fit="contain"`: the tile box's content width and height, one observer each on one element.
+  const contain = fit === 'contain' && layout === 'grid';
+  const fitHeight = useContainerDensity<HTMLDivElement>({ axis: 'height', enabled: contain });
+  const fitWidth = useContainerDensity<HTMLDivElement>({ axis: 'width', forward: fitHeight.ref, enabled: contain });
+  const fitW = contain && fitWidth.size && fitHeight.size ? fitWidth.size : 0;
+  const fitH = contain && fitWidth.size && fitHeight.size ? fitHeight.size : 0;
 
   if (phase === 'error' && error) {
     return (
@@ -417,45 +451,69 @@ export function CallDock({
       ...(connecting ? { disabled: true, disabledReason: 'Connecting…' } : {}), 'data-testid': 'call-dock-popout' },
   ];
 
-  const tiles = (
-    <div className={cn('relative min-w-0', stage && 'min-h-0 flex-1 overflow-y-auto', compactDock && 'order-first max-w-full')} data-testid="call-dock-tiles">
-      {reconnecting && (
-        <div
-          className="mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg"
-          role="status"
-          data-testid="call-dock-reconnecting"
-        >
-          Reconnecting…
-        </div>
-      )}
-      {/* The call block shows the people already in the call while its media connects (their avatars), not a grey box. */}
-      {connecting && !(compactDock && participants.length > 0) ? (
-        <div className="flex gap-2" data-testid="call-dock-connecting">
-          <div
-            className={cn(
-              'shrink-0 overflow-hidden rounded-md',
-              stage ? 'aspect-video w-full max-w-[26rem] mx-auto' : grid || (stack && !compactDock) ? 'aspect-video w-full' : compactDock ? COMPACT_GALLERY_TILE.box : TILE_PX[size].box,
-            )}
-          >
-            <SkeletonCard height="100%" rounded="md" />
+  // The viewer's own tile is known: the grid draws the tiles while the call
+  // connects ("You" first), as the compact block does, instead of one grey box.
+  const viewerKnown = !!localParticipantId && participants.some((p) => p.userId === localParticipantId);
+  const skeleton = connecting && !(compactDock && participants.length > 0) && !(layout === 'grid' && viewerKnown);
+  const skeletonBox = (
+    <div className="flex gap-2" data-testid="call-dock-connecting">
+      <div
+        className={cn(
+          'shrink-0 overflow-hidden rounded-md',
+          stage ? 'aspect-video w-full max-w-[26rem] mx-auto' : grid || (stack && !compactDock) ? 'aspect-video w-full' : compactDock ? COMPACT_GALLERY_TILE.box : TILE_PX[size].box,
+        )}
+      >
+        <SkeletonCard height="100%" rounded="md" />
+      </div>
+    </div>
+  );
+  const tileGrid = (
+    <CallDockTiles
+      participants={participants}
+      localParticipantId={localParticipantId}
+      activeSpeakerId={activeSpeakerId}
+      followingUserId={followingUserId}
+      reconnecting={reconnecting}
+      size={size}
+      grid={grid || (stack && !compactDock)}
+      gallery={stage}
+      wrap={compactDock}
+      {...(stack && !compactDock ? { maxColumns: 2 } : {})}
+      {...(contain ? { fitWidth: fitW, fitHeight: fitH } : {})}
+      onTileClick={onTileClick ? stableTileClick : undefined}
+      title={title}
+    />
+  );
+  const reconnectingBadge = reconnecting && (
+    <div
+      className={cn('mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg', contain && 'shrink-0 self-start')}
+      role="status"
+      data-testid="call-dock-reconnecting"
+    >
+      Reconnecting…
+    </div>
+  );
+  // `fit="contain"`: the measured box fills the dock below the badge; the
+  // skeleton is one fitted tile, centred.
+  const fitted = gridFit(1, fitW, fitH, 0);
+  const tiles = contain ? (
+    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col" data-testid="call-dock-tiles">
+      {reconnectingBadge}
+      <div ref={fitWidth.ref} className="flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center" data-testid="call-dock-fit-box">
+        {skeleton ? (
+          <div className="flex w-full justify-center" data-testid="call-dock-connecting">
+            <div className="aspect-video w-full shrink-0 overflow-hidden rounded-md" style={fitted.tileWidth > 0 ? { width: fitted.tileWidth } : undefined}>
+              <SkeletonCard height="100%" rounded="md" />
+            </div>
           </div>
-        </div>
-      ) : (
-        <CallDockTiles
-          participants={participants}
-          localParticipantId={localParticipantId}
-          activeSpeakerId={activeSpeakerId}
-          followingUserId={followingUserId}
-          reconnecting={reconnecting}
-          size={size}
-          grid={grid || (stack && !compactDock)}
-          gallery={stage}
-          wrap={compactDock}
-          {...(stack && !compactDock ? { maxColumns: 2 } : {})}
-          onTileClick={onTileClick ? stableTileClick : undefined}
-          title={title}
-        />
-      )}
+        ) : tileGrid}
+      </div>
+    </div>
+  ) : (
+    <div className={cn('relative min-w-0', stage && 'min-h-0 flex-1 overflow-y-auto', compactDock && 'order-first max-w-full')} data-testid="call-dock-tiles">
+      {reconnectingBadge}
+      {/* The call block shows the people already in the call while its media connects (their avatars), not a grey box. */}
+      {skeleton ? skeletonBox : tileGrid}
     </div>
   );
 
@@ -463,11 +521,12 @@ export function CallDock({
     return (
       <section
         data-ui-part=""
-        className={cn('flex min-w-0 flex-col gap-2 bg-surface p-3', className)}
+        className={cn('flex min-w-0 flex-col gap-2 bg-surface p-3', contain && 'min-h-0 flex-1', className)}
         aria-label={`Call: ${title}`}
         data-testid={testId}
         data-phase={phase}
         data-layout="grid"
+        {...(contain ? { 'data-fit': 'contain' } : {})}
         data-compact={size === 'sm' ? 'true' : 'false'}
       >
         {tiles}

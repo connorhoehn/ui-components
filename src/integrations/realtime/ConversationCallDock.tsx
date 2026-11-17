@@ -109,6 +109,8 @@ export interface ConversationCallDockProps {
    * and Leave on the bar, the rest in its "⋯" menu, the tiles two to a row.
    */
   layout?: CallDockProps['layout'];
+  /** `layout="grid"`: fluid columns by width (default) or tiles fitted to the block's width and height (`CallDock` `fit`). */
+  fit?: CallDockProps['fit'];
   className?: string;
   /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
   'data-testid'?: string;
@@ -210,6 +212,7 @@ function ConversationCallDockImpl(
     documentsOpen,
     onDocumentClick,
     layout = 'shelf',
+    fit,
     className,
     'data-testid': testId = 'conversation-call-dock',
   }: ConversationCallDockProps,
@@ -250,6 +253,7 @@ function ConversationCallDockImpl(
         }
       : {}),
     layout,
+    ...(fit ? { fit } : {}),
     ...(tileSize ? { tileSize } : {}),
     ...(documents ? { documents } : {}),
     ...(onOpenDocuments ? { onOpenDocuments } : {}),

@@ -80,6 +80,7 @@ import {
   shouldShowPreJoin,
   type CallBlockClaimPlacement,
   type CallBlockDocument,
+  type CallBlockFit,
   type CallBlockPlacement,
   type PreJoinChoice,
   type PreJoinKind,
@@ -270,6 +271,14 @@ export interface CallBlockProps {
   /** The narrow bar (mic, camera, Leave; the rest in ⋯). Composer and stage placements. */
   compact?: boolean;
   documents?: readonly CallBlockDocument[];
+  /**
+   * `pane` placement: how the call's tile grid takes this block's room
+   * (`CallDock` `fit`). `width` (default): fluid 16:9 columns, as before.
+   * `contain`: the tiles fit the block's width AND height, centred, so a tall
+   * or short stage is filled without scrolling; give the block a height
+   * (`className="h-full min-h-0"`). Carried to the dock through the claim.
+   */
+  fit?: CallBlockFit;
   className?: string;
 }
 
@@ -337,6 +346,7 @@ const noPlacement = (): CallBlockPlacement => 'footer';
 const noFalse = () => false;
 const NO_DOCUMENTS: readonly CallBlockDocument[] = [];
 const noDocuments = () => NO_DOCUMENTS;
+const noFit = (): CallBlockFit => 'width';
 const DEFAULT_PRE_JOIN_KEY = 'ui.call-prejoin.v1';
 
 /** Why no call can start here at all, in the bar's words; null when one can. */
@@ -724,12 +734,13 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
   }
 
   /** Claim the sink into `target` while `enabled`; true while this claim holds it. */
-  function useClaimCallBlock(target: HTMLElement | null, placement: CallBlockClaimPlacement, enabled = true, options: { compact?: boolean; documents?: readonly CallBlockDocument[] } = {}): boolean {
+  function useClaimCallBlock(target: HTMLElement | null, placement: CallBlockClaimPlacement, enabled = true, options: { compact?: boolean; documents?: readonly CallBlockDocument[]; fit?: CallBlockFit } = {}): boolean {
     const claims = useContext(ClaimsContext);
     const compact = !!options.compact;
+    const fit: CallBlockFit = options.fit ?? 'width';
     const documentsKey = JSON.stringify(options.documents ?? []);
     const documents = useMemo(() => JSON.parse(documentsKey) as CallBlockDocument[], [documentsKey]);
-    useLayoutEffect(() => (claims && target && enabled ? claims.claim(target, placement, { compact, documents }) : undefined), [claims, target, enabled, placement, compact, documents]);
+    useLayoutEffect(() => (claims && target && enabled ? claims.claim(target, placement, { compact, documents, fit }) : undefined), [claims, target, enabled, placement, compact, documents, fit]);
     const current = useClaimsSnapshot((c) => c.current, noTarget);
     return !!target && current === target;
   }
@@ -742,7 +753,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
    * side pane's tile grid. `stage`: a dedicated call page that owns the full
    * grid regardless of the media-panel toggle and takes precedence over chat.
    */
-  function CallBlock({ placement, compact = false, documents, className }: CallBlockProps) {
+  function CallBlock({ placement, compact = false, documents, fit, className }: CallBlockProps) {
     const host = useContext(HostContext);
     const media = useContext(MediaPanelContext);
     const [target, setTarget] = useState<HTMLElement | null>(null);
@@ -754,7 +765,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       : drawn && !!media?.open && width > 0;
     const sized = placement === 'composer' || placement === 'stage';
     const narrow = sized && (compact || callBlockNarrow(width));
-    const holds = useClaimCallBlock(target, placement, enabled, { compact: narrow, ...(documents ? { documents } : {}) });
+    const holds = useClaimCallBlock(target, placement, enabled, { compact: narrow, ...(documents ? { documents } : {}), ...(fit ? { fit } : {}) });
     const testId = placement === 'stage' ? 'call-stage' : placement === 'composer' ? 'composer-call-dock' : placement === 'page' ? 'page-call-block' : placement === 'block' ? 'shell-call-block' : 'call-block-pane';
     return <Stack ref={setTarget} gap="none" className={className ?? (placement === 'composer' ? 'min-w-0' : 'shrink-0 min-w-0')} aria-label="Huddle"
       data-testid={testId} data-holds-media={holds ? 'true' : 'false'} {...(sized ? { 'data-compact': narrow ? 'true' : 'false' } : {})} />;
@@ -820,10 +831,13 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     const placement = useClaimsSnapshot((c) => c.placement, noPlacement);
     const holderCompact = useClaimsSnapshot((c) => c.compact, noFalse);
     const documents = useClaimsSnapshot((c) => c.documents, noDocuments);
+    const holderFit = useClaimsSnapshot((c) => c.fit, noFit);
     const draw = !!host?.lobby && callDrawn(host.call.phase, true);
     const inComposer = !!target && placement === 'composer';
     const fullBar = !!target && placement !== 'pane';
     const layout = callBlockLayout(target ? placement : 'footer', holderCompact);
+    // `fit="contain"` reaches the grid only: the block's wrapper and the dock then fill the claimant's height.
+    const contain = !!target && layout === 'grid' && holderFit === 'contain';
     const lobby = host?.lobby ?? null;
     // Hands on tiles from the call's meeting, when one rides the call (2.477.0).
     const hands = host?.meeting?.hands;
@@ -854,6 +868,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
         onDocumentClick: (docId: string) => { const doc = documents.find((d) => d.id === docId); if (doc) onOpenDocument?.(doc); },
       } : {})}
       layout={layout}
+      {...(contain ? { fit: 'contain' as const } : {})}
       {...(handFor ? { handFor } : {})}
       {...(extras !== undefined ? { extras } : {})}
       {...(shownNotice !== undefined && shownNotice !== null ? { notice: shownNotice } : {})}
@@ -862,7 +877,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     /> : null;
     if (!dock) return null;
     return target
-      ? createPortal(<Stack gap="none" className={placement === 'stage' ? 'relative h-full min-h-0' : 'relative'} data-testid="shell-call-media" data-placement={placement} data-layout={layout} data-expanded="true">{header}{dock}{overlay}</Stack>, target)
+      ? createPortal(<Stack gap="none" className={placement === 'stage' ? 'relative h-full min-h-0' : contain ? 'relative min-h-0 flex-1' : 'relative'} data-testid="shell-call-media" data-placement={placement} data-layout={layout} data-expanded="true">{header}{dock}{overlay}</Stack>, target)
       : <Stack id={id} gap="none" className="hidden" data-testid="shell-call-media" data-placement="footer" data-layout={layout} data-expanded="false">{dock}</Stack>;
   }
 

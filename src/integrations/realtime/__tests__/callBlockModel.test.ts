@@ -48,6 +48,7 @@ describe('the one media sink', () => {
     const releasePage = claims.claim('page', 'page');
     expect(claims.current()).toBe('page');
     const docs = [{ id: 'page:1', title: 'Auth architecture' }];
+    expect(claims.fit()).toBe('width');
     const releaseComposer = claims.claim('composer', 'composer', { compact: true, documents: docs });
     expect(claims.current()).toBe('composer');
     expect(claims.compact()).toBe(true);
@@ -149,5 +150,20 @@ describe('the pre-join device check', () => {
     expect(mediaFixups({ micOn: false, cameraOn: false, remember: false }, { audioOn: true, cameraOn: true })).toEqual({ toggleMic: true, toggleCamera: true });
     expect(mediaFixups({ micOn: true, cameraOn: false, remember: false }, { audioOn: true, cameraOn: true })).toEqual({ toggleMic: false, toggleCamera: true });
     expect(mediaFixups({ micOn: false, cameraOn: false, remember: false }, { audioOn: false, cameraOn: false })).toEqual({ toggleMic: false, toggleCamera: false });
+  });
+});
+
+describe('CallBlockClaims fit', () => {
+  it('the holder\'s fit is the sink\'s; a release falls back to the claim before it', () => {
+    const claims = new CallBlockClaims<string>();
+    expect(claims.fit()).toBe('width');
+    const releaseA = claims.claim('a', 'pane', { fit: 'contain' });
+    expect(claims.fit()).toBe('contain');
+    const releaseB = claims.claim('b', 'pane');
+    expect(claims.fit()).toBe('width');
+    releaseB();
+    expect(claims.fit()).toBe('contain');
+    releaseA();
+    expect(claims.fit()).toBe('width');
   });
 });

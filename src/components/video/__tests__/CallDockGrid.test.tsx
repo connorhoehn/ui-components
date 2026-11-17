@@ -82,8 +82,9 @@ describe('CallDock layout', () => {
     expect(screen.getByTestId('call-tile-alice')).toHaveAttribute('data-is-muted', 'true');
   });
 
-  it('grid: connecting draws one fluid skeleton; reconnecting keeps its badge', () => {
-    const { rerender } = render(<CallDock {...props({ layout: 'grid', phase: 'connecting' })} />);
+  it('grid: connecting before the viewer is known draws one fluid skeleton; reconnecting keeps its badge', () => {
+    // A known viewer draws "You" instead (CallDockFit.test.tsx).
+    const { rerender } = render(<CallDock {...props({ layout: 'grid', phase: 'connecting', participants: [], localParticipantId: '' })} />);
     expect(screen.getByTestId('call-dock-connecting').firstElementChild!.className).toContain('aspect-video');
     rerender(<CallDock {...props({ layout: 'grid', phase: 'reconnecting' })} />);
     expect(screen.getByTestId('call-dock-reconnecting')).toBeInTheDocument();

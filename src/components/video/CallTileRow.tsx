@@ -23,6 +23,7 @@ import { noteCallDockRender } from './callDockRenderProbe';
 import { ParticipantTile } from './ParticipantTile';
 import { RaisedHandBadge, raisedHandLabel } from './RaisedHandBadge';
 import { gridCols } from './HangoutGrid';
+import { gridFit } from './gridFit';
 import { Avatar } from '../shared/Avatar';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
 import { MicIcon, MicOffIcon, ScreenShareIcon } from './MediaIcons';
@@ -104,6 +105,14 @@ export interface CallTileRowProps {
   /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
   maxColumns?: number;
   /**
+   * `grid` only: the box the grid must fit, in px (its measured content
+   * width and height). Given, the grid picks the column count that makes the
+   * largest 16:9 tile with every tile inside the box (`gridFit`), sizes its
+   * columns to that tile and centres itself in the box (`data-fit="contain"`);
+   * `maxColumns` is then ignored. Absent or zero: the fluid columns above.
+   */
+  fitBox?: { width: number; height: number } | null;
+  /**
    * `dock` only (2.529.0): a gallery that WRAPS. Every tile is the same
    * `tileWidth` × `tileHeight`, side by side, onto a second line when the
    * row is narrow — nobody is clipped off its edge. Past `maxVisible`
@@ -131,6 +140,7 @@ export function CallTileRow({
   tileHeight = 84,
   tileTestIdPrefix = 'call-tile',
   maxColumns,
+  fitBox = null,
   wrap = false,
   className,
   style,
@@ -138,17 +148,26 @@ export function CallTileRow({
 }: CallTileRowProps) {
   if (variant === 'grid' || variant === 'gallery') {
     const all = localParticipant ? [localParticipant, ...participants] : participants;
-    const cols = maxColumns ? Math.max(1, Math.min(gridCols(all.length), maxColumns)) : gridCols(all.length);
+    const fit = variant === 'grid' && fitBox && fitBox.width > 0 && fitBox.height > 0 && all.length > 0
+      ? gridFit(all.length, fitBox.width, fitBox.height, GRID_GAP_PX)
+      : null;
+    const cols = fit ? fit.columns : maxColumns ? Math.max(1, Math.min(gridCols(all.length), maxColumns)) : gridCols(all.length);
     return (
       <div
-        className={cn('grid w-full min-w-0 gap-3', variant === 'gallery' ? 'grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] justify-items-center [&>*]:max-w-[26rem]' : GRID_COLUMNS[cols] ?? GRID_COLUMNS[4], className)}
-        style={style}
+        className={cn(
+          'grid w-full min-w-0 gap-3',
+          fit ? 'h-full content-center justify-center' : variant === 'gallery' ? 'grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] justify-items-center [&>*]:max-w-[26rem]' : GRID_COLUMNS[cols] ?? GRID_COLUMNS[4],
+          className,
+        )}
+        // The fitted column width is measured, so it is a style, not a class.
+        style={fit ? { ...style, gridTemplateColumns: `repeat(${fit.columns}, ${fit.tileWidth}px)` } : style}
         role="group"
         aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
         data-testid={testId}
         data-variant={variant}
         data-tile-count={all.length}
         data-columns={variant === 'gallery' ? undefined : cols}
+        {...(fit ? { 'data-fit': 'contain', 'data-tile-width': fit.tileWidth } : {})}
       >
         {all.map((p) => (
           <DockTile
@@ -310,6 +329,9 @@ export function CallTileRow({
     </div>
   );
 }
+
+/** The `grid` variant's `gap-3`, for `gridFit`. */
+const GRID_GAP_PX = 12;
 
 /** Static column classes for the `grid` variant, keyed by `gridCols`. */
 const GRID_COLUMNS: Record<number, string> = {

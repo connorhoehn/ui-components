@@ -37,18 +37,23 @@ export interface CallBlockClaimOptions {
   compact?: boolean;
   /** The bar's document chips. Composer claims only. */
   documents?: readonly CallBlockDocument[];
+  /** How the grid's tiles take the block's room (`CallDock` `fit`). Pane claims only; default `width`. */
+  fit?: CallBlockFit;
 }
+
+/** `CallDock layout="grid"`'s `fit`: fluid columns by width, or tiles fitted to the block's width and height. */
+export type CallBlockFit = 'width' | 'contain';
 
 const NO_DOCUMENTS: readonly CallBlockDocument[] = [];
 const RANK: readonly CallBlockClaimPlacement[] = ['stage', 'composer', 'page', 'block', 'pane'];
 
 /** The sink's claims. Each read is a stable snapshot for `useSyncExternalStore`. */
 export class CallBlockClaims<T> {
-  private claims: { token: symbol; target: T; placement: CallBlockClaimPlacement; compact: boolean; documents: readonly CallBlockDocument[] }[] = [];
+  private claims: { token: symbol; target: T; placement: CallBlockClaimPlacement; compact: boolean; documents: readonly CallBlockDocument[]; fit: CallBlockFit }[] = [];
   private listeners = new Set<() => void>();
   claim(target: T, placement: CallBlockClaimPlacement = 'page', options: CallBlockClaimOptions = {}): () => void {
     const token = Symbol('call-block-claim');
-    this.claims = [...this.claims, { token, target, placement, compact: !!options.compact, documents: options.documents ?? NO_DOCUMENTS }];
+    this.claims = [...this.claims, { token, target, placement, compact: !!options.compact, documents: options.documents ?? NO_DOCUMENTS, fit: options.fit ?? 'width' }];
     this.emit();
     return () => {
       const before = this.claims.length;
@@ -68,6 +73,8 @@ export class CallBlockClaims<T> {
   placement = (): CallBlockPlacement => this.top()?.placement ?? 'footer';
   /** The holder asked for the narrow form. */
   compact = (): boolean => this.top()?.compact ?? false;
+  /** The holder's grid fit (`width` with no claim). */
+  fit = (): CallBlockFit => this.top()?.fit ?? 'width';
   /** The holder's document chips (one stable array per claim). */
   documents = (): readonly CallBlockDocument[] => this.top()?.documents ?? NO_DOCUMENTS;
   /** A composer or page block holds the sink (so a side pane offers no second media panel). */

@@ -324,7 +324,9 @@ export type {
 export { StartCallDrawer } from './StartCallDrawer';
 export type { StartCallDrawerProps, StartCallPeople } from './StartCallDrawer';
 export { CallDock, formatCallElapsed } from './CallDock';
-export type { CallDockProps, CallDockParticipant, CallDockPhase, CallDockTileSize } from './CallDock';
+export type { CallDockProps, CallDockParticipant, CallDockPhase, CallDockTileSize, CallDockFit } from './CallDock';
+export { gridFit, GRID_FIT_ASPECT } from './gridFit';
+export type { GridFit } from './gridFit';
 export { IncomingCallPopover } from './IncomingCallPopover';
 export type { IncomingCallPopoverProps } from './IncomingCallPopover';
 export { DocumentCallPanel } from './DocumentCallPanel';
