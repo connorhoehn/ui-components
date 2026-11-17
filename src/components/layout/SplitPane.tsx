@@ -63,6 +63,16 @@ export interface SplitPaneProps {
    * share of the height.
    */
   orientation?: 'horizontal' | 'vertical';
+  /**
+   * Re-clamp the ratio to the pixel floors when the window or the split's own
+   * box resizes, reporting it through `onRatioChange` (default true). Pass
+   * false when the host clamps the ratio it passes for itself at every width
+   * and remembers `onRatioChange` as the reader's choice (SidePaneSplit, since
+   * NEXT): a resize is not a choice. Since NEXT the re-clamp also follows the
+   * split's box (a ResizeObserver), and reports only a ratio actually outside
+   * the floors.
+   */
+  reclampOnResize?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -82,6 +92,7 @@ export function SplitPane({
   resizable = true,
   primaryHidden = false,
   orientation = 'horizontal',
+  reclampOnResize = true,
   className,
   'data-testid': testId = 'split-pane',
 }: SplitPaneProps) {
@@ -138,14 +149,30 @@ export function SplitPane({
     else if ((e.key === 'Enter' || e.key === ' ') && onDividerActivate) { e.preventDefault(); onDividerActivate(); }
   };
 
-  // A window that shrinks under a fixed ratio can push a pane below its floor;
-  // re-clamp on resize so the floors hold.
+  // A window (or a container) that shrinks under a fixed ratio can push a pane
+  // below its floor; re-clamp on resize so the floors hold. Only a ratio that
+  // is actually outside the floors is reported: a resize that leaves it in
+  // range must not call `onRatioChange`, or a host that remembers the ratio
+  // would record a size the reader never chose (SidePane then stopped
+  // honouring its pane's `widthPx`).
+  const hasSecondary = secondary !== null && secondary !== undefined;
   useEffect(() => {
-    if (!resizable) return;
-    const onResize = () => setRatio(ratio);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [ratio, setRatio, resizable]);
+    if (!resizable || !hasSecondary || !reclampOnResize) return undefined;
+    const reclamp = () => {
+      const rect = rootRef.current?.getBoundingClientRect();
+      const width = (vertical ? rect?.height : rect?.width) ?? 0;
+      if (width <= 0) return;
+      const lo = minPrimaryPx / width;
+      const hi = 1 - minSecondaryPx / width;
+      const eps = 0.002;
+      if (ratio < Math.min(lo, hi) - eps || ratio > Math.max(lo, hi) + eps) setRatio(ratio);
+    };
+    window.addEventListener('resize', reclamp);
+    const root = rootRef.current;
+    const observer = root && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(reclamp) : null;
+    if (root) observer?.observe(root);
+    return () => { window.removeEventListener('resize', reclamp); observer?.disconnect(); };
+  }, [ratio, setRatio, resizable, hasSecondary, reclampOnResize, minPrimaryPx, minSecondaryPx, vertical]);
 
   if (secondary === null || secondary === undefined) {
     return (

@@ -113,6 +113,8 @@ export interface SidePaneRegistration {
    * The pane's width (px) until the reader sizes it: Search opens at 320–380px
    * so its graph keeps the width. A drag (or the divider's arrow keys) is
    * remembered per `paneId` and then wins, within 320px–60% of the split.
+   * `min` stays a floor at every width (since NEXT): the drawn pane is
+   * re-clamped as the window or the container narrows, and a drag stops at it.
    */
   widthPx?: { min: number; max: number };
   /** Names the pane's remembered width (`<storageKey>.ratio.<paneId>`; `page` → `<storageKey>.ratio`). Default `page`. */
@@ -147,11 +149,32 @@ const HostContext = createContext<HostValue | null>(null);
 function documentOwnsColumn(host: HostValue): boolean {
   return host.registration?.presentation === 'document' && host.width != null && host.width < Math.max(640, host.bounds.minPrimaryPx) + 600;
 }
+/** The pane's own floor (px): its `widthPx.min` when it has one, never under the host's `minSecondaryPx`. */
+function paneMinPx(host: HostValue): number {
+  return Math.max(host.bounds.minSecondaryPx, host.registration?.widthPx?.min ?? 0);
+}
 function drawnRatio(host: HostValue): number {
   if (documentOwnsColumn(host)) return 0;
   const desired = host.sized ? host.ratio : boundedSidePaneRatio(host.ratio, host.width, host.registration?.widthPx);
-  return host.registration?.presentation === 'document' && host.width
-    ? Math.max(Math.max(640, host.bounds.minPrimaryPx) / host.width, desired) : desired;
+  const document = host.registration?.presentation === 'document';
+  const primaryMin = document ? Math.max(640, host.bounds.minPrimaryPx) : host.bounds.minPrimaryPx;
+  const ratio = document && host.width ? Math.max(primaryMin / host.width, desired) : desired;
+  // Re-clamped at every width (since NEXT): a remembered share, or one taken
+  // at a wider window, never draws the pane under its own minimum.
+  return floorSidePaneRatio(ratio, host.width, paneMinPx(host), primaryMin);
+}
+
+/**
+ * The ratio with both columns at or above their floors at this split width
+ * (since NEXT): the pane at least `minPanePx`, the page at least
+ * `minPrimaryPx`. When the split cannot fit both, any ratio between the two
+ * floors is kept (as `SplitPane` does). Unmeasured: the ratio unchanged.
+ */
+export function floorSidePaneRatio(ratio: number, splitWidthPx: number | null, minPanePx: number, minPrimaryPx: number): number {
+  if (splitWidthPx == null || splitWidthPx <= 0) return ratio;
+  const lo = minPrimaryPx / splitWidthPx;
+  const hi = 1 - minPanePx / splitWidthPx;
+  return Math.min(Math.max(lo, hi), Math.max(Math.min(lo, hi), ratio));
 }
 
 function readStored(key: string): string | null {
@@ -319,10 +342,12 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
     // Zero is "not laid out yet" (a hidden tab, a test DOM), not "too narrow".
     const update = () => { const w = measured.getBoundingClientRect().width; setWidth(w > 0 ? w : null); };
     update();
-    if (typeof ResizeObserver === 'undefined') return undefined;
-    const observer = new ResizeObserver(update);
-    observer.observe(measured);
-    return () => observer.disconnect();
+    // The window's resize too (since NEXT): the drawn ratio is re-clamped from
+    // this width, so it must follow the window even where no observer runs.
+    window.addEventListener('resize', update);
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+    observer?.observe(measured);
+    return () => { window.removeEventListener('resize', update); observer?.disconnect(); };
   }, [measured, setWidth]);
   const [slot, setSlot] = useState<HTMLElement | null>(null);
   const { node, registration } = host;
@@ -360,9 +385,9 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
     <div ref={setMeasured} className={cn('flex h-full min-h-0 min-w-0 flex-row', className)}>
       <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
         <SplitPane primary={children} secondary={secondary} ratio={ratio} onRatioChange={host.setRatio}
-          primaryHidden={exclusive} resizable={!exclusive}
+          primaryHidden={exclusive} resizable={!exclusive} reclampOnResize={false}
           onDividerActivate={host.toggleFolded}
-          minPrimaryPx={host.bounds.minPrimaryPx} minSecondaryPx={host.bounds.minSecondaryPx} dividerLabel={dividerLabel}
+          minPrimaryPx={host.bounds.minPrimaryPx} minSecondaryPx={paneMinPx(host)} dividerLabel={dividerLabel}
           className="h-full min-h-0" data-testid={testId} />
       </div>
       {folded && (
