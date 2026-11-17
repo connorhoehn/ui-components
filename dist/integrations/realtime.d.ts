@@ -343,6 +343,8 @@ declare interface AudioVideoSettingsFormProps {
     layout?: 'stack' | 'prejoin';
     /** Capture and effects actions under the pre-join preview. */
     previewControls?: ReactNode;
+    /** `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle."). Default "huddle". */
+    callNoun?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -488,6 +490,9 @@ export declare interface CallBlockDocument {
     href?: string;
 }
 
+/** `CallDock layout="grid"`'s `fit`: fluid columns by width, or tiles fitted to the block's width and height. */
+export declare type CallBlockFit = 'width' | 'contain';
+
 export declare type CallBlockHost<M extends CallBlockModules> = ReturnType<typeof createCallBlockHost<M>>;
 
 /** The realtime-modules functions the host calls (spread `/client/video`). */
@@ -572,6 +577,14 @@ export declare interface CallBlockProps {
     /** The narrow bar (mic, camera, Leave; the rest in ⋯). Composer and stage placements. */
     compact?: boolean;
     documents?: readonly CallBlockDocument[];
+    /**
+     * `pane` placement: how the call's tile grid takes this block's room
+     * (`CallDock` `fit`). `width` (default): fluid 16:9 columns, as before.
+     * `contain`: the tiles fit the block's width AND height, centred, so a tall
+     * or short stage is filled without scrolling; give the block a height
+     * (`className="h-full min-h-0"`). Carried to the dock through the claim.
+     */
+    fit?: CallBlockFit;
     className?: string;
 }
 
@@ -602,6 +615,9 @@ export declare function callCounts(call: {
     joined: number;
     ringing: number;
 };
+
+/** How `CallDock layout="grid"` sizes its tiles: by width (fluid columns) or to fit the block's width and height. */
+declare type CallDockFit = 'width' | 'contain';
 
 declare interface CallDockParticipant extends HangoutLayoutParticipant {
     userId: string;
@@ -701,8 +717,11 @@ declare interface CallDockProps {
      * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
      * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
      * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
-     * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
-     * its badge; the ended and error phases render as they do for `shelf`.
+     * camera and Leave. Connecting draws the tiles, the viewer first as "You",
+     * once the viewer's own participant is in `participants` (one fluid
+     * skeleton before that); reconnecting keeps its badge; the ended and error
+     * phases render as they do for `shelf`. `fit="contain"` fits the tiles to
+     * the block's width and height instead of its width alone.
      * `stack` (2.432.0): the narrow form of `shelf` — the header (title, meta,
      * mic ▾, camera ▾, a "⋯" menu holding Share, People, Documents, settings
      * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
@@ -723,6 +742,19 @@ declare interface CallDockProps {
      * `layout="grid"`, which has no meta line.
      */
     metaAside?: ReactNode;
+    /**
+     * `layout="grid"` only: how the tiles take the block's room. `width`
+     * (default): fluid 16:9 tiles as wide as their columns, the markup of
+     * every earlier release. `contain`: the tiles fit the block's measured
+     * width AND height — the column count that gives the largest 16:9 tile
+     * with every tile visible and nothing scrolling (`gridFit`), the grid
+     * centred in what is left (`data-fit="contain"`). The dock then grows to
+     * fill a flex column (`min-h-0 flex-1`), so give the host a height
+     * (`<CallBlock placement="pane" fit="contain" className="h-full min-h-0">`).
+     * It re-fits on resize and when someone joins or leaves without remounting
+     * a tile; before the first measurement it draws the `width` layout.
+     */
+    fit?: CallDockFit;
     className?: string;
     'data-testid'?: string;
 }
@@ -788,6 +820,14 @@ export declare interface CallHostProviderProps {
         privacyLabel?: string;
     };
     /**
+     * The word for the call in what the host draws itself: the pre-join
+     * dialog's heading ("Start a huddle", "Join the huddle"), its fallback
+     * title ("this huddle"), its camera line ("…how you'll appear in the
+     * huddle") and the call block's accessible name ("Huddle"). Default
+     * "huddle"; lower case, capitalised where it starts a phrase.
+     */
+    callNoun?: string;
+    /**
      * Run a meeting beside the call (needs `useMeeting` in the modules): the
      * meeting id is the call's lobby, and the call's MEDIA follows the meeting
      * into a breakout room's lobby (realtime-modules 0.134 `mediaLobby`) while
@@ -820,6 +860,8 @@ export declare interface CallHostValue<C extends CallBlockCall> {
      * recording lasts, whether or not `recordingNote` was dismissed.
      */
     recordingIndicator: ReactNode | null;
+    /** The word for the call in the words the host draws (`CallHostProvider callNoun`, default "huddle"). */
+    callNoun: string;
     /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
     lobby: CallLobby | null;
     /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
@@ -2163,6 +2205,8 @@ export declare interface ConversationCallDockProps {
      * and Leave on the bar, the rest in its "⋯" menu, the tiles two to a row.
      */
     layout?: CallDockProps['layout'];
+    /** `layout="grid"`: fluid columns by width (default) or tiles fitted to the block's width and height (`CallDock` `fit`). */
+    fit?: CallDockProps['fit'];
     className?: string;
     /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
     'data-testid'?: string;
@@ -2338,13 +2382,15 @@ declare interface ConversationSurfaceProps {
 export declare function createCallBlockHost<M extends CallBlockModules>(rm: M): {
     CallHostProvider: ({ scopeKey, videoUrl, children, ...rest }: CallHostProviderProps) => JSX.Element;
     CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, recordingConsent, dockTestId }: CallMediaOutletProps) => JSX.Element | null;
-    CallBlock: ({ placement, compact, documents, className }: CallBlockProps) => JSX.Element;
-    PreJoinDialog: ({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel }: {
+    CallBlock: ({ placement, compact, documents, fit, className }: CallBlockProps) => JSX.Element;
+    PreJoinDialog: ({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel, callNoun }: {
         kind: PreJoinKind;
         title: string;
         selfName: string;
         selfAvatarUrl?: string;
         initial: PreJoinChoice;
+        /** The word for the call in the heading and the camera line. Default "huddle". */
+        callNoun?: string;
         onJoin(choice: PreJoinChoice, devices: {
             microphoneId?: string;
             cameraId?: string;
@@ -2365,6 +2411,7 @@ export declare function createCallBlockHost<M extends CallBlockModules>(rm: M): 
     useClaimCallBlock: (target: HTMLElement | null, placement: CallBlockClaimPlacement, enabled?: boolean, options?: {
         compact?: boolean;
         documents?: readonly CallBlockDocument[];
+        fit?: CallBlockFit;
     }) => boolean;
 };
 
@@ -4706,7 +4753,7 @@ export declare interface WrappedActivityPanelProps {
 
 export declare function WrappedAudioVideoSettingsForm({ devices, settings, cameraOn, ...rest }: WrappedAudioVideoSettingsFormProps): JSX.Element;
 
-export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'layout' | 'previewControls' | 'className' | 'data-testid'> {
+export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'layout' | 'previewControls' | 'callNoun' | 'className' | 'data-testid'> {
     devices: RMMediaDevicesSource;
     settings: RMAudioVideoSettingsSource;
     /** Whether the viewer's camera is on (the preview shows "Camera is off" otherwise). */

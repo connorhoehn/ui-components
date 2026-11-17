@@ -1876,7 +1876,7 @@ export declare interface AudioVideoSettings {
     rememberDevices: boolean;
 }
 
-export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, layout, previewControls, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
+export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, layout, previewControls, callNoun, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
 
 export declare interface AudioVideoSettingsFormProps {
     value: AudioVideoSettings;
@@ -1906,6 +1906,8 @@ export declare interface AudioVideoSettingsFormProps {
     layout?: 'stack' | 'prejoin';
     /** Capture and effects actions under the pre-join preview. */
     previewControls?: ReactNode;
+    /** `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle."). Default "huddle". */
+    callNoun?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -2889,7 +2891,7 @@ export declare interface CallControlsProps {
     className?: string;
 }
 
-export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, tileSize, layout, metaAside, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
+export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, tileSize, layout, metaAside, fit, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
 
 /** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
 export declare interface CallDockDragPayload {
@@ -2898,6 +2900,9 @@ export declare interface CallDockDragPayload {
     /** Slot the widget is leaving, or null when it was floating free. */
     fromDockId: string | null;
 }
+
+/** How `CallDock layout="grid"` sizes its tiles: by width (fluid columns) or to fit the block's width and height. */
+export declare type CallDockFit = 'width' | 'contain';
 
 export declare interface CallDockParticipant extends HangoutLayoutParticipant {
     userId: string;
@@ -2997,8 +3002,11 @@ export declare interface CallDockProps {
      * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
      * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
      * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
-     * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
-     * its badge; the ended and error phases render as they do for `shelf`.
+     * camera and Leave. Connecting draws the tiles, the viewer first as "You",
+     * once the viewer's own participant is in `participants` (one fluid
+     * skeleton before that); reconnecting keeps its badge; the ended and error
+     * phases render as they do for `shelf`. `fit="contain"` fits the tiles to
+     * the block's width and height instead of its width alone.
      * `stack` (2.432.0): the narrow form of `shelf` — the header (title, meta,
      * mic ▾, camera ▾, a "⋯" menu holding Share, People, Documents, settings
      * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
@@ -3019,6 +3027,19 @@ export declare interface CallDockProps {
      * `layout="grid"`, which has no meta line.
      */
     metaAside?: ReactNode;
+    /**
+     * `layout="grid"` only: how the tiles take the block's room. `width`
+     * (default): fluid 16:9 tiles as wide as their columns, the markup of
+     * every earlier release. `contain`: the tiles fit the block's measured
+     * width AND height — the column count that gives the largest 16:9 tile
+     * with every tile visible and nothing scrolling (`gridFit`), the grid
+     * centred in what is left (`data-fit="contain"`). The dock then grows to
+     * fill a flex column (`min-h-0 flex-1`), so give the host a height
+     * (`<CallBlock placement="pane" fit="contain" className="h-full min-h-0">`).
+     * It re-fits on resize and when someone joins or leaves without remounting
+     * a tile; before the first measurement it draws the `width` layout.
+     */
+    fit?: CallDockFit;
     className?: string;
     'data-testid'?: string;
 }
@@ -3508,7 +3529,7 @@ export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     ringing?: boolean;
 }
 
-export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, maxColumns, wrap, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
+export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, maxColumns, fitBox, wrap, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
 
 export declare interface CallTileRowProps {
     participants: CallTileParticipant[];
@@ -3563,6 +3584,17 @@ export declare interface CallTileRowProps {
     variant?: 'floating' | 'bar' | 'dock' | 'grid' | 'gallery';
     /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
     maxColumns?: number;
+    /**
+     * `grid` only: the box the grid must fit, in px (its measured content
+     * width and height). Given, the grid picks the column count that makes the
+     * largest 16:9 tile with every tile inside the box (`gridFit`), sizes its
+     * columns to that tile and centres itself in the box (`data-fit="contain"`);
+     * `maxColumns` is then ignored. Absent or zero: the fluid columns above.
+     */
+    fitBox?: {
+        width: number;
+        height: number;
+    } | null;
     /**
      * `dock` only (2.529.0): a gallery that WRAPS. Every tile is the same
      * `tileWidth` × `tileHeight`, side by side, onto a second line when the
@@ -12129,7 +12161,28 @@ export declare interface GraphSearchResult {
     skillMatches: SkillMatch[];
 }
 
+/** The 16:9 tile's height over its width. */
+export declare const GRID_FIT_ASPECT: number;
+
 export declare function gridCols(count: number): number;
+
+export declare interface GridFit {
+    /** Columns in the grid (1 when there is nothing to fit). */
+    columns: number;
+    /** Rows the tiles take: `ceil(count / columns)`. */
+    rows: number;
+    /** Each tile's width in whole px (0 when the box or the count is empty). */
+    tileWidth: number;
+    /** Each tile's height in whole px: `tileWidth` at 16:9, rounded down. */
+    tileHeight: number;
+}
+
+/**
+ * The column count that gives the largest 16:9 tile with all `count` tiles
+ * visible in `width` × `height` (px, `gap` between cells). Ties go to fewer
+ * columns. A box or count of zero gives a zero tile.
+ */
+export declare function gridFit(count: number, width: number, height: number, gap?: number): GridFit;
 
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -12872,7 +12925,7 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
 export declare interface HuddleBarLiveParticipant {
@@ -12942,6 +12995,13 @@ export declare interface HuddleBarProps {
     onStart?: () => void;
     /** Idle only: label of the start button. Default "Huddle". */
     startLabel?: string;
+    /**
+     * The word for the call in the bar's accessible names and the Join
+     * tooltip ("Design review huddle", "Join Design review huddle", the status
+     * dot's "Huddle live"). Default "huddle"; lower case, the bar capitalises
+     * it where it starts a phrase.
+     */
+    callNoun?: string;
     /** Idle only: disables the start button and is its tooltip. */
     startDisabledReason?: string;
     /** Joinable only: who is in the huddle, for the avatar stack. Since 2.480.0. */
