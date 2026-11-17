@@ -12,7 +12,7 @@ import { MicIcon, VideoIcon, SpeakerIcon } from './MediaIcons';
 /** One responsive green-room form for the shared call host. */
 export function PreJoinDeviceSetup({ value, onChange, devices, permission, micLevel, cameraOn,
   speakerSelectionSupported, onTestMic, onTestSound, testMicState = 'idle', preview, previewControls,
-  selfName = 'You', className, 'data-testid': testId = 'audio-video-settings-form',
+  selfName = 'You', callNoun = 'huddle', className, 'data-testid': testId = 'audio-video-settings-form',
 }: AudioVideoSettingsFormProps & { preview: ReactNode }) {
   const set = (patch: Partial<typeof value>) => onChange({ ...value, ...patch });
   const device = (kind: 'camera' | 'microphone' | 'speaker', label: string, icon: ReactNode) => {
@@ -42,7 +42,7 @@ export function PreJoinDeviceSetup({ value, onChange, devices, permission, micLe
         <Button size="sm" variant="secondary" aria-pressed={value.mirrorPreview} onClick={() => set({ mirrorPreview: !value.mirrorPreview })}
           data-testid="settings-mirror">Mirror</Button>
       </div>
-      <span className="text-xs text-text-secondary">{cameraOn ? 'Your camera is on. This is how you’ll appear in the huddle.' : 'Your camera is off. You can turn it on when you’re ready.'}</span>
+      <span className="text-xs text-text-secondary">{cameraOn ? `Your camera is on. This is how you’ll appear in the ${callNoun}.` : 'Your camera is off. You can turn it on when you’re ready.'}</span>
     </section>
     <section data-ui-part="" className="flex min-w-0 flex-col gap-4" aria-label="Device setup">
       {device('camera', 'Camera', <VideoIcon size={16} />)}

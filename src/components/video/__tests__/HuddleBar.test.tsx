@@ -245,3 +245,18 @@ describe('HuddleBar meetingItems (2.475.0)', () => {
     expect(join).toHaveTextContent('Join huddle');
   });
 });
+
+describe('HuddleBar callNoun', () => {
+  it('names the call in the bar, the live line, the dot and Join; default "huddle"', () => {
+    const live = [{ id: 'a', displayName: 'Ada' }];
+    const { rerender } = render(<HuddleBar name="Design review" phase="joinable" onJoin={() => {}} liveParticipants={live} callNoun="call" />);
+    expect(screen.getByRole('group', { name: 'Design review call' })).toBeInTheDocument();
+    expect(screen.getByTestId('huddle-bar-live')).toHaveTextContent('call live · 1 joined');
+    expect(screen.getByLabelText('Call live')).toBeInTheDocument();
+    expect(screen.getAllByLabelText('Join Design review call').length).toBeGreaterThan(0);
+    rerender(<HuddleBar name="Design review" phase="joinable" onJoin={() => {}} liveParticipants={live} />);
+    expect(screen.getByRole('group', { name: 'Design review huddle' })).toBeInTheDocument();
+    expect(screen.getByTestId('huddle-bar-live')).toHaveTextContent('huddle live · 1 joined');
+    expect(screen.getByLabelText('Huddle live')).toBeInTheDocument();
+  });
+});

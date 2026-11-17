@@ -477,3 +477,46 @@ export const PublishRevoked: Story = {
   decorators: [themed('light')],
 };
 export const PublishRevokedDark: Story = { ...PublishRevoked, decorators: [themed('dark')] };
+
+/** `fit="contain"`: the grid in a tall stage (a call pane beside a side pane),
+ *  its 16:9 tiles fitted to the block's width AND height, centred. One fills
+ *  as much as 16:9 allows; two stack; three and four take the room without
+ *  scrolling. Compare `GridTallWidth`, the default fit by width. */
+function tallStage(count: number, over: Partial<CallDockProps> = {}): Story {
+  return {
+    args: base({ layout: 'grid', fit: 'contain', participants: PEOPLE.slice(0, count), participantCount: count, ...over }),
+    decorators: [themed('light')],
+    render: (args) => (
+      <div className="flex h-[760px] w-[640px] flex-col border border-border">
+        <CallDock {...args} />
+      </div>
+    ),
+  };
+}
+export const GridTallOne: Story = tallStage(1);
+export const GridTallTwo: Story = tallStage(2);
+export const GridTallThree: Story = tallStage(3);
+export const GridTallFour: Story = tallStage(4);
+export const GridTallFourDark: Story = { ...tallStage(4), decorators: [themed('dark')] };
+/** The default fit by width in the same tall stage: tiles at the top, room under them. */
+export const GridTallWidth: Story = tallStage(2, { fit: 'width' });
+
+/** A short, wide stage: the tiles shrink to the height instead of overflowing it. */
+export const GridShortWide: Story = {
+  ...tallStage(4),
+  render: (args) => (
+    <div className="flex h-[300px] w-[1200px] flex-col border border-border">
+      <CallDock {...args} />
+    </div>
+  ),
+};
+
+/** Connecting with the viewer known: their own tile as "You" (camera off,
+ *  their avatar), not a grey box. The host's bar keeps the controls. */
+export const GridConnectingYou: Story = tallStage(1, {
+  phase: 'connecting',
+  participants: [person('connor', { cameraOn: false, videoElement: undefined })],
+  elapsedMs: null,
+});
+/** Connecting before the viewer is known: one skeleton tile, fitted. */
+export const GridConnectingUnknown: Story = tallStage(1, { phase: 'connecting', participants: [], localParticipantId: '', elapsedMs: null });

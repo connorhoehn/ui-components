@@ -51,6 +51,8 @@ const PHASE_DOT: Record<HuddleBarPhase, PresenceState> = {
   ended: 'offline',
 };
 
+const capitalise = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
+
 const PHASE_LABEL: Record<HuddleBarPhase, string> = {
   idle: 'No call',
   joinable: 'Huddle live',
@@ -131,6 +133,13 @@ export interface HuddleBarProps {
   onStart?: () => void;
   /** Idle only: label of the start button. Default "Huddle". */
   startLabel?: string;
+  /**
+   * The word for the call in the bar's accessible names and the Join
+   * tooltip ("Design review huddle", "Join Design review huddle", the status
+   * dot's "Huddle live"). Default "huddle"; lower case, the bar capitalises
+   * it where it starts a phrase.
+   */
+  callNoun?: string;
   /** Idle only: disables the start button and is its tooltip. */
   startDisabledReason?: string;
   /** Joinable only: who is in the huddle, for the avatar stack. Since 2.480.0. */
@@ -203,6 +212,7 @@ export function HuddleBar({
   mediaToggleLabel = 'Participants',
   onStart,
   startLabel = 'Huddle',
+  callNoun = 'huddle',
   startDisabledReason,
   liveParticipants = [],
   onJoin,
@@ -243,20 +253,20 @@ export function HuddleBar({
   return (
     <div
       role="group"
-      aria-label={phase === 'idle' ? name : `${name} huddle`}
+      aria-label={phase === 'idle' ? name : `${name} ${callNoun}`}
       data-testid={testId}
       data-phase={phase}
       data-compact={compact ? '' : undefined}
       className={cn('@container flex min-w-0 items-center', compact ? 'gap-1.5 px-1 py-1' : 'gap-3 px-3 py-1.5', className)}
     >
       {showContext && <div className="flex min-w-0 items-center gap-2" data-testid={`${testId}-status`}>
-        <PresenceDot state={PHASE_DOT[phase]} ariaLabel={PHASE_LABEL[phase]} data-testid={`${testId}-dot`} />
+        <PresenceDot state={PHASE_DOT[phase]} ariaLabel={phase === 'joinable' ? `${capitalise(callNoun)} live` : PHASE_LABEL[phase]} data-testid={`${testId}-dot`} />
         <T className="min-w-0 truncate" size="xs" weight={phase === 'idle' ? 'normal' : 'medium'} tone={phase === 'idle' ? 'secondary' : 'primary'} title={name} data-testid={`${testId}-name`}>
           {name}
         </T>
         {joinable && (
           <T className="shrink-0" size="xs" tone="secondary" data-testid={`${testId}-live`}>
-            huddle live · {joinedCount} joined
+            {callNoun} live · {joinedCount} joined
           </T>
         )}
         {joinable && liveParticipants.length > 0 && (
@@ -332,13 +342,13 @@ export function HuddleBar({
           </Button>
         ))}
         {joinable && onJoin && (compact ? (
-          <Tooltip content={joinDisabledReason ?? `${joinLabel} ${name} huddle`}>
+          <Tooltip content={joinDisabledReason ?? `${joinLabel} ${name} ${callNoun}`}>
             <IconButton
               variant="primary"
               size="sm"
               onClick={onJoin}
               disabled={joinDisabledReason !== undefined}
-              aria-label={`${joinLabel} ${name} huddle`}
+              aria-label={`${joinLabel} ${name} ${callNoun}`}
               icon={<PhoneIcon size={16} />}
               data-testid={`${testId}-join`}
             />
@@ -350,7 +360,7 @@ export function HuddleBar({
             onClick={onJoin}
             disabled={joinDisabledReason !== undefined}
             title={joinDisabledReason}
-            aria-label={`${joinLabel} ${name} huddle`}
+            aria-label={`${joinLabel} ${name} ${callNoun}`}
             data-testid={`${testId}-join`}
             className="gap-1.5"
           >

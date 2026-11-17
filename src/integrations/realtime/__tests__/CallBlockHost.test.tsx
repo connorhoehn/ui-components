@@ -133,6 +133,29 @@ describe('CallBlockHost', () => {
 });
 
 
+describe('CallBlockHost callNoun', () => {
+  it('names the call in the pre-join heading, its camera line and the block\'s accessible name; default "huddle"', async () => {
+    phase = 'idle';
+    render(<calls.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green' }} tenant="orgiq" scopeKey="orgiq|u-vera"
+      platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={null} gatewayConfigured connectionState="connected" callNoun="call">
+      <Page channel="pipelines:run:r-1" />
+      <calls.CallBlock placement="pane" />
+    </calls.CallHostProvider>);
+    expect(screen.getByTestId('call-block-pane')).toHaveAttribute('aria-label', 'Call');
+    await act(async () => { screen.getByTestId('huddle').click(); });
+    expect(screen.getByRole('dialog', { name: 'Start a call' })).toBeInTheDocument();
+    expect(screen.getByText('Your camera is on. This is how you’ll appear in the call.')).toBeInTheDocument();
+  });
+
+  it('without callNoun the words are unchanged', async () => {
+    phase = 'idle';
+    render(<Shell><Page channel="pipelines:run:r-1" /><calls.CallBlock placement="pane" /></Shell>);
+    expect(screen.getByTestId('call-block-pane')).toHaveAttribute('aria-label', 'Huddle');
+    await act(async () => { screen.getByTestId('huddle').click(); });
+    expect(screen.getByRole('dialog', { name: 'Start a huddle' })).toBeInTheDocument();
+  });
+});
+
 describe('CallBlockHost initial capture intent', () => {
   const choice = (remember: boolean) => window.localStorage.setItem('ui.call-prejoin.v1', JSON.stringify({ micOn: false, cameraOn: false, remember }));
   it('both-off preview requests neither permission; entry sees both-off before native start', async () => {

@@ -64,6 +64,8 @@ export interface AudioVideoSettingsFormProps {
   layout?: 'stack' | 'prejoin';
   /** Capture and effects actions under the pre-join preview. */
   previewControls?: ReactNode;
+  /** `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle."). Default "huddle". */
+  callNoun?: string;
   className?: string;
   'data-testid'?: string;
 }
@@ -138,6 +140,7 @@ export function AudioVideoSettingsForm({
   selfAvatarUrl,
   layout = 'stack',
   previewControls,
+  callNoun,
   className,
   'data-testid': testId = 'audio-video-settings-form',
 }: AudioVideoSettingsFormProps) {
@@ -176,6 +179,7 @@ export function AudioVideoSettingsForm({
   if (layout === 'prejoin') return <PreJoinDeviceSetup value={value} onChange={onChange} devices={devices} permission={permission}
     micLevel={micLevel} previewStream={previewStream} cameraOn={cameraOn} speakerSelectionSupported={speakerSelectionSupported}
     onTestMic={onTestMic} onTestSound={onTestSound} testMicState={testMicState} preview={preview} previewControls={previewControls}
+    {...(callNoun ? { callNoun } : {})}
     selfName={selfName} selfAvatarUrl={selfAvatarUrl} className={className} data-testid={testId} />;
 
   return (

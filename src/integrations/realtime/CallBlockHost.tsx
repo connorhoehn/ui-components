@@ -193,6 +193,8 @@ export interface CallHostValue<C extends CallBlockCall> {
    * recording lasts, whether or not `recordingNote` was dismissed.
    */
   recordingIndicator: ReactNode | null;
+  /** The word for the call in the words the host draws (`CallHostProvider callNoun`, default "huddle"). */
+  callNoun: string;
   /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
   lobby: CallLobby | null;
   /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
@@ -248,6 +250,14 @@ export interface CallHostProviderProps {
   nameFor?: (userId: string) => { displayName: string; avatarUrl?: string } | null | undefined;
   /** The recording note's privacy link, or `false` for no note at all (2.480.2). */
   recordingConsent?: false | { privacyHref?: string; privacyLabel?: string };
+  /**
+   * The word for the call in what the host draws itself: the pre-join
+   * dialog's heading ("Start a huddle", "Join the huddle"), its fallback
+   * title ("this huddle"), its camera line ("…how you'll appear in the
+   * huddle") and the call block's accessible name ("Huddle"). Default
+   * "huddle"; lower case, capitalised where it starts a phrase.
+   */
+  callNoun?: string;
   /**
    * Run a meeting beside the call (needs `useMeeting` in the modules): the
    * meeting id is the call's lobby, and the call's MEDIA follows the meeting
@@ -337,7 +347,9 @@ export interface CallMediaOutletProps {
   dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
 }
 
-const PREJOIN_TITLE: Record<PreJoinKind, string> = { start: 'Start a huddle', join: 'Join the huddle', accept: 'Join the huddle', check: 'Check your devices' };
+const prejoinTitle = (kind: PreJoinKind, noun: string): string =>
+  kind === 'start' ? `Start a ${noun}` : kind === 'check' ? 'Check your devices' : `Join the ${noun}`;
+const capitalise = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
 const UNBOUND = '__unbound__';
 const noToken = (): string => '';
 const noSubscribe = () => () => {};
@@ -392,8 +404,10 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   // ── the device check ──
 
-  function PreJoinDialog({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel }: {
+  function PreJoinDialog({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel, callNoun = 'huddle' }: {
     kind: PreJoinKind; title: string; selfName: string; selfAvatarUrl?: string; initial: PreJoinChoice;
+    /** The word for the call in the heading and the camera line. Default "huddle". */
+    callNoun?: string;
     onJoin(choice: PreJoinChoice, devices: { microphoneId?: string; cameraId?: string; speakerId?: string }): void;
     onCancel(): void;
   }) {
@@ -438,10 +452,10 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       return () => window.clearInterval(timer);
     }, [total]);
     return (
-      <Modal open onClose={onCancel} ariaLabel={PREJOIN_TITLE[kind]} maxWidth={1000} rawChildren
+      <Modal open onClose={onCancel} ariaLabel={prejoinTitle(kind, callNoun)} maxWidth={1000} rawChildren
         cardClassName="flex max-h-[90dvh] flex-col gap-5 overflow-hidden border border-border p-5 sm:p-6" backdropTestId="prejoin-backdrop">
         <Inline justify="between" align="baseline" gap="md" wrap={false} className="min-w-0 shrink-0 border-b border-border pb-4" data-testid="prejoin-header">
-          <h2 className="m-0 shrink-0 text-lg font-semibold text-text-primary">{PREJOIN_TITLE[kind]}</h2>
+          <h2 className="m-0 shrink-0 text-lg font-semibold text-text-primary">{prejoinTitle(kind, callNoun)}</h2>
           <Text size="sm" weight="medium" className="min-w-0 truncate text-right" title={title} data-testid="prejoin-title">{title}</Text>
         </Inline>
         <Stack gap="md" className="min-h-0 overflow-y-auto" data-testid="prejoin-dialog"
@@ -449,7 +463,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
           onKeyDownCapture={() => { stopped.current = true; setRemaining(null); }}>
           <Text size="xs" tone="secondary">Joining as {selfName}</Text>
           <WrappedAudioVideoSettingsForm devices={devices} settings={{ ...settings, previewStream: processedPreview }} cameraOn={choice.cameraOn}
-            selfName={selfName} selfAvatarUrl={selfAvatarUrl} layout="prejoin" data-testid="prejoin-devices"
+            selfName={selfName} selfAvatarUrl={selfAvatarUrl} layout="prejoin" callNoun={callNoun} data-testid="prejoin-devices"
             previewControls={<>
               <DeviceToggleSelect kind="microphone" on={choice.micOn} onToggle={() => setChoice(c => ({ ...c, micOn: !c.micOn }))}
                 devices={devices.microphones} selectedDeviceId={settings.settings.microphoneId} onSelectDevice={microphoneId => settings.update({ microphoneId })}
@@ -489,7 +503,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   interface PreJoinRequest { kind: PreJoinKind; run(call: Call): void; cancel?(): void; initial: PreJoinChoice }
 
-  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, nameFor, recordingConsent: consentOption, meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
+  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, nameFor, recordingConsent: consentOption, callNoun = 'huddle', meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
     const [lobby, setLobby] = useState<CallLobby | null>(null);
     const pendingRing = useRef<CallBlockRing | null>(null);
     const hostRef = useRef<string | null>(null);
@@ -649,9 +663,9 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       ? <RecordingConsentNotice open kind="recording" placement="indicator" data-testid="call-recording-indicator" />
       : null), [recording?.enabled]);
     const value = useMemo<CallHostValue<Call>>(() => ({
-      call, recordingNote, recordingIndicator, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
+      call, recordingNote, recordingIndicator, callNoun, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
       gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting,
-    }), [call, recordingNote, recordingIndicator, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting]);
+    }), [call, recordingNote, recordingIndicator, callNoun, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting]);
 
     const head = rings.rings[0] ?? null;
     return (
@@ -659,7 +673,8 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
         {children}
         {prompt && <PreJoinDialog
           kind={prompt.kind}
-          title={lobby?.title ?? 'this huddle'}
+          title={lobby?.title ?? `this ${callNoun}`}
+          callNoun={callNoun}
           selfName={self?.displayName ?? ''}
           selfAvatarUrl={self?.avatarUrl}
           initial={prompt.initial}
@@ -767,7 +782,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     const narrow = sized && (compact || callBlockNarrow(width));
     const holds = useClaimCallBlock(target, placement, enabled, { compact: narrow, ...(documents ? { documents } : {}), ...(fit ? { fit } : {}) });
     const testId = placement === 'stage' ? 'call-stage' : placement === 'composer' ? 'composer-call-dock' : placement === 'page' ? 'page-call-block' : placement === 'block' ? 'shell-call-block' : 'call-block-pane';
-    return <Stack ref={setTarget} gap="none" className={className ?? (placement === 'composer' ? 'min-w-0' : 'shrink-0 min-w-0')} aria-label="Huddle"
+    return <Stack ref={setTarget} gap="none" className={className ?? (placement === 'composer' ? 'min-w-0' : 'shrink-0 min-w-0')} aria-label={capitalise(host?.callNoun ?? 'huddle')}
       data-testid={testId} data-holds-media={holds ? 'true' : 'false'} {...(sized ? { 'data-compact': narrow ? 'true' : 'false' } : {})} />;
   }
 
