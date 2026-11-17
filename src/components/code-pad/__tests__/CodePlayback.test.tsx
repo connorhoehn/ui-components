@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { EditorView } from '@codemirror/view';
-import { CodePlayback, codePlaybackMarkerLetter, type CodePlaybackFrame, type CodePlaybackMarker } from '../index';
+import { CodePlayback, codePlaybackMarkerLetter, codePlaybackMarkerRows, type CodePlaybackFrame, type CodePlaybackMarker } from '../index';
 
 // jsdom has no layout: CodeMirror's measure pass asks a Range for its rects.
 beforeAll(() => {
@@ -142,5 +142,42 @@ describe('CodePlayback', () => {
     expect(screen.queryByTestId('code-pad')).toBeNull();
     rerender(<CodePlayback frames={frames} durationMs={10_000} timeMs={6_000} />);
     expect(editorText()).toBe(frames[1].text);
+  });
+});
+
+describe('CodePlayback marker rows', () => {
+  it('codePlaybackMarkerRows keeps spaced stops on one row and stacks ones that would touch', () => {
+    expect(codePlaybackMarkerRows([0, 30, 60])).toEqual([0, 0, 0]);
+    expect(codePlaybackMarkerRows([100, 101, 102, 130])).toEqual([0, 1, 2, 0]);
+    expect(codePlaybackMarkerRows([100, 110], 8)).toEqual([0, 0]);
+  });
+
+  it('stacks a run and a hint that sit close together, and both stay reachable by keyboard', () => {
+    const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      { x: 0, y: 0, top: 0, left: 0, right: 1000, bottom: 24, width: 1000, height: 24, toJSON: () => ({}) } as DOMRect,
+    );
+    try {
+      render(<CodePlayback frames={frames} markers={markers} durationMs={10_000} />);
+      const stops = screen.getAllByTestId('code-playback-marker');
+      // 9.5s and 9.8s are 30px apart at 1000px: they keep one row; at 9.5/9.6 they would not.
+      expect(stops.map((s) => s.getAttribute('data-row'))).toEqual(['0', '0', '0', '0']);
+      cleanup();
+      const close = [...markers.slice(0, 3), { atMs: 9_510, kind: 'paste', label: 'Pasted again' }];
+      render(<CodePlayback frames={frames} markers={close} durationMs={10_000} />);
+      const near = screen.getAllByTestId('code-playback-marker');
+      expect(near.map((s) => s.getAttribute('data-row'))).toEqual(['0', '0', '0', '1']);
+      expect(near[3].style.top).toBe('24px');
+      expect(screen.getByTestId('code-playback-markers').getAttribute('data-rows')).toBe('2');
+      act(() => near[2].focus());
+      fireEvent.keyDown(near[2], { key: 'ArrowRight' });
+      expect(document.activeElement).toBe(near[3]);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('keeps every stop on one row when the strip is unmeasured', () => {
+    render(<CodePlayback frames={frames} markers={[...markers, { atMs: 9_501, kind: 'paste', label: 'p' }]} durationMs={10_000} />);
+    expect(screen.getAllByTestId('code-playback-marker').every((s) => s.getAttribute('data-row') === '0')).toBe(true);
   });
 });

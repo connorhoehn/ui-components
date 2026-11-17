@@ -19,7 +19,7 @@ export type {
 export { CodeRunOutput, codeRunStatusLabel } from './CodeRunOutput';
 export type { CodeRunOutputProps, CodeRunStatus } from './CodeRunOutput';
 // Code over time, read only, beside a recording.
-export { CodePlayback, codePlaybackMarkerLetter } from './CodePlayback';
+export { CodePlayback, codePlaybackMarkerLetter, codePlaybackMarkerRows } from './CodePlayback';
 export type { CodePlaybackProps, CodePlaybackFrame, CodePlaybackMarker } from './CodePlayback';
 export { CODE_PAD_LANGUAGES, isCodePadLanguage } from './languages';
 export type { CodePadLanguage, CodePadLanguageLoader } from './languages';

@@ -13,7 +13,7 @@
 // change between the two texts, so the editor is never rebuilt and the scroll
 // stays where it was wherever the text above it did not change.
 
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Slider } from '../forms/Slider';
 import { Inline, Stack } from '../ui/Stack';
@@ -100,6 +100,28 @@ function kindName(kind: string): string {
 /** The letter on the stop: Q, R, P, or the first letter of a page's own kind. */
 export function codePlaybackMarkerLetter(kind: string): string {
   return kindName(kind).charAt(0).toUpperCase();
+}
+
+/** A stop's drawn width (`min-w-5`) plus the least room left between two stops, in px. */
+const MARKER_PITCH_PX = 24;
+/** The vertical step between rows of stops (a 20px stop and 4px between rows). */
+const MARKER_ROW_PX = 24;
+
+/**
+ * Which row each stop sits on (since NEXT), given their centres in px along the
+ * strip in time order: each stop takes the first row whose last stop is at
+ * least `pitchPx` to its left, else opens a new row. Stops far enough apart all
+ * stay on row 0, so a sparse strip draws as before; stops that would touch (a
+ * paste and a run a second apart) stack instead of overlapping.
+ */
+export function codePlaybackMarkerRows(centresPx: readonly number[], pitchPx: number = MARKER_PITCH_PX): number[] {
+  const rowEnds: number[] = [];
+  return centresPx.map((x) => {
+    let row = rowEnds.findIndex((end) => x - end >= pitchPx);
+    if (row < 0) row = rowEnds.length;
+    rowEnds[row] = x;
+    return row;
+  });
 }
 
 /** The smallest single change that turns `from` into `to`. */
@@ -200,6 +222,29 @@ export function CodePlayback({
   };
 
   const pct = (ms: number) => (duration > 0 ? Math.min(100, Math.max(0, (ms / duration) * 100)) : 0);
+
+  // The strip's width, so stops that would touch can stack into rows. Unmeasured
+  // (0, as before layout or in a test DOM) every stop stays on the first row.
+  const stripRef = useRef<HTMLDivElement | null>(null);
+  const [stripPx, setStripPx] = useState(0);
+  const hasMarkers = sortedMarkers.length > 0;
+  useLayoutEffect(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    const measure = () => setStripPx(el.getBoundingClientRect().width);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMarkers]);
+  const markerRows = useMemo(
+    () => stripPx > 0 && duration > 0
+      ? codePlaybackMarkerRows(sortedMarkers.map((m) => (Math.min(duration, Math.max(0, m.atMs)) / duration) * stripPx))
+      : sortedMarkers.map(() => 0),
+    [sortedMarkers, stripPx, duration],
+  );
+  const rowCount = markerRows.reduce((n, r) => Math.max(n, r + 1), 1);
   const step = duration > 20_000 ? 1000 : 100;
 
   return (
@@ -225,7 +270,17 @@ export function CodePlayback({
         {sortedMarkers.length > 0 && (
           // Half a thumb of inset each side, so a stop sits over the thumb's
           // centre at its time rather than over the track's raw edge.
-          <div role="group" aria-label="Moments" data-testid={`${testId}-markers`} className="relative mx-2 h-6">
+          // Stops that would touch stack into rows (`data-row`), each still its own
+          // button in time order for the arrow keys.
+          <div
+            ref={stripRef}
+            role="group"
+            aria-label="Moments"
+            data-testid={`${testId}-markers`}
+            data-rows={rowCount}
+            className="relative mx-2 h-6"
+            style={rowCount > 1 ? { height: `${(rowCount - 1) * MARKER_ROW_PX + 24}px` } : undefined}
+          >
             {sortedMarkers.map((m, i) => {
               const name = kindName(m.kind);
               const spoken = `${name}: ${m.label}${m.detail ? `. ${m.detail}` : ''}, at ${formatTime(m.atMs)}`;
@@ -239,6 +294,7 @@ export function CodePlayback({
                   data-ui-part=""
                   data-testid={`${testId}-marker`}
                   data-kind={m.kind}
+                  data-row={markerRows[i] ?? 0}
                   data-passed={m.atMs <= time ? 'true' : undefined}
                   tabIndex={i === tabStop ? 0 : -1}
                   aria-label={spoken}
@@ -256,7 +312,7 @@ export function CodePlayback({
                     m.atMs <= time ? 'opacity-100' : 'opacity-70',
                   )}
                   // A stop's place is its time: there is no class for 37.4%.
-                  style={{ left: `${pct(m.atMs)}%` }}
+                  style={markerRows[i] ? { left: `${pct(m.atMs)}%`, top: `${markerRows[i] * MARKER_ROW_PX}px` } : { left: `${pct(m.atMs)}%` }}
                 >
                   {codePlaybackMarkerLetter(m.kind)}
                 </button>
