@@ -549,7 +549,7 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 									let a = i.render ? i.render(t, n) : String(t[i.key] ?? ""), o = i.truncate ? de(i, t, a) : "";
 									return /* @__PURE__ */ O(r, {
 										numeric: i.numeric,
-										className: e(Ae(i.align), i.truncate && (i.wrap === "two-lines" ? le : ce), M && oe, i.className, X && Se, Z.has(i.key) && rt),
+										className: e(Ae(i.align), i.truncate && (i.wrap === "two-lines" ? le : ce), M && oe, i.className, X && Se, Z.has(i.key) && rt, i.hideInCards && M && "@max-[40rem]:hidden!", i.hideInCards && X && "hidden!"),
 										...it ? { "data-label": fe(i) } : {},
 										...i.truncate ? { "data-truncate": i.wrap === "two-lines" ? "two-lines" : "" } : {},
 										...o ? { "data-full-text": o } : {},

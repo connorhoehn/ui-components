@@ -1,3 +1,7 @@
+## 2.536.1
+
+- `DataTable` columns take `hideInCards`: the column stays in the table and is left out of the stacked card form (`narrow` under 40rem, or `responsiveColumns`' forced stack), for a value another cell carries there (a row number the title cell shows on a phone).
+
 ## 2.536.0
 
 The call grid fits the room it is given and shows you while it connects, and the call's own words can name it something other than a huddle. Every new prop is optional; with none given, output is unchanged.

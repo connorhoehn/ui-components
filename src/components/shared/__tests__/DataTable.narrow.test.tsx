@@ -15,6 +15,14 @@ const columns: DataTableColumn<Row>[] = [
 ];
 
 describe('DataTable narrow', () => {
+  it('leaves a hideInCards column out of the card form only', () => {
+    const cols: DataTableColumn<Row>[] = [{ key: 'at', header: '#', hideInCards: true }, { key: 'name', header: 'Name' }];
+    render(<DataTable data={rows} columns={cols} keyField={(r) => r.id} staticRows="test" narrow />);
+    const [num, name] = Array.from(screen.getAllByRole('row')[1]!.querySelectorAll('td'));
+    expect(num!.className).toContain('@max-[40rem]:hidden!');
+    expect(name!.className).not.toContain('hidden!');
+  });
+
   it('labels every cell: the column label, else the string header, else the key', () => {
     render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} staticRows="test" narrow />);
     const cells = screen.getAllByRole('row')[1]!.querySelectorAll('td');

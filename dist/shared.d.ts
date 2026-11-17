@@ -2976,6 +2976,12 @@ export declare interface DataTableColumn<T> {
     /** The label a stacked card (`narrow`) puts before this column's value. Default: `header` when it is a string, else `key`. Since 2.515.3. */
     label?: string;
     /**
+     * Leave this column out of the stacked card form (`narrow` under 40rem, or `responsiveColumns`' forced stack),
+     * for a value another cell already carries there, such as a row number the title cell shows on a phone
+     * (since 2.536.1). The table form is unchanged.
+     */
+    hideInCards?: boolean;
+    /**
      * Cut this column's cells to one line with an ellipsis instead of letting a
      * long value widen the table (since 2.515.12). The cell takes the column's
      * share of the width (`width` when given, else what is left), and the full
