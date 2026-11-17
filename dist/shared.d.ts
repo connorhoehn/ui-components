@@ -2982,6 +2982,11 @@ export declare interface DataTableColumn<T> {
      */
     hideInCards?: boolean;
     /**
+     * This row's label in the stacked card form, in place of `label` (since 2.536.2): "Episode 13" for a title cell
+     * that carries the number a `hideInCards` column shows in the table.
+     */
+    cardLabel?: (row: T) => string;
+    /**
      * Cut this column's cells to one line with an ellipsis instead of letting a
      * long value widen the table (since 2.515.12). The cell takes the column's
      * share of the width (`width` when given, else what is left), and the full

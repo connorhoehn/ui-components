@@ -60,6 +60,11 @@ export interface DataTableColumn<T> {
    */
   hideInCards?: boolean;
   /**
+   * This row's label in the stacked card form, in place of `label` (since 2.536.2): "Episode 13" for a title cell
+   * that carries the number a `hideInCards` column shows in the table.
+   */
+  cardLabel?: (row: T) => string;
+  /**
    * Cut this column's cells to one line with an ellipsis instead of letting a
    * long value widen the table (since 2.515.12). The cell takes the column's
    * share of the width (`width` when given, else what is left), and the full
@@ -933,7 +938,7 @@ export function DataTable<T>({
                         key={col.key}
                         numeric={col.numeric}
                         className={cn(alignClass(col.align), col.truncate && (col.wrap === 'two-lines' ? CLAMP_CELL : TRUNCATE_CELL), narrow && NARROW_CELL, col.className, stacked && STACK_CELL, hidden.has(col.key) && hideClass, col.hideInCards && narrow && '@max-[40rem]:hidden!', col.hideInCards && stacked && 'hidden!')}
-                        {...(labelled ? { 'data-label': columnLabel(col) } : {})}
+                        {...(labelled ? { 'data-label': col.cardLabel?.(row) || columnLabel(col) } : {})}
                         {...(col.truncate ? { 'data-truncate': col.wrap === 'two-lines' ? 'two-lines' : '' } : {})}
                         {...(fullText ? { 'data-full-text': fullText } : {})}
                       >

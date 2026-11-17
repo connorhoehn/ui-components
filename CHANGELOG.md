@@ -1,3 +1,7 @@
+## 2.536.2
+
+- `DataTable` columns take `cardLabel(row)`: a row's own label in the stacked card form ("Episode 13"), in place of the column's `label`.
+
 ## 2.536.1
 
 - `DataTable` columns take `hideInCards`: the column stays in the table and is left out of the stacked card form (`narrow` under 40rem, or `responsiveColumns`' forced stack), for a value another cell carries there (a row number the title cell shows on a phone).

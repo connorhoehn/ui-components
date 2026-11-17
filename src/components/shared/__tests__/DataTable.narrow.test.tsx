@@ -23,6 +23,12 @@ describe('DataTable narrow', () => {
     expect(name!.className).not.toContain('hidden!');
   });
 
+  it('labels a card cell per row with cardLabel', () => {
+    const cols: DataTableColumn<Row>[] = [{ key: 'name', header: 'Name', cardLabel: (r) => `Item ${r.at}` }];
+    render(<DataTable data={rows} columns={cols} keyField={(r) => r.id} staticRows="test" narrow />);
+    expect(screen.getAllByRole('row')[2]!.querySelector('td')).toHaveAttribute('data-label', 'Item 2');
+  });
+
   it('labels every cell: the column label, else the string header, else the key', () => {
     render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} staticRows="test" narrow />);
     const cells = screen.getAllByRole('row')[1]!.querySelectorAll('td');

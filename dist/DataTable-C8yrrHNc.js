@@ -550,7 +550,7 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 									return /* @__PURE__ */ O(r, {
 										numeric: i.numeric,
 										className: e(Ae(i.align), i.truncate && (i.wrap === "two-lines" ? le : ce), M && oe, i.className, X && Se, Z.has(i.key) && rt, i.hideInCards && M && "@max-[40rem]:hidden!", i.hideInCards && X && "hidden!"),
-										...it ? { "data-label": fe(i) } : {},
+										...it ? { "data-label": i.cardLabel?.(t) || fe(i) } : {},
 										...i.truncate ? { "data-truncate": i.wrap === "two-lines" ? "two-lines" : "" } : {},
 										...o ? { "data-full-text": o } : {},
 										children: i.truncate ? /* @__PURE__ */ O(h, {
