@@ -1,16 +1,17 @@
-import { d as e, n as t } from "./Button-DQoeE5dN.js";
-import { n, t as r } from "./Stack-CE1FjEn8.js";
-import { t as i } from "./Text-XdCzxWMv.js";
-import { t as a } from "./IconButton-BgM9MvwA.js";
-import { J as o, P as s } from "./Icons-CqVFbuiZ.js";
+import { t as e } from "./cn-D4QmbyEy.js";
+import { n as t } from "./Button-C-I3BxWI.js";
+import { n, t as r } from "./Stack-h_hskqqc.js";
+import { t as i } from "./Text-BxqRqgIU.js";
+import { t as a } from "./IconButton-Bf5Wy0tS.js";
+import { P as o, Y as s } from "./Icons-CNCMF52q.js";
 import { a as c, i as l, t as u, u as d } from "./MediaIcons-_ai5Til2.js";
-import { t as f } from "./Input-DiOEvL5h.js";
-import { t as p } from "./InlinePopover-CEzf8hyR.js";
-import { t as m } from "./DropdownMenu-LFtIWj5Y.js";
-import { t as h } from "./SegmentedControl-CO8w_o0t.js";
-import { t as g } from "./StatusPill-AqmSksrZ.js";
-import { t as _ } from "./Switch-CRiY_kzy.js";
-import { t as v } from "./DotMeter-DJzl5dNX.js";
+import { t as f } from "./Input-Brvp1kPv.js";
+import { t as p } from "./InlinePopover-CkfVqASn.js";
+import { t as m } from "./DropdownMenu-QoI-s9Bm.js";
+import { t as h } from "./SegmentedControl-CbduGSM-.js";
+import { t as g } from "./StatusPill-Bw4Y0yZf.js";
+import { t as _ } from "./Switch-CRCnYrhx.js";
+import { t as v } from "./DotMeter-B6ZDgLU7.js";
 import { useCallback as y, useEffect as b, useId as x, useRef as S, useState as C } from "react";
 import { jsx as w, jsxs as T } from "react/jsx-runtime";
 //#region src/components/voice/voiceTypes.ts
@@ -406,8 +407,8 @@ function H(e) {
 		minute: "2-digit"
 	});
 }
-function te({ turns: a, maxVisible: o = 4, onClear: c, pending: l = null, pendingChoice: u = null, size: d = "panel", keepTranscript: f = !1, onKeepTranscriptChange: p, onOpenLog: m, className: h, "data-testid": v = "voice-turn-strip" }) {
-	let y = d === "footer", b = x(), S = !y && o > 0 ? a.slice(-o) : a, C = p || m ? /* @__PURE__ */ T(r, {
+function te({ turns: a, maxVisible: s = 4, onClear: c, pending: l = null, pendingChoice: u = null, size: d = "panel", keepTranscript: f = !1, onKeepTranscriptChange: p, onOpenLog: m, className: h, "data-testid": v = "voice-turn-strip" }) {
+	let y = d === "footer", b = x(), S = !y && s > 0 ? a.slice(-s) : a, C = p || m ? /* @__PURE__ */ T(r, {
 		gap: "sm",
 		justify: "between",
 		className: "min-h-7",
@@ -432,7 +433,7 @@ function te({ turns: a, maxVisible: o = 4, onClear: c, pending: l = null, pendin
 			className: "gap-1.5",
 			onClick: m,
 			"data-testid": `${v}-log`,
-			children: [/* @__PURE__ */ w(s, { size: 16 }), "History"]
+			children: [/* @__PURE__ */ w(o, { size: 16 }), "History"]
 		}) : null]
 	}) : null;
 	return y ? /* @__PURE__ */ T(n, {
@@ -725,7 +726,7 @@ function G({ phase: f, level: h, outputLevel: _, elapsedSeconds: x, budget: E = 
 					"data-testid": `${q}-mute`
 				}) : null,
 				we && (H || G) ? /* @__PURE__ */ w(m, {
-					trigger: /* @__PURE__ */ w(o, { size: 16 }),
+					trigger: /* @__PURE__ */ w(s, { size: 16 }),
 					triggerLabel: "More voice controls",
 					triggerTitle: "More voice controls",
 					triggerVariant: "link",
@@ -740,7 +741,7 @@ function G({ phase: f, level: h, outputLevel: _, elapsedSeconds: x, budget: E = 
 						"data-testid": `${q}-cc`
 					}] : [], ...G ? [{
 						label: "Open voice history",
-						icon: /* @__PURE__ */ w(s, { size: 16 }),
+						icon: /* @__PURE__ */ w(o, { size: 16 }),
 						onSelect: G,
 						"data-testid": `${q}-history`
 					}] : []] }]
@@ -758,7 +759,7 @@ function G({ phase: f, level: h, outputLevel: _, elapsedSeconds: x, budget: E = 
 					"aria-label": "Open voice history",
 					size: "sm",
 					variant: "ghost",
-					icon: /* @__PURE__ */ w(s, { size: 16 }),
+					icon: /* @__PURE__ */ w(o, { size: 16 }),
 					onClick: G,
 					"data-testid": `${q}-history`
 				}) : null,

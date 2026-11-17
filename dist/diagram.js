@@ -1,19 +1,20 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
-import { d as n, n as r } from "./Button-DQoeE5dN.js";
-import { n as i, r as a } from "./safeHref-CSAycLWi.js";
-import { t as o } from "./Input-DiOEvL5h.js";
-import { t as s } from "./Select-CDxAVVnW.js";
-import { t as c } from "./Textarea-Cf4WFXAs.js";
-import { t as l } from "./Checkbox-DgSkOMOT.js";
+import { t as n } from "./cn-D4QmbyEy.js";
+import { n as r } from "./Button-C-I3BxWI.js";
+import { n as i, r as a } from "./safeHref-DG89LIze.js";
+import { t as o } from "./Input-Brvp1kPv.js";
+import { t as s } from "./Select-BUWbzQjb.js";
+import { t as c } from "./Textarea-CvdLeuO_.js";
+import { t as l } from "./Checkbox-a_0LP5Ii.js";
 import { t as u } from "./formatBytes-05ivRSJY.js";
-import { n as d, t as f } from "./useResolvedTheme-DOW-ad8r.js";
+import { n as d, t as f } from "./useResolvedTheme-CyO5J8RL.js";
 import { Suspense as p, createElement as m, lazy as h, useCallback as g, useEffect as _, useMemo as ee, useRef as v, useState as y } from "react";
 import { Fragment as b, jsx as x, jsxs as S } from "react/jsx-runtime";
 import { Extension as C } from "@tiptap/core";
 import { NodeSelection as te, Plugin as ne, PluginKey as re, TextSelection as ie } from "@tiptap/pm/state";
 import { createRoot as ae } from "react-dom/client";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var oe = h(() => import("./ExcalidrawCanvas-Cxa63s8g.js"));
+var oe = h(() => import("./ExcalidrawCanvas-B2XJbRLT.js"));
 function se({ label: e }) {
 	return /* @__PURE__ */ x("div", {
 		"data-testid": "diagram-loading",

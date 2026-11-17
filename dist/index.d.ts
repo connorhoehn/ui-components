@@ -8559,6 +8559,28 @@ export declare const dateFieldType: FieldTypeDefinition;
 
 export declare function DateReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
+export declare function DateTimeField({ label, value, onChange, min, hint, error, required, disabled, timeZone, minMessage, 'data-testid': testId, }: DateTimeFieldProps): JSX.Element;
+
+export declare interface DateTimeFieldProps {
+    label: string;
+    /** ISO 8601 instant (UTC), or null for "not set". */
+    value: string | null;
+    /** Called with the new ISO 8601 UTC instant, or null when the field is cleared. Not called for a time before `min`. */
+    onChange: (value: string | null) => void;
+    /** Earliest instant allowed, as an ISO 8601 string. */
+    min?: string;
+    hint?: string;
+    /** Error message from the caller; wins over the field's own "before min" message. */
+    error?: string;
+    required?: boolean;
+    disabled?: boolean;
+    /** IANA zone to show and edit in. Default: the viewer's own zone. */
+    timeZone?: string;
+    /** Sentence shown when the typed time is before `min`. */
+    minMessage?: string;
+    'data-testid'?: string;
+}
+
 /** Local calendar day of an ISO timestamp, as `YYYY-MM-DD`. Empty when unparseable. */
 export declare function dayKeyOf(isoString: string): string;
 
@@ -16043,6 +16065,9 @@ export declare function MicOffIcon({ size, ...rest }: IconProps): JSX.Element;
 /** Four corners pulled inward: "leave full screen". Since 2.500.3. */
 export declare function MinimizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A minus: "less of it" (zoom out, remove one). The plus's partner. */
+export declare function MinusIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, dialogKind, }: ModalProps): ReactPortal | null;
 
 export declare interface ModalProps {
@@ -20023,6 +20048,31 @@ export declare function rareSkillFindingsUrl(skill: string, findingId?: string |
 
 export declare interface RateInfo {
     [key: string]: unknown;
+}
+
+export declare function RatingInput({ label, value, onChange, options, hint, error, required, disabled, readOnly, notRatedLabel, 'data-testid': testId, }: RatingInputProps): JSX.Element;
+
+export declare interface RatingInputProps {
+    label: string;
+    /** The chosen point's value, or null for "not rated". */
+    value: number | null;
+    onChange: (value: number | null) => void;
+    /** The scale, lowest to highest, each point with its label. */
+    options: RatingOption[];
+    hint?: string;
+    error?: string;
+    required?: boolean;
+    disabled?: boolean;
+    /** Shows the chosen label as text instead of the choices. */
+    readOnly?: boolean;
+    /** Label of the null choice. @default 'Not rated' */
+    notRatedLabel?: string;
+    'data-testid'?: string;
+}
+
+export declare interface RatingOption {
+    value: number;
+    label: string;
 }
 
 export declare const rawBorderRadius: {

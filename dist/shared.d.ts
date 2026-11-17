@@ -6805,6 +6805,9 @@ export declare interface MeterRowProps {
 /** Four corners pulled inward: "leave full screen". Since 2.500.3. */
 export declare function MinimizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A minus: "less of it" (zoom out, remove one). The plus's partner. */
+export declare function MinusIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, dialogKind, }: ModalProps): ReactPortal | null;
 
 export declare interface ModalProps {

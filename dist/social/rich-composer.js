@@ -1,17 +1,18 @@
-import { c as e, d as t, n } from "../Button-DQoeE5dN.js";
-import { i as r } from "../ToastProvider-BU9h6ZJU.js";
-import { n as i, t as a } from "../Stack-CE1FjEn8.js";
-import { n as o } from "../Text-XdCzxWMv.js";
-import { t as s } from "../Select-CDxAVVnW.js";
-import { t as c } from "../FormField-BDZIVA7n.js";
-import { t as l } from "../Textarea-Cf4WFXAs.js";
-import { t as u } from "../DecisionPath-EmucEGVS.js";
-import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-CkZXGTCj.js";
+import { t as e } from "../cn-D4QmbyEy.js";
+import { i as t } from "../ToastProvider-DH4KqzFJ.js";
+import { c as n, n as r } from "../Button-C-I3BxWI.js";
+import { n as i, t as a } from "../Stack-h_hskqqc.js";
+import { n as o } from "../Text-BxqRqgIU.js";
+import { t as s } from "../Select-BUWbzQjb.js";
+import { t as c } from "../FormField-CQ27qxWt.js";
+import { t as l } from "../Textarea-CvdLeuO_.js";
+import { t as u } from "../DecisionPath-CTH2c3WN.js";
+import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-Bp7HX3Mx.js";
 import { a as ee, i as v, n as y, r as b, t as x } from "../composerContext-BLn1-Nao.js";
-import { a as te, i as S, n as C, o as ne, r as w, s as T, t as re } from "../ConversationInputs-CCs-hXjV.js";
-import { a as E, c as D, d as O, i as k, l as A, n as ie, o as j, r as M, s as N, t as ae, u as oe } from "../RichChatComposer-SfF4SJhR.js";
-import { t as se } from "../ContextComposer-Dv0_1MYI.js";
-import { t as P } from "../AgentComposerDock-BvELQd-I.js";
+import { a as te, i as S, n as C, o as ne, r as w, s as T, t as re } from "../ConversationInputs-CldAiAr0.js";
+import { a as E, c as D, d as O, i as k, l as A, n as ie, o as j, r as M, s as N, t as ae, u as oe } from "../RichChatComposer-C388ujIl.js";
+import { t as se } from "../ContextComposer-DfoqigAU.js";
+import { t as P } from "../AgentComposerDock-zhXhWFI7.js";
 import { useCallback as F, useContext as ce, useEffect as I, useId as le, useMemo as L, useRef as R, useState as z } from "react";
 import { jsx as B, jsxs as V } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx
@@ -26,7 +27,7 @@ var de = {
 	review: 1,
 	done: 2
 };
-function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMessageChange: f, messageLabel: p = "Message", placeholder: m, reviewTitle: h, note: g, doneTitle: _ = "Done", doneMessage: ee = "Confirmed.", continueLabel: v = "Continue", confirmLabel: y = "Confirm", backLabel: b = "Back", doneActionLabel: x = "Back", onConfirm: te, onCancel: S, onDone: C, onStageChange: ne, path: w, autoFocus: T = !0, className: re, "data-testid": E = "composer-confirm-flow" }) {
+function fe({ title: t, recipient: n, defaultMessage: s = "", message: d, onMessageChange: f, messageLabel: p = "Message", placeholder: m, reviewTitle: h, note: g, doneTitle: _ = "Done", doneMessage: ee = "Confirmed.", continueLabel: v = "Continue", confirmLabel: y = "Confirm", backLabel: b = "Back", doneActionLabel: x = "Back", onConfirm: te, onCancel: S, onDone: C, onStageChange: ne, path: w, autoFocus: T = !0, className: re, "data-testid": E = "composer-confirm-flow" }) {
 	let [D, O] = z(s), k = d !== void 0, A = k ? d : D, ie = F((e) => {
 		k || O(e), f?.(e);
 	}, [k, f]), [j, M] = z("draft"), [N, ae] = z(!1), [oe, se] = z(null), [P, ce] = z(null), L = R(!1), fe = R(null), pe = R(null), U = R(null), me = le(), he = A.trim().length > 0, W = F((e) => {
@@ -58,7 +59,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 		A,
 		te,
 		W
-	]), ve = j === "review" ? h ?? e : j === "done" ? _ : e, K = `${me}-heading`, ye = `${me}-keys`, q = ve || r ? /* @__PURE__ */ V(a, {
+	]), ve = j === "review" ? h ?? t : j === "done" ? _ : t, K = `${me}-heading`, ye = `${me}-keys`, q = ve || n ? /* @__PURE__ */ V(a, {
 		gap: "sm",
 		align: "baseline",
 		wrap: !0,
@@ -71,14 +72,14 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 			id: K,
 			className: "min-w-0",
 			children: ve
-		}), r && /* @__PURE__ */ B(o, {
+		}), n && /* @__PURE__ */ B(o, {
 			as: "p",
 			size: "xs",
 			tone: "secondary",
 			wrap: !0,
 			className: "min-w-0",
 			"data-testid": `${E}-recipient`,
-			children: r
+			children: n
 		})]
 	}) : null, be = w ? /* @__PURE__ */ B(u, {
 		steps: w.steps,
@@ -87,7 +88,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 	}) : null;
 	return j === "done" ? /* @__PURE__ */ V(i, {
 		gap: "xs",
-		className: t("min-w-0", re),
+		className: e("min-w-0", re),
 		"data-composer-confirm-flow": "done",
 		"data-testid": E,
 		children: [be, /* @__PURE__ */ V(i, {
@@ -115,7 +116,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 					align: "center",
 					wrap: !0,
 					className: "min-w-0",
-					children: /* @__PURE__ */ B(n, {
+					children: /* @__PURE__ */ B(r, {
 						size: "sm",
 						variant: "ghost",
 						onClick: C,
@@ -128,7 +129,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 		})]
 	}) : j === "review" ? /* @__PURE__ */ V(i, {
 		gap: "xs",
-		className: t("min-w-0", re),
+		className: e("min-w-0", re),
 		"data-composer-confirm-flow": "review",
 		"data-testid": E,
 		children: [be, /* @__PURE__ */ V(i, {
@@ -165,7 +166,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 					wrap: !0,
 					className: "min-w-0",
 					children: [
-						/* @__PURE__ */ B(n, {
+						/* @__PURE__ */ B(r, {
 							size: "sm",
 							variant: "primary",
 							disabled: N,
@@ -176,7 +177,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 							"data-testid": `${E}-confirm`,
 							children: y
 						}),
-						/* @__PURE__ */ B(n, {
+						/* @__PURE__ */ B(r, {
 							size: "sm",
 							variant: "ghost",
 							disabled: N,
@@ -227,7 +228,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 		})]
 	}) : /* @__PURE__ */ V(i, {
 		gap: "xs",
-		className: t("min-w-0", re),
+		className: e("min-w-0", re),
 		"data-composer-confirm-flow": "draft",
 		"data-testid": E,
 		children: [be, /* @__PURE__ */ V(i, {
@@ -265,7 +266,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 					wrap: !0,
 					className: "min-w-0",
 					children: [
-						/* @__PURE__ */ B(n, {
+						/* @__PURE__ */ B(r, {
 							size: "sm",
 							type: "submit",
 							variant: "primary",
@@ -275,7 +276,7 @@ function fe({ title: e, recipient: r, defaultMessage: s = "", message: d, onMess
 							"data-testid": `${E}-continue`,
 							children: v
 						}),
-						S && /* @__PURE__ */ B(n, {
+						S && /* @__PURE__ */ B(r, {
 							size: "sm",
 							type: "button",
 							variant: "ghost",
@@ -640,8 +641,8 @@ function X() {
 	return typeof navigator > "u" ? "Ctrl" : /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "⌘" : "Ctrl+";
 }
 var Ae = "max-h-[min(40vh,24rem)] overflow-y-auto overscroll-contain [&>:not(dl)]:shrink-0", je = "min-h-0 overflow-y-auto overscroll-contain";
-function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReason: d, variant: f = "card", presentation: p, className: m, "data-testid": h = "composer-prompt-deck" }) {
-	let g = f === "inset", _ = ce(j), ee = p ?? _ ?? "card", v = ee === "prompt", y = De(e ? null : r, { scope: s }), b = e ?? y, x = R(null), te = le(), S = R(null), [C, ne] = z({
+function Me({ deck: t, prompts: n, scope: s, input: c = null, submitDisabledReason: d, variant: f = "card", presentation: p, className: m, "data-testid": h = "composer-prompt-deck" }) {
+	let g = f === "inset", _ = ce(j), ee = p ?? _ ?? "card", v = ee === "prompt", y = De(t ? null : n, { scope: s }), b = t ?? y, x = R(null), te = le(), S = R(null), [C, ne] = z({
 		id: "",
 		text: ""
 	}), { active: w, pending: T, index: re, collapsed: E, busy: D, error: O, receipt: k } = b, A = w?.inputDraft?.value ?? (C.id === w?.id ? C.text : ""), ie = !c && b.typed && !w?.readOnlyReason, M = w && !w.readOnlyReason && (d?.trim() || w.disabledReason?.trim()) || null, N = `${te}-disabled-reason`, ae = async () => {
@@ -710,7 +711,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 		gap: "xs",
 		align: "center",
 		wrap: !1,
-		className: t("min-w-0", g && !E && w && "px-3 pb-2"),
+		className: e("min-w-0", g && !E && w && "px-3 pb-2"),
 		"data-testid": `${h}-receipt`,
 		children: [/* @__PURE__ */ B(o, {
 			as: "p",
@@ -720,7 +721,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 			className: "min-w-0 flex-1 truncate",
 			title: `Answered · ${k}`,
 			children: `Answered · ${k}`
-		}), /* @__PURE__ */ B(n, {
+		}), /* @__PURE__ */ B(r, {
 			variant: "link",
 			size: "sm",
 			onClick: b.dismissReceipt,
@@ -730,7 +731,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 	}) : null;
 	if (!w || E) return /* @__PURE__ */ V(i, {
 		gap: "xs",
-		className: t("min-w-0", g && "border-b border-border px-3 py-1.5", m),
+		className: e("min-w-0", g && "border-b border-border px-3 py-1.5", m),
 		"data-composer-prompt-deck": w ? "collapsed" : "answered",
 		"data-deck-variant": f,
 		"data-presentation": ee,
@@ -740,7 +741,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 			gap: "sm",
 			align: "center",
 			wrap: !0,
-			className: t("min-w-0", !g && "rounded-md border border-border bg-surface-secondary px-3 py-1.5"),
+			className: e("min-w-0", !g && "rounded-md border border-border bg-surface-secondary px-3 py-1.5"),
 			children: [
 				/* @__PURE__ */ B(o, {
 					size: "xs",
@@ -749,7 +750,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 					className: "min-w-0 flex-1",
 					children: P === 1 ? `1 question waiting · ${w.title}` : `${P} questions waiting · ${w.title}`
 				}),
-				/* @__PURE__ */ B(n, {
+				/* @__PURE__ */ B(r, {
 					variant: "link",
 					size: "sm",
 					onClick: () => b.setCollapsed(!1),
@@ -771,7 +772,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 	].filter(Boolean).join(" · ");
 	return /* @__PURE__ */ V(i, {
 		gap: "xs",
-		className: t("min-w-0", g && "border-b border-border", m),
+		className: e("min-w-0", g && "border-b border-border", m),
 		"data-composer-prompt-deck": "expanded",
 		"data-composer-dialogue": c ? void 0 : w.kind,
 		"data-deck-variant": f,
@@ -792,7 +793,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 				"aria-labelledby": pe,
 				"aria-describedby": W,
 				"aria-busy": D || void 0,
-				className: t("flex min-w-0 flex-col gap-2 px-3 py-2.5", Ae, !g && "rounded-lg border border-border bg-surface"),
+				className: e("flex min-w-0 flex-col gap-2 px-3 py-2.5", Ae, !g && "rounded-lg border border-border bg-surface"),
 				"data-composer-prompt": w.id,
 				"data-composer-prompt-kind": w.kind,
 				"data-testid": `${h}-card`,
@@ -827,7 +828,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 									children: w.title
 								})]
 							}),
-							b.backControl && /* @__PURE__ */ B(n, {
+							b.backControl && /* @__PURE__ */ B(r, {
 								variant: "ghost",
 								size: "sm",
 								className: "shrink-0",
@@ -855,7 +856,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 										"data-testid": `${h}-position`,
 										children: `${re + 1} of ${P}`
 									}),
-									/* @__PURE__ */ B(n, {
+									/* @__PURE__ */ B(r, {
 										variant: "ghost",
 										size: "sm",
 										"aria-label": "Previous question",
@@ -865,7 +866,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 										"data-testid": `${h}-previous`,
 										children: "‹"
 									}),
-									/* @__PURE__ */ B(n, {
+									/* @__PURE__ */ B(r, {
 										variant: "ghost",
 										size: "sm",
 										"aria-label": "Next question",
@@ -877,7 +878,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 									})
 								]
 							}),
-							/* @__PURE__ */ B(n, {
+							/* @__PURE__ */ B(r, {
 								variant: "ghost",
 								size: "sm",
 								className: "shrink-0",
@@ -897,41 +898,41 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 						"aria-hidden": !0,
 						className: "min-w-0",
 						"data-testid": `${h}-progress`,
-						children: T.map((e, n) => /* @__PURE__ */ B(i, {
+						children: T.map((t, n) => /* @__PURE__ */ B(i, {
 							gap: "none",
-							className: t("h-1 min-w-0 flex-1 rounded-full", n === re ? "bg-primary" : "bg-border")
-						}, e.id))
+							className: e("h-1 min-w-0 flex-1 rounded-full", n === re ? "bg-primary" : "bg-border")
+						}, t.id))
 					}),
 					w.fields && w.fields.length > 0 && v && /* @__PURE__ */ B("dl", {
 						className: "m-0 flex min-w-0 flex-col gap-0.5",
 						"data-testid": `${h}-fields`,
-						children: w.fields.map((e, n) => /* @__PURE__ */ V("div", {
+						children: w.fields.map((t, n) => /* @__PURE__ */ V("div", {
 							className: "flex min-w-0 items-baseline gap-2",
 							"data-composer-prompt-field": "",
 							children: [/* @__PURE__ */ B("dt", {
 								className: "m-0 shrink-0 text-xs font-normal text-text-tertiary",
-								children: e.label
+								children: t.label
 							}), /* @__PURE__ */ B("dd", {
-								className: t("m-0 min-w-0 flex-1 truncate text-xs font-normal", Oe[e.tone ?? "neutral"], e.mono && "tabular-nums"),
-								...typeof e.value == "string" || typeof e.value == "number" ? { title: String(e.value) } : {},
-								children: e.value
+								className: e("m-0 min-w-0 flex-1 truncate text-xs font-normal", Oe[t.tone ?? "neutral"], t.mono && "tabular-nums"),
+								...typeof t.value == "string" || typeof t.value == "number" ? { title: String(t.value) } : {},
+								children: t.value
 							})]
-						}, `${e.label}-${n}`))
+						}, `${t.label}-${n}`))
 					}),
 					w.fields && w.fields.length > 0 && !v && /* @__PURE__ */ B("dl", {
-						className: t("m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5", je),
+						className: e("m-0 flex min-w-0 flex-wrap gap-x-6 gap-y-1.5", je),
 						"data-testid": `${h}-fields`,
-						children: w.fields.map((e, n) => /* @__PURE__ */ V("div", {
+						children: w.fields.map((t, n) => /* @__PURE__ */ V("div", {
 							className: "flex min-w-0 max-w-full flex-col",
 							children: [/* @__PURE__ */ B("dt", {
 								className: "m-0 text-xs font-normal text-text-tertiary",
-								children: e.label
+								children: t.label
 							}), /* @__PURE__ */ B("dd", {
-								className: t("m-0 min-w-0 break-words text-xs font-normal", Oe[e.tone ?? "neutral"], e.mono && "tabular-nums"),
-								...typeof e.value == "string" ? { title: e.value } : {},
-								children: e.value
+								className: e("m-0 min-w-0 break-words text-xs font-normal", Oe[t.tone ?? "neutral"], t.mono && "tabular-nums"),
+								...typeof t.value == "string" ? { title: t.value } : {},
+								children: t.value
 							})]
-						}, `${e.label}-${n}`))
+						}, `${t.label}-${n}`))
 					}),
 					/* @__PURE__ */ B(o, {
 						as: "p",
@@ -980,12 +981,12 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 						role: "list",
 						"aria-label": "Answers",
 						children: L.map((e, t) => {
-							let r = G[t], a = r ? `${ue ? "Alt+" : ""}${r}` : void 0;
+							let n = G[t], a = n ? `${ue ? "Alt+" : ""}${n}` : void 0;
 							return /* @__PURE__ */ V(i, {
 								gap: "none",
 								role: "listitem",
 								className: "min-w-0",
-								children: [/* @__PURE__ */ V(n, {
+								children: [/* @__PURE__ */ V(r, {
 									size: "sm",
 									variant: e.emphasis === "primary" ? "primary" : e.emphasis === "danger" ? "danger" : "secondary",
 									disabled: D || !!e.disabledReason || !!M,
@@ -1049,7 +1050,7 @@ function Me({ deck: e, prompts: r, scope: s, input: c = null, submitDisabledReas
 									className: "truncate",
 									children: M
 								})
-							}), /* @__PURE__ */ B(n, {
+							}), /* @__PURE__ */ B(r, {
 								variant: "primary",
 								size: "sm",
 								className: "shrink-0",
@@ -1332,8 +1333,8 @@ function nt(e) {
 	}
 	return t.displayName = "ConversationComposer", t;
 }
-function rt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity: f, offline: p, recipients: m, defaultRecipient: h, recipient: g, onRecipientChange: v, commands: y = [], onAgent: b, callBlock: x, reply: S, mode: C, onModeChange: ne, defaultMode: T, draftKey: re, persistDraft: E = !0, claim: D = !1, answersFocus: O = !1, onReveal: k, disabled: A, offModes: ie, prompts: j, promptScope: M, composerRef: N, onDraftChange: ae, defaultDraft: oe, draft: P, above: ce, foldRecipients: le = !1, modeRowEnd: ue, references: H, onRemoveReference: de, modePlaceholders: fe, contextChip: pe, sendWithReferencesOnly: U, console: me, submitDisabledReason: he, "data-testid": W = "conversation-composer", ...G }) {
-	let _e = e() === "compact", ve = f?.displayName || "You", K = re ?? s ?? `${l.kind}:${l.id}`, ye = u.readOnlyReason || "You can read this conversation but not post to it.", q = L(() => {
+function rt({ rm: r, channel: s, chat: c, context: l, capabilities: u, identity: f, offline: p, recipients: m, defaultRecipient: h, recipient: g, onRecipientChange: v, commands: y = [], onAgent: b, callBlock: x, reply: S, mode: C, onModeChange: ne, defaultMode: T, draftKey: re, persistDraft: E = !0, claim: D = !1, answersFocus: O = !1, onReveal: k, disabled: A, offModes: ie, prompts: j, promptScope: M, composerRef: N, onDraftChange: ae, defaultDraft: oe, draft: P, above: ce, foldRecipients: le = !1, modeRowEnd: ue, references: H, onRemoveReference: de, modePlaceholders: fe, contextChip: pe, sendWithReferencesOnly: U, console: me, submitDisabledReason: he, "data-testid": W = "conversation-composer", ...G }) {
+	let _e = n() === "compact", ve = f?.displayName || "You", K = re ?? s ?? `${l.kind}:${l.id}`, ye = u.readOnlyReason || "You can read this conversation but not post to it.", q = L(() => {
 		let e = m ?? (s ? [{
 			id: "discussion",
 			label: l.title || "This conversation",
@@ -1442,7 +1443,7 @@ function rt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		J?.channel,
 		s
 	]);
-	let _t = X === "chat" && u.mayAttach && J?.attachments && J.channel ? J.channel : null, vt = et(n, _t, ve), [yt, bt] = z(null), xt = r(), St = R(null), Ct = F((e) => {
+	let _t = X === "chat" && u.mayAttach && J?.attachments && J.channel ? J.channel : null, vt = et(r, _t, ve), [yt, bt] = z(null), xt = t(), St = R(null), Ct = F((e) => {
 		St.current = e, Ze(N, e);
 	}, [N]), wt = F(() => {
 		k?.();
@@ -1619,7 +1620,7 @@ function rt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 					size: "xs",
 					tone: "tertiary",
 					title: Jt,
-					className: t("min-w-0", Kt && "border-0 border-l border-solid border-border pl-2"),
+					className: e("min-w-0", Kt && "border-0 border-l border-solid border-border pl-2"),
 					"data-composer-recipient-notice": "",
 					"data-testid": `${W}-recipient-unavailable`,
 					children: /* @__PURE__ */ B("span", {
@@ -1724,7 +1725,7 @@ function rt({ rm: n, channel: s, chat: c, context: l, capabilities: u, identity:
 		...pt === void 0 ? {} : { defaultDraft: pt },
 		onDraftChange: ht,
 		onSend: (e, t) => Bt(e, t.mode),
-		className: t(G.className)
+		className: e(G.className)
 	});
 }
 function it(e) {
