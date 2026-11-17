@@ -625,7 +625,7 @@ export { SplitPane } from '../layout/SplitPane';
 export type { SplitPaneProps } from '../layout/SplitPane';
 export {
   SidePane, SidePaneProvider, SidePaneSplit, PaneHeader, useSidePane, useSidePaneHost,
-  SIDE_PANE_BOUNDS, readSidePaneOpen, readSidePaneRatio, sidePaneFits, boundedSidePaneRatio,
+  SIDE_PANE_BOUNDS, readSidePaneOpen, readSidePaneRatio, sidePaneFits, boundedSidePaneRatio, floorSidePaneRatio,
 } from '../layout/SidePane';
 export type {
   SidePaneProps, SidePaneProviderProps, SidePaneSplitProps, SidePaneRegistration, SidePaneHostState, SidePaneBounds, PaneHeaderProps,

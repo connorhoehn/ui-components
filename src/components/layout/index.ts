@@ -30,7 +30,7 @@ export type { SplitPaneProps } from './SplitPane';
 // The pane model (2.438.0): one right pane per page, one URL contract for its tabs.
 export {
   SidePane, SidePaneProvider, SidePaneSplit, PaneHeader, useSidePane, useSidePaneHost,
-  SIDE_PANE_BOUNDS, readSidePaneOpen, readSidePaneRatio, sidePaneFits, boundedSidePaneRatio,
+  SIDE_PANE_BOUNDS, readSidePaneOpen, readSidePaneRatio, sidePaneFits, boundedSidePaneRatio, floorSidePaneRatio,
 } from './SidePane';
 export type {
   SidePaneProps, SidePaneProviderProps, SidePaneSplitProps, SidePaneRegistration, SidePaneHostState, SidePaneBounds, PaneHeaderProps,
