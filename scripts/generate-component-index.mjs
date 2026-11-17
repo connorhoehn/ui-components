@@ -387,7 +387,7 @@ const DIR_GROUP = [
   [/^components\/(forms|field-types)\//, 'Forms'],
   [/^components\/(social|inbox|collaboration)\//, 'Chat & social'],
   [/^(components\/(video|hangout|voice)\/|video(-ivs)?\.ts$)/, 'Video'],
-  [/^components\/(doc-editor|doc-types|doc-macros|change-review)\//, 'Docs & editor'],
+  [/^components\/(doc-editor|doc-types|doc-macros|change-review|code-pad|pdf-viewer)\//, 'Docs & editor'],
   [/^components\/(diagram|graph|pipelines)\//, 'Diagram, graph & pipelines'],
   [/^components\/(agents|compute)\//, 'Agents & compute'],
   [/^components\/identity\//, 'Identity'],

@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1001 components across 21 entry points; 853 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1002 components across 22 entry points; 854 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -56,7 +56,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
 - [Video](#video) (111)
-- [Docs & editor](#docs--editor) (138)
+- [Docs & editor](#docs--editor) (139)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
@@ -576,6 +576,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ChecklistEditorRenderer` | `@connorhoehn/ui-components` | — |  |  |
 | `ChecklistReaderRenderer` | `@connorhoehn/ui-components` | — |  |  |
 | `ChunkViewer` | `@connorhoehn/ui-components/doc-editor` | Renders a single section chunk for ack-mode review. |  |  |
+| `CodePad` | `@connorhoehn/ui-components/code-pad` | A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`. |  |  |
 | `CommentContextHeader` | `@connorhoehn/ui-components/doc-editor` | The muted, left-ruled quote a comment card leads with. |  |  |
 | `CommentGhostPopover` | `@connorhoehn/ui-components/doc-editor` | Comment "ghosts" — how a reader learns a discussion exists when the margin gutter is not there to tell them. |  |  |
 | `CommentHandoffBar` | `@connorhoehn/ui-components/doc-editor` | Sits above the page composer while it is answering a margin comment (WS-J lane B, "Ask agent"): whose comment, the text it is anchored to, and the "Resolve when applied" choice the run carries. |  |  |

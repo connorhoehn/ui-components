@@ -287,6 +287,17 @@ describe('entry points and their transitive optional peers', () => {
       // stopped simulation — a real dependency, externalised.
       graph: { static: ['@xyflow/react', 'd3-force'], dynamic: ['@xterm/addon-fit', '@xterm/xterm'] },
       agents: { static: ['@xyflow/react'], dynamic: [] },
+      // The collaborative code editor. Every peer here is optional and needed
+      // by this entry alone; the languages are static so a language switch
+      // never waits on a fetch.
+      'code-pad': {
+        static: [
+          '@codemirror/commands', '@codemirror/lang-cpp', '@codemirror/lang-go', '@codemirror/lang-java',
+          '@codemirror/lang-javascript', '@codemirror/lang-python', '@codemirror/language', '@codemirror/legacy-modes',
+          '@codemirror/state', '@codemirror/view', '@lezer/highlight', 'y-codemirror.next', 'yjs',
+        ],
+        dynamic: [],
+      },
       // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
       // same footing as cmdk — npm installs them for the consumer).
       // `@dnd-kit/*` are DYNAMIC in `shared` and `pipelines` (2.385.0): `GroupedList`

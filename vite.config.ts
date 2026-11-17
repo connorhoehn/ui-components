@@ -38,6 +38,9 @@ export default defineConfig({
         'doc-editor': resolve(import.meta.dirname, 'src/components/doc-editor/index.ts'),
         'doc-types': resolve(import.meta.dirname, 'src/components/doc-types/index.ts'),
         diagram: resolve(import.meta.dirname, 'src/components/diagram/index.ts'),
+        // CodeMirror, its language modes and the Yjs binding are optional peers
+        // of this entry alone; nothing else imports from it.
+        'code-pad': resolve(import.meta.dirname, 'src/components/code-pad/index.ts'),
         social: resolve(import.meta.dirname, 'src/components/social/index.ts'),
         graph: resolve(import.meta.dirname, 'src/components/graph/index.ts'),
         // Separate entry so the tiptap optional peers stay OUT of the plain
@@ -141,6 +144,13 @@ export default defineConfig({
         // cssCodeSplit is false here, so bundling it would weld ~100KB of
         // editor CSS into the always-loaded ui-components.css.
         '@excalidraw/excalidraw', '@excalidraw/excalidraw/index.css',
+        // The code pad's editor (optional peers of `./code-pad`
+        // alone). Patterns, not names: the Swift mode is a deep import
+        // (`@codemirror/legacy-modes/mode/swift`), and a string external only
+        // matches the exact specifier. `@codemirror/state` and `-view` must be
+        // ONE instance shared with the binding, or CodeMirror refuses the
+        // extensions ("Unrecognized extension value") at runtime.
+        /^@codemirror\//, /^@lezer\//, 'y-codemirror.next',
         // realtime-modules is a peer dep. The hangout-rooms composites
         // import its hooks at runtime; keeping the package external
         // avoids bundling its CJS dist (which Rollup can't tree-shake)
