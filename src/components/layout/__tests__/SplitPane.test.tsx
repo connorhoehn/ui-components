@@ -79,4 +79,82 @@ describe('SplitPane', () => {
       expect(onRatioChange).toHaveBeenCalledTimes(2);
     });
   });
+
+  // 2.534.0: the stacked orientation must not move a byte of the side-by-side
+  // markup every existing host renders. These strings are what 2.533.0 rendered.
+  describe('orientation', () => {
+    it('horizontal (the default, and when named) renders exactly what 2.533.0 did', () => {
+      const golden = [
+        "<div data-testid=\"split-pane\" class=\"flex h-full min-h-0 min-w-0\"><div data-testid=\"split-pane-primary\" class=\"min-h-0 min-w-0 flex-col flex\" style=\"flex: 0 0 55%;\"><p>a</p></div><div role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize panes\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"55\" tabindex=\"0\" data-testid=\"split-pane-divider\" class=\"group relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20\"><div class=\"absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary\"></div></div><div data-testid=\"split-pane-secondary\" class=\"flex min-h-0 min-w-0 flex-1 flex-col\"><p>b</p></div></div>",
+        "<div data-testid=\"split-pane\" class=\"flex h-full min-h-0 min-w-0 x\"><div data-testid=\"split-pane-primary\" class=\"flex min-h-0 min-w-0 flex-1 flex-col\"><p>a</p></div></div>",
+        "<div data-testid=\"t\" class=\"flex h-full min-h-0 min-w-0\"><div data-testid=\"t-primary\" hidden=\"\" class=\"min-h-0 min-w-0 flex-col hidden\" style=\"flex: 0 0 30%;\"><p>a</p></div><div data-testid=\"t-secondary\" class=\"flex min-h-0 min-w-0 flex-1 flex-col\"><p>b</p></div></div>",
+      ];
+      const cases = (orientation?: 'horizontal') => [
+        <SplitPane primary={<p>a</p>} secondary={<p>b</p>} orientation={orientation} />,
+        <SplitPane primary={<p>a</p>} secondary={null} className="x" orientation={orientation} />,
+        <SplitPane primary={<p>a</p>} secondary={<p>b</p>} ratio={0.3} resizable={false} primaryHidden dividerLabel="L" data-testid="t" orientation={orientation} />,
+      ];
+      for (const orientation of [undefined, 'horizontal'] as const) {
+        cases(orientation).forEach((el, i) => {
+          const { container } = render(el);
+          expect(container.innerHTML).toBe(golden[i]);
+          cleanup();
+        });
+      }
+    });
+
+    function stacked(props: Partial<Parameters<typeof SplitPane>[0]> = {}) {
+      const onRatioChange = vi.fn();
+      render(<SplitPane primary={<p>code</p>} secondary={<p>output</p>} orientation="vertical" defaultRatio={0.5} onRatioChange={onRatioChange} {...props} />);
+      return { divider: screen.getByRole('separator'), onRatioChange, root: screen.getByTestId('split-pane') };
+    }
+
+    it('vertical stacks primary over secondary with a horizontal separator', () => {
+      const { divider, root } = stacked();
+      expect(root.className).toContain('flex-col');
+      expect(root).toHaveAttribute('data-orientation', 'vertical');
+      expect(divider).toHaveAttribute('aria-orientation', 'horizontal');
+      expect(divider.className).toContain('cursor-row-resize');
+      expect(divider.className).toMatch(/\bh-2\b/);
+      expect(divider.className).toMatch(/(^|\s)-my-1(\s|$)/);
+      expect(divider.firstElementChild!.className).toContain('h-px');
+      expect(screen.getByTestId('split-pane-primary').nextElementSibling).toBe(divider);
+      expect(screen.getByTestId('split-pane-primary').style.flexBasis).toBe('50%');
+    });
+
+    it('vertical moves with ArrowUp / ArrowDown, not Left / Right', () => {
+      const { divider, onRatioChange } = stacked();
+      fireEvent.keyDown(divider, { key: 'ArrowDown' });
+      expect(onRatioChange).toHaveBeenLastCalledWith(0.52);
+      fireEvent.keyDown(divider, { key: 'ArrowUp', shiftKey: true });
+      expect(onRatioChange).toHaveBeenLastCalledWith(0.42);
+      fireEvent.keyDown(divider, { key: 'ArrowLeft' });
+      fireEvent.keyDown(divider, { key: 'ArrowRight' });
+      expect(onRatioChange).toHaveBeenCalledTimes(2);
+      fireEvent.keyDown(divider, { key: 'Home' });
+      expect(onRatioChange).toHaveBeenLastCalledWith(0.15);
+    });
+
+    it('vertical drags by clientY and reads the pixel floors as heights', () => {
+      const { divider, onRatioChange, root } = stacked({ minPrimaryPx: 100, minSecondaryPx: 200 });
+      // Wide and short: were the floors read against the width, 0.9 would pass.
+      root.getBoundingClientRect = () => ({ left: 0, top: 100, width: 2000, height: 1000, right: 2000, bottom: 1100, x: 0, y: 100, toJSON: () => ({}) });
+      divider.setPointerCapture = () => {};
+      divider.releasePointerCapture = () => {};
+      fireEvent.pointerDown(divider, { pointerId: 1, clientX: 5, clientY: 600 });
+      fireEvent.pointerMove(divider, { pointerId: 1, clientX: 1500, clientY: 400 });
+      expect(onRatioChange).toHaveBeenLastCalledWith(0.3);
+      fireEvent.pointerMove(divider, { pointerId: 1, clientX: 1500, clientY: 1050 });
+      expect(onRatioChange).toHaveBeenLastCalledWith(0.8);
+      fireEvent.pointerMove(divider, { pointerId: 1, clientX: 1500, clientY: 120 });
+      expect(onRatioChange).toHaveBeenLastCalledWith(0.1);
+      fireEvent.pointerUp(divider, { pointerId: 1 });
+    });
+
+    it('vertical without a secondary renders the primary alone, stacked', () => {
+      render(<SplitPane primary={<p>code</p>} secondary={null} orientation="vertical" />);
+      expect(screen.queryByRole('separator')).toBeNull();
+      expect(screen.getByTestId('split-pane').className).toContain('flex-col');
+    });
+  });
 });

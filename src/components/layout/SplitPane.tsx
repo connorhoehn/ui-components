@@ -1,4 +1,4 @@
-// SplitPane — two regions side by side with a divider the person can drag.
+// SplitPane — two regions side by side (or stacked, one over the other) with a divider the person can drag.
 //
 // Why this exists: "open the document beside the chat" needs a primary pane
 // (the conversation) and a secondary one (the page), and a fixed 50/50 is the
@@ -22,6 +22,15 @@
 // `aria-valuenow` as the primary pane's percentage; ArrowLeft/ArrowRight move
 // it by 2%, Shift by 10%, Home/End to the limits. Pointer events (not mouse
 // events) so a touch or pen drags too.
+//
+// ## Stacked (2.534.0)
+//
+// `orientation="vertical"` stacks the primary over the secondary (an editor
+// over its output) with the same divider turned on its side: it drags up and
+// down, ArrowUp/ArrowDown move it, `minPrimaryPx` / `minSecondaryPx` are
+// heights, and the separator says `aria-orientation="horizontal"` (a divider
+// lying across the stack). The default, `"horizontal"`, renders exactly what
+// it always has.
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -46,6 +55,14 @@ export interface SplitPaneProps {
   resizable?: boolean;
   /** Keep the primary mounted but hide it while the secondary owns a narrow viewport. */
   primaryHidden?: boolean;
+  /**
+   * `'horizontal'` (default): primary left, secondary right. `'vertical'`
+   * (2.534.0): primary on top, secondary below, the divider dragged up and
+   * down (ArrowUp / ArrowDown), the pixel floors read as heights, and the
+   * separator's `aria-orientation` `horizontal`. The ratio is the primary's
+   * share of the height.
+   */
+  orientation?: 'horizontal' | 'vertical';
   className?: string;
   'data-testid'?: string;
 }
@@ -64,6 +81,7 @@ export function SplitPane({
   onDividerActivate,
   resizable = true,
   primaryHidden = false,
+  orientation = 'horizontal',
   className,
   'data-testid': testId = 'split-pane',
 }: SplitPaneProps) {
@@ -71,10 +89,12 @@ export function SplitPane({
   const [own, setOwn] = useState(defaultRatio);
   const ratio = controlled ?? own;
   const dragging = useRef(false);
+  const vertical = orientation === 'vertical';
 
   const setRatio = useCallback((next: number) => {
     const root = rootRef.current;
-    const width = root?.getBoundingClientRect().width ?? 0;
+    const rect = root?.getBoundingClientRect();
+    const width = (vertical ? rect?.height : rect?.width) ?? 0;
     // Pixel floors win over the fraction: a pane you cannot use is not a pane.
     const lo = width > 0 ? minPrimaryPx / width : 0.15;
     const hi = width > 0 ? 1 - minSecondaryPx / width : 0.85;
@@ -83,7 +103,7 @@ export function SplitPane({
     const clamped = Math.round(clamp(next, Math.min(lo, hi), Math.max(lo, hi)) * 1000) / 1000;
     if (controlled === undefined) setOwn(clamped);
     onRatioChange?.(clamped);
-  }, [controlled, minPrimaryPx, minSecondaryPx, onRatioChange]);
+  }, [controlled, minPrimaryPx, minSecondaryPx, onRatioChange, vertical]);
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     dragging.current = true;
@@ -93,7 +113,13 @@ export function SplitPane({
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!dragging.current) return;
     const rect = rootRef.current?.getBoundingClientRect();
-    if (!rect || rect.width === 0) return;
+    if (!rect) return;
+    if (vertical) {
+      if (rect.height === 0) return;
+      setRatio((e.clientY - rect.top) / rect.height);
+      return;
+    }
+    if (rect.width === 0) return;
     setRatio((e.clientX - rect.left) / rect.width);
   };
   const endDrag = (e: PointerEvent<HTMLDivElement>) => {
@@ -103,8 +129,10 @@ export function SplitPane({
   };
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const step = e.shiftKey ? 0.1 : 0.02;
-    if (e.key === 'ArrowLeft') { e.preventDefault(); setRatio(ratio - step); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); setRatio(ratio + step); }
+    const back = vertical ? 'ArrowUp' : 'ArrowLeft';
+    const forward = vertical ? 'ArrowDown' : 'ArrowRight';
+    if (e.key === back) { e.preventDefault(); setRatio(ratio - step); }
+    else if (e.key === forward) { e.preventDefault(); setRatio(ratio + step); }
     else if (e.key === 'Home') { e.preventDefault(); setRatio(0); }
     else if (e.key === 'End') { e.preventDefault(); setRatio(1); }
     else if ((e.key === 'Enter' || e.key === ' ') && onDividerActivate) { e.preventDefault(); onDividerActivate(); }
@@ -121,7 +149,7 @@ export function SplitPane({
 
   if (secondary === null || secondary === undefined) {
     return (
-      <div ref={rootRef} data-testid={testId} className={cn('flex h-full min-h-0 min-w-0', className)}>
+      <div ref={rootRef} data-testid={testId} data-orientation={vertical ? 'vertical' : undefined} className={cn('flex h-full min-h-0 min-w-0', vertical && 'flex-col', className)}>
         <div data-testid={`${testId}-primary`} className="flex min-h-0 min-w-0 flex-1 flex-col">{primary}</div>
       </div>
     );
@@ -129,7 +157,7 @@ export function SplitPane({
 
   const pct = Math.round(ratio * 1000) / 10;
   return (
-    <div ref={rootRef} data-testid={testId} className={cn('flex h-full min-h-0 min-w-0', className)}>
+    <div ref={rootRef} data-testid={testId} data-orientation={vertical ? 'vertical' : undefined} className={cn('flex h-full min-h-0 min-w-0', vertical && 'flex-col', className)}>
       {/* Widths are the one thing here that has to be computed, so they are the
           one place a style attribute is right: there is no class for 55.0%. */}
       <div data-testid={`${testId}-primary`} hidden={primaryHidden} className={cn('min-h-0 min-w-0 flex-col', primaryHidden ? 'hidden' : 'flex')} style={{ flexBasis: `${pct}%`, flexGrow: 0, flexShrink: 0 }}>
@@ -137,7 +165,7 @@ export function SplitPane({
       </div>
       {resizable && <div
         role="separator"
-        aria-orientation="vertical"
+        aria-orientation={vertical ? 'horizontal' : 'vertical'}
         aria-label={dividerLabel}
         aria-valuemin={0}
         aria-valuemax={100}
@@ -152,9 +180,13 @@ export function SplitPane({
         // An overlay, not a column (2.441.6): the 8px hit area sits centred on
         // the pane boundary and its negative margins give back its width, so
         // the secondary pane begins exactly where the primary ends.
-        className="group relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20"
+        className={vertical
+          ? 'group relative z-10 -my-1 h-2 shrink-0 cursor-row-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20'
+          : 'group relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20'}
       >
-        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary" />
+        <div className={vertical
+          ? 'absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary'
+          : 'absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary'} />
       </div>}
       <div data-testid={`${testId}-secondary`} className="flex min-h-0 min-w-0 flex-1 flex-col">
         {secondary}
