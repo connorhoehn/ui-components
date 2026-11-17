@@ -31,7 +31,7 @@ import { t as He } from "./FilterPopover-CMDWNLbG.js";
 import { t as Ue } from "./FormField-BDZIVA7n.js";
 import { t as We } from "./SearchInput-dKz14kIg.js";
 import { n as Ge } from "./Toolbar-NJ8rKguE.js";
-import { n as Ke, r as qe, t as Je } from "./DataTable-F4j3XfFC.js";
+import { n as Ke, r as qe, t as Je } from "./DataTable-BUSWCmI0.js";
 import { t as Ye } from "./KeyValue-Cas8iY09.js";
 import { t as Xe } from "./EmptyState-wSbA9Oka.js";
 import { t as Ze } from "./ErrorState-Cu8eBaIu.js";

@@ -1,3 +1,7 @@
+## 2.537.2
+
+- `DataTable` `rowHeight="content"`: a small table's content cell pads 8px top and bottom (was 10px, off the 4px spacing scale the page audits check).
+
 ## 2.537.1
 
 - `RichChatComposer`'s context chip: a long label with no short " · " scope keeps its last 12 characters from a word start ("Ep 11: The Next Tier" keeps " Next Tier", not "he Next Tier"), and the label clips inside the chip so its tail never runs into the input.

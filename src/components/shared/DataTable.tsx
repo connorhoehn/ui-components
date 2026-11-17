@@ -315,7 +315,7 @@ const TRUNCATE_CELL = 'max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:ma
 // `rowHeight="content"`: undoes the compact cell's fixed height and single
 // line (tailwind-merge replaces `Table`'s `h-[…]` and `whitespace-nowrap`), so
 // prose wraps; the row aligns to its top line.
-const CONTENT_CELL = 'h-auto whitespace-normal break-words align-top [[data-size=sm]_&]:py-2.5';
+const CONTENT_CELL = 'h-auto whitespace-normal break-words align-top [[data-size=sm]_&]:py-2';
 // `stickyFirstColumn`: the cell inherits the row's fill (stripe, selection,
 // hover) so the columns scrolling under it never show through; an inset
 // shadow draws its edge (a collapsed border would not travel with it).
