@@ -90,15 +90,68 @@ export interface DataTableColumn<T> {
    * width narrows (the highest number first, the rightmost first on a tie).
    */
   priority?: number;
+  /**
+   * The `key` of the `columnGroups` entry this column sits under (since
+   * NEXT): adjacent columns with the same group share one cell in a header
+   * row above the column headers ("Round 1" over its interviewers). A column
+   * with no group gets an empty cell there. Ignored unless some column has a
+   * group.
+   */
+  group?: string;
   className?: string;
 }
+
+/**
+ * One group in the header row above the column headers (since NEXT): one
+ * interview round over a column per interviewer. Its cell spans the adjacent
+ * shown columns whose `group` is its `key`.
+ */
+export interface DataTableColumnGroup {
+  /** Matches `DataTableColumn.group`. */
+  key: string;
+  /** The group's header text. Default: the key. */
+  header: ReactNode;
+  /** Default `center`. */
+  align?: 'left' | 'right' | 'center';
+  className?: string;
+}
+
+/**
+ * How tall a body row is (`DataTable rowHeight`). `fixed` (default): the
+ * table's density sets it (at `sm`, every row 44px on one line). `content`
+ * (works since NEXT; before, it only set an attribute): each row is as tall as
+ * its content, prose wraps inside its cell (no ellipsis) and the cells align
+ * to the top. A `truncate` column still truncates.
+ */
+export type DataTableRowHeight = 'fixed' | 'content';
 
 /** Header letter case (since 2.515.12). `upper` (default): caps with wide tracking. `sentence`: the header text as written. */
 export type DataTableHeaderCase = 'upper' | 'sentence';
 
 export interface DataTableProps<T> {
-  /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
-  rowHeight?: 'fixed' | 'content';
+  /**
+   * Document tables may wrap prose; ordinary collection rows retain their
+   * fixed rhythm. `content` (fixed in NEXT: it used to set only
+   * `data-ui-table-rows`, so a compact table's cells kept their fixed height
+   * and one line): rows grow to their content and prose wraps, top-aligned,
+   * with no ellipsis. See `DataTableRowHeight`.
+   */
+  rowHeight?: DataTableRowHeight;
+  /**
+   * A header row above the column headers that spans groups of columns (since
+   * NEXT): pair it with `columns[].group`. Drawn only when some column has a
+   * group; hidden with the header in the stacked card form. Each group cell
+   * is a `<th scope="colgroup">` with `data-column-group="<key>"`.
+   */
+  columnGroups?: DataTableColumnGroup[];
+  /**
+   * Pin the first column to the left edge while a wide table scrolls sideways
+   * (since NEXT), for tables whose first column names the row (a candidate
+   * beside a column per interviewer). Its cells carry `data-sticky-column`
+   * and keep the row's stripe, selection and hover fill. Off in the card form.
+   * Default false.
+   */
+  stickyFirstColumn?: boolean;
   data: T[];
   columns: DataTableColumn<T>[];
   /** Stable id for each row. Used as React key. */
@@ -259,6 +312,31 @@ const SENTENCE_HEADER = 'normal-case tracking-normal';
 // column's share instead of its content's width; the inner span cuts the
 // text. The narrow (stacked card) form undoes the cap.
 const TRUNCATE_CELL = 'max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:max-w-none';
+// `rowHeight="content"`: undoes the compact cell's fixed height and single
+// line (tailwind-merge replaces `Table`'s `h-[…]` and `whitespace-nowrap`), so
+// prose wraps; the row aligns to its top line.
+const CONTENT_CELL = 'h-auto whitespace-normal break-words align-top [[data-size=sm]_&]:py-2.5';
+// `stickyFirstColumn`: the cell inherits the row's fill (stripe, selection,
+// hover) so the columns scrolling under it never show through; an inset
+// shadow draws its edge (a collapsed border would not travel with it).
+const STICKY_CELL = 'sticky left-0 z-[1] bg-inherit shadow-[inset_-1px_0_0_var(--color-border)]';
+const STICKY_HEAD = 'sticky left-0 z-[2] bg-surface-panel shadow-[inset_-1px_0_0_var(--color-border)]';
+const STICKY_OFF_NARROW = '@max-[40rem]:static @max-[40rem]:shadow-none';
+
+interface GroupRun { key: string | null; span: number; group?: DataTableColumnGroup; first: boolean }
+
+/** Adjacent shown columns with the same group, in order; `stickyFirst` keeps the first column a run of its own. */
+function columnGroupRuns<T>(shown: DataTableColumn<T>[], groups: DataTableColumnGroup[] | undefined, stickyFirst = false): GroupRun[] {
+  const byKey = new Map((groups ?? []).map((g) => [g.key, g]));
+  const runs: GroupRun[] = [];
+  shown.forEach((col, i) => {
+    const key = col.group ?? null;
+    const last = runs[runs.length - 1];
+    if (last && last.key === key && !(stickyFirst && i === 1)) { last.span += 1; return; }
+    runs.push({ key, span: 1, first: i === 0, ...(key != null ? { group: byKey.get(key) ?? { key, header: key } } : {}) });
+  });
+  return runs;
+}
 // Two lines, then the clamp: the cell wraps (no nowrap) and the inner span clamps.
 const CLAMP_CELL = 'max-w-0 overflow-hidden @max-[40rem]:max-w-none';
 const CLAMP_TEXT = 'line-clamp-2 whitespace-normal break-words';
@@ -639,6 +717,8 @@ function alignClass(a?: 'left' | 'right' | 'center'): string | undefined {
 
 export function DataTable<T>({
   rowHeight = 'fixed',
+  columnGroups,
+  stickyFirstColumn = false,
   data: dataProp,
   columns: columnsProp,
   keyField,
@@ -763,6 +843,14 @@ export function DataTable<T>({
   const hideClass = narrow ? HIDDEN_COLUMN_NARROW : HIDDEN_COLUMN;
   const moreColumn = hiddenCols.length > 0;
   const labelled = narrow || stacked;
+  const contentRows = rowHeight === 'content';
+  const sticky = stickyFirstColumn && !stacked;
+  const shownColumns = columns.filter((c) => !hidden.has(c.key));
+  const firstKey = shownColumns[0]?.key;
+  const stickyCell = (key: string, head = false) =>
+    sticky && key === firstKey ? cn(head ? STICKY_HEAD : STICKY_CELL, narrow && STICKY_OFF_NARROW) : undefined;
+  const stickyMark = (key: string) => (sticky && key === firstKey ? { 'data-sticky-column': '' } : {});
+  const grouped = columns.some((c) => c.group != null);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -814,9 +902,23 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table data-ui-table-rows={rowHeight} data-ui-table-cards={narrow || stacked ? '' : undefined} {...(size ? { size } : {})} className={cn(!frameless && 'border border-border rounded-lg overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
+        <Table data-ui-table-rows={rowHeight} data-ui-table-cards={narrow || stacked ? '' : undefined} {...(size ? { size } : {})} data-sticky-first-column={sticky ? '' : undefined} className={cn(!frameless && 'border border-border rounded-lg', !frameless && !sticky && 'overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
           {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {})}>
         <TableHead className={cn(narrow && NARROW_HEAD, stacked && STACK_HEAD)} data-header-case={headerCase}>
+          {grouped && (
+            <tr data-column-groups="">
+              {columnGroupRuns(shownColumns, columnGroups, sticky).map((run, i) => run.group ? (
+                <TableTh key={`group-${run.key}-${i}`} colSpan={run.span} scope="colgroup" data-column-group={run.key ?? undefined}
+                  className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(run.group.align ?? 'center'), !run.first && 'border-l border-border', run.first && sticky && cn(STICKY_HEAD, narrow && STICKY_OFF_NARROW), run.group.className)}>
+                  {run.group.header}
+                </TableTh>
+              ) : (
+                <TableTh key={`group-none-${i}`} colSpan={run.span} aria-hidden="true" data-column-group=""
+                  className={cn(run.first && sticky && cn(STICKY_HEAD, narrow && STICKY_OFF_NARROW))} />
+              ))}
+              {(moreColumn || rowActions) && <TableTh aria-hidden="true" colSpan={(moreColumn ? 1 : 0) + (rowActions ? 1 : 0)} />}
+            </tr>
+          )}
           <tr>
             {columns.map((col) => {
               const isSorted = col.sortable && sortKey === col.key;
@@ -827,7 +929,8 @@ export function DataTable<T>({
                   sortDirection={isSorted ? sortDir : null}
                   style={col.width ? { width: col.width } : undefined}
                   numeric={col.numeric}
-                  className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(col.align), col.className, hidden.has(col.key) && HIDDEN_COLUMN)}
+                  className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(col.align), col.className, hidden.has(col.key) && HIDDEN_COLUMN, stickyCell(col.key, true))}
+                  {...stickyMark(col.key)}
                   onClick={col.sortable ? () => toggleSort(col.key) : undefined}
                   data-testid={col.sortable ? `datatable-header-${col.key}` : undefined}
                   data-column={responsiveColumns ? col.key : undefined}
@@ -860,9 +963,9 @@ export function DataTable<T>({
         <TableBody striped={false} className={cn(narrow && NARROW_BODY, stacked && STACK_BODY)} data-ui-table-striped={striped ? '' : undefined}>
           {loading
             ? Array.from({ length: loadingRows }).map((_, i) => (
-                <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">
+                <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row" className={sticky ? 'bg-surface' : undefined}>
                   {columns.map((col) => (
-                    <TableTd key={col.key} numeric={col.numeric} className={cn(alignClass(col.align), hidden.has(col.key) && HIDDEN_COLUMN)}>
+                    <TableTd key={col.key} numeric={col.numeric} className={cn(alignClass(col.align), hidden.has(col.key) && HIDDEN_COLUMN, stickyCell(col.key))}>
                       <div className="h-4 w-3/4 animate-pulse rounded bg-surface-hover" />
                     </TableTd>
                   ))}
@@ -900,7 +1003,8 @@ export function DataTable<T>({
                       narrow && NARROW_ROW,
                       stacked && STACK_ROW,
                       // The selection tint wins over the stripe (one background).
-                      selected ? 'bg-primary-bg hover:bg-primary-bg' : striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined,
+                      // A sticky first column inherits the row's fill, so every row needs one.
+                      selected ? 'bg-primary-bg hover:bg-primary-bg' : striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : sticky ? 'bg-surface' : undefined,
                       // Only a clickable row joins the tab order — a plain
                       // display table has nothing to activate, and adding a
                       // stop with no effect would be a worse keyboard
@@ -937,7 +1041,8 @@ export function DataTable<T>({
                       <TableTd
                         key={col.key}
                         numeric={col.numeric}
-                        className={cn(alignClass(col.align), col.truncate && (col.wrap === 'two-lines' ? CLAMP_CELL : TRUNCATE_CELL), narrow && NARROW_CELL, col.className, stacked && STACK_CELL, hidden.has(col.key) && hideClass, col.hideInCards && narrow && '@max-[40rem]:hidden!', col.hideInCards && stacked && 'hidden!')}
+                        className={cn(alignClass(col.align), contentRows && CONTENT_CELL, col.truncate && (col.wrap === 'two-lines' ? CLAMP_CELL : TRUNCATE_CELL), narrow && NARROW_CELL, col.className, stacked && STACK_CELL, hidden.has(col.key) && hideClass, col.hideInCards && narrow && '@max-[40rem]:hidden!', col.hideInCards && stacked && 'hidden!', stickyCell(col.key))}
+                        {...stickyMark(col.key)}
                         {...(labelled ? { 'data-label': col.cardLabel?.(row) || columnLabel(col) } : {})}
                         {...(col.truncate ? { 'data-truncate': col.wrap === 'two-lines' ? 'two-lines' : '' } : {})}
                         {...(fullText ? { 'data-full-text': fullText } : {})}

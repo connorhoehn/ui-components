@@ -169,3 +169,33 @@ export const StaticRows: Story = {
     staticRows: 'Read-only history of this record; the record itself is the page.',
   },
 };
+
+interface Scorecard { id: string; candidate: string; r1a: string; r1b: string; r2a: string; r2b: string; summary: string }
+const SCORECARDS: Scorecard[] = [
+  { id: 's1', candidate: 'Avery Stone', r1a: 'Strong yes', r1b: 'Yes', r2a: 'Yes', r2b: 'Lean yes', summary: 'Clear communicator; walked through the trade-offs of the cache design before writing code, and tested the edge cases unprompted.' },
+  { id: 's2', candidate: 'Jordan Lake', r1a: 'Yes', r1b: 'Lean no', r2a: 'No', r2b: 'Lean no', summary: 'Solid fundamentals but struggled to scope the problem.' },
+  { id: 's3', candidate: 'Riley Moss', r1a: 'Lean yes', r1b: 'Yes', r2a: 'Strong yes', r2b: 'Yes', summary: 'Fast and careful; asked good questions about the data model.' },
+];
+const scorecardColumns: DataTableColumn<Scorecard>[] = [
+  { key: 'candidate', header: 'Candidate' },
+  { key: 'r1a', header: 'Interviewer A', group: 'r1' },
+  { key: 'r1b', header: 'Interviewer B', group: 'r1' },
+  { key: 'r2a', header: 'Interviewer C', group: 'r2' },
+  { key: 'r2b', header: 'Interviewer D', group: 'r2' },
+  { key: 'summary', header: 'Summary', width: '28rem' },
+];
+
+/**
+ * Column groups (one per round, a column per interviewer), a sticky first
+ * column for the sideways scroll, and `rowHeight="content"` so the summary
+ * wraps instead of truncating (since NEXT).
+ */
+export const GroupedStickyWrapping: Story = {
+  render: () => (
+    <div className="max-w-2xl">
+      <DataTable<Scorecard> data={SCORECARDS} columns={scorecardColumns} keyField={(r) => r.id} size="sm" rowHeight="content"
+        stickyFirstColumn columnGroups={[{ key: 'r1', header: 'Round 1 · Coding' }, { key: 'r2', header: 'Round 2 · System design' }]}
+        staticRows="A read-only summary of the panel's scores." />
+    </div>
+  ),
+} as unknown as Story;
