@@ -18,6 +18,9 @@ export type {
 // output does not pull in the editor (a bundler drops CodePad when unused).
 export { CodeRunOutput, codeRunStatusLabel } from './CodeRunOutput';
 export type { CodeRunOutputProps, CodeRunStatus } from './CodeRunOutput';
+// Code over time, read only, beside a recording.
+export { CodePlayback, codePlaybackMarkerLetter } from './CodePlayback';
+export type { CodePlaybackProps, CodePlaybackFrame, CodePlaybackMarker } from './CodePlayback';
 export { CODE_PAD_LANGUAGES, isCodePadLanguage } from './languages';
 export type { CodePadLanguage, CodePadLanguageLoader } from './languages';
 // The CodeMirror types an app needs to write `extensions` or `languages` for a
