@@ -1182,22 +1182,22 @@ var xe = {
 	md: "my-4",
 	lg: "my-6"
 };
-function Se({ label: e, spacing: t = "md", orientation: r = "horizontal", className: i, "data-testid": a }) {
-	let o = Q[t];
+function Se({ label: e, spacing: t = "md", orientation: r = "horizontal", blankOnPhone: i, className: a, "data-testid": o }) {
+	let s = Q[t];
 	return r === "vertical" ? /* @__PURE__ */ j("span", {
 		role: "separator",
 		"aria-orientation": "vertical",
 		"data-divider": "vertical",
-		className: n("inline-block w-px shrink-0 self-stretch min-h-[1em] bg-border align-middle", xe[t], i),
-		...a ? { "data-testid": a } : {}
+		className: n("inline-block w-px shrink-0 self-stretch min-h-[1em] bg-border align-middle", xe[t], i && "max-sm:bg-transparent", a),
+		...o ? { "data-testid": o } : {}
 	}) : e == null ? /* @__PURE__ */ j("hr", {
-		className: n("border-0 border-t border-border", o, i),
-		...a ? { "data-testid": a } : {}
+		className: n("border-0 border-t border-border", s, a),
+		...o ? { "data-testid": o } : {}
 	}) : /* @__PURE__ */ M("div", {
 		role: "separator",
 		"aria-label": typeof e == "string" ? e : void 0,
-		className: n("flex items-center gap-3", o, i),
-		...a ? { "data-testid": a } : {},
+		className: n("flex items-center gap-3", s, a),
+		...o ? { "data-testid": o } : {},
 		children: [
 			/* @__PURE__ */ j("span", { className: "h-px flex-1 bg-border" }),
 			/* @__PURE__ */ j("span", {

@@ -3,6 +3,13 @@ import { Divider } from '../Divider';
 import { DetailSection } from '../DetailSection';
 
 describe('Divider', () => {
+  it('a vertical rule blank on a phone keeps its margins and draws nothing under sm', () => {
+    const { container } = render(<Divider orientation="vertical" spacing="sm" blankOnPhone />);
+    const rule = container.querySelector('[role="separator"]')!;
+    expect(rule.className).toContain('max-sm:bg-transparent');
+    expect(rule.className).toContain('mx-2');
+  });
+
   it('renders a plain rule as an <hr> when unlabelled', () => {
     const { container } = render(<Divider />);
     expect(container.querySelector('hr')).toBeInTheDocument();

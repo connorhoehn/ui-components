@@ -33,6 +33,11 @@ export interface DividerProps {
    * Margins: none 0, sm 8px, md 12px, lg 16px each side.
    */
   orientation?: 'horizontal' | 'vertical';
+  /**
+   * Vertical only (since 2.538.1): under the `sm` breakpoint the rule draws nothing and keeps its margins, so a
+   * strip that wraps on a phone neither ends a line on a lone rule nor runs its items together.
+   */
+  blankOnPhone?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -51,7 +56,7 @@ const SPACING: Record<DividerSpacing, string> = {
   lg: 'my-6',
 };
 
-export function Divider({ label, spacing = 'md', orientation = 'horizontal', className, 'data-testid': testId }: DividerProps) {
+export function Divider({ label, spacing = 'md', orientation = 'horizontal', blankOnPhone, className, 'data-testid': testId }: DividerProps) {
   const margin = SPACING[spacing];
 
   if (orientation === 'vertical') {
@@ -60,7 +65,7 @@ export function Divider({ label, spacing = 'md', orientation = 'horizontal', cla
         role="separator"
         aria-orientation="vertical"
         data-divider="vertical"
-        className={cn('inline-block w-px shrink-0 self-stretch min-h-[1em] bg-border align-middle', INLINE_SPACING[spacing], className)}
+        className={cn('inline-block w-px shrink-0 self-stretch min-h-[1em] bg-border align-middle', INLINE_SPACING[spacing], blankOnPhone && 'max-sm:bg-transparent', className)}
         {...(testId ? { 'data-testid': testId } : {})}
       />
     );

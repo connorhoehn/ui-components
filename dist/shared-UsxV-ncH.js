@@ -8,7 +8,7 @@ import { n as b, t as x } from "./Stack-CE1FjEn8.js";
 import { n as S, t as C } from "./Text-XdCzxWMv.js";
 import { n as w } from "./safeHref-dF2rw8EK.js";
 import { c as T } from "./usePromptContext-CUNhKC01.js";
-import { I as E, L as D, O, R as k, j as A } from "./GenerativeImagePreview-Ddjcw9Yi.js";
+import { I as E, L as D, O, R as k, j as A } from "./GenerativeImagePreview-BdV0Fsnb.js";
 import { t as j } from "./Card-j0qB4VOx.js";
 import { a as M, i as N, n as P, o as F, r as I, t as L } from "./Table-B3hr3Qau.js";
 import { t as ee } from "./PageSection-C5qJhW-8.js";

@@ -9377,7 +9377,7 @@ export declare interface DisclosureProps {
 
 export declare function DisconnectReconnect({ connectionState, onDisconnect, onReconnect }: Props_5): JSX.Element;
 
-export declare function Divider({ label, spacing, orientation, className, 'data-testid': testId }: DividerProps): JSX.Element;
+export declare function Divider({ label, spacing, orientation, blankOnPhone, className, 'data-testid': testId }: DividerProps): JSX.Element;
 
 export declare interface DividerProps {
     /** Optional caption sitting on the rule. */
@@ -9392,6 +9392,11 @@ export declare interface DividerProps {
      * Margins: none 0, sm 8px, md 12px, lg 16px each side.
      */
     orientation?: 'horizontal' | 'vertical';
+    /**
+     * Vertical only (since 2.538.1): under the `sm` breakpoint the rule draws nothing and keeps its margins, so a
+     * strip that wraps on a phone neither ends a line on a lone rule nor runs its items together.
+     */
+    blankOnPhone?: boolean;
     className?: string;
     'data-testid'?: string;
 }
