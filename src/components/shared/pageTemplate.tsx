@@ -63,8 +63,8 @@ export function hasTrailRow(p: PageTemplateTrailProps): boolean {
 
 /** The template header. Rendered as the template root's direct child (no wrapper) so host selectors keep matching. */
 export function TemplateHeader({
-  title, description, breadcrumbs, actions, badge, back, density = 'compact', titleAs, gutter,
-}: PageTemplateHeaderProps & { gutter: PageGutter }) {
+  title, description, breadcrumbs, actions, badge, back, density = 'compact', titleAs, gutter, frameClassName,
+}: PageTemplateHeaderProps & { gutter: PageGutter; frameClassName?: string }) {
   const trail = !!breadcrumbs && breadcrumbs.length > 0;
   return (
     <PageHeader
@@ -76,7 +76,7 @@ export function TemplateHeader({
       {...(trail ? { breadcrumbs } : {})}
       density={density}
       {...(titleAs ? { as: titleAs } : {})}
-      className={cn('shrink-0', gutter === 'page' && PAGE_GUTTER_X, gutter === 'page' && !trail && 'pt-3')}
+      className={cn('shrink-0', gutter === 'page' && PAGE_GUTTER_X, gutter === 'page' && !trail && 'pt-3', frameClassName)}
     />
   );
 }
@@ -90,8 +90,8 @@ export function TemplateHeader({
  */
 export function TrailHeader({
   title, description, breadcrumbs, actions, badge, back, density = 'compact', titleAs,
-  trailControls, trailLink, collapsed = false, onToggleCollapsed, gutter,
-}: PageTemplateHeaderProps & PageTemplateTrailProps & { gutter: PageGutter }) {
+  trailControls, trailLink, collapsed = false, onToggleCollapsed, gutter, frameClassName,
+}: PageTemplateHeaderProps & PageTemplateTrailProps & { gutter: PageGutter; frameClassName?: string }) {
   const hangs = trailControls != null || !!trailLink;
   return (
     <>
@@ -103,12 +103,12 @@ export function TrailHeader({
         {...(onToggleCollapsed ? { onToggleCollapsed } : {})}
         {...(trailControls != null ? { controls: trailControls } : {})}
         {...(trailLink ? { link: trailLink } : {})}
-        className={cn('shrink-0', gutter === 'none' && 'px-0')}
+        className={cn('shrink-0', gutter === 'none' && 'px-0', frameClassName)}
         data-testid="page-trail"
       />
       {!collapsed && (
         <div
-          className={cn('shrink-0 min-w-0', gutter === 'page' && PAGE_GUTTER_X, density === 'compact' ? 'pb-2 pt-1' : cn('pb-4', hangs ? 'pt-1' : 'pt-3'))}
+          className={cn('shrink-0 min-w-0', gutter === 'page' && PAGE_GUTTER_X, density === 'compact' ? 'pb-2 pt-1' : cn('pb-4', hangs ? 'pt-1' : 'pt-3'), frameClassName)}
           data-page-title=""
         >
           <PageHeader

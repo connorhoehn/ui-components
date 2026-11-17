@@ -116,4 +116,41 @@ describe('PageFrame', () => {
     expect(container.querySelector('[data-page-body]')!.className).not.toContain('--ui-page-gutter');
     expect(container.querySelector('[data-page-title]')!.className).toContain('--ui-page-gutter');
   });
+
+  it('column="centered" puts the header, the body content and the footer in one centred 4xl column', () => {
+    const { container } = render(
+      <PageFrame title="Before you join" column="centered" footer={<button type="button">Join</button>}><p>check</p></PageFrame>,
+    );
+    const root = container.querySelector('[data-page-template="page-frame"]')!;
+    expect(root.getAttribute('data-page-column-width')).toBe('4xl');
+    const body = container.querySelector('[data-page-body="scroll"]')!;
+    // The scroller spans the column (scrollbar at the edge); the content inside is centred.
+    expect(body.className).toContain('overflow-auto');
+    expect(body.className).not.toContain('max-w-');
+    const content = body.querySelector('[data-page-column-content]')!;
+    expect(content.className).toContain('mx-auto');
+    expect(content.className).toContain('max-w-4xl');
+    expect(content.className).toContain('--ui-page-gutter');
+    expect(content.textContent).toBe('check');
+    // The title band shares the column, gutter inside it.
+    const heading = screen.getByRole('heading', { name: 'Before you join' });
+    const header = heading.closest('.max-w-4xl');
+    expect(header).toBeTruthy();
+    expect(header!.className).toContain('mx-auto');
+    expect(container.querySelector('[data-page-footer] .max-w-4xl')!.textContent).toBe('Join');
+  });
+
+  it('takes a columnWidth and keeps the trail row in the column', () => {
+    const { container } = render(<PageFrame title="Step 2" column="centered" columnWidth="2xl" trailControls={<span>c</span>}><p>x</p></PageFrame>);
+    expect(container.querySelector('[data-page-trail]')?.className ?? container.querySelector('[data-testid="page-trail"]')!.className).toContain('max-w-2xl');
+    expect(container.querySelector('[data-page-title]')!.className).toContain('max-w-2xl');
+    expect(container.querySelector('[data-page-column-content]')!.className).toContain('max-w-2xl');
+  });
+
+  it('is full width by default (no centred column)', () => {
+    const { container } = render(<PageFrame title="T"><p>x</p></PageFrame>);
+    expect(container.querySelector('[data-page-column-content]')).toBeNull();
+    expect(container.querySelector('[data-page-column-width]')).toBeNull();
+    expect(container.innerHTML).not.toContain('max-w-4xl');
+  });
 });

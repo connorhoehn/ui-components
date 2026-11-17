@@ -71,3 +71,15 @@ export const CollapsedIntoTrail: Story = {
     );
   },
 };
+
+/** `column="centered"` (since NEXT): a guest or step page — one centred 4xl column for the title, the content and the footer. */
+export const CenteredColumn: Story = {
+  render: () => (
+    <PageFrame title="Before your interview" description="Check your camera and microphone, then join when you are ready."
+      column="centered" footer={<div className="flex justify-end px-[var(--ui-page-gutter,1.5rem)] py-3"><Button variant="primary">Join interview</Button></div>}>
+      <PageSection title="Your details">
+        <FormField label="Name">{({ id }) => <Input id={id} defaultValue="Avery Stone" />}</FormField>
+      </PageSection>
+    </PageFrame>
+  ),
+};

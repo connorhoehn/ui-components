@@ -563,7 +563,7 @@ export * from './CollectionPage';
 // Page templates: one per page shape, each `h-full min-h-0` with one scrolling
 // region and `data-page-template="<name>"`. CollectionPage (above) is the list one.
 export { PageFrame } from './PageFrame';
-export type { PageFrameProps } from './PageFrame';
+export type { PageFrameProps, PageFrameColumn, PageFrameColumnWidth } from './PageFrame';
 export { MasterDetailPage } from './MasterDetailPage';
 export type { MasterDetailPageProps } from './MasterDetailPage';
 export { DetailPage } from './DetailPage';
