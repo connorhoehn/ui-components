@@ -41,6 +41,8 @@ export default defineConfig({
         // CodeMirror, its language modes and the Yjs binding are optional peers
         // of this entry alone; nothing else imports from it.
         'code-pad': resolve(import.meta.dirname, 'src/components/code-pad/index.ts'),
+        // pdf.js is an optional peer of this entry alone, loaded on first mount.
+        'pdf-viewer': resolve(import.meta.dirname, 'src/components/pdf-viewer/index.ts'),
         social: resolve(import.meta.dirname, 'src/components/social/index.ts'),
         graph: resolve(import.meta.dirname, 'src/components/graph/index.ts'),
         // Separate entry so the tiptap optional peers stay OUT of the plain
@@ -151,6 +153,10 @@ export default defineConfig({
         // ONE instance shared with the binding, or CodeMirror refuses the
         // extensions ("Unrecognized extension value") at runtime.
         /^@codemirror\//, /^@lezer\//, 'y-codemirror.next',
+        // pdf.js (optional peer of `./pdf-viewer`, dynamic-imported). Bundling
+        // it would add ~400KB to the viewer chunk and a second copy beside the
+        // app's own, whose worker version must match the main thread's.
+        /^pdfjs-dist(\/.*)?$/,
         // realtime-modules is a peer dep. The hangout-rooms composites
         // import its hooks at runtime; keeping the package external
         // avoids bundling its CJS dist (which Rollup can't tree-shake)

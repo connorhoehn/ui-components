@@ -55,6 +55,11 @@
       "import": "./dist/diagram.js",
       "require": "./dist/diagram.cjs"
     },
+    "./pdf-viewer": {
+      "types": "./dist/pdf-viewer.d.ts",
+      "import": "./dist/pdf-viewer.js",
+      "require": "./dist/pdf-viewer.cjs"
+    },
     "./code-pad": {
       "types": "./dist/code-pad.d.ts",
       "import": "./dist/code-pad.js",
@@ -237,6 +242,7 @@
     "eslint": ">=9.0.0",
     "hls.js": "^1.7.0",
     "lib0": "^0.2.117",
+    "pdfjs-dist": "^6.0.0",
     "prosemirror-view": ">=1.42.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -411,6 +417,12 @@
       "optional": true,
       "_subpaths": [
         "./code-pad"
+      ]
+    },
+    "pdfjs-dist": {
+      "optional": true,
+      "_subpaths": [
+        "./pdf-viewer"
       ]
     }
   },

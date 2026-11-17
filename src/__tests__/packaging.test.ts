@@ -298,6 +298,9 @@ describe('entry points and their transitive optional peers', () => {
         ],
         dynamic: [],
       },
+      // pdf.js is imported on the viewer's first mount, so importing the
+      // subpath needs nothing on disk beyond React.
+      'pdf-viewer': { static: [], dynamic: ['pdfjs-dist'] },
       // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
       // same footing as cmdk — npm installs them for the consumer).
       // `@dnd-kit/*` are DYNAMIC in `shared` and `pipelines` (2.385.0): `GroupedList`

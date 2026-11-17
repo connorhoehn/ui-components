@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1002 components across 22 entry points; 854 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1004 components across 23 entry points; 856 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -56,14 +56,14 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
 - [Video](#video) (111)
-- [Docs & editor](#docs--editor) (139)
+- [Docs & editor](#docs--editor) (140)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (10)
 - [Other](#other) (83)
-- [Icons](#icons) (112)
+- [Icons](#icons) (113)
 
 ## Page templates
 
@@ -645,6 +645,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `NumberEditorRenderer` | `@connorhoehn/ui-components` | Editor-mode renderer for sectionType='number'. |  |  |
 | `NumberReaderRenderer` | `@connorhoehn/ui-components` | Reader-mode renderer for sectionType='number'. |  |  |
 | `ParticipantAvatars` | `@connorhoehn/ui-components/doc-editor` | Interactive presence strip with clickable avatars, online dots, mode badges, section indicators, and tooltips. |  |  |
+| `PdfViewer` | `@connorhoehn/ui-components/pdf-viewer` | A PDF, one page at a time, from a URL or bytes, with page navigation and zoom, drawn by pdf.js. |  |  |
 | `PresentationEditor` | `@connorhoehn/ui-components/doc-editor` | Editing a generated deck. |  |  |
 | `PresentationView` | `@connorhoehn/ui-components/doc-editor` | A generated deck, read-only. |  |  |
 | `ProposalCard` | `@connorhoehn/ui-components/doc-editor` | One proposed document change, awaiting a human. | `doc-editor-proposalcard` |  |
@@ -1037,6 +1038,6 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 ## Icons
 
-From `@connorhoehn/ui-components/shared`: `ActivityIcon`, `ArrowRightIcon`, `ArrowUpIcon`, `AtIcon`, `BellIcon`, `BellMutedIcon`, `BotIcon`, `BranchIcon`, `BulletListIcon`, `ChartIcon`, `ChatIcon`, `CheckIcon`, `ChecklistIcon`, `ChevronIcon`, `CloseIcon`, `CloudIcon`, `CodeIcon`, `CommentIcon`, `CopyIcon`, `DesktopIcon`, `DocumentAddIcon`, `DocumentIcon`, `DownloadIcon`, `EditIcon`, `ExternalLinkIcon`, `EyeIcon`, `EyeOffIcon`, `FilterIcon`, `FolderIcon`, `ForwardIcon`, `GraphIcon`, `GripIcon`, `HighlighterIcon`, `HistoryIcon`, `ImageIcon`, `InfoIcon`, `ItalicIcon`, `KeyboardIcon`, `LaptopIcon`, `LinkIcon`, `ListIcon`, `ListStyleIcon`, `LockIcon`, `MaximizeIcon`, `MenuIcon`, `MinimizeIcon`, `MonitorIcon`, `MoonIcon`, `MoreIcon`, `NumberedListIcon`, `PaperclipIcon`, `PauseCircleIcon`, `PeopleIcon`, `PersonIcon`, `PhoneIcon`, `PinIcon`, `PlayCircleIcon`, `PlusCircleIcon`, `PlusIcon`, `PopOutIcon`, `PrinterIcon`, `PuzzleIcon`, `QuoteIcon`, `RailCaretIcon`, `RedoIcon`, `RepeatIcon`, `ReplyIcon`, `SearchIcon`, `SendIcon`, `ShareIcon`, `SlidersIcon`, `SmileyIcon`, `SparkleIcon`, `SplitViewIcon`, `SunIcon`, `TemplateIcon`, `TranscribeIcon`, `TrashIcon`, `UndoIcon`, `UploadIcon`, `VideoCallIcon`, `WarningIcon`, `WhiteboardIcon`
+From `@connorhoehn/ui-components/shared`: `ActivityIcon`, `ArrowRightIcon`, `ArrowUpIcon`, `AtIcon`, `BellIcon`, `BellMutedIcon`, `BotIcon`, `BranchIcon`, `BulletListIcon`, `ChartIcon`, `ChatIcon`, `CheckIcon`, `ChecklistIcon`, `ChevronIcon`, `CloseIcon`, `CloudIcon`, `CodeIcon`, `CommentIcon`, `CopyIcon`, `DesktopIcon`, `DocumentAddIcon`, `DocumentIcon`, `DownloadIcon`, `EditIcon`, `ExternalLinkIcon`, `EyeIcon`, `EyeOffIcon`, `FilterIcon`, `FolderIcon`, `ForwardIcon`, `GraphIcon`, `GripIcon`, `HighlighterIcon`, `HistoryIcon`, `ImageIcon`, `InfoIcon`, `ItalicIcon`, `KeyboardIcon`, `LaptopIcon`, `LinkIcon`, `ListIcon`, `ListStyleIcon`, `LockIcon`, `MaximizeIcon`, `MenuIcon`, `MinimizeIcon`, `MinusIcon`, `MonitorIcon`, `MoonIcon`, `MoreIcon`, `NumberedListIcon`, `PaperclipIcon`, `PauseCircleIcon`, `PeopleIcon`, `PersonIcon`, `PhoneIcon`, `PinIcon`, `PlayCircleIcon`, `PlusCircleIcon`, `PlusIcon`, `PopOutIcon`, `PrinterIcon`, `PuzzleIcon`, `QuoteIcon`, `RailCaretIcon`, `RedoIcon`, `RepeatIcon`, `ReplyIcon`, `SearchIcon`, `SendIcon`, `ShareIcon`, `SlidersIcon`, `SmileyIcon`, `SparkleIcon`, `SplitViewIcon`, `SunIcon`, `TemplateIcon`, `TranscribeIcon`, `TrashIcon`, `UndoIcon`, `UploadIcon`, `VideoCallIcon`, `WarningIcon`, `WhiteboardIcon`
 
 From `@connorhoehn/ui-components/video`: `CaptionsIcon`, `ChatBubbleIcon`, `ExpandIcon`, `MeetingAppsIcon`, `MeetingHandIcon`, `MeetingNotesIcon`, `MeetingReactIcon`, `MeetingRecordingIcon`, `MeetingRoomsIcon`, `MeetingShareIcon`, `MeetingShieldIcon`, `MeetingViewIcon`, `MicIcon`, `MicOffIcon`, `MoreHorizontalIcon`, `PauseIcon`, `PhoneCallIcon`, `PhoneOffIcon`, `PlayIcon`, `PopOutIcon`, `ScreenShareIcon`, `ScreenShareOffIcon`, `SettingsGearIcon`, `SparklesIcon`, `SpeakerIcon`, `UserPlusIcon`, `UsersIcon`, `VideoIcon`, `VideoOffIcon`

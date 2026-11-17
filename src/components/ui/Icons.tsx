@@ -34,6 +34,15 @@ export function PlusIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** A minus: "less of it" (zoom out, remove one). The plus's partner. */
+export function MinusIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M3.5 8h9" />
+    </svg>
+  );
+}
+
 /** Italic formatting, drawn as a glyph rather than changing the control font. */
 export function ItalicIcon({ size = 16, ...rest }: GlyphProps) {
   return <svg {...base(size, rest)}><path d="M7 3h6M3 13h6M10 3L6 13" /></svg>;
