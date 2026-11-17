@@ -86,7 +86,7 @@ export { CallStartedBanner } from './CallStartedBanner';
 export type { CallStartedBannerProps, CallStartedBannerMode, CallStartedBannerMedia } from './CallStartedBanner';
 
 export { RecordingPlayer } from './RecordingPlayer';
-export type { RecordingPlayerProps } from './RecordingPlayer';
+export type { RecordingPlayerProps, RecordingPlayerHandle } from './RecordingPlayer';
 
 export { RecordingList } from './RecordingList';
 export type { RecordingListProps, RecordingListItem } from './RecordingList';

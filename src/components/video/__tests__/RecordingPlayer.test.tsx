@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, act, configure } from '@testing-library/react';
-import { RecordingPlayer } from '../RecordingPlayer';
+import { createRef } from 'react';
+import { RecordingPlayer, type RecordingPlayerHandle } from '../RecordingPlayer';
 // `hls.js` is aliased to a stub in `vitest.config.ts`; the Safari-native-HLS
 // path stubbed below means tests never actually reach that branch.
 
@@ -364,5 +365,116 @@ describe('RecordingPlayer — hls.js engine lifetime', () => {
 
     expect(first.destroy).toHaveBeenCalledTimes(1);
     expect(MockHls.instances).toHaveLength(2);
+  });
+});
+
+// 2.534.0: a page that drives something else from the recording's clock (a
+// code playback beside it) needs to move the recording too.
+describe('RecordingPlayer — handle and startAt', () => {
+  let restores: Stub[] = [];
+  afterEach(() => { while (restores.length) restores.pop()!(); });
+
+  function stubEngine(nativeHls: boolean) {
+    restores = [
+      stubProto('canPlayType', () => (nativeHls ? 'maybe' : '')),
+      stubProto('play', vi.fn(() => Promise.resolve())),
+      stubProto('pause', vi.fn()),
+      stubProto('load', () => undefined),
+    ];
+  }
+
+  /** A video whose clock the test can read and set, with a given duration. */
+  function fakeClock(v: HTMLVideoElement, duration: number) {
+    let t = 0;
+    const sets: number[] = [];
+    Object.defineProperty(v, 'currentTime', { configurable: true, get: () => t, set: (n: number) => { t = n; sets.push(n); } });
+    Object.defineProperty(v, 'duration', { configurable: true, value: duration });
+    return { sets, now: () => t };
+  }
+
+  const loadMetadata = (v: HTMLVideoElement) => act(() => { v.dispatchEvent(new Event('loadedmetadata')); });
+
+  for (const [kind, url, nativeHls] of [
+    ['progressive', 'https://example.com/r.mp4', false],
+    ['native HLS', 'https://example.com/r.m3u8', true],
+    ['hls.js', 'https://example.com/r.m3u8', false],
+  ] as const) {
+    it(`seek moves and clamps the ${kind} source once its metadata has loaded`, () => {
+      stubEngine(nativeHls);
+      const ref = createRef<RecordingPlayerHandle>();
+      const { container } = render(<RecordingPlayer playlistUrl={url} ref={ref} />);
+      const v = getVideo(container);
+      const clock = fakeClock(v, 120);
+      loadMetadata(v);
+      act(() => ref.current!.seek(42.5));
+      expect(clock.now()).toBe(42.5);
+      expect(ref.current!.currentTime).toBe(42.5);
+      act(() => ref.current!.seek(500));
+      expect(clock.now()).toBe(120);
+      act(() => ref.current!.seek(-3));
+      expect(clock.now()).toBe(0);
+    });
+  }
+
+  it('remembers a seek made before the metadata and applies it (clamped) when it loads', () => {
+    stubEngine(true);
+    const ref = createRef<RecordingPlayerHandle>();
+    const { container } = render(<RecordingPlayer playlistUrl="https://example.com/r.mp4" ref={ref} />);
+    const v = getVideo(container);
+    const clock = fakeClock(v, 60);
+    act(() => ref.current!.seek(90));
+    expect(clock.sets).toEqual([]);
+    expect(ref.current!.currentTime).toBe(90);
+    loadMetadata(v);
+    expect(clock.sets).toEqual([60]);
+  });
+
+  it('applies startAt once when the metadata loads, and an early seek wins over it', () => {
+    stubEngine(true);
+    const ref = createRef<RecordingPlayerHandle>();
+    const { container } = render(<RecordingPlayer playlistUrl="https://example.com/a.mp4" startAt={15} ref={ref} />);
+    const v = getVideo(container);
+    const clock = fakeClock(v, 60);
+    loadMetadata(v);
+    expect(clock.sets).toEqual([15]);
+    // A second loadedmetadata on the same source does not jump back.
+    loadMetadata(v);
+    expect(clock.sets).toEqual([15]);
+
+    const ref2 = createRef<RecordingPlayerHandle>();
+    const second = render(<RecordingPlayer playlistUrl="https://example.com/b.mp4" startAt={15} ref={ref2} />);
+    const v2 = getVideo(second.container);
+    const clock2 = fakeClock(v2, 60);
+    act(() => ref2.current!.seek(30));
+    loadMetadata(v2);
+    expect(clock2.sets).toEqual([30]);
+  });
+
+  it('applies startAt again for a new source', () => {
+    stubEngine(true);
+    const { container, rerender } = render(<RecordingPlayer playlistUrl="https://example.com/a.mp4" startAt={10} />);
+    const v = getVideo(container);
+    const clock = fakeClock(v, 60);
+    loadMetadata(v);
+    rerender(<RecordingPlayer playlistUrl="https://example.com/b.mp4" startAt={10} />);
+    loadMetadata(v);
+    expect(clock.sets).toEqual([10, 10]);
+  });
+
+  it('play and pause drive the video; onTimeUpdate still reports', () => {
+    stubEngine(true);
+    const ref = createRef<RecordingPlayerHandle>();
+    const onTimeUpdate = vi.fn();
+    const { container } = render(<RecordingPlayer playlistUrl="https://example.com/r.mp4" ref={ref} onTimeUpdate={onTimeUpdate} />);
+    const v = getVideo(container);
+    fakeClock(v, 60);
+    act(() => ref.current!.play());
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(1);
+    act(() => ref.current!.pause());
+    expect(HTMLMediaElement.prototype.pause).toHaveBeenCalledTimes(1);
+    loadMetadata(v);
+    act(() => ref.current!.seek(7));
+    act(() => { v.dispatchEvent(new Event('timeupdate')); });
+    expect(onTimeUpdate).toHaveBeenLastCalledWith(7, 60);
   });
 });

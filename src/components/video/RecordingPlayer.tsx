@@ -24,7 +24,7 @@
 // and anything ambiguous keeps the old probe-first behaviour rather than
 // guessing. hls.js is still only imported when it is actually needed.
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useImperativeHandle, useMemo, useRef, useState, type CSSProperties, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
 import { safeDownloadHref } from '../../lib/safeHref';
@@ -44,8 +44,34 @@ export function sourceKind(url: string): 'hls' | 'progressive' | 'unknown' {
   return 'unknown';
 }
 
+/**
+ * Imperative control of a `RecordingPlayer`, through `ref` (2.534.0): for a
+ * page that ties something else to the recording's clock (a code playback, a
+ * transcript, a list of markers) and moves the recording from it.
+ */
+export interface RecordingPlayerHandle {
+  /**
+   * Move to `seconds`, clamped to 0 and the duration. Works the same for HLS
+   * and progressive sources. Called before the metadata has loaded, the time
+   * is remembered and applied when it loads (and wins over `startAt`).
+   */
+  seek(seconds: number): void;
+  play(): void;
+  pause(): void;
+  /** Where playback is, in seconds; before the metadata loads, a remembered seek (or 0). */
+  readonly currentTime: number;
+}
+
 export interface RecordingPlayerProps {
   playlistUrl: string | null;
+  /**
+   * Start at this many seconds (2.534.0), applied once when the metadata of
+   * each source has loaded, clamped to the duration. A later `seek` moves on
+   * from it as usual.
+   */
+  startAt?: number;
+  /** Imperative `seek` / `play` / `pause` / `currentTime` (2.534.0). */
+  ref?: Ref<RecordingPlayerHandle>;
   poster?: string;
   autoPlay?: boolean;
   muted?: boolean;
@@ -55,6 +81,12 @@ export interface RecordingPlayerProps {
   /** Hide the download button (private channels). Default false. */
   hideDownload?: boolean;
   className?: string;
+}
+
+/** 0 to the duration; a live or unknown duration only floors at 0. */
+function clampToDuration(seconds: number, duration: number): number {
+  const lo = Math.max(0, seconds);
+  return Number.isFinite(duration) && duration > 0 ? Math.min(lo, duration) : lo;
 }
 
 function formatTime(sec: number): string {
@@ -77,8 +109,16 @@ export function RecordingPlayer({
   onError,
   hideDownload = false,
   className,
+  startAt,
+  ref,
 }: RecordingPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  // Seeking before the metadata loads is lost (or throws on some engines), so
+  // a seek that arrives early is held here and applied in onLoadedMetadata.
+  const metadataLoaded = useRef(false);
+  const pendingSeek = useRef<number | null>(null);
+  const startAtRef = useRef(startAt);
+  startAtRef.current = startAt;
   const hlsRef = useRef<any>(null);
   // `onError` is a consumer callback, usually an inline arrow. Held as an
   // effect dependency it re-keyed the whole hls.js lifecycle to the parent's
@@ -98,6 +138,8 @@ export function RecordingPlayer({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // A new source has no metadata yet; `startAt` applies to it afresh.
+    metadataLoaded.current = false;
     const v = videoRef.current;
     if (!v || !playlistUrl) return;
     setError(null);
@@ -148,6 +190,33 @@ export function RecordingPlayer({
       }
     };
   }, [playlistUrl]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      seek(seconds: number) {
+        const v = videoRef.current;
+        if (!Number.isFinite(seconds)) return;
+        if (!v || !metadataLoaded.current) {
+          pendingSeek.current = Math.max(0, seconds);
+          return;
+        }
+        v.currentTime = clampToDuration(seconds, v.duration);
+      },
+      play() {
+        videoRef.current?.play()?.catch(() => { /* autoplay refused: the person presses play */ });
+      },
+      pause() {
+        videoRef.current?.pause();
+      },
+      get currentTime() {
+        const v = videoRef.current;
+        if (!v || !metadataLoaded.current) return pendingSeek.current ?? 0;
+        return v.currentTime;
+      },
+    }),
+    [],
+  );
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -206,6 +275,14 @@ export function RecordingPlayer({
         onPause={() => setIsPlaying(false)}
         onLoadedMetadata={(e) => {
           const v = e.currentTarget;
+          const firstForSource = !metadataLoaded.current;
+          metadataLoaded.current = true;
+          // A seek asked for before the metadata wins over `startAt`.
+          const target = pendingSeek.current ?? (firstForSource ? startAtRef.current : undefined);
+          pendingSeek.current = null;
+          if (target !== undefined && Number.isFinite(target)) {
+            v.currentTime = clampToDuration(target, v.duration);
+          }
           setDuration(v.duration);
           setIsLoading(false);
           onLoadedMetadata?.(v.duration);
