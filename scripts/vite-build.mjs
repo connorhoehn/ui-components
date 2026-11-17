@@ -1,6 +1,9 @@
 // scripts/vite-build.mjs
 //
-// Runs `vite build` with the 8GB heap the dts rollup needs.
+// Runs `vite build` with the heap the dts rollup needs: 12GB by default, or
+// UI_BUILD_HEAP_MB. It was 8GB until the build began running out at 8GB (the
+// api-extractor pass over 21+ entries peaked near 9.5GB resident on Node 25),
+// before and after the code-pad and pdf-viewer entries were added.
 //
 // This exists because `package.json` used to spell the invocation as
 // `node --max-old-space-size=8192 ./node_modules/vite/bin/vite.js build`.
@@ -47,7 +50,7 @@ try {
 
 const result = spawnSync(
   process.execPath,
-  ['--max-old-space-size=8192', viteBin, 'build', ...process.argv.slice(2)],
+  [`--max-old-space-size=${Number(process.env.UI_BUILD_HEAP_MB) || 12288}`, viteBin, 'build', ...process.argv.slice(2)],
   { stdio: 'inherit' },
 );
 

@@ -447,6 +447,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "MicIcon",
     "MicOffIcon",
     "MinimizeIcon",
+    "MinusIcon",
     "Modal",
     "ModelViewer",
     "MonitorIcon",
@@ -1776,6 +1777,16 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "useResolvedTheme",
     "yamlScalar",
   ],
+  "./pdf-viewer": [
+    "PDF_ZOOM_STEPS",
+    "PdfViewer",
+    "setPdfWorkerSrc",
+  ],
+  "./code-pad": [
+    "CODE_PAD_LANGUAGES",
+    "CodePad",
+    "isCodePadLanguage",
+  ],
   "./social": [
     "AGENT_RUN_STEP_DOT",
     "ALL_CONVERSATION_FEATURES",
@@ -2396,6 +2407,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "MetaLine",
     "MeterRow",
     "MinimizeIcon",
+    "MinusIcon",
     "Modal",
     "ModelViewer",
     "MonitorIcon",
