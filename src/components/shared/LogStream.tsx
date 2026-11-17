@@ -30,6 +30,13 @@ export interface LogStreamProps {
   lines: LogLine[];
   /** When true, autoscroll to the latest line as new lines arrive. Default true. */
   follow?: boolean;
+  /**
+   * Whether screen readers hear each new line (`aria-live="polite"` on the
+   * log). Defaults to `follow`, as before. `false` (2.534.0) keeps the log
+   * quiet for a host that announces what matters itself (a run's status
+   * change rather than every line of its output).
+   */
+  announceLines?: boolean;
   /** When true, render the small timestamp column. Default true. */
   showTimestamp?: boolean;
   /** When true, render the level glyph. Default true. */
@@ -84,6 +91,7 @@ const LEVEL_COLOR: Record<LogLevel, string> = {
 export function LogStream({
   lines,
   follow = true,
+  announceLines,
   showTimestamp = true,
   showLevel = true,
   showSource = true,
@@ -175,7 +183,7 @@ export function LogStream({
           ref={scrollRef}
           onScroll={onScroll}
           role="log"
-          aria-live={follow ? 'polite' : 'off'}
+          aria-live={(announceLines ?? follow) ? 'polite' : 'off'}
           data-testid={`${testId}-scroll`}
           className={cn(
             'flex-1 overflow-y-auto',

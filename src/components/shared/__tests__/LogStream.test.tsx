@@ -98,6 +98,13 @@ describe('LogStream', () => {
     expect(screen.getByTestId('log-stream-scroll').getAttribute('aria-live')).toBe('off');
   });
 
+  it('announceLines={false} keeps a following log quiet; true announces a still one (2.534.0)', () => {
+    const { rerender } = render(<LogStream lines={sample} announceLines={false} />);
+    expect(screen.getByTestId('log-stream-scroll').getAttribute('aria-live')).toBe('off');
+    rerender(<LogStream lines={sample} follow={false} announceLines />);
+    expect(screen.getByTestId('log-stream-scroll').getAttribute('aria-live')).toBe('polite');
+  });
+
   it('uses a custom data-testid', () => {
     render(<LogStream lines={sample} data-testid="my-log" />);
     expect(screen.getByTestId('my-log')).toBeInTheDocument();
