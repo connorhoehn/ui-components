@@ -1,3 +1,13 @@
+## 2.535.0
+
+A program run's output and code over time join the code pad, a split can stack its panes, and a recording can be moved from the page. Every new prop is optional; with none given, output is unchanged.
+
+- `CodeRunOutput` (`./code-pad`): one run, live or finished. A header row (a status chip with a plain word for each `CodeRunStatus`, "Run by …", the language and runtime version, time, peak memory and exit code once known, then the host's `actions`) over the output in `LogStream`'s console: compiler output first, then output, then error output, each labelled, error lines toned and marked `data-level="error"`, and a line where `truncated` says a stream was cut at the limit. It announces the status change in a polite status region, not each line. Its file imports no CodeMirror, so a page that shows only output does not load the editor (a test reads its imports).
+- `CodePlayback` (`./code-pad`): a read-only `CodePad` showing the last of `frames` at or before the time, over the library's `Slider` across `durationMs` with `markers` as focusable stops (Q, R, P or the first letter of a page's own kind, with a spoken label; one tab stop, arrow keys between them). `timeMs` is controlled (omit it and it keeps its own); moving the slider or choosing a marker calls `onTimeChange`. It never plays by itself: tie `timeMs` to a recording's `onTimeUpdate` and `seek` it from `onTimeChange`. A new frame is applied as the smallest text change, so the editor is not rebuilt.
+- `SplitPane` `orientation?: 'horizontal' | 'vertical'`: vertical stacks the primary over the secondary with the same divider on its side (dragged by height, ArrowUp / ArrowDown, `minPrimaryPx` / `minSecondaryPx` read as heights, `aria-orientation="horizontal"`). The horizontal markup is unchanged byte for byte, pinned by a test against 2.533.0's output.
+- `RecordingPlayer` `ref?: Ref<RecordingPlayerHandle>` (`seek`, `play`, `pause`, `currentTime`) and `startAt?: number` (seconds). `seek` clamps to the duration on HLS and progressive sources alike; a seek before the metadata loads is remembered and applied when it does, winning over `startAt`, which applies once per source. `onTimeUpdate` is unchanged.
+- `LogStream` `announceLines?: boolean` (default: `follow`, as before): `false` keeps a following log quiet for a host that announces what matters itself.
+
 ## 2.531.0
 
 Right- and centre-aligned table cells align what they hold, and a list row's pill gives way before its title. No prop changes.

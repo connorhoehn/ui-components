@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1007 components across 23 entry points; 859 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1009 components across 23 entry points; 861 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -56,7 +56,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
 - [Video](#video) (111)
-- [Docs & editor](#docs--editor) (140)
+- [Docs & editor](#docs--editor) (142)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
@@ -118,7 +118,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `SidePane` | `@connorhoehn/ui-components/shared` | A page's pane, registered with the shell's `SidePaneProvider` and portaled into its right column. |  |  |
 | `SidePaneProvider` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `SidePaneSplit` | `@connorhoehn/ui-components/shared` | Where the page renders, with its pane on the right. |  |  |
-| `SplitPane` | `@connorhoehn/ui-components/shared` | Two regions side by side with a divider the person can drag. |  |  |
+| `SplitPane` | `@connorhoehn/ui-components/shared` | Two regions side by side (or stacked, one over the other) with a divider the person can drag. |  |  |
 | `StackedRail` | `@connorhoehn/ui-components/shared` | The concise stacking left menu, grown up enough to hold a documents tree. | `shared-stackedrail` |  |
 | `SubNavLayout` | `@connorhoehn/ui-components/shared` | — | `shared-subnavlayout` |  |
 | `TopNav` | `@connorhoehn/ui-components/shared` | — | `layout-topnav` |  |
@@ -580,6 +580,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ChecklistReaderRenderer` | `@connorhoehn/ui-components` | — |  |  |
 | `ChunkViewer` | `@connorhoehn/ui-components/doc-editor` | Renders a single section chunk for ack-mode review. |  |  |
 | `CodePad` | `@connorhoehn/ui-components/code-pad` | A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`; extendable with app CodeMirror `extensions`… |  |  |
+| `CodePlayback` | `@connorhoehn/ui-components/code-pad` | A read-only view of code over time: a `CodePad` showing the snapshot for the current time, over the library's `Slider` with question, run and paste markers as labelled, focusable stops; driven by the page (`timeMs` fr… |  |  |
+| `CodeRunOutput` | `@connorhoehn/ui-components/code-pad` | One program run's output, live or finished: a status chip in plain words, who ran it, time, memory and exit code when known and the host's actions, over compiler output, standard output and labelled standard error in… |  |  |
 | `CommentContextHeader` | `@connorhoehn/ui-components/doc-editor` | The muted, left-ruled quote a comment card leads with. |  |  |
 | `CommentGhostPopover` | `@connorhoehn/ui-components/doc-editor` | Comment "ghosts" — how a reader learns a discussion exists when the margin gutter is not there to tell them. |  |  |
 | `CommentHandoffBar` | `@connorhoehn/ui-components/doc-editor` | Sits above the page composer while it is answering a margin comment (WS-J lane B, "Ask agent"): whose comment, the text it is anchored to, and the "Resolve when applied" choice the run carries. |  |  |
