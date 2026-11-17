@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1001 components across 21 entry points; 853 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1003 components across 21 entry points; 855 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -51,7 +51,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Shells & layouts](#shells--layouts) (42)
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (61)
 - [Tables & lists](#tables--lists) (31)
-- [Forms](#forms) (30)
+- [Forms](#forms) (32)
 - [Buttons & actions](#buttons--actions) (19)
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
@@ -237,6 +237,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `CodeEditor` | `@connorhoehn/ui-components/shared` | Shared lightweight code editor for syntax-like / expression inputs used by pipeline config panels (Transform, Condition, LLM, etc.). | `shared-codeeditor` |  |
 | `ColorInput` | `@connorhoehn/ui-components` | Color swatch primitive — a thin wrapper over `<input type="color">`. | `forms-colorinput` |  |
 | `Combobox` | `@connorhoehn/ui-components/shared` | Searchable select over a still-focused input (ARIA 1.2 combobox with a listbox popup). |  |  |
+| `DateTimeField` | `@connorhoehn/ui-components` | A labelled field for one date and time. |  |  |
 | `FileInput` | `@connorhoehn/ui-components` | The invisible file picker that sits behind a styled trigger (a paperclip button, a drop zone). |  |  |
 | `FileUploadDrop` | `@connorhoehn/ui-components/shared` | Drag-and-drop file upload zone. | `shared-fileuploaddrop` |  |
 | `FormField` | `@connorhoehn/ui-components/identity` | Identity's value-coercing form field. (also exported as `IdentityFormField` from `@connorhoehn/ui-components`) | `identity-shared-formfield` |  |
@@ -253,6 +254,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `PopoverForm` | `@connorhoehn/ui-components/shared` | A small form that opens AT the control that asked for it. |  |  |
 | `RadioGroup` | `@connorhoehn/ui-components/shared` | Vertical (or horizontal) enum picker using native <input type="radio">. | `forms-radiogroup` |  |
 | `RangeSlider` | `@connorhoehn/ui-components` | Two native keyboard-operable handles on one track, with stable tab order. |  |  |
+| `RatingInput` | `@connorhoehn/ui-components` | One rating on a fixed scale, each point carrying its own label (a scorecard competency rated 1 to 4: "Does not meet" to "Exceeds"). |  |  |
 | `SearchInput` | `@connorhoehn/ui-components/shared` | Text input with magnifier icon and clear button. | `shared-searchinput` |  |
 | `Select` | `@connorhoehn/ui-components/shared` | The library's dropdown (2.445.0: a custom listbox). | `forms-select` |  |
 | `Slider` | `@connorhoehn/ui-components/shared` | Range input primitive. | `forms-slider` |  |
