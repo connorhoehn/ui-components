@@ -74,7 +74,7 @@ import { t as Bt } from "./canvasPaneInset-D2oCiCnp.js";
 import "./FollowUpChips-DiWiWsSm.js";
 import { t as Vt } from "./PresenceAvatars-CM37OyKJ.js";
 import "./FileUploadDrop-CBNJ4LFr.js";
-import { t as Ht } from "./ActivityFeed-CIGF7n7Z.js";
+import { t as Ht } from "./ActivityFeed-BZ42BPMw.js";
 import { i as Ut, n as Wt, r as Gt, s as Kt, t as qt } from "./ActivityPanel-DpZgLaAI.js";
 import { t as Jt } from "./useMeasuredWidth-vp2hlEPF.js";
 import "./SectionLabel-B60gea5o.js";

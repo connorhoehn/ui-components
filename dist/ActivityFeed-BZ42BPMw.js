@@ -11,8 +11,8 @@ var s = {
 	status: "var(--color-info)"
 };
 function c(e) {
-	let t = e.trim().split(/\s+/), n = t[0] ?? "", r = t[1]?.[0] ?? "";
-	return r ? `${n} ${r}.` : n;
+	let t = e.trim().split(/\s+/), n = t[0] ?? "", r = t[1] ?? "";
+	return r ? /^\p{Lu}/u.test(r) ? `${n} ${r[0]}.` : t.join(" ") : n;
 }
 function l({ item: e, dotColor: n }) {
 	return /* @__PURE__ */ o("div", {

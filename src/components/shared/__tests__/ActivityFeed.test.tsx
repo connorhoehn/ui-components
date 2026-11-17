@@ -13,6 +13,11 @@ describe('ActivityFeed', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
+  it('cuts a surname to its initial but keeps a lower-case role whole', () => {
+    render(<ActivityFeed items={[{ id: 'r', actor: 'Local worker', action: 'started', subject: 'Voice', kind: 'task' }]} rotateMs={0} />);
+    expect(screen.getByText('Local worker')).toBeInTheDocument();
+  });
+
   it('shows the empty message with no items', () => {
     render(<ActivityFeed items={[]} />);
     expect(screen.getByText('No recent activity')).toBeInTheDocument();

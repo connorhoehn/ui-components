@@ -18,7 +18,7 @@ import { t as P } from "./Switch-CRiY_kzy.js";
 import { t as ee } from "./Textarea-Cf4WFXAs.js";
 import { t as te } from "./StatusDot-DAok6F5B.js";
 import { t as F } from "./InlineAlert-BMRUWJjD.js";
-import { t as ne } from "./ActivityFeed-CIGF7n7Z.js";
+import { t as ne } from "./ActivityFeed-BZ42BPMw.js";
 import { t as I } from "./NumberInput-pHxC7Spt.js";
 import { t as re } from "./Checkbox-DrdG_-IA.js";
 import { t as ie } from "./InlineEditableText-CKjRokmb.js";

@@ -1,3 +1,7 @@
+## 2.538.2
+
+- `ActivityFeed` cuts only a surname to its initial ("Alex Chen" -> "Alex C."); a lower-case role such as "Local worker" reads whole instead of "Local w.".
+
 ## 2.538.1
 
 - `Divider` (vertical) takes `blankOnPhone`: under the `sm` breakpoint the rule draws nothing and keeps its margins, so a wrapping strip never ends a line on a lone rule.

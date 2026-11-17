@@ -60,8 +60,11 @@ const DEFAULT_KIND_COLORS: Record<string, string> = {
 function shortName(fullName: string): string {
   const parts = fullName.trim().split(/\s+/);
   const first = parts[0] ?? '';
-  const lastInit = parts[1]?.[0] ?? '';
-  return lastInit ? `${first} ${lastInit}.` : first;
+  // Only a surname is cut to its initial ("Alex Chen" -> "Alex C."); a role written in lower case ("Local worker")
+  // reads whole, since "Local w." names nobody (since 2.538.2).
+  const second = parts[1] ?? '';
+  if (!second) return first;
+  return /^\p{Lu}/u.test(second) ? `${first} ${second[0]}.` : parts.join(' ');
 }
 
 // ─── ActivityRow ──────────────────────────────────────────────────────────────
