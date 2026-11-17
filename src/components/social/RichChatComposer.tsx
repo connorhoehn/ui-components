@@ -124,6 +124,18 @@ import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggest
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
 import { ArrowRightIcon, ArrowUpIcon, SendIcon, ChatIcon, ChevronIcon, CodeIcon, EyeIcon, EyeOffIcon, LinkIcon, ListIcon, LockIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon, SparkleIcon } from '../ui/Icons';
 
+
+/**
+ * The end of a long context label that stays whole while the rest truncates (middle truncation): from the last
+ * " · " when that names a short scope ("Second Look · catalog" keeps " · catalog"), else the last 12 characters.
+ * Labels of 18 characters or fewer are not split.
+ */
+export function contextLabelTail(label: string): string {
+  if (label.length <= 18) return '';
+  const sep = label.lastIndexOf(' · ');
+  return sep > 0 && label.length - sep <= 16 ? label.slice(sep) : label.slice(-12);
+}
+
 export type { MentionCandidate, DocumentCandidate, DocumentMenuPanel };
 
 /** What the composer hands back on send. */
@@ -3263,12 +3275,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             ))}
             {!!references?.length && !(foldedChip && chipModes) && (() => {
               const label = references[0]!.label;
-              const tail = label.length > 18 ? label.slice(-12) : '';
+              const tail = contextLabelTail(label);
               return (
                 <>
                   {chipModes && <span aria-hidden="true" className="shrink-0 text-text-tertiary">·</span>}
                   <span className="flex min-w-0 items-center" data-testid={`${testId}-context-label`}>
-                    <span className="min-w-0 truncate">{tail ? label.slice(0, -12) : label}</span>
+                    {/* min-w: the head always has room for a letter and its ellipsis (2.535.2: at 390px it shrank to a
+                        sliver of a glyph, ":Look · Audio") */}
+                    <span className="min-w-[1.75em] truncate">{tail ? label.slice(0, -tail.length) : label}</span>
                     {tail && <span className="shrink-0">{tail}</span>}
                   </span>
                   {references.length > 1 && <span className="shrink-0 text-text-tertiary">+{references.length - 1}</span>}

@@ -84,17 +84,22 @@ export type NavTabsVariant = 'underline' | 'pill';
  * header (`--app-shell-header-h`); 36px is the tallest item that centres
  * inside its 52px content box with a whole number of pixels either side.
  */
+// `shrink-0 whitespace-nowrap`: an item's label is one line ("At a glance" wrapped to two in a 390px strip,
+// 2.535.2); a strip wider than its column scrolls instead (NavTabs).
 const NAV_ITEM_BASE =
-  'inline-flex h-9 items-center gap-1.5 px-3 text-sm no-underline transition-colors';
+  'inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap px-3 text-sm no-underline transition-colors';
 
 function TopNavLink({
   item,
   active,
   renderLink,
   variant = 'underline',
+  overlap = true,
 }: {
   item: TopNavItem;
   active: boolean;
+  /** Pull the underline 1px over the rule below (TopNav). NavTabs' rule is an inset shadow inside a scroll box, so no. */
+  overlap?: boolean;
   renderLink: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
   variant?: NavTabsVariant;
 }) {
@@ -116,7 +121,8 @@ function TopNavLink({
               : 'font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]',
           )
         : cn(
-            'font-medium border-b-2 -mb-px',
+            'font-medium border-b-2',
+            overlap && '-mb-px',
             active
               ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
               : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
@@ -277,8 +283,10 @@ export function NavTabs({
     <nav
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex items-center gap-1',
-        variant === 'underline' && 'border-b border-[var(--color-border)]',
+        'inline-flex max-w-full items-center gap-1 overflow-x-auto overflow-y-hidden',
+        // The strip scrolls, so its rule is an inset shadow the items' underline paints over (a border plus the
+        // items' -mb-px would be clipped by the scroll box).
+        variant === 'underline' && 'shadow-[inset_0_-1px_0_var(--color-border)]',
         className,
       )}
       style={style}
@@ -290,6 +298,7 @@ export function NavTabs({
           active={isActive(activeHref, item.to)}
           renderLink={renderLink}
           variant={variant}
+          overlap={false}
         />
       ))}
     </nav>

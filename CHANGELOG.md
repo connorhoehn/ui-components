@@ -1,3 +1,8 @@
+## 2.535.2
+
+- `NavTabs` and `TopNav` items keep their label on one line (`shrink-0 whitespace-nowrap`); a `NavTabs` strip wider than its column scrolls sideways, its rule drawn as an inset shadow the active underline paints over ("At a glance" wrapped to two lines at 390px).
+- `RichChatComposer`'s context chip splits a long label at its last " · " when that names a short scope (`contextLabelTail`), and its truncating head keeps room for a letter and its ellipsis (at 390px it showed ":Look · Audio").
+
 ## 2.535.1
 
 - `RovingToolbar` takes `variant`, rendered as `data-toolbar-variant` (the attribute `Toolbar` already sets). `MessageActionBar` sets `action-bar`, so a page that gives it its own test id (AssetGallery's `gallery-tile-actions-*`) is still recognisable as the compact hover bar, not a collection toolbar.

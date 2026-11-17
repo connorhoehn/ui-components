@@ -11475,13 +11475,13 @@ function mu(e, t) {
 		children: t.children
 	});
 }
-var hu = "inline-flex h-9 items-center gap-1.5 px-3 text-sm no-underline transition-colors";
-function gu({ item: e, active: t, renderLink: n, variant: r = "underline" }) {
-	let a = {
+var hu = "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap px-3 text-sm no-underline transition-colors";
+function gu({ item: e, active: t, renderLink: n, variant: r = "underline", overlap: a = !0 }) {
+	let o = {
 		"aria-current": t ? "page" : void 0,
 		"aria-disabled": e.disabled || void 0,
 		"data-testid": `topnav-link-${e.to}`,
-		className: i(hu, r === "pill" ? i("rounded-md", t ? "font-semibold bg-[var(--color-primary-bg)] text-[var(--color-primary-fg)]" : "font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]") : i("font-medium border-b-2 -mb-px", t ? "border-[var(--color-primary)] text-[var(--color-text-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"), e.disabled && "opacity-50 pointer-events-none"),
+		className: i(hu, r === "pill" ? i("rounded-md", t ? "font-semibold bg-[var(--color-primary-bg)] text-[var(--color-primary-fg)]" : "font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]") : i("font-medium border-b-2", a && "-mb-px", t ? "border-[var(--color-primary)] text-[var(--color-text-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"), e.disabled && "opacity-50 pointer-events-none"),
 		children: /* @__PURE__ */ Q(X, { children: [
 			e.icon,
 			/* @__PURE__ */ Z("span", { children: e.label }),
@@ -11491,7 +11491,7 @@ function gu({ item: e, active: t, renderLink: n, variant: r = "underline" }) {
 			})
 		] })
 	};
-	return /* @__PURE__ */ Z(X, { children: n(e, a) });
+	return /* @__PURE__ */ Z(X, { children: n(e, o) });
 }
 function _u({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: a = mu, maxVisible: o, className: s, style: c, "aria-label": l = "Main navigation" }) {
 	let [u, d] = Y(!1), f = J(null);
@@ -11571,13 +11571,14 @@ function _u({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: a = m
 function vu({ items: e, activeHref: t, renderLink: n = mu, className: r, style: a, "aria-label": o = "Sub navigation", variant: s = "underline" }) {
 	return /* @__PURE__ */ Z("nav", {
 		"aria-label": o,
-		className: i("inline-flex items-center gap-1", s === "underline" && "border-b border-[var(--color-border)]", r),
+		className: i("inline-flex max-w-full items-center gap-1 overflow-x-auto overflow-y-hidden", s === "underline" && "shadow-[inset_0_-1px_0_var(--color-border)]", r),
 		style: a,
 		children: e.map((e) => /* @__PURE__ */ Z(gu, {
 			item: e,
 			active: pu(t, e.to),
 			renderLink: n,
-			variant: s
+			variant: s,
+			overlap: !1
 		}, e.to))
 	});
 }

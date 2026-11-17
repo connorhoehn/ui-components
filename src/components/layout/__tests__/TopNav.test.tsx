@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import { TopNav, NavTabs, type TopNavItem } from '../TopNav';
 
 const ITEMS: TopNavItem[] = [
@@ -87,6 +87,13 @@ describe('TopNav', () => {
 });
 
 describe('NavTabs', () => {
+  it('keeps each label on one line and scrolls a strip wider than its column', () => {
+    render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" />);
+    const nav = screen.getByRole('navigation');
+    expect(nav.className).toContain('overflow-x-auto');
+    for (const a of within(nav).getAllByRole('link')) expect(a.className).toContain('whitespace-nowrap');
+  });
+
   it('renders link-style underline tabs', () => {
     render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" />);
     expect(screen.getByRole('navigation', { name: 'Sub navigation' })).toBeInTheDocument();
@@ -99,10 +106,12 @@ describe('NavTabs', () => {
   it('underline variant puts the indicator on a rule that exists', () => {
     render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" />);
     const nav = screen.getByRole('navigation', { name: 'Sub navigation' });
-    expect(nav.className).toContain('border-b');
+    // The rule is an inset shadow at the strip's bottom edge (2.535.2: the strip scrolls, and a scroll box clips
+    // an underline pulled over a border); the active underline paints over it.
+    expect(nav.className).toContain('shadow-[inset_0_-1px_0_var(--color-border)]');
     const active = screen.getByRole('link', { name: 'Components' });
     expect(active.className).toContain('border-b-2');
-    expect(active.className).toContain('-mb-px');
+    expect(active.className).not.toContain('-mb-px');
   });
 
   // In a header there is no such rule — the header's own border belongs to the

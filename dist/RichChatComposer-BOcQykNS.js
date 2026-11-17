@@ -2380,23 +2380,31 @@ var ua = be(function({ items: t, command: n, label: r = "Commands", draft: i, wi
 			children: u
 		})]
 	});
-}), da = ye(null), fa = {
+}), da = ye(null);
+//#endregion
+//#region src/components/social/RichChatComposer.tsx
+function fa(e) {
+	if (e.length <= 18) return "";
+	let t = e.lastIndexOf(" · ");
+	return t > 0 && e.length - t <= 16 ? e.slice(t) : e.slice(-12);
+}
+var pa = {
 	narrow: 380,
 	wide: te.pane
 };
-function pa(e) {
-	return e === null ? "wide" : e < fa.narrow ? "narrow" : w(e, fa.wide) === "compact" ? "medium" : "wide";
+function ma(e) {
+	return e === null ? "wide" : e < pa.narrow ? "narrow" : w(e, pa.wide) === "compact" ? "medium" : "wide";
 }
-var ma = {
+var ha = {
 	none: "0px",
 	sm: "4px",
 	md: "6px",
 	lg: "8px",
 	xl: "12px"
-}, ha = {
+}, ga = {
 	visible: "Visible to everyone",
 	hidden: "Only you"
-}, ga = [
+}, _a = [
 	"chat",
 	"agent",
 	"terminal"
@@ -2404,33 +2412,33 @@ var ma = {
 	chat: "Chat",
 	agent: "Agent",
 	terminal: "Terminal"
-}, _a = {
+}, va = {
 	chat: /* @__PURE__ */ O(m, { size: 13 }),
 	agent: /* @__PURE__ */ O(p, { size: 13 }),
 	terminal: /* @__PURE__ */ O("span", {
 		className: "font-mono text-[11px]",
 		children: ">_"
 	})
-}, va = ">", ya = "/run";
-function ba(e, t) {
+}, ya = ">", ba = "/run";
+function xa(e, t) {
 	return t ? e === `${t} ` || e === `${t}\u00a0` || e === t && t.length === 1 && !/[\p{L}\p{N}]/u.test(t) : !1;
 }
-var xa = {
+var Sa = {
 	chat: "Write a message…",
 	agent: "Tell the agent what to do… (budget and model in the status line)",
 	terminal: "$ command in the cloud shell"
-}, Sa = {
+}, Ca = {
 	info: "bg-info",
 	success: "bg-success",
 	warning: "bg-warning",
 	danger: "bg-danger"
-}, Ca = {
+}, wa = {
 	running: "bg-info animate-pulse motion-reduce:animate-none",
 	idle: "bg-border-emphasis",
 	failed: "bg-danger",
 	done: "bg-success"
 };
-function wa() {
+function Ta() {
 	let e = null, t = 0, n = (t, n) => {
 		if (!e) return t;
 		let r = e.offsetWidth;
@@ -2455,7 +2463,7 @@ function wa() {
 		}
 	};
 }
-function Ta(e, t) {
+function Ea(e, t) {
 	let n = /* @__PURE__ */ new Set(), r = [];
 	return e.state.doc.descendants((e) => {
 		if (e.type.name !== t) return;
@@ -2466,20 +2474,20 @@ function Ta(e, t) {
 		}));
 	}), r;
 }
-function Ea(e) {
-	return Ta(e, "mention");
-}
 function Da(e) {
-	return Ta(e, "docref");
+	return Ea(e, "mention");
 }
-function Oa({ state: e, range: t }) {
+function Oa(e) {
+	return Ea(e, "docref");
+}
+function ka({ state: e, range: t }) {
 	let n = e.doc.resolve(t.from);
 	if (n.parentOffset === 0) return !0;
 	let r = n.parent.textBetween(n.parentOffset - 1, n.parentOffset, void 0, "\0");
 	return r === "" || /[\s\0(\[{"'“‘]/.test(r);
 }
-var ka = Ye.extend({ name: "docref" }), Aa = new Ge("docrefSuggestion"), ja = 0, Ma = 32;
-function Na(e, t, n) {
+var Aa = Ye.extend({ name: "docref" }), ja = new Ge("docrefSuggestion"), Ma = 0, Na = 32;
+function Pa(e, t, n) {
 	let r = e.firstChild;
 	if (!r || !r.isTextblock) return null;
 	let i = r.textBetween(0, r.content.size, void 0, "￼"), a = pe(i, t);
@@ -2510,12 +2518,12 @@ function Na(e, t, n) {
 		caret: 1 + o
 	};
 }
-var Pa = new Ge("commandPrefixHidden");
-function Fa(e, t, n) {
+var Fa = new Ge("commandPrefixHidden");
+function Ia(e, t, n) {
 	return !e || !t || e.trigger !== t.trigger ? null : _e(n, t).includes(e.item.label) ? e.item : null;
 }
-var Ia = new Ge("commandSuggestion"), La = new Ge("commandArgumentSuggestion");
-function Ra(e, t) {
+var La = new Ge("commandSuggestion"), Ra = new Ge("commandArgumentSuggestion");
+function za(e, t) {
 	let n = null, r = null, i = 0;
 	return {
 		get renderer() {
@@ -2537,8 +2545,8 @@ function Ra(e, t) {
 		}
 	};
 }
-function za(e, t, n = !1) {
-	let r = [], i = wa(), a = Ra(i, (e) => new Oe(ua, {
+function Ba(e, t, n = !1) {
+	let r = [], i = Ta(), a = za(i, (e) => new Oe(ua, {
 		props: o(e),
 		editor: e.editor
 	})), o = (i) => {
@@ -2569,7 +2577,7 @@ function za(e, t, n = !1) {
 		}
 	};
 }
-var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCommandPick: te, onSearchPeople: ne, mentionMembers: ve, onMentionNonMember: ye, onSearchDocuments: be, allowAttachments: Ne = !1, allowEmoji: Pe = !1, onRequestLink: Fe, placeholder: Ie = "Write a message…", inputLabel: Le, commands: Re, privacy: ze = "visible", onPrivacyChange: Be, privacyLabels: Ve, disabled: He = !1, readOnly: Ue, references: A, onRemoveReference: Xe, toolbarExtras: Ze, foldedMenu: Qe, foldedMenuLabel: $e, toolbar: et = "full", moreActions: tt, moreActionsLabel: nt = "More actions", processes: rt, mode: it = "chat", onModeChange: at, fixedMode: ot, modePlaceholders: st, hints: ct, onQuickOpen: lt, sendOptions: ut, onSendOption: dt, onShellCommand: j, modeControl: M = "tabs", modeShortcuts: ft = !1, modeTriggers: N, disabledModes: pt, modes: mt, modeUnavailableReasons: ht, modeHints: gt, submitLead: _t, submitLabel: vt, submitDisabledReason: yt, radius: bt, backdropTone: xt = "auto", working: St, maxInputHeight: Ct, layout: wt = "auto", density: Tt = "comfortable", status: P, suggestions: Et, onSuggestion: Dt, suggestionsVisible: Ot = "focused", modeRowEnd: kt, hideModeMenu: At = !1, singleModeLabel: jt = !1, referencesAction: Mt, referencesPlacement: Nt = "end", referenceDrop: Pt, collapseWhenIdle: Ft = !1, responsive: It, expanded: Lt = !1, onIdleFoldChange: Rt, documentMenu: zt, modeRowStart: Bt, header: Vt, sendWithReferencesOnly: Ht = !1, sendShortcut: Ut = "enter", defaultCommand: Wt, presentation: Gt = "card", className: Kt, "data-testid": F = "rich-chat-composer" }, qt) {
+var Va = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCommandPick: te, onSearchPeople: ne, mentionMembers: ve, onMentionNonMember: ye, onSearchDocuments: be, allowAttachments: Ne = !1, allowEmoji: Pe = !1, onRequestLink: Fe, placeholder: Ie = "Write a message…", inputLabel: Le, commands: Re, privacy: ze = "visible", onPrivacyChange: Be, privacyLabels: Ve, disabled: He = !1, readOnly: Ue, references: A, onRemoveReference: Xe, toolbarExtras: Ze, foldedMenu: Qe, foldedMenuLabel: $e, toolbar: et = "full", moreActions: tt, moreActionsLabel: nt = "More actions", processes: rt, mode: it = "chat", onModeChange: at, fixedMode: ot, modePlaceholders: st, hints: ct, onQuickOpen: lt, sendOptions: ut, onSendOption: dt, onShellCommand: j, modeControl: M = "tabs", modeShortcuts: ft = !1, modeTriggers: N, disabledModes: pt, modes: mt, modeUnavailableReasons: ht, modeHints: gt, submitLead: _t, submitLabel: vt, submitDisabledReason: yt, radius: bt, backdropTone: xt = "auto", working: St, maxInputHeight: Ct, layout: wt = "auto", density: Tt = "comfortable", status: P, suggestions: Et, onSuggestion: Dt, suggestionsVisible: Ot = "focused", modeRowEnd: kt, hideModeMenu: At = !1, singleModeLabel: jt = !1, referencesAction: Mt, referencesPlacement: Nt = "end", referenceDrop: Pt, collapseWhenIdle: Ft = !1, responsive: It, expanded: Lt = !1, onIdleFoldChange: Rt, documentMenu: zt, modeRowStart: Bt, header: Vt, sendWithReferencesOnly: Ht = !1, sendShortcut: Ut = "enter", defaultCommand: Wt, presentation: Gt = "card", className: Kt, "data-testid": F = "rich-chat-composer" }, qt) {
 	let Jt = E(() => {}), Yt = E(Ut);
 	Yt.current = Ut;
 	let Xt = E(zt);
@@ -2586,20 +2594,20 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 	}), sn = E(h), cn = E(b);
 	cn.current = b;
 	let [ln, un] = D(() => (h?.files ?? []).map((e) => ({
-		id: `staged-${ja++}`,
+		id: `staged-${Ma++}`,
 		file: e
 	}))), dn = E(ln), fn = E(() => {}), pn = E(!1), mn = E(!0);
 	T(() => (mn.current = !0, () => {
 		mn.current = !1;
 	}), []);
-	let [hn, gn] = D(!1), [_n, vn] = D(!1), yn = Ue != null && Ue !== !1, bn = Ue === !0 ? "Read only" : Ue, I = He || yn || hn, xn = He || yn, [Sn, Cn] = D(!0), wn = Ne && !I, Tn = !!at || !!ot, L = mt?.length ? ga.filter((e) => mt.includes(e)) : ga, R = ot ?? (Tn ? L.includes(it) ? it : L[0] ?? "chat" : "chat"), z = R === "terminal", En = Tn && R !== "chat", Dn = yn ? "" : st?.[R] ?? (R === "chat" ? Ie : xa[R]), On = !!at && !ot, kn = jt && Tn && !ot && L.length === 1, An = E(null), jn = E(!1), [Mn, Nn] = D(null), Pn = (e) => !!pt?.includes(e), Fn = yn && !L.some((e) => e !== R && !Pn(e)), B = yn && !Fn ? { "data-composer-readonly-allow": "Switch to a mode you can use" } : void 0, In = (e) => !On || !L.includes(e) ? !1 : Pn(e) ? (Nn(ht?.[e] ?? `${$[e]} is not available here`), !1) : (Nn(null), e !== R && (jn.current = !0, at?.(e)), !0), Ln = N && On ? {
-		terminal: (typeof N == "object" ? N.terminalPrefix : void 0) ?? va,
-		agent: (typeof N == "object" ? N.agentPrefix : void 0) ?? ya
+	let [hn, gn] = D(!1), [_n, vn] = D(!1), yn = Ue != null && Ue !== !1, bn = Ue === !0 ? "Read only" : Ue, I = He || yn || hn, xn = He || yn, [Sn, Cn] = D(!0), wn = Ne && !I, Tn = !!at || !!ot, L = mt?.length ? _a.filter((e) => mt.includes(e)) : _a, R = ot ?? (Tn ? L.includes(it) ? it : L[0] ?? "chat" : "chat"), z = R === "terminal", En = Tn && R !== "chat", Dn = yn ? "" : st?.[R] ?? (R === "chat" ? Ie : Sa[R]), On = !!at && !ot, kn = jt && Tn && !ot && L.length === 1, An = E(null), jn = E(!1), [Mn, Nn] = D(null), Pn = (e) => !!pt?.includes(e), Fn = yn && !L.some((e) => e !== R && !Pn(e)), B = yn && !Fn ? { "data-composer-readonly-allow": "Switch to a mode you can use" } : void 0, In = (e) => !On || !L.includes(e) ? !1 : Pn(e) ? (Nn(ht?.[e] ?? `${$[e]} is not available here`), !1) : (Nn(null), e !== R && (jn.current = !0, at?.(e)), !0), Ln = N && On ? {
+		terminal: (typeof N == "object" ? N.terminalPrefix : void 0) ?? ya,
+		agent: (typeof N == "object" ? N.agentPrefix : void 0) ?? ba
 	} : null, Rn = E(() => !1);
 	Rn.current = (e) => {
 		if (!Ln) return Mn && Nn(null), !1;
 		let t = e.getText(), n = null;
-		return R !== "terminal" && L.includes("terminal") && ba(t, Ln.terminal) ? n = "terminal" : R !== "agent" && L.includes("agent") && ba(t, Ln.agent) && (n = "agent"), n ? In(n) ? (e.commands.clearContent(!0), !0) : !1 : (Mn && Nn(null), !1);
+		return R !== "terminal" && L.includes("terminal") && xa(t, Ln.terminal) ? n = "terminal" : R !== "agent" && L.includes("agent") && xa(t, Ln.agent) && (n = "agent"), n ? In(n) ? (e.commands.clearContent(!0), !0) : !1 : (Mn && Nn(null), !1);
 	};
 	let zn = E(Dn);
 	zn.current = Dn;
@@ -2625,7 +2633,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 		e.description ?? "",
 		+!!e.disabled,
 		+!!e.argument
-	].join("")).join("\0"), [Zn, Qn] = D(!0), [$n, er] = D(null), [tr, nr] = D(!1), rr = (e) => Jn.current && !!Na(e.state.doc, Bn.current, H.current);
+	].join("")).join("\0"), [Zn, Qn] = D(!0), [$n, er] = D(null), [tr, nr] = D(!1), rr = (e) => Jn.current && !!Pa(e.state.doc, Bn.current, H.current);
 	T(() => {
 		let e = ir.current;
 		if (!e || e.isDestroyed) return;
@@ -2661,7 +2669,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 							e.chain().focus().deleteRange(t).insertContent(n.emoji).run();
 						},
 						render: () => {
-							let e = wa(), t = Ra(e, (e) => new Oe(oa, {
+							let e = Ta(), t = za(e, (e) => new Oe(oa, {
 								props: e,
 								editor: e.editor
 							}));
@@ -2686,7 +2694,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 				priority: 101,
 				addProseMirrorPlugins() {
 					return [$i({
-						pluginKey: Ia,
+						pluginKey: La,
 						editor: this.editor,
 						char: "/",
 						allow: ({ state: e, range: t }) => e.doc.textBetween(0, t.from, "\n", "\0").trim() === "",
@@ -2709,7 +2717,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 							}
 							e.chain().focus().deleteRange(t).insertContent(`${n.id} `).run();
 						},
-						render: () => za("Commands", !1, () => !qn.current)
+						render: () => Ba("Commands", !1, () => !qn.current)
 					})];
 				}
 			}),
@@ -2718,7 +2726,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 				priority: 101,
 				addProseMirrorPlugins() {
 					return [$i({
-						pluginKey: La,
+						pluginKey: Ra,
 						editor: this.editor,
 						debounce: 120,
 						findSuggestionMatch: ({ $position: e }) => {
@@ -2756,18 +2764,18 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 								item: i
 							}, e.chain().focus().deleteRange(t).insertContent(`${i.label} `).run();
 						},
-						render: () => za("Arguments", !0)
+						render: () => Ba("Arguments", !0)
 					})];
 				}
 			}),
 			Me.create({
 				name: "commandPrefixHidden",
 				addProseMirrorPlugins() {
-					let e = (e) => Jn.current ? Na(e, Bn.current, H.current) : null;
+					let e = (e) => Jn.current ? Pa(e, Bn.current, H.current) : null;
 					return [new We({
-						key: Pa,
+						key: Fa,
 						appendTransaction: (t, n, r) => {
-							if (!t.some((e) => e.docChanged || e.selectionSet || e.getMeta(Pa))) return null;
+							if (!t.some((e) => e.docChanged || e.selectionSet || e.getMeta(Fa))) return null;
 							let i = e(r.doc), a = r.selection;
 							return !i || !a.empty || a.from >= i.caret ? null : r.tr.setSelection(Ke.create(r.doc, i.caret));
 						},
@@ -2824,12 +2832,12 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 					})) : t;
 				},
 				render: () => {
-					let e = wa(), t = (t) => ({
+					let e = Ta(), t = (t) => ({
 						...t,
 						onPickNonMember: (n) => {
 							e.detach(), t.editor.chain().focus().deleteRange(t.range).run(), Hn.current?.(n);
 						}
-					}), n = Ra(e, (e) => new Oe(ia, {
+					}), n = za(e, (e) => new Oe(ia, {
 						props: t(e),
 						editor: e.editor
 					}));
@@ -2862,7 +2870,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 					}
 				} : e;
 			};
-			e.push(ka.configure({
+			e.push(Aa.configure({
 				HTMLAttributes: { class: "docref" },
 				renderText: ({ node: e }) => `#${e.attrs.label ?? e.attrs.id}`,
 				renderHTML: ({ options: e, node: t }) => [
@@ -2872,11 +2880,11 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 				],
 				suggestion: {
 					char: "#",
-					pluginKey: Aa,
-					allow: Oa,
+					pluginKey: ja,
+					allow: ka,
 					items: ({ query: e }) => Wn.current?.(e) ?? [],
 					render: () => {
-						let e = wa(), n = Ra(e, (e) => new Oe(aa, {
+						let e = Ta(), n = za(e, (e) => new Oe(aa, {
 							props: t(e),
 							editor: e.editor
 						}));
@@ -2920,7 +2928,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 			if (Rn.current(e)) return;
 			Cn(e.isEmpty), ir.current = e;
 			let t = e.getText(), n = pe(t, Bn.current);
-			Yn((e) => e?.trigger === n?.trigger ? e : n), Qn(!n || _e(t, n).trim() === ""), H.current && H.current.trigger !== n?.trigger && (H.current = null), er(Fa(H.current, n, t)), nr(rr(e)), fn.current(e);
+			Yn((e) => e?.trigger === n?.trigger ? e : n), Qn(!n || _e(t, n).trim() === ""), H.current && H.current.trigger !== n?.trigger && (H.current = null), er(Ia(H.current, n, t)), nr(rr(e)), fn.current(e);
 		},
 		editorProps: { attributes: or }
 	}, [ar]);
@@ -2992,7 +3000,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 		a.revisions.set(i, o), a.recentHtml.push({
 			html: i.html,
 			revision: o
-		}), a.recentHtml.length > Ma && a.recentHtml.shift(), cn.current?.(i, t);
+		}), a.recentHtml.length > Na && a.recentHtml.shift(), cn.current?.(i, t);
 	};
 	let wr = (e) => {
 		dn.current = e, un(e), W && !W.isDestroyed && fn.current(W);
@@ -3024,9 +3032,9 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 				item: h.command.argument
 			} : null;
 			let e = h?.html ?? "";
-			e === (W.isEmpty ? "" : W.getHTML()) ? W.view.dispatch(W.state.tr.setMeta(Pa, !0)) : W.commands.setContent(e, { emitUpdate: !1 });
+			e === (W.isEmpty ? "" : W.getHTML()) ? W.view.dispatch(W.state.tr.setMeta(Fa, !0)) : W.commands.setContent(e, { emitUpdate: !1 });
 			let t = (h?.files ?? []).map((e) => ({
-				id: `staged-${ja++}`,
+				id: `staged-${Ma++}`,
 				file: e
 			}));
 			t.length === dn.current.length && t.every((e, t) => e.file === dn.current[t].file) || (dn.current = t, un(t));
@@ -3035,7 +3043,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 		let t = W.getText();
 		Cn(W.isEmpty);
 		let n = pe(t, Bn.current);
-		H.current && H.current.trigger !== n?.trigger && (H.current = null), Yn(n), Qn(!n || _e(t, n).trim() === ""), er(Fa(H.current, n, t)), nr(rr(W));
+		H.current && H.current.trigger !== n?.trigger && (H.current = null), Yn(n), Qn(!n || _e(t, n).trim() === ""), er(Ia(H.current, n, t)), nr(rr(W));
 	}, [
 		W,
 		h,
@@ -3063,10 +3071,10 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 		if (!W || !xr || z || pn.current) return;
 		let e = W.getText(), t = R === "agent" && !ot && e.trim() && !/^\s*\/agent\b/i.test(e) ? `/agent ${e.trim()}` : e, n = pe(t, Bn.current), r = H.current, i;
 		n && (i = { trigger: n.trigger }, r && r.trigger === n.trigger && _e(t, n).includes(r.item.label) && (i.argument = r.item));
-		let a = Da(W), o = {
+		let a = Oa(W), o = {
 			html: W.isEmpty ? "" : W.getHTML(),
 			text: t,
-			mentions: Ea(W),
+			mentions: Da(W),
 			privacy: ze,
 			files: ln.map((e) => e.file),
 			...a.length > 0 ? { documents: a } : {},
@@ -3137,18 +3145,18 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 	}), [W]);
 	let Mr = xe((e) => {
 		!wn || e.length === 0 || wr([...dn.current, ...e.map((e) => ({
-			id: `staged-${ja++}`,
+			id: `staged-${Ma++}`,
 			file: e
 		}))]);
-	}, [wn, W]), [Nr, Pr] = D(null), Fr = E(null), Ir = E({}), Lr = E(pa(null)), Rr = xe((e) => {
+	}, [wn, W]), [Nr, Pr] = D(null), Fr = E(null), Ir = E({}), Lr = E(ma(null)), Rr = xe((e) => {
 		if (!(e > 0)) {
 			Ir.current = {}, Pr(null);
 			return;
 		}
 		let t = Lr.current, n = Ir.current[t];
 		n !== void 0 && n !== e && (Ir.current = {}), Ir.current[t] = e;
-		let r = pa(e), i = Ir.current[r];
-		(r === t || n !== e || i === void 0 || pa(i) === r) && Pr(e);
+		let r = ma(e), i = Ir.current[r];
+		(r === t || n !== e || i === void 0 || ma(i) === r) && Pr(e);
 	}, []), zr = E(null), [Br, Vr] = D(!1), [Hr, Ur] = D(0), Wr = (e) => !!Pt && !!e && Array.from(e.types ?? []).some((e) => Pt.types.includes(e)), [G, Gr] = D(!1), Kr = E(null);
 	T(() => () => {
 		Kr.current !== null && clearTimeout(Kr.current);
@@ -3163,7 +3171,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 		if (!e) return;
 		let t = e.getBoundingClientRect().width;
 		t > 0 && t !== Nr && Rr(t), Br && Kr.current === null && typeof document < "u" && (!document.activeElement || document.activeElement === document.body) && (Vr(!1), Gr(!1));
-	}), Lr.current = pa(Nr);
+	}), Lr.current = ma(Nr);
 	let Yr = wt === "auto" ? Lr.current : wt, K = Yr === "wide", Xr = Yr === "narrow", q = It === "pane" && !K, Zr = Tt === "compact", Qr = Tn && !ot && (M === "compact" || M === "menu" || Xr), J = Qr && M === "menu" && !Xr && !q, Y = J && (et === "editor" || et === "prompt" || et === "prompt-card" || et === "basic"), $r = Y && et === "prompt-card", X = Gt === "prompt", ei = Y && (et === "basic" || et === "prompt" && !X), ti = Y ? "inline-flex items-center gap-1 px-2.5 py-1 text-xs" : J ? "px-3 py-1.5 text-sm" : "px-2.5 py-1 text-xs", ni = X ? /* @__PURE__ */ O(Ee, { children: yr }) : /* @__PURE__ */ k(Ee, { children: [
 		ei && /* @__PURE__ */ O(v, {
 			size: 12,
@@ -3180,7 +3188,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 		})
 	] });
 	Jn.current = J, T(() => {
-		!W || W.isDestroyed || (W.view.dispatch(W.state.tr.setMeta(Pa, !0)), nr(rr(W)));
+		!W || W.isDestroyed || (W.view.dispatch(W.state.tr.setMeta(Fa, !0)), nr(rr(W)));
 	}, [
 		W,
 		J,
@@ -3201,7 +3209,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 			...e.onSelect ? { onSelect: e.onSelect } : {}
 		}))
 	}] : []] : [], Li = ie(zr, xt, En), Ri = ae(), zi = En && Li !== "none" && !(Z && !Ri?.painting), Bi = zi && !!Ri?.painting, Vi = zi && !Bi, Hi = St ?? Ri?.working ?? !1, Ui = {};
-	bt && (Ui["--composer-radius"] = ma[bt]), Ct !== void 0 && (Ui["--composer-input-max"] = typeof Ct == "number" ? `${Ct}px` : Ct);
+	bt && (Ui["--composer-radius"] = ha[bt]), Ct !== void 0 && (Ui["--composer-input-max"] = typeof Ct == "number" ? `${Ct}px` : Ct);
 	let Wi = Hi ? 30 : 22, Gi = (t, n, r, i, a, o) => /* @__PURE__ */ O("button", {
 		"data-ui-part": "",
 		ref: a,
@@ -3363,7 +3371,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 							}),
 							/* @__PURE__ */ O("span", {
 								"aria-hidden": "true",
-								className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", Ca[t.tone])
+								className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", wa[t.tone])
 							}),
 							/* @__PURE__ */ O("span", {
 								className: "min-w-0 truncate",
@@ -3380,7 +3388,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 					children: [
 						/* @__PURE__ */ O("span", {
 							"aria-hidden": "true",
-							className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", Sa[P.tone ?? "info"])
+							className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", Ca[P.tone ?? "info"])
 						}),
 						/* @__PURE__ */ O("span", {
 							className: "min-w-0 flex-1 truncate",
@@ -3424,7 +3432,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 							children: [!ei && /* @__PURE__ */ O("span", {
 								"aria-hidden": "true",
 								className: e("flex justify-center text-primary", Y ? "w-5" : "w-4"),
-								children: Y && R === "agent" ? /* @__PURE__ */ O(S, { size: 18 }) : _a[R]
+								children: Y && R === "agent" ? /* @__PURE__ */ O(S, { size: 18 }) : va[R]
 							}), /* @__PURE__ */ O("span", {
 								"data-testid": `${F}-mode-label`,
 								children: $[R]
@@ -3440,7 +3448,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 										!ei && /* @__PURE__ */ O("span", {
 											"aria-hidden": "true",
 											className: e("flex justify-center text-primary", Y ? "w-5" : "w-4"),
-											children: Y && R === "agent" ? /* @__PURE__ */ O(S, { size: 18 }) : _a[R]
+											children: Y && R === "agent" ? /* @__PURE__ */ O(S, { size: 18 }) : va[R]
 										}),
 										$[R],
 										Y ? /* @__PURE__ */ O(_, {
@@ -3466,7 +3474,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 									let n = Pn(e) ? ht?.[e] : void 0;
 									return {
 										label: $[e],
-										icon: Y && e === "agent" ? /* @__PURE__ */ O(S, { size: 13 }) : _a[e],
+										icon: Y && e === "agent" ? /* @__PURE__ */ O(S, { size: 13 }) : va[e],
 										active: e === R,
 										...n ? { description: n } : {},
 										...ft ? { trailing: /* @__PURE__ */ k("kbd", {
@@ -3490,7 +3498,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 							children: [/* @__PURE__ */ O("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center text-text-secondary",
-								children: _a[R]
+								children: va[R]
 							}), $[R]]
 						}),
 						!J && !kn && !X && /* @__PURE__ */ O("span", {
@@ -3651,7 +3659,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 							children: [/* @__PURE__ */ O("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center",
-								children: _a[R]
+								children: va[R]
 							}), $[R]]
 						}),
 						Z && !mi && Tn && !ot && !kn && !X && /* @__PURE__ */ k("button", {
@@ -3664,7 +3672,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 							children: [/* @__PURE__ */ O("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center",
-								children: _a[R]
+								children: va[R]
 							}), $[R]]
 						}),
 						mi && (hi || !!A?.length) && /* @__PURE__ */ k("span", {
@@ -3679,7 +3687,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 									children: [/* @__PURE__ */ O("span", {
 										"aria-hidden": "true",
 										className: "flex w-3.5 justify-center",
-										children: _a[R]
+										children: va[R]
 									}), $[R]]
 								}),
 								triggerLabel: `Composer mode: ${$[R]}`,
@@ -3694,7 +3702,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 									let t = Pn(e) ? ht?.[e] : void 0;
 									return {
 										label: $[e],
-										icon: _a[e],
+										icon: va[e],
 										active: e === R,
 										...t ? { description: t } : {},
 										onSelect: () => {
@@ -3717,10 +3725,10 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 								children: [/* @__PURE__ */ O("span", {
 									"aria-hidden": "true",
 									className: "flex w-3.5 justify-center",
-									children: _a[R]
+									children: va[R]
 								}), $[R]]
 							})), !!A?.length && !(pi && hi) && (() => {
-								let e = A[0].label, t = e.length > 18 ? e.slice(-12) : "";
+								let e = A[0].label, t = fa(e);
 								return /* @__PURE__ */ k(Ee, { children: [
 									hi && /* @__PURE__ */ O("span", {
 										"aria-hidden": "true",
@@ -3731,8 +3739,8 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 										className: "flex min-w-0 items-center",
 										"data-testid": `${F}-context-label`,
 										children: [/* @__PURE__ */ O("span", {
-											className: "min-w-0 truncate",
-											children: t ? e.slice(0, -12) : e
+											className: "min-w-[1.75em] truncate",
+											children: t ? e.slice(0, -t.length) : e
 										}), t && /* @__PURE__ */ O("span", {
 											className: "shrink-0",
 											children: t
@@ -4066,7 +4074,7 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 										})] }),
 										Be && (() => {
 											let e = {
-												...ha,
+												...ga,
 												...Ve
 											}, t = ze === "hidden";
 											return Gi(t ? e.hidden : e.visible, t, () => Be(t ? "visible" : "hidden"), O(t ? a : o, { size: 16 }), void 0, `${F}-privacy-toggle`);
@@ -4287,4 +4295,4 @@ var Ba = be(function({ onSend: s, draft: h, onDraftChange: b, onCommand: w, onCo
 	});
 });
 //#endregion
-export { ba as a, oa as c, ra as d, pa as i, aa as l, ga as n, da as o, Ba as r, ua as s, fa as t, ia as u };
+export { xa as a, oa as c, ra as d, ma as i, aa as l, _a as n, da as o, Va as r, ua as s, pa as t, ia as u };
