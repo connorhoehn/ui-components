@@ -220,14 +220,14 @@ function changeSummary(changes: Transaction['changes']): { from: number; inserte
  * `EditorView` and `LanguageSupport` are re-exported as types from this subpath.
  *
  * ```tsx
- * import { CodePad, type Extension } from '@connorhoehn/ui-components/code-pad';
+ * // CodePad and the Extension type come from this package's code-pad subpath.
  * import { StreamLanguage } from '@codemirror/language';
  * import { rust } from '@codemirror/legacy-modes/mode/rust';
- * import { autocompletion } from '@codemirror/autocomplete';
+ * import { EditorView } from '@codemirror/view';
  *
  * const rustLanguage = StreamLanguage.define(rust);
  * const languages = { rust: () => rustLanguage };
- * const extensions: Extension[] = [autocompletion()];
+ * const extensions: Extension[] = [EditorView.lineWrapping];
  *
  * <CodePad ydoc={doc} provider={provider} language="rust" languages={languages} extensions={extensions} />
  * ```

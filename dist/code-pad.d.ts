@@ -1,6 +1,8 @@
 import { Awareness } from 'y-protocols/awareness';
 import { EditorView } from '@codemirror/view';
+import { Extension } from '@codemirror/state';
 import { JSX } from 'react';
+import { LanguageSupport } from '@codemirror/language';
 import { Ref } from 'react';
 import * as Y from 'yjs';
 
@@ -11,13 +13,32 @@ export declare const CODE_PAD_LANGUAGES: ReadonlyArray<{
 }>;
 
 /**
- * A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`.
+ * A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`; extendable with app CodeMirror `extensions`, extra `languages` and the view on its ref.
  *
  * Import from `@connorhoehn/ui-components/code-pad`. Needs the optional peers
  * `@codemirror/{state,view,commands,language,lang-python,lang-javascript,lang-java,lang-go,lang-cpp,legacy-modes}`,
  * `@lezer/highlight` and `y-codemirror.next`, beside `yjs` (and `y-protocols` for awareness).
+ *
+ * Extending it: pass `extensions` (any CodeMirror `Extension`, after the pad's
+ * own, reconfigured in place when the list changes), register more languages
+ * by name in `languages` and select one with `language`, and reach the live
+ * `EditorView` through `ref.current.view` for anything else. `Extension`,
+ * `EditorView` and `LanguageSupport` are re-exported as types from this subpath.
+ *
+ * ```tsx
+ * // CodePad and the Extension type come from this package's code-pad subpath.
+ * import { StreamLanguage } from '@codemirror/language';
+ * import { rust } from '@codemirror/legacy-modes/mode/rust';
+ * import { EditorView } from '@codemirror/view';
+ *
+ * const rustLanguage = StreamLanguage.define(rust);
+ * const languages = { rust: () => rustLanguage };
+ * const extensions: Extension[] = [EditorView.lineWrapping];
+ *
+ * <CodePad ydoc={doc} provider={provider} language="rust" languages={languages} extensions={extensions} />
+ * ```
  */
-export declare function CodePad({ ydoc, ytext, textName, provider, user, defaultValue, value, onChange, language, readOnly, placeholder, 'aria-label': ariaLabel, onPaste, onLocalEdit, variant, autoFocus, className, ref, }: CodePadProps): JSX.Element;
+export declare function CodePad({ ydoc, ytext, textName, provider, user, defaultValue, value, onChange, language, languages, extensions, readOnly, placeholder, 'aria-label': ariaLabel, onPaste, onLocalEdit, variant, autoFocus, className, ref, }: CodePadProps): JSX.Element;
 
 /** One change made by this person (never a remote one). */
 export declare interface CodePadEdit {
@@ -39,7 +60,12 @@ export declare type CodePadEditKind = 'type' | 'paste' | 'drop' | 'delete' | 'un
 
 /** Imperative access, through `ref`. */
 export declare interface CodePadHandle {
-    /** The CodeMirror view, or null before mount and after unmount. */
+    /**
+     * The CodeMirror view, or null before mount and after unmount. An escape
+     * hatch for what the props do not cover (dispatching effects, reading the
+     * state, measuring): prefer `extensions` for behaviour that should last, and
+     * do not `destroy()` it or replace its state, which the pad owns.
+     */
     readonly view: EditorView | null;
     /** The current text. */
     getText(): string;
@@ -54,6 +80,14 @@ export declare interface CodePadHandle {
 
 /** A language the pad can highlight. */
 export declare type CodePadLanguage = 'python' | 'swift' | 'javascript' | 'typescript' | 'java' | 'go' | 'cpp';
+
+/**
+ * Builds the CodeMirror support for one extra language: a `LanguageSupport`
+ * (`python()`, `rust()`, ...) or a `StreamLanguage` from a legacy mode. It is
+ * called each time the pad switches to that language, so a `StreamLanguage`
+ * should be defined once (at module scope) and returned, not defined inside.
+ */
+export declare type CodePadLanguageLoader = () => Extension;
 
 /** A paste (or a drop of text from outside the pad) by this person. */
 export declare interface CodePadPaste {
@@ -86,8 +120,28 @@ export declare interface CodePadProps {
     value?: string;
     /** Every change to the text, local or remote, with the whole text. */
     onChange?: (text: string) => void;
-    /** Syntax mode; switching keeps the text. Default `'python'`. */
-    language?: CodePadLanguage;
+    /**
+     * Syntax mode; switching keeps the text. Default `'python'`. Any built-in
+     * `CodePadLanguage`, or a name registered in `languages`; a name with neither
+     * shows plain text.
+     */
+    language?: CodePadLanguage | (string & {});
+    /**
+     * Extra languages, by name, merged over the built-in ones (a loader named
+     * like a built-in replaces it). Keep the object stable (module scope or
+     * `useMemo`): the pad re-runs the current language's loader when it changes.
+     */
+    languages?: Readonly<Record<string, CodePadLanguageLoader>>;
+    /**
+     * Further CodeMirror extensions (keymaps, linters, autocompletion, gutters,
+     * theme tweaks), added after the pad's own, so on equal precedence the pad's
+     * keymap runs first; wrap one in `Prec.high` to go ahead of it. Changing the
+     * list reconfigures the live editor in place: the text, the shared-document
+     * binding, the carets and the undo history stay. A new array with the same
+     * items does nothing, but keep the items themselves stable (module scope or
+     * `useMemo`), since a new item is a new extension.
+     */
+    extensions?: readonly Extension[];
     /** Shows the text (and other people's changes) but refuses typing, pasting and deleting. */
     readOnly?: boolean;
     /** Shown while the pad is empty. */
@@ -120,8 +174,14 @@ export declare interface CodePadUser {
     colorLight?: string;
 }
 
+export { EditorView }
+
+export { Extension }
+
 /** True when `value` names a language the pad supports. */
 export declare function isCodePadLanguage(value: unknown): value is CodePadLanguage;
+
+export { LanguageSupport }
 
 export { }
 

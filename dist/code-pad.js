@@ -3,19 +3,19 @@ import { useEffect as t, useImperativeHandle as n, useRef as r } from "react";
 import { jsx as i } from "react/jsx-runtime";
 import * as a from "yjs";
 import { Annotation as o, Compartment as s, EditorState as c } from "@codemirror/state";
-import { EditorView as l, drawSelection as ee, highlightActiveLine as te, highlightActiveLineGutter as u, keymap as d, lineNumbers as f, placeholder as p } from "@codemirror/view";
-import { defaultKeymap as m, history as h, historyKeymap as g, indentWithTab as _ } from "@codemirror/commands";
-import { HighlightStyle as v, StreamLanguage as y, bracketMatching as b, indentOnInput as x, syntaxHighlighting as S } from "@codemirror/language";
-import { yCollab as C, ySyncAnnotation as w } from "y-codemirror.next";
-import { python as T } from "@codemirror/lang-python";
-import { javascript as E } from "@codemirror/lang-javascript";
-import { java as D } from "@codemirror/lang-java";
-import { go as O } from "@codemirror/lang-go";
-import { cpp as k } from "@codemirror/lang-cpp";
-import { swift as A } from "@codemirror/legacy-modes/mode/swift";
-import { tags as j } from "@lezer/highlight";
+import { EditorView as l, drawSelection as ee, highlightActiveLine as te, highlightActiveLineGutter as ne, keymap as u, lineNumbers as d, placeholder as f } from "@codemirror/view";
+import { defaultKeymap as re, history as p, historyKeymap as m, indentWithTab as ie } from "@codemirror/commands";
+import { HighlightStyle as h, StreamLanguage as g, bracketMatching as _, indentOnInput as v, syntaxHighlighting as y } from "@codemirror/language";
+import { yCollab as ae, ySyncAnnotation as oe } from "y-codemirror.next";
+import { python as b } from "@codemirror/lang-python";
+import { javascript as x } from "@codemirror/lang-javascript";
+import { java as S } from "@codemirror/lang-java";
+import { go as C } from "@codemirror/lang-go";
+import { cpp as w } from "@codemirror/lang-cpp";
+import { swift as T } from "@codemirror/legacy-modes/mode/swift";
+import { tags as E } from "@lezer/highlight";
 //#region src/components/code-pad/languages.ts
-var M = [
+var D = [
 	{
 		value: "python",
 		label: "Python"
@@ -45,25 +45,27 @@ var M = [
 		label: "Swift"
 	}
 ];
-function N(e) {
-	return typeof e == "string" && M.some((t) => t.value === e);
+function O(e) {
+	return typeof e == "string" && D.some((t) => t.value === e);
 }
-var P = null;
-function F(e) {
+var k = null;
+function A(e, t) {
+	let n = t && Object.prototype.hasOwnProperty.call(t, e) ? t[e] : void 0;
+	if (n) return n();
 	switch (e) {
-		case "python": return T();
-		case "javascript": return E();
-		case "typescript": return E({ typescript: !0 });
-		case "java": return D();
-		case "go": return O();
-		case "cpp": return k();
-		case "swift": return P ??= y.define(A), P;
+		case "python": return b();
+		case "javascript": return x();
+		case "typescript": return x({ typescript: !0 });
+		case "java": return S();
+		case "go": return C();
+		case "cpp": return w();
+		case "swift": return k ??= g.define(T), k;
 		default: return [];
 	}
 }
 //#endregion
 //#region src/components/code-pad/theme.ts
-var I = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)", L = "var(--font-sans, system-ui, sans-serif)", R = "color-mix(in srgb, var(--color-primary) 22%, transparent)", z = "color-mix(in srgb, var(--color-primary) 5%, transparent)", B = l.theme({
+var j = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)", M = "var(--font-sans, system-ui, sans-serif)", N = "color-mix(in srgb, var(--color-primary) 22%, transparent)", P = "color-mix(in srgb, var(--color-primary) 5%, transparent)", F = l.theme({
 	"&": {
 		height: "100%",
 		color: "var(--color-text-primary)",
@@ -71,7 +73,7 @@ var I = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospa
 	},
 	"&.cm-focused": { outline: "none" },
 	".cm-scroller": {
-		fontFamily: I,
+		fontFamily: j,
 		lineHeight: "1.6"
 	},
 	".cm-content": {
@@ -79,15 +81,15 @@ var I = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospa
 		paddingBlock: "8px"
 	},
 	".cm-cursor, .cm-dropCursor": { borderLeftColor: "var(--color-text-primary)" },
-	"&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection": { backgroundColor: R },
-	".cm-activeLine": { backgroundColor: z },
+	"&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection": { backgroundColor: N },
+	".cm-activeLine": { backgroundColor: P },
 	".cm-gutters": {
 		backgroundColor: "var(--color-surface-panel)",
 		color: "var(--color-text-tertiary)",
 		borderRight: "1px solid var(--color-border)"
 	},
 	".cm-activeLineGutter": {
-		backgroundColor: z,
+		backgroundColor: P,
 		color: "var(--color-text-secondary)"
 	},
 	".cm-lineNumbers .cm-gutterElement": { paddingInline: "8px 10px" },
@@ -98,7 +100,7 @@ var I = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospa
 	"&.cm-focused .cm-nonmatchingBracket": { backgroundColor: "color-mix(in srgb, var(--color-danger) 18%, transparent)" },
 	".cm-placeholder": { color: "var(--color-text-tertiary)" },
 	".cm-ySelectionInfo": {
-		fontFamily: L,
+		fontFamily: M,
 		fontSize: "10px",
 		fontWeight: "600",
 		lineHeight: "1.4",
@@ -109,109 +111,109 @@ var I = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospa
 		opacity: "0.85"
 	},
 	".cm-ySelectionCaret:hover > .cm-ySelectionInfo": { opacity: "1" }
-}), V = v.define([
+}), I = h.define([
 	{
 		tag: [
-			j.keyword,
-			j.controlKeyword,
-			j.moduleKeyword,
-			j.operatorKeyword,
-			j.definitionKeyword,
-			j.modifier
+			E.keyword,
+			E.controlKeyword,
+			E.moduleKeyword,
+			E.operatorKeyword,
+			E.definitionKeyword,
+			E.modifier
 		],
 		color: "var(--color-accent-fg)"
 	},
 	{
 		tag: [
-			j.string,
-			j.special(j.string),
-			j.regexp,
-			j.character
+			E.string,
+			E.special(E.string),
+			E.regexp,
+			E.character
 		],
 		color: "var(--color-success-fg)"
 	},
 	{
 		tag: [
-			j.number,
-			j.bool,
-			j.null,
-			j.atom,
-			j.unit
+			E.number,
+			E.bool,
+			E.null,
+			E.atom,
+			E.unit
 		],
 		color: "var(--color-warning-fg)"
 	},
 	{
 		tag: [
-			j.comment,
-			j.lineComment,
-			j.blockComment,
-			j.docComment
+			E.comment,
+			E.lineComment,
+			E.blockComment,
+			E.docComment
 		],
 		color: "var(--color-text-tertiary)",
 		fontStyle: "italic"
 	},
 	{
 		tag: [
-			j.function(j.variableName),
-			j.function(j.propertyName),
-			j.definition(j.function(j.variableName))
+			E.function(E.variableName),
+			E.function(E.propertyName),
+			E.definition(E.function(E.variableName))
 		],
 		color: "var(--color-info-fg)"
 	},
 	{
 		tag: [
-			j.typeName,
-			j.className,
-			j.namespace,
-			j.definition(j.typeName)
+			E.typeName,
+			E.className,
+			E.namespace,
+			E.definition(E.typeName)
 		],
 		color: "var(--color-primary-fg)"
 	},
 	{
 		tag: [
-			j.meta,
-			j.annotation,
-			j.processingInstruction
+			E.meta,
+			E.annotation,
+			E.processingInstruction
 		],
 		color: "var(--color-warning-fg)"
 	},
 	{
 		tag: [
-			j.operator,
-			j.punctuation,
-			j.separator,
-			j.bracket
+			E.operator,
+			E.punctuation,
+			E.separator,
+			E.bracket
 		],
 		color: "var(--color-text-secondary)"
 	},
 	{
-		tag: [j.propertyName, j.attributeName],
+		tag: [E.propertyName, E.attributeName],
 		color: "var(--color-text-primary)"
 	},
 	{
-		tag: j.invalid,
+		tag: E.invalid,
 		color: "var(--color-danger-fg)"
 	},
 	{
-		tag: j.strong,
+		tag: E.strong,
 		fontWeight: "600"
 	},
 	{
-		tag: j.emphasis,
+		tag: E.emphasis,
 		fontStyle: "italic"
 	}
-]), H = S(V), U = o.define(), W = o.define();
-function G(e) {
-	return e.annotation(W) ? "insert" : e.isUserEvent("input.paste") ? "paste" : e.isUserEvent("input.drop") ? "drop" : e.isUserEvent("input") ? "type" : e.isUserEvent("delete") ? "delete" : e.isUserEvent("undo") ? "undo" : e.isUserEvent("redo") ? "redo" : e.isUserEvent("move") ? "move" : "other";
+]), L = y(I), R = o.define(), z = o.define();
+function B(e) {
+	return e.annotation(z) ? "insert" : e.isUserEvent("input.paste") ? "paste" : e.isUserEvent("input.drop") ? "drop" : e.isUserEvent("input") ? "type" : e.isUserEvent("delete") ? "delete" : e.isUserEvent("undo") ? "undo" : e.isUserEvent("redo") ? "redo" : e.isUserEvent("move") ? "move" : "other";
 }
-var K = [
+var V = [
 	"input",
 	"delete",
 	"undo",
 	"redo",
 	"move"
-], q = c.changeFilter.of((e) => !(e.startState.readOnly && K.some((t) => e.isUserEvent(t))));
-function J(e) {
+], H = c.changeFilter.of((e) => !(e.startState.readOnly && V.some((t) => e.isUserEvent(t))));
+function U(e) {
 	return e ? [
 		c.readOnly.of(!0),
 		l.editable.of(!1),
@@ -221,10 +223,10 @@ function J(e) {
 		})
 	] : [];
 }
-function Y(e) {
-	return e ? p(e) : [];
+function W(e) {
+	return e ? f(e) : [];
 }
-function X(e) {
+function G(e) {
 	let t = Infinity, n = 0, r = 0, i = 0;
 	return e.iterChanges((e, a, o, s, c) => {
 		t = Math.min(t, e), n += c.length, r += a - e, i += c.length > 0 ? c.lines : 0;
@@ -235,50 +237,55 @@ function X(e) {
 		lines: i
 	};
 }
-function Z({ ydoc: o, ytext: p, textName: v = "code", provider: y = null, user: S, defaultValue: T = "", value: E, onChange: D, language: O = "python", readOnly: k = !1, placeholder: A, "aria-label": j = "Code", onPaste: M, onLocalEdit: N, variant: P = "framed", autoFocus: I = !1, className: L, ref: R }) {
-	let z = r(null), V = r(null), K = r({
+function K({ ydoc: o, ytext: f, textName: h = "code", provider: g = null, user: y, defaultValue: b = "", value: x, onChange: S, language: C = "python", languages: w, extensions: T, readOnly: E = !1, placeholder: D, "aria-label": O = "Code", onPaste: k, onLocalEdit: j, variant: M = "framed", autoFocus: N = !1, className: P, ref: I }) {
+	let V = r(null), K = r(null), q = r({
 		language: new s(),
 		readOnly: new s(),
 		placeholder: new s(),
-		label: new s()
-	}), Z = r({
-		onChange: D,
-		onPaste: M,
-		onLocalEdit: N,
-		language: O,
-		readOnly: k,
-		placeholder: A,
-		ariaLabel: j,
-		value: E,
-		defaultValue: T,
-		autoFocus: I
+		label: new s(),
+		extensions: new s()
+	}), J = r({
+		onChange: S,
+		onPaste: k,
+		onLocalEdit: j,
+		language: C,
+		languages: w,
+		extensions: T,
+		readOnly: E,
+		placeholder: D,
+		ariaLabel: O,
+		value: x,
+		defaultValue: b,
+		autoFocus: N
 	});
-	Z.current = {
-		onChange: D,
-		onPaste: M,
-		onLocalEdit: N,
-		language: O,
-		readOnly: k,
-		placeholder: A,
-		ariaLabel: j,
-		value: E,
-		defaultValue: T,
-		autoFocus: I
+	J.current = {
+		onChange: S,
+		onPaste: k,
+		onLocalEdit: j,
+		language: C,
+		languages: w,
+		extensions: T,
+		readOnly: E,
+		placeholder: D,
+		ariaLabel: O,
+		value: x,
+		defaultValue: b,
+		autoFocus: N
 	};
-	let Q = p ?? (o ? o.getText(v) : null), $ = y?.awareness ?? null;
-	return t(() => {
-		let e = z.current;
+	let Y = se(T), X = w && Object.prototype.hasOwnProperty.call(w, C) ? w[C] : void 0, Z = f ?? (o ? o.getText(h) : null), Q = g?.awareness ?? null;
+	t(() => {
+		let e = V.current;
 		if (!e) return;
-		let t = K.current, n = Z.current, r = (e, t, n) => {
-			let { from: r, inserted: i, deleted: a, lines: o } = X(e.changes), s = Date.now();
-			Z.current.onLocalEdit?.({
+		let t = q.current, n = J.current, r = (e, t, n) => {
+			let { from: r, inserted: i, deleted: a, lines: o } = G(e.changes), s = Date.now();
+			J.current.onLocalEdit?.({
 				kind: t,
 				from: r,
 				inserted: i,
 				deleted: a,
 				length: n,
 				at: s
-			}), (t === "paste" || t === "drop") && i > 0 && Z.current.onPaste?.({
+			}), (t === "paste" || t === "drop") && i > 0 && J.current.onPaste?.({
 				characters: i,
 				lines: o,
 				from: r,
@@ -286,104 +293,121 @@ function Z({ ydoc: o, ytext: p, textName: v = "code", provider: y = null, user: 
 				via: t === "paste" ? "paste" : "drop"
 			});
 		}, i = null, o;
-		Q ? (i = new a.UndoManager(Q), o = C(Q, $, { undoManager: i })) : o = [h(), d.of(g)];
+		Z ? (i = new a.UndoManager(Z), o = ae(Z, Q, { undoManager: i })) : o = [p(), u.of(m)];
 		let s = [
-			f(),
-			u(),
+			d(),
+			ne(),
 			te(),
 			ee(),
-			x(),
-			b(),
-			H,
-			B,
-			d.of([...m, _]),
+			v(),
+			_(),
+			L,
+			F,
+			u.of([...re, ie]),
 			o,
-			q,
-			t.language.of(F(n.language)),
-			t.readOnly.of(J(n.readOnly)),
-			t.placeholder.of(Y(n.placeholder)),
+			H,
+			t.language.of(A(n.language, n.languages)),
+			t.readOnly.of(U(n.readOnly)),
+			t.placeholder.of(W(n.placeholder)),
 			t.label.of(l.contentAttributes.of({ "aria-label": n.ariaLabel })),
 			l.updateListener.of((e) => {
 				if (e.docChanged) {
-					for (let t of e.transactions) t.docChanged && t.annotation(w) === void 0 && (t.annotation(U) || r(t, G(t), t.newDoc.length));
-					Z.current.onChange?.(e.state.doc.toString());
+					for (let t of e.transactions) t.docChanged && t.annotation(oe) === void 0 && (t.annotation(R) || r(t, B(t), t.newDoc.length));
+					J.current.onChange?.(e.state.doc.toString());
 				}
-			})
-		], p = Q ? Q.toString() : n.value ?? n.defaultValue, v = new l({
+			}),
+			t.extensions.of(n.extensions ? [...n.extensions] : [])
+		], f = Z ? Z.toString() : n.value ?? n.defaultValue, h = new l({
 			parent: e,
 			state: c.create({
-				doc: p,
+				doc: f,
 				extensions: s
 			})
 		});
-		V.current = v;
-		let y = null;
-		if (Q && i) {
+		K.current = h;
+		let g = null;
+		if (Z && i) {
 			let e = i;
-			y = (t, n) => {
+			g = (t, n) => {
 				if (n.origin !== e) return;
 				let r = 0, i = Infinity, a = 0, o = 0;
 				for (let e of t.delta) e.retain && (r += e.retain), typeof e.insert == "string" && (i = Math.min(i, r), a += e.insert.length, r += e.insert.length), e.delete && (i = Math.min(i, r), o += e.delete);
-				Z.current.onLocalEdit?.({
+				J.current.onLocalEdit?.({
 					kind: e.undoing ? "undo" : "redo",
 					from: Number.isFinite(i) ? i : 0,
 					inserted: a,
 					deleted: o,
-					length: Q.length,
+					length: Z.length,
 					at: Date.now()
 				});
-			}, Q.observe(y);
+			}, Z.observe(g);
 		}
-		return n.autoFocus && v.focus(), () => {
-			y && Q && Q.unobserve(y), v.destroy(), i?.destroy(), V.current === v && (V.current = null);
+		return n.autoFocus && h.focus(), () => {
+			g && Z && Z.unobserve(g), h.destroy(), i?.destroy(), K.current === h && (K.current = null);
 		};
-	}, [Q, $]), t(() => {
-		if (!$ || !S) return;
-		let e = $.getLocalState()?.user ?? {};
-		$.setLocalStateField("user", {
+	}, [Z, Q]), t(() => {
+		if (!Q || !y) return;
+		let e = Q.getLocalState()?.user ?? {};
+		Q.setLocalStateField("user", {
 			...e,
-			name: S.name,
-			color: S.color,
-			colorLight: S.colorLight ?? `color-mix(in srgb, ${S.color} 20%, transparent)`
+			name: y.name,
+			color: y.color,
+			colorLight: y.colorLight ?? `color-mix(in srgb, ${y.color} 20%, transparent)`
 		});
 	}, [
-		$,
-		S?.name,
-		S?.color,
-		S?.colorLight
+		Q,
+		y?.name,
+		y?.color,
+		y?.colorLight
 	]), t(() => {
-		if ($) return () => {
-			$.getLocalState() && $.setLocalStateField("cursor", null);
+		if (Q) return () => {
+			Q.getLocalState() && Q.setLocalStateField("cursor", null);
 		};
-	}, [$]), t(() => {
-		V.current?.dispatch({ effects: K.current.language.reconfigure(F(O)) });
+	}, [Q]);
+	let $ = r({
+		language: C,
+		languageLoader: X,
+		appExtensions: Y
+	});
+	return t(() => {
+		let e = $.current;
+		(e.language !== C || e.languageLoader !== X) && ($.current = {
+			...e,
+			language: C,
+			languageLoader: X
+		}, K.current?.dispatch({ effects: q.current.language.reconfigure(A(C, J.current.languages)) }));
+	}, [C, X]), t(() => {
+		$.current.appExtensions !== Y && ($.current = {
+			...$.current,
+			appExtensions: Y
+		}, K.current?.dispatch({ effects: q.current.extensions.reconfigure(Y ? [...Y] : []) }));
+	}, [Y]), t(() => {
+		K.current?.dispatch({ effects: q.current.readOnly.reconfigure(U(E)) });
+	}, [E]), t(() => {
+		K.current?.dispatch({ effects: q.current.placeholder.reconfigure(W(D)) });
+	}, [D]), t(() => {
+		K.current?.dispatch({ effects: q.current.label.reconfigure(l.contentAttributes.of({ "aria-label": O })) });
 	}, [O]), t(() => {
-		V.current?.dispatch({ effects: K.current.readOnly.reconfigure(J(k)) });
-	}, [k]), t(() => {
-		V.current?.dispatch({ effects: K.current.placeholder.reconfigure(Y(A)) });
-	}, [A]), t(() => {
-		V.current?.dispatch({ effects: K.current.label.reconfigure(l.contentAttributes.of({ "aria-label": j })) });
-	}, [j]), t(() => {
-		let e = V.current;
-		if (Q || E === void 0 || !e) return;
+		let e = K.current;
+		if (Z || x === void 0 || !e) return;
 		let t = e.state.doc.toString();
-		t !== E && e.dispatch({
+		t !== x && e.dispatch({
 			changes: {
 				from: 0,
 				to: t.length,
-				insert: E
+				insert: x
 			},
-			annotations: U.of(!0)
+			annotations: R.of(!0)
 		});
-	}, [E, Q]), n(R, () => ({
+	}, [x, Z]), n(I, () => ({
 		get view() {
-			return V.current;
+			return K.current;
 		},
 		getText() {
-			return V.current?.state.doc.toString() ?? "";
+			return K.current?.state.doc.toString() ?? "";
 		},
 		insertText(e, t = "cursor") {
-			let n = V.current;
+			let n = K.current;
 			if (!n) return;
 			let r = n.state.doc.length, i = typeof t == "number" ? Math.max(0, Math.min(t, r)) : t === "start" ? 0 : t === "end" ? r : n.state.selection.main.head;
 			n.dispatch({
@@ -392,21 +416,25 @@ function Z({ ydoc: o, ytext: p, textName: v = "code", provider: y = null, user: 
 					insert: e
 				},
 				selection: { anchor: i + e.length },
-				annotations: W.of(!0),
+				annotations: z.of(!0),
 				scrollIntoView: !0
 			});
 		},
 		focus() {
-			V.current?.focus();
+			K.current?.focus();
 		}
 	}), []), /* @__PURE__ */ i("div", {
-		ref: z,
+		ref: V,
 		"data-testid": "code-pad",
-		"data-language": O,
-		"data-readonly": k ? "true" : void 0,
-		"data-shared": Q ? "true" : void 0,
-		className: e("relative flex min-h-0 min-w-0 flex-col overflow-hidden bg-surface font-code text-[13px] [&>.cm-editor]:min-h-0 [&>.cm-editor]:flex-1", P === "framed" && "rounded-md border border-solid border-border", L)
+		"data-language": C,
+		"data-readonly": E ? "true" : void 0,
+		"data-shared": Z ? "true" : void 0,
+		className: e("relative flex min-h-0 min-w-0 flex-col overflow-hidden bg-surface font-code text-[13px] [&>.cm-editor]:min-h-0 [&>.cm-editor]:flex-1", M === "framed" && "rounded-md border border-solid border-border", P)
 	});
 }
+function se(e) {
+	let t = r(e), n = t.current;
+	return n === e || n !== void 0 && e !== void 0 && n.length === e.length && n.every((t, n) => t === e[n]) || (t.current = e), t.current;
+}
 //#endregion
-export { M as CODE_PAD_LANGUAGES, Z as CodePad, N as isCodePadLanguage };
+export { D as CODE_PAD_LANGUAGES, K as CodePad, O as isCodePadLanguage };
