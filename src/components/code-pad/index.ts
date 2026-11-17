@@ -14,6 +14,10 @@ export type {
   CodePadEditKind,
   CodePadHandle,
 } from './CodePad';
+// One run's output. Its file imports no CodeMirror, so a page that shows only
+// output does not pull in the editor (a bundler drops CodePad when unused).
+export { CodeRunOutput, codeRunStatusLabel } from './CodeRunOutput';
+export type { CodeRunOutputProps, CodeRunStatus } from './CodeRunOutput';
 export { CODE_PAD_LANGUAGES, isCodePadLanguage } from './languages';
 export type { CodePadLanguage, CodePadLanguageLoader } from './languages';
 // The CodeMirror types an app needs to write `extensions` or `languages` for a
