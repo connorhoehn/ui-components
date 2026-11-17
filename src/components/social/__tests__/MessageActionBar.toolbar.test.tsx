@@ -30,6 +30,11 @@ describe('MessageActionBar — one tab stop', () => {
     expect(screen.getByRole('toolbar')).toHaveAttribute('aria-orientation', 'horizontal');
   });
 
+  it('marks itself as an action bar whatever its test id, so audits can tell it from a collection toolbar', () => {
+    render(<MessageActionBar onReply={vi.fn()} data-testid="gallery-tile-actions-x" />);
+    expect(screen.getByRole('toolbar')).toHaveAttribute('data-toolbar-variant', 'action-bar');
+  });
+
   it('puts exactly one control in the tab order however many there are', () => {
     full();
     const inOrder = buttons().filter((b) => b.getAttribute('tabindex') === '0');

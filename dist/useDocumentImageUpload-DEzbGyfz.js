@@ -7,7 +7,7 @@ import { t as v } from "./Input-DiOEvL5h.js";
 import { t as ee } from "./Select-k38b8PrZ.js";
 import { t as y } from "./InlinePopover-CEzf8hyR.js";
 import { t as b } from "./EmptyState-wSbA9Oka.js";
-import { n as te } from "./RovingToolbar-C8vF753M.js";
+import { n as te } from "./RovingToolbar-eUKIxXK4.js";
 import { t as ne } from "./useMeasuredWidth-vp2hlEPF.js";
 import { a as re, c as ie, d as ae, i as oe, n as se, o as ce, t as le, u as ue } from "./TiptapEditor-Blmu8WT6.js";
 import { createContext as de, useCallback as x, useContext as S, useEffect as C, useId as fe, useLayoutEffect as pe, useMemo as me, useRef as w, useState as T } from "react";

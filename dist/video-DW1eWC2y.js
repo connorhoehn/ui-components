@@ -31,7 +31,7 @@ import { t as Ce } from "./Switch-CRiY_kzy.js";
 import { t as we } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as Te } from "./Textarea-Cf4WFXAs.js";
 import { i as Ee, r as De, t as Oe } from "./ChoiceList-DHsxqQ1Y.js";
-import { n as ke } from "./RovingToolbar-C8vF753M.js";
+import { n as ke } from "./RovingToolbar-eUKIxXK4.js";
 import { t as Ae } from "./PresenceAvatars-CM37OyKJ.js";
 import { t as je } from "./Checkbox-DrdG_-IA.js";
 import { t as Me } from "./activationKey-CjbL3LUv.js";

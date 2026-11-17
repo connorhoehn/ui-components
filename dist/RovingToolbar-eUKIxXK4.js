@@ -36,13 +36,14 @@ function a({ orientation: e = "horizontal" } = {}) {
 		}
 	};
 }
-function o({ label: t, children: n, orientation: r = "horizontal", className: o, "data-testid": s }) {
-	let c = a({ orientation: r });
+function o({ label: t, children: n, orientation: r = "horizontal", className: o, variant: s, "data-testid": c }) {
+	let l = a({ orientation: r });
 	return /* @__PURE__ */ i("div", {
-		...c,
+		...l,
 		role: "toolbar",
 		"aria-label": t,
-		"data-testid": s,
+		"data-toolbar-variant": s,
+		"data-testid": c,
 		className: e("flex items-center", o),
 		children: n
 	});

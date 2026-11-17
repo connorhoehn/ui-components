@@ -22072,7 +22072,7 @@ export declare interface RosterParticipant {
     access?: ParticipantAccess;
 }
 
-export declare function RovingToolbar({ label, children, orientation, className, 'data-testid': testId, }: RovingToolbarProps): default_2.JSX.Element;
+export declare function RovingToolbar({ label, children, orientation, className, variant, 'data-testid': testId, }: RovingToolbarProps): default_2.JSX.Element;
 
 export declare interface RovingToolbarProps {
     /** Accessible name — a toolbar without one is an unlabelled group. */
@@ -22081,6 +22081,11 @@ export declare interface RovingToolbarProps {
     /** Arrow keys that move. Vertical leaves Left/Right alone, and vice versa. */
     orientation?: 'horizontal' | 'vertical';
     className?: string;
+    /**
+     * Which kind of toolbar this is, rendered as `data-toolbar-variant` (the attribute `Toolbar` sets), so audits
+     * and styles can tell a compact hover action bar from a collection toolbar (2.535.1).
+     */
+    variant?: string;
     'data-testid'?: string;
 }
 

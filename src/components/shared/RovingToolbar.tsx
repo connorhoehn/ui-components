@@ -36,6 +36,11 @@ export interface RovingToolbarProps {
   /** Arrow keys that move. Vertical leaves Left/Right alone, and vice versa. */
   orientation?: 'horizontal' | 'vertical';
   className?: string;
+  /**
+   * Which kind of toolbar this is, rendered as `data-toolbar-variant` (the attribute `Toolbar` sets), so audits
+   * and styles can tell a compact hover action bar from a collection toolbar (2.535.1).
+   */
+  variant?: string;
   'data-testid'?: string;
 }
 
@@ -135,6 +140,7 @@ export function RovingToolbar({
   children,
   orientation = 'horizontal',
   className,
+  variant,
   'data-testid': testId,
 }: RovingToolbarProps) {
   const roving = useRovingToolbar({ orientation });
@@ -143,6 +149,7 @@ export function RovingToolbar({
       {...roving}
       role="toolbar"
       aria-label={label}
+      data-toolbar-variant={variant}
       data-testid={testId}
       className={cn('flex items-center', className)}
     >

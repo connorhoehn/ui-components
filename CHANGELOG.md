@@ -1,3 +1,7 @@
+## 2.535.1
+
+- `RovingToolbar` takes `variant`, rendered as `data-toolbar-variant` (the attribute `Toolbar` already sets). `MessageActionBar` sets `action-bar`, so a page that gives it its own test id (AssetGallery's `gallery-tile-actions-*`) is still recognisable as the compact hover bar, not a collection toolbar.
+
 ## 2.535.0
 
 A program run's output and code over time join the code pad, a split can stack its panes, and a recording can be moved from the page. Every new prop is optional; with none given, output is unchanged.

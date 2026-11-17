@@ -15,7 +15,7 @@ import { n as w } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as T } from "./Textarea-Cf4WFXAs.js";
 import { t as E } from "./DotMeter-DJzl5dNX.js";
 import { t as D } from "./StatusDot-DAok6F5B.js";
-import { t as O } from "./RovingToolbar-C8vF753M.js";
+import { t as O } from "./RovingToolbar-eUKIxXK4.js";
 import { t as k } from "./ThinkingDots-BhOnjzvM.js";
 import { t as ee } from "./PresenceAvatars-CM37OyKJ.js";
 import { i as A, n as j, r as M, t as N } from "./ReactionPickerPopover-se1jqsCw.js";
@@ -173,6 +173,7 @@ function W({ actions: t = [], label: n = "Message actions", quickReactions: r = 
 	});
 	return S.length === 0 ? null : /* @__PURE__ */ V(O, {
 		label: n,
+		variant: "action-bar",
 		"data-testid": x,
 		className: e("gap-0.5 rounded-lg border border-border bg-surface p-0.5 shadow-sm", b),
 		children: S.map((e) => /* @__PURE__ */ V("button", {

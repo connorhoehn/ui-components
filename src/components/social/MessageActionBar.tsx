@@ -157,6 +157,7 @@ export function MessageActionBar({
   return (
     <RovingToolbar
       label={label}
+      variant="action-bar"
       data-testid={testId}
       // `group-hover` reveals it in a dense list; `focus-within` is what keeps
       // it reachable without a pointer. Both, or it serves only half the users.
