@@ -536,6 +536,8 @@ export { SuggestionRow } from './SuggestionRow';
 export type { SuggestionRowProps } from './SuggestionRow';
 export { MeterRow } from './MeterRow';
 export type { MeterRowProps } from './MeterRow';
+export { TakeRow } from './TakeRow';
+export type { TakeRowProps } from './TakeRow';
 
 // Search workspace — matched-term marking for result rows. Since 2.400.0.
 export { Highlight, highlightSegments } from './Highlight';

@@ -11617,6 +11617,27 @@ export declare interface TagEditorProps {
     lowercase?: boolean;
 }
 
+export declare function TakeRow({ play, title, tags, meta, detail, actions, selected, className, 'data-testid': testId }: TakeRowProps): JSX.Element;
+
+export declare interface TakeRowProps {
+    /** The take's play control, usually a small "Play" button. */
+    play?: ReactNode;
+    /** The take's name: "Take 2a". */
+    title: ReactNode;
+    /** Tags after the name: a "Proposed" or "Passes" pill. */
+    tags?: ReactNode;
+    /** One muted line of what it measured: "4.48 s · -19.2 LUFS · every word heard". */
+    meta?: ReactNode;
+    /** An optional second line, such as the transcript; clamped to two lines. */
+    detail?: ReactNode;
+    /** The take's actions ("Keep take 2a"), at the end of the row. */
+    actions?: ReactNode;
+    /** The proposed or chosen take: drawn on the selected surface. */
+    selected?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function TaskComposer({ title, description, titlePlaceholder, promptPlaceholder, suggestions, suggestionsTitle, suggestionsLoading, suggestionsEmpty, onSubmit, onChooseSuggestion, submitLabel, hint, busy, className, 'data-testid': testId, }: TaskComposerProps): JSX.Element;
 
 export declare interface TaskComposerProps {

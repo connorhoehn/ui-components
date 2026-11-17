@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1006 components across 23 entry points; 858 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1007 components across 23 entry points; 859 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -50,7 +50,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Page templates](#page-templates) (10)
 - [Shells & layouts](#shells--layouts) (42)
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (61)
-- [Tables & lists](#tables--lists) (31)
+- [Tables & lists](#tables--lists) (32)
 - [Forms](#forms) (32)
 - [Buttons & actions](#buttons--actions) (19)
 - [Feedback & states](#feedback--states) (27)
@@ -225,6 +225,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `TableRow` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `TableTd` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `TableTh` | `@connorhoehn/ui-components/shared` | — |  |  |
+| `TakeRow` | `@connorhoehn/ui-components/shared` | One recorded or generated take in a list of takes: its play control, its name with a tag ("Proposed", "Kept"), one muted line of what it measured, an optional second line (what was heard), and its actions at the end. | `shared-takerow` |  |
 | `Toolbar` | `@connorhoehn/ui-components/shared` | The chrome-level action row that sits above content. | `shared-toolbar` |  |
 | `TreeView` | `@connorhoehn/ui-components/shared` | Nested rows built from a flat `{id, title, parentId}` list, the shape a knowledge/document explorer's sidebar actually has on the wire (parent_id pointers, not a pre-nested tree). | `shared-treeview` |  |
 | `WorkListToolbar` | `@connorhoehn/ui-components/shared` | Search on its own row; sort and the filter button on the next. |  |  |
