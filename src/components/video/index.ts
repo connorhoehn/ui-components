@@ -189,6 +189,8 @@ export type {
   CircularIconToggleSize,
 } from './CircularIconToggle';
 
+export { CallNounProvider, useCallNoun, DEFAULT_CALL_NOUN } from './callNoun';
+export type { CallNounProviderProps } from './callNoun';
 export { HuddleBar } from './HuddleBar';
 export type { HuddleBarProps, HuddleBarMedia, HuddleBarPhase, HuddleBarLiveParticipant } from './HuddleBar';
 export { default as MediaControlsBar } from './MediaControlsBar';

@@ -8,12 +8,14 @@ import InlineAlert from '../shared/InlineAlert';
 import { AudioLevelMeter } from './AudioLevelMeter';
 import { VolumeSlider } from './VolumeSlider';
 import { MicIcon, VideoIcon, SpeakerIcon } from './MediaIcons';
+import { useCallNoun } from './callNoun';
 
 /** One responsive green-room form for the shared call host. */
 export function PreJoinDeviceSetup({ value, onChange, devices, permission, micLevel, cameraOn,
   speakerSelectionSupported, onTestMic, onTestSound, testMicState = 'idle', preview, previewControls,
-  selfName = 'You', callNoun = 'huddle', className, 'data-testid': testId = 'audio-video-settings-form',
+  selfName = 'You', callNoun: callNounProp, className, 'data-testid': testId = 'audio-video-settings-form',
 }: AudioVideoSettingsFormProps & { preview: ReactNode }) {
+  const callNoun = useCallNoun(callNounProp);
   const set = (patch: Partial<typeof value>) => onChange({ ...value, ...patch });
   const device = (kind: 'camera' | 'microphone' | 'speaker', label: string, icon: ReactNode) => {
     const list = kind === 'camera' ? devices.cameras : kind === 'microphone' ? devices.microphones : devices.speakers;

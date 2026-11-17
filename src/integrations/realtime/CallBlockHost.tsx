@@ -55,6 +55,7 @@ import Modal from '../../components/shared/Modal';
 import Switch from '../../components/shared/Switch';
 import { DeviceToggleSelect } from '../../components/video/DeviceToggleSelect';
 import { SparklesIcon } from '../../components/video/MediaIcons';
+import { CallNounProvider, useCallNoun } from '../../components/video/callNoun';
 import { DropdownMenu } from '../../components/shared/DropdownMenu';
 import type { RMMediaEffectsControllerSource } from '../realtime-modules/WrappedMediaEffectsTray';
 import { WrappedAudioVideoSettingsForm, type RMAudioVideoSettingsSource, type RMMediaDevicesSource } from '../realtime-modules/WrappedAudioVideoSettingsForm';
@@ -404,13 +405,14 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   // ── the device check ──
 
-  function PreJoinDialog({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel, callNoun = 'huddle' }: {
+  function PreJoinDialog({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel, callNoun: callNounProp }: {
     kind: PreJoinKind; title: string; selfName: string; selfAvatarUrl?: string; initial: PreJoinChoice;
     /** The word for the call in the heading and the camera line. Default "huddle". */
     callNoun?: string;
     onJoin(choice: PreJoinChoice, devices: { microphoneId?: string; cameraId?: string; speakerId?: string }): void;
     onCancel(): void;
   }) {
+    const callNoun = useCallNoun(callNounProp);
     const [choice, setChoice] = useState(initial);
     const devices = rm.useMediaDevices({ requestOnMount: false });
     const settings = rm.useAudioVideoSettings({ preview: choice.micOn || choice.cameraOn, previewAudio: choice.micOn, previewVideo: choice.cameraOn } as never) as unknown as RMAudioVideoSettingsSource;
@@ -503,7 +505,9 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   interface PreJoinRequest { kind: PreJoinKind; run(call: Call): void; cancel?(): void; initial: PreJoinChoice }
 
-  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, nameFor, recordingConsent: consentOption, callNoun = 'huddle', meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
+  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, nameFor, recordingConsent: consentOption, callNoun: callNounProp, meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
+    // The host's word, else an enclosing CallNounProvider's, else "huddle"; provided to everything under the host.
+    const callNoun = useCallNoun(callNounProp);
     const [lobby, setLobby] = useState<CallLobby | null>(null);
     const pendingRing = useRef<CallBlockRing | null>(null);
     const hostRef = useRef<string | null>(null);
@@ -670,7 +674,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     const head = rings.rings[0] ?? null;
     return (
       <HostContext.Provider value={value}>
-        {children}
+        <CallNounProvider noun={callNoun}>{children}</CallNounProvider>
         {prompt && <PreJoinDialog
           kind={prompt.kind}
           title={lobby?.title ?? `this ${callNoun}`}

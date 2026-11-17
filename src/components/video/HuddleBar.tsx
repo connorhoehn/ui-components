@@ -31,6 +31,7 @@ import { PhoneOffIcon } from './MediaIcons';
 import { formatCallElapsed } from './CallDock';
 import { InlinePopover } from '../shared/InlinePopover';
 import type { MeetingToolbarItem } from './MeetingToolbar';
+import { useCallNoun } from './callNoun';
 
 export type HuddleBarPhase = 'idle' | 'joinable' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
@@ -212,7 +213,7 @@ export function HuddleBar({
   mediaToggleLabel = 'Participants',
   onStart,
   startLabel = 'Huddle',
-  callNoun = 'huddle',
+  callNoun: callNounProp,
   startDisabledReason,
   liveParticipants = [],
   onJoin,
@@ -228,6 +229,7 @@ export function HuddleBar({
   className,
   'data-testid': testId = 'huddle-bar',
 }: HuddleBarProps) {
+  const callNoun = useCallNoun(callNounProp);
   const elapsed = useElapsed(startedAt, phase === 'live');
   const statusText = statusLabel === undefined ? PHASE_TEXT[phase] : statusLabel;
   const joinable = phase === 'joinable';

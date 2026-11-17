@@ -7,6 +7,7 @@ import type { ReactNode } from 'react';
 import * as video from '@connorhoehn/realtime-modules/client/video';
 import { callHostUnavailable, createCallBlockHost, type CallBlockCall, type CallBlockModules, type CallBlockRing } from '../CallBlockHost';
 import * as barrel from '../index';
+import { useCallNoun } from '../../../components/video/callNoun';
 
 afterEach(cleanup);
 beforeEach(() => { window.localStorage.clear(); start.mockClear(); rejoin.mockClear(); accept.mockClear(); seenLobbies.length = 0; captureAtEntry.length = 0; deviceRequests.length = 0; previewRequests.length = 0; knownIdleCall = false; });
@@ -145,6 +146,15 @@ describe('CallBlockHost callNoun', () => {
     await act(async () => { screen.getByTestId('huddle').click(); });
     expect(screen.getByRole('dialog', { name: 'Start a call' })).toBeInTheDocument();
     expect(screen.getByText('Your camera is on. This is how you’ll appear in the call.')).toBeInTheDocument();
+  });
+
+  it('provides its word to a device check a page renders itself (CallNounProvider)', () => {
+    function PageWord() { return <span data-testid="page-word">{useCallNoun()}</span>; }
+    render(<calls.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green' }} tenant="orgiq" scopeKey="orgiq|u-vera"
+      platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={null} gatewayConfigured connectionState="connected" callNoun="interview">
+      <PageWord />
+    </calls.CallHostProvider>);
+    expect(screen.getByTestId('page-word')).toHaveTextContent('interview');
   });
 
   it('without callNoun the words are unchanged', async () => {
