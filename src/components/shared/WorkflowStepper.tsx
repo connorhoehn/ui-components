@@ -39,6 +39,9 @@ export interface WorkflowStep {
   outcome?: 'failed' | 'cancelled';
 }
 
+/** The current step's colour: the library's blue or the host's brand (since NEXT). */
+export type WorkflowStepperCurrentTone = 'info' | 'primary';
+
 export interface WorkflowStepperProps {
   steps: WorkflowStep[];
   /**
@@ -62,6 +65,13 @@ export interface WorkflowStepperProps {
    * `data-orientation` on the root.
    */
   orientation?: 'horizontal' | 'vertical';
+  /**
+   * The current step's colour (since NEXT). `info` (default): the library's
+   * blue. `primary`: the brand token (`--color-primary`), which a host sets per
+   * tenant, so the current step takes the tenant's accent like the rest of the
+   * library's brand-coloured parts. `data-current-tone="primary"` on the root.
+   */
+  currentTone?: WorkflowStepperCurrentTone;
   className?: string;
   'data-testid'?: string;
 }
@@ -89,7 +99,8 @@ function CheckIcon({ compact }: { compact: boolean }) {
   );
 }
 
-function StepMarker({ step, size }: { step: WorkflowStep; size: StepperSize }) {
+function StepMarker({ step, size, tone }: { step: WorkflowStep; size: StepperSize; tone: WorkflowStepperCurrentTone }) {
+  const brand = tone === 'primary';
   const compact = size === 'compact';
   return (
     <div data-workflow-marker={step.outcome ?? (step.done ? 'done' : step.active ? 'active' : 'todo')}
@@ -97,10 +108,10 @@ function StepMarker({ step, size }: { step: WorkflowStep; size: StepperSize }) {
         step.outcome === 'failed' ? 'border-2 border-danger bg-danger-bg text-danger'
           : step.outcome === 'cancelled' ? 'border-2 border-border bg-surface-inset text-text-secondary'
             : step.done ? 'bg-success text-white'
-              : step.active ? cn(compact ? 'border-[1.5px]' : 'border-2', 'border-info bg-info-bg')
+              : step.active ? cn(compact ? 'border-[1.5px]' : 'border-2', brand ? 'border-primary bg-primary-bg' : 'border-info bg-info-bg')
                 : 'border border-border bg-surface-inset')}>
       {step.outcome ? <span className={cn('rounded-full', step.outcome === 'failed' ? 'bg-danger' : 'bg-text-secondary', compact ? 'h-1.5 w-1.5' : 'h-2 w-2')} />
-        : step.done ? <CheckIcon compact={compact} /> : step.active ? <span className={cn('rounded-full bg-info', compact ? 'h-1.5 w-1.5' : 'h-2 w-2')} /> : null}
+        : step.done ? <CheckIcon compact={compact} /> : step.active ? <span className={cn('rounded-full', brand ? 'bg-primary' : 'bg-info', compact ? 'h-1.5 w-1.5' : 'h-2 w-2')} /> : null}
     </div>
   );
 }
@@ -110,9 +121,9 @@ function connectorFill(step: WorkflowStep, next: WorkflowStep | undefined): 'ful
   return step.done ? (next?.done ? 'full' : 'partial') : 'none';
 }
 
-function VerticalStepper({ steps, size, className, ariaLabel, testId }: { steps: WorkflowStep[]; size: StepperSize; className?: string; ariaLabel?: string; testId: string }) {
+function VerticalStepper({ steps, size, tone, className, ariaLabel, testId }: { steps: WorkflowStep[]; size: StepperSize; tone: WorkflowStepperCurrentTone; className?: string; ariaLabel?: string; testId: string }) {
   return (
-    <ol className={cn('m-0 flex min-w-0 list-none flex-col p-0', className)} data-orientation="vertical" data-testid={testId}
+    <ol className={cn('m-0 flex min-w-0 list-none flex-col p-0', className)} data-orientation="vertical" data-testid={testId} data-current-tone={tone === 'primary' ? tone : undefined}
       {...(size === 'compact' ? { 'data-density': 'compact' } : {})}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}>
       {steps.map((step, idx) => {
@@ -122,7 +133,7 @@ function VerticalStepper({ steps, size, className, ariaLabel, testId }: { steps:
         return (
           <li key={step.step} aria-current={step.active ? 'step' : undefined} data-state={state} className="flex min-w-0 gap-3">
             <div className="flex flex-shrink-0 flex-col items-center">
-              <StepMarker step={step} size={size} />
+              <StepMarker step={step} size={size} tone={tone} />
               {!isLast && <div aria-hidden="true" data-workflow-connector={fill}
                 className={cn('my-1 min-h-4 w-0.5 flex-1 rounded-full transition-colors',
                   fill === 'full' ? 'bg-success' : fill === 'partial' ? 'bg-gradient-to-b from-success to-success/30' : 'bg-border')} />}
@@ -140,12 +151,12 @@ function VerticalStepper({ steps, size, className, ariaLabel, testId }: { steps:
   );
 }
 
-export function WorkflowStepper({ steps, size: sizeProp, wrap = false, orientation = 'horizontal', className, 'aria-label': ariaLabel, 'data-testid': testId = 'workflow-stepper' }: WorkflowStepperProps) {
+export function WorkflowStepper({ steps, size: sizeProp, wrap = false, orientation = 'horizontal', currentTone: tone = 'info', className, 'aria-label': ariaLabel, 'data-testid': testId = 'workflow-stepper' }: WorkflowStepperProps) {
   const density = useDensity();
   if (sizeProp === 'sm') warnDeprecatedSize('WorkflowStepper', 'sm');
   const size: StepperSize = sizeProp ?? (density === 'compact' ? 'compact' : 'md');
   const compact = size === 'compact';
-  if (orientation === 'vertical') return <VerticalStepper steps={steps} size={size} className={className} ariaLabel={ariaLabel} testId={testId} />;
+  if (orientation === 'vertical') return <VerticalStepper steps={steps} size={size} tone={tone} className={className} ariaLabel={ariaLabel} testId={testId} />;
   const detailed = steps.some(step => step.description != null);
   return (
     <ol
@@ -153,6 +164,7 @@ export function WorkflowStepper({ steps, size: sizeProp, wrap = false, orientati
       {...(wrap ? { 'data-wrap': '' } : {})}
       data-orientation="horizontal"
       data-testid={testId}
+      data-current-tone={tone === 'primary' ? tone : undefined}
       {...(compact ? { 'data-density': 'compact' } : {})}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
     >
@@ -165,7 +177,7 @@ export function WorkflowStepper({ steps, size: sizeProp, wrap = false, orientati
             : 'bg-gradient-to-r from-success to-success/30'
           : 'bg-border';
         const state = step.outcome ?? (step.done ? 'done' : step.active ? 'active' : 'pending');
-        const node = <StepMarker step={step} size={size} />;
+        const node = <StepMarker step={step} size={size} tone={tone} />;
         const label = <span className={cn(detailed ? 'block text-xs font-semibold leading-4' : LABEL_SIZE[size],
           step.active ? 'text-text-primary' : step.done ? 'text-text-secondary' : 'text-text-tertiary')}>{step.label}</span>;
         if (detailed) return <li key={step.step} aria-current={step.active ? 'step' : undefined} data-state={state}

@@ -501,7 +501,7 @@ export type { FilterPopoverProps } from './FilterPopover';
 export { TaskStrip, AGENT_TASK_STATUS_LABELS, AGENT_TASK_STATUS_DOT, taskPercent } from './TaskStrip';
 export type { TaskStripProps, AgentTaskStatus } from './TaskStrip';
 export { WorkflowStepper } from './WorkflowStepper';
-export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';
+export type { WorkflowStepperProps, WorkflowStep, WorkflowStepperCurrentTone } from './WorkflowStepper';
 // DecisionPath (2.482.0): the one-line path a multi-stage answer walks inside
 // a response box ("Choose → Draft request → Confirm → Done"), ticks for done.
 export { DecisionPath } from './DecisionPath';

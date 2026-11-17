@@ -66,3 +66,8 @@ export const VerticalWithFactsAndAnAction: Story = {
     ],
   },
 };
+
+/** `currentTone="primary"` (since NEXT): the current step takes the host's brand token, so a tenant's accent shows. */
+export const BrandCurrentStep: Story = {
+  args: { steps: STEPS, currentTone: 'primary' },
+};

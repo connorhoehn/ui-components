@@ -120,3 +120,30 @@ describe('WorkflowStepper orientation="vertical" (2.512.0)', () => {
     expect(screen.queryByRole('button')).toBeNull();
   });
 });
+
+describe('WorkflowStepper currentTone', () => {
+  const steps: WorkflowStep[] = [
+    { step: 1, label: 'Applied', done: true, active: false },
+    { step: 2, label: 'Screen', done: false, active: true },
+    { step: 3, label: 'Offer', done: false, active: false },
+  ];
+  const marker = (c: HTMLElement) => c.querySelector('[data-workflow-marker="active"]') as HTMLElement;
+
+  it('draws the current step in the library blue by default', () => {
+    const { container } = render(<WorkflowStepper steps={steps} />);
+    expect(marker(container).className).toContain('border-info');
+    expect(marker(container).querySelector('span')!.className).toContain('bg-info');
+    expect(screen.getByTestId('workflow-stepper').hasAttribute('data-current-tone')).toBe(false);
+  });
+
+  it('takes the brand (tenant) token with currentTone="primary", in both orientations', () => {
+    for (const orientation of ['horizontal', 'vertical'] as const) {
+      const { container } = render(<WorkflowStepper steps={steps} currentTone="primary" orientation={orientation} />);
+      expect(marker(container).className).toContain('border-primary');
+      expect(marker(container).className).not.toContain('border-info');
+      expect(marker(container).querySelector('span')!.className).toContain('bg-primary');
+      expect(screen.getByTestId('workflow-stepper').getAttribute('data-current-tone')).toBe('primary');
+      cleanup();
+    }
+  });
+});
