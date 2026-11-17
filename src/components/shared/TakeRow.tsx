@@ -43,7 +43,7 @@ export function TakeRow({ play, title, tags, meta, detail, actions, selected = f
       )}
     >
       {play != null && <div className="shrink-0">{play}</div>}
-      <div className="flex min-w-0 flex-1 basis-56 flex-col gap-0.5">
+      <div className="flex min-w-0 flex-1 basis-40 flex-col gap-0.5">
         <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-[13px] font-semibold text-text-primary">
           <span className="min-w-0 truncate">{title}</span>
           {tags}

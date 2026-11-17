@@ -7508,7 +7508,7 @@ function ys({ play: e, title: t, tags: n, meta: i, detail: a, actions: o, select
 				children: e
 			}),
 			/* @__PURE__ */ Q("div", {
-				className: "flex min-w-0 flex-1 basis-56 flex-col gap-0.5",
+				className: "flex min-w-0 flex-1 basis-40 flex-col gap-0.5",
 				children: [
 					/* @__PURE__ */ Q("div", {
 						className: "flex min-w-0 flex-wrap items-center gap-1.5 text-[13px] font-semibold text-text-primary",
