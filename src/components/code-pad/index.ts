@@ -15,4 +15,9 @@ export type {
   CodePadHandle,
 } from './CodePad';
 export { CODE_PAD_LANGUAGES, isCodePadLanguage } from './languages';
-export type { CodePadLanguage } from './languages';
+export type { CodePadLanguage, CodePadLanguageLoader } from './languages';
+// The CodeMirror types an app needs to write `extensions` or `languages` for a
+// pad, so it does not deep-import them. Type-only: they add nothing at runtime.
+export type { Extension } from '@codemirror/state';
+export type { EditorView } from '@codemirror/view';
+export type { LanguageSupport } from '@codemirror/language';

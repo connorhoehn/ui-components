@@ -37,8 +37,25 @@ export function isCodePadLanguage(value: unknown): value is CodePadLanguage {
 // rather than registering a second language with the same name.
 let swiftLanguage: StreamLanguage<unknown> | null = null;
 
-/** The CodeMirror extension that parses and highlights `language`. */
-export function languageExtension(language: CodePadLanguage): Extension {
+/**
+ * Builds the CodeMirror support for one extra language: a `LanguageSupport`
+ * (`python()`, `rust()`, ...) or a `StreamLanguage` from a legacy mode. It is
+ * called each time the pad switches to that language, so a `StreamLanguage`
+ * should be defined once (at module scope) and returned, not defined inside.
+ */
+export type CodePadLanguageLoader = () => Extension;
+
+/**
+ * The CodeMirror extension that parses and highlights `language`. A loader in
+ * `languages` wins over the built-in mode of the same name; a name with neither
+ * shows plain text.
+ */
+export function languageExtension(
+  language: string,
+  languages?: Readonly<Record<string, CodePadLanguageLoader>>,
+): Extension {
+  const loader = languages && Object.prototype.hasOwnProperty.call(languages, language) ? languages[language] : undefined;
+  if (loader) return loader();
   switch (language) {
     case 'python':
       return python();

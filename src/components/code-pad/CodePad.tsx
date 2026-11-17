@@ -30,7 +30,7 @@ import { yCollab, ySyncAnnotation } from 'y-codemirror.next';
 import * as Y from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 import { cn } from '../../lib/cn';
-import { languageExtension, type CodePadLanguage } from './languages';
+import { languageExtension, type CodePadLanguage, type CodePadLanguageLoader } from './languages';
 import { codePadHighlighting, codePadTheme } from './theme';
 
 /** The person typing, as other people's pads show them. */
@@ -81,7 +81,12 @@ export interface CodePadEdit {
 
 /** Imperative access, through `ref`. */
 export interface CodePadHandle {
-  /** The CodeMirror view, or null before mount and after unmount. */
+  /**
+   * The CodeMirror view, or null before mount and after unmount. An escape
+   * hatch for what the props do not cover (dispatching effects, reading the
+   * state, measuring): prefer `extensions` for behaviour that should last, and
+   * do not `destroy()` it or replace its state, which the pad owns.
+   */
   readonly view: EditorView | null;
   /** The current text. */
   getText(): string;
@@ -111,8 +116,28 @@ export interface CodePadProps {
   value?: string;
   /** Every change to the text, local or remote, with the whole text. */
   onChange?: (text: string) => void;
-  /** Syntax mode; switching keeps the text. Default `'python'`. */
-  language?: CodePadLanguage;
+  /**
+   * Syntax mode; switching keeps the text. Default `'python'`. Any built-in
+   * `CodePadLanguage`, or a name registered in `languages`; a name with neither
+   * shows plain text.
+   */
+  language?: CodePadLanguage | (string & {});
+  /**
+   * Extra languages, by name, merged over the built-in ones (a loader named
+   * like a built-in replaces it). Keep the object stable (module scope or
+   * `useMemo`): the pad re-runs the current language's loader when it changes.
+   */
+  languages?: Readonly<Record<string, CodePadLanguageLoader>>;
+  /**
+   * Further CodeMirror extensions (keymaps, linters, autocompletion, gutters,
+   * theme tweaks), added after the pad's own, so on equal precedence the pad's
+   * keymap runs first; wrap one in `Prec.high` to go ahead of it. Changing the
+   * list reconfigures the live editor in place: the text, the shared-document
+   * binding, the carets and the undo history stay. A new array with the same
+   * items does nothing, but keep the items themselves stable (module scope or
+   * `useMemo`), since a new item is a new extension.
+   */
+  extensions?: readonly Extension[];
   /** Shows the text (and other people's changes) but refuses typing, pasting and deleting. */
   readOnly?: boolean;
   /** Shown while the pad is empty. */
@@ -182,11 +207,30 @@ function changeSummary(changes: Transaction['changes']): { from: number; inserte
 }
 
 /**
- * A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`.
+ * A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`; extendable with app CodeMirror `extensions`, extra `languages` and the view on its ref.
  *
  * Import from `@connorhoehn/ui-components/code-pad`. Needs the optional peers
  * `@codemirror/{state,view,commands,language,lang-python,lang-javascript,lang-java,lang-go,lang-cpp,legacy-modes}`,
  * `@lezer/highlight` and `y-codemirror.next`, beside `yjs` (and `y-protocols` for awareness).
+ *
+ * Extending it: pass `extensions` (any CodeMirror `Extension`, after the pad's
+ * own, reconfigured in place when the list changes), register more languages
+ * by name in `languages` and select one with `language`, and reach the live
+ * `EditorView` through `ref.current.view` for anything else. `Extension`,
+ * `EditorView` and `LanguageSupport` are re-exported as types from this subpath.
+ *
+ * ```tsx
+ * import { CodePad, type Extension } from '@connorhoehn/ui-components/code-pad';
+ * import { StreamLanguage } from '@codemirror/language';
+ * import { rust } from '@codemirror/legacy-modes/mode/rust';
+ * import { autocompletion } from '@codemirror/autocomplete';
+ *
+ * const rustLanguage = StreamLanguage.define(rust);
+ * const languages = { rust: () => rustLanguage };
+ * const extensions: Extension[] = [autocompletion()];
+ *
+ * <CodePad ydoc={doc} provider={provider} language="rust" languages={languages} extensions={extensions} />
+ * ```
  */
 export function CodePad({
   ydoc,
@@ -198,6 +242,8 @@ export function CodePad({
   value,
   onChange,
   language = 'python',
+  languages,
+  extensions,
   readOnly = false,
   placeholder,
   'aria-label': ariaLabel = 'Code',
@@ -215,11 +261,18 @@ export function CodePad({
     readOnly: new Compartment(),
     placeholder: new Compartment(),
     label: new Compartment(),
+    extensions: new Compartment(),
   });
 
   // Latest props for the listeners the view was built with.
-  const latest = useRef({ onChange, onPaste, onLocalEdit, language, readOnly, placeholder, ariaLabel, value, defaultValue, autoFocus });
-  latest.current = { onChange, onPaste, onLocalEdit, language, readOnly, placeholder, ariaLabel, value, defaultValue, autoFocus };
+  const latest = useRef({ onChange, onPaste, onLocalEdit, language, languages, extensions, readOnly, placeholder, ariaLabel, value, defaultValue, autoFocus });
+  latest.current = { onChange, onPaste, onLocalEdit, language, languages, extensions, readOnly, placeholder, ariaLabel, value, defaultValue, autoFocus };
+
+  // The app's extensions, held by item so a new array with the same items is
+  // not a change (a caller writing `extensions={[a, b]}` inline).
+  const appExtensions = useStableItems(extensions);
+  // Only the loader for the language in use matters for a reconfigure.
+  const languageLoader = languages && Object.prototype.hasOwnProperty.call(languages, language) ? languages[language] : undefined;
 
   const shared = ytext ?? (ydoc ? ydoc.getText(textName) : null);
   const awareness = provider?.awareness ?? null;
@@ -262,7 +315,7 @@ export function CodePad({
       keymap.of([...defaultKeymap, indentWithTab]),
       collab,
       readOnlyGuard,
-      c.language.of(languageExtension(props.language)),
+      c.language.of(languageExtension(props.language, props.languages)),
       c.readOnly.of(readOnlyExtension(props.readOnly)),
       c.placeholder.of(placeholderExtension(props.placeholder)),
       c.label.of(EditorView.contentAttributes.of({ 'aria-label': props.ariaLabel })),
@@ -278,6 +331,8 @@ export function CodePad({
         }
         latest.current.onChange?.(update.state.doc.toString());
       }),
+      // Last, so the app's extensions come after every built-in one.
+      c.extensions.of(props.extensions ? [...props.extensions] : []),
     ];
 
     const initial = shared ? shared.toString() : (props.value ?? props.defaultValue);
@@ -352,9 +407,22 @@ export function CodePad({
     };
   }, [awareness]);
 
+  // Skip the first run: the view was just built with the current values.
+  const configured = useRef({ language, languageLoader, appExtensions });
   useEffect(() => {
-    viewRef.current?.dispatch({ effects: compartments.current.language.reconfigure(languageExtension(language)) });
-  }, [language]);
+    const was = configured.current;
+    if (was.language === language && was.languageLoader === languageLoader) return;
+    configured.current = { ...was, language, languageLoader };
+    viewRef.current?.dispatch({
+      effects: compartments.current.language.reconfigure(languageExtension(language, latest.current.languages)),
+    });
+  }, [language, languageLoader]);
+
+  useEffect(() => {
+    if (configured.current.appExtensions === appExtensions) return;
+    configured.current = { ...configured.current, appExtensions };
+    viewRef.current?.dispatch({ effects: compartments.current.extensions.reconfigure(appExtensions ? [...appExtensions] : []) });
+  }, [appExtensions]);
 
   useEffect(() => {
     viewRef.current?.dispatch({ effects: compartments.current.readOnly.reconfigure(readOnlyExtension(readOnly)) });
@@ -431,6 +499,17 @@ export function CodePad({
       )}
     />
   );
+}
+
+/** The same array back while its items are the same, by identity and order. */
+function useStableItems<T>(items: readonly T[] | undefined): readonly T[] | undefined {
+  const held = useRef(items);
+  const prev = held.current;
+  const same =
+    prev === items ||
+    (prev !== undefined && items !== undefined && prev.length === items.length && prev.every((x, i) => x === items[i]));
+  if (!same) held.current = items;
+  return held.current;
 }
 
 export default CodePad;

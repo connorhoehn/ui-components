@@ -578,7 +578,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ChecklistEditorRenderer` | `@connorhoehn/ui-components` | — |  |  |
 | `ChecklistReaderRenderer` | `@connorhoehn/ui-components` | — |  |  |
 | `ChunkViewer` | `@connorhoehn/ui-components/doc-editor` | Renders a single section chunk for ack-mode review. |  |  |
-| `CodePad` | `@connorhoehn/ui-components/code-pad` | A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`. |  |  |
+| `CodePad` | `@connorhoehn/ui-components/code-pad` | A collaborative code editor: CodeMirror 6 on a shared `Y.Text` with named remote carets, seven languages, read-only, and paste and edit reports; local text without a `ydoc`; extendable with app CodeMirror `extensions`… |  |  |
 | `CommentContextHeader` | `@connorhoehn/ui-components/doc-editor` | The muted, left-ruled quote a comment card leads with. |  |  |
 | `CommentGhostPopover` | `@connorhoehn/ui-components/doc-editor` | Comment "ghosts" — how a reader learns a discussion exists when the margin gutter is not there to tell them. |  |  |
 | `CommentHandoffBar` | `@connorhoehn/ui-components/doc-editor` | Sits above the page composer while it is answering a margin comment (WS-J lane B, "Ask agent"): whose comment, the text it is anchored to, and the "Resolve when applied" choice the run carries. |  |  |
