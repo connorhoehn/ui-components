@@ -27,3 +27,19 @@ describe('DetailSection heading title row (G129-1)', () => {
     expect((container.querySelector('[data-detail-section-title-row]') as HTMLElement).className).toContain('mb-2');
   });
 });
+
+describe('DetailSection actionsVisibility', () => {
+  it('keeps heading actions hover-revealed by default', () => {
+    render(<DetailSection variant="heading" title="Plan" actions={<button type="button">Start</button>}>body</DetailSection>);
+    const span = screen.getByRole('button', { name: 'Start' }).parentElement!;
+    expect(span.getAttribute('data-actions-visibility')).toBe('hover');
+    expect(span.className).toContain('opacity-0');
+  });
+
+  it('shows heading actions at all times with always', () => {
+    render(<DetailSection variant="heading" title="Plan" actionsVisibility="always" actions={<button type="button">Start</button>}>body</DetailSection>);
+    const span = screen.getByRole('button', { name: 'Start' }).parentElement!;
+    expect(span.getAttribute('data-actions-visibility')).toBe('always');
+    expect(span.className).not.toContain('opacity-0');
+  });
+});

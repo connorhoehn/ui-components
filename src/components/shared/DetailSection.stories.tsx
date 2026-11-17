@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DetailSection } from './DetailSection';
+import { Button } from '../ui/Button';
 
 const meta = {
   title: 'Shared/DetailSection',
@@ -17,4 +18,9 @@ export const Default: Story = {
 
 export const PageSection: Story = {
   args: { ...Default.args, as: 'h2', variant: 'heading', description: 'A section directly under a page title.' },
+};
+
+/** `actionsVisibility="always"`: the section's action is the page's primary one, so it never hides (since NEXT). */
+export const PrimaryAction: Story = {
+  args: { ...PageSection.args, title: 'Prepare', actionsVisibility: 'always', actions: <Button size="sm">Start interview</Button> },
 };

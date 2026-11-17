@@ -7,7 +7,7 @@
 // Designed to replace hand-rolled `<table>` patterns across admin shells
 // (RunsTable, ActiveRunsTable, EntityTable, identity list pages, etc).
 
-import { isValidElement, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { isValidElement, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { CollectionToolbar } from './CollectionToolbar';
 import { IconButton } from '../ui/IconButton';
@@ -48,6 +48,16 @@ export interface DataTableColumn<T> {
   /** Include this column's text in the global search box. Default: true if a search box is shown. */
   filterable?: boolean;
   width?: string;
+  /**
+   * The narrowest this column draws in the table form (since NEXT), as a CSS
+   * length (`'12rem'`, `'160px'`). When the columns' minimums add up to more
+   * than the box, the table keeps them and scrolls sideways inside its own
+   * scroller instead of squeezing every column until its text wraps, which is
+   * also what lets `stickyFirstColumn` pin. Set on the column's header cell
+   * (`min-width`, `data-min-width` on it); `data-min-width-columns` on the
+   * `<table>`. Ignored in the stacked card form.
+   */
+  minWidth?: string;
   align?: 'left' | 'right' | 'center';
   /** A number column: right-aligned header and cells, tabular figures. Since 2.434.0. */
   numeric?: boolean;
@@ -851,6 +861,9 @@ export function DataTable<T>({
     sticky && key === firstKey ? cn(head ? STICKY_HEAD : STICKY_CELL, narrow && STICKY_OFF_NARROW) : undefined;
   const stickyMark = (key: string) => (sticky && key === firstKey ? { 'data-sticky-column': '' } : {});
   const grouped = columns.some((c) => c.group != null);
+  const minWidthColumns = !stacked && columns.some((c) => c.minWidth != null);
+  const headerStyle = (col: DataTableColumn<T>): CSSProperties | undefined =>
+    col.width || col.minWidth ? { ...(col.width ? { width: col.width } : {}), ...(col.minWidth && !stacked ? { minWidth: col.minWidth } : {}) } : undefined;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -902,7 +915,7 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table data-ui-table-rows={rowHeight} data-ui-table-cards={narrow || stacked ? '' : undefined} {...(size ? { size } : {})} data-sticky-first-column={sticky ? '' : undefined} className={cn(!frameless && 'border border-border rounded-lg', !frameless && !sticky && 'overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
+        <Table data-ui-table-rows={rowHeight} data-ui-table-cards={narrow || stacked ? '' : undefined} {...(size ? { size } : {})} data-sticky-first-column={sticky ? '' : undefined} data-min-width-columns={minWidthColumns ? '' : undefined} className={cn(!frameless && 'border border-border rounded-lg', !frameless && !sticky && 'overflow-hidden', narrow && NARROW_TABLE, stacked && STACK_TABLE)}
           {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(ariaLabelledBy ? { 'aria-labelledby': ariaLabelledBy } : {})}>
         <TableHead className={cn(narrow && NARROW_HEAD, stacked && STACK_HEAD)} data-header-case={headerCase}>
           {grouped && (
@@ -927,7 +940,8 @@ export function DataTable<T>({
                   key={col.key}
                   sortable={col.sortable}
                   sortDirection={isSorted ? sortDir : null}
-                  style={col.width ? { width: col.width } : undefined}
+                  style={headerStyle(col)}
+                  {...(col.minWidth && !stacked ? { 'data-min-width': col.minWidth } : {})}
                   numeric={col.numeric}
                   className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(col.align), col.className, hidden.has(col.key) && HIDDEN_COLUMN, stickyCell(col.key, true))}
                   {...stickyMark(col.key)}

@@ -18,6 +18,9 @@ import { useDensitySize } from './Density';
 import { Divider } from './Divider';
 import { SectionLabel } from './SectionLabel';
 
+/** When a `heading` DetailSection shows its `actions` (since NEXT). */
+export type DetailSectionActionsVisibility = 'hover' | 'always';
+
 export interface DetailSectionProps {
   title: string;
   /** Semantic heading level, independent of visual size. Default h3 preserves nested detail sections; use h2 directly under a page title. */
@@ -26,6 +29,13 @@ export interface DetailSectionProps {
   hint?: ReactNode;
   /** Right-aligned affordance for this section only. */
   actions?: ReactNode;
+  /**
+   * `heading` variant (since NEXT): `hover` (default) keeps `actions` quiet
+   * until the section is hovered or focused; `always` shows them at all times,
+   * for a section whose action is the page's primary one. The `label` variant
+   * always shows its actions. `data-actions-visibility` on the actions span.
+   */
+  actionsVisibility?: DetailSectionActionsVisibility;
   /** Suppress the leading rule. Use on the first section of a surface. */
   first?: boolean;
   /**
@@ -59,7 +69,7 @@ export interface DetailSectionProps {
 }
 
 export function DetailSection({
-  title, as: Heading = 'h3', hint, actions, first = false, variant = 'label', size: sizeProp, description, children, className, 'data-testid': testId,
+  title, as: Heading = 'h3', hint, actions, actionsVisibility = 'hover', first = false, variant = 'label', size: sizeProp, description, children, className, 'data-testid': testId,
 }: DetailSectionProps) {
   const size = useDensitySize<'sm' | 'md' | 'lg'>('DetailSection', sizeProp, { comfortable: 'md', compact: 'sm' });
   if (variant === 'heading') {
@@ -78,7 +88,10 @@ export function DetailSection({
           {actions != null && (
             <>
               <span className="flex-1" />
-              <span className="flex items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover/section:opacity-100 [@media(hover:none)]:opacity-100">
+              <span
+                className={cn('flex items-center gap-1', actionsVisibility === 'hover' && 'opacity-0 transition-opacity focus-within:opacity-100 group-hover/section:opacity-100 [@media(hover:none)]:opacity-100')}
+                data-actions-visibility={actionsVisibility}
+              >
                 {actions}
               </span>
             </>

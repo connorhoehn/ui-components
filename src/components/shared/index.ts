@@ -476,7 +476,7 @@ export type { KeyValueProps, KeyValueItem, KeyValueLayout } from './KeyValue';
 export { Divider } from './Divider';
 export type { DividerProps, DividerSpacing } from './Divider';
 export { DetailSection } from './DetailSection';
-export type { DetailSectionProps } from './DetailSection';
+export type { DetailSectionProps, DetailSectionActionsVisibility } from './DetailSection';
 
 // PersonHoverCard — the Outlook/Teams people card. Hover (or focus) a name to
 // get who they are and what you can do about it.
