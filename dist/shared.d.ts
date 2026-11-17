@@ -6476,12 +6476,19 @@ export declare interface LogLine {
     message: ReactNode;
 }
 
-export declare function LogStream({ lines, follow, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, tone, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
+export declare function LogStream({ lines, follow, announceLines, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, tone, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
 
 export declare interface LogStreamProps {
     lines: LogLine[];
     /** When true, autoscroll to the latest line as new lines arrive. Default true. */
     follow?: boolean;
+    /**
+     * Whether screen readers hear each new line (`aria-live="polite"` on the
+     * log). Defaults to `follow`, as before. `false` (2.534.0) keeps the log
+     * quiet for a host that announces what matters itself (a run's status
+     * change rather than every line of its output).
+     */
+    announceLines?: boolean;
     /** When true, render the small timestamp column. Default true. */
     showTimestamp?: boolean;
     /** When true, render the level glyph. Default true. */
@@ -10559,7 +10566,7 @@ export declare interface SpinnerProps {
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
 
-export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
+export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, orientation, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
 
 export declare interface SplitPaneProps {
     primary: ReactNode;
@@ -10581,6 +10588,14 @@ export declare interface SplitPaneProps {
     resizable?: boolean;
     /** Keep the primary mounted but hide it while the secondary owns a narrow viewport. */
     primaryHidden?: boolean;
+    /**
+     * `'horizontal'` (default): primary left, secondary right. `'vertical'`
+     * (2.534.0): primary on top, secondary below, the divider dragged up and
+     * down (ArrowUp / ArrowDown), the pixel floors read as heights, and the
+     * separator's `aria-orientation` `horizontal`. The ratio is the primary's
+     * share of the height.
+     */
+    orientation?: 'horizontal' | 'vertical';
     className?: string;
     'data-testid'?: string;
 }

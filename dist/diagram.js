@@ -1,20 +1,20 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
-import { t as n } from "./cn-D4QmbyEy.js";
-import { n as r } from "./Button-C-I3BxWI.js";
-import { n as i, r as a } from "./safeHref-DG89LIze.js";
-import { t as o } from "./Input-Brvp1kPv.js";
-import { t as s } from "./Select-BUWbzQjb.js";
-import { t as c } from "./Textarea-CvdLeuO_.js";
-import { t as l } from "./Checkbox-a_0LP5Ii.js";
+import { d as n, n as r } from "./Button-DQoeE5dN.js";
+import { t as i } from "./Chip-BtSN-nsV.js";
+import { n as a } from "./safeHref-dF2rw8EK.js";
+import { t as o } from "./Input-DiOEvL5h.js";
+import { t as s } from "./Select-k38b8PrZ.js";
+import { t as c } from "./Textarea-Cf4WFXAs.js";
+import { t as l } from "./Checkbox-DrdG_-IA.js";
 import { t as u } from "./formatBytes-05ivRSJY.js";
-import { n as d, t as f } from "./useResolvedTheme-CyO5J8RL.js";
+import { n as d, t as f } from "./useResolvedTheme-TMQ3XLRS.js";
 import { Suspense as p, createElement as m, lazy as h, useCallback as g, useEffect as _, useMemo as ee, useRef as v, useState as y } from "react";
 import { Fragment as b, jsx as x, jsxs as S } from "react/jsx-runtime";
 import { Extension as C } from "@tiptap/core";
 import { NodeSelection as te, Plugin as ne, PluginKey as re, TextSelection as ie } from "@tiptap/pm/state";
 import { createRoot as ae } from "react-dom/client";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var oe = h(() => import("./ExcalidrawCanvas-B2XJbRLT.js"));
+var oe = h(() => import("./ExcalidrawCanvas-BCovel_g.js"));
 function se({ label: e }) {
 	return /* @__PURE__ */ x("div", {
 		"data-testid": "diagram-loading",
@@ -1318,8 +1318,8 @@ function Gt({ onAnswer: e, busy: t, testId: n }) {
 		})]
 	});
 }
-function Kt({ callout: e, editable: t = !1, now: n, onAnswer: i, busy: o = !1, failure: s = null, people: c, onAssign: l, onRetract: u, onRemove: d, "data-testid": f = "hitl" }) {
-	let p = Bt(e, n), m = Vt[p], h = p === "waiting" && t && !!i, g = p === "waiting" && t && !!l && (c?.length ?? 0) > 0;
+function Kt({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, failure: s = null, people: c, onAssign: l, onRetract: u, onRemove: d, "data-testid": f = "hitl" }) {
+	let p = Bt(e, n), m = Vt[p], h = p === "waiting" && t && !!a, g = p === "waiting" && t && !!l && (c?.length ?? 0) > 0;
 	return /* @__PURE__ */ S("div", {
 		"data-testid": f,
 		"data-phase": p,
@@ -1331,7 +1331,7 @@ function Kt({ callout: e, editable: t = !1, now: n, onAnswer: i, busy: o = !1, f
 					className: "whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 					children: "Agent asks"
 				}),
-				/* @__PURE__ */ x(a, {
+				/* @__PURE__ */ x(i, {
 					tone: m.tone,
 					size: "xs",
 					uppercase: !0,
@@ -1374,18 +1374,18 @@ function Kt({ callout: e, editable: t = !1, now: n, onAnswer: i, busy: o = !1, f
 							disabled: o,
 							onAssign: (e) => l?.(e),
 							testId: f
-						}) : e.assignee ? /* @__PURE__ */ S(a, {
+						}) : e.assignee ? /* @__PURE__ */ S(i, {
 							tone: "neutral",
 							size: "xs",
 							"data-testid": `${f}-assignee`,
 							children: ["for ", e.assignee]
-						}) : /* @__PURE__ */ x(a, {
+						}) : /* @__PURE__ */ x(i, {
 							tone: "neutral",
 							size: "xs",
 							"data-testid": `${f}-unassigned`,
 							children: "unassigned"
 						}),
-						e.blocks ? /* @__PURE__ */ S(a, {
+						e.blocks ? /* @__PURE__ */ S(i, {
 							tone: "warning",
 							size: "xs",
 							"data-testid": `${f}-blocks`,
@@ -1442,12 +1442,12 @@ function Kt({ callout: e, editable: t = !1, now: n, onAnswer: i, busy: o = !1, f
 					children: e.options.map((e, t) => /* @__PURE__ */ x(Ut, {
 						option: e,
 						disabled: o,
-						onPick: () => i?.(e.value),
+						onPick: () => a?.(e.value),
 						testId: `${f}-option-${t}`
 					}, `${e.value}:${t}`))
 				}) : null,
 				h && e.options.length === 0 ? /* @__PURE__ */ x(Gt, {
-					onAnswer: (e) => i?.(e),
+					onAnswer: (e) => a?.(e),
 					busy: o,
 					testId: f
 				}) : null,
@@ -1748,7 +1748,7 @@ var un = {
 		hint: "Was in force, replaced"
 	}
 };
-function dn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: i, onRemove: s, testId: c = "decision-block" }) {
+function dn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: a, onRemove: s, testId: c = "decision-block" }) {
 	let [l, u] = y(""), d = un[e.status], f = e.status === "rejected";
 	return /* @__PURE__ */ S("div", {
 		"data-testid": c,
@@ -1761,7 +1761,7 @@ function dn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 					className: "whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 					children: "Decision"
 				}),
-				/* @__PURE__ */ x(a, {
+				/* @__PURE__ */ x(i, {
 					tone: d.tone,
 					size: "sm",
 					"data-testid": `${c}-status`,
@@ -1819,7 +1819,7 @@ function dn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 						children: e.supersededBy
 					})]
 				}),
-				t && i && e.status === "superseded" && !e.supersededBy && /* @__PURE__ */ S("div", {
+				t && a && e.status === "superseded" && !e.supersededBy && /* @__PURE__ */ S("div", {
 					className: "flex items-center gap-1.5",
 					children: [/* @__PURE__ */ x(o, {
 						"aria-label": "What replaced this decision",
@@ -1833,7 +1833,7 @@ function dn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 						className: "shrink-0 whitespace-nowrap",
 						disabled: l.trim() === "",
 						onClick: () => {
-							i(l.trim()), u("");
+							a(l.trim()), u("");
 						},
 						children: "Record"
 					})]
@@ -2125,7 +2125,7 @@ var zn = {
 	number: "not a number",
 	boolean: "not yes / no"
 };
-function Vn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, onTypeChange: i, onRemove: c, testId: u = "field-block" }) {
+function Vn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, onTypeChange: a, onRemove: c, testId: u = "field-block" }) {
 	let [d, f, p] = L(null), [m, h, g] = L(null), _ = e.value === void 0 ? "empty" : e.valid ? "set" : "invalid";
 	if (!t) {
 		let t = An(e);
@@ -2149,7 +2149,7 @@ function Vn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 					className: "text-[12px] italic text-text-tertiary",
 					children: "Not set"
 				}),
-				!e.valid && /* @__PURE__ */ x(a, {
+				!e.valid && /* @__PURE__ */ x(i, {
 					tone: "warning",
 					size: "xs",
 					"data-testid": `${u}-invalid`,
@@ -2253,7 +2253,7 @@ function Vn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				...y(ee, () => f(null))
 			}),
 			C(),
-			!e.valid && /* @__PURE__ */ x(a, {
+			!e.valid && /* @__PURE__ */ x(i, {
 				tone: "warning",
 				size: "xs",
 				"data-testid": `${u}-invalid`,
@@ -2277,7 +2277,7 @@ function Vn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 					value: e,
 					label: zn[e]
 				})),
-				onChange: (e) => i?.(e.target.value)
+				onChange: (e) => a?.(e.target.value)
 			}),
 			/* @__PURE__ */ x("span", { className: "flex-1" }),
 			c && /* @__PURE__ */ x("button", {
@@ -2663,8 +2663,8 @@ function _r(e) {
 function vr(e) {
 	return e.startsWith("image/") ? "🖼" : e.startsWith("video/") ? "🎞" : e.startsWith("audio/") ? "🎵" : e === "application/pdf" ? "📄" : e.includes("zip") || e.includes("compressed") || e.includes("tar") ? "🗜" : e.startsWith("text/") || e.includes("json") || e.includes("xml") ? "📝" : "📎";
 }
-function yr({ attachment: e, editable: t = !1, href: a = null, onOpen: o, previewSrc: s = null, onRemove: c, "data-testid": l = "attachment" }) {
-	let d = e.size === null ? "" : u(e.size), f = !!(o || a), p = fr(e) && !!s, m = /* @__PURE__ */ x("span", {
+function yr({ attachment: e, editable: t = !1, href: i = null, onOpen: o, previewSrc: s = null, onRemove: c, "data-testid": l = "attachment" }) {
+	let d = e.size === null ? "" : u(e.size), f = !!(o || i), p = fr(e) && !!s, m = /* @__PURE__ */ x("span", {
 		"data-testid": `${l}-name`,
 		className: "min-w-0 break-all text-[13px] font-medium leading-5 text-text-primary",
 		children: e.name
@@ -2696,9 +2696,9 @@ function yr({ attachment: e, editable: t = !1, href: a = null, onOpen: o, previe
 						onClick: o,
 						className: "m-0 flex min-w-0 cursor-pointer border-0 bg-transparent p-0 text-left hover:underline",
 						children: m
-					}) : a ? /* @__PURE__ */ x("a", {
+					}) : i ? /* @__PURE__ */ x("a", {
 						"data-testid": `${l}-anchor`,
-						href: i(a) ?? void 0,
+						href: a(i) ?? void 0,
 						target: "_blank",
 						rel: "noopener noreferrer",
 						className: "flex min-w-0 hover:underline",

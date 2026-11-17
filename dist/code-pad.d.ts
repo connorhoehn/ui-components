@@ -3,6 +3,7 @@ import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { JSX } from 'react';
 import { LanguageSupport } from '@codemirror/language';
+import { ReactNode } from 'react';
 import { Ref } from 'react';
 import * as Y from 'yjs';
 
@@ -173,6 +174,133 @@ export declare interface CodePadUser {
     /** Selection tint. Defaults to `color` at about a fifth of its strength. */
     colorLight?: string;
 }
+
+/**
+ * A read-only view of code over time: a `CodePad` showing the snapshot for the current time, over the library's `Slider` with question, run and paste markers as labelled, focusable stops; driven by the page (`timeMs` from a recording, `onTimeChange` to seek it).
+ *
+ * Import from `@connorhoehn/ui-components/code-pad`. It never plays by itself:
+ *
+ * ```tsx
+ * const player = useRef<RecordingPlayerHandle>(null);
+ * const [t, setT] = useState(0);
+ * <RecordingPlayer ref={player} playlistUrl={url} onTimeUpdate={(s) => setT(s * 1000)} />
+ * <CodePlayback frames={frames} markers={markers} durationMs={duration}
+ *   timeMs={t} onTimeChange={(ms) => player.current?.seek(ms / 1000)} />
+ * ```
+ */
+export declare function CodePlayback({ frames, markers, durationMs, timeMs, onTimeChange, language, languages, formatTime, emptyMessage, className, 'data-testid': testId, }: CodePlaybackProps): JSX.Element;
+
+/** The whole text at one moment, `atMs` from the start. */
+export declare interface CodePlaybackFrame {
+    atMs: number;
+    text: string;
+    /** The language from this frame on; defaults to the playback's `language`. */
+    language?: string;
+}
+
+/** Something that happened at a moment: a question asked, a run, a paste, or the page's own kind. */
+export declare interface CodePlaybackMarker {
+    atMs: number;
+    kind: 'question' | 'run' | 'paste' | (string & {});
+    /** What the stop is called ("Two sum", "Run 3", "Pasted 120 characters"). */
+    label: string;
+    /** A longer line, shown on hover and read with the label. */
+    detail?: string;
+}
+
+/** The letter on the stop: Q, R, P, or the first letter of a page's own kind. */
+export declare function codePlaybackMarkerLetter(kind: string): string;
+
+export declare interface CodePlaybackProps {
+    /** Snapshots in time order; the view shows the last frame at or before the time. */
+    frames: readonly CodePlaybackFrame[];
+    markers?: readonly CodePlaybackMarker[];
+    /** Length of the timeline, in milliseconds. */
+    durationMs: number;
+    /** The time to show, controlled (tie it to a recording's `onTimeUpdate`). Omit and it keeps its own. */
+    timeMs?: number;
+    /** The slider moved or a marker was chosen; seek the recording here. */
+    onTimeChange?(timeMs: number): void;
+    /** Syntax mode for frames that name none. Default `'python'`. */
+    language?: string;
+    /** Extra languages, as `CodePad` takes them. */
+    languages?: CodePadProps['languages'];
+    /** How a time reads. Default `m:ss` (`h:mm:ss` past an hour). */
+    formatTime?(ms: number): string;
+    /** Shown instead of the editor when there are no frames. Default "No code was written." */
+    emptyMessage?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * One program run's output, live or finished: a status chip in plain words, who ran it, time, memory and exit code when known and the host's actions, over compiler output, standard output and labelled standard error in the library's monospace console, with a line where output was cut.
+ *
+ * Import from `@connorhoehn/ui-components/code-pad`. It does not load the
+ * editor: a page showing only output pays for no CodeMirror. It announces the
+ * status change (a polite status region), not every line. It knows nothing of
+ * queues or buttons: the page passes the run's fields and its own `actions`.
+ *
+ * ```tsx
+ * <CodeRunOutput
+ *   status={run.status}
+ *   stdout={run.stdout}
+ *   stderr={run.stderr}
+ *   truncated={run.truncated}
+ *   exitCode={run.exitCode}
+ *   timeMs={run.timeMs}
+ *   runBy="Run by Ada"
+ *   languageLabel="Python"
+ *   runtimeVersion="3.12"
+ *   actions={<Button size="sm" onClick={runAgain}>Run again</Button>}
+ * />
+ * ```
+ */
+export declare function CodeRunOutput({ status, stdout, stderr, compileOutput, truncated, exitCode, timeMs, peakMemoryMb, runBy, languageLabel, runtimeVersion, follow, emptyMessage, actions, variant, className, 'data-testid': testId, }: CodeRunOutputProps): JSX.Element;
+
+export declare interface CodeRunOutputProps {
+    /** The run's status; `null` when nothing has been run yet. */
+    status: CodeRunStatus | null;
+    /** Standard output so far (or in full). */
+    stdout?: string;
+    /** Standard error so far (or in full). */
+    stderr?: string;
+    /** What the compiler printed, shown first. */
+    compileOutput?: string;
+    /** A stream that was cut at the output limit gets a line saying so after it. */
+    truncated?: {
+        stdout?: boolean;
+        stderr?: boolean;
+    };
+    /** Shown in the header once known. */
+    exitCode?: number | null;
+    /** Wall time, shown in the header once known. */
+    timeMs?: number | null;
+    /** Peak memory, shown in the header once known. */
+    peakMemoryMb?: number | null;
+    /** Who started the run: a name ("Ada") shows as "Run by Ada"; text already starting "Run by" shows as given. */
+    runBy?: string;
+    /** The language's name as people read it ("Python"). */
+    languageLabel?: string;
+    /** The runtime's version ("3.12"), shown after the language. */
+    runtimeVersion?: string;
+    /** Keep the newest output in view while it grows. Default true. */
+    follow?: boolean;
+    /** Shown when `status` is null. Default "Nothing has been run yet." */
+    emptyMessage?: ReactNode;
+    /** The host's controls (Run again, Cancel), at the end of the header row. */
+    actions?: ReactNode;
+    /** `framed` (default) draws a rounded border; `flush` draws none, for a pane that has its own. */
+    variant?: 'framed' | 'flush';
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Where a run is: waiting, building, running, or one of the ways it ended. */
+export declare type CodeRunStatus = 'queued' | 'compiling' | 'running' | 'succeeded' | 'failed' | 'compile_error' | 'timed_out' | 'memory_exceeded' | 'cancelled' | 'internal_error';
+
+/** The plain word the header shows for a status. Exported for hosts that list runs. */
+export declare function codeRunStatusLabel(status: CodeRunStatus): string;
 
 export { EditorView }
 

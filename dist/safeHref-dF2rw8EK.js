@@ -1,0 +1,18 @@
+//#region src/lib/safeHref.ts
+var e = /^(https?:|mailto:|tel:|sms:)/i, t = /[\u0000-\u001f\u007f\\]/;
+function n(n) {
+	if (!n) return null;
+	let r = n.trim();
+	if (!r || t.test(r) || r.startsWith("//")) return null;
+	if (r.startsWith("/") || r.startsWith("#") || r.startsWith("?") || e.test(r)) return r;
+	let i = r.search(/[/?#]/);
+	return (i === -1 ? r : r.slice(0, i)).includes(":") ? null : r;
+}
+var r = /^data:(image\/(png|jpe?g|gif|webp|avif|bmp)|audio\/[\w.+-]+|video\/[\w.+-]+|application\/(pdf|octet-stream|zip|json)|text\/(plain|csv))[;,]/i;
+function i(e) {
+	if (!e) return null;
+	let i = e.trim();
+	return t.test(i) ? null : /^blob:/i.test(i) || r.test(i) ? i : n(i);
+}
+//#endregion
+export { n, i as t };

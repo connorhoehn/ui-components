@@ -14871,12 +14871,19 @@ export declare interface LogoutPageProps {
     clientName?: string;
 }
 
-export declare function LogStream({ lines, follow, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, tone, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
+export declare function LogStream({ lines, follow, announceLines, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, tone, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
 
 export declare interface LogStreamProps {
     lines: LogLine[];
     /** When true, autoscroll to the latest line as new lines arrive. Default true. */
     follow?: boolean;
+    /**
+     * Whether screen readers hear each new line (`aria-live="polite"` on the
+     * log). Defaults to `follow`, as before. `false` (2.534.0) keeps the log
+     * quiet for a host that announces what matters itself (a run's status
+     * change rather than every line of its output).
+     */
+    announceLines?: boolean;
     /** When true, render the small timestamp column. Default true. */
     showTimestamp?: boolean;
     /** When true, render the level glyph. Default true. */
@@ -20829,10 +20836,36 @@ export declare interface RecordingParticipant {
     color?: string;
 }
 
-export declare function RecordingPlayer({ playlistUrl, poster, autoPlay, muted, onLoadedMetadata, onTimeUpdate, onError, hideDownload, className, }: RecordingPlayerProps): JSX.Element;
+export declare function RecordingPlayer({ playlistUrl, poster, autoPlay, muted, onLoadedMetadata, onTimeUpdate, onError, hideDownload, className, startAt, ref, }: RecordingPlayerProps): JSX.Element;
+
+/**
+ * Imperative control of a `RecordingPlayer`, through `ref` (2.534.0): for a
+ * page that ties something else to the recording's clock (a code playback, a
+ * transcript, a list of markers) and moves the recording from it.
+ */
+export declare interface RecordingPlayerHandle {
+    /**
+     * Move to `seconds`, clamped to 0 and the duration. Works the same for HLS
+     * and progressive sources. Called before the metadata has loaded, the time
+     * is remembered and applied when it loads (and wins over `startAt`).
+     */
+    seek(seconds: number): void;
+    play(): void;
+    pause(): void;
+    /** Where playback is, in seconds; before the metadata loads, a remembered seek (or 0). */
+    readonly currentTime: number;
+}
 
 export declare interface RecordingPlayerProps {
     playlistUrl: string | null;
+    /**
+     * Start at this many seconds (2.534.0), applied once when the metadata of
+     * each source has loaded, clamped to the duration. A later `seek` moves on
+     * from it as usual.
+     */
+    startAt?: number;
+    /** Imperative `seek` / `play` / `pause` / `currentTime` (2.534.0). */
+    ref?: Ref<RecordingPlayerHandle>;
     poster?: string;
     autoPlay?: boolean;
     muted?: boolean;
@@ -24046,7 +24079,7 @@ export declare function splitEffectLabel(label: string): {
     text: string;
 };
 
-export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
+export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, orientation, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
 
 export declare interface SplitPaneProps {
     primary: ReactNode;
@@ -24068,6 +24101,14 @@ export declare interface SplitPaneProps {
     resizable?: boolean;
     /** Keep the primary mounted but hide it while the secondary owns a narrow viewport. */
     primaryHidden?: boolean;
+    /**
+     * `'horizontal'` (default): primary left, secondary right. `'vertical'`
+     * (2.534.0): primary on top, secondary below, the divider dragged up and
+     * down (ArrowUp / ArrowDown), the pixel floors read as heights, and the
+     * separator's `aria-orientation` `horizontal`. The ratio is the primary's
+     * share of the height.
+     */
+    orientation?: 'horizontal' | 'vertical';
     className?: string;
     'data-testid'?: string;
 }

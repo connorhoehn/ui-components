@@ -2902,10 +2902,36 @@ export declare interface RecordingListProps {
     className?: string;
 }
 
-export declare function RecordingPlayer({ playlistUrl, poster, autoPlay, muted, onLoadedMetadata, onTimeUpdate, onError, hideDownload, className, }: RecordingPlayerProps): JSX.Element;
+export declare function RecordingPlayer({ playlistUrl, poster, autoPlay, muted, onLoadedMetadata, onTimeUpdate, onError, hideDownload, className, startAt, ref, }: RecordingPlayerProps): JSX.Element;
+
+/**
+ * Imperative control of a `RecordingPlayer`, through `ref` (2.534.0): for a
+ * page that ties something else to the recording's clock (a code playback, a
+ * transcript, a list of markers) and moves the recording from it.
+ */
+export declare interface RecordingPlayerHandle {
+    /**
+     * Move to `seconds`, clamped to 0 and the duration. Works the same for HLS
+     * and progressive sources. Called before the metadata has loaded, the time
+     * is remembered and applied when it loads (and wins over `startAt`).
+     */
+    seek(seconds: number): void;
+    play(): void;
+    pause(): void;
+    /** Where playback is, in seconds; before the metadata loads, a remembered seek (or 0). */
+    readonly currentTime: number;
+}
 
 export declare interface RecordingPlayerProps {
     playlistUrl: string | null;
+    /**
+     * Start at this many seconds (2.534.0), applied once when the metadata of
+     * each source has loaded, clamped to the duration. A later `seek` moves on
+     * from it as usual.
+     */
+    startAt?: number;
+    /** Imperative `seek` / `play` / `pause` / `currentTime` (2.534.0). */
+    ref?: Ref<RecordingPlayerHandle>;
     poster?: string;
     autoPlay?: boolean;
     muted?: boolean;

@@ -1,1 +1,0 @@
-let e=require("clsx");var t=(0,require("tailwind-merge").extendTailwindMerge)({extend:{classGroups:{"font-family":[{font:[`[inherit]`]}]}}});function n(...n){return t((0,e.clsx)(n))}Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return n}});

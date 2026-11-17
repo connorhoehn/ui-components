@@ -720,6 +720,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "TableTh",
     "Tabs",
     "TagEditor",
+    "TakeRow",
     "TaskComposer",
     "TaskStrip",
     "TasksEditorRenderer",
@@ -1787,6 +1788,10 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
   "./code-pad": [
     "CODE_PAD_LANGUAGES",
     "CodePad",
+    "CodePlayback",
+    "CodeRunOutput",
+    "codePlaybackMarkerLetter",
+    "codeRunStatusLabel",
     "isCodePadLanguage",
   ],
   "./social": [
@@ -2569,6 +2574,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "TableTh",
     "Tabs",
     "TagEditor",
+    "TakeRow",
     "TaskComposer",
     "TaskStrip",
     "TechnicalDetails",
