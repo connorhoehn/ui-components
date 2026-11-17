@@ -39,7 +39,7 @@ export interface WorkflowStep {
   outcome?: 'failed' | 'cancelled';
 }
 
-/** The current step's colour: the library's blue or the host's brand (since NEXT). */
+/** The current step's colour: the library's blue or the host's brand (since 2.538.0). */
 export type WorkflowStepperCurrentTone = 'info' | 'primary';
 
 export interface WorkflowStepperProps {
@@ -66,7 +66,7 @@ export interface WorkflowStepperProps {
    */
   orientation?: 'horizontal' | 'vertical';
   /**
-   * The current step's colour (since NEXT). `info` (default): the library's
+   * The current step's colour (since 2.538.0). `info` (default): the library's
    * blue. `primary`: the brand token (`--color-primary`), which a host sets per
    * tenant, so the current step takes the tenant's accent like the rest of the
    * library's brand-coloured parts. `data-current-tone="primary"` on the root.

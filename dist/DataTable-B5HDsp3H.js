@@ -361,70 +361,73 @@ function F(e) {
 	if (e === "center") return "text-center [&>*]:justify-center";
 }
 function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1, data: d, columns: f, keyField: m, onRowClick: g, rowActions: _, rowActionsHeader: ee = "Actions", rowActionsHeaderHidden: te = !1, searchable: v = !1, searchPlaceholder: y = "Search…", pageSize: b, emptyMessage: x = "No records.", loading: D = !1, loadingRows: j = 5, frameless: Ae = !1, size: N, striped: P = !0, narrow: I = !1, "aria-label": Pe, "aria-labelledby": Fe, selectedKey: L, revealSelection: R = !1, isRowSelected: Ie, headerCase: Le = "upper", responsiveColumns: z = !1, hiddenColumnsControl: Re = "row", className: ze, "data-testid": Be, staticRows: Ve }) {
-	let He = Le === "sentence", Ue = L !== void 0 || !!Ie, We = (e) => L === void 0 ? !!Ie?.(e) : L !== null && m(e) === L, Ge = Array.isArray(d) ? d : [], B = Array.isArray(f) ? f : [], [V, Ke] = E(null), [qe, Je] = E("asc"), [Ye, Xe] = E(""), [Ze, Qe] = E(0), $e = T(null), [H, et] = E(null), [tt, nt] = E(!1), U = w(() => {
+	let B = Le === "sentence", He = L !== void 0 || !!Ie, Ue = (e) => L === void 0 ? !!Ie?.(e) : L !== null && m(e) === L, We = Array.isArray(d) ? d : [], V = Array.isArray(f) ? f : [], [H, Ge] = E(null), [Ke, qe] = E("asc"), [Je, Ye] = E(""), [Xe, Ze] = E(0), Qe = T(null), [U, $e] = E(null), [et, tt] = E(!1), W = w(() => {
 		if (!z) return [];
-		let e = ve(B);
-		return H ? e.filter((e) => e !== H) : e;
+		let e = ve(V);
+		return U ? e.filter((e) => e !== U) : e;
 	}, [
 		z,
-		B,
-		H
-	]), rt = B.map((e) => e.key).join("|"), it = (e) => {
-		V === e ? Je((e) => e === "asc" ? "desc" : "asc") : (Ke(e), Je("asc"));
-	}, at = w(() => {
-		if (!v || Ye.trim() === "") return Ge;
-		let e = Ye.trim().toLowerCase();
-		return Ge.filter((t, n) => B.some((r) => r.filterable !== !1 && Ne(r, t, n).toLowerCase().includes(e)));
-	}, [
-		Ge,
-		B,
-		Ye,
-		v
-	]), W = w(() => {
-		if (!V) return at;
-		let e = B.find((e) => e.key === V);
-		if (!e || !e.sortable) return at;
-		let t = e.compare ?? ((t, n) => Me(t[e.key], n[e.key])), n = [...at];
-		return n.sort((e, n) => qe === "asc" ? t(e, n) : -t(e, n)), n;
-	}, [
-		at,
-		B,
 		V,
-		qe
-	]), ot = b && b > 0 ? Math.max(1, Math.ceil(W.length / b)) : 1, st = R && L != null ? W.findIndex((e) => m(e) === L) : -1, G = st < 0 ? -1 : b && b > 0 ? Math.floor(st / b) : 0;
+		U
+	]), nt = V.map((e) => e.key).join("|"), rt = (e) => {
+		H === e ? qe((e) => e === "asc" ? "desc" : "asc") : (Ge(e), qe("asc"));
+	}, it = w(() => {
+		if (!v || Je.trim() === "") return We;
+		let e = Je.trim().toLowerCase();
+		return We.filter((t, n) => V.some((r) => r.filterable !== !1 && Ne(r, t, n).toLowerCase().includes(e)));
+	}, [
+		We,
+		V,
+		Je,
+		v
+	]), G = w(() => {
+		if (!H) return it;
+		let e = V.find((e) => e.key === H);
+		if (!e || !e.sortable) return it;
+		let t = e.compare ?? ((t, n) => Me(t[e.key], n[e.key])), n = [...it];
+		return n.sort((e, n) => Ke === "asc" ? t(e, n) : -t(e, n)), n;
+	}, [
+		it,
+		V,
+		H,
+		Ke
+	]), at = b && b > 0 ? Math.max(1, Math.ceil(G.length / b)) : 1, ot = R && L != null ? G.findIndex((e) => m(e) === L) : -1, K = ot < 0 ? -1 : b && b > 0 ? Math.floor(ot / b) : 0;
 	C(() => {
-		!D && G >= 0 && Qe(G);
+		!D && K >= 0 && Ze(K);
 	}, [
 		L,
-		G,
+		K,
 		D
 	]);
-	let K = Math.min(Ze, ot - 1), q = w(() => {
-		if (!b || b <= 0) return W;
-		let e = K * b;
-		return W.slice(e, e + b);
+	let q = Math.min(Xe, at - 1), st = w(() => {
+		if (!b || b <= 0) return G;
+		let e = q * b;
+		return G.slice(e, e + b);
 	}, [
-		W,
+		G,
 		b,
-		K
+		q
 	]), ct = w(() => ({
-		paged: q,
-		columnKeys: rt,
-		shownByChoice: H
+		paged: st,
+		columnKeys: nt,
+		shownByChoice: U
 	}), [
-		q,
-		rt,
-		H
-	]), J = De(z, U.length, B.length, $e, ct), Y = J.stacked || z && tt, X = w(() => new Set(Y ? [] : U.slice(0, J.hidden)), [
-		U,
+		st,
+		nt,
+		U
+	]), J = De(z, W.length, V.length, Qe, ct), Y = J.stacked || z && et, X = w(() => new Set(Y ? [] : W.slice(0, J.hidden)), [
+		W,
 		J.hidden,
 		Y
 	]), lt = Re === "header", ut = (e) => {
-		U.length > J.hidden ? et(e) : nt(!0);
-	}, Z = B.filter((e) => X.has(e.key)), dt = I ? be : ye, Q = Z.length > 0, ft = I || Y, pt = t === "content", $ = u && !Y, mt = B.filter((e) => !X.has(e.key)), ht = mt[0]?.key, gt = (t, n = !1) => $ && t === ht ? e(n ? ue : le, I && de) : void 0, _t = (e) => $ && e === ht ? { "data-sticky-column": "" } : {}, vt = B.some((e) => e.group != null);
+		W.length > J.hidden ? $e(e) : tt(!0);
+	}, Z = V.filter((e) => X.has(e.key)), dt = I ? be : ye, Q = Z.length > 0, ft = I || Y, pt = t === "content", $ = u && !Y, mt = V.filter((e) => !X.has(e.key)), ht = mt[0]?.key, gt = (t, n = !1) => $ && t === ht ? e(n ? ue : le, I && de) : void 0, _t = (e) => $ && e === ht ? { "data-sticky-column": "" } : {}, vt = V.some((e) => e.group != null), yt = !Y && V.some((e) => e.minWidth != null), bt = (e) => e.width || e.minWidth ? {
+		...e.width ? { width: e.width } : {},
+		...e.minWidth && !Y ? { minWidth: e.minWidth } : {}
+	} : void 0;
 	return S(() => {
-		let e = $e.current;
-		if (!R || L == null || G < 0 || D || !e) return;
+		let e = Qe.current;
+		if (!R || L == null || K < 0 || D || !e) return;
 		let t = !0, n = 0, r = () => {
 			t && (cancelAnimationFrame(n), n = requestAnimationFrame(() => {
 				n = requestAnimationFrame(() => {
@@ -447,14 +450,14 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 	}, [
 		R,
 		L,
-		G,
-		D,
 		K,
+		D,
+		q,
 		I,
 		z,
-		tt
+		et
 	]), /* @__PURE__ */ k("div", {
-		ref: $e,
+		ref: Qe,
 		className: e("flex min-w-0 flex-col gap-3", I && "@container", ze),
 		"data-testid": Be,
 		"data-responsive-columns": z ? "" : void 0,
@@ -468,9 +471,9 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 			v && /* @__PURE__ */ O(A, {
 				label: "Table controls",
 				search: {
-					value: Ye,
+					value: Je,
 					onChange: (e) => {
-						Xe(e), Qe(0);
+						Ye(e), Ze(0);
 					},
 					placeholder: y,
 					"aria-label": "Search",
@@ -482,6 +485,7 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 				"data-ui-table-cards": I || Y ? "" : void 0,
 				...N ? { size: N } : {},
 				"data-sticky-first-column": $ ? "" : void 0,
+				"data-min-width-columns": yt ? "" : void 0,
 				className: e(!Ae && "border border-border rounded-lg", !Ae && !$ && "overflow-hidden", I && ne, Y && Se),
 				...Pe ? { "aria-label": Pe } : {},
 				...Fe ? { "aria-labelledby": Fe } : {},
@@ -494,7 +498,7 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 							colSpan: t.span,
 							scope: "colgroup",
 							"data-column-group": t.key ?? void 0,
-							className: e(He && M, F(t.group.align ?? "center"), !t.first && "border-l border-border", t.first && $ && e(ue, I && de), t.group.className),
+							className: e(B && M, F(t.group.align ?? "center"), !t.first && "border-l border-border", t.first && $ && e(ue, I && de), t.group.className),
 							children: t.group.header
 						}, `group-${t.key}-${n}`) : /* @__PURE__ */ O(o, {
 							colSpan: t.span,
@@ -506,16 +510,17 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 							colSpan: +!!Q + +!!_
 						})]
 					}), /* @__PURE__ */ k("tr", { children: [
-						B.map((t) => {
-							let n = t.sortable && V === t.key;
+						V.map((t) => {
+							let n = t.sortable && H === t.key;
 							return /* @__PURE__ */ O(o, {
 								sortable: t.sortable,
-								sortDirection: n ? qe : null,
-								style: t.width ? { width: t.width } : void 0,
+								sortDirection: n ? Ke : null,
+								style: bt(t),
+								...t.minWidth && !Y ? { "data-min-width": t.minWidth } : {},
 								numeric: t.numeric,
-								className: e(He && M, F(t.align), t.className, X.has(t.key) && ye, gt(t.key, !0)),
+								className: e(B && M, F(t.align), t.className, X.has(t.key) && ye, gt(t.key, !0)),
 								..._t(t.key),
-								onClick: t.sortable ? () => it(t.key) : void 0,
+								onClick: t.sortable ? () => rt(t.key) : void 0,
 								"data-testid": t.sortable ? `datatable-header-${t.key}` : void 0,
 								"data-column": z ? t.key : void 0,
 								...X.has(t.key) ? { "data-column-hidden": "" } : {},
@@ -523,7 +528,7 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 							}, t.key);
 						}),
 						Q && /* @__PURE__ */ O(o, {
-							className: e(He && M, "w-px whitespace-nowrap text-right"),
+							className: e(B && M, "w-px whitespace-nowrap text-right"),
 							"data-testid": "datatable-more-header",
 							"data-column-more": "",
 							"data-hidden-columns-control": Re,
@@ -533,11 +538,11 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 									label: ge(e)
 								})),
 								onChoose: ut,
-								onStack: U.length > J.hidden ? void 0 : () => nt(!0)
+								onStack: W.length > J.hidden ? void 0 : () => tt(!0)
 							}) : "More"
 						}),
 						_ && /* @__PURE__ */ O(o, {
-							className: e(He && M, "text-right"),
+							className: e(B && M, "text-right"),
 							"data-testid": "datatable-actions-header",
 							"data-row-actions-header": te ? "hidden" : "visible",
 							children: te ? /* @__PURE__ */ O("span", {
@@ -554,7 +559,7 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 						"data-testid": "datatable-loading-row",
 						className: $ ? "bg-surface" : void 0,
 						children: [
-							B.map((t) => /* @__PURE__ */ O(r, {
+							V.map((t) => /* @__PURE__ */ O(r, {
 								numeric: t.numeric,
 								className: e(F(t.align), X.has(t.key) && ye, gt(t.key)),
 								children: /* @__PURE__ */ O("div", { className: "h-4 w-3/4 animate-pulse rounded bg-surface-hover" })
@@ -565,15 +570,15 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 								children: /* @__PURE__ */ O("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" })
 							})
 						]
-					}, `skeleton-${n}`)) : q.length === 0 ? /* @__PURE__ */ O(i, { children: /* @__PURE__ */ O(r, {
-						colSpan: B.length - Z.length + +!!Q + +!!_,
+					}, `skeleton-${n}`)) : st.length === 0 ? /* @__PURE__ */ O(i, { children: /* @__PURE__ */ O(r, {
+						colSpan: V.length - Z.length + +!!Q + +!!_,
 						className: "text-center text-text-secondary py-8",
 						children: x
-					}) }) : q.map((t, n) => {
-						let a = Ue && We(t);
+					}) }) : st.map((t, n) => {
+						let a = He && Ue(t);
 						return /* @__PURE__ */ k(i, {
 							clickable: !!g,
-							...Ue ? { "aria-selected": a } : {},
+							...He ? { "aria-selected": a } : {},
 							...a ? { "data-selected": "" } : {},
 							className: e(I && ae, Y && Te, a ? "bg-primary-bg hover:bg-primary-bg" : P && n % 2 == 1 ? "bg-surface-inset" : $ ? "bg-surface" : void 0, g && "focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"),
 							tabIndex: g ? 0 : void 0,
@@ -585,7 +590,7 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 								e.target === e.currentTarget && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), g(t));
 							} : void 0,
 							children: [
-								B.map((i) => {
+								V.map((i) => {
 									let a = i.render ? i.render(t, n) : String(t[i.key] ?? ""), o = i.truncate ? he(i, t, a) : "";
 									return /* @__PURE__ */ O(r, {
 										numeric: i.numeric,
@@ -614,7 +619,7 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 									onKeyDown: (e) => e.stopPropagation(),
 									children: /* @__PURE__ */ O(ke, {
 										count: Z.length,
-										rowLabel: _e(B.find((e) => !X.has(e.key)), t, n) || m(t),
+										rowLabel: _e(V.find((e) => !X.has(e.key)), t, n) || m(t),
 										testId: `datatable-more-${m(t)}`,
 										variant: lt ? "chevron" : "link",
 										items: Z.map((e) => ({
@@ -636,18 +641,18 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 					})
 				})]
 			}),
-			b && b > 0 && W.length > b && /* @__PURE__ */ k("div", {
+			b && b > 0 && G.length > b && /* @__PURE__ */ k("div", {
 				className: "flex items-center justify-between text-xs text-text-secondary",
 				"data-collection-pager": !0,
 				children: [/* @__PURE__ */ k("span", {
 					"data-testid": "datatable-page-summary",
 					children: [
 						"Page ",
-						K + 1,
+						q + 1,
 						" of ",
-						ot,
+						at,
 						" · ",
-						W.length,
+						G.length,
 						" total"
 					]
 				}), /* @__PURE__ */ k("div", {
@@ -660,8 +665,8 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 							size: "sm",
 							"aria-label": "Previous page",
 							icon: /* @__PURE__ */ O(p, { dir: "left" }),
-							onClick: () => Qe(Math.max(0, K - 1)),
-							disabled: K === 0,
+							onClick: () => Ze(Math.max(0, q - 1)),
+							disabled: q === 0,
 							"data-testid": "datatable-prev"
 						})
 					}), /* @__PURE__ */ O(h, {
@@ -670,8 +675,8 @@ function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1,
 							size: "sm",
 							"aria-label": "Next page",
 							icon: /* @__PURE__ */ O(p, { dir: "right" }),
-							onClick: () => Qe(Math.min(ot - 1, K + 1)),
-							disabled: K >= ot - 1,
+							onClick: () => Ze(Math.min(at - 1, q + 1)),
+							disabled: q >= at - 1,
 							"data-testid": "datatable-next"
 						})
 					})]

@@ -283,7 +283,7 @@ export interface GroupedListProps {
   /**
    * Scroll the current row (`currentId`, or a row with `current`) into view in
    * the list's scroller when the list mounts and whenever the current row
-   * changes (since NEXT), with `block: 'nearest'`, so a record opened from a
+   * changes (since 2.538.0), with `block: 'nearest'`, so a record opened from a
    * link or a search shows its row in a long rail. Waits for the row to be
    * drawn (rows that load later, a group that opens); the reader's own scroll
    * is left alone until the current row changes again. Never moves focus.

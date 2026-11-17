@@ -108,7 +108,7 @@ const MARKER_PITCH_PX = 24;
 const MARKER_ROW_PX = 24;
 
 /**
- * Which row each stop sits on (since NEXT), given their centres in px along the
+ * Which row each stop sits on (since 2.538.0), given their centres in px along the
  * strip in time order: each stop takes the first row whose last stop is at
  * least `pitchPx` to its left, else opens a new row. Stops far enough apart all
  * stay on row 0, so a sparse strip draws as before; stops that would touch (a

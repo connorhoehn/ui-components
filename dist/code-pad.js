@@ -6,23 +6,23 @@ import { t as a } from "./Card-j0qB4VOx.js";
 import { t as o } from "./Slider-COaaKXgy.js";
 import { n as s } from "./VisuallyHidden-CVFiyXyk.js";
 import { t as c } from "./LogStream-BiRhfUBG.js";
-import { useCallback as l, useEffect as u, useImperativeHandle as d, useMemo as f, useRef as p, useState as m } from "react";
-import { jsx as h, jsxs as g } from "react/jsx-runtime";
-import * as _ from "yjs";
-import { Annotation as v, Compartment as y, EditorState as b } from "@codemirror/state";
-import { EditorView as x, drawSelection as S, highlightActiveLine as C, highlightActiveLineGutter as w, keymap as T, lineNumbers as E, placeholder as D } from "@codemirror/view";
-import { defaultKeymap as O, history as k, historyKeymap as A, indentWithTab as j } from "@codemirror/commands";
-import { HighlightStyle as M, StreamLanguage as N, bracketMatching as P, indentOnInput as F, syntaxHighlighting as I } from "@codemirror/language";
-import { yCollab as L, ySyncAnnotation as R } from "y-codemirror.next";
-import { python as z } from "@codemirror/lang-python";
-import { javascript as B } from "@codemirror/lang-javascript";
-import { java as V } from "@codemirror/lang-java";
-import { go as H } from "@codemirror/lang-go";
-import { cpp as U } from "@codemirror/lang-cpp";
-import { swift as W } from "@codemirror/legacy-modes/mode/swift";
-import { tags as G } from "@lezer/highlight";
+import { useCallback as l, useEffect as u, useImperativeHandle as d, useLayoutEffect as f, useMemo as p, useRef as m, useState as h } from "react";
+import { jsx as g, jsxs as _ } from "react/jsx-runtime";
+import * as v from "yjs";
+import { Annotation as y, Compartment as b, EditorState as x } from "@codemirror/state";
+import { EditorView as S, drawSelection as C, highlightActiveLine as w, highlightActiveLineGutter as T, keymap as E, lineNumbers as D, placeholder as O } from "@codemirror/view";
+import { defaultKeymap as k, history as A, historyKeymap as j, indentWithTab as M } from "@codemirror/commands";
+import { HighlightStyle as N, StreamLanguage as P, bracketMatching as F, indentOnInput as I, syntaxHighlighting as L } from "@codemirror/language";
+import { yCollab as R, ySyncAnnotation as z } from "y-codemirror.next";
+import { python as B } from "@codemirror/lang-python";
+import { javascript as V } from "@codemirror/lang-javascript";
+import { java as H } from "@codemirror/lang-java";
+import { go as U } from "@codemirror/lang-go";
+import { cpp as W } from "@codemirror/lang-cpp";
+import { swift as G } from "@codemirror/legacy-modes/mode/swift";
+import { tags as K } from "@lezer/highlight";
 //#region src/components/code-pad/languages.ts
-var K = [
+var q = [
 	{
 		value: "python",
 		label: "Python"
@@ -52,27 +52,27 @@ var K = [
 		label: "Swift"
 	}
 ];
-function q(e) {
-	return typeof e == "string" && K.some((t) => t.value === e);
+function J(e) {
+	return typeof e == "string" && q.some((t) => t.value === e);
 }
-var J = null;
-function ee(e, t) {
+var Y = null;
+function X(e, t) {
 	let n = t && Object.prototype.hasOwnProperty.call(t, e) ? t[e] : void 0;
 	if (n) return n();
 	switch (e) {
-		case "python": return z();
-		case "javascript": return B();
-		case "typescript": return B({ typescript: !0 });
-		case "java": return V();
-		case "go": return H();
-		case "cpp": return U();
-		case "swift": return J ??= N.define(W), J;
+		case "python": return B();
+		case "javascript": return V();
+		case "typescript": return V({ typescript: !0 });
+		case "java": return H();
+		case "go": return U();
+		case "cpp": return W();
+		case "swift": return Y ??= P.define(G), Y;
 		default: return [];
 	}
 }
 //#endregion
 //#region src/components/code-pad/theme.ts
-var Y = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)", X = "var(--font-sans, system-ui, sans-serif)", te = "color-mix(in srgb, var(--color-primary) 22%, transparent)", ne = "color-mix(in srgb, var(--color-primary) 5%, transparent)", re = x.theme({
+var Z = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)", ee = "var(--font-sans, system-ui, sans-serif)", te = "color-mix(in srgb, var(--color-primary) 22%, transparent)", ne = "color-mix(in srgb, var(--color-primary) 5%, transparent)", re = S.theme({
 	"&": {
 		height: "100%",
 		color: "var(--color-text-primary)",
@@ -80,7 +80,7 @@ var Y = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospa
 	},
 	"&.cm-focused": { outline: "none" },
 	".cm-scroller": {
-		fontFamily: Y,
+		fontFamily: Z,
 		lineHeight: "1.6"
 	},
 	".cm-content": {
@@ -107,7 +107,7 @@ var Y = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospa
 	"&.cm-focused .cm-nonmatchingBracket": { backgroundColor: "color-mix(in srgb, var(--color-danger) 18%, transparent)" },
 	".cm-placeholder": { color: "var(--color-text-tertiary)" },
 	".cm-ySelectionInfo": {
-		fontFamily: X,
+		fontFamily: ee,
 		fontSize: "10px",
 		fontWeight: "600",
 		lineHeight: "1.4",
@@ -118,122 +118,122 @@ var Y = "var(--font-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospa
 		opacity: "0.85"
 	},
 	".cm-ySelectionCaret:hover > .cm-ySelectionInfo": { opacity: "1" }
-}), ie = M.define([
+}), ie = N.define([
 	{
 		tag: [
-			G.keyword,
-			G.controlKeyword,
-			G.moduleKeyword,
-			G.operatorKeyword,
-			G.definitionKeyword,
-			G.modifier
+			K.keyword,
+			K.controlKeyword,
+			K.moduleKeyword,
+			K.operatorKeyword,
+			K.definitionKeyword,
+			K.modifier
 		],
 		color: "var(--color-accent-fg)"
 	},
 	{
 		tag: [
-			G.string,
-			G.special(G.string),
-			G.regexp,
-			G.character
+			K.string,
+			K.special(K.string),
+			K.regexp,
+			K.character
 		],
 		color: "var(--color-success-fg)"
 	},
 	{
 		tag: [
-			G.number,
-			G.bool,
-			G.null,
-			G.atom,
-			G.unit
+			K.number,
+			K.bool,
+			K.null,
+			K.atom,
+			K.unit
 		],
 		color: "var(--color-warning-fg)"
 	},
 	{
 		tag: [
-			G.comment,
-			G.lineComment,
-			G.blockComment,
-			G.docComment
+			K.comment,
+			K.lineComment,
+			K.blockComment,
+			K.docComment
 		],
 		color: "var(--color-text-tertiary)",
 		fontStyle: "italic"
 	},
 	{
 		tag: [
-			G.function(G.variableName),
-			G.function(G.propertyName),
-			G.definition(G.function(G.variableName))
+			K.function(K.variableName),
+			K.function(K.propertyName),
+			K.definition(K.function(K.variableName))
 		],
 		color: "var(--color-info-fg)"
 	},
 	{
 		tag: [
-			G.typeName,
-			G.className,
-			G.namespace,
-			G.definition(G.typeName)
+			K.typeName,
+			K.className,
+			K.namespace,
+			K.definition(K.typeName)
 		],
 		color: "var(--color-primary-fg)"
 	},
 	{
 		tag: [
-			G.meta,
-			G.annotation,
-			G.processingInstruction
+			K.meta,
+			K.annotation,
+			K.processingInstruction
 		],
 		color: "var(--color-warning-fg)"
 	},
 	{
 		tag: [
-			G.operator,
-			G.punctuation,
-			G.separator,
-			G.bracket
+			K.operator,
+			K.punctuation,
+			K.separator,
+			K.bracket
 		],
 		color: "var(--color-text-secondary)"
 	},
 	{
-		tag: [G.propertyName, G.attributeName],
+		tag: [K.propertyName, K.attributeName],
 		color: "var(--color-text-primary)"
 	},
 	{
-		tag: G.invalid,
+		tag: K.invalid,
 		color: "var(--color-danger-fg)"
 	},
 	{
-		tag: G.strong,
+		tag: K.strong,
 		fontWeight: "600"
 	},
 	{
-		tag: G.emphasis,
+		tag: K.emphasis,
 		fontStyle: "italic"
 	}
-]), ae = I(ie), Z = v.define(), oe = v.define();
-function se(e) {
-	return e.annotation(oe) ? "insert" : e.isUserEvent("input.paste") ? "paste" : e.isUserEvent("input.drop") ? "drop" : e.isUserEvent("input") ? "type" : e.isUserEvent("delete") ? "delete" : e.isUserEvent("undo") ? "undo" : e.isUserEvent("redo") ? "redo" : e.isUserEvent("move") ? "move" : "other";
+]), ae = L(ie), oe = y.define(), se = y.define();
+function ce(e) {
+	return e.annotation(se) ? "insert" : e.isUserEvent("input.paste") ? "paste" : e.isUserEvent("input.drop") ? "drop" : e.isUserEvent("input") ? "type" : e.isUserEvent("delete") ? "delete" : e.isUserEvent("undo") ? "undo" : e.isUserEvent("redo") ? "redo" : e.isUserEvent("move") ? "move" : "other";
 }
-var ce = [
+var le = [
 	"input",
 	"delete",
 	"undo",
 	"redo",
 	"move"
-], le = b.changeFilter.of((e) => !(e.startState.readOnly && ce.some((t) => e.isUserEvent(t))));
-function ue(e) {
+], ue = x.changeFilter.of((e) => !(e.startState.readOnly && le.some((t) => e.isUserEvent(t))));
+function de(e) {
 	return e ? [
-		b.readOnly.of(!0),
-		x.editable.of(!1),
-		x.contentAttributes.of({
+		x.readOnly.of(!0),
+		S.editable.of(!1),
+		S.contentAttributes.of({
 			tabindex: "0",
 			"aria-readonly": "true"
 		})
 	] : [];
 }
-function de(e) {
-	return e ? D(e) : [];
-}
 function fe(e) {
+	return e ? O(e) : [];
+}
+function pe(e) {
 	let t = Infinity, n = 0, r = 0, i = 0;
 	return e.iterChanges((e, a, o, s, c) => {
 		t = Math.min(t, e), n += c.length, r += a - e, i += c.length > 0 ? c.lines : 0;
@@ -244,47 +244,47 @@ function fe(e) {
 		lines: i
 	};
 }
-function pe({ ydoc: t, ytext: n, textName: r = "code", provider: i = null, user: a, defaultValue: o = "", value: s, onChange: c, language: l = "python", languages: f, extensions: m, readOnly: g = !1, placeholder: v, "aria-label": D = "Code", onPaste: M, onLocalEdit: N, variant: I = "framed", autoFocus: z = !1, className: B, ref: V }) {
-	let H = p(null), U = p(null), W = p({
-		language: new y(),
-		readOnly: new y(),
-		placeholder: new y(),
-		label: new y(),
-		extensions: new y()
-	}), G = p({
+function me({ ydoc: t, ytext: n, textName: r = "code", provider: i = null, user: a, defaultValue: o = "", value: s, onChange: c, language: l = "python", languages: f, extensions: p, readOnly: h = !1, placeholder: _, "aria-label": y = "Code", onPaste: O, onLocalEdit: N, variant: P = "framed", autoFocus: L = !1, className: B, ref: V }) {
+	let H = m(null), U = m(null), W = m({
+		language: new b(),
+		readOnly: new b(),
+		placeholder: new b(),
+		label: new b(),
+		extensions: new b()
+	}), G = m({
 		onChange: c,
-		onPaste: M,
+		onPaste: O,
 		onLocalEdit: N,
 		language: l,
 		languages: f,
-		extensions: m,
-		readOnly: g,
-		placeholder: v,
-		ariaLabel: D,
+		extensions: p,
+		readOnly: h,
+		placeholder: _,
+		ariaLabel: y,
 		value: s,
 		defaultValue: o,
-		autoFocus: z
+		autoFocus: L
 	});
 	G.current = {
 		onChange: c,
-		onPaste: M,
+		onPaste: O,
 		onLocalEdit: N,
 		language: l,
 		languages: f,
-		extensions: m,
-		readOnly: g,
-		placeholder: v,
-		ariaLabel: D,
+		extensions: p,
+		readOnly: h,
+		placeholder: _,
+		ariaLabel: y,
 		value: s,
 		defaultValue: o,
-		autoFocus: z
+		autoFocus: L
 	};
-	let K = me(m), q = f && Object.prototype.hasOwnProperty.call(f, l) ? f[l] : void 0, J = n ?? (t ? t.getText(r) : null), Y = i?.awareness ?? null;
+	let K = he(p), q = f && Object.prototype.hasOwnProperty.call(f, l) ? f[l] : void 0, J = n ?? (t ? t.getText(r) : null), Y = i?.awareness ?? null;
 	u(() => {
 		let e = H.current;
 		if (!e) return;
 		let t = W.current, n = G.current, r = (e, t, n) => {
-			let { from: r, inserted: i, deleted: a, lines: o } = fe(e.changes), s = Date.now();
+			let { from: r, inserted: i, deleted: a, lines: o } = pe(e.changes), s = Date.now();
 			G.current.onLocalEdit?.({
 				kind: t,
 				from: r,
@@ -300,33 +300,33 @@ function pe({ ydoc: t, ytext: n, textName: r = "code", provider: i = null, user:
 				via: t === "paste" ? "paste" : "drop"
 			});
 		}, i = null, a;
-		J ? (i = new _.UndoManager(J), a = L(J, Y, { undoManager: i })) : a = [k(), T.of(A)];
+		J ? (i = new v.UndoManager(J), a = R(J, Y, { undoManager: i })) : a = [A(), E.of(j)];
 		let o = [
-			E(),
+			D(),
+			T(),
 			w(),
 			C(),
-			S(),
+			I(),
 			F(),
-			P(),
 			ae,
 			re,
-			T.of([...O, j]),
+			E.of([...k, M]),
 			a,
-			le,
-			t.language.of(ee(n.language, n.languages)),
-			t.readOnly.of(ue(n.readOnly)),
-			t.placeholder.of(de(n.placeholder)),
-			t.label.of(x.contentAttributes.of({ "aria-label": n.ariaLabel })),
-			x.updateListener.of((e) => {
+			ue,
+			t.language.of(X(n.language, n.languages)),
+			t.readOnly.of(de(n.readOnly)),
+			t.placeholder.of(fe(n.placeholder)),
+			t.label.of(S.contentAttributes.of({ "aria-label": n.ariaLabel })),
+			S.updateListener.of((e) => {
 				if (e.docChanged) {
-					for (let t of e.transactions) t.docChanged && t.annotation(R) === void 0 && (t.annotation(Z) || r(t, se(t), t.newDoc.length));
+					for (let t of e.transactions) t.docChanged && t.annotation(z) === void 0 && (t.annotation(oe) || r(t, ce(t), t.newDoc.length));
 					G.current.onChange?.(e.state.doc.toString());
 				}
 			}),
 			t.extensions.of(n.extensions ? [...n.extensions] : [])
-		], s = J ? J.toString() : n.value ?? n.defaultValue, c = new x({
+		], s = J ? J.toString() : n.value ?? n.defaultValue, c = new S({
 			parent: e,
-			state: b.create({
+			state: x.create({
 				doc: s,
 				extensions: o
 			})
@@ -371,30 +371,30 @@ function pe({ ydoc: t, ytext: n, textName: r = "code", provider: i = null, user:
 			Y.getLocalState() && Y.setLocalStateField("cursor", null);
 		};
 	}, [Y]);
-	let X = p({
+	let Z = m({
 		language: l,
 		languageLoader: q,
 		appExtensions: K
 	});
 	return u(() => {
-		let e = X.current;
-		(e.language !== l || e.languageLoader !== q) && (X.current = {
+		let e = Z.current;
+		(e.language !== l || e.languageLoader !== q) && (Z.current = {
 			...e,
 			language: l,
 			languageLoader: q
-		}, U.current?.dispatch({ effects: W.current.language.reconfigure(ee(l, G.current.languages)) }));
+		}, U.current?.dispatch({ effects: W.current.language.reconfigure(X(l, G.current.languages)) }));
 	}, [l, q]), u(() => {
-		X.current.appExtensions !== K && (X.current = {
-			...X.current,
+		Z.current.appExtensions !== K && (Z.current = {
+			...Z.current,
 			appExtensions: K
 		}, U.current?.dispatch({ effects: W.current.extensions.reconfigure(K ? [...K] : []) }));
 	}, [K]), u(() => {
-		U.current?.dispatch({ effects: W.current.readOnly.reconfigure(ue(g)) });
-	}, [g]), u(() => {
-		U.current?.dispatch({ effects: W.current.placeholder.reconfigure(de(v)) });
-	}, [v]), u(() => {
-		U.current?.dispatch({ effects: W.current.label.reconfigure(x.contentAttributes.of({ "aria-label": D })) });
-	}, [D]), u(() => {
+		U.current?.dispatch({ effects: W.current.readOnly.reconfigure(de(h)) });
+	}, [h]), u(() => {
+		U.current?.dispatch({ effects: W.current.placeholder.reconfigure(fe(_)) });
+	}, [_]), u(() => {
+		U.current?.dispatch({ effects: W.current.label.reconfigure(S.contentAttributes.of({ "aria-label": y })) });
+	}, [y]), u(() => {
 		let e = U.current;
 		if (J || s === void 0 || !e) return;
 		let t = e.state.doc.toString();
@@ -404,7 +404,7 @@ function pe({ ydoc: t, ytext: n, textName: r = "code", provider: i = null, user:
 				to: t.length,
 				insert: s
 			},
-			annotations: Z.of(!0)
+			annotations: oe.of(!0)
 		});
 	}, [s, J]), d(V, () => ({
 		get view() {
@@ -423,29 +423,29 @@ function pe({ ydoc: t, ytext: n, textName: r = "code", provider: i = null, user:
 					insert: e
 				},
 				selection: { anchor: i + e.length },
-				annotations: oe.of(!0),
+				annotations: se.of(!0),
 				scrollIntoView: !0
 			});
 		},
 		focus() {
 			U.current?.focus();
 		}
-	}), []), /* @__PURE__ */ h("div", {
+	}), []), /* @__PURE__ */ g("div", {
 		ref: H,
 		"data-testid": "code-pad",
 		"data-language": l,
-		"data-readonly": g ? "true" : void 0,
+		"data-readonly": h ? "true" : void 0,
 		"data-shared": J ? "true" : void 0,
-		className: e("relative flex min-h-0 min-w-0 flex-col overflow-hidden bg-surface font-code text-[13px] [&>.cm-editor]:min-h-0 [&>.cm-editor]:flex-1", I === "framed" && "rounded-md border border-solid border-border", B)
+		className: e("relative flex min-h-0 min-w-0 flex-col overflow-hidden bg-surface font-code text-[13px] [&>.cm-editor]:min-h-0 [&>.cm-editor]:flex-1", P === "framed" && "rounded-md border border-solid border-border", B)
 	});
 }
-function me(e) {
-	let t = p(e), n = t.current;
+function he(e) {
+	let t = m(e), n = t.current;
 	return n === e || n !== void 0 && e !== void 0 && n.length === e.length && n.every((t, n) => t === e[n]) || (t.current = e), t.current;
 }
 //#endregion
 //#region src/components/code-pad/CodeRunOutput.tsx
-var he = {
+var ge = {
 	queued: {
 		label: "Queued",
 		tone: "neutral",
@@ -499,10 +499,10 @@ var he = {
 		announce: "The code couldn't be run. Try again."
 	}
 };
-function ge(e) {
-	return he[e]?.label ?? String(e);
-}
 function _e(e) {
+	return ge[e]?.label ?? String(e);
+}
+function ve(e) {
 	switch (e) {
 		case "queued": return "Waiting to start.";
 		case "compiling": return "Compiling…";
@@ -511,14 +511,14 @@ function _e(e) {
 		default: return "The program printed nothing.";
 	}
 }
-function ve(e) {
+function ye(e) {
 	return e < 1e3 ? `${Math.round(e)} ms` : e < 6e4 ? `${(e / 1e3).toFixed(2)} s` : `${Math.floor(e / 6e4)} min ${Math.round(e % 6e4 / 1e3)} s`;
 }
-function ye(e) {
+function be(e) {
 	let t = e.replace(/\r\n?/g, "\n").split("\n");
 	return t.length > 1 && t[t.length - 1] === "" && t.pop(), t;
 }
-var be = {
+var xe = {
 	compile: "Compiler output",
 	stdout: "Output",
 	stderr: "Error output"
@@ -526,26 +526,26 @@ var be = {
 function Q(e, t, n) {
 	let r = e === "stderr", a = [{
 		id: `${e}-label`,
-		message: /* @__PURE__ */ h(i, {
+		message: /* @__PURE__ */ g(i, {
 			size: "xs",
 			weight: "semibold",
 			tone: r ? "danger" : "secondary",
 			"data-testid": `code-run-${e}-label`,
-			children: be[e]
+			children: xe[e]
 		})
 	}];
-	return ye(t).forEach((t, n) => {
+	return be(t).forEach((t, n) => {
 		a.push({
 			id: `${e}-${n}`,
 			level: r ? "error" : void 0,
-			message: r ? /* @__PURE__ */ h(i, {
+			message: r ? /* @__PURE__ */ g(i, {
 				tone: "danger",
 				children: t || " "
 			}) : t || " "
 		});
 	}), n && a.push({
 		id: `${e}-cut`,
-		message: /* @__PURE__ */ h(i, {
+		message: /* @__PURE__ */ g(i, {
 			size: "xs",
 			tone: "tertiary",
 			"data-testid": `code-run-${e}-cut`,
@@ -553,8 +553,8 @@ function Q(e, t, n) {
 		})
 	}), a;
 }
-function xe({ status: n, stdout: o = "", stderr: l = "", compileOutput: u = "", truncated: d, exitCode: f, timeMs: p, peakMemoryMb: m, runBy: _, languageLabel: v, runtimeVersion: y, follow: b = !0, emptyMessage: x = "Nothing has been run yet.", actions: S, variant: C = "framed", className: w, "data-testid": T = "code-run-output" }) {
-	let E = n ? he[n] ?? {
+function Se({ status: n, stdout: o = "", stderr: l = "", compileOutput: u = "", truncated: d, exitCode: f, timeMs: p, peakMemoryMb: m, runBy: h, languageLabel: v, runtimeVersion: y, follow: b = !0, emptyMessage: x = "Nothing has been run yet.", actions: S, variant: C = "framed", className: w, "data-testid": T = "code-run-output" }) {
+	let E = n ? ge[n] ?? {
 		label: String(n),
 		tone: "neutral",
 		announce: String(n)
@@ -563,36 +563,36 @@ function xe({ status: n, stdout: o = "", stderr: l = "", compileOutput: u = "", 
 		...o || d?.stdout ? Q("stdout", o, !!d?.stdout) : [],
 		...l || d?.stderr ? Q("stderr", l, !!d?.stderr) : []
 	] : [], O = [v, y].filter(Boolean).join(" "), k = [];
-	return _ && k.push(_.startsWith("Run by") ? _ : `Run by ${_}`), O && k.push(O), typeof p == "number" && Number.isFinite(p) && k.push(ve(p)), typeof m == "number" && Number.isFinite(m) && k.push(`${Math.round(m)} MB`), typeof f == "number" && k.push(`Exit code ${f}`), /* @__PURE__ */ g(a, {
+	return h && k.push(h.startsWith("Run by") ? h : `Run by ${h}`), O && k.push(O), typeof p == "number" && Number.isFinite(p) && k.push(ye(p)), typeof m == "number" && Number.isFinite(m) && k.push(`${Math.round(m)} MB`), typeof f == "number" && k.push(`Exit code ${f}`), /* @__PURE__ */ _(a, {
 		"data-testid": T,
 		"data-status": n ?? void 0,
 		"data-variant": C,
 		className: e("flex min-h-0 min-w-0 flex-col", C === "flush" && "rounded-none border-0 bg-transparent", w),
 		children: [
-			/* @__PURE__ */ g(r, {
+			/* @__PURE__ */ _(r, {
 				gap: "sm",
 				align: "center",
 				justify: "between",
 				wrap: !1,
 				"data-testid": `${T}-header`,
 				className: "min-w-0 shrink-0 border-b border-[var(--color-border)] px-3 py-2",
-				children: [/* @__PURE__ */ g(r, {
+				children: [/* @__PURE__ */ _(r, {
 					gap: "sm",
 					align: "center",
 					wrap: !1,
 					className: "min-w-0",
-					children: [E ? /* @__PURE__ */ h(t, {
+					children: [E ? /* @__PURE__ */ g(t, {
 						tone: E.tone,
 						size: "sm",
 						dot: E.live ? "pulse" : "static",
 						"data-testid": `${T}-status`,
 						children: E.label
-					}) : /* @__PURE__ */ h(i, {
+					}) : /* @__PURE__ */ g(i, {
 						size: "sm",
 						weight: "semibold",
 						tone: "secondary",
 						children: "Output"
-					}), k.length > 0 && /* @__PURE__ */ h(i, {
+					}), k.length > 0 && /* @__PURE__ */ g(i, {
 						size: "xs",
 						tone: "tertiary",
 						tabular: !0,
@@ -600,7 +600,7 @@ function xe({ status: n, stdout: o = "", stderr: l = "", compileOutput: u = "", 
 						"data-testid": `${T}-facts`,
 						children: k.join(" · ")
 					})]
-				}), S && /* @__PURE__ */ h(r, {
+				}), S && /* @__PURE__ */ g(r, {
 					gap: "xs",
 					align: "center",
 					wrap: !1,
@@ -609,17 +609,17 @@ function xe({ status: n, stdout: o = "", stderr: l = "", compileOutput: u = "", 
 					children: S
 				})]
 			}),
-			/* @__PURE__ */ h(s, {
+			/* @__PURE__ */ g(s, {
 				as: "div",
 				"data-testid": `${T}-announcer`,
-				children: /* @__PURE__ */ h("span", {
+				children: /* @__PURE__ */ g("span", {
 					role: "status",
 					"aria-live": "polite",
 					"aria-atomic": "true",
 					children: E ? E.announce : ""
 				})
 			}),
-			/* @__PURE__ */ h(c, {
+			/* @__PURE__ */ g(c, {
 				lines: D,
 				title: null,
 				follow: b,
@@ -627,7 +627,7 @@ function xe({ status: n, stdout: o = "", stderr: l = "", compileOutput: u = "", 
 				showTimestamp: !1,
 				showLevel: !1,
 				showSource: !1,
-				emptyMessage: n ? _e(n) : x,
+				emptyMessage: n ? ve(n) : x,
 				"data-testid": `${T}-log`,
 				className: "min-h-0 flex-1 rounded-none border-0"
 			})
@@ -636,11 +636,11 @@ function xe({ status: n, stdout: o = "", stderr: l = "", compileOutput: u = "", 
 }
 //#endregion
 //#region src/components/code-pad/CodePlayback.tsx
-function Se(e) {
+function Ce(e) {
 	let t = Math.max(0, Math.floor((Number.isFinite(e) ? e : 0) / 1e3)), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = String(t % 60).padStart(2, "0");
 	return n > 0 ? `${n}:${String(r).padStart(2, "0")}:${i}` : `${r}:${i}`;
 }
-function Ce(e, t) {
+function we(e, t) {
 	let n = 0, r = e.length - 1, i = -1;
 	for (; n <= r;) {
 		let a = n + r >> 1;
@@ -648,22 +648,30 @@ function Ce(e, t) {
 	}
 	return i;
 }
-var we = {
+var Te = {
 	question: "Question",
 	run: "Run",
 	paste: "Paste"
-}, Te = {
+}, Ee = {
 	question: "border-[var(--color-info-fg,#1d4ed8)] text-[var(--color-info-fg,#1d4ed8)]",
 	run: "border-[var(--color-success-fg,#15803d)] text-[var(--color-success-fg,#15803d)]",
 	paste: "border-[var(--color-warning-fg,#b45309)] text-[var(--color-warning-fg,#b45309)]"
 };
 function $(e) {
-	return we[e] ?? (e ? e.charAt(0).toUpperCase() + e.slice(1) : "Marker");
+	return Te[e] ?? (e ? e.charAt(0).toUpperCase() + e.slice(1) : "Marker");
 }
-function Ee(e) {
+function De(e) {
 	return $(e).charAt(0).toUpperCase();
 }
-function De(e, t) {
+var Oe = 24, ke = 24;
+function Ae(e, t = Oe) {
+	let n = [];
+	return e.map((e) => {
+		let r = n.findIndex((n) => e - n >= t);
+		return r < 0 && (r = n.length), n[r] = e, r;
+	});
+}
+function je(e, t) {
 	if (e === t) return null;
 	let n = 0, r = Math.min(e.length, t.length);
 	for (; n < r && e.charCodeAt(n) === t.charCodeAt(n);) n++;
@@ -675,120 +683,140 @@ function De(e, t) {
 		insert: t.slice(n, a)
 	};
 }
-function Oe({ frames: t, markers: a = [], durationMs: s, timeMs: c, onTimeChange: d, language: _ = "python", languages: v, formatTime: y = Se, emptyMessage: b = "No code was written.", className: x, "data-testid": S = "code-playback" }) {
-	let [C, w] = m(c ?? 0), T = Math.max(0, Number.isFinite(s) ? s : 0), E = Math.min(T, Math.max(0, c ?? C)), D = l((e) => {
-		let t = Math.min(T, Math.max(0, e));
-		c === void 0 && w(t), d?.(t);
+function Me({ frames: t, markers: a = [], durationMs: s, timeMs: c, onTimeChange: d, language: v = "python", languages: y, formatTime: b = Ce, emptyMessage: x = "No code was written.", className: S, "data-testid": C = "code-playback" }) {
+	let [w, T] = h(c ?? 0), E = Math.max(0, Number.isFinite(s) ? s : 0), D = Math.min(E, Math.max(0, c ?? w)), O = l((e) => {
+		let t = Math.min(E, Math.max(0, e));
+		c === void 0 && T(t), d?.(t);
 	}, [
-		T,
+		E,
 		c,
 		d
-	]), O = f(() => [...t].sort((e, t) => e.atMs - t.atMs), [t]), k = f(() => [...a].sort((e, t) => e.atMs - t.atMs), [a]), A = Ce(O, E), j = A >= 0 ? O[A] : null, M = j?.text ?? "", N = j?.language ?? _, P = p(null), F = O.length > 0;
+	]), k = p(() => [...t].sort((e, t) => e.atMs - t.atMs), [t]), A = p(() => [...a].sort((e, t) => e.atMs - t.atMs), [a]), j = we(k, D), M = j >= 0 ? k[j] : null, N = M?.text ?? "", P = M?.language ?? v, F = m(null), I = k.length > 0;
 	u(() => {
-		let e = P.current?.view;
+		let e = F.current?.view;
 		if (!e) return;
-		let t = De(e.state.doc.toString(), M);
+		let t = je(e.state.doc.toString(), N);
 		t && e.dispatch({ changes: t });
-	}, [M, F]);
-	let I = Ce(k, E), L = I >= 0 ? k[I] : null, [R, z] = m(0), B = p([]), V = Math.min(R, Math.max(0, k.length - 1)), H = (e, t) => {
+	}, [N, I]);
+	let L = we(A, D), R = L >= 0 ? A[L] : null, [z, B] = h(0), V = m([]), H = Math.min(z, Math.max(0, A.length - 1)), U = (e, t) => {
 		let n = -1;
-		e.key === "ArrowRight" || e.key === "ArrowDown" ? n = Math.min(k.length - 1, t + 1) : e.key === "ArrowLeft" || e.key === "ArrowUp" ? n = Math.max(0, t - 1) : e.key === "Home" ? n = 0 : e.key === "End" && (n = k.length - 1), !(n < 0) && (e.preventDefault(), z(n), B.current[n]?.focus());
-	}, U = (e) => T > 0 ? Math.min(100, Math.max(0, e / T * 100)) : 0, W = T > 2e4 ? 1e3 : 100;
-	return /* @__PURE__ */ g(n, {
+		e.key === "ArrowRight" || e.key === "ArrowDown" ? n = Math.min(A.length - 1, t + 1) : e.key === "ArrowLeft" || e.key === "ArrowUp" ? n = Math.max(0, t - 1) : e.key === "Home" ? n = 0 : e.key === "End" && (n = A.length - 1), !(n < 0) && (e.preventDefault(), B(n), V.current[n]?.focus());
+	}, W = (e) => E > 0 ? Math.min(100, Math.max(0, e / E * 100)) : 0, G = m(null), [K, q] = h(0), J = A.length > 0;
+	f(() => {
+		let e = G.current;
+		if (!e) return;
+		let t = () => q(e.getBoundingClientRect().width);
+		if (t(), typeof ResizeObserver > "u") return;
+		let n = new ResizeObserver(t);
+		return n.observe(e), () => n.disconnect();
+	}, [J]);
+	let Y = p(() => K > 0 && E > 0 ? Ae(A.map((e) => Math.min(E, Math.max(0, e.atMs)) / E * K)) : A.map(() => 0), [
+		A,
+		K,
+		E
+	]), X = Y.reduce((e, t) => Math.max(e, t + 1), 1), Z = E > 2e4 ? 1e3 : 100;
+	return /* @__PURE__ */ _(n, {
 		gap: "sm",
-		"data-testid": S,
-		className: e("min-h-0 min-w-0", x),
-		children: [F ? /* @__PURE__ */ h(pe, {
-			ref: P,
+		"data-testid": C,
+		className: e("min-h-0 min-w-0", S),
+		children: [I ? /* @__PURE__ */ g(me, {
+			ref: F,
 			readOnly: !0,
-			defaultValue: M,
-			language: N,
-			languages: v,
+			defaultValue: N,
+			language: P,
+			languages: y,
 			"aria-label": "Code playback",
 			className: "min-h-0 flex-1"
-		}) : /* @__PURE__ */ h(n, {
+		}) : /* @__PURE__ */ g(n, {
 			gap: "none",
 			align: "center",
 			justify: "center",
-			"data-testid": `${S}-empty`,
+			"data-testid": `${C}-empty`,
 			className: "min-h-0 flex-1 rounded-md border border-border py-8",
-			children: /* @__PURE__ */ h(i, {
+			children: /* @__PURE__ */ g(i, {
 				size: "sm",
 				tone: "tertiary",
-				children: b
+				children: x
 			})
-		}), /* @__PURE__ */ g(n, {
+		}), /* @__PURE__ */ _(n, {
 			gap: "xs",
-			"data-testid": `${S}-timeline`,
+			"data-testid": `${C}-timeline`,
 			className: "shrink-0",
 			children: [
-				k.length > 0 && /* @__PURE__ */ h("div", {
+				A.length > 0 && /* @__PURE__ */ g("div", {
+					ref: G,
 					role: "group",
 					"aria-label": "Moments",
-					"data-testid": `${S}-markers`,
+					"data-testid": `${C}-markers`,
+					"data-rows": X,
 					className: "relative mx-2 h-6",
-					children: k.map((t, n) => {
-						let r = $(t.kind), i = `${r}: ${t.label}${t.detail ? `. ${t.detail}` : ""}, at ${y(t.atMs)}`;
-						return /* @__PURE__ */ h("button", {
+					style: X > 1 ? { height: `${(X - 1) * ke + 24}px` } : void 0,
+					children: A.map((t, n) => {
+						let r = $(t.kind), i = `${r}: ${t.label}${t.detail ? `. ${t.detail}` : ""}, at ${b(t.atMs)}`;
+						return /* @__PURE__ */ g("button", {
 							ref: (e) => {
-								B.current[n] = e;
+								V.current[n] = e;
 							},
 							type: "button",
 							"data-ui-part": "",
-							"data-testid": `${S}-marker`,
+							"data-testid": `${C}-marker`,
 							"data-kind": t.kind,
-							"data-passed": t.atMs <= E ? "true" : void 0,
-							tabIndex: n === V ? 0 : -1,
+							"data-row": Y[n] ?? 0,
+							"data-passed": t.atMs <= D ? "true" : void 0,
+							tabIndex: n === H ? 0 : -1,
 							"aria-label": i,
-							title: `${r}: ${t.label}${t.detail ? ` (${t.detail})` : ""} at ${y(t.atMs)}`,
+							title: `${r}: ${t.label}${t.detail ? ` (${t.detail})` : ""} at ${b(t.atMs)}`,
 							onClick: () => {
-								z(n), D(t.atMs);
+								B(n), O(t.atMs);
 							},
-							onFocus: () => z(n),
-							onKeyDown: (e) => H(e, n),
-							className: e("absolute top-0 flex h-5 min-w-5 -translate-x-1/2 cursor-pointer items-center justify-center rounded border border-solid bg-surface px-1 font-mono text-[10px] font-semibold leading-none", "outline-none focus-visible:ring-2 focus-visible:ring-primary", Te[t.kind] ?? "border-border text-text-secondary", t.atMs <= E ? "opacity-100" : "opacity-70"),
-							style: { left: `${U(t.atMs)}%` },
-							children: Ee(t.kind)
+							onFocus: () => B(n),
+							onKeyDown: (e) => U(e, n),
+							className: e("absolute top-0 flex h-5 min-w-5 -translate-x-1/2 cursor-pointer items-center justify-center rounded border border-solid bg-surface px-1 font-mono text-[10px] font-semibold leading-none", "outline-none focus-visible:ring-2 focus-visible:ring-primary", Ee[t.kind] ?? "border-border text-text-secondary", t.atMs <= D ? "opacity-100" : "opacity-70"),
+							style: Y[n] ? {
+								left: `${W(t.atMs)}%`,
+								top: `${Y[n] * ke}px`
+							} : { left: `${W(t.atMs)}%` },
+							children: De(t.kind)
 						}, `${t.atMs}-${n}`);
 					})
 				}),
-				/* @__PURE__ */ h(o, {
-					value: E,
-					onChange: D,
+				/* @__PURE__ */ g(o, {
+					value: D,
+					onChange: O,
 					min: 0,
-					max: T,
-					step: W,
+					max: E,
+					step: Z,
 					readout: !1,
 					"aria-label": "Time in the code",
-					"aria-valuetext": `${y(E)} of ${y(T)}`,
-					"data-testid": `${S}-slider`
+					"aria-valuetext": `${b(D)} of ${b(E)}`,
+					"data-testid": `${C}-slider`
 				}),
-				/* @__PURE__ */ g(r, {
+				/* @__PURE__ */ _(r, {
 					gap: "sm",
 					justify: "between",
 					wrap: !1,
 					className: "min-w-0",
-					children: [/* @__PURE__ */ g(i, {
+					children: [/* @__PURE__ */ _(i, {
 						size: "xs",
 						tone: "secondary",
 						tabular: !0,
-						"data-testid": `${S}-time`,
+						"data-testid": `${C}-time`,
 						children: [
-							y(E),
+							b(D),
 							" / ",
-							y(T)
+							b(E)
 						]
-					}), L && /* @__PURE__ */ g(i, {
+					}), R && /* @__PURE__ */ _(i, {
 						size: "xs",
 						tone: "tertiary",
 						truncate: !0,
-						"data-testid": `${S}-current`,
+						"data-testid": `${C}-current`,
 						children: [
-							$(L.kind),
+							$(R.kind),
 							": ",
-							L.label,
+							R.label,
 							" at ",
-							y(L.atMs)
+							b(R.atMs)
 						]
 					})]
 				})
@@ -797,4 +825,4 @@ function Oe({ frames: t, markers: a = [], durationMs: s, timeMs: c, onTimeChange
 	});
 }
 //#endregion
-export { K as CODE_PAD_LANGUAGES, pe as CodePad, Oe as CodePlayback, xe as CodeRunOutput, Ee as codePlaybackMarkerLetter, ge as codeRunStatusLabel, q as isCodePadLanguage };
+export { q as CODE_PAD_LANGUAGES, me as CodePad, Me as CodePlayback, Se as CodeRunOutput, De as codePlaybackMarkerLetter, Ae as codePlaybackMarkerRows, _e as codeRunStatusLabel, J as isCodePadLanguage };

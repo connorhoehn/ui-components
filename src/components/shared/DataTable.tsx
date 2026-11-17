@@ -49,7 +49,7 @@ export interface DataTableColumn<T> {
   filterable?: boolean;
   width?: string;
   /**
-   * The narrowest this column draws in the table form (since NEXT), as a CSS
+   * The narrowest this column draws in the table form (since 2.538.0), as a CSS
    * length (`'12rem'`, `'160px'`). When the columns' minimums add up to more
    * than the box, the table keeps them and scrolls sideways inside its own
    * scroller instead of squeezing every column until its text wraps, which is

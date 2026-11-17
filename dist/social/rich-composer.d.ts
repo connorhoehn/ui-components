@@ -834,6 +834,16 @@ export declare interface ComposerPromptField {
     tone?: ComposerPromptTone;
     /** An identifier value (ids, repos): tabular figures in the body face, never monospace. */
     mono?: boolean;
+    /**
+     * `one-line` (since 2.538.0): in the card presentation this fact draws on one
+     * line cut with an ellipsis, as every fact does under `presentation="prompt"`,
+     * with its full text as the value's tooltip (`title`): `fullText` when given,
+     * else the value when it is a string or number. `wrap` (default): the card's
+     * fact wraps as before. `data-composer-prompt-field-line="one"` on the fact.
+     */
+    line?: 'wrap' | 'one-line';
+    /** The tooltip text for a `one-line` fact whose `value` is not a plain string (since 2.538.0). */
+    fullText?: string;
 }
 
 /** The follow-up each answered prompt routed to (`{ next }`), by the answered prompt's id. */

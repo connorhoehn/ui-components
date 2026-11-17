@@ -8408,6 +8408,16 @@ export declare interface DataTableColumn<T> {
     /** Include this column's text in the global search box. Default: true if a search box is shown. */
     filterable?: boolean;
     width?: string;
+    /**
+     * The narrowest this column draws in the table form (since 2.538.0), as a CSS
+     * length (`'12rem'`, `'160px'`). When the columns' minimums add up to more
+     * than the box, the table keeps them and scrolls sideways inside its own
+     * scroller instead of squeezing every column until its text wraps, which is
+     * also what lets `stickyFirstColumn` pin. Set on the column's header cell
+     * (`min-width`, `data-min-width` on it); `data-min-width-columns` on the
+     * `<table>`. Ignored in the stacked card form.
+     */
+    minWidth?: string;
     align?: 'left' | 'right' | 'center';
     /** A number column: right-aligned header and cells, tabular figures. Since 2.434.0. */
     numeric?: boolean;
@@ -9094,7 +9104,10 @@ export declare interface DetailPageTab {
     content: ReactNode;
 }
 
-export declare function DetailSection({ title, as: Heading, hint, actions, first, variant, size: sizeProp, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+export declare function DetailSection({ title, as: Heading, hint, actions, actionsVisibility, first, variant, size: sizeProp, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+
+/** When a `heading` DetailSection shows its `actions` (since 2.538.0). */
+export declare type DetailSectionActionsVisibility = 'hover' | 'always';
 
 export declare interface DetailSectionProps {
     title: string;
@@ -9104,6 +9117,13 @@ export declare interface DetailSectionProps {
     hint?: ReactNode;
     /** Right-aligned affordance for this section only. */
     actions?: ReactNode;
+    /**
+     * `heading` variant (since 2.538.0): `hover` (default) keeps `actions` quiet
+     * until the section is hovered or focused; `always` shows them at all times,
+     * for a section whose action is the page's primary one. The `label` variant
+     * always shows its actions. `data-actions-visibility` on the actions span.
+     */
+    actionsVisibility?: DetailSectionActionsVisibility;
     /** Suppress the leading rule. Use on the first section of a surface. */
     first?: boolean;
     /**
@@ -12274,7 +12294,7 @@ export declare function gridFit(count: number, width: number, height: number, ga
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, trailingLayout, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, trailingLayout, scrollCurrentIntoView, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -12378,6 +12398,16 @@ export declare interface GroupedListProps {
      * 2.513.0.
      */
     trailingLayout?: 'inline' | 'columns';
+    /**
+     * Scroll the current row (`currentId`, or a row with `current`) into view in
+     * the list's scroller when the list mounts and whenever the current row
+     * changes (since 2.538.0), with `block: 'nearest'`, so a record opened from a
+     * link or a search shows its row in a long rail. Waits for the row to be
+     * drawn (rows that load later, a group that opens); the reader's own scroll
+     * is left alone until the current row changes again. Never moves focus.
+     * Default false.
+     */
+    scrollCurrentIntoView?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -30446,7 +30476,10 @@ declare interface UseActivityBusReturn {
       outcome?: 'failed' | 'cancelled';
   }
 
-  export declare function WorkflowStepper({ steps, size: sizeProp, wrap, orientation, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+  export declare function WorkflowStepper({ steps, size: sizeProp, wrap, orientation, currentTone: tone, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+
+  /** The current step's colour: the library's blue or the host's brand (since 2.538.0). */
+  export declare type WorkflowStepperCurrentTone = 'info' | 'primary';
 
   export declare interface WorkflowStepperProps {
       steps: WorkflowStep[];
@@ -30471,6 +30504,13 @@ declare interface UseActivityBusReturn {
        * `data-orientation` on the root.
        */
       orientation?: 'horizontal' | 'vertical';
+      /**
+       * The current step's colour (since 2.538.0). `info` (default): the library's
+       * blue. `primary`: the brand token (`--color-primary`), which a host sets per
+       * tenant, so the current step takes the tenant's accent like the rest of the
+       * library's brand-coloured parts. `data-current-tone="primary"` on the root.
+       */
+      currentTone?: WorkflowStepperCurrentTone;
       className?: string;
       'data-testid'?: string;
   }

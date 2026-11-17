@@ -211,6 +211,15 @@ export declare interface CodePlaybackMarker {
 /** The letter on the stop: Q, R, P, or the first letter of a page's own kind. */
 export declare function codePlaybackMarkerLetter(kind: string): string;
 
+/**
+ * Which row each stop sits on (since 2.538.0), given their centres in px along the
+ * strip in time order: each stop takes the first row whose last stop is at
+ * least `pitchPx` to its left, else opens a new row. Stops far enough apart all
+ * stay on row 0, so a sparse strip draws as before; stops that would touch (a
+ * paste and a run a second apart) stack instead of overlapping.
+ */
+export declare function codePlaybackMarkerRows(centresPx: readonly number[], pitchPx?: number): number[];
+
 export declare interface CodePlaybackProps {
     /** Snapshots in time order; the view shows the last frame at or before the time. */
     frames: readonly CodePlaybackFrame[];

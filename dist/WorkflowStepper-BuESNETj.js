@@ -246,104 +246,109 @@ function T({ compact: e }) {
 		})
 	});
 }
-function E({ step: t, size: n }) {
-	let r = n === "compact";
+function E({ step: t, size: n, tone: r }) {
+	let i = r === "primary", a = n === "compact";
 	return /* @__PURE__ */ g("div", {
 		"data-workflow-marker": t.outcome ?? (t.done ? "done" : t.active ? "active" : "todo"),
-		className: e("flex flex-shrink-0 items-center justify-center rounded-full transition-colors", C[n], t.outcome === "failed" ? "border-2 border-danger bg-danger-bg text-danger" : t.outcome === "cancelled" ? "border-2 border-border bg-surface-inset text-text-secondary" : t.done ? "bg-success text-white" : t.active ? e(r ? "border-[1.5px]" : "border-2", "border-info bg-info-bg") : "border border-border bg-surface-inset"),
-		children: t.outcome ? /* @__PURE__ */ g("span", { className: e("rounded-full", t.outcome === "failed" ? "bg-danger" : "bg-text-secondary", r ? "h-1.5 w-1.5" : "h-2 w-2") }) : t.done ? /* @__PURE__ */ g(T, { compact: r }) : t.active ? /* @__PURE__ */ g("span", { className: e("rounded-full bg-info", r ? "h-1.5 w-1.5" : "h-2 w-2") }) : null
+		className: e("flex flex-shrink-0 items-center justify-center rounded-full transition-colors", C[n], t.outcome === "failed" ? "border-2 border-danger bg-danger-bg text-danger" : t.outcome === "cancelled" ? "border-2 border-border bg-surface-inset text-text-secondary" : t.done ? "bg-success text-white" : t.active ? e(a ? "border-[1.5px]" : "border-2", i ? "border-primary bg-primary-bg" : "border-info bg-info-bg") : "border border-border bg-surface-inset"),
+		children: t.outcome ? /* @__PURE__ */ g("span", { className: e("rounded-full", t.outcome === "failed" ? "bg-danger" : "bg-text-secondary", a ? "h-1.5 w-1.5" : "h-2 w-2") }) : t.done ? /* @__PURE__ */ g(T, { compact: a }) : t.active ? /* @__PURE__ */ g("span", { className: e("rounded-full", i ? "bg-primary" : "bg-info", a ? "h-1.5 w-1.5" : "h-2 w-2") }) : null
 	});
 }
 function D(e, t) {
 	return e.done ? t?.done ? "full" : "partial" : "none";
 }
-function O({ steps: t, size: n, className: r, ariaLabel: i, testId: a }) {
+function O({ steps: t, size: n, tone: r, className: i, ariaLabel: a, testId: o }) {
 	return /* @__PURE__ */ g("ol", {
-		className: e("m-0 flex min-w-0 list-none flex-col p-0", r),
+		className: e("m-0 flex min-w-0 list-none flex-col p-0", i),
 		"data-orientation": "vertical",
-		"data-testid": a,
+		"data-testid": o,
+		"data-current-tone": r === "primary" ? r : void 0,
 		...n === "compact" ? { "data-density": "compact" } : {},
-		...i ? { "aria-label": i } : {},
-		children: t.map((r, i) => {
-			let a = i === t.length - 1, o = D(r, t[i + 1]), s = r.outcome ?? (r.done ? "done" : r.active ? "active" : "pending");
+		...a ? { "aria-label": a } : {},
+		children: t.map((i, a) => {
+			let o = a === t.length - 1, s = D(i, t[a + 1]), c = i.outcome ?? (i.done ? "done" : i.active ? "active" : "pending");
 			return /* @__PURE__ */ _("li", {
-				"aria-current": r.active ? "step" : void 0,
-				"data-state": s,
+				"aria-current": i.active ? "step" : void 0,
+				"data-state": c,
 				className: "flex min-w-0 gap-3",
 				children: [/* @__PURE__ */ _("div", {
 					className: "flex flex-shrink-0 flex-col items-center",
 					children: [/* @__PURE__ */ g(E, {
-						step: r,
-						size: n
-					}), !a && /* @__PURE__ */ g("div", {
+						step: i,
+						size: n,
+						tone: r
+					}), !o && /* @__PURE__ */ g("div", {
 						"aria-hidden": "true",
-						"data-workflow-connector": o,
-						className: e("my-1 min-h-4 w-0.5 flex-1 rounded-full transition-colors", o === "full" ? "bg-success" : o === "partial" ? "bg-gradient-to-b from-success to-success/30" : "bg-border")
+						"data-workflow-connector": s,
+						className: e("my-1 min-h-4 w-0.5 flex-1 rounded-full transition-colors", s === "full" ? "bg-success" : s === "partial" ? "bg-gradient-to-b from-success to-success/30" : "bg-border")
 					})]
 				}), /* @__PURE__ */ _("div", {
-					className: e("flex min-w-0 flex-1 flex-col gap-1", !a && "pb-4"),
+					className: e("flex min-w-0 flex-1 flex-col gap-1", !o && "pb-4"),
 					children: [
 						/* @__PURE__ */ g("span", {
-							className: e("text-sm font-medium leading-6", r.active ? "text-text-primary" : r.done ? "text-text-secondary" : "text-text-tertiary"),
-							children: r.label
+							className: e("text-sm font-medium leading-6", i.active ? "text-text-primary" : i.done ? "text-text-secondary" : "text-text-tertiary"),
+							children: i.label
 						}),
-						r.description != null && /* @__PURE__ */ g("div", {
+						i.description != null && /* @__PURE__ */ g("div", {
 							"data-ui-text": "workflow-step-description",
 							className: "min-w-0 break-words text-xs leading-5 text-text-secondary",
-							children: r.description
+							children: i.description
 						}),
-						r.active && r.action != null && /* @__PURE__ */ g("div", {
+						i.active && i.action != null && /* @__PURE__ */ g("div", {
 							"data-workflow-action": "",
 							className: "mt-1 flex min-w-0 flex-wrap items-center gap-2",
-							children: r.action
+							children: i.action
 						})
 					]
 				})]
-			}, r.step);
+			}, i.step);
 		})
 	});
 }
-function k({ steps: t, size: i, wrap: a = !1, orientation: o = "horizontal", className: s, "aria-label": c, "data-testid": l = "workflow-stepper" }) {
-	let u = n();
+function k({ steps: t, size: i, wrap: a = !1, orientation: o = "horizontal", currentTone: s = "info", className: c, "aria-label": l, "data-testid": u = "workflow-stepper" }) {
+	let d = n();
 	i === "sm" && r("WorkflowStepper", "sm");
-	let d = i ?? (u === "compact" ? "compact" : "md"), f = d === "compact";
+	let f = i ?? (d === "compact" ? "compact" : "md"), p = f === "compact";
 	if (o === "vertical") return /* @__PURE__ */ g(O, {
 		steps: t,
-		size: d,
-		className: s,
-		ariaLabel: c,
-		testId: l
+		size: f,
+		tone: s,
+		className: c,
+		ariaLabel: l,
+		testId: u
 	});
-	let p = t.some((e) => e.description != null);
+	let m = t.some((e) => e.description != null);
 	return /* @__PURE__ */ g("ol", {
-		className: e(p || f ? "m-0 inline-flex w-fit max-w-full list-none p-0" : "flex", a ? "flex-wrap gap-y-2" : "overflow-x-auto", p ? "items-start" : "items-center", s),
+		className: e(m || p ? "m-0 inline-flex w-fit max-w-full list-none p-0" : "flex", a ? "flex-wrap gap-y-2" : "overflow-x-auto", m ? "items-start" : "items-center", c),
 		...a ? { "data-wrap": "" } : {},
 		"data-orientation": "horizontal",
-		"data-testid": l,
-		...f ? { "data-density": "compact" } : {},
-		...c ? { "aria-label": c } : {},
+		"data-testid": u,
+		"data-current-tone": s === "primary" ? s : void 0,
+		...p ? { "data-density": "compact" } : {},
+		...l ? { "aria-label": l } : {},
 		children: t.map((n, r) => {
-			let i = r === t.length - 1, a = t[r + 1], o = n.done ? a?.done ? "bg-success" : "bg-gradient-to-r from-success to-success/30" : "bg-border", s = n.outcome ?? (n.done ? "done" : n.active ? "active" : "pending"), c = /* @__PURE__ */ g(E, {
+			let i = r === t.length - 1, a = t[r + 1], o = n.done ? a?.done ? "bg-success" : "bg-gradient-to-r from-success to-success/30" : "bg-border", c = n.outcome ?? (n.done ? "done" : n.active ? "active" : "pending"), l = /* @__PURE__ */ g(E, {
 				step: n,
-				size: d
-			}), l = /* @__PURE__ */ g("span", {
-				className: e(p ? "block text-xs font-semibold leading-4" : w[d], n.active ? "text-text-primary" : n.done ? "text-text-secondary" : "text-text-tertiary"),
+				size: f,
+				tone: s
+			}), u = /* @__PURE__ */ g("span", {
+				className: e(m ? "block text-xs font-semibold leading-4" : w[f], n.active ? "text-text-primary" : n.done ? "text-text-secondary" : "text-text-tertiary"),
 				children: n.label
 			});
-			return p ? /* @__PURE__ */ _("li", {
+			return m ? /* @__PURE__ */ _("li", {
 				"aria-current": n.active ? "step" : void 0,
-				"data-state": s,
-				className: e("shrink-0", f ? "w-32" : "w-40"),
+				"data-state": c,
+				className: e("shrink-0", p ? "w-32" : "w-40"),
 				children: [/* @__PURE__ */ _("div", {
 					className: "flex items-center",
-					children: [c, !i && /* @__PURE__ */ g("div", {
+					children: [l, !i && /* @__PURE__ */ g("div", {
 						"aria-hidden": "true",
 						"data-workflow-connector": "",
 						className: e("h-0.5 flex-1", o)
 					})]
 				}), /* @__PURE__ */ _("div", {
 					className: "mt-2 pr-3 space-y-1",
-					children: [l, n.description != null && /* @__PURE__ */ g("div", {
+					children: [u, n.description != null && /* @__PURE__ */ g("div", {
 						"data-ui-text": "workflow-step-description",
 						className: "text-xs text-text-secondary leading-5 break-words",
 						children: n.description
@@ -351,15 +356,15 @@ function k({ steps: t, size: i, wrap: a = !1, orientation: o = "horizontal", cla
 				})]
 			}, n.step) : /* @__PURE__ */ _("li", {
 				"aria-current": n.active ? "step" : void 0,
-				"data-state": s,
-				className: f ? "flex items-center" : "flex flex-1 items-center last:flex-none",
+				"data-state": c,
+				className: p ? "flex items-center" : "flex flex-1 items-center last:flex-none",
 				children: [/* @__PURE__ */ _("div", {
 					className: "flex items-center gap-1 whitespace-nowrap",
 					"data-workflow-step-head": "",
-					children: [c, l]
+					children: [l, u]
 				}), !i && /* @__PURE__ */ g("div", {
 					"aria-hidden": "true",
-					className: e(f ? "mx-2 h-0.5 w-3" : "mx-2 h-1 flex-1", "rounded-full transition-colors", o)
+					className: e(p ? "mx-2 h-0.5 w-3" : "mx-2 h-1 flex-1", "rounded-full transition-colors", o)
 				})]
 			}, n.step);
 		})

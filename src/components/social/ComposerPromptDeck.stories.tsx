@@ -230,7 +230,7 @@ export const BudgetRequest: Story = {
   },
 };
 
-/** A fact with `line: 'one-line'` (since NEXT): one truncating line in the card, its full text as the tooltip. */
+/** A fact with `line: 'one-line'` (since 2.538.0): one truncating line in the card, its full text as the tooltip. */
 export const OneLineFact: Story = {
   args: {
     prompts: [{

@@ -18,7 +18,7 @@ import { useDensitySize } from './Density';
 import { Divider } from './Divider';
 import { SectionLabel } from './SectionLabel';
 
-/** When a `heading` DetailSection shows its `actions` (since NEXT). */
+/** When a `heading` DetailSection shows its `actions` (since 2.538.0). */
 export type DetailSectionActionsVisibility = 'hover' | 'always';
 
 export interface DetailSectionProps {
@@ -30,7 +30,7 @@ export interface DetailSectionProps {
   /** Right-aligned affordance for this section only. */
   actions?: ReactNode;
   /**
-   * `heading` variant (since NEXT): `hover` (default) keeps `actions` quiet
+   * `heading` variant (since 2.538.0): `hover` (default) keeps `actions` quiet
    * until the section is hovered or focused; `always` shows them at all times,
    * for a section whose action is the page's primary one. The `label` variant
    * always shows its actions. `data-actions-visibility` on the actions span.

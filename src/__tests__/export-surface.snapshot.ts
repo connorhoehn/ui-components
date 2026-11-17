@@ -1797,6 +1797,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "CodePlayback",
     "CodeRunOutput",
     "codePlaybackMarkerLetter",
+    "codePlaybackMarkerRows",
     "codeRunStatusLabel",
     "isCodePadLanguage",
   ],
