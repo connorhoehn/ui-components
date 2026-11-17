@@ -3,8 +3,11 @@ import { act, cleanup, render } from '@testing-library/react';
 import { createRef } from 'react';
 import * as Y from 'yjs';
 import { Awareness, applyAwarenessUpdate, encodeAwarenessUpdate } from 'y-protocols/awareness';
-import { language as languageFacet } from '@codemirror/language';
-import { CodePad, type CodePadHandle, type CodePadEdit, type CodePadPaste } from '../index';
+import { language as languageFacet, StreamLanguage } from '@codemirror/language';
+import { lua } from '@codemirror/legacy-modes/mode/lua';
+import { EditorView } from '@codemirror/view';
+import { undo } from '@codemirror/commands';
+import { CodePad, type CodePadHandle, type CodePadEdit, type CodePadPaste, type Extension } from '../index';
 
 // jsdom has no layout: CodeMirror's measure pass asks a Range for its rects.
 beforeAll(() => {
@@ -244,5 +247,98 @@ describe('CodePad, local', () => {
     const { container } = render(<CodePad ref={ref} defaultValue={'a\nb\nc'} aria-label="Candidate's code" />);
     expect(container.querySelector('.cm-lineNumbers')).not.toBeNull();
     expect(ref.current!.view!.contentDOM.getAttribute('aria-label')).toBe("Candidate's code");
+  });
+});
+
+describe('CodePad, extended', () => {
+  const luaLanguage = StreamLanguage.define(lua);
+  const languages = { lua: () => luaLanguage };
+  const marker = (name: string): Extension => EditorView.editorAttributes.of({ 'data-ext': name });
+
+  it('applies app extensions after its own', () => {
+    const ref = createRef<CodePadHandle>();
+    render(<CodePad ref={ref} defaultValue="x" extensions={[marker('one')]} />);
+    expect(ref.current!.view!.dom.getAttribute('data-ext')).toBe('one');
+    // The built-ins are still there.
+    expect(ref.current!.view!.dom.querySelector('.cm-lineNumbers')).not.toBeNull();
+  });
+
+  it('reconfigures on a new extensions list, keeping the view, the text and the undo history', () => {
+    const ref = createRef<CodePadHandle>();
+    const one = marker('one');
+    const { rerender } = render(<CodePad ref={ref} defaultValue="a" extensions={[one]} />);
+    const view = ref.current!.view!;
+    type(view, 1, 'b');
+    rerender(<CodePad ref={ref} defaultValue="a" extensions={[marker('two')]} />);
+    expect(ref.current!.view).toBe(view);
+    expect(view.dom.getAttribute('data-ext')).toBe('two');
+    expect(ref.current!.getText()).toBe('ab');
+    rerender(<CodePad ref={ref} defaultValue="a" />);
+    expect(view.dom.getAttribute('data-ext')).toBeNull();
+    // History survived both reconfigures: undo takes back the typing.
+    act(() => {
+      undo(view);
+    });
+    expect(ref.current!.getText()).toBe('a');
+  });
+
+  it('does not reconfigure for a new array with the same items', () => {
+    const ref = createRef<CodePadHandle>();
+    const one = marker('one');
+    const { rerender } = render(<CodePad ref={ref} defaultValue="a" extensions={[one]} />);
+    const view = ref.current!.view!;
+    const spy = vi.spyOn(view, 'dispatch');
+    rerender(<CodePad ref={ref} defaultValue="a" extensions={[one]} />);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('keeps a shared pad bound to its document across a reconfigure', () => {
+    const doc = new Y.Doc();
+    const ref = createRef<CodePadHandle>();
+    const { rerender } = render(<CodePad ref={ref} ydoc={doc} extensions={[marker('one')]} />);
+    const view = ref.current!.view!;
+    type(view, 0, 'hi');
+    rerender(<CodePad ref={ref} ydoc={doc} extensions={[marker('two')]} />);
+    expect(ref.current!.view).toBe(view);
+    act(() => doc.getText('code').insert(2, '!'));
+    expect(ref.current!.getText()).toBe('hi!');
+    type(view, 0, '>');
+    expect(doc.getText('code').toString()).toBe('>hi!');
+  });
+
+  it('uses a registered language, and switches to and from it', () => {
+    const ref = createRef<CodePadHandle>();
+    const { rerender, getByTestId } = render(<CodePad ref={ref} language="lua" languages={languages} defaultValue="print(1)" />);
+    const view = ref.current!.view!;
+    expect(view.state.facet(languageFacet)?.name).toBe('lua');
+    rerender(<CodePad ref={ref} language="python" languages={languages} defaultValue="print(1)" />);
+    expect(view.state.facet(languageFacet)?.name).toBe('python');
+    rerender(<CodePad ref={ref} language="lua" languages={languages} defaultValue="print(1)" />);
+    expect(view.state.facet(languageFacet)?.name).toBe('lua');
+    expect(getByTestId('code-pad').getAttribute('data-language')).toBe('lua');
+    expect(ref.current!.getText()).toBe('print(1)');
+  });
+
+  it('a registered loader replaces the built-in mode of the same name', () => {
+    const ref = createRef<CodePadHandle>();
+    render(<CodePad ref={ref} language="python" languages={{ python: () => luaLanguage }} />);
+    expect(ref.current!.view!.state.facet(languageFacet)?.name).toBe('lua');
+  });
+
+  it('shows plain text for a name with no mode', () => {
+    const ref = createRef<CodePadHandle>();
+    render(<CodePad ref={ref} language="cobol" defaultValue="x" />);
+    expect(ref.current!.view!.state.facet(languageFacet)).toBeNull();
+  });
+
+  it('exposes the view through the ref, and null after unmount', () => {
+    const ref = createRef<CodePadHandle>();
+    const { unmount } = render(<CodePad ref={ref} defaultValue="abc" />);
+    const view = ref.current!.view!;
+    expect(view).toBeInstanceOf(EditorView);
+    expect(view.state.doc.toString()).toBe('abc');
+    const handle = ref.current!;
+    unmount();
+    expect(handle.view).toBeNull();
   });
 });
