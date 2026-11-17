@@ -30,6 +30,12 @@
 // (2.432.0) picks the shelf's tile size: `sm` 132 × 74 (= `compact`), `md`
 // 176 × 88 (default), `lg` 240 × 135 above a full-width composer.
 //
+// `layout="grid"` with `fit="contain"` fits the tiles to the block's width
+// AND height (`gridFit`: the column count that gives the largest 16:9 tile
+// with everyone visible), centred, for a call pane that is the page's whole
+// stage; the default `fit="width"` keeps fluid columns. The grid draws the
+// viewer's own tile as "You" while connecting once the viewer is known.
+//
 // A narrow column (a chat pane with a side panel open, ~520–650px) keeps
 // every control: the labels collapse first (below 860px), then the controls
 // wrap onto further right-aligned lines. Settings, pop-out and Leave travel

@@ -1,3 +1,14 @@
+## 2.536.0
+
+The call grid fits the room it is given and shows you while it connects, and the call's own words can name it something other than a huddle. Every new prop is optional; with none given, output is unchanged.
+
+- `CallDock` `fit?: 'width' | 'contain'` (`layout="grid"` only; `CallDockFit`): `width` (default) is the fluid 16:9 columns, unchanged byte for byte, pinned by a test against 2.535.1's output. `contain` measures the tile box's width and height and picks the column count that gives the largest 16:9 tile with every tile visible and nothing scrolling, sizes the columns to it and centres the grid (`data-fit="contain"` on the dock and the row); one tile fills as much as 16:9 allows, two sit side by side or stacked, whichever is larger. The dock then fills a flex column (`min-h-0 flex-1`). It re-fits on resize and when someone joins or leaves without re-rendering or remounting the tiles already there; before the first measurement it draws the `width` layout. The other layouts ignore it.
+- `gridFit(count, width, height, gap?)` → `{ columns, rows, tileWidth, tileHeight }` (`GridFit`, `GRID_FIT_ASPECT`), the pure choice behind `contain`.
+- `CallTileRow` `fitBox?: { width, height } | null` (`variant="grid"`): the box to fit; given, `maxColumns` is ignored.
+- `CallBlock` `fit?: 'width' | 'contain'` (`CallBlockFit`), for the `pane` placement: the claim carries it (`CallBlockClaims.claim(…, { fit })`, read as `claims.fit()`), and `CallMediaOutlet` passes `fit="contain"` to the dock (through `ConversationCallDock` `fit`) and lets its wrapper fill the claimant (`min-h-0 flex-1`) when the holder is a pane asking for it. A page writes `<CallBlock placement="pane" fit="contain" className="h-full min-h-0" />`.
+- `CallDock layout="grid"` while `connecting`: once the viewer's own participant is in `participants` (realtime-modules lists it from the moment the call is active), the tiles draw, the viewer first as "You", instead of one skeleton; before that the skeleton stays. The host's bar keeps the controls. `shelf`, `stack`, `stage` and `compact` are unchanged.
+- `HuddleBar` `callNoun?: string` (default "huddle"): the bar's accessible name ("Design review huddle"), the joinable line ("huddle live · 2 joined"), the status dot ("Huddle live") and Join's name and tooltip.
+- `CallHostProvider` `callNoun?: string` (default "huddle"): the pre-join heading ("Start a huddle", "Join the huddle"), its fallback title ("this huddle"), its camera line and the call block's accessible name ("Huddle"); the host value carries it as `callNoun`. `PreJoinDialog` and `AudioVideoSettingsForm` (`layout="prejoin"`, and the wrapped form) take the same `callNoun`.
 ## 2.535.3
 
 - `PageHeader` (compact) and `DetailPage` lay their title cell out at a 12rem basis (was 8rem): the actions wrap under the title before it truncates, so "Voices & sound" no longer reads "Voices & so…" beside two actions at 390px. Wide headers are unchanged.
