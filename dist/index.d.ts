@@ -1906,7 +1906,10 @@ export declare interface AudioVideoSettingsFormProps {
     layout?: 'stack' | 'prejoin';
     /** Capture and effects actions under the pre-join preview. */
     previewControls?: ReactNode;
-    /** `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle."). Default "huddle". */
+    /**
+     * `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle.").
+     * Default: the nearest `CallNounProvider`'s (a `CallHostProvider callNoun` provides one, since 2.537.0), else "huddle".
+     */
     callNoun?: string;
     className?: string;
     'data-testid'?: string;
@@ -3122,6 +3125,15 @@ export declare interface CallNoticePillProps {
     maxLines?: 1 | 2 | 3;
     className?: string;
     'data-testid'?: string;
+}
+
+/** Sets the word for the call for every call component inside it (`HuddleBar`, `AudioVideoSettingsForm`'s pre-join form, `PreJoinDeviceSetup`). */
+export declare function CallNounProvider({ noun, children }: CallNounProviderProps): JSX.Element;
+
+export declare interface CallNounProviderProps {
+    /** Lower case ("call", "interview"); components capitalise it where it starts a phrase. */
+    noun: string;
+    children: ReactNode;
 }
 
 /** How an invite that never became a call ended. */
@@ -8373,7 +8385,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, revealSelection, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, columnGroups, stickyFirstColumn, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, revealSelection, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8438,6 +8450,29 @@ export declare interface DataTableColumn<T> {
      * width narrows (the highest number first, the rightmost first on a tie).
      */
     priority?: number;
+    /**
+     * The `key` of the `columnGroups` entry this column sits under (since
+     * NEXT): adjacent columns with the same group share one cell in a header
+     * row above the column headers ("Round 1" over its interviewers). A column
+     * with no group gets an empty cell there. Ignored unless some column has a
+     * group.
+     */
+    group?: string;
+    className?: string;
+}
+
+/**
+ * One group in the header row above the column headers (since 2.537.0): one
+ * interview round over a column per interviewer. Its cell spans the adjacent
+ * shown columns whose `group` is its `key`.
+ */
+export declare interface DataTableColumnGroup {
+    /** Matches `DataTableColumn.group`. */
+    key: string;
+    /** The group's header text. Default: the key. */
+    header: ReactNode;
+    /** Default `center`. */
+    align?: 'left' | 'right' | 'center';
     className?: string;
 }
 
@@ -8448,8 +8483,29 @@ export declare type DataTableHeaderCase = 'upper' | 'sentence';
 export declare type DataTableHiddenColumnsControl = 'row' | 'header';
 
 export declare interface DataTableProps<T> {
-    /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
-    rowHeight?: 'fixed' | 'content';
+    /**
+     * Document tables may wrap prose; ordinary collection rows retain their
+     * fixed rhythm. `content` (fixed in NEXT: it used to set only
+     * `data-ui-table-rows`, so a compact table's cells kept their fixed height
+     * and one line): rows grow to their content and prose wraps, top-aligned,
+     * with no ellipsis. See `DataTableRowHeight`.
+     */
+    rowHeight?: DataTableRowHeight;
+    /**
+     * A header row above the column headers that spans groups of columns (since
+     * NEXT): pair it with `columns[].group`. Drawn only when some column has a
+     * group; hidden with the header in the stacked card form. Each group cell
+     * is a `<th scope="colgroup">` with `data-column-group="<key>"`.
+     */
+    columnGroups?: DataTableColumnGroup[];
+    /**
+     * Pin the first column to the left edge while a wide table scrolls sideways
+     * (since 2.537.0), for tables whose first column names the row (a candidate
+     * beside a column per interviewer). Its cells carry `data-sticky-column`
+     * and keep the row's stripe, selection and hover fill. Off in the card form.
+     * Default false.
+     */
+    stickyFirstColumn?: boolean;
     data: T[];
     columns: DataTableColumn<T>[];
     /** Stable id for each row. Used as React key. */
@@ -8596,6 +8652,15 @@ export declare interface DataTableProps<T> {
     'data-testid'?: string;
 }
 
+/**
+ * How tall a body row is (`DataTable rowHeight`). `fixed` (default): the
+ * table's density sets it (at `sm`, every row 44px on one line). `content`
+ * (works since 2.537.0; before, it only set an attribute): each row is as tall as
+ * its content, prose wraps inside its cell (no ellipsis) and the cells align
+ * to the top. A `truncate` column still truncates.
+ */
+export declare type DataTableRowHeight = 'fixed' | 'content';
+
 export declare function DateEditorRenderer(props: SectionRendererProps): JSX.Element;
 
 export declare const dateFieldType: FieldTypeDefinition;
@@ -8740,6 +8805,9 @@ export declare interface DeckSpec {
 }
 
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
+
+/** The default word for the call. */
+export declare const DEFAULT_CALL_NOUN = "huddle";
 
 export declare const DEFAULT_CITED_SECTIONS: CitedRecordSection[];
 
@@ -11164,6 +11232,14 @@ export declare interface FloatingPanelProps {
     'data-testid'?: string;
 }
 
+/**
+ * The ratio with both columns at or above their floors at this split width
+ * (since 2.537.0): the pane at least `minPanePx`, the page at least
+ * `minPrimaryPx`. When the split cannot fit both, any ratio between the two
+ * floors is kept (as `SplitPane` does). Unmeasured: the ratio unchanged.
+ */
+export declare function floorSidePaneRatio(ratio: number, splitWidthPx: number | null, minPanePx: number, minPrimaryPx: number): number;
+
 export declare interface FocusedOrgGraph {
     people: OrgGraphPerson[];
     relationships: GraphRelationship[];
@@ -12936,7 +13012,7 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun: callNounProp, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
 export declare interface HuddleBarLiveParticipant {
@@ -17248,7 +17324,13 @@ export declare interface OutcomeSectionProps {
  *   <PageSection title="Channels">…</PageSection>
  * </PageFrame>
  */
-export declare function PageFrame({ title, description, breadcrumbs, actions, badge, back, density, titleAs, trailControls, trailLink, collapsed, onToggleCollapsed, children, body, dockedBody, footer, gutter, bodyGutter, bodyClassName, className, ...rest }: PageFrameProps): JSX.Element;
+export declare function PageFrame({ title, description, breadcrumbs, actions, badge, back, density, titleAs, trailControls, trailLink, collapsed, onToggleCollapsed, children, body, dockedBody, footer, gutter, bodyGutter, bodyClassName, column, columnWidth, className, ...rest }: PageFrameProps): JSX.Element;
+
+/** `PageFrame column` (since 2.537.0). */
+export declare type PageFrameColumn = 'full' | 'centered';
+
+/** `PageFrame columnWidth` (since 2.537.0): Tailwind's max-width steps. */
+export declare type PageFrameColumnWidth = 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl';
 
 export declare interface PageFrameProps extends PageTemplateHeaderProps, PageTemplateTrailProps, Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
     /** The page content, at the page gutter. */
@@ -17267,8 +17349,20 @@ export declare interface PageFrameProps extends PageTemplateHeaderProps, PageTem
     gutter?: PageGutter;
     /** The body's inset when it differs from the header's (since 2.504.0): `none` for a conversation that owns its gutters. Default: `gutter`. */
     bodyGutter?: PageGutter;
-    /** Extra classes for the body region. */
+    /** Extra classes for the body region (with `column="centered"`: the centred column inside it). */
     bodyClassName?: string;
+    /**
+     * `full` (default, unchanged): header and body span the column.
+     * `centered` (since 2.537.0): a guest or step page's single centred column —
+     * the header, the body's content and the footer sit in one column of
+     * `columnWidth`, centred, with the page gutter inside it, so the title lines
+     * up with the content. The body still scrolls at the full width (its
+     * scrollbar at the window's edge). `data-page-column-width` on the root.
+     * Replaces a hand-written `mx-auto max-w-4xl` wrapper.
+     */
+    column?: PageFrameColumn;
+    /** With `column="centered"`: the column's maximum width. Default `4xl` (56rem). Since NEXT. */
+    columnWidth?: PageFrameColumnWidth;
 }
 
 /**
@@ -23813,6 +23907,8 @@ export declare interface SidePaneRegistration {
      * The pane's width (px) until the reader sizes it: Search opens at 320–380px
      * so its graph keeps the width. A drag (or the divider's arrow keys) is
      * remembered per `paneId` and then wins, within 320px–60% of the split.
+     * `min` stays a floor at every width (since 2.537.0): the drawn pane is
+     * re-clamped as the window or the container narrows, and a drag stops at it.
      */
     widthPx?: {
         min: number;
@@ -24155,7 +24251,7 @@ export declare function splitEffectLabel(label: string): {
     text: string;
 };
 
-export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, orientation, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
+export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, orientation, reclampOnResize, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
 
 export declare interface SplitPaneProps {
     primary: ReactNode;
@@ -24185,6 +24281,16 @@ export declare interface SplitPaneProps {
      * share of the height.
      */
     orientation?: 'horizontal' | 'vertical';
+    /**
+     * Re-clamp the ratio to the pixel floors when the window or the split's own
+     * box resizes, reporting it through `onRatioChange` (default true). Pass
+     * false when the host clamps the ratio it passes for itself at every width
+     * and remembers `onRatioChange` as the reader's choice (SidePaneSplit, since
+     * NEXT): a resize is not a choice. Since NEXT the re-clamp also follows the
+     * split's box (a ResizeObserver), and reports only a ratio actually outside
+     * the floors.
+     */
+    reclampOnResize?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -27282,6 +27388,9 @@ declare interface UseActivityBusReturn {
  }
 
  export declare function useAwarenessState(provider: GatewayProvider | null, initial: Omit<AwarenessFields, 'lastSeen' | 'idle'>): AwarenessUpdaters;
+
+ /** The word for the call: `override` when given, else the nearest `CallNounProvider`'s, else "huddle". */
+ export declare function useCallNoun(override?: string): string;
 
  export declare function useCallWidgetPersistence({ persistKey, defaults, debounceMs, }: UseCallWidgetPersistenceOptions): {
      state: PersistedWidgetState;

@@ -35,7 +35,7 @@ export interface PageFrameProps extends PageTemplateHeaderProps, PageTemplateTra
   bodyClassName?: string;
   /**
    * `full` (default, unchanged): header and body span the column.
-   * `centered` (since NEXT): a guest or step page's single centred column —
+   * `centered` (since 2.537.0): a guest or step page's single centred column —
    * the header, the body's content and the footer sit in one column of
    * `columnWidth`, centred, with the page gutter inside it, so the title lines
    * up with the content. The body still scrolls at the full width (its
@@ -47,9 +47,9 @@ export interface PageFrameProps extends PageTemplateHeaderProps, PageTemplateTra
   columnWidth?: PageFrameColumnWidth;
 }
 
-/** `PageFrame column` (since NEXT). */
+/** `PageFrame column` (since 2.537.0). */
 export type PageFrameColumn = 'full' | 'centered';
-/** `PageFrame columnWidth` (since NEXT): Tailwind's max-width steps. */
+/** `PageFrame columnWidth` (since 2.537.0): Tailwind's max-width steps. */
 export type PageFrameColumnWidth = 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl';
 
 // Written out whole so Tailwind's scanner sees each class.

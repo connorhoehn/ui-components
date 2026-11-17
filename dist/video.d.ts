@@ -107,7 +107,10 @@ export declare interface AudioVideoSettingsFormProps {
     layout?: 'stack' | 'prejoin';
     /** Capture and effects actions under the pre-join preview. */
     previewControls?: ReactNode;
-    /** `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle."). Default "huddle". */
+    /**
+     * `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle.").
+     * Default: the nearest `CallNounProvider`'s (a `CallHostProvider callNoun` provides one, since 2.537.0), else "huddle".
+     */
     callNoun?: string;
     className?: string;
     'data-testid'?: string;
@@ -567,6 +570,15 @@ export declare interface CallNoticePillProps {
     maxLines?: 1 | 2 | 3;
     className?: string;
     'data-testid'?: string;
+}
+
+/** Sets the word for the call for every call component inside it (`HuddleBar`, `AudioVideoSettingsForm`'s pre-join form, `PreJoinDeviceSetup`). */
+export declare function CallNounProvider({ noun, children }: CallNounProviderProps): JSX.Element;
+
+export declare interface CallNounProviderProps {
+    /** Lower case ("call", "interview"); components capitalise it where it starts a phrase. */
+    noun: string;
+    children: ReactNode;
 }
 
 export declare function CallParticipantStrip({ participants, localFallback, maxVisible, avatarSize, testId, className, style, }: CallParticipantStripProps): JSX.Element;
@@ -1277,6 +1289,9 @@ export declare interface ConsentDismissal {
     reset(): void;
 }
 
+/** The default word for the call. */
+export declare const DEFAULT_CALL_NOUN = "huddle";
+
 /** Device choices for a Camera/Mic split chevron. */
 export declare function deviceMenuSections(heading: string, devices: ReadonlyArray<{
     deviceId: string;
@@ -1975,7 +1990,7 @@ export declare type HlsPhase =
 /** Unplayable. `error` carries the wording. */
 | 'error';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun: callNounProp, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
 export declare interface HuddleBarLiveParticipant {
@@ -3696,6 +3711,9 @@ declare interface UseActiveSpeakerOptions {
 }
 
 export declare function useAudioLevel(stream: MediaStream | null | undefined): number | null;
+
+/** The word for the call: `override` when given, else the nearest `CallNounProvider`'s, else "huddle". */
+export declare function useCallNoun(override?: string): string;
 
 export declare function useCallWidgetPersistence({ persistKey, defaults, debounceMs, }: UseCallWidgetPersistenceOptions): {
     state: PersistedWidgetState;

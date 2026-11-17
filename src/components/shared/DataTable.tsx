@@ -102,7 +102,7 @@ export interface DataTableColumn<T> {
 }
 
 /**
- * One group in the header row above the column headers (since NEXT): one
+ * One group in the header row above the column headers (since 2.537.0): one
  * interview round over a column per interviewer. Its cell spans the adjacent
  * shown columns whose `group` is its `key`.
  */
@@ -119,7 +119,7 @@ export interface DataTableColumnGroup {
 /**
  * How tall a body row is (`DataTable rowHeight`). `fixed` (default): the
  * table's density sets it (at `sm`, every row 44px on one line). `content`
- * (works since NEXT; before, it only set an attribute): each row is as tall as
+ * (works since 2.537.0; before, it only set an attribute): each row is as tall as
  * its content, prose wraps inside its cell (no ellipsis) and the cells align
  * to the top. A `truncate` column still truncates.
  */
@@ -146,7 +146,7 @@ export interface DataTableProps<T> {
   columnGroups?: DataTableColumnGroup[];
   /**
    * Pin the first column to the left edge while a wide table scrolls sideways
-   * (since NEXT), for tables whose first column names the row (a candidate
+   * (since 2.537.0), for tables whose first column names the row (a candidate
    * beside a column per interviewer). Its cells carry `data-sticky-column`
    * and keep the row's stripe, selection and hover fill. Off in the card form.
    * Default false.

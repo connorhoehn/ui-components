@@ -352,7 +352,10 @@ declare interface AudioVideoSettingsFormProps {
     layout?: 'stack' | 'prejoin';
     /** Capture and effects actions under the pre-join preview. */
     previewControls?: ReactNode;
-    /** `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle."). Default "huddle". */
+    /**
+     * `prejoin` only: the word for the call in the camera line ("…how you'll appear in the huddle.").
+     * Default: the nearest `CallNounProvider`'s (a `CallHostProvider callNoun` provides one, since 2.537.0), else "huddle".
+     */
     callNoun?: string;
     className?: string;
     'data-testid'?: string;

@@ -1,4 +1,4 @@
-// callNoun (since NEXT): the word the call components use for the call
+// callNoun (since 2.537.0): the word the call components use for the call
 // ("huddle" by default; an app says "call" or "interview"). Each component
 // still takes its own `callNoun` prop, which wins; without one it reads the
 // nearest `CallNounProvider`, so an app sets the word once — and

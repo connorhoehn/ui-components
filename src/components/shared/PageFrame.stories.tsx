@@ -72,7 +72,7 @@ export const CollapsedIntoTrail: Story = {
   },
 };
 
-/** `column="centered"` (since NEXT): a guest or step page — one centred 4xl column for the title, the content and the footer. */
+/** `column="centered"` (since 2.537.0): a guest or step page — one centred 4xl column for the title, the content and the footer. */
 export const CenteredColumn: Story = {
   render: () => (
     <PageFrame title="Before your interview" description="Check your camera and microphone, then join when you are ready."

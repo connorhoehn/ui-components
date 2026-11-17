@@ -6,8 +6,8 @@ import { I as u, dt as d, h as f, m as p } from "./Icons-CNCMF52q.js";
 import { t as m } from "./Select-k38b8PrZ.js";
 import { t as h } from "./Tooltip-DGN3JB6V.js";
 import { t as g } from "./InlinePopover-CEzf8hyR.js";
-import { t as ee } from "./FilterPopover-CMDWNLbG.js";
-import { t as _ } from "./FormField-BDZIVA7n.js";
+import { t as _ } from "./FilterPopover-CMDWNLbG.js";
+import { t as ee } from "./FormField-BDZIVA7n.js";
 import { t as te } from "./SearchInput-dKz14kIg.js";
 import { t as v } from "./Toolbar-NJ8rKguE.js";
 import { t as y } from "./KeyValue-Cas8iY09.js";
@@ -50,7 +50,7 @@ function A({ label: e, layout: t = "table", search: n, filters: r = [], filterPa
 				collapsible: ne,
 				className: ne ? "min-w-0 w-56 max-w-full" : "min-w-0 w-full max-w-64"
 			}),
-			(r.length > 0 || i) && /* @__PURE__ */ k(ee, {
+			(r.length > 0 || i) && /* @__PURE__ */ k(_, {
 				label: "Filters",
 				trigger: "icon",
 				placement: "bottom-end",
@@ -59,7 +59,7 @@ function A({ label: e, layout: t = "table", search: n, filters: r = [], filterPa
 				onClear: () => {
 					r.forEach((e) => e.onChange(e.emptyValue ?? "")), i?.onClear?.();
 				},
-				children: [r.map((e) => /* @__PURE__ */ O(_, {
+				children: [r.map((e) => /* @__PURE__ */ O(ee, {
 					label: e.label,
 					children: (t) => /* @__PURE__ */ O(m, {
 						...t,
@@ -90,7 +90,7 @@ function A({ label: e, layout: t = "table", search: n, filters: r = [], filterPa
 			disabled: e.disabled,
 			"data-testid": e["data-testid"]
 		})
-	}, e.id))] }), se = j.length > 0 || ie || c.length > 0 || S != null;
+	}, e.id))] }), M = j.length > 0 || ie || c.length > 0 || S != null;
 	return /* @__PURE__ */ O(v, {
 		"aria-label": e,
 		wrap: s === "band",
@@ -101,7 +101,7 @@ function A({ label: e, layout: t = "table", search: n, filters: r = [], filterPa
 		className: s === "header" ? "min-h-0 px-0 py-0" : t === "cards" ? "px-0" : void 0,
 		"data-collection-selection": x ? "idle" : void 0,
 		end: ae || p.length ? oe : void 0,
-		children: se && /* @__PURE__ */ k(D, { children: [
+		children: M && /* @__PURE__ */ k(D, { children: [
 			j.length > 0 && /* @__PURE__ */ O("span", {
 				className: "min-w-0 truncate text-xs text-text-primary",
 				title: j.map((e) => `${e.label}: ${e.options.find((t) => t.value === e.value)?.label ?? e.value}`).join(" · "),
@@ -142,29 +142,49 @@ function j(e) {
 }
 //#endregion
 //#region src/components/shared/DataTable.tsx
-var ne = "[--ui-table-layout:table] @max-[40rem]:block @max-[40rem]:[--ui-table-layout:cards]", re = "@max-[40rem]:sr-only", ie = "@max-[40rem]:block", ae = "@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2", oe = "@max-[40rem]:flex @max-[40rem]:h-auto @max-[40rem]:items-baseline @max-[40rem]:justify-between @max-[40rem]:gap-4 @max-[40rem]:whitespace-normal @max-[40rem]:px-0 @max-[40rem]:py-1 @max-[40rem]:text-right @max-[40rem]:before:shrink-0 @max-[40rem]:before:text-left @max-[40rem]:before:text-xs @max-[40rem]:before:font-semibold @max-[40rem]:before:uppercase @max-[40rem]:before:tracking-wide @max-[40rem]:before:text-text-secondary @max-[40rem]:before:content-[attr(data-label)]", se = "normal-case tracking-normal", ce = "max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:max-w-none", le = "max-w-0 overflow-hidden @max-[40rem]:max-w-none", ue = "line-clamp-2 whitespace-normal break-words";
-function de(e, t, n) {
-	let r = t[e.key];
-	return !e.render && r != null && typeof r != "object" ? String(r) : typeof n == "string" || typeof n == "number" ? String(n) : e.getFilterText ? e.getFilterText(t) : M(n).replace(/\s+/g, " ").trim();
+var ne = "[--ui-table-layout:table] @max-[40rem]:block @max-[40rem]:[--ui-table-layout:cards]", re = "@max-[40rem]:sr-only", ie = "@max-[40rem]:block", ae = "@max-[40rem]:block @max-[40rem]:px-3 @max-[40rem]:py-2", oe = "@max-[40rem]:flex @max-[40rem]:h-auto @max-[40rem]:items-baseline @max-[40rem]:justify-between @max-[40rem]:gap-4 @max-[40rem]:whitespace-normal @max-[40rem]:px-0 @max-[40rem]:py-1 @max-[40rem]:text-right @max-[40rem]:before:shrink-0 @max-[40rem]:before:text-left @max-[40rem]:before:text-xs @max-[40rem]:before:font-semibold @max-[40rem]:before:uppercase @max-[40rem]:before:tracking-wide @max-[40rem]:before:text-text-secondary @max-[40rem]:before:content-[attr(data-label)]", M = "normal-case tracking-normal", se = "max-w-0 overflow-hidden whitespace-nowrap @max-[40rem]:max-w-none", ce = "h-auto whitespace-normal break-words align-top [[data-size=sm]_&]:py-2.5", le = "sticky left-0 z-[1] bg-inherit shadow-[inset_-1px_0_0_var(--color-border)]", ue = "sticky left-0 z-[2] bg-surface-panel shadow-[inset_-1px_0_0_var(--color-border)]", de = "@max-[40rem]:static @max-[40rem]:shadow-none";
+function fe(e, t, n = !1) {
+	let r = new Map((t ?? []).map((e) => [e.key, e])), i = [];
+	return e.forEach((e, t) => {
+		let a = e.group ?? null, o = i[i.length - 1];
+		if (o && o.key === a && !(n && t === 1)) {
+			o.span += 1;
+			return;
+		}
+		i.push({
+			key: a,
+			span: 1,
+			first: t === 0,
+			...a == null ? {} : { group: r.get(a) ?? {
+				key: a,
+				header: a
+			} }
+		});
+	}), i;
 }
-function fe(e) {
+var pe = "max-w-0 overflow-hidden @max-[40rem]:max-w-none", me = "line-clamp-2 whitespace-normal break-words";
+function he(e, t, n) {
+	let r = t[e.key];
+	return !e.render && r != null && typeof r != "object" ? String(r) : typeof n == "string" || typeof n == "number" ? String(n) : e.getFilterText ? e.getFilterText(t) : N(n).replace(/\s+/g, " ").trim();
+}
+function ge(e) {
 	return e.label ?? (typeof e.header == "string" ? e.header : e.key);
 }
-function pe(e, t, n) {
+function _e(e, t, n) {
 	if (!e) return "";
 	if (e.getFilterText) return e.getFilterText(t);
 	let r = t[e.key];
-	return r != null && typeof r != "object" ? String(r) : e.render ? M(e.render(t, n)).replace(/\s+/g, " ").trim() : "";
+	return r != null && typeof r != "object" ? String(r) : e.render ? N(e.render(t, n)).replace(/\s+/g, " ").trim() : "";
 }
-function me(e) {
+function ve(e) {
 	return e.map((e, t) => ({
 		key: e.key,
 		p: e.priority ?? 1,
 		index: t
 	})).filter((e) => e.p > 1).sort((e, t) => t.p - e.p || t.index - e.index).map((e) => e.key);
 }
-var he = "hidden", ge = "hidden @max-[40rem]:flex", _e = "@max-[40rem]:hidden", ve = "block [--ui-table-layout:cards]", ye = "sr-only", be = "block", xe = "block px-3 py-2", Se = "flex h-auto max-w-none items-baseline justify-between gap-4 whitespace-normal px-0 py-1 text-right before:shrink-0 before:text-left before:text-xs before:font-semibold before:uppercase before:tracking-wide before:text-text-secondary before:content-[attr(data-label)]";
-function Ce(e, t, n, r, i) {
+var ye = "hidden", be = "hidden @max-[40rem]:flex", xe = "@max-[40rem]:hidden", Se = "block [--ui-table-layout:cards]", Ce = "sr-only", we = "block", Te = "block px-3 py-2", Ee = "flex h-auto max-w-none items-baseline justify-between gap-4 whitespace-normal px-0 py-1 text-right before:shrink-0 before:text-left before:text-xs before:font-semibold before:uppercase before:tracking-wide before:text-text-secondary before:content-[attr(data-label)]";
+function De(e, t, n, r, i) {
 	let a = Math.min(t, Math.floor(n / 2)), [o, s] = E(0), [c, l] = E(0), u = T(!1), d = T(i);
 	if (S(() => {
 		if (!e) return;
@@ -217,7 +237,7 @@ function Ce(e, t, n, r, i) {
 		stacked: f
 	};
 }
-function we({ columns: e, onChoose: r, onStack: i }) {
+function Oe({ columns: e, onChoose: r, onStack: i }) {
 	let [a, o] = E(!1), s = T(null), c = x(() => o(!1), []), l = e.length;
 	return /* @__PURE__ */ k(D, { children: [/* @__PURE__ */ k(t, {
 		ref: s,
@@ -263,7 +283,7 @@ function we({ columns: e, onChoose: r, onStack: i }) {
 		})
 	})] });
 }
-function Te({ count: e, items: n, rowLabel: r, testId: i, variant: a = "link" }) {
+function ke({ count: e, items: n, rowLabel: r, testId: i, variant: a = "link" }) {
 	let [o, s] = E(!1), c = T(null), u = x(() => s(!1), []);
 	return /* @__PURE__ */ k(D, { children: [a === "chevron" ? /* @__PURE__ */ O(l, {
 		ref: c,
@@ -301,13 +321,13 @@ function Te({ count: e, items: n, rowLabel: r, testId: i, variant: a = "link" })
 		})
 	})] });
 }
-var Ee = "a[href], button, input, select, textarea, label, summary, [role=\"button\"], [role=\"checkbox\"], [role=\"link\"], [role=\"menuitem\"], [role=\"switch\"], [contenteditable=\"true\"]";
-function De(e, t) {
+var Ae = "a[href], button, input, select, textarea, label, summary, [role=\"button\"], [role=\"checkbox\"], [role=\"link\"], [role=\"menuitem\"], [role=\"switch\"], [contenteditable=\"true\"]";
+function je(e, t) {
 	if (!(e instanceof Element)) return !1;
-	let n = e.closest(Ee);
+	let n = e.closest(Ae);
 	return !!n && n !== t && t.contains(n);
 }
-function Oe(e, t) {
+function Me(e, t) {
 	if (typeof e == "number" && typeof t == "number") {
 		let n = Number.isNaN(e), r = Number.isNaN(t);
 		return n || r ? n && r ? 0 : n ? 1 : -1 : e < t ? -1 : +(e > t);
@@ -319,92 +339,92 @@ function Oe(e, t) {
 	}
 	return typeof e == "boolean" && typeof t == "boolean" ? e === t ? 0 : e ? 1 : -1 : String(e ?? "").localeCompare(String(t ?? ""));
 }
-function M(e) {
+function N(e) {
 	if (e == null || typeof e == "boolean") return "";
 	if (typeof e == "string") return e;
 	if (typeof e == "number") return String(e);
-	if (Array.isArray(e)) return e.map(M).join(" ");
+	if (Array.isArray(e)) return e.map(N).join(" ");
 	if (b(e)) {
 		let t = e.props?.children;
-		return t === void 0 ? "" : M(t);
+		return t === void 0 ? "" : N(t);
 	}
 	return "";
 }
-var N = /* @__PURE__ */ new Set();
-function ke(e, t, n) {
+var P = /* @__PURE__ */ new Set();
+function Ne(e, t, n) {
 	if (e.getFilterText) return e.getFilterText(t);
 	let r = t[e.key];
-	return r != null && typeof r != "object" && typeof r != "function" ? String(r) : e.render ? M(e.render(t, n)) : (process.env.NODE_ENV !== "production" && !N.has(e.key) && (N.add(e.key), console.warn(`[DataTable] Column "${e.key}" is searchable but its value lives in neither a primitive row value nor getFilterText, and it has no render function to fall back on — it will never match a search query. Add getFilterText, add render, or set filterable={false}.`)), String(r ?? ""));
+	return r != null && typeof r != "object" && typeof r != "function" ? String(r) : e.render ? N(e.render(t, n)) : (process.env.NODE_ENV !== "production" && !P.has(e.key) && (P.add(e.key), console.warn(`[DataTable] Column "${e.key}" is searchable but its value lives in neither a primitive row value nor getFilterText, and it has no render function to fall back on — it will never match a search query. Add getFilterText, add render, or set filterable={false}.`)), String(r ?? ""));
 }
-function Ae(e) {
+function F(e) {
 	if (e === "right") return "text-right [&>*]:justify-end";
 	if (e === "center") return "text-center [&>*]:justify-center";
 }
-function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowClick: f, rowActions: m, rowActionsHeader: g = "Actions", rowActionsHeaderHidden: ee = !1, searchable: _ = !1, searchPlaceholder: te = "Search…", pageSize: v, emptyMessage: y = "No records.", loading: b = !1, loadingRows: x = 5, frameless: D = !1, size: j, striped: Ee = !0, narrow: M = !1, "aria-label": N, "aria-labelledby": je, selectedKey: P, revealSelection: F = !1, isRowSelected: Me, headerCase: Ne = "upper", responsiveColumns: I = !1, hiddenColumnsControl: Pe = "row", className: Fe, "data-testid": Ie, staticRows: Le }) {
-	let Re = Ne === "sentence", ze = P !== void 0 || !!Me, Be = (e) => P === void 0 ? !!Me?.(e) : P !== null && d(e) === P, Ve = Array.isArray(n) ? n : [], L = Array.isArray(u) ? u : [], [R, He] = E(null), [Ue, We] = E("asc"), [z, Ge] = E(""), [Ke, B] = E(0), qe = T(null), [V, Je] = E(null), [Ye, Xe] = E(!1), H = w(() => {
-		if (!I) return [];
-		let e = me(L);
-		return V ? e.filter((e) => e !== V) : e;
+function I({ rowHeight: t = "fixed", columnGroups: n, stickyFirstColumn: u = !1, data: d, columns: f, keyField: m, onRowClick: g, rowActions: _, rowActionsHeader: ee = "Actions", rowActionsHeaderHidden: te = !1, searchable: v = !1, searchPlaceholder: y = "Search…", pageSize: b, emptyMessage: x = "No records.", loading: D = !1, loadingRows: j = 5, frameless: Ae = !1, size: N, striped: P = !0, narrow: I = !1, "aria-label": Pe, "aria-labelledby": Fe, selectedKey: L, revealSelection: R = !1, isRowSelected: Ie, headerCase: Le = "upper", responsiveColumns: z = !1, hiddenColumnsControl: Re = "row", className: ze, "data-testid": Be, staticRows: Ve }) {
+	let He = Le === "sentence", Ue = L !== void 0 || !!Ie, We = (e) => L === void 0 ? !!Ie?.(e) : L !== null && m(e) === L, Ge = Array.isArray(d) ? d : [], B = Array.isArray(f) ? f : [], [V, Ke] = E(null), [qe, Je] = E("asc"), [Ye, Xe] = E(""), [Ze, Qe] = E(0), $e = T(null), [H, et] = E(null), [tt, nt] = E(!1), U = w(() => {
+		if (!z) return [];
+		let e = ve(B);
+		return H ? e.filter((e) => e !== H) : e;
 	}, [
-		I,
-		L,
-		V
-	]), Ze = L.map((e) => e.key).join("|"), Qe = (e) => {
-		R === e ? We((e) => e === "asc" ? "desc" : "asc") : (He(e), We("asc"));
-	}, U = w(() => {
-		if (!_ || z.trim() === "") return Ve;
-		let e = z.trim().toLowerCase();
-		return Ve.filter((t, n) => L.some((r) => r.filterable !== !1 && ke(r, t, n).toLowerCase().includes(e)));
-	}, [
-		Ve,
-		L,
 		z,
-		_
+		B,
+		H
+	]), rt = B.map((e) => e.key).join("|"), it = (e) => {
+		V === e ? Je((e) => e === "asc" ? "desc" : "asc") : (Ke(e), Je("asc"));
+	}, at = w(() => {
+		if (!v || Ye.trim() === "") return Ge;
+		let e = Ye.trim().toLowerCase();
+		return Ge.filter((t, n) => B.some((r) => r.filterable !== !1 && Ne(r, t, n).toLowerCase().includes(e)));
+	}, [
+		Ge,
+		B,
+		Ye,
+		v
 	]), W = w(() => {
-		if (!R) return U;
-		let e = L.find((e) => e.key === R);
-		if (!e || !e.sortable) return U;
-		let t = e.compare ?? ((t, n) => Oe(t[e.key], n[e.key])), n = [...U];
-		return n.sort((e, n) => Ue === "asc" ? t(e, n) : -t(e, n)), n;
+		if (!V) return at;
+		let e = B.find((e) => e.key === V);
+		if (!e || !e.sortable) return at;
+		let t = e.compare ?? ((t, n) => Me(t[e.key], n[e.key])), n = [...at];
+		return n.sort((e, n) => qe === "asc" ? t(e, n) : -t(e, n)), n;
 	}, [
-		U,
-		L,
-		R,
-		Ue
-	]), G = v && v > 0 ? Math.max(1, Math.ceil(W.length / v)) : 1, $e = F && P != null ? W.findIndex((e) => d(e) === P) : -1, K = $e < 0 ? -1 : v && v > 0 ? Math.floor($e / v) : 0;
+		at,
+		B,
+		V,
+		qe
+	]), ot = b && b > 0 ? Math.max(1, Math.ceil(W.length / b)) : 1, st = R && L != null ? W.findIndex((e) => m(e) === L) : -1, G = st < 0 ? -1 : b && b > 0 ? Math.floor(st / b) : 0;
 	C(() => {
-		!b && K >= 0 && B(K);
+		!D && G >= 0 && Qe(G);
 	}, [
-		P,
-		K,
-		b
+		L,
+		G,
+		D
 	]);
-	let q = Math.min(Ke, G - 1), J = w(() => {
-		if (!v || v <= 0) return W;
-		let e = q * v;
-		return W.slice(e, e + v);
+	let K = Math.min(Ze, ot - 1), q = w(() => {
+		if (!b || b <= 0) return W;
+		let e = K * b;
+		return W.slice(e, e + b);
 	}, [
 		W,
-		v,
-		q
-	]), et = w(() => ({
-		paged: J,
-		columnKeys: Ze,
-		shownByChoice: V
+		b,
+		K
+	]), ct = w(() => ({
+		paged: q,
+		columnKeys: rt,
+		shownByChoice: H
 	}), [
-		J,
-		Ze,
-		V
-	]), Y = Ce(I, H.length, L.length, qe, et), X = Y.stacked || I && Ye, Z = w(() => new Set(X ? [] : H.slice(0, Y.hidden)), [
-		H,
-		Y.hidden,
-		X
-	]), tt = Pe === "header", nt = (e) => {
-		H.length > Y.hidden ? Je(e) : Xe(!0);
-	}, Q = L.filter((e) => Z.has(e.key)), rt = M ? ge : he, $ = Q.length > 0, it = M || X;
+		q,
+		rt,
+		H
+	]), J = De(z, U.length, B.length, $e, ct), Y = J.stacked || z && tt, X = w(() => new Set(Y ? [] : U.slice(0, J.hidden)), [
+		U,
+		J.hidden,
+		Y
+	]), lt = Re === "header", ut = (e) => {
+		U.length > J.hidden ? et(e) : nt(!0);
+	}, Z = B.filter((e) => X.has(e.key)), dt = I ? be : ye, Q = Z.length > 0, ft = I || Y, pt = t === "content", $ = u && !Y, mt = B.filter((e) => !X.has(e.key)), ht = mt[0]?.key, gt = (t, n = !1) => $ && t === ht ? e(n ? ue : le, I && de) : void 0, _t = (e) => $ && e === ht ? { "data-sticky-column": "" } : {}, vt = B.some((e) => e.group != null);
 	return S(() => {
-		let e = qe.current;
-		if (!F || P == null || K < 0 || b || !e) return;
+		let e = $e.current;
+		if (!R || L == null || G < 0 || D || !e) return;
 		let t = !0, n = 0, r = () => {
 			t && (cancelAnimationFrame(n), n = requestAnimationFrame(() => {
 				n = requestAnimationFrame(() => {
@@ -425,132 +445,153 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 			t = !1, a?.disconnect(), cancelAnimationFrame(n);
 		};
 	}, [
-		F,
-		P,
+		R,
+		L,
+		G,
+		D,
 		K,
-		b,
-		q,
-		M,
 		I,
-		Ye
+		z,
+		tt
 	]), /* @__PURE__ */ k("div", {
-		ref: qe,
-		className: e("flex min-w-0 flex-col gap-3", M && "@container", Fe),
-		"data-testid": Ie,
-		"data-responsive-columns": I ? "" : void 0,
-		"data-hidden-columns": I ? Q.map((e) => e.key).join(" ") : void 0,
-		"data-stacked": X ? "" : void 0,
-		"data-reveal-selection": F ? "" : void 0,
+		ref: $e,
+		className: e("flex min-w-0 flex-col gap-3", I && "@container", ze),
+		"data-testid": Be,
+		"data-responsive-columns": z ? "" : void 0,
+		"data-hidden-columns": z ? Z.map((e) => e.key).join(" ") : void 0,
+		"data-stacked": Y ? "" : void 0,
+		"data-reveal-selection": R ? "" : void 0,
 		"data-collection-table": "",
-		"data-collection-rows": f ? "activatable" : Le ? "static" : void 0,
-		"data-collection-rows-reason": !f && Le ? Le : void 0,
+		"data-collection-rows": g ? "activatable" : Ve ? "static" : void 0,
+		"data-collection-rows-reason": !g && Ve ? Ve : void 0,
 		children: [
-			_ && /* @__PURE__ */ O(A, {
+			v && /* @__PURE__ */ O(A, {
 				label: "Table controls",
 				search: {
-					value: z,
+					value: Ye,
 					onChange: (e) => {
-						Ge(e), B(0);
+						Xe(e), Qe(0);
 					},
-					placeholder: te,
+					placeholder: y,
 					"aria-label": "Search",
 					"data-testid": "datatable-search"
 				}
 			}),
 			/* @__PURE__ */ k(c, {
 				"data-ui-table-rows": t,
-				"data-ui-table-cards": M || X ? "" : void 0,
-				...j ? { size: j } : {},
-				className: e(!D && "border border-border rounded-lg overflow-hidden", M && ne, X && ve),
-				...N ? { "aria-label": N } : {},
-				...je ? { "aria-labelledby": je } : {},
-				children: [/* @__PURE__ */ O(s, {
-					className: e(M && re, X && ye),
-					"data-header-case": Ne,
-					children: /* @__PURE__ */ k("tr", { children: [
-						L.map((t) => {
-							let n = t.sortable && R === t.key;
+				"data-ui-table-cards": I || Y ? "" : void 0,
+				...N ? { size: N } : {},
+				"data-sticky-first-column": $ ? "" : void 0,
+				className: e(!Ae && "border border-border rounded-lg", !Ae && !$ && "overflow-hidden", I && ne, Y && Se),
+				...Pe ? { "aria-label": Pe } : {},
+				...Fe ? { "aria-labelledby": Fe } : {},
+				children: [/* @__PURE__ */ k(s, {
+					className: e(I && re, Y && Ce),
+					"data-header-case": Le,
+					children: [vt && /* @__PURE__ */ k("tr", {
+						"data-column-groups": "",
+						children: [fe(mt, n, $).map((t, n) => t.group ? /* @__PURE__ */ O(o, {
+							colSpan: t.span,
+							scope: "colgroup",
+							"data-column-group": t.key ?? void 0,
+							className: e(He && M, F(t.group.align ?? "center"), !t.first && "border-l border-border", t.first && $ && e(ue, I && de), t.group.className),
+							children: t.group.header
+						}, `group-${t.key}-${n}`) : /* @__PURE__ */ O(o, {
+							colSpan: t.span,
+							"aria-hidden": "true",
+							"data-column-group": "",
+							className: e(t.first && $ && e(ue, I && de))
+						}, `group-none-${n}`)), (Q || _) && /* @__PURE__ */ O(o, {
+							"aria-hidden": "true",
+							colSpan: +!!Q + +!!_
+						})]
+					}), /* @__PURE__ */ k("tr", { children: [
+						B.map((t) => {
+							let n = t.sortable && V === t.key;
 							return /* @__PURE__ */ O(o, {
 								sortable: t.sortable,
-								sortDirection: n ? Ue : null,
+								sortDirection: n ? qe : null,
 								style: t.width ? { width: t.width } : void 0,
 								numeric: t.numeric,
-								className: e(Re && se, Ae(t.align), t.className, Z.has(t.key) && he),
-								onClick: t.sortable ? () => Qe(t.key) : void 0,
+								className: e(He && M, F(t.align), t.className, X.has(t.key) && ye, gt(t.key, !0)),
+								..._t(t.key),
+								onClick: t.sortable ? () => it(t.key) : void 0,
 								"data-testid": t.sortable ? `datatable-header-${t.key}` : void 0,
-								"data-column": I ? t.key : void 0,
-								...Z.has(t.key) ? { "data-column-hidden": "" } : {},
+								"data-column": z ? t.key : void 0,
+								...X.has(t.key) ? { "data-column-hidden": "" } : {},
 								children: t.header
 							}, t.key);
 						}),
-						$ && /* @__PURE__ */ O(o, {
-							className: e(Re && se, "w-px whitespace-nowrap text-right"),
+						Q && /* @__PURE__ */ O(o, {
+							className: e(He && M, "w-px whitespace-nowrap text-right"),
 							"data-testid": "datatable-more-header",
 							"data-column-more": "",
-							"data-hidden-columns-control": Pe,
-							children: tt ? /* @__PURE__ */ O(we, {
-								columns: Q.map((e) => ({
+							"data-hidden-columns-control": Re,
+							children: lt ? /* @__PURE__ */ O(Oe, {
+								columns: Z.map((e) => ({
 									key: e.key,
-									label: fe(e)
+									label: ge(e)
 								})),
-								onChoose: nt,
-								onStack: H.length > Y.hidden ? void 0 : () => Xe(!0)
+								onChoose: ut,
+								onStack: U.length > J.hidden ? void 0 : () => nt(!0)
 							}) : "More"
 						}),
-						m && /* @__PURE__ */ O(o, {
-							className: e(Re && se, "text-right"),
+						_ && /* @__PURE__ */ O(o, {
+							className: e(He && M, "text-right"),
 							"data-testid": "datatable-actions-header",
-							"data-row-actions-header": ee ? "hidden" : "visible",
-							children: ee ? /* @__PURE__ */ O("span", {
+							"data-row-actions-header": te ? "hidden" : "visible",
+							children: te ? /* @__PURE__ */ O("span", {
 								className: "sr-only",
-								children: g
-							}) : g
+								children: ee
+							}) : ee
 						})
-					] })
+					] })]
 				}), /* @__PURE__ */ O(a, {
 					striped: !1,
-					className: e(M && ie, X && be),
-					"data-ui-table-striped": Ee ? "" : void 0,
-					children: b ? Array.from({ length: x }).map((t, n) => /* @__PURE__ */ k(i, {
+					className: e(I && ie, Y && we),
+					"data-ui-table-striped": P ? "" : void 0,
+					children: D ? Array.from({ length: j }).map((t, n) => /* @__PURE__ */ k(i, {
 						"data-testid": "datatable-loading-row",
+						className: $ ? "bg-surface" : void 0,
 						children: [
-							L.map((t) => /* @__PURE__ */ O(r, {
+							B.map((t) => /* @__PURE__ */ O(r, {
 								numeric: t.numeric,
-								className: e(Ae(t.align), Z.has(t.key) && he),
+								className: e(F(t.align), X.has(t.key) && ye, gt(t.key)),
 								children: /* @__PURE__ */ O("div", { className: "h-4 w-3/4 animate-pulse rounded bg-surface-hover" })
 							}, t.key)),
-							$ && /* @__PURE__ */ O(r, { "data-column-more": "" }),
-							m && /* @__PURE__ */ O(r, {
+							Q && /* @__PURE__ */ O(r, { "data-column-more": "" }),
+							_ && /* @__PURE__ */ O(r, {
 								className: "text-right",
 								children: /* @__PURE__ */ O("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" })
 							})
 						]
-					}, `skeleton-${n}`)) : J.length === 0 ? /* @__PURE__ */ O(i, { children: /* @__PURE__ */ O(r, {
-						colSpan: L.length - Q.length + +!!$ + +!!m,
+					}, `skeleton-${n}`)) : q.length === 0 ? /* @__PURE__ */ O(i, { children: /* @__PURE__ */ O(r, {
+						colSpan: B.length - Z.length + +!!Q + +!!_,
 						className: "text-center text-text-secondary py-8",
-						children: y
-					}) }) : J.map((t, n) => {
-						let a = ze && Be(t);
+						children: x
+					}) }) : q.map((t, n) => {
+						let a = Ue && We(t);
 						return /* @__PURE__ */ k(i, {
-							clickable: !!f,
-							...ze ? { "aria-selected": a } : {},
+							clickable: !!g,
+							...Ue ? { "aria-selected": a } : {},
 							...a ? { "data-selected": "" } : {},
-							className: e(M && ae, X && xe, a ? "bg-primary-bg hover:bg-primary-bg" : Ee && n % 2 == 1 ? "bg-surface-inset" : void 0, f && "focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"),
-							tabIndex: f ? 0 : void 0,
-							"aria-rowindex": f ? n + 2 : void 0,
-							onClick: f ? (e) => {
-								De(e.target, e.currentTarget) || f(t);
+							className: e(I && ae, Y && Te, a ? "bg-primary-bg hover:bg-primary-bg" : P && n % 2 == 1 ? "bg-surface-inset" : $ ? "bg-surface" : void 0, g && "focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"),
+							tabIndex: g ? 0 : void 0,
+							"aria-rowindex": g ? n + 2 : void 0,
+							onClick: g ? (e) => {
+								je(e.target, e.currentTarget) || g(t);
 							} : void 0,
-							onKeyDown: f ? (e) => {
-								e.target === e.currentTarget && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(t));
+							onKeyDown: g ? (e) => {
+								e.target === e.currentTarget && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), g(t));
 							} : void 0,
 							children: [
-								L.map((i) => {
-									let a = i.render ? i.render(t, n) : String(t[i.key] ?? ""), o = i.truncate ? de(i, t, a) : "";
+								B.map((i) => {
+									let a = i.render ? i.render(t, n) : String(t[i.key] ?? ""), o = i.truncate ? he(i, t, a) : "";
 									return /* @__PURE__ */ O(r, {
 										numeric: i.numeric,
-										className: e(Ae(i.align), i.truncate && (i.wrap === "two-lines" ? le : ce), M && oe, i.className, X && Se, Z.has(i.key) && rt, i.hideInCards && M && "@max-[40rem]:hidden!", i.hideInCards && X && "hidden!"),
-										...it ? { "data-label": i.cardLabel?.(t) || fe(i) } : {},
+										className: e(F(i.align), pt && ce, i.truncate && (i.wrap === "two-lines" ? pe : se), I && oe, i.className, Y && Ee, X.has(i.key) && dt, i.hideInCards && I && "@max-[40rem]:hidden!", i.hideInCards && Y && "hidden!", gt(i.key)),
+										..._t(i.key),
+										...ft ? { "data-label": i.cardLabel?.(t) || ge(i) } : {},
 										...i.truncate ? { "data-truncate": i.wrap === "two-lines" ? "two-lines" : "" } : {},
 										...o ? { "data-full-text": o } : {},
 										children: i.truncate ? /* @__PURE__ */ O(h, {
@@ -560,51 +601,51 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 											triggerClassName: "block min-w-0",
 											"data-testid": "datatable-cell-tooltip",
 											children: /* @__PURE__ */ O("span", {
-												className: e("block min-w-0", i.wrap === "two-lines" ? ue : "truncate"),
+												className: e("block min-w-0", i.wrap === "two-lines" ? me : "truncate"),
 												children: a
 											})
 										}) : a
 									}, i.key);
 								}),
-								$ && /* @__PURE__ */ O(r, {
+								Q && /* @__PURE__ */ O(r, {
 									"data-column-more": "",
-									className: e("w-px whitespace-nowrap text-right", M && _e),
+									className: e("w-px whitespace-nowrap text-right", I && xe),
 									onClick: (e) => e.stopPropagation(),
 									onKeyDown: (e) => e.stopPropagation(),
-									children: /* @__PURE__ */ O(Te, {
-										count: Q.length,
-										rowLabel: pe(L.find((e) => !Z.has(e.key)), t, n) || d(t),
-										testId: `datatable-more-${d(t)}`,
-										variant: tt ? "chevron" : "link",
-										items: Q.map((e) => ({
-											label: fe(e),
+									children: /* @__PURE__ */ O(ke, {
+										count: Z.length,
+										rowLabel: _e(B.find((e) => !X.has(e.key)), t, n) || m(t),
+										testId: `datatable-more-${m(t)}`,
+										variant: lt ? "chevron" : "link",
+										items: Z.map((e) => ({
+											label: ge(e),
 											value: e.render ? e.render(t, n) : String(t[e.key] ?? "")
 										}))
 									})
 								}),
-								m && /* @__PURE__ */ O(r, {
+								_ && /* @__PURE__ */ O(r, {
 									className: "text-right",
 									onClick: (e) => e.stopPropagation(),
 									children: /* @__PURE__ */ O("div", {
 										className: "flex items-center justify-end gap-2",
-										children: m(t)
+										children: _(t)
 									})
 								})
 							]
-						}, d(t));
+						}, m(t));
 					})
 				})]
 			}),
-			v && v > 0 && W.length > v && /* @__PURE__ */ k("div", {
+			b && b > 0 && W.length > b && /* @__PURE__ */ k("div", {
 				className: "flex items-center justify-between text-xs text-text-secondary",
 				"data-collection-pager": !0,
 				children: [/* @__PURE__ */ k("span", {
 					"data-testid": "datatable-page-summary",
 					children: [
 						"Page ",
-						q + 1,
+						K + 1,
 						" of ",
-						G,
+						ot,
 						" · ",
 						W.length,
 						" total"
@@ -619,8 +660,8 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 							size: "sm",
 							"aria-label": "Previous page",
 							icon: /* @__PURE__ */ O(p, { dir: "left" }),
-							onClick: () => B(Math.max(0, q - 1)),
-							disabled: q === 0,
+							onClick: () => Qe(Math.max(0, K - 1)),
+							disabled: K === 0,
 							"data-testid": "datatable-prev"
 						})
 					}), /* @__PURE__ */ O(h, {
@@ -629,8 +670,8 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 							size: "sm",
 							"aria-label": "Next page",
 							icon: /* @__PURE__ */ O(p, { dir: "right" }),
-							onClick: () => B(Math.min(G - 1, q + 1)),
-							disabled: q >= G - 1,
+							onClick: () => Qe(Math.min(ot - 1, K + 1)),
+							disabled: K >= ot - 1,
 							"data-testid": "datatable-next"
 						})
 					})]
@@ -640,4 +681,4 @@ function je({ rowHeight: t = "fixed", data: n, columns: u, keyField: d, onRowCli
 	});
 }
 //#endregion
-export { A as n, j as r, je as t };
+export { A as n, j as r, I as t };

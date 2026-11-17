@@ -188,7 +188,7 @@ const scorecardColumns: DataTableColumn<Scorecard>[] = [
 /**
  * Column groups (one per round, a column per interviewer), a sticky first
  * column for the sideways scroll, and `rowHeight="content"` so the summary
- * wraps instead of truncating (since NEXT).
+ * wraps instead of truncating (since 2.537.0).
  */
 export const GroupedStickyWrapping: Story = {
   render: () => (

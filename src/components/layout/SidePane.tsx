@@ -113,7 +113,7 @@ export interface SidePaneRegistration {
    * The pane's width (px) until the reader sizes it: Search opens at 320–380px
    * so its graph keeps the width. A drag (or the divider's arrow keys) is
    * remembered per `paneId` and then wins, within 320px–60% of the split.
-   * `min` stays a floor at every width (since NEXT): the drawn pane is
+   * `min` stays a floor at every width (since 2.537.0): the drawn pane is
    * re-clamped as the window or the container narrows, and a drag stops at it.
    */
   widthPx?: { min: number; max: number };
@@ -159,14 +159,14 @@ function drawnRatio(host: HostValue): number {
   const document = host.registration?.presentation === 'document';
   const primaryMin = document ? Math.max(640, host.bounds.minPrimaryPx) : host.bounds.minPrimaryPx;
   const ratio = document && host.width ? Math.max(primaryMin / host.width, desired) : desired;
-  // Re-clamped at every width (since NEXT): a remembered share, or one taken
+  // Re-clamped at every width (since 2.537.0): a remembered share, or one taken
   // at a wider window, never draws the pane under its own minimum.
   return floorSidePaneRatio(ratio, host.width, paneMinPx(host), primaryMin);
 }
 
 /**
  * The ratio with both columns at or above their floors at this split width
- * (since NEXT): the pane at least `minPanePx`, the page at least
+ * (since 2.537.0): the pane at least `minPanePx`, the page at least
  * `minPrimaryPx`. When the split cannot fit both, any ratio between the two
  * floors is kept (as `SplitPane` does). Unmeasured: the ratio unchanged.
  */
@@ -342,7 +342,7 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
     // Zero is "not laid out yet" (a hidden tab, a test DOM), not "too narrow".
     const update = () => { const w = measured.getBoundingClientRect().width; setWidth(w > 0 ? w : null); };
     update();
-    // The window's resize too (since NEXT): the drawn ratio is re-clamped from
+    // The window's resize too (since 2.537.0): the drawn ratio is re-clamped from
     // this width, so it must follow the window even where no observer runs.
     window.addEventListener('resize', update);
     const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
