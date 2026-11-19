@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DropdownMenu } from '../DropdownMenu';
+import { Button } from '../../ui/Button';
 import type { DropdownMenuSection } from '../DropdownMenu';
 
 function makeSections(): DropdownMenuSection[] {
@@ -145,5 +146,17 @@ describe('DropdownMenu', () => {
     );
     fireEvent.click(screen.getByLabelText('Open menu'));
     expect(screen.getByRole('menuitem', { name: 'Lone item' })).toBeInTheDocument();
+  });
+
+  it('renders the trigger with Button\'s own classes when buttonVariant is set', () => {
+    render(
+      <div>
+        <Button size="sm" variant="secondary" data-testid="ref">Ref</Button>
+        <DropdownMenu trigger="Menu" buttonVariant="secondary" triggerTestId="trig" sections={makeSections()} />
+      </div>,
+    );
+    const ref = screen.getByTestId('ref').className.split(' ');
+    const cls = screen.getByTestId('trig').className;
+    ref.forEach((c) => expect(cls).toContain(c));
   });
 });

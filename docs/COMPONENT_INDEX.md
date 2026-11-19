@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1010 components across 23 entry points; 862 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1013 components across 23 entry points; 865 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -51,11 +51,11 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Shells & layouts](#shells--layouts) (42)
 - [Page structure, sections & dividers](#page-structure-sections--dividers) (61)
 - [Tables & lists](#tables--lists) (32)
-- [Forms](#forms) (32)
+- [Forms](#forms) (33)
 - [Buttons & actions](#buttons--actions) (19)
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
-- [Video](#video) (112)
+- [Video](#video) (114)
 - [Docs & editor](#docs--editor) (142)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
@@ -259,6 +259,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `SearchInput` | `@connorhoehn/ui-components/shared` | Text input with magnifier icon and clear button. | `shared-searchinput` |  |
 | `Select` | `@connorhoehn/ui-components/shared` | The library's dropdown (2.445.0: a custom listbox). | `forms-select` |  |
 | `Slider` | `@connorhoehn/ui-components/shared` | Range input primitive. | `forms-slider` |  |
+| `StarRating` | `@connorhoehn/ui-components` | A star presentation of a 1..max rating. | `forms-starrating` |  |
 | `Switch` | `@connorhoehn/ui-components/shared` | Accessible on/off toggle. | `shared-switch` |  |
 | `TagEditor` | `@connorhoehn/ui-components/shared` | Reusable tag input: a small text field plus a chip strip. | `shared-tageditor` |  |
 | `Textarea` | `@connorhoehn/ui-components/shared` | Generic textarea primitive. | `forms-textarea` |  |
@@ -484,6 +485,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `HangoutRoomRow` | `@connorhoehn/ui-components/integrations/realtime-modules` | HangoutRoomRow bound to the canonical `@connorhoehn/realtime-modules` install. | `integrations-hangoutroomrow` |  |
 | `HangoutRoomsSection` | `@connorhoehn/ui-components/integrations/realtime-modules` | HangoutRoomsSection bound to the canonical `@connorhoehn/realtime-modules` install. | `integrations-hangoutroomssection` |  |
 | `HangoutSpotlight` | `@connorhoehn/ui-components/video` | Spotlight + filmstrip layout for a hangout call. | `video-hangoutspotlight` |  |
+| `HoldToTalkButton` | `@connorhoehn/ui-components/video` | A round, pulsing record button for push-to-talk. | `video-holdtotalkbutton` |  |
 | `HuddleBar` | `@connorhoehn/ui-components/video` | The whole call in one horizontal row, for a shell's footer. | `video-huddlebar` |  |
 | `IncomingCallPopover` | `@connorhoehn/ui-components/video` | A document-review call ringing you, anchored under the toolbar's Call button (not a toast, not a modal): who is calling, the call's title, the documents it is about, who is already in it, the mic/camera you will join… | `video-document-calls-incomingcallpopover` |  |
 | `IncomingCallToast` | `@connorhoehn/ui-components/integrations/realtime-modules` | "<caller> is calling" with Decline / Accept, pinned to a viewport corner on every page of an app shell — the ring from realtime-modules' `useIncomingConversationCalls()`: |  |  |
@@ -520,6 +522,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `ResumeCallDialog` | `@connorhoehn/ui-components/shared` | "you were in a call, want to rejoin?" prompt. | `hangout-resumecalldialog` |  |
 | `ReviewDocumentList` | `@connorhoehn/ui-components/video` | The documents a call is about. |  |  |
 | `RosterPanel` | `@connorhoehn/ui-components/video` | Collapsible roster shown alongside HangoutLayout when N≥5. | `video-rosterpanel` |  |
+| `SpokenCaption` | `@connorhoehn/ui-components/video` | One spoken line shown in a call: who said it, a mark (an AssistantMark or an avatar), the words, and optional "Question" / "Speaking" chips. | `video-spokencaption` |  |
 | `StartCallDrawer` | `@connorhoehn/ui-components/video` | "Start a call" from a document: a docked, non-modal drawer in the page's right column (the editor beside it keeps taking input). | `video-document-calls-startcalldrawer` |  |
 | `StatsCard` | `@connorhoehn/ui-components/video` | — | `video-statscard` |  |
 | `StatusStrip` | `@connorhoehn/ui-components/video` | — | `video-statusstrip` |  |

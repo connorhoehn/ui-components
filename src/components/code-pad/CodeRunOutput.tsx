@@ -36,7 +36,9 @@ export type CodeRunStatus =
   | 'timed_out'
   | 'memory_exceeded'
   | 'cancelled'
-  | 'internal_error';
+  | 'internal_error'
+  /** The runner never started the program. */
+  | 'runner_unavailable';
 
 export interface CodeRunOutputProps {
   /** The run's status; `null` when nothing has been run yet. */
@@ -85,6 +87,7 @@ const STATUS: Record<CodeRunStatus, { label: string; tone: ChipTone; live?: bool
   memory_exceeded: { label: 'Out of memory', tone: 'warning', announce: 'The run used too much memory and was stopped.' },
   cancelled: { label: 'Cancelled', tone: 'neutral', announce: 'The run was cancelled.' },
   internal_error: { label: "Couldn't run", tone: 'danger', announce: "The code couldn't be run. Try again." },
+  runner_unavailable: { label: 'Runner did not start', tone: 'danger', announce: 'The runner did not start the program. Try again.' },
 };
 
 /** The plain word the header shows for a status. Exported for hosts that list runs. */

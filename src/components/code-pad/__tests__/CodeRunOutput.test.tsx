@@ -18,7 +18,7 @@ describe('CodeRunOutput', () => {
   });
 
   it('names every status with a plain word', () => {
-    const all: CodeRunStatus[] = ['queued', 'compiling', 'running', 'succeeded', 'failed', 'compile_error', 'timed_out', 'memory_exceeded', 'cancelled', 'internal_error'];
+    const all: CodeRunStatus[] = ['queued', 'compiling', 'running', 'succeeded', 'failed', 'compile_error', 'timed_out', 'memory_exceeded', 'cancelled', 'internal_error', 'runner_unavailable'];
     const words = all.map((s) => {
       render(<CodeRunOutput status={s} />);
       const word = screen.getByTestId('code-run-output-status').textContent;

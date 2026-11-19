@@ -377,7 +377,7 @@ export function HuddleBar({
               size="sm"
               onClick={onToggleChat}
               aria-pressed={chatOpen}
-              aria-label={chatLabel}
+              aria-label={chatUnread > 0 ? `${chatLabel}, ${chatUnread > 99 ? '99+' : chatUnread} unread` : chatLabel}
               disabled={chatDisabledReason !== undefined}
               title={chatDisabledReason}
               data-testid={`${testId}-chat`}
@@ -390,6 +390,7 @@ export function HuddleBar({
               <T
                 className="absolute -right-1 -top-1 h-4 min-w-4 justify-center rounded-full bg-danger px-1 text-[10px] leading-none text-white"
                 weight="semibold"
+                aria-hidden="true"
                 data-testid={`${testId}-chat-unread`}
               >
                 {chatUnread > 99 ? '99+' : chatUnread}
