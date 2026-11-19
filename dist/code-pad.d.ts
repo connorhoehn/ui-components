@@ -306,7 +306,9 @@ export declare interface CodeRunOutputProps {
 }
 
 /** Where a run is: waiting, building, running, or one of the ways it ended. */
-export declare type CodeRunStatus = 'queued' | 'compiling' | 'running' | 'succeeded' | 'failed' | 'compile_error' | 'timed_out' | 'memory_exceeded' | 'cancelled' | 'internal_error';
+export declare type CodeRunStatus = 'queued' | 'compiling' | 'running' | 'succeeded' | 'failed' | 'compile_error' | 'timed_out' | 'memory_exceeded' | 'cancelled' | 'internal_error'
+/** The runner never started the program. */
+| 'runner_unavailable';
 
 /** The plain word the header shows for a status. Exported for hosts that list runs. */
 export declare function codeRunStatusLabel(status: CodeRunStatus): string;

@@ -2646,6 +2646,24 @@ export declare function Button({ variant, size: requestedSize, tone, disabled, f
  */
 export declare const BUTTON_WEIGHT = "font-semibold";
 
+/**
+ * The exact class string `Button` renders. Hand-built button-like controls
+ * (a menu trigger) call this so they match a `Button` of the same variant and
+ * size instead of copying its classes.
+ */
+export declare function buttonClasses({ variant, size, tone, disabled, fullWidth, explicitSize, className, }?: ButtonClassOptions): string;
+
+export declare interface ButtonClassOptions {
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    tone?: ButtonTone;
+    disabled?: boolean;
+    fullWidth?: boolean;
+    /** True when `size` was passed explicitly (a link only draws type then). */
+    explicitSize?: boolean;
+    className?: string;
+}
+
 /** `ToolbarGroup` of buttons and menus: related actions side by side. */
 export declare interface ButtonGroupLeaf {
     kind: 'button-group';
@@ -5509,7 +5527,7 @@ export declare interface ChecklistItem {
 
 export declare function ChecklistReaderRenderer({ section, fragment, ydoc, provider, onUpdateItem, onNavigateToEditor, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
 
-export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, as, variant, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
+export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, as, variant, strikeDone, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
 
 export declare interface ChecklistSectionProps {
     title?: string;
@@ -5532,6 +5550,8 @@ export declare interface ChecklistSectionProps {
      * caption with the tally and an always-open add field, for a side panel.
      */
     variant?: 'label' | 'heading';
+    /** Ticked rows are struck through. False keeps them plain (a "seen" list); the tally is unchanged. @default true */
+    strikeDone?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -10062,7 +10082,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, buttonVariant, buttonSize, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -10119,6 +10139,14 @@ export declare interface DropdownMenuProps {
      * one, `link` bare secondary text ("Relevance ▾"). Since 2.389.6.
      */
     triggerVariant?: 'default' | 'primary' | 'secondary' | 'link';
+    /**
+     * Render the trigger with exactly `Button`'s own classes for this variant
+     * (and `buttonSize`), so a menu trigger beside a `Button size="sm"
+     * variant="secondary"` is the same box and colour. Overrides `triggerVariant`.
+     */
+    buttonVariant?: ButtonVariant;
+    /** Size step for `buttonVariant`. @default 'sm' */
+    buttonSize?: ButtonSize;
     /**
      * Tab order of the trigger. Default undefined (a normal tab stop).
      *
@@ -11218,7 +11246,7 @@ export declare interface FloatingCardProps {
     'data-testid'?: string;
 }
 
-export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, snapEnabled, snapThreshold, snapAnchors, onSnap, baseZIndex, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): ReactPortal | null;
+export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, snapEnabled, snapThreshold, snapAnchors, onSnap, baseZIndex, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, headerActions, closeLabel, closeIcon, minimized, onMinimizedChange, minimizedLabel, minimizedContent, }: FloatingPanelProps): ReactPortal | null;
 
 /** Named viewport docking positions a panel can snap to. */
 export declare type FloatingPanelAnchor = 'top-left' | 'top-right' | 'left-center' | 'right-center' | 'bottom-left' | 'bottom-right';
@@ -11255,6 +11283,34 @@ export declare interface FloatingPanelProps {
     zIndexClassName?: string;
     className?: string;
     'data-testid'?: string;
+    /**
+     * Extra controls drawn in the title bar, before the ×: icon buttons such as
+     * "Dock" or "Pop out". Pointer presses and keys on them never start a drag
+     * or nudge the panel. Since 2.541.0.
+     */
+    headerActions?: ReactNode;
+    /** Accessible name of the × button. Default "Close". Since 2.541.0. */
+    closeLabel?: string;
+    /**
+     * The × button's glyph: `'close'` (an ×, the default) or `'minimize'` (a
+     * bar), for a panel whose × minimises rather than closes. Since 2.541.0.
+     */
+    closeIcon?: 'close' | 'minimize';
+    /**
+     * Minimised: the panel stays mounted (its children keep running, e.g. call
+     * media) but is hidden, and a pill in the panel's nearest corner restores
+     * it. Pair with `onMinimizedChange`. Since 2.541.0.
+     */
+    minimized?: boolean;
+    /**
+     * Fires with `true` from the minimise button (drawn in the title bar
+     * whenever this is set) and `false` from the pill. Since 2.541.0.
+     */
+    onMinimizedChange?: (minimized: boolean) => void;
+    /** The pill's text. Default the title. Since 2.541.0. */
+    minimizedLabel?: string;
+    /** Extra content inside the pill, after its label (a live dot, a count). Since 2.541.0. */
+    minimizedContent?: ReactNode;
 }
 
 /**
@@ -13008,6 +13064,38 @@ export declare type HlsPhase =
 | 'stalled'
 /** Unplayable. `error` carries the wording. */
 | 'error';
+
+export declare function HoldToTalkButton({ onStart, onEnd, onCancel, onTone, spaceToTalk, tapThresholdMs, maxDurationMs, busy, disabled, size, label, talkingLabel, className, 'data-testid': testId, }: HoldToTalkButtonProps): JSX.Element;
+
+export declare interface HoldToTalkButtonProps {
+    onStart?: () => void;
+    /** Talking ended normally (release, second tap, or the max duration). */
+    onEnd?: (durationMs: number) => void;
+    /** Esc: talking ended and the result should be dropped. */
+    onCancel?: () => void;
+    /** Hook for a host to play a sound. */
+    onTone?: (kind: HoldToTalkTone) => void;
+    /** Hold Space (outside text fields) to talk. @default false */
+    spaceToTalk?: boolean;
+    /** A press shorter than this latches talking on instead of ending on release. @default 250 */
+    tapThresholdMs?: number;
+    /** Talking ends by itself after this long. @default 30000 */
+    maxDurationMs?: number;
+    /** Someone else is holding: disabled, the label is shown beside the button. */
+    busy?: {
+        label: string;
+    };
+    disabled?: boolean;
+    size?: 'sm' | 'md' | 'lg';
+    /** Accessible name while idle. @default 'Hold to talk' */
+    label?: string;
+    /** Accessible name while talking. @default 'Talking, release to send' */
+    talkingLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type HoldToTalkTone = 'start' | 'end' | 'cancel';
 
 export declare const HOVER_CARD_CLOSE_MS = 250;
 
@@ -23839,7 +23927,7 @@ export declare interface SidebarSectionProps {
  * into its right column. Outside a host it renders nothing (the page's own
  * column is unchanged).
  */
-export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, tabsOverflow, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
+export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, actions, tabsOverflow, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
 
 export declare interface SidePaneBounds {
     /** The split's ratio (page share) when nothing is remembered. Default 0.72. */
@@ -23901,6 +23989,12 @@ export declare interface SidePaneProps extends SidePaneRegistration {
     onValueChange?: (id: string) => void;
     /** Right end of the tab row. */
     trailing?: ReactNode;
+    /**
+     * Controls in the pane's title row, before the built-in minimise-to-edge
+     * and × (icon buttons such as "Float the call"). Works with or without
+     * `tabs`. Since 2.541.0.
+     */
+    actions?: ReactNode;
     /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.10). Default `menu`. */
     tabsOverflow?: 'scroll' | 'menu';
     /** Docked under the body: the pane's one composer. */
@@ -24333,6 +24427,24 @@ export declare interface SplitPaneProps {
 /** A frame split into a main pane and two stacked ones: "split layout". Since 2.411.0. */
 export declare function SplitViewIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function SpokenCaption({ speaker, mark, kind, speaking, text, holdMs, onExpire, className, 'data-testid': testId, }: SpokenCaptionProps): JSX.Element;
+
+export declare interface SpokenCaptionProps {
+    speaker: string;
+    /** An `AssistantMark` or avatar shown beside the name. */
+    mark?: ReactNode;
+    /** `question` is tinted and carries a "Question" chip. @default 'said' */
+    kind?: 'question' | 'said';
+    /** Shows a "Speaking" chip while the line is still being spoken. */
+    speaking?: boolean;
+    text: string;
+    /** Milliseconds after the last text change before `onExpire` fires. */
+    holdMs?: number;
+    onExpire?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Vertical flex column with a scale gap. */
 export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ref, ...rest }: StackProps): JSX.Element;
 
@@ -24581,6 +24693,24 @@ export declare function stagePhaseIsLive(phase: StreamStagePhase): boolean;
  * words over it rather than a bare frame.
  */
 export declare function stagePhaseIsShowingLiveMedia(phase: StreamStagePhase): boolean;
+
+export declare function StarRating({ value, onChange, max, readOnly, disabled, label, size, className, 'data-testid': testId, }: StarRatingProps): JSX.Element;
+
+export declare interface StarRatingProps {
+    /** Current value; fractional only when `readOnly`. Null is "not rated". */
+    value: number | null;
+    /** Interactive mode only. Receives the chosen 1..max value. */
+    onChange?: (value: number) => void;
+    /** Number of stars. @default 5 */
+    max?: number;
+    readOnly?: boolean;
+    disabled?: boolean;
+    /** Names the group (interactive) or prefixes the spoken value (read-only). */
+    label: string;
+    size?: 'sm' | 'md' | 'lg';
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare function StartCallDrawer({ open, onClose, title, onTitleChange, media, onMediaChange, documents, onManageAccess, people, message, onMessageChange, messageMaxLength, ring, onRingChange, precheck, selectedCount, onCopyLink, onStart, starting, startDisabledReason, error, width, docked, className, 'data-testid': testId, }: StartCallDrawerProps): JSX.Element;
 

@@ -1,11 +1,11 @@
-import { d as e } from "./Button-DQoeE5dN.js";
-import { t } from "./Chip-BtSN-nsV.js";
-import { n, t as r } from "./Stack-CE1FjEn8.js";
-import { t as i } from "./Text-XdCzxWMv.js";
-import { t as a } from "./Card-j0qB4VOx.js";
-import { t as o } from "./Slider-COaaKXgy.js";
+import { f as e } from "./Button-DwPf_9pb.js";
+import { t } from "./Chip-DVGdTxaN.js";
+import { n, t as r } from "./Stack-BPtkNzDm.js";
+import { t as i } from "./Text-DyujO08i.js";
+import { t as a } from "./Card-B4INuMUn.js";
+import { t as o } from "./Slider-CQoCab1A.js";
 import { n as s } from "./VisuallyHidden-CVFiyXyk.js";
-import { t as c } from "./LogStream-BiRhfUBG.js";
+import { t as c } from "./LogStream-2dWQBBcx.js";
 import { useCallback as l, useEffect as u, useImperativeHandle as d, useLayoutEffect as f, useMemo as p, useRef as m, useState as h } from "react";
 import { jsx as g, jsxs as _ } from "react/jsx-runtime";
 import * as v from "yjs";
@@ -497,6 +497,11 @@ var ge = {
 		label: "Couldn't run",
 		tone: "danger",
 		announce: "The code couldn't be run. Try again."
+	},
+	runner_unavailable: {
+		label: "Runner did not start",
+		tone: "danger",
+		announce: "The runner did not start the program. Try again."
 	}
 };
 function _e(e) {

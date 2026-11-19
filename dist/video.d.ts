@@ -1990,6 +1990,38 @@ export declare type HlsPhase =
 /** Unplayable. `error` carries the wording. */
 | 'error';
 
+export declare function HoldToTalkButton({ onStart, onEnd, onCancel, onTone, spaceToTalk, tapThresholdMs, maxDurationMs, busy, disabled, size, label, talkingLabel, className, 'data-testid': testId, }: HoldToTalkButtonProps): JSX.Element;
+
+export declare interface HoldToTalkButtonProps {
+    onStart?: () => void;
+    /** Talking ended normally (release, second tap, or the max duration). */
+    onEnd?: (durationMs: number) => void;
+    /** Esc: talking ended and the result should be dropped. */
+    onCancel?: () => void;
+    /** Hook for a host to play a sound. */
+    onTone?: (kind: HoldToTalkTone) => void;
+    /** Hold Space (outside text fields) to talk. @default false */
+    spaceToTalk?: boolean;
+    /** A press shorter than this latches talking on instead of ending on release. @default 250 */
+    tapThresholdMs?: number;
+    /** Talking ends by itself after this long. @default 30000 */
+    maxDurationMs?: number;
+    /** Someone else is holding: disabled, the label is shown beside the button. */
+    busy?: {
+        label: string;
+    };
+    disabled?: boolean;
+    size?: 'sm' | 'md' | 'lg';
+    /** Accessible name while idle. @default 'Hold to talk' */
+    label?: string;
+    /** Accessible name while talking. @default 'Talking, release to send' */
+    talkingLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type HoldToTalkTone = 'start' | 'end' | 'cancel';
+
 export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun: callNounProp, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
@@ -3188,6 +3220,24 @@ export declare function splitEffectLabel(label: string): {
     glyph: string | null;
     text: string;
 };
+
+export declare function SpokenCaption({ speaker, mark, kind, speaking, text, holdMs, onExpire, className, 'data-testid': testId, }: SpokenCaptionProps): JSX.Element;
+
+export declare interface SpokenCaptionProps {
+    speaker: string;
+    /** An `AssistantMark` or avatar shown beside the name. */
+    mark?: ReactNode;
+    /** `question` is tinted and carries a "Question" chip. @default 'said' */
+    kind?: 'question' | 'said';
+    /** Shows a "Speaking" chip while the line is still being spoken. */
+    speaking?: boolean;
+    text: string;
+    /** Milliseconds after the last text change before `onExpire` fires. */
+    holdMs?: number;
+    onExpire?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Whether the LIVE badge may be lit.

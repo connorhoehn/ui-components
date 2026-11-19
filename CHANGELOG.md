@@ -1,3 +1,19 @@
+## 2.541.0
+
+- `CollaborativeExcalidraw`: `helpButton` (`'corner'` default, `'start'` moves Excalidraw's help "?" into the footer beside the zoom and undo controls, `'hidden'` removes it; the "?" key still opens help), so an overlay in the canvas's bottom-right corner no longer covers it.
+- `CollaborativeExcalidraw`: `followFit="contain"` shows the followed person's whole visible area, centred and zoomed out until it fits (never past their zoom); each canvas now publishes its size with its camera, and a peer that publishes none is mirrored as before. `onViewportInput` fires on the person's own pan or zoom (not on a follow or the opening fit), so a host can pause following without listening to the DOM.
+- `CollaborativeExcalidraw`: `fitOnOpen` opens the board zoomed to its content once the scene has elements, or to a region (`elementIds` / `elementIdPrefix`, `minZoom`, `maxZoom`, `margin`); a region too large for `minZoom` opens on its top-left corner. `onExcalidrawAPI` hands out Excalidraw's API.
+- `/diagram` exports the camera maths: `cameraToContain`, `visibleSceneArea`, `sceneBounds`.
+- `FloatingPanel`: `headerActions` (controls in the title bar before the ×; presses and keys on them never drag or nudge the panel), `closeLabel`, `closeIcon: 'close' | 'minimize'`, and a real minimise: `minimized` + `onMinimizedChange` draw a "Minimise" button and, when minimised, keep the panel mounted but hidden and show a pill in its nearest corner that restores it (`minimizedLabel`, `minimizedContent`); focus moves to the pill.
+- `SidePane`: `actions` in the pane's title row, before the built-in minimise-to-edge and ×, with or without tabs.
+- New `HoldToTalkButton` (`/video`): a round record button; hold (pointer, or Space with `spaceToTalk` unless typing in a field), a quick tap latches it, Esc cancels, `maxDurationMs` ends it, `aria-pressed`, an `onTone` hook, a `busy` state for someone else holding, and the pulse respects reduced motion.
+- New `SpokenCaption` (`/video`): a spoken caption for an assistant in a call (speaker, mark, `kind` question or said, a speaking chip, `holdMs` / `onExpire`) in a polite live region.
+- New `StarRating` (`/forms`): a star scale set by click or arrow keys with each star named ("3 of 4"), and a read-only form for an average ("3.5 of 4").
+- `ChecklistSection`: `strikeDone={false}` keeps ticked items plain (a "seen" checklist), with the group's count.
+- `HuddleBar`: with unread messages the Message toggle's accessible name carries the count ("Message, 3 unread").
+- `DropdownMenu`: `buttonVariant` / `buttonSize` draw the trigger with `Button`'s own classes (`buttonClasses`, now exported from `Button`), so a menu matches a `Button` beside it.
+- `CodeRunStatus`: `'runner_unavailable'` ("Runner did not start") for a runner that never started the program.
+
 ## 2.540.0
 
 - `StepThread`: the host's `renderStepDetail` output now sits inside the expanded part, so clicking a step header collapses it along with the rest of the step (it used to stay visible under a collapsed header).

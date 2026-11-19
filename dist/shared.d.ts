@@ -1083,6 +1083,24 @@ export declare function Button({ variant, size: requestedSize, tone, disabled, f
  */
 export declare const BUTTON_WEIGHT = "font-semibold";
 
+/**
+ * The exact class string `Button` renders. Hand-built button-like controls
+ * (a menu trigger) call this so they match a `Button` of the same variant and
+ * size instead of copying its classes.
+ */
+export declare function buttonClasses({ variant, size, tone, disabled, fullWidth, explicitSize, className, }?: ButtonClassOptions): string;
+
+export declare interface ButtonClassOptions {
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    tone?: ButtonTone;
+    disabled?: boolean;
+    fullWidth?: boolean;
+    /** True when `size` was passed explicitly (a link only draws type then). */
+    explicitSize?: boolean;
+    className?: string;
+}
+
 /** `ToolbarGroup` of buttons and menus: related actions side by side. */
 export declare interface ButtonGroupLeaf {
     kind: 'button-group';
@@ -1818,7 +1836,7 @@ export declare interface ChecklistItem {
     pending?: boolean;
 }
 
-export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, as, variant, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
+export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, as, variant, strikeDone, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
 
 export declare interface ChecklistSectionProps {
     title?: string;
@@ -1841,6 +1859,8 @@ export declare interface ChecklistSectionProps {
      * caption with the tally and an always-open add field, for a side panel.
      */
     variant?: 'label' | 'heading';
+    /** Ticked rows are struck through. False keeps them plain (a "seen" list); the tally is unchanged. @default true */
+    strikeDone?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -3935,7 +3955,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, buttonVariant, buttonSize, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -3992,6 +4012,14 @@ export declare interface DropdownMenuProps {
      * one, `link` bare secondary text ("Relevance ▾"). Since 2.389.6.
      */
     triggerVariant?: 'default' | 'primary' | 'secondary' | 'link';
+    /**
+     * Render the trigger with exactly `Button`'s own classes for this variant
+     * (and `buttonSize`), so a menu trigger beside a `Button size="sm"
+     * variant="secondary"` is the same box and colour. Overrides `triggerVariant`.
+     */
+    buttonVariant?: ButtonVariant;
+    /** Size step for `buttonVariant`. @default 'sm' */
+    buttonSize?: ButtonSize;
     /**
      * Tab order of the trigger. Default undefined (a normal tab stop).
      *
@@ -4696,7 +4724,7 @@ export declare interface FloatingCardProps {
     'data-testid'?: string;
 }
 
-export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, snapEnabled, snapThreshold, snapAnchors, onSnap, baseZIndex, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): ReactPortal | null;
+export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, snapEnabled, snapThreshold, snapAnchors, onSnap, baseZIndex, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, headerActions, closeLabel, closeIcon, minimized, onMinimizedChange, minimizedLabel, minimizedContent, }: FloatingPanelProps): ReactPortal | null;
 
 /** Named viewport docking positions a panel can snap to. */
 export declare type FloatingPanelAnchor = 'top-left' | 'top-right' | 'left-center' | 'right-center' | 'bottom-left' | 'bottom-right';
@@ -4733,6 +4761,34 @@ export declare interface FloatingPanelProps {
     zIndexClassName?: string;
     className?: string;
     'data-testid'?: string;
+    /**
+     * Extra controls drawn in the title bar, before the ×: icon buttons such as
+     * "Dock" or "Pop out". Pointer presses and keys on them never start a drag
+     * or nudge the panel. Since 2.541.0.
+     */
+    headerActions?: ReactNode;
+    /** Accessible name of the × button. Default "Close". Since 2.541.0. */
+    closeLabel?: string;
+    /**
+     * The × button's glyph: `'close'` (an ×, the default) or `'minimize'` (a
+     * bar), for a panel whose × minimises rather than closes. Since 2.541.0.
+     */
+    closeIcon?: 'close' | 'minimize';
+    /**
+     * Minimised: the panel stays mounted (its children keep running, e.g. call
+     * media) but is hidden, and a pill in the panel's nearest corner restores
+     * it. Pair with `onMinimizedChange`. Since 2.541.0.
+     */
+    minimized?: boolean;
+    /**
+     * Fires with `true` from the minimise button (drawn in the title bar
+     * whenever this is set) and `false` from the pill. Since 2.541.0.
+     */
+    onMinimizedChange?: (minimized: boolean) => void;
+    /** The pill's text. Default the title. Since 2.541.0. */
+    minimizedLabel?: string;
+    /** Extra content inside the pill, after its label (a live dot, a count). Since 2.541.0. */
+    minimizedContent?: ReactNode;
 }
 
 /**
@@ -10361,7 +10417,7 @@ export declare interface SidebarSectionProps {
  * into its right column. Outside a host it renders nothing (the page's own
  * column is unchanged).
  */
-export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, tabsOverflow, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
+export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, actions, tabsOverflow, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
 
 export declare interface SidePaneBounds {
     /** The split's ratio (page share) when nothing is remembered. Default 0.72. */
@@ -10413,6 +10469,12 @@ export declare interface SidePaneProps extends SidePaneRegistration {
     onValueChange?: (id: string) => void;
     /** Right end of the tab row. */
     trailing?: ReactNode;
+    /**
+     * Controls in the pane's title row, before the built-in minimise-to-edge
+     * and × (icon buttons such as "Float the call"). Works with or without
+     * `tabs`. Since 2.541.0.
+     */
+    actions?: ReactNode;
     /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.10). Default `menu`. */
     tabsOverflow?: 'scroll' | 'menu';
     /** Docked under the body: the pane's one composer. */
