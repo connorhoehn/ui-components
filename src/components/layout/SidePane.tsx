@@ -125,6 +125,8 @@ export interface SidePaneRegistration {
 
 interface HostValue {
   node: HTMLElement | null;
+  /** Where a pane's `actions` portal to: a span the frame mounts in its title row. */
+  actionsNode: HTMLElement | null;
   registration: SidePaneRegistration | null;
   register(registration: SidePaneRegistration): () => void;
   open: boolean;
@@ -210,6 +212,13 @@ export function SidePaneProvider({ storageKey = 'uic.side-pane', defaultOpen = t
     element.className = 'flex h-full min-h-0 flex-col';
     return element;
   });
+  const [actionsNode] = useState<HTMLElement | null>(() => {
+    if (typeof document === 'undefined') return null;
+    const element = document.createElement('span');
+    element.className = 'flex items-center gap-1';
+    element.setAttribute('data-testid', 'side-pane-actions');
+    return element;
+  });
   const [registration, setRegistration] = useState<SidePaneRegistration | null>(null);
   const register = useCallback((next: SidePaneRegistration) => {
     setRegistration(next);
@@ -254,9 +263,9 @@ export function SidePaneProvider({ storageKey = 'uic.side-pane', defaultOpen = t
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bounds.ratioMax, bounds.ratioMin, paneId, storageKey]);
   const value = useMemo<HostValue>(() => ({
-    node, registration, register, open: open || pageOwned, shown, fits, ratio, width, bounds, sized, folded,
+    node, actionsNode, registration, register, open: open || pageOwned, shown, fits, ratio, width, bounds, sized, folded,
     setWidth, setRatio, reveal, collapse, toggleFolded,
-  }), [node, registration, register, open, pageOwned, shown, fits, ratio, width, bounds, sized, folded, setRatio, reveal, collapse, toggleFolded]);
+  }), [node, actionsNode, registration, register, open, pageOwned, shown, fits, ratio, width, bounds, sized, folded, setRatio, reveal, collapse, toggleFolded]);
   return <HostContext.Provider value={value}>{children}</HostContext.Provider>;
 }
 
@@ -350,7 +359,13 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
     return () => { window.removeEventListener('resize', update); observer?.disconnect(); };
   }, [measured, setWidth]);
   const [slot, setSlot] = useState<HTMLElement | null>(null);
-  const { node, registration } = host;
+  const [actionsSlot, setActionsSlot] = useState<HTMLElement | null>(null);
+  const { node, registration, actionsNode } = host;
+  useLayoutEffect(() => {
+    if (!actionsNode) return;
+    if (actionsSlot) { if (actionsNode.parentElement !== actionsSlot) actionsSlot.appendChild(actionsNode); }
+    else actionsNode.remove();
+  }, [actionsNode, actionsSlot]);
   const shown = host.shown;
   useLayoutEffect(() => {
     if (!node) return;
@@ -362,10 +377,11 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
   const pane = shown && registration
     ? <DensityProvider density="compact"><ChatSidePanelFrame titleAs={documentOwnsColumn(host) ? 'h1' : undefined} title={registration.title} {...(registration.subtitle ? { subtitle: registration.subtitle } : {})}
         closeLabel={registration.closeLabel ?? `Collapse ${registration.title.toLowerCase()}`} onClose={registration.onClose ?? host.collapse}
-        actions={<Tooltip content={`Minimize ${title.toLowerCase()} to the edge`} placement="bottom">
+        actions={<><span ref={setActionsSlot} className="contents" data-testid={`${paneTestId}-actions-slot`} />
+          <Tooltip content={`Minimize ${title.toLowerCase()} to the edge`} placement="bottom">
           <IconButton aria-label={`Minimize ${title.toLowerCase()}`} aria-expanded onClick={host.toggleFolded}
             icon={<ChevronIcon dir="right" size={14} />} data-testid={`${paneTestId}-minimize`} />
-        </Tooltip>}
+        </Tooltip></>}
         className="min-h-0 flex-1 border-l border-border bg-surface" data-testid={paneTestId}>
         <div ref={setSlot} className="flex h-full min-h-0 flex-col" data-testid={`${paneTestId}-slot`} />
       </ChatSidePanelFrame></DensityProvider>
@@ -464,6 +480,12 @@ export interface SidePaneProps extends SidePaneRegistration {
   onValueChange?: (id: string) => void;
   /** Right end of the tab row. */
   trailing?: ReactNode;
+  /**
+   * Controls in the pane's title row, before the built-in minimise-to-edge
+   * and × (icon buttons such as "Float the call"). Works with or without
+   * `tabs`. Since 2.541.0.
+   */
+  actions?: ReactNode;
   /** The tab row's narrow behaviour, `PaneHeader overflow` (since 2.515.10). Default `menu`. */
   tabsOverflow?: 'scroll' | 'menu';
   /** Docked under the body: the pane's one composer. */
@@ -482,7 +504,7 @@ export interface SidePaneProps extends SidePaneRegistration {
  */
 export function SidePane({
   title, subtitle, closeLabel, onClose, widthPx, paneId, explores = false, presentation,
-  tabs, value, onValueChange, trailing, tabsOverflow, footer, density = 'compact', children, 'data-testid': testId = 'side-pane-content',
+  tabs, value, onValueChange, trailing, actions, tabsOverflow, footer, density = 'compact', children, 'data-testid': testId = 'side-pane-content',
 }: SidePaneProps) {
   const host = useContext(HostContext);
   const register = host?.register;
@@ -502,6 +524,7 @@ export function SidePane({
     : null;
   return createPortal(
     <DensityProvider value={density}>
+      {actions != null && host.actionsNode && createPortal(actions, host.actionsNode)}
       <div className="flex h-full min-h-0 min-w-0 flex-col" data-ui-pane="side" data-testid={testId}>
         {tabRow}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>

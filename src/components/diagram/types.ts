@@ -66,8 +66,56 @@ export interface SharedDiagramProps {
      * Null (the default) leaves the viewport under local control.
      */
     followUserId?: string | null;
+    /**
+     * How a follower shows the followed person's view.
+     *
+     * `'mirror'` (the default) copies their scroll and zoom, so a follower on a
+     * smaller canvas sees only the top-left of what they see. `'contain'`
+     * centres the followed person's whole visible area and zooms out until it
+     * fits this canvas (never zooming in past their zoom). Each canvas
+     * publishes its size with its camera for this; a peer on an older version
+     * that publishes no size is mirrored.
+     */
+    followFit?: 'mirror' | 'contain';
+    /**
+     * Fires when the person moves this canvas's camera themselves (a pan,
+     * a zoom), as opposed to a follow or an opening fit this canvas applied.
+     * A host pauses following on it without listening to the DOM.
+     */
+    onViewportInput?: () => void;
+    /**
+     * Open the board zoomed to its content, once the scene first has
+     * elements. `true` fits the whole scene; an object picks a region
+     * (`elementIds`, or every id starting with `elementIdPrefix`) and zoom
+     * bounds. A region too large for `minZoom` opens on its top-left corner,
+     * so the start of a long prompt is readable.
+     */
+    fitOnOpen?: boolean | DiagramFitOptions;
+    /**
+     * Excalidraw's help "?" button. `'corner'` (the default) leaves it in the
+     * bottom-right corner; `'start'` moves it into the footer beside the zoom
+     * and undo controls (clear of an overlay in that corner); `'hidden'`
+     * removes the button (the "?" key still opens the help dialog).
+     */
+    helpButton?: 'corner' | 'start' | 'hidden';
+    /** Receives Excalidraw's imperative API once the editor has mounted. */
+    onExcalidrawAPI?: (api: unknown) => void;
     /** Social actions for the people on the presence bar. See DiagramPresenceActions. */
     presenceActions?: DiagramPresenceActions;
+}
+
+/** Options for `fitOnOpen`. */
+export interface DiagramFitOptions {
+    /** Fit these elements only. */
+    elementIds?: readonly string[];
+    /** Fit every element whose id starts with this. */
+    elementIdPrefix?: string;
+    /** Never zoom out past this (a readable floor). Default 0.1. */
+    minZoom?: number;
+    /** Never zoom in past this. Default 1. */
+    maxZoom?: number;
+    /** Share of the canvas kept clear on each side. Default 0.05. */
+    margin?: number;
 }
 
 /** Props of the lazily-loaded canvas — always fully resolved by this point. */

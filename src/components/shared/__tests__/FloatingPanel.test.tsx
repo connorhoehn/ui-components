@@ -566,3 +566,69 @@ describe('FloatingPanel viewport resize', () => {
     expect(panelStyle().top).toBe('184px');
   });
 });
+
+describe('FloatingPanel — header actions and minimise (2.541.0)', () => {
+  beforeEach(() => setViewport(VW, VH));
+
+  it('draws header actions before the × without starting a drag', () => {
+    const onDock = vi.fn();
+    renderPanel({ headerActions: <button type="button" onClick={onDock}>Dock</button> });
+    const dock = screen.getByRole('button', { name: 'Dock' });
+    expect(screen.getByTestId('floating-panel-actions').contains(dock)).toBe(true);
+    const before = panelStyle().left;
+    fireEvent.pointerDown(dock, { clientX: 100, clientY: 100, button: 0, pointerType: 'mouse' });
+    fireEvent.pointerMove(document, { clientX: 300, clientY: 300 });
+    fireEvent.pointerUp(document);
+    expect(panelStyle().left).toBe(before);
+    fireEvent.click(dock);
+    expect(onDock).toHaveBeenCalled();
+  });
+
+  it('an arrow key on a header action does not nudge the panel', () => {
+    renderPanel({ headerActions: <button type="button">Dock</button> });
+    const before = panelStyle().left;
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Dock' }), { key: 'ArrowLeft' });
+    expect(panelStyle().left).toBe(before);
+  });
+
+  it('names and draws the × as the host says', () => {
+    renderPanel({ closeLabel: 'Minimise the call', closeIcon: 'minimize' });
+    expect(screen.getByRole('button', { name: 'Minimise the call' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
+  });
+
+  it('minimises to a pill that keeps the children mounted and restores', () => {
+    const onMinimizedChange = vi.fn();
+    const { rerender } = render(
+      <FloatingPanel open onClose={() => {}} title="Call" onMinimizedChange={onMinimizedChange} defaultPosition="bottom-right">
+        <video data-testid="media" />
+      </FloatingPanel>,
+    );
+    const minimise = screen.getByRole('button', { name: 'Minimise' });
+    minimise.focus();
+    fireEvent.click(minimise);
+    expect(onMinimizedChange).toHaveBeenCalledWith(true);
+
+    rerender(
+      <FloatingPanel open minimized onClose={() => {}} title="Call" onMinimizedChange={onMinimizedChange} minimizedLabel="Call, 2 people" defaultPosition="bottom-right">
+        <video data-testid="media" />
+      </FloatingPanel>,
+    );
+    expect(screen.getByTestId('media')).toBeTruthy();
+    expect(screen.getByTestId('floating-panel').getAttribute('aria-hidden')).toBe('true');
+    expect(screen.getByTestId('floating-panel').className).toContain('invisible');
+    const pill = screen.getByRole('button', { name: 'Show Call, 2 people' });
+    expect(document.activeElement).toBe(pill);
+    // Nearest corner of a bottom-right panel: flush right and bottom.
+    expect(pill.style.right).not.toBe('');
+    expect(pill.style.bottom).not.toBe('');
+    fireEvent.click(pill);
+    expect(onMinimizedChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it('draws no minimise button or pill without onMinimizedChange', () => {
+    renderPanel();
+    expect(screen.queryByRole('button', { name: 'Minimise' })).toBeNull();
+    expect(screen.queryByTestId('floating-panel-pill')).toBeNull();
+  });
+});

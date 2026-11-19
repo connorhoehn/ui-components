@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     Excalidraw,
+    Footer,
     reconcileElements,
     CaptureUpdateAction,
 } from '@excalidraw/excalidraw';
@@ -21,7 +22,27 @@ import type { DiagramElement } from '@connorhoehn/realtime-modules/adapters/exca
 import { cn } from '../../lib/cn';
 import { useResolvedTheme } from './useResolvedTheme';
 import { DiagramPresenceBar } from './DiagramPresenceBar';
-import type { ExcalidrawCanvasProps } from './types';
+import type { DiagramFitOptions, ExcalidrawCanvasProps } from './types';
+import { cameraToContain, sceneBounds, visibleSceneArea } from './camera';
+import type { DiagramCamera, DiagramCanvasSize } from './camera';
+
+/** A published camera, with the canvas size it was taken on (absent from older peers). */
+type PublishedViewport = DiagramCamera & Partial<DiagramCanvasSize>;
+
+/** The elements `fitOnOpen` frames: all of them, or the named region. */
+function fitTargets<T extends { id?: string; isDeleted?: boolean }>(elements: readonly T[], fit: true | DiagramFitOptions): T[] {
+    const live = elements.filter((el) => !el.isDeleted);
+    if (fit === true) return live;
+    if (fit.elementIds?.length) {
+        const ids = new Set(fit.elementIds);
+        return live.filter((el) => el.id !== undefined && ids.has(el.id));
+    }
+    if (fit.elementIdPrefix) {
+        const prefix = fit.elementIdPrefix;
+        return live.filter((el) => el.id?.startsWith(prefix));
+    }
+    return live;
+}
 
 /**
  * Excalidraw's public types are deliberately branded (`OrderedExcalidrawElement`,
@@ -48,6 +69,11 @@ export default function ExcalidrawCanvas({
     assetPath,
     onSceneChange,
     followUserId = null,
+    followFit = 'mirror',
+    onViewportInput,
+    fitOnOpen = false,
+    helpButton = 'corner',
+    onExcalidrawAPI,
     presenceActions,
 }: ExcalidrawCanvasProps) {
     const hostRef = useRef<HTMLDivElement | null>(null);
@@ -55,7 +81,14 @@ export default function ExcalidrawCanvas({
 
     const apiRef = useRef<ExcalidrawAPI | null>(null);
     /** Last camera we published, so a drag does not publish every frame. */
-    const lastViewportRef = useRef<{ scrollX: number; scrollY: number; zoom: number } | null>(null);
+    const lastViewportRef = useRef<PublishedViewport | null>(null);
+    /** Latest props read from stable callbacks. */
+    const onViewportInputRef = useRef(onViewportInput);
+    onViewportInputRef.current = onViewportInput;
+    const fitOnOpenRef = useRef(fitOnOpen);
+    fitOnOpenRef.current = fitOnOpen;
+    /** Set once the opening fit has run, or the person moved the view first. */
+    const fitDoneRef = useRef(false);
     /** True only while a followed peer's viewport is being written in. */
     const applyingFollowRef = useRef(false);
     const [apiReady, setApiReady] = useState(false);
@@ -102,6 +135,74 @@ export default function ExcalidrawCanvas({
             user,
             onRemoteElements: applyRemote,
         });
+
+    /**
+     * Writes a camera this canvas chose (a follow, the opening fit). The
+     * flag makes the onChange echo of the write neither re-published as this
+     * person's own view nor reported as their input.
+     */
+    const applyCamera = useCallback((camera: DiagramCamera) => {
+        const api = apiRef.current;
+        if (!api) return;
+        applyingFollowRef.current = true;
+        api.updateScene({
+            appState: { scrollX: camera.scrollX, scrollY: camera.scrollY, zoom: { value: camera.zoom } },
+            // Being carried somewhere is not something the person should be
+            // able to undo — their history is their own edits.
+            captureUpdate: CaptureUpdateAction.NEVER,
+        });
+        // Cleared after onChange has drained, so the echo of our own write is
+        // the thing being suppressed and not the user's next real gesture.
+        setTimeout(() => {
+            applyingFollowRef.current = false;
+        }, 0);
+    }, []);
+
+    /** This canvas's own size, from Excalidraw's state (0 before layout). */
+    const ownCanvas = useCallback((): DiagramCanvasSize | null => {
+        const state = apiRef.current?.getAppState() as { width?: number; height?: number } | undefined;
+        const width = state?.width ?? 0;
+        const height = state?.height ?? 0;
+        return width > 0 && height > 0 ? { width, height } : null;
+    }, []);
+
+    // ---- Opening fit -------------------------------------------------------
+    // Our own camera maths rather than Excalidraw's "zoom to fit": its fit
+    // measures the toolbar in window coordinates, which squeezes the result on
+    // a canvas that sits lower on the page. Runs once, after hydration sees
+    // elements, and never after the person has moved the view.
+    const fitOpening = useCallback(() => {
+        const fit = fitOnOpenRef.current;
+        if (!fit || fitDoneRef.current) return;
+        const api = apiRef.current;
+        const canvas = ownCanvas();
+        if (!api) return;
+        if (!canvas) {
+            // Excalidraw reports its size after its first layout; try again
+            // for a moment rather than fitting into a 0x0 canvas.
+            if (fitRetriesRef.current++ < 20) setTimeout(() => fitOpeningRef.current(), 100);
+            return;
+        }
+        const rect = sceneBounds(
+            fitTargets(api.getSceneElementsIncludingDeleted() as unknown as Array<{
+                id?: string; x: number; y: number; width: number; height: number; isDeleted?: boolean;
+            }>, fit),
+        );
+        if (!rect) return;
+        fitDoneRef.current = true;
+        const opts = fit === true ? {} : fit;
+        applyCamera(
+            cameraToContain(rect, canvas, {
+                zoom: opts.maxZoom ?? 1,
+                minZoom: opts.minZoom,
+                margin: opts.margin,
+                overflow: 'start',
+            }),
+        );
+    }, [applyCamera, ownCanvas]);
+    const fitRetriesRef = useRef(0);
+    const fitOpeningRef = useRef(fitOpening);
+    fitOpeningRef.current = fitOpening;
 
     // ---- Hydrate the canvas from the shared scene --------------------------
     //
@@ -154,6 +255,7 @@ export default function ExcalidrawCanvas({
                 // the snapshot arrived. Either way there is nothing to hydrate
                 // and nothing may be overwritten.
                 hydratedRef.current = true;
+                fitOpening();
                 return;
             }
             if (api && shared.length > 0) {
@@ -178,7 +280,7 @@ export default function ExcalidrawCanvas({
             cancelled = true;
             if (timer) clearTimeout(timer);
         };
-    }, [apiReady, ready, readAll]);
+    }, [apiReady, ready, readAll, fitOpening]);
 
     // ---- Canvas → shared doc ----------------------------------------------
     const handleChange = useCallback(
@@ -189,6 +291,8 @@ export default function ExcalidrawCanvas({
                 scrollX?: number;
                 scrollY?: number;
                 zoom?: { value: number };
+                width?: number;
+                height?: number;
             },
         ) => {
             // Published ABOVE the `editable` gate: a viewer's camera is not an
@@ -200,23 +304,37 @@ export default function ExcalidrawCanvas({
             // make two people following each other chase one another around
             // the board forever.
             if (!applyingFollowRef.current) {
-                const next = {
+                const next: PublishedViewport = {
                     scrollX: appState.scrollX ?? 0,
                     scrollY: appState.scrollY ?? 0,
                     zoom: appState.zoom?.value ?? 1,
                 };
+                // The canvas size rides with the camera so a follower can
+                // fit the whole of this view (`followFit="contain"`).
+                if (appState.width && appState.height) {
+                    next.width = appState.width;
+                    next.height = appState.height;
+                }
                 const prev = lastViewportRef.current;
                 // Sub-pixel scroll deltas arrive on almost every frame of a
                 // drag; publishing them all would spend the presence budget on
                 // movement nobody can see.
-                const moved =
-                    !prev ||
-                    Math.abs(prev.scrollX - next.scrollX) > 0.5 ||
-                    Math.abs(prev.scrollY - next.scrollY) > 0.5 ||
-                    prev.zoom !== next.zoom;
-                if (moved) {
+                const cameraMoved =
+                    !!prev &&
+                    (Math.abs(prev.scrollX - next.scrollX) > 0.5 ||
+                        Math.abs(prev.scrollY - next.scrollY) > 0.5 ||
+                        prev.zoom !== next.zoom);
+                const resized = !!prev && (prev.width !== next.width || prev.height !== next.height);
+                if (!prev || cameraMoved || resized) {
                     lastViewportRef.current = next;
+                    // The adapter passes the record through whole; its type
+                    // names only the camera, and the size is extra.
                     publishPresence({ viewport: next });
+                }
+                if (cameraMoved) {
+                    // A move this canvas did not apply itself: the person's own.
+                    fitDoneRef.current = true;
+                    onViewportInputRef.current?.();
                 }
             }
 
@@ -283,34 +401,39 @@ export default function ExcalidrawCanvas({
         );
     }, [followUserId, participants]);
 
-    const fx = followed?.viewport?.scrollX;
-    const fy = followed?.viewport?.scrollY;
-    const fz = followed?.viewport?.zoom;
+    const followedViewport = followed?.viewport as PublishedViewport | undefined;
+    const fx = followedViewport?.scrollX;
+    const fy = followedViewport?.scrollY;
+    const fz = followedViewport?.zoom;
+    const fw = followedViewport?.width;
+    const fh = followedViewport?.height;
 
     useEffect(() => {
-        const api = apiRef.current;
-        if (!api || fx === undefined || fy === undefined || fz === undefined) return;
-
-        applyingFollowRef.current = true;
-        api.updateScene({
-            appState: { scrollX: fx, scrollY: fy, zoom: { value: fz } },
-            // Being carried somewhere is not something the follower should be
-            // able to undo — their history is their own edits.
-            captureUpdate: CaptureUpdateAction.NEVER,
-        });
-        // Cleared after onChange has drained, so the echo of our own write is
-        // the thing being suppressed and not the user's next real gesture.
-        const id = setTimeout(() => {
-            applyingFollowRef.current = false;
-        }, 0);
-        return () => clearTimeout(id);
-    }, [fx, fy, fz, apiReady]);
+        if (!apiRef.current || fx === undefined || fy === undefined || fz === undefined) return;
+        const camera: DiagramCamera = { scrollX: fx, scrollY: fy, zoom: fz };
+        const canvas = followFit === 'contain' ? ownCanvas() : null;
+        if (canvas && fw && fh) {
+            // Centre their whole visible area, zoomed out until it fits here.
+            applyCamera(
+                cameraToContain(visibleSceneArea(camera, { width: fw, height: fh }), canvas, { zoom: fz, margin: 0 }),
+            );
+        } else {
+            applyCamera(camera);
+        }
+    }, [fx, fy, fz, fw, fh, followFit, apiReady, applyCamera, ownCanvas]);
 
     return (
         <div
             ref={hostRef}
             data-testid="excalidraw-canvas"
-            className={cn('relative h-full w-full', className)}
+            data-help-button={helpButton}
+            className={cn(
+                'relative h-full w-full',
+                // Excalidraw has no option for its help button; this rule is
+                // scoped to this canvas and leaves our own footer button alone.
+                helpButton !== 'corner' && '[&_.help-icon:not([data-ui-help])]:hidden!',
+                className,
+            )}
         >
             {/* Right rail, BELOW Excalidraw's own top island.
                 Excalidraw owns the top-left (main menu), the top-centre
@@ -333,11 +456,31 @@ export default function ExcalidrawCanvas({
                 excalidrawAPI={(api) => {
                     apiRef.current = api as unknown as ExcalidrawAPI;
                     setApiReady(true);
+                    onExcalidrawAPI?.(api);
                 }}
                 onChange={handleChange as never}
                 onPointerUpdate={handlePointerUpdate}
                 UIOptions={{ canvasActions: { toggleTheme: false } }}
-            />
+            >
+                {helpButton === 'start' && (
+                    <Footer>
+                        {/* Excalidraw's own class gives it the island look;
+                            data-ui-help keeps it clear of the hiding rule. */}
+                        <button
+                            type="button"
+                            className="help-icon"
+                            data-ui-help=""
+                            aria-label="Help"
+                            title="Help — ?"
+                            onClick={() =>
+                                apiRef.current?.updateScene({ appState: { openDialog: { name: 'help' } } })
+                            }
+                        >
+                            <span aria-hidden="true" className="text-sm font-semibold">?</span>
+                        </button>
+                    </Footer>
+                )}
+            </Excalidraw>
         </div>
     );
 }

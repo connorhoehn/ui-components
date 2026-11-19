@@ -32,6 +32,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { CloseIcon, MinusIcon } from '../ui/Icons';
 
 /** Named viewport docking positions a panel can snap to. */
 export type FloatingPanelAnchor =
@@ -80,6 +81,34 @@ export interface FloatingPanelProps {
   zIndexClassName?: string;  // default matching the call widget's layer
   className?: string;
   'data-testid'?: string;    // root default 'floating-panel'
+  /**
+   * Extra controls drawn in the title bar, before the ×: icon buttons such as
+   * "Dock" or "Pop out". Pointer presses and keys on them never start a drag
+   * or nudge the panel. Since 2.541.0.
+   */
+  headerActions?: ReactNode;
+  /** Accessible name of the × button. Default "Close". Since 2.541.0. */
+  closeLabel?: string;
+  /**
+   * The × button's glyph: `'close'` (an ×, the default) or `'minimize'` (a
+   * bar), for a panel whose × minimises rather than closes. Since 2.541.0.
+   */
+  closeIcon?: 'close' | 'minimize';
+  /**
+   * Minimised: the panel stays mounted (its children keep running, e.g. call
+   * media) but is hidden, and a pill in the panel's nearest corner restores
+   * it. Pair with `onMinimizedChange`. Since 2.541.0.
+   */
+  minimized?: boolean;
+  /**
+   * Fires with `true` from the minimise button (drawn in the title bar
+   * whenever this is set) and `false` from the pill. Since 2.541.0.
+   */
+  onMinimizedChange?: (minimized: boolean) => void;
+  /** The pill's text. Default the title. Since 2.541.0. */
+  minimizedLabel?: string;
+  /** Extra content inside the pill, after its label (a live dot, a count). Since 2.541.0. */
+  minimizedContent?: ReactNode;
 }
 
 const STORAGE_VERSION = 2;
@@ -237,6 +266,13 @@ export function FloatingPanel({
   zIndexClassName = 'z-[9999]',
   className,
   'data-testid': testId = 'floating-panel',
+  headerActions,
+  closeLabel = 'Close',
+  closeIcon = 'close',
+  minimized = false,
+  onMinimizedChange,
+  minimizedLabel,
+  minimizedContent,
 }: FloatingPanelProps) {
   const dark = tone === 'dark';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -452,7 +488,34 @@ export function FloatingPanel({
     persistPosition(next.x, next.y, rect.width, rect.height);
   }, [persistPosition]);
 
+  // Minimising from inside the panel would drop focus into the hidden
+  // dialog; hand it to the pill instead.
+  const pillRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!minimized) return;
+    const active = typeof document === 'undefined' ? null : document.activeElement;
+    if (active && rootRef.current?.contains(active)) pillRef.current?.focus();
+  }, [minimized]);
+
   if (!open) return null;
+
+  // The pill sits flush in the corner the panel is nearest, so a gallery
+  // parked bottom-right minimises to a pill bottom-right.
+  const pill = (() => {
+    if (!minimized) return null;
+    const el = rootRef.current;
+    const w = el?.offsetWidth ?? 0;
+    const h = el?.offsetHeight ?? 0;
+    const vw = typeof window === 'undefined' ? 0 : window.innerWidth;
+    const vh = typeof window === 'undefined' ? 0 : window.innerHeight;
+    const p = pos ?? { x: vw - w - MARGIN, y: vh - h - MARGIN };
+    const right = p.x + w / 2 > vw / 2;
+    const bottom = p.y + h / 2 > vh / 2;
+    return {
+      ...(right ? { right: Math.max(0, vw - (p.x + w)) } : { left: Math.max(0, p.x) }),
+      ...(bottom ? { bottom: Math.max(0, vh - (p.y + h)) } : { top: Math.max(0, p.y) }),
+    };
+  })();
 
   const ghost = armedAnchor
     ? resolveAnchorPosition(armedAnchor, rootRef.current?.offsetWidth ?? 0, rootRef.current?.offsetHeight ?? 0)
@@ -491,8 +554,13 @@ export function FloatingPanel({
         data-snapping={isSnapping ? 'true' : undefined}
         onPointerDownCapture={raiseToFront}
         onFocusCapture={raiseToFront}
+        aria-hidden={minimized || undefined}
+        data-minimized={minimized ? 'true' : undefined}
         className={cn(
           'fixed flex flex-col rounded-2xl border overflow-hidden backdrop-blur-sm',
+          // Hidden but laid out: children stay mounted and the size stays
+          // measurable for the pill's corner and the restore.
+          minimized && 'invisible pointer-events-none',
           widthClassName,
           heightClassName,
           zIndexClassName,
@@ -533,24 +601,41 @@ export function FloatingPanel({
           <span className={cn('text-xs font-medium truncate', dark ? 'text-white/80' : 'text-text-primary')}>
             {title}
           </span>
-          <button
+          <div
             data-ui-part=""
-            type="button"
-            onClick={onClose}
-            // Don't let a click on ✕ start a drag.
+            data-testid="floating-panel-actions"
+            className="flex items-center gap-1 shrink-0"
+            // Controls in the handle: a press or a key on them is theirs,
+            // never a drag start or an arrow-key nudge of the panel.
             onPointerDown={(e) => e.stopPropagation()}
-            aria-label="Close"
-            data-testid="floating-panel-close"
-            className={cn(
-              'w-5 h-5 flex items-center justify-center border-none bg-transparent cursor-pointer rounded transition-colors shrink-0',
-              dark ? 'text-white/40 hover:text-white/80' : 'text-text-tertiary hover:text-text-primary',
-            )}
+            onKeyDown={(e) => e.stopPropagation()}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+            {headerActions}
+            {onMinimizedChange && closeIcon !== 'minimize' && (
+              <button
+                data-ui-part=""
+                type="button"
+                onClick={() => onMinimizedChange(true)}
+                aria-label="Minimise"
+                data-testid="floating-panel-minimize"
+                className={headerButtonClass(dark)}
+              >
+                <MinusIcon size={12} aria-hidden="true" />
+              </button>
+            )}
+            <button
+              data-ui-part=""
+              type="button"
+              onClick={onClose}
+              aria-label={closeLabel}
+              data-testid="floating-panel-close"
+              className={headerButtonClass(dark)}
+            >
+              {closeIcon === 'minimize'
+                ? <MinusIcon size={12} aria-hidden="true" />
+                : <CloseIcon size={12} aria-hidden="true" />}
+            </button>
+          </div>
         </div>
 
         {/* Body — fill-height slot for the hosted tool */}
@@ -558,8 +643,36 @@ export function FloatingPanel({
           {children}
         </div>
       </div>
+      {pill && (
+        <button
+          ref={pillRef}
+          type="button"
+          data-ui-part=""
+          data-testid="floating-panel-pill"
+          aria-label={`Show ${minimizedLabel ?? title}`}
+          onClick={() => onMinimizedChange?.(false)}
+          className={cn(
+            'fixed flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium cursor-pointer shadow-lg',
+            zIndexClassName,
+            dark
+              ? 'bg-call-chrome border-call-chrome-border text-white/80 hover:text-white'
+              : 'bg-surface-panel border-border text-text-primary hover:bg-surface-hover',
+          )}
+          style={{ ...pill, ...(zOrder !== null ? { zIndex: baseZIndex + zOrder } : null) }}
+        >
+          <span className="truncate max-w-[12rem]">{minimizedLabel ?? title}</span>
+          {minimizedContent}
+        </button>
+      )}
     </>,
     document.body,
+  );
+}
+
+function headerButtonClass(dark: boolean): string {
+  return cn(
+    'w-5 h-5 flex items-center justify-center border-none bg-transparent cursor-pointer rounded transition-colors shrink-0',
+    dark ? 'text-white/40 hover:text-white/80' : 'text-text-tertiary hover:text-text-primary',
   );
 }
 

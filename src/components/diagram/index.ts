@@ -38,11 +38,14 @@ export {
 } from './macro';
 
 export { useResolvedTheme } from './useResolvedTheme';
+export { cameraToContain, visibleSceneArea, sceneBounds, DIAGRAM_ZOOM_FLOOR, DIAGRAM_ZOOM_CEILING } from './camera';
+export type { DiagramCamera, DiagramCanvasSize, DiagramSceneRect, ContainOptions } from './camera';
 export type { ResolvedTheme } from './useResolvedTheme';
 
 export type {
     DiagramUser,
     SharedDiagramProps,
+    DiagramFitOptions,
     CollaborativeExcalidrawProps,
     CollaborativeExcalidrawHostedProps,
     CollaborativeExcalidrawBootstrapProps,

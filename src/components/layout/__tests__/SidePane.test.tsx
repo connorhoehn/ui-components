@@ -183,3 +183,27 @@ describe('SidePane fold and width (2.438.1)', () => {
     expect(Number(window.localStorage.getItem('t.pane.ratio.search'))).toBe(0.4);
   });
 });
+
+describe('SidePane actions (2.541.0)', () => {
+  it('draws actions in the title row before minimise, without tabs, and keeps them across a fold', () => {
+    const onFloat = vi.fn();
+    render(
+      <SidePaneProvider storageKey="t.actions">
+        <SidePaneSplit paneTestId="the-pane"><p>page</p>
+          <SidePane title="Call" actions={<button type="button" onClick={onFloat}>Float the call</button>}><p>tiles</p></SidePane>
+        </SidePaneSplit>
+      </SidePaneProvider>,
+    );
+    const float = screen.getByRole('button', { name: 'Float the call' });
+    const slot = screen.getByTestId('the-pane-actions-slot');
+    expect(slot.contains(float)).toBe(true);
+    const minimise = screen.getByRole('button', { name: 'Minimize call' });
+    expect(float.compareDocumentPosition(minimise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    fireEvent.click(float);
+    expect(onFloat).toHaveBeenCalledTimes(1);
+    fireEvent.click(minimise);
+    expect(screen.queryByRole('button', { name: 'Float the call' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Restore call' }));
+    expect(screen.getByTestId('the-pane-actions-slot').contains(screen.getByRole('button', { name: 'Float the call' }))).toBe(true);
+  });
+});
