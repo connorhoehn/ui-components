@@ -50,8 +50,12 @@ export interface StepThreadProps {
   canRetry?: (step: StepExecution, stepId: string) => boolean;
   /** The same gate for "Resume from here" / `onResumeFromStep`. Same default. */
   canResume?: (step: StepExecution, stepId: string) => boolean;
-  /** Start with the row expanded. Default false: a run reads as its step list. */
-  defaultExpanded?: boolean;
+  /**
+   * Start with the row expanded. Default false: a run reads as its step list.
+   * A function decides per step, e.g. open a running or failed step and
+   * collapse the finished ones.
+   */
+  defaultExpanded?: boolean | ((step: StepExecution, stepId: string) => boolean);
   /**
    * The step's internals — execution timeline, node configuration, runtime
    * input, resolved prompt, raw JSON output and token usage. They are for
@@ -145,7 +149,8 @@ export function StepThread({
   const knownType = !!nodeType && nodeType !== 'unknown';
   const stepTitle = label ?? (knownType ? nodeType : stepId);
   const stepSubtitle = label ? (knownType ? nodeType : undefined) : knownType ? stepId.slice(0, 8) : undefined;
-  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [expanded, setExpanded] = useState(() =>
+    typeof defaultExpanded === 'function' ? defaultExpanded(step, stepId) : defaultExpanded);
   const [technicalOpen, setTechnicalOpen] = useState(showTechnicalDetails === 'expanded');
   const technicalId = useId();
   const detail = renderStepDetail?.(step, stepId);
@@ -285,17 +290,18 @@ export function StepThread({
         )}
       </div>
 
-      {detail != null && detail !== false && (
-        <div className="mt-1" data-testid={`step-detail-${stepId}`}>
-          {detail}
-        </div>
-      )}
-
       {expanded && (
         <div
           className="border-t-0 rounded-b-lg bg-surface overflow-hidden"
           style={{ border: `1px solid ${statusColor}40` }}
         >
+          {/* The host's detail for this step sits inside the expanded part,
+              so clicking the header collapses it with everything else. */}
+          {detail != null && detail !== false && (
+            <div className="px-3 pt-2" data-testid={`step-detail-${stepId}`}>
+              {detail}
+            </div>
+          )}
           {/* Produced images — populated by `pipeline:step:image:produced`
               events (crop / adjust / save handlers). Rendered BEFORE the
               output section so image pipelines surface their artifacts at

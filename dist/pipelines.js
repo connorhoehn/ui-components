@@ -19718,7 +19718,7 @@ function Rd(e, t) {
 	};
 }
 function zd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryFromStep: o, onResumeFromStep: s, onArtifactClick: c, renderStepDetail: u, canRetry: d, canResume: f, defaultExpanded: p = !1, showTechnicalDetails: m = "collapsed" }) {
-	let h = typeof a?.label == "string" && a.label.trim() ? a.label : void 0, g = !!i && i !== "unknown", _ = h ?? (g ? i : e), v = h ? g ? i : void 0 : g ? e.slice(0, 8) : void 0, [y, b] = V(p), [x, S] = V(m === "expanded"), C = zt(), w = u?.(t, e), [T, E] = V("Copy JSON"), O = D(), ee = L(() => {
+	let h = typeof a?.label == "string" && a.label.trim() ? a.label : void 0, g = !!i && i !== "unknown", _ = h ?? (g ? i : e), v = h ? g ? i : void 0 : g ? e.slice(0, 8) : void 0, [y, b] = V(() => typeof p == "function" ? p(t, e) : p), [x, S] = V(m === "expanded"), C = zt(), w = u?.(t, e), [T, E] = V("Copy JSON"), O = D(), ee = L(() => {
 		let e = t.output;
 		e && navigator.clipboard.writeText(JSON.stringify(e, null, 2)).then(() => {
 			E("Copied!"), setTimeout(() => E("Copy JSON"), 1e3);
@@ -19792,15 +19792,15 @@ function zd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 					})
 				]
 			}),
-			w != null && w !== !1 && /* @__PURE__ */ U("div", {
-				className: "mt-1",
-				"data-testid": `step-detail-${e}`,
-				children: w
-			}),
 			y && /* @__PURE__ */ W("div", {
 				className: "border-t-0 rounded-b-lg bg-surface overflow-hidden",
 				style: { border: `1px solid ${M}40` },
 				children: [
+					w != null && w !== !1 && /* @__PURE__ */ U("div", {
+						className: "px-3 pt-2",
+						"data-testid": `step-detail-${e}`,
+						children: w
+					}),
 					O && t.images && t.images.length > 0 && /* @__PURE__ */ U(fd, {
 						title: `Produced images (${t.images.length})`,
 						children: /* @__PURE__ */ U("div", {

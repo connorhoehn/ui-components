@@ -1,3 +1,8 @@
+## 2.540.0
+
+- `StepThread`: the host's `renderStepDetail` output now sits inside the expanded part, so clicking a step header collapses it along with the rest of the step (it used to stay visible under a collapsed header).
+- `StepThread` and `StepTree`: `defaultExpanded` also takes a function `(step, stepId) => boolean`, so a host can open running, waiting or failed steps and collapse the finished ones.
+
 ## 2.539.0
 
 - `WorkArea` takes `footerPlacement="float"`: the footer floats over the bottom of the body instead of sitting under it, the body scrolls beneath it and ends with a spacer of the footer's measured height (`--dock-height`, from a ResizeObserver), so the last row always scrolls clear. The floating layer is click-through; content opts in with `pointer-events-auto`. `useInFloatingFooter()` reports it.

@@ -25,8 +25,8 @@ export interface StepTreeProps {
   canRetry?: StepThreadProps['canRetry'];
   /** Forwarded to every step. See {@link StepThreadProps.canResume}. */
   canResume?: StepThreadProps['canResume'];
-  /** Forwarded to every step: start rows expanded. Default false. */
-  defaultExpanded?: boolean;
+  /** Forwarded to every step: start rows expanded, or a function deciding per step. Default false. */
+  defaultExpanded?: StepThreadProps['defaultExpanded'];
   /** Forwarded to every step. See {@link StepThreadProps.showTechnicalDetails}. Default `'collapsed'`. */
   showTechnicalDetails?: StepThreadProps['showTechnicalDetails'];
 }

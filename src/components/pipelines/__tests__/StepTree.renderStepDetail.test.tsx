@@ -26,6 +26,7 @@ describe('StepTree renderStepDetail', () => {
       <StepTree
         steps={steps}
         nodeDataMap={nodeDataMap}
+        defaultExpanded
         renderStepDetail={(_step, stepId) =>
           stepId === 'deck' ? <article>Sprint review deck</article> : null}
       />,
@@ -40,6 +41,7 @@ describe('StepTree renderStepDetail', () => {
       <StepTree
         steps={steps}
         nodeDataMap={nodeDataMap}
+        defaultExpanded
         renderStepDetail={(_step, stepId) => (stepId === 'deck' ? <article>Deck card</article> : null)}
       />,
     );
@@ -47,16 +49,31 @@ describe('StepTree renderStepDetail', () => {
     expect(within(row).getByText('Deck card')).toBeInTheDocument();
   });
 
-  it('shows the card without expanding the step', () => {
+  it('hides the card while the step is collapsed', () => {
     render(
       <StepTree
         steps={steps}
         nodeDataMap={nodeDataMap}
-        renderStepDetail={() => <span>Always visible</span>}
+        renderStepDetail={() => <span>Only when open</span>}
       />,
     );
     expect(screen.getByTestId('step-row-deck')).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.getAllByText('Always visible')).toHaveLength(3);
+    expect(screen.queryAllByText('Only when open')).toHaveLength(0);
+  });
+
+  it('defaultExpanded as a function opens only the steps it names', () => {
+    render(
+      <StepTree
+        steps={steps}
+        nodeDataMap={nodeDataMap}
+        defaultExpanded={(_step, stepId) => stepId === 'deck'}
+        renderStepDetail={(_step, stepId) => <span>{`detail ${stepId}`}</span>}
+      />,
+    );
+    expect(screen.getByTestId('step-row-deck')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('step-row-fetch')).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByText('detail deck')).toBeInTheDocument();
+    expect(screen.queryByText('detail fetch')).not.toBeInTheDocument();
   });
 
   it('hands the slot the step itself, not just its id', () => {

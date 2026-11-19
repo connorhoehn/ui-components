@@ -3060,8 +3060,12 @@ export declare interface StepThreadProps {
     canRetry?: (step: StepExecution, stepId: string) => boolean;
     /** The same gate for "Resume from here" / `onResumeFromStep`. Same default. */
     canResume?: (step: StepExecution, stepId: string) => boolean;
-    /** Start with the row expanded. Default false: a run reads as its step list. */
-    defaultExpanded?: boolean;
+    /**
+     * Start with the row expanded. Default false: a run reads as its step list.
+     * A function decides per step, e.g. open a running or failed step and
+     * collapse the finished ones.
+     */
+    defaultExpanded?: boolean | ((step: StepExecution, stepId: string) => boolean);
     /**
      * The step's internals — execution timeline, node configuration, runtime
      * input, resolved prompt, raw JSON output and token usage. They are for
@@ -3102,8 +3106,8 @@ export declare interface StepTreeProps {
     canRetry?: StepThreadProps['canRetry'];
     /** Forwarded to every step. See {@link StepThreadProps.canResume}. */
     canResume?: StepThreadProps['canResume'];
-    /** Forwarded to every step: start rows expanded. Default false. */
-    defaultExpanded?: boolean;
+    /** Forwarded to every step: start rows expanded, or a function deciding per step. Default false. */
+    defaultExpanded?: StepThreadProps['defaultExpanded'];
     /** Forwarded to every step. See {@link StepThreadProps.showTechnicalDetails}. Default `'collapsed'`. */
     showTechnicalDetails?: StepThreadProps['showTechnicalDetails'];
 }

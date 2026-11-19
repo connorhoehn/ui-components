@@ -62,9 +62,24 @@ describe('StepThread at rest', () => {
     expect(screen.queryByText('Execution Timeline')).not.toBeInTheDocument();
   });
 
-  it('renderStepDetail stays visible in the summary area with the row collapsed', () => {
+  it('renderStepDetail sits inside the expanded part, so a collapsed row hides it', () => {
     render(<StepThread stepId="s1" index={0} nodeType="transform" step={step({})} renderStepDetail={() => <span>Deck ready</span>} />);
+    expect(screen.queryByTestId('step-detail-s1')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('step-row-s1'));
     expect(screen.getByTestId('step-detail-s1')).toHaveTextContent('Deck ready');
+    fireEvent.click(screen.getByTestId('step-row-s1'));
+    expect(screen.queryByTestId('step-detail-s1')).not.toBeInTheDocument();
+  });
+
+  it('defaultExpanded as a function decides per step', () => {
+    const open = (s: StepExecution) => s.status === 'running';
+    const { unmount } = render(<StepThread defaultExpanded={open} stepId="s1" index={0} nodeType="transform" step={step({ status: 'running' })} renderStepDetail={() => <span>Live</span>} />);
+    expect(screen.getByTestId('step-row-s1')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText('Live')).toBeInTheDocument();
+    unmount();
+    render(<StepThread defaultExpanded={open} stepId="s2" index={0} nodeType="transform" step={step({ status: 'completed' })} renderStepDetail={() => <span>Done</span>} />);
+    expect(screen.getByTestId('step-row-s2')).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('Done')).not.toBeInTheDocument();
   });
 
   it('a user-facing result (an error) shows in the expanded row without opening the disclosure', () => {
