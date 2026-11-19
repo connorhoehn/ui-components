@@ -38,3 +38,5 @@ export type { DateTimeFieldProps } from './DateTimeField';
 
 export { RatingInput } from './RatingInput';
 export type { RatingInputProps, RatingOption } from './RatingInput';
+export { StarRating } from './StarRating';
+export type { StarRatingProps } from './StarRating';

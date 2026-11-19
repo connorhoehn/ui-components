@@ -122,6 +122,43 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 const LINK_TEXT: Record<ButtonSize, string> = { sm: 'text-xs', md: 'text-sm', lg: 'text-sm' };
 
+export interface ButtonClassOptions {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  tone?: ButtonTone;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  /** True when `size` was passed explicitly (a link only draws type then). */
+  explicitSize?: boolean;
+  className?: string;
+}
+
+/**
+ * The exact class string `Button` renders. Hand-built button-like controls
+ * (a menu trigger) call this so they match a `Button` of the same variant and
+ * size instead of copying its classes.
+ */
+export function buttonClasses({
+  variant = 'primary', size = 'md', tone = 'surface', disabled = false, fullWidth = false,
+  explicitSize = true, className,
+}: ButtonClassOptions = {}): string {
+  const isLink = variant === 'link';
+  return cn(
+    isLink
+      ? 'font-[inherit] transition-colors duration-150 ease-in-out'
+      : 'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
+    BUTTON_WEIGHT,
+    tone === 'code' ? 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-code-blue' : 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+    (TONE[tone] ?? variantClasses)[variant],
+    !isLink && sizeClasses[size],
+    isLink && explicitSize && LINK_TEXT[size],
+    disabled && 'opacity-50 cursor-not-allowed',
+    !disabled && 'cursor-pointer',
+    fullWidth && 'w-full',
+    className,
+  );
+}
+
 export function Button({
   variant = 'primary',
   size: requestedSize,
@@ -150,28 +187,7 @@ export function Button({
       // that need to find "every small ghost button" without parsing classes.
       data-variant={variant}
       data-size={isLink ? undefined : size}
-      className={cn(
-        isLink
-          ? 'font-[inherit] transition-colors duration-150 ease-in-out'
-          : // A caption never breaks mid-word: a narrow flex parent turned
-            // "Remove" into "Rem / ove" (measured, in a 430px document pane).
-            'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
-        // After the family reset: `font-[inherit]` is a font-FAMILY class
-        // (see lib/cn), and the weight is the one button weight.
-        BUTTON_WEIGHT,
-        tone === 'code' ? 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-code-blue' : 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-        (TONE[tone] ?? variantClasses)[variant],
-        !isLink && sizeClasses[size],
-        // A link given an explicit size draws that size's type itself (sm 12,
-        // md/lg 14) rather than inheriting the document's 16px wherever its
-        // host has no sized text (2.441.3). With no `size`, it stays inline
-        // prose and inherits.
-        isLink && requestedSize && LINK_TEXT[requestedSize],
-        disabled && 'opacity-50 cursor-not-allowed',
-        !disabled && 'cursor-pointer',
-        fullWidth && 'w-full',
-        className,
-      )}
+      className={buttonClasses({ variant, size, tone, disabled, fullWidth, explicitSize: !!requestedSize, className })}
       {...rest}
     >
       {children}

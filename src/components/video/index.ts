@@ -374,3 +374,9 @@ export {
 } from './MeetingIcons';
 export { MediaPlaybackDock, useMediaPlayback } from './MediaPlaybackDock';
 export type { MediaPlaybackDockProps, PlaybackSource, MediaPlaybackState, MediaPlaybackHandle } from './MediaPlaybackDock';
+
+export { HoldToTalkButton } from './HoldToTalkButton';
+export type { HoldToTalkButtonProps, HoldToTalkTone } from './HoldToTalkButton';
+
+export { SpokenCaption } from './SpokenCaption';
+export type { SpokenCaptionProps } from './SpokenCaption';

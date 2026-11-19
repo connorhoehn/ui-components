@@ -43,6 +43,8 @@ export interface ChecklistSectionProps {
    * caption with the tally and an always-open add field, for a side panel.
    */
   variant?: 'label' | 'heading';
+  /** Ticked rows are struck through. False keeps them plain (a "seen" list); the tally is unchanged. @default true */
+  strikeDone?: boolean;
 
   className?: string;
   'data-testid'?: string;
@@ -54,6 +56,7 @@ interface RowProps {
   count: number;
   locked: boolean;
   large: boolean;
+  strikeDone: boolean;
   reasonId?: string;
   onToggle?: ChecklistSectionProps['onToggle'];
   onEdit?: ChecklistSectionProps['onEdit'];
@@ -61,7 +64,7 @@ interface RowProps {
   onMove?: ChecklistSectionProps['onMove'];
 }
 
-function Row({ item, index, count, locked, large, reasonId, onToggle, onEdit, onRemove, onMove }: RowProps) {
+function Row({ item, index, count, locked, large, strikeDone, reasonId, onToggle, onEdit, onRemove, onMove }: RowProps) {
   const textId = useId();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(item.text);
@@ -116,7 +119,7 @@ function Row({ item, index, count, locked, large, reasonId, onToggle, onEdit, on
           className={cn(
             'min-w-0 flex-1',
             large ? 'text-sm leading-5' : 'text-[13px]',
-            item.done ? 'text-text-tertiary line-through' : 'text-text-primary',
+            item.done && strikeDone ? 'text-text-tertiary line-through' : 'text-text-primary',
           )}
         >
           {item.text}
@@ -149,7 +152,7 @@ function Row({ item, index, count, locked, large, reasonId, onToggle, onEdit, on
 export function ChecklistSection({
   title = 'Acceptance criteria', items, onToggle, onAdd, onEdit, onRemove, onMove,
   readOnlyReason, emptyLabel = 'No acceptance criteria yet', addPlaceholder = 'Add criterion',
-  first, as, variant = 'heading', className, 'data-testid': testId = 'checklist-section',
+  first, as, variant = 'heading', strikeDone = true, className, 'data-testid': testId = 'checklist-section',
 }: ChecklistSectionProps) {
   const reasonId = useId();
   const [newText, setNewText] = useState('');
@@ -197,6 +200,7 @@ export function ChecklistSection({
                 count={items.length}
                 locked={locked}
                 large={heading}
+                strikeDone={strikeDone}
                 reasonId={readOnlyReason ? reasonId : undefined}
                 onToggle={onToggle}
                 onEdit={onEdit}

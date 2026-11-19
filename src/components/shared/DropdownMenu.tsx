@@ -15,7 +15,7 @@
 // `role="menu"`, so an open menu is never also a dialog.
 
 import { useCallback, useRef, useState, type KeyboardEvent, type ReactNode, useEffect, useId } from 'react';
-import { BUTTON_WEIGHT } from '../ui/Button';
+import { BUTTON_WEIGHT, buttonClasses, type ButtonSize, type ButtonVariant } from '../ui/Button';
 import { InlinePopover } from './InlinePopover';
 import { ChevronIcon } from '../ui/Icons';
 import { useDensity } from './Density';
@@ -96,6 +96,14 @@ export interface DropdownMenuProps {
    */
   triggerVariant?: 'default' | 'primary' | 'secondary' | 'link';
   /**
+   * Render the trigger with exactly `Button`'s own classes for this variant
+   * (and `buttonSize`), so a menu trigger beside a `Button size="sm"
+   * variant="secondary"` is the same box and colour. Overrides `triggerVariant`.
+   */
+  buttonVariant?: ButtonVariant;
+  /** Size step for `buttonVariant`. @default 'sm' */
+  buttonSize?: ButtonSize;
+  /**
    * Tab order of the trigger. Default undefined (a normal tab stop).
    *
    * `-1` is for a menu that lives inside a ROVING-FOCUS list — one trigger per
@@ -154,6 +162,8 @@ export function DropdownMenu({
   triggerTitle,
   triggerClassName,
   triggerVariant = 'default',
+  buttonVariant,
+  buttonSize = 'sm',
   triggerTabIndex,
   disabled = false,
   triggerTestId,
@@ -208,8 +218,12 @@ export function DropdownMenu({
         disabled={disabled || undefined}
         aria-disabled={disabled ? 'true' : undefined}
         onClick={() => { if (!disabled) setOpen((v) => !v); }}
-        data-variant={triggerVariant}
-        className={cn(
+        data-variant={buttonVariant ?? triggerVariant}
+        className={buttonVariant ? cn(
+          buttonClasses({ variant: buttonVariant, size: buttonSize, disabled }),
+          open && 'bg-primary/12',
+          triggerClassName,
+        ) : cn(
           'inline-flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-100',
           'disabled:cursor-not-allowed disabled:bg-transparent disabled:text-[var(--color-text-disabled)] disabled:opacity-70',
           BUTTON_WEIGHT,

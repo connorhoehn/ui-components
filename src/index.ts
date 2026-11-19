@@ -68,6 +68,8 @@ export { DateTimeField } from './components/forms/DateTimeField';
 export type { DateTimeFieldProps } from './components/forms/DateTimeField';
 export { RatingInput } from './components/forms/RatingInput';
 export type { RatingInputProps, RatingOption } from './components/forms/RatingInput';
+export { StarRating } from './components/forms/StarRating';
+export type { StarRatingProps } from './components/forms/StarRating';
 export { Checkbox } from './components/forms/Checkbox';
 export type { CheckboxProps } from './components/forms/Checkbox';
 export { ColorInput } from './components/forms/ColorInput';

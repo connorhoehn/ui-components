@@ -106,4 +106,10 @@ describe('ChecklistSection', () => {
     expect(screen.queryByRole('textbox')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();
   });
+
+  it('keeps ticked text plain when strikeDone is false', () => {
+    render(<ChecklistSection variant="label" strikeDone={false} items={[{ id: 'a', text: 'Seen it', done: true }]} />);
+    expect(screen.getByText('Seen it').className).not.toContain('line-through');
+    expect(screen.getByText(/1 of 1/)).toBeTruthy();
+  });
 });

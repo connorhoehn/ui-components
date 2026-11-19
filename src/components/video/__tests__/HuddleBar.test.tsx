@@ -259,4 +259,9 @@ describe('HuddleBar callNoun', () => {
     expect(screen.getByTestId('huddle-bar-live')).toHaveTextContent('huddle live · 1 joined');
     expect(screen.getByLabelText('Huddle live')).toBeInTheDocument();
   });
+
+  it('puts the unread count in the chat toggle name', () => {
+    render(<HuddleBar name="Standup" onToggleChat={() => {}} chatLabel="Message" chatUnread={3} onLeave={() => {}} />);
+    expect(screen.getByRole('button', { name: 'Message, 3 unread' })).toBeInTheDocument();
+  });
 });
