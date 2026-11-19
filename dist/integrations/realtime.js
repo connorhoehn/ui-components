@@ -5,10 +5,10 @@ import { g as i } from "../MediaIcons-_ai5Til2.js";
 import { t as a } from "../Modal-CEcJQMxG.js";
 import { t as o } from "../DropdownMenu-BmZwWz7K.js";
 import { t as s } from "../Switch-DolksIFk.js";
-import { C as c, E as l, w as u } from "../BreakoutRoomsPanel-kSEdG_RC.js";
-import { n as d, r as f } from "../RecordingConsentNotice-CbXpm_Cs.js";
+import { C as c, E as l, w as u } from "../BreakoutRoomsPanel-BZPc5_-C.js";
+import { n as d, r as f } from "../RecordingConsentNotice-Ciubkrhb.js";
 import { i as p, n as m, r as h, t as g } from "../useDocumentImageUpload-DXdHirQY.js";
-import { $ as _, A as v, B as y, C as b, Ct as x, D as S, E as C, F as w, G as T, H as E, I as D, J as O, K as k, L as A, M as j, N as M, O as N, P, Q as F, R as ee, S as te, St as ne, T as re, U as I, V as L, W as R, X as ie, Y as ae, Z as oe, _ as z, _t as se, a as ce, at as le, b as B, bt as ue, c as V, ct as de, d as fe, dt as pe, et as me, f as he, ft as H, g as ge, gt as _e, h as ve, ht as U, i as ye, it as be, j as W, k as xe, l as Se, lt as Ce, m as we, mt as Te, n as Ee, nt as De, o as Oe, ot as ke, p as Ae, pt as je, q as Me, r as Ne, rt as Pe, s as Fe, st as Ie, t as Le, tt as Re, u as ze, ut as Be, v as Ve, vt as He, w as Ue, wt as We, x as Ge, xt as Ke, y as qe, yt as Je, z as Ye } from "../meeting-BoHrLpFM.js";
+import { $ as _, A as v, B as y, C as b, Ct as x, D as S, E as C, F as w, G as T, H as E, I as D, J as O, K as k, L as A, M as j, N as M, O as N, P, Q as F, R as ee, S as te, St as ne, T as re, U as I, V as L, W as R, X as ie, Y as ae, Z as oe, _ as z, _t as se, a as ce, at as le, b as B, bt as ue, c as V, ct as de, d as fe, dt as pe, et as me, f as he, ft as H, g as ge, gt as _e, h as ve, ht as U, i as ye, it as be, j as W, k as xe, l as Se, lt as Ce, m as we, mt as Te, n as Ee, nt as De, o as Oe, ot as ke, p as Ae, pt as je, q as Me, r as Ne, rt as Pe, s as Fe, st as Ie, t as Le, tt as Re, u as ze, ut as Be, v as Ve, vt as He, w as Ue, wt as We, x as Ge, xt as Ke, y as qe, yt as Je, z as Ye } from "../meeting-D3AOHTnZ.js";
 import { createContext as Xe, useCallback as G, useContext as K, useEffect as q, useLayoutEffect as Ze, useMemo as J, useRef as Y, useState as X, useSyncExternalStore as Qe } from "react";
 import { Fragment as $e, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { createPortal as et } from "react-dom";
@@ -754,60 +754,61 @@ function Ft(p) {
 			...c
 		};
 	}
-	function ee({ id: e, onOpenPeople: n, onOpenDocument: r, overlay: i, header: a, extras: o, notice: s, recordingConsent: c, dockTestId: l }) {
-		let u = K(m), d = D((e) => e.current, wt), f = D((e) => e.placement, Tt), p = D((e) => e.compact, Et), h = D((e) => e.documents, Ot), g = D((e) => e.fit, kt), v = !!u?.lobby && $(u.call.phase, !0), y = !!d && f === "composer", b = !!d && f !== "pane", x = it(d ? f : "footer", p), S = !!d && x === "grid" && g === "contain", C = u?.lobby ?? null, w = u?.meeting?.hands, T = J(() => {
-			if (!w || w.length === 0) return;
-			let e = new Map(w.map((e, t) => [e.userId, t + 1]));
+	function ee({ id: e, onOpenPeople: n, onOpenDocument: r, overlay: i, header: a, extras: o, notice: s, recordingConsent: c, dockTestId: l, highlightFor: u }) {
+		let d = K(m), f = D((e) => e.current, wt), p = D((e) => e.placement, Tt), h = D((e) => e.compact, Et), g = D((e) => e.documents, Ot), v = D((e) => e.fit, kt), y = !!d?.lobby && $(d.call.phase, !0), b = !!f && p === "composer", x = !!f && p !== "pane", S = it(f ? p : "footer", h), C = !!f && S === "grid" && v === "contain", w = d?.lobby ?? null, T = d?.meeting?.hands, E = J(() => {
+			if (!T || T.length === 0) return;
+			let e = new Map(T.map((e, t) => [e.userId, t + 1]));
 			return (t) => e.get(t);
-		}, [w]), E = !!d && a != null && !!u?.meeting, O = x !== "grid" && x !== "stage", k = c === !1 || E || O ? null : u?.recordingNote ?? null, A = c === !1 || !O ? null : u?.recordingIndicator ?? null, j = k && s !== void 0 ? /* @__PURE__ */ Q(t, {
+		}, [T]), O = !!f && a != null && !!d?.meeting, k = S !== "grid" && S !== "stage", A = c === !1 || O || k ? null : d?.recordingNote ?? null, j = c === !1 || !k ? null : d?.recordingIndicator ?? null, M = A && s !== void 0 ? /* @__PURE__ */ Q(t, {
 			gap: "xs",
-			children: [k, s]
-		}) : k ?? s, M = v && C && u ? /* @__PURE__ */ Z(_, {
-			call: u.call,
-			title: C.title,
-			onOpenPeople: () => n?.(C, u.tenant),
-			selfName: u.self?.displayName ?? "",
-			compact: !b || p,
-			...b && !p ? { tileSize: "lg" } : {},
-			...y && h.length ? {
-				documents: h.map((e) => ({
+			children: [A, s]
+		}) : A ?? s, N = y && w && d ? /* @__PURE__ */ Z(_, {
+			call: d.call,
+			title: w.title,
+			onOpenPeople: () => n?.(w, d.tenant),
+			selfName: d.self?.displayName ?? "",
+			compact: !x || h,
+			...x && !h ? { tileSize: "lg" } : {},
+			...b && g.length ? {
+				documents: g.map((e) => ({
 					id: e.id,
 					title: e.title
 				})),
 				onDocumentClick: (e) => {
-					let t = h.find((t) => t.id === e);
+					let t = g.find((t) => t.id === e);
 					t && r?.(t);
 				}
 			} : {},
-			layout: x,
-			...S ? { fit: "contain" } : {},
-			...T ? { handFor: T } : {},
+			layout: S,
+			...C ? { fit: "contain" } : {},
+			...E ? { handFor: E } : {},
+			...u ? { highlightFor: u } : {},
 			...o === void 0 ? {} : { extras: o },
-			...j == null ? {} : { notice: j },
-			...A ? { metaAside: A } : {},
-			"data-testid": l ? l(C, u.tenant) : "conversation-call-dock"
+			...M == null ? {} : { notice: M },
+			...j ? { metaAside: j } : {},
+			"data-testid": l ? l(w, d.tenant) : "conversation-call-dock"
 		}) : null;
-		return M ? d ? et(/* @__PURE__ */ Q(t, {
+		return N ? f ? et(/* @__PURE__ */ Q(t, {
 			gap: "none",
-			className: f === "stage" ? "relative h-full min-h-0" : S ? "relative min-h-0 flex-1" : "relative",
+			className: p === "stage" ? "relative h-full min-h-0" : C ? "relative min-h-0 flex-1" : "relative",
 			"data-testid": "shell-call-media",
-			"data-placement": f,
-			"data-layout": x,
+			"data-placement": p,
+			"data-layout": S,
 			"data-expanded": "true",
 			children: [
 				a,
-				M,
+				N,
 				i
 			]
-		}), d) : /* @__PURE__ */ Z(t, {
+		}), f) : /* @__PURE__ */ Z(t, {
 			id: e,
 			gap: "none",
 			className: "hidden",
 			"data-testid": "shell-call-media",
 			"data-placement": "footer",
-			"data-layout": x,
+			"data-layout": S,
 			"data-expanded": "false",
-			children: M
+			children: N
 		}) : null;
 	}
 	return {

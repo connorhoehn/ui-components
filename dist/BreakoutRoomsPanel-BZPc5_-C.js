@@ -283,32 +283,34 @@ function xe({ raised: t, tone: n = "chip", size: i = "sm", className: a, "data-t
 }
 //#endregion
 //#region src/components/video/ParticipantTile.tsx
-function Y({ id: t, displayName: n, avatarUrl: r, isSpeaking: i = !1, isMuted: a = !1, handRaised: o, access: s, isLocal: c = !1, isSpotlight: l = !1, videoElement: u, onClick: d, fillParent: f = !1, className: p, style: m }) {
-	let h = c ? "local-tile" : "remote-tile";
+function Y({ id: t, displayName: n, avatarUrl: r, isSpeaking: i = !1, isMuted: a = !1, handRaised: o, highlight: s, access: c, isLocal: l = !1, isSpotlight: u = !1, videoElement: d, onClick: f, fillParent: p = !1, className: m, style: h }) {
+	let g = l ? "local-tile" : "remote-tile";
 	return /* @__PURE__ */ W("div", {
-		className: e("relative bg-video-tile flex items-center justify-center rounded overflow-hidden border-2 transition-colors", f ? "w-full h-full" : "aspect-video", i ? "border-success" : "border-transparent", d && "cursor-pointer hover:border-white/30", p),
-		style: m,
-		onClick: d,
-		role: d ? "button" : void 0,
-		tabIndex: d ? 0 : void 0,
-		onKeyDown: d ? (e) => {
-			(e.key === "Enter" || e.key === " ") && d();
+		className: e("relative bg-video-tile flex items-center justify-center rounded overflow-hidden border-2 transition-colors", p ? "w-full h-full" : "aspect-video", i ? "border-success" : "border-transparent", f && "cursor-pointer hover:border-white/30", m),
+		style: h,
+		onClick: f,
+		role: f ? "button" : void 0,
+		tabIndex: f ? 0 : void 0,
+		onKeyDown: f ? (e) => {
+			(e.key === "Enter" || e.key === " ") && f();
 		} : void 0,
-		"data-testid": h,
+		"data-testid": g,
 		"data-peer-id": t,
 		"data-peer-name": n,
-		"data-is-local": c ? "true" : "false",
-		"data-is-spotlight": l ? "true" : "false",
+		"data-is-local": l ? "true" : "false",
+		"data-is-spotlight": u ? "true" : "false",
 		"data-is-muted": a ? "true" : "false",
 		"data-hand-raised": o ? "true" : void 0,
-		"data-access": s,
-		"data-track-kind": u ? "camera" : "avatar",
+		"data-highlight": s?.label,
+		title: s?.label,
+		"data-access": c,
+		"data-track-kind": d ? "camera" : "avatar",
 		children: [
-			u ?? /* @__PURE__ */ U("div", {
+			d ?? /* @__PURE__ */ U("div", {
 				className: "absolute inset-0 flex items-center justify-center",
 				style: { background: Se(n) },
 				children: /* @__PURE__ */ U("div", {
-					className: e("rounded-full flex items-center justify-center text-white font-semibold bg-black/25 backdrop-blur-sm shadow-inner", l ? "w-24 h-24 text-4xl" : "w-14 h-14 text-xl"),
+					className: e("rounded-full flex items-center justify-center text-white font-semibold bg-black/25 backdrop-blur-sm shadow-inner", u ? "w-24 h-24 text-4xl" : "w-14 h-14 text-xl"),
 					children: r ? /* @__PURE__ */ U("img", {
 						src: r,
 						alt: "",
@@ -319,16 +321,16 @@ function Y({ id: t, displayName: n, avatarUrl: r, isSpeaking: i = !1, isMuted: a
 			/* @__PURE__ */ W("div", {
 				className: e("absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow"),
 				children: [
-					c && /* @__PURE__ */ U("span", {
+					l && /* @__PURE__ */ U("span", {
 						className: e("text-code-blue truncate font-medium"),
 						children: "You"
 					}),
-					!c && /* @__PURE__ */ U("span", {
+					!l && /* @__PURE__ */ U("span", {
 						className: "truncate font-medium",
 						children: n
 					}),
 					/* @__PURE__ */ U(K, {
-						access: s,
+						access: c,
 						tone: "overlay",
 						iconOnly: !0,
 						"data-testid": "tile-access"
@@ -354,11 +356,11 @@ function Y({ id: t, displayName: n, avatarUrl: r, isSpeaking: i = !1, isMuted: a
 				]
 			}),
 			a && /* @__PURE__ */ U("div", {
-				className: e("absolute top-1 left-1 flex items-center justify-center rounded-full bg-danger/90 text-white shadow-md", l ? "w-7 h-7" : "w-5 h-5"),
+				className: e("absolute top-1 left-1 flex items-center justify-center rounded-full bg-danger/90 text-white shadow-md", u ? "w-7 h-7" : "w-5 h-5"),
 				"aria-label": "Microphone muted",
 				children: /* @__PURE__ */ W("svg", {
-					width: l ? 16 : 12,
-					height: l ? 16 : 12,
+					width: u ? 16 : 12,
+					height: u ? 16 : 12,
 					viewBox: "0 0 24 24",
 					fill: "none",
 					stroke: "currentColor",
@@ -380,7 +382,16 @@ function Y({ id: t, displayName: n, avatarUrl: r, isSpeaking: i = !1, isMuted: a
 					]
 				})
 			}),
-			i && /* @__PURE__ */ U("div", { className: e("absolute top-1 right-1 w-2 h-2 rounded-full bg-success shadow-[0_0_4px_#22c55e]") })
+			i && /* @__PURE__ */ U("div", { className: e("absolute top-1 right-1 w-2 h-2 rounded-full bg-success shadow-[0_0_4px_#22c55e]") }),
+			s && /* @__PURE__ */ U("span", {
+				"aria-hidden": "true",
+				"data-testid": "tile-highlight-ring",
+				className: "pointer-events-none absolute inset-0 z-10 rounded ring-2 ring-inset ring-info"
+			}),
+			s && /* @__PURE__ */ U("span", {
+				className: "sr-only",
+				children: s.label
+			})
 		]
 	});
 }
@@ -634,6 +645,7 @@ function Pe({ participants: t, localParticipant: n = null, activeSpeakerId: r = 
 				isSpeaking: e.id === r,
 				isMuted: e.isMuted,
 				handRaised: e.handRaised,
+				highlight: e.highlight,
 				access: e.access,
 				isLocal: e.isLocal,
 				videoElement: e.videoElement,
@@ -653,6 +665,7 @@ function Pe({ participants: t, localParticipant: n = null, activeSpeakerId: r = 
 					avatarUrl: n.avatarUrl,
 					isMuted: n.isMuted,
 					handRaised: n.handRaised,
+					highlight: n.highlight,
 					access: n.access,
 					isLocal: !0,
 					videoElement: n.videoElement
@@ -765,6 +778,7 @@ function Re({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidt
 		...t.avatarUrl ? { avatarUrl: t.avatarUrl } : {},
 		isMuted: t.isMuted,
 		handRaised: t.handRaised,
+		highlight: t.highlight,
 		access: t.access,
 		isLocal: t.isLocal,
 		isSpeaking: t.id === r,
@@ -790,6 +804,7 @@ function Re({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidt
 				...t.avatarUrl ? { avatarUrl: t.avatarUrl } : {},
 				isMuted: t.isMuted,
 				handRaised: t.handRaised,
+				highlight: t.highlight,
 				access: t.access,
 				isLocal: t.isLocal,
 				isSpeaking: t.id === r,
@@ -985,7 +1000,7 @@ function We(e, t) {
 var Ge = L(Ke, (e, t) => e.width === t.width && e.height === t.height && e.fluid === t.fluid && e.speaking === t.speaking && e.highlighted === t.highlighted && e.testId === t.testId && e.onParticipantClick === t.onParticipantClick && We(e.participant, t.participant));
 function Ke({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, highlighted: o, testId: s, onParticipantClick: c }) {
 	Ne("tile", t.id);
-	let l = c ? () => c(t.id) : void 0, u = t.isLocal ? "You" : t.displayName, d = t.ringing ? `${t.displayName}, ringing` : `${t.isLocal ? "You" : t.displayName}${Je(t.access)}${t.handRaised ? `, ${ye(t.handRaised).toLowerCase()}` : ""}${t.isMuted ? ", muted" : ""}${t.screenSharing ? ", sharing screen" : ""}`;
+	let l = c ? () => c(t.id) : void 0, u = t.isLocal ? "You" : t.displayName, d = t.ringing ? `${t.displayName}, ringing` : `${t.isLocal ? "You" : t.displayName}${Je(t.access)}${t.handRaised ? `, ${ye(t.handRaised).toLowerCase()}` : ""}${t.highlight ? `, ${t.highlight.label.toLowerCase()}` : ""}${t.isMuted ? ", muted" : ""}${t.screenSharing ? ", sharing screen" : ""}`;
 	return /* @__PURE__ */ W("div", {
 		className: e("relative shrink-0 overflow-hidden rounded-md text-white", i && "aspect-video w-full", t.videoElement && !t.cameraOff ? "bg-video-tile" : "bg-video-tile-off", "[&_video]:h-full [&_video]:w-full [&_video]:object-cover", l && "cursor-pointer"),
 		style: i ? void 0 : {
@@ -1011,6 +1026,7 @@ function Ke({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, h
 		"data-track-kind": t.videoElement && !t.cameraOff ? "camera" : "avatar",
 		"data-ringing": t.ringing ? "true" : void 0,
 		"data-hand-raised": t.handRaised ? "true" : void 0,
+		"data-highlight": t.highlight?.label,
 		"data-access": t.access,
 		children: [
 			t.videoElement && /* @__PURE__ */ U("div", {
@@ -1076,11 +1092,11 @@ function Ke({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, h
 					})
 				] })]
 			}),
-			(o || a) && /* @__PURE__ */ U("span", {
+			(t.highlight || o || a) && /* @__PURE__ */ U("span", {
 				"aria-hidden": "true",
 				"data-testid": `${s}-ring`,
-				"data-ring": o ? "highlighted" : "speaking",
-				className: e("pointer-events-none absolute inset-0 z-10 rounded-md ring-2 ring-inset", o ? "ring-primary" : "ring-success")
+				"data-ring": t.highlight ? "highlight" : o ? "highlighted" : "speaking",
+				className: e("pointer-events-none absolute inset-0 z-10 rounded-md ring-2 ring-inset", t.highlight ? "ring-info" : o ? "ring-primary" : "ring-success")
 			}),
 			a && o && /* @__PURE__ */ U("span", {
 				className: "absolute right-1 top-1 h-2 w-2 rounded-full bg-success",
@@ -1090,9 +1106,9 @@ function Ke({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, h
 	});
 }
 function qe({ participant: t, speaking: n, onClick: r }) {
-	let i = `${t.displayName}${t.isLocal ? " (you)" : ""}${Je(t.access)}${t.handRaised ? `, ${ye(t.handRaised).toLowerCase()}` : ""}${t.isMuted ? ", muted" : ""}`;
+	let i = `${t.displayName}${t.isLocal ? " (you)" : ""}${Je(t.access)}${t.handRaised ? `, ${ye(t.handRaised).toLowerCase()}` : ""}${t.highlight ? `, ${t.highlight.label.toLowerCase()}` : ""}${t.isMuted ? ", muted" : ""}`;
 	return /* @__PURE__ */ W("div", {
-		className: e("relative shrink-0 rounded-full shadow-lg ring-2 transition-shadow", n ? "ring-success" : "ring-white/70", r && "cursor-pointer"),
+		className: e("relative shrink-0 rounded-full shadow-lg ring-2 transition-shadow", t.highlight ? "ring-info" : n ? "ring-success" : "ring-white/70", r && "cursor-pointer"),
 		title: i,
 		"aria-label": i,
 		role: r ? "button" : "img",
@@ -1105,6 +1121,7 @@ function qe({ participant: t, speaking: n, onClick: r }) {
 		"data-peer-id": t.id,
 		"data-is-muted": t.isMuted ? "true" : "false",
 		"data-access": t.access,
+		"data-highlight": t.highlight?.label,
 		children: [
 			/* @__PURE__ */ U(M, {
 				name: t.displayName,
@@ -1161,6 +1178,7 @@ function Ye({ participants: t, localParticipant: n = null, spotlightContent: r, 
 		avatarUrl: h.avatarUrl,
 		isMuted: h.isMuted,
 		handRaised: h.handRaised,
+		highlight: h.highlight,
 		access: h.access,
 		isLocal: h.isLocal,
 		isSpotlight: !0,
@@ -1187,6 +1205,7 @@ function Ye({ participants: t, localParticipant: n = null, spotlightContent: r, 
 					avatarUrl: e.avatarUrl,
 					isMuted: e.isMuted,
 					handRaised: e.handRaised,
+					highlight: e.highlight,
 					access: e.access,
 					isLocal: e.isLocal,
 					videoElement: e.videoElement,

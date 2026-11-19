@@ -27,6 +27,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type * as RMVideo from '@connorhoehn/realtime-modules/client/video';
 import { CallDock, type CallDockProps, type CallDockTileSize } from '../../components/video/CallDock';
 import type { ParticipantAccess } from '../../components/video/ParticipantAccessBadge';
+import type { TileHighlight } from '../../components/video/HangoutLayoutTypes';
 import { StreamVideo } from '../../components/video/StreamVideo';
 import { AudioVideoSettingsForm } from '../../components/video/AudioVideoSettingsForm';
 import InlineAlert from '../../components/shared/InlineAlert';
@@ -77,6 +78,12 @@ export interface ConversationCallDockProps {
    * (an eye, "View only" in its accessible name). Same shape as `handFor`.
    */
   accessFor?: (userId: string) => ParticipantAccess | undefined;
+  /**
+   * A ring on a person's tile and its words, keyed like `handFor` (e.g. the
+   * person a call assistant is listening to: `{ label: 'Talking to Milo' }`).
+   * Since 2.542.0.
+   */
+  highlightFor?: (userId: string) => TileHighlight | undefined;
   /**
    * Set while YOU may not publish (the host made you view-only): the dock's
    * microphone, camera and share controls are disabled with this as their
@@ -165,15 +172,17 @@ function withHandsAndAccess(
   participants: CallDockProps['participants'],
   handFor: ConversationCallDockProps['handFor'],
   accessFor: ConversationCallDockProps['accessFor'],
+  highlightFor?: ConversationCallDockProps['highlightFor'],
 ): CallDockProps['participants'] {
-  if (!handFor && !accessFor) return participants;
+  if (!handFor && !accessFor && !highlightFor) return participants;
   let changed = false;
   const next = participants.map((p) => {
     const hand = handFor?.(p.userId);
     const access = accessFor?.(p.userId);
-    if (!hand && !access) return p;
+    const highlight = highlightFor?.(p.userId);
+    if (!hand && !access && !highlight) return p;
     changed = true;
-    return { ...p, ...(hand ? { handRaised: hand } : {}), ...(access ? { access } : {}) };
+    return { ...p, ...(hand ? { handRaised: hand } : {}), ...(access ? { access } : {}), ...(highlight ? { highlight } : {}) };
   });
   return changed ? next : participants;
 }
@@ -203,6 +212,7 @@ function ConversationCallDockImpl(
     metaAside,
     handFor,
     accessFor,
+    highlightFor,
     publishDisabledReason,
     selfName,
     compact = false,
@@ -244,7 +254,7 @@ function ConversationCallDockImpl(
   if (!dock) return null;
   const dockProps: CallDockProps = {
     ...dock,
-    participants: withHandsAndAccess(withRingingInvitees(dock.participants as CallDockProps['participants'], call.call?.participants ?? [], dock.phase), handFor, accessFor),
+    participants: withHandsAndAccess(withRingingInvitees(dock.participants as CallDockProps['participants'], call.call?.participants ?? [], dock.phase), handFor, accessFor, highlightFor),
     ...(publishDisabledReason
       ? {
           mic: { ...dock.mic, disabledReason: publishDisabledReason },

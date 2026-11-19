@@ -21,11 +21,12 @@ import "./ChatSidePanelRegistry-DtGItuO7.js";
 import { n as R } from "./Tabs-CpGyT_X6.js";
 import { n as z, r as te } from "./Avatar-BWzSZ73h.js";
 import { t as B } from "./SkeletonCard-DBVy8trP.js";
+import "./AssistantMark-yMqczRQv.js";
 import { t as V } from "./Textarea-MJCZpfkl.js";
 import { t as ne } from "./DotMeter-B7TMlYNN.js";
 import { i as re, n as ie, r as ae, t as oe } from "./ChoiceList-CUqpUbVG.js";
 import { t as H } from "./InlineAlert-DoLPfet9.js";
-import { G as se, O as U, T as ce, Z as le, q as ue, tt as de, x as fe } from "./ChatPanel-CIU65-57.js";
+import { D as se, K as U, W as ce, X as le, b as ue, et as de, w as fe } from "./ChatPanel-BvqmyH19.js";
 import { t as pe } from "./LogStream-2dWQBBcx.js";
 import { a as W, n as me, o as he, s as ge, t as _e } from "./backdropTone-DH2di_Hr.js";
 import { a as G, i as ve, n as ye, o as be } from "./ActivityPanel-DB_V9lgx.js";
@@ -35,7 +36,7 @@ import { n as Ce, t as we } from "./ReactionPickerPopover-DnsNc9Cx.js";
 import { n as Te } from "./useComputeProjects-ZSazDRet.js";
 import "./QuoteBlock-nEnmOQxg.js";
 import { t as Ee } from "./rovingFocus-Bj5Y6kwY.js";
-import { d as De } from "./ConversationSurface-3UAY7WJp.js";
+import { d as De } from "./ConversationSurface-BgdE4jhw.js";
 import { i as Oe, r as ke } from "./composerSendError-DqhNuI6T.js";
 import { r as Ae } from "./PaneStatusLine-DflL_tzt.js";
 import { Suspense as je, createContext as Me, lazy as Ne, useCallback as K, useContext as Pe, useEffect as q, useId as Fe, useMemo as J, useRef as Y, useState as X } from "react";
@@ -602,7 +603,7 @@ function Ke({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 	}), oe = (e) => ie((t) => {
 		let n = new Set(t);
 		return n.has(e) ? n.delete(e) : n.add(e), n;
-	}), H = ae.flatMap((e) => e.collapsed ? [] : e.shown), se = Y(null), [U, ce] = X(null), de = (U && H.some((e) => e.channel === U) ? U : null) ?? (u && H.some((e) => e.channel === u) ? u : null) ?? H[0]?.channel ?? null, fe = Y(null);
+	}), H = ae.flatMap((e) => e.collapsed ? [] : e.shown), se = Y(null), [ce, ue] = X(null), de = (ce && H.some((e) => e.channel === ce) ? ce : null) ?? (u && H.some((e) => e.channel === u) ? u : null) ?? H[0]?.channel ?? null, fe = Y(null);
 	q(() => {
 		let e = fe.current;
 		if (!e) return;
@@ -612,7 +613,7 @@ function Ke({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 	});
 	function pe(e) {
 		let t = Math.max(0, Math.min(H.length - 1, e)), n = H[t];
-		!n || n.channel === de || (fe.current = n.channel, ce(n.channel));
+		!n || n.channel === de || (fe.current = n.channel, ue(n.channel));
 	}
 	function W(e) {
 		if (H.length === 0) return;
@@ -662,7 +663,7 @@ function Ke({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 					"aria-label": e.collapsible ? void 0 : e.label,
 					"aria-labelledby": e.collapsible ? n : void 0,
 					children: e.shown.map((e) => {
-						let t = e.channel === u, n = e.channel === de, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), f = e.lastMessageAt ? ue(e.lastMessageAt) : "", p = e.lastMessageAt ? le(e.lastMessageAt) : "", w = e.unreadCount ?? 0, T = !!e.mentioned, O = !!e.live, j = !!e.muted, M = `${A}-row-menu-${e.channel}`, N = [];
+						let t = e.channel === u, n = e.channel === de, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), f = e.lastMessageAt ? U(e.lastMessageAt) : "", p = e.lastMessageAt ? le(e.lastMessageAt) : "", w = e.unreadCount ?? 0, T = !!e.mentioned, O = !!e.live, j = !!e.muted, M = `${A}-row-menu-${e.channel}`, N = [];
 						return s && (N.push({
 							label: "Call",
 							icon: /* @__PURE__ */ Q(E, { size: 14 }),
@@ -703,7 +704,7 @@ function Ke({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 								"data-ui-part": "",
 								type: "button",
 								onClick: () => d(e.channel),
-								onFocus: () => ce(e.channel),
+								onFocus: () => ue(e.channel),
 								"data-testid": "conversation-row",
 								"data-channel": e.channel,
 								"data-active": t ? "true" : "false",
@@ -1233,7 +1234,7 @@ function tt({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i }
 		"data-author": e,
 		"data-row-count": r.length,
 		className: o("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ Q(se, {
+		children: r.map((r, i) => /* @__PURE__ */ Q(ce, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
@@ -3663,7 +3664,7 @@ function ln(e) {
 	return e.kind === "link" ? e.label ?? "Open link" : e.kind === "panel" ? e.panel.title ? `Open ${e.panel.title}` : "Open result" : "Open beside the chat";
 }
 function un({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenResult: i, className: a, "data-testid": c = "run-summary-panel" }) {
-	let { status: u } = e, d = e.pipelineName || e.pipelineId, f = ce({
+	let { status: u } = e, d = e.pipelineName || e.pipelineId, f = fe({
 		startedAt: e.startedAt,
 		completedAt: e.completedAt
 	}), p = e.ops ?? [], m = e.result && i && !(e.result.kind === "document" && e.document && r), g = e.document?.title || "Document", _ = u === "failed" ? e.error || "The run failed" : void 0;
@@ -3733,7 +3734,7 @@ function un({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								}),
 								/* @__PURE__ */ Q("span", {
 									"aria-hidden": "true",
-									className: o("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", fe[t.status] ?? fe.pending)
+									className: o("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", ue[t.status] ?? ue.pending)
 								}),
 								/* @__PURE__ */ $("span", {
 									className: "flex min-w-0 flex-1 items-baseline justify-between gap-2",
@@ -3763,7 +3764,7 @@ function un({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								className: "truncate",
 								"data-op": e.op,
 								title: e.text,
-								children: U(e)
+								children: se(e)
 							}, t))
 						}),
 						p.length > cn && /* @__PURE__ */ $("div", {

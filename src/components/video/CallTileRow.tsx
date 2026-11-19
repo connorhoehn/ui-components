@@ -234,6 +234,7 @@ export function CallTileRow({
       {...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {})}
       isMuted={p.isMuted}
       handRaised={p.handRaised}
+      highlight={p.highlight}
       access={p.access}
       isLocal={p.isLocal}
       isSpeaking={p.id === activeSpeakerId}
@@ -270,6 +271,7 @@ export function CallTileRow({
                 {...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {})}
                 isMuted={p.isMuted}
                 handRaised={p.handRaised}
+                highlight={p.highlight}
                 access={p.access}
                 isLocal={p.isLocal}
                 isSpeaking={p.id === activeSpeakerId}
@@ -599,7 +601,7 @@ function DockTileImpl({
   const name = p.isLocal ? 'You' : p.displayName;
   const label = p.ringing
     ? `${p.displayName}, ringing`
-    : `${p.isLocal ? 'You' : p.displayName}${accessSuffix(p.access)}${p.handRaised ? `, ${raisedHandLabel(p.handRaised)!.toLowerCase()}` : ''}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
+    : `${p.isLocal ? 'You' : p.displayName}${accessSuffix(p.access)}${p.handRaised ? `, ${raisedHandLabel(p.handRaised)!.toLowerCase()}` : ''}${p.highlight ? `, ${p.highlight.label.toLowerCase()}` : ''}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
   return (
     <div
       className={cn(
@@ -630,6 +632,7 @@ function DockTileImpl({
       data-track-kind={p.videoElement && !p.cameraOff ? 'camera' : 'avatar'}
       data-ringing={p.ringing ? 'true' : undefined}
       data-hand-raised={p.handRaised ? 'true' : undefined}
+      data-highlight={p.highlight?.label}
       data-access={p.access}
     >
       {p.videoElement && (
@@ -675,17 +678,18 @@ function DockTileImpl({
           </>
         )}
       </div>
-      {(highlighted || speaking) && (
+      {(p.highlight || highlighted || speaking) && (
         // The ring is drawn INSIDE the tile, on top of the video (2.395.3): an
         // outer ring/offset was clipped by the dock row's overflow and never
-        // showed. Accent = followed; green = speaking.
+        // showed. Info = the participant's `highlight` (2.542.0, e.g. talking
+        // to a call assistant); accent = followed; green = speaking.
         <span
           aria-hidden="true"
           data-testid={`${testId}-ring`}
-          data-ring={highlighted ? 'highlighted' : 'speaking'}
+          data-ring={p.highlight ? 'highlight' : highlighted ? 'highlighted' : 'speaking'}
           className={cn(
             'pointer-events-none absolute inset-0 z-10 rounded-md ring-2 ring-inset',
-            highlighted ? 'ring-primary' : 'ring-success',
+            p.highlight ? 'ring-info' : highlighted ? 'ring-primary' : 'ring-success',
           )}
         />
       )}
@@ -703,12 +707,12 @@ function DockTileImpl({
  * wider than the circle.
  */
 function AvatarBubble({ participant: p, speaking, onClick }: { participant: HangoutLayoutParticipant; speaking: boolean; onClick?: () => void }) {
-  const label = `${p.displayName}${p.isLocal ? ' (you)' : ''}${accessSuffix(p.access)}${p.handRaised ? `, ${raisedHandLabel(p.handRaised)!.toLowerCase()}` : ''}${p.isMuted ? ', muted' : ''}`;
+  const label = `${p.displayName}${p.isLocal ? ' (you)' : ''}${accessSuffix(p.access)}${p.handRaised ? `, ${raisedHandLabel(p.handRaised)!.toLowerCase()}` : ''}${p.highlight ? `, ${p.highlight.label.toLowerCase()}` : ''}${p.isMuted ? ', muted' : ''}`;
   return (
     <div
       className={cn(
         'relative shrink-0 rounded-full shadow-lg ring-2 transition-shadow',
-        speaking ? 'ring-success' : 'ring-white/70',
+        p.highlight ? 'ring-info' : speaking ? 'ring-success' : 'ring-white/70',
         onClick && 'cursor-pointer',
       )}
       title={label}
@@ -721,6 +725,7 @@ function AvatarBubble({ participant: p, speaking, onClick }: { participant: Hang
       data-peer-id={p.id}
       data-is-muted={p.isMuted ? 'true' : 'false'}
       data-access={p.access}
+      data-highlight={p.highlight?.label}
     >
       <Avatar name={p.displayName} size={44} {...(p.avatarUrl ? { src: p.avatarUrl } : {})} />
       {p.handRaised ? (

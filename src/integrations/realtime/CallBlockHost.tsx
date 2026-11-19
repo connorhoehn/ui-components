@@ -57,6 +57,7 @@ import { DeviceToggleSelect } from '../../components/video/DeviceToggleSelect';
 import { SparklesIcon } from '../../components/video/MediaIcons';
 import { CallNounProvider, useCallNoun } from '../../components/video/callNoun';
 import { DropdownMenu } from '../../components/shared/DropdownMenu';
+import type { TileHighlight } from '../../components/video/HangoutLayoutTypes';
 import type { RMMediaEffectsControllerSource } from '../realtime-modules/WrappedMediaEffectsTray';
 import { WrappedAudioVideoSettingsForm, type RMAudioVideoSettingsSource, type RMMediaDevicesSource } from '../realtime-modules/WrappedAudioVideoSettingsForm';
 import { createConversationCallDock, type ConversationCallDockModules } from './ConversationCallDock';
@@ -346,6 +347,11 @@ export interface CallMediaOutletProps {
   recordingConsent?: false | { privacyHref?: string; privacyLabel?: string };
   /** The dock's test id for a lobby (default `conversation-call-dock`). */
   dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
+  /**
+   * A ring on a person's tile and its words, keyed by user id (e.g. the
+   * person a call assistant is listening to). Since 2.542.0.
+   */
+  highlightFor?: (userId: string) => TileHighlight | undefined;
 }
 
 const prejoinTitle = (kind: PreJoinKind, noun: string): string =>
@@ -844,7 +850,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
    * stays in the footer collapsed (`display: none`; media keeps playing).
    * Moving between claimants moves this one dock — no second subscription.
    */
-  function CallMediaOutlet({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, recordingConsent, dockTestId }: CallMediaOutletProps) {
+  function CallMediaOutlet({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, recordingConsent, dockTestId, highlightFor }: CallMediaOutletProps) {
     const host = useContext(HostContext);
     const target = useClaimsSnapshot((c) => c.current, noTarget);
     const placement = useClaimsSnapshot((c) => c.placement, noPlacement);
@@ -889,6 +895,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       layout={layout}
       {...(contain ? { fit: 'contain' as const } : {})}
       {...(handFor ? { handFor } : {})}
+      {...(highlightFor ? { highlightFor } : {})}
       {...(extras !== undefined ? { extras } : {})}
       {...(shownNotice !== undefined && shownNotice !== null ? { notice: shownNotice } : {})}
       {...(recordingIndicator ? { metaAside: recordingIndicator } : {})}

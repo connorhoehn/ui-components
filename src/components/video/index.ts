@@ -75,6 +75,7 @@ export type { CallTileRowProps } from './CallTileRow';
 
 export { HangoutLayout } from './HangoutLayout';
 export type { HangoutLayoutProps, HangoutLayoutParticipant, HangoutMode } from './HangoutLayout';
+export type { TileHighlight } from './HangoutLayoutTypes';
 
 export { HangoutGrid, gridCols } from './HangoutGrid';
 export type { HangoutGridProps } from './HangoutGrid';
@@ -377,6 +378,8 @@ export type { MediaPlaybackDockProps, PlaybackSource, MediaPlaybackState, MediaP
 
 export { HoldToTalkButton } from './HoldToTalkButton';
 export type { HoldToTalkButtonProps, HoldToTalkTone } from './HoldToTalkButton';
+export { AssistantBar, assistantFloorWords } from './AssistantBar';
+export type { AssistantBarProps, AssistantBarFloor, AssistantBarHold } from './AssistantBar';
 
 export { SpokenCaption } from './SpokenCaption';
 export type { SpokenCaptionProps } from './SpokenCaption';

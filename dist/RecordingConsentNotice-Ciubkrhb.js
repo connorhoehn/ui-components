@@ -5,7 +5,7 @@ import { h as i } from "./Icons-CNCMF52q.js";
 import { t as a } from "./Tooltip-BaCci7O5.js";
 import { t as o } from "./LiveRegion-DOMNUSPR.js";
 import { t as s } from "./Link-BuANgxYo.js";
-import { rt as c } from "./BreakoutRoomsPanel-kSEdG_RC.js";
+import { rt as c } from "./BreakoutRoomsPanel-BZPc5_-C.js";
 import { useCallback as l, useEffect as u, useRef as d, useState as f } from "react";
 import { Fragment as p, jsx as m, jsxs as h } from "react/jsx-runtime";
 //#region src/components/video/RecordingConsentNotice.tsx

@@ -139,6 +139,7 @@ export function HangoutSpotlight({
         avatarUrl={cameraTileSource.avatarUrl}
         isMuted={cameraTileSource.isMuted}
         handRaised={cameraTileSource.handRaised}
+        highlight={cameraTileSource.highlight}
         access={cameraTileSource.access}
         isLocal={cameraTileSource.isLocal}
         isSpotlight
@@ -189,6 +190,7 @@ export function HangoutSpotlight({
                 avatarUrl={p.avatarUrl}
                 isMuted={p.isMuted}
                 handRaised={p.handRaised}
+                highlight={p.highlight}
                 access={p.access}
                 isLocal={p.isLocal}
                 videoElement={p.videoElement}

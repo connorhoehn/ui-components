@@ -1,3 +1,4 @@
+import type { TileHighlight } from './HangoutLayoutTypes';
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { ParticipantAccessBadge, type ParticipantAccess } from './ParticipantAccessBadge';
@@ -16,6 +17,8 @@ export interface ParticipantTileProps {
   isMuted?: boolean;
   /** Raised hand: `true`, or the 1-based queue position (shown as "✋ 2" in the name chip). Since 2.458.0. */
   handRaised?: boolean | number;
+  /** A ring on the tile (blue, over the speaking border) and its words, e.g. "Talking to Milo". Since 2.542.0. */
+  highlight?: TileHighlight;
   /**
    * Less than full access: `view-only` draws an eye in the name chip, named
    * "View only" for screen readers, and stamps `data-access`. Absent: nothing.
@@ -54,6 +57,7 @@ export function ParticipantTile({
   isSpeaking = false,
   isMuted = false,
   handRaised,
+  highlight,
   access,
   isLocal = false,
   isSpotlight = false,
@@ -92,6 +96,8 @@ export function ParticipantTile({
       data-is-spotlight={isSpotlight ? 'true' : 'false'}
       data-is-muted={isMuted ? 'true' : 'false'}
       data-hand-raised={handRaised ? 'true' : undefined}
+      data-highlight={highlight?.label}
+      title={highlight?.label}
       data-access={access}
       data-track-kind={videoElement ? 'camera' : 'avatar'}
     >
@@ -160,6 +166,11 @@ export function ParticipantTile({
       {isSpeaking && (
         <div className={cn('absolute top-1 right-1 w-2 h-2 rounded-full bg-success shadow-[0_0_4px_#22c55e]')} />
       )}
+      {highlight && (
+        // Inside the tile, over the video and the speaking border: the person a call assistant is listening to (2.542.0).
+        <span aria-hidden="true" data-testid="tile-highlight-ring" className="pointer-events-none absolute inset-0 z-10 rounded ring-2 ring-inset ring-info" />
+      )}
+      {highlight && <span className="sr-only">{highlight.label}</span>}
     </div>
   );
 }

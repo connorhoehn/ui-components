@@ -24,6 +24,7 @@ import type { HangoutParticipant, HangoutConnectionState } from '@connorhoehn/re
 import type { RealtimeClientModules } from './modules';
 import { HangoutLayout, type HangoutLayoutParticipant, type HangoutMode } from '../../components/video/HangoutLayout';
 import type { ParticipantAccess } from '../../components/video/ParticipantAccessBadge';
+import type { TileHighlight } from '../../components/video/HangoutLayoutTypes';
 import { RemoteTileSlot } from '../../components/video/RemoteTileSlot';
 import { StreamVideo } from '../../components/video/StreamVideo';
 import { Avatar } from '../../components/shared/Avatar';
@@ -110,6 +111,8 @@ export interface WrappedLVSHangoutLayoutProps {
    * publish permission, so the host supplies it.
    */
   accessFor?: (userId: string) => ParticipantAccess | undefined;
+  /** A ring on a person's tile and its words, keyed like `handFor`. Since 2.542.0. */
+  highlightFor?: (userId: string) => TileHighlight | undefined;
 
   className?: string;
   'data-testid'?: string;
@@ -216,6 +219,7 @@ function WrappedLVSHangoutLayoutView(rm: WrappedLVSHangoutLayoutModules, {
   showLocalAsTile = true,
   handFor,
   accessFor,
+  highlightFor,
   className,
   'data-testid': testId,
 }: WrappedLVSHangoutLayoutProps) {
@@ -238,11 +242,12 @@ function WrappedLVSHangoutLayoutView(rm: WrappedLVSHangoutLayoutModules, {
         const key = p.appUserId ?? p.userId;
         const hand = handFor?.(key);
         const access = accessFor?.(key);
-        if (!hand && !access) return tile;
-        return { ...tile, ...(hand ? { handRaised: hand } : {}), ...(access ? { access } : {}) };
+        const highlight = highlightFor?.(key);
+        if (!hand && !access && !highlight) return tile;
+        return { ...tile, ...(hand ? { handRaised: hand } : {}), ...(access ? { access } : {}), ...(highlight ? { highlight } : {}) };
       });
     return list;
-  }, [hangout.participants, showLocalAsTile, localTileLabel, handFor, accessFor]);
+  }, [hangout.participants, showLocalAsTile, localTileLabel, handFor, accessFor, highlightFor]);
 
   const remoteCount = hangout.participants.filter((p) => !p.isLocal).length;
   const overlayState: WrappedHangoutState = {

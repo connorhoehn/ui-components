@@ -9,6 +9,63 @@ import { SVGProps } from 'react';
 
 export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
 
+export declare function AssistantBar({ assistantName, status, statusLabel, floor, selfId, hold, refusal, disabled, leading, children, divided, className, 'data-testid': testId, }: AssistantBarProps): JSX.Element;
+
+export declare interface AssistantBarFloor {
+    /** Who has the assistant's ear. */
+    userId: string;
+    name: string;
+}
+
+export declare interface AssistantBarHold {
+    onStart: () => void;
+    onEnd: (durationMs: number) => void;
+    onCancel: () => void;
+    /** This viewer is holding (the app's view of the press, e.g. until the server answers). */
+    holding?: boolean;
+    /** Space holds too, unless typing. Default true. */
+    spaceToTalk?: boolean;
+    /** The hold's cap. Default 30 000. */
+    maxDurationMs?: number;
+    /** Change it to draw the button afresh (e.g. after a refused press). */
+    resetKey?: string | number;
+    /** Default `Hold to talk to <assistantName>`. */
+    label?: string;
+    /** Default `Talking to <assistantName>, release to send`. */
+    talkingLabel?: string;
+}
+
+export declare interface AssistantBarProps {
+    /** The assistant's name, used in every default sentence. */
+    assistantName: string;
+    /** The app's status control (e.g. a menu whose trigger says "Milo is listening"); replaces the mark and `statusLabel`. */
+    status?: ReactNode;
+    /** Without `status`: the assistant's mark and these words. Omitted: no mark, no words. */
+    statusLabel?: string | null;
+    /** Who has the assistant's ear now; null or omitted: nobody. */
+    floor?: AssistantBarFloor | null;
+    /** This viewer's id, so their own floor reads "You are talking to …". */
+    selfId?: string | null;
+    /** The hold button's handlers; null or omitted: no button (this viewer may not hold). */
+    hold?: AssistantBarHold | null;
+    /** A refused press, in words (the app clears it). */
+    refusal?: string | null;
+    /** The whole row is waiting on the app (the hold button is disabled). */
+    disabled?: boolean;
+    /** Items before the status (e.g. an invite button). */
+    leading?: ReactNode;
+    /** Items after the floor (e.g. a voice chip, a badge). */
+    children?: ReactNode;
+    /** A rule on the left, for a row that follows other bar items. */
+    divided?: boolean;
+    className?: string;
+    /** Root test id; parts get `-hold`, `-floor`, `-refused`. Default `assistant-bar`. */
+    'data-testid'?: string;
+}
+
+/** "You are talking to Milo" for the person themself, "Hugo is talking to Milo" for everyone else; null with nobody. */
+export declare function assistantFloorWords(assistantName: string, floor: AssistantBarFloor | null | undefined, selfId: string | null | undefined): string | null;
+
 export declare function AudioLevelMeter({ level, segments, label, disabled, className, 'data-testid': testId, }: AudioLevelMeterProps): JSX.Element;
 
 export declare interface AudioLevelMeterProps {
@@ -1751,6 +1808,11 @@ export declare interface HangoutLayoutParticipant {
     handRaised?: boolean | number;
     /** Less than full access: `view-only` marks the tile (an eye, "View only"). */
     access?: ParticipantAccess;
+    /**
+     * A ring on the tile and words for it, e.g. `{ label: 'Talking to Milo' }`
+     * for the person a call assistant is listening to. Since 2.542.0.
+     */
+    highlight?: TileHighlight;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
     /** Pre-rendered screen-share video element. When ANY participant supplies
@@ -2657,7 +2719,7 @@ export declare function participantAccessInfo(access: ParticipantAccess | null |
  * convention (Meet/Teams/Zoom), reflowing tiles on speaker change is jarring;
  * a green border is the agreed-on cue.
  */
-export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, handRaised, access, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
+export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, handRaised, highlight, access, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
 
 export declare interface ParticipantTileProps {
     /** Unique identifier for keying / pin actions. */
@@ -2672,6 +2734,8 @@ export declare interface ParticipantTileProps {
     isMuted?: boolean;
     /** Raised hand: `true`, or the 1-based queue position (shown as "✋ 2" in the name chip). Since 2.458.0. */
     handRaised?: boolean | number;
+    /** A ring on the tile (blue, over the speaking border) and its words, e.g. "Talking to Milo". Since 2.542.0. */
+    highlight?: TileHighlight;
     /**
      * Less than full access: `view-only` draws an eye in the name chip, named
      * "View only" for screen readers, and stamps `data-access`. Absent: nothing.
@@ -3621,6 +3685,11 @@ export declare interface SummaryPanelProps {
     pendingMessage?: string;
     idleState?: ReactNode;
     className?: string;
+}
+
+/** A tile's ring and its words (`label` is read by screen readers and shown as the tile's tooltip). Since 2.542.0. */
+export declare interface TileHighlight {
+    label: string;
 }
 
 export declare interface TimedReaction {

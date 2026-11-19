@@ -1,3 +1,8 @@
+## 2.542.0
+
+- `AssistantBar` (`/video`): a call assistant's control row, all props: the assistant's mark and status (`statusLabel`, or the app's own control in `status`), the `HoldToTalkButton` for a viewer allowed to hold (`hold`, with `holding`, `resetKey`, labels), who has the assistant's ear (`floor` + `selfId`: "Hugo is talking to Milo" / "You are talking to Milo"; someone else's floor makes the button busy with those words), a refused press (`refusal`), `disabled`, and `leading` / `children` slots. Part test ids: `<testid>-hold`, `-floor`, `-refused`, `-status`; the root carries `data-floor` and `data-holding`. `assistantFloorWords(name, floor, selfId)` is exported.
+- Tile highlight: `HangoutLayoutParticipant.highlight` (`TileHighlight`, `{ label }`) rings a tile in info blue inside its edge, over the speaking and followed rings, and adds the label to its accessible name (`ParticipantTile`, `CallTileRow` tiles and camera-off bubbles, `HangoutGrid`, `HangoutSpotlight`; `data-highlight` carries the label). Keyed by user id like `handFor`: `highlightFor` on `ConversationCallDock`, `WrappedLVSHangoutLayout` and the call host's `CallMediaOutlet`.
+
 ## 2.541.0
 
 - `CollaborativeExcalidraw`: `helpButton` (`'corner'` default, `'start'` moves Excalidraw's help "?" into the footer beside the zoom and undo controls, `'hidden'` removes it; the "?" key still opens help), so an overlay in the canvas's bottom-right corner no longer covers it.

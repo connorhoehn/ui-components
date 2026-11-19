@@ -937,6 +937,11 @@ export declare interface CallMediaOutletProps {
     };
     /** The dock's test id for a lobby (default `conversation-call-dock`). */
     dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
+    /**
+     * A ring on a person's tile and its words, keyed by user id (e.g. the
+     * person a call assistant is listening to). Since 2.542.0.
+     */
+    highlightFor?: (userId: string) => TileHighlight | undefined;
 }
 
 /** The media panel (the side pane's tile grid): open or collapsed. Opens by itself once per call. */
@@ -2173,6 +2178,12 @@ export declare interface ConversationCallDockProps {
      */
     accessFor?: (userId: string) => ParticipantAccess | undefined;
     /**
+     * A ring on a person's tile and its words, keyed like `handFor` (e.g. the
+     * person a call assistant is listening to: `{ label: 'Talking to Milo' }`).
+     * Since 2.542.0.
+     */
+    highlightFor?: (userId: string) => TileHighlight | undefined;
+    /**
      * Set while YOU may not publish (the host made you view-only): the dock's
      * microphone, camera and share controls are disabled with this as their
      * tooltip and accessible description. Absent: the controls are as the call
@@ -2384,7 +2395,7 @@ declare interface ConversationSurfaceProps {
 /** Bind the host to the installed realtime-modules call hooks. Call once, at module scope. */
 export declare function createCallBlockHost<M extends CallBlockModules>(rm: M): {
     CallHostProvider: ({ scopeKey, videoUrl, children, ...rest }: CallHostProviderProps) => JSX.Element;
-    CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, recordingConsent, dockTestId }: CallMediaOutletProps) => JSX.Element | null;
+    CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, recordingConsent, dockTestId, highlightFor }: CallMediaOutletProps) => JSX.Element | null;
     CallBlock: ({ placement, compact, documents, fit, className }: CallBlockProps) => JSX.Element;
     PreJoinDialog: ({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel, callNoun: callNounProp }: {
         kind: PreJoinKind;
@@ -2822,6 +2833,11 @@ declare interface HangoutLayoutParticipant {
     handRaised?: boolean | number;
     /** Less than full access: `view-only` marks the tile (an eye, "View only"). */
     access?: ParticipantAccess;
+    /**
+     * A ring on the tile and words for it, e.g. `{ label: 'Talking to Milo' }`
+     * for the person a call assistant is listening to. Since 2.542.0.
+     */
+    highlight?: TileHighlight;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
     /** Pre-rendered screen-share video element. When ANY participant supplies
@@ -4578,6 +4594,11 @@ declare interface StreamStageProps {
 /** Which colour family a primitive paints in. See the block comment above. */
 declare type SurfaceTone = 'surface' | 'code';
 
+/** A tile's ring and its words (`label` is read by screen readers and shown as the tile's tooltip). Since 2.542.0. */
+declare interface TileHighlight {
+    label: string;
+}
+
 declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, chrome, hideToolbar, onEditorReady, }: TiptapEditorProps): JSX.Element;
 
 declare interface TiptapEditorProps {
@@ -5245,6 +5266,8 @@ export declare interface WrappedLVSHangoutLayoutProps {
      * publish permission, so the host supplies it.
      */
     accessFor?: (userId: string) => ParticipantAccess | undefined;
+    /** A ring on a person's tile and its words, keyed like `handFor`. Since 2.542.0. */
+    highlightFor?: (userId: string) => TileHighlight | undefined;
     className?: string;
     'data-testid'?: string;
 }

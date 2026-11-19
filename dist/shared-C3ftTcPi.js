@@ -53,7 +53,7 @@ import "./SkeletonCard-DBVy8trP.js";
 import { n as vt, t as yt } from "./VisuallyHidden-CVFiyXyk.js";
 import "./LiveRegion-DOMNUSPR.js";
 import { t as bt } from "./Switch-DolksIFk.js";
-import "./DockedPanelContext-pH9A5z1h.js";
+import "./AssistantMark-yMqczRQv.js";
 import { t as xt } from "./Textarea-MJCZpfkl.js";
 import { t as St } from "./TitledFrame-o88sI_8n.js";
 import "./DotMeter-B7TMlYNN.js";
@@ -65,7 +65,7 @@ import "./CardHeader--V2WcTQ0.js";
 import { t as Et } from "./Breadcrumbs-BALh6O9m.js";
 import { a as Dt, d as Ot, f as kt, o as At, p as jt, t as Mt, u as Nt } from "./PageHeader-BubUF_9A.js";
 import { t as Pt } from "./ThinkingDots-CL7iPQV1.js";
-import { $ as Ft, et as It, t as Lt, tt as Rt } from "./ChatPanel-CIU65-57.js";
+import { $ as Ft, Q as It, et as Lt, t as Rt } from "./ChatPanel-BvqmyH19.js";
 import { c as zt } from "./SidebarRow-C5jzYqPT.js";
 import "./LogStream-2dWQBBcx.js";
 import "./RisingParticles-ONO2_uMj.js";
@@ -10670,7 +10670,7 @@ function Ll({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 				className: "pointer-events-none absolute left-2 top-2 max-w-[calc(100%-1rem)]",
 				children: T
 			}),
-			S && /* @__PURE__ */ Z(Rt, {
+			S && /* @__PURE__ */ Z(Lt, {
 				label: `${e.title} actions`,
 				actions: o,
 				"data-testid": `gallery-tile-actions-${e.id}`,
@@ -11238,7 +11238,7 @@ function lu({ connectionState: e, onDisconnect: t, onReconnect: n, onCollapse: r
 					}), /* @__PURE__ */ Q("div", {
 						className: "flex flex-col gap-0.5",
 						children: [a.map((e) => {
-							let t = e.metadata.displayName ?? e.clientId.slice(0, 8), n = e.clientId === o, r = Ft(e.metadata.email ?? e.clientId), a = It(t);
+							let t = e.metadata.displayName ?? e.clientId.slice(0, 8), n = e.clientId === o, r = It(e.metadata.email ?? e.clientId), a = Ft(t);
 							return /* @__PURE__ */ Q("div", {
 								"data-testid": "presence-avatar",
 								"data-presence-user": t,
@@ -15600,7 +15600,7 @@ function Ff({ cursors: e, localCursor: t, onMouseMove: n, width: r = 600, height
 				});
 			})(),
 			Array.from(e.values()).map((e) => {
-				let t = e.position.x, n = e.position.y, r = Ft(e.metadata.displayName ?? e.clientId), i = It(e.metadata.displayName ?? e.clientId.slice(0, 2));
+				let t = e.position.x, n = e.position.y, r = It(e.metadata.displayName ?? e.clientId), i = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2));
 				return /* @__PURE__ */ Z("div", {
 					className: "absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-md z-10 pointer-events-none select-none",
 					style: {
@@ -15657,7 +15657,7 @@ function Rf({ cursors: e, localCursor: t, onCellClick: n }) {
 						className: "absolute -top-2.5 right-0 text-[10px] bg-info text-white px-1 py-px rounded-[3px] pointer-events-none z-[19] whitespace-nowrap",
 						children: "You"
 					})] }), s.map((e, t) => {
-						let n = Ft(e.metadata.displayName ?? e.clientId), r = It(e.metadata.displayName ?? e.clientId.slice(0, 2)), i = 3 - Math.min(t, 1);
+						let n = It(e.metadata.displayName ?? e.clientId), r = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2)), i = 3 - Math.min(t, 1);
 						return /* @__PURE__ */ Q("div", { children: [/* @__PURE__ */ Z("div", {
 							className: "absolute inset-0 rounded pointer-events-none",
 							style: {
@@ -15750,7 +15750,7 @@ function Uf({ cursors: e, localCursor: t, onPositionChange: n }) {
 	let c = [], l = [];
 	e.forEach((e) => {
 		if (e.metadata.mode !== "text") return;
-		let t = Ft(e.metadata.displayName ?? e.clientId), n = It(e.metadata.displayName ?? e.clientId.slice(0, 2)), r = e.position;
+		let t = It(e.metadata.displayName ?? e.clientId), n = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2)), r = e.position;
 		r.position != null && c.push({
 			cursor: e,
 			position: r.position,
@@ -15992,7 +15992,7 @@ function qf({ cursors: e, localCursor: t, onMouseMove: n, width: r = 600, height
 				});
 			})(),
 			v.map((e) => {
-				let t = e.position.x, n = e.position.y, r = Ft(e.metadata.displayName ?? e.clientId), i = It(e.metadata.displayName ?? e.clientId.slice(0, 2)), a = e.metadata.tool ?? "brush", o = e.metadata.size ?? 5;
+				let t = e.position.x, n = e.position.y, r = It(e.metadata.displayName ?? e.clientId), i = Ft(e.metadata.displayName ?? e.clientId.slice(0, 2)), a = e.metadata.tool ?? "brush", o = e.metadata.size ?? 5;
 				return /* @__PURE__ */ Z(Jf, {
 					x: t,
 					y: n,
@@ -16205,7 +16205,7 @@ function $f({ connectionState: e, onReact: t, chatMessages: n, onChatSend: r, cu
 			children: [/* @__PURE__ */ Z("p", {
 				className: "text-xs font-semibold uppercase tracking-wide text-text-secondary m-0 mb-3",
 				children: "Chat"
-			}), /* @__PURE__ */ Z(Lt, {
+			}), /* @__PURE__ */ Z(Rt, {
 				messages: n,
 				onSend: r,
 				disabled: e !== "connected",

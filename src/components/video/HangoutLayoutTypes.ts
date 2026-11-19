@@ -5,6 +5,11 @@
 import type { ReactNode } from 'react';
 import type { ParticipantAccess } from './ParticipantAccessBadge';
 
+/** A tile's ring and its words (`label` is read by screen readers and shown as the tile's tooltip). Since 2.542.0. */
+export interface TileHighlight {
+  label: string;
+}
+
 export interface HangoutLayoutParticipant {
   id: string;
   displayName: string;
@@ -15,6 +20,11 @@ export interface HangoutLayoutParticipant {
   handRaised?: boolean | number;
   /** Less than full access: `view-only` marks the tile (an eye, "View only"). */
   access?: ParticipantAccess;
+  /**
+   * A ring on the tile and words for it, e.g. `{ label: 'Talking to Milo' }`
+   * for the person a call assistant is listening to. Since 2.542.0.
+   */
+  highlight?: TileHighlight;
   /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
   videoElement?: ReactNode;
   /** Pre-rendered screen-share video element. When ANY participant supplies

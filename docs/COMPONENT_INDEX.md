@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1013 components across 23 entry points; 865 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1014 components across 23 entry points; 866 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -55,7 +55,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Buttons & actions](#buttons--actions) (19)
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
-- [Video](#video) (114)
+- [Video](#video) (115)
 - [Docs & editor](#docs--editor) (142)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
@@ -444,6 +444,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | Component | Import | Description | Story | Deprecated |
 |---|---|---|---|---|
 | `ActiveCallBanner` | `@connorhoehn/ui-components/shared` | "there's a live call in this lobby, want to join?" |  |  |
+| `AssistantBar` | `@connorhoehn/ui-components/video` | A call assistant's control row in a call's bar (since 2.542.0). |  |  |
 | `AudioLevelMeter` | `@connorhoehn/ui-components/video` | A microphone's live input level as a row of bar segments — the "Input level ▮▮▮▮▮▮▯▯▯▯" in call settings. |  |  |
 | `AudioPlayer` | `@connorhoehn/ui-components/video` | A voice message with the library's controls, not the browser's. |  |  |
 | `AudioVideoSettingsForm` | `@connorhoehn/ui-components/video` | The "Audio & video" tab of call settings: microphone (with a live input level, Test mic and noise reduction), speakers (with volume and Test sound), camera (with a mirrored preview), quality, an Advanced disclosure an… |  |  |
