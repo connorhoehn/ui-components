@@ -1,3 +1,8 @@
+## 2.539.0
+
+- `WorkArea` takes `footerPlacement="float"`: the footer floats over the bottom of the body instead of sitting under it, the body scrolls beneath it and ends with a spacer of the footer's measured height (`--dock-height`, from a ResizeObserver), so the last row always scrolls clear. The floating layer is click-through; content opts in with `pointer-events-auto`. `useInFloatingFooter()` reports it.
+- `FloatingComposerDock` (overlay) inside a floating WorkArea footer keeps its fade and floating card but sits in the layer's flow, fading into the work area's panel colour.
+
 ## 2.538.3
 
 - `ProgressBar`: a label longer than the bar is cut to one line (a text label keeps its whole text as the title) instead of running past the bar over neighbouring cells; the value label never shrinks.

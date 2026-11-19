@@ -334,7 +334,7 @@ export type {
   ToolbarLabelProps,
   ToolbarTone,
 } from './Toolbar';
-export { WorkArea } from './WorkArea';
+export { WorkArea, useInFloatingFooter, WORKAREA_DOCK_HEIGHT_VAR } from './WorkArea';
 export type { WorkAreaProps, WorkAreaTone } from './WorkArea';
 
 // ── Sidebar primitives (2026-05) ──

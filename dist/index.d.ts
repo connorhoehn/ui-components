@@ -28230,6 +28230,9 @@ declare interface UseActivityBusReturn {
  /** Whether a DockedColumn is above this component (its ColumnDock will dock rather than render in place). */
  export declare function useInDockedColumn(): boolean;
 
+ /** Whether this component renders inside a WorkArea's floating footer (`footerPlacement="float"`). */
+ export declare function useInFloatingFooter(): boolean;
+
  export declare function useIngestAudit(filters?: IngestAuditFilters): UseIngestAuditResult;
 
  declare interface UseIngestAuditResult {
@@ -30168,7 +30171,10 @@ declare interface UseActivityBusReturn {
       following: boolean;
   }
 
-  export declare function WorkArea({ breadcrumbs, toolbar, children, status, footer, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
+  export declare function WorkArea({ breadcrumbs, toolbar, children, status, footer, footerPlacement, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
+
+  /** The CSS variable a floating footer's measured height is written to. */
+  export declare const WORKAREA_DOCK_HEIGHT_VAR = "--dock-height";
 
   export declare interface WorkAreaProps {
       /** The trail row. Usually a `<Breadcrumbs>`; renders nothing when omitted. */
@@ -30181,6 +30187,13 @@ declare interface UseActivityBusReturn {
       status?: ReactNode;
       /** Pinned full-width content, such as ComposerSurface. It owns its insets/background. */
       footer?: ReactNode;
+      /**
+       * `pinned` (default): the footer is a row under the body. `float`: it floats
+       * over the body's bottom, the body scrolls under it and ends with a spacer of
+       * the footer's measured height (`--dock-height`). The floating layer is
+       * click-through; its content opts in with `pointer-events-auto`.
+       */
+      footerPlacement?: 'pinned' | 'float';
       /** Comfortable padding around `children`. Off for canvases and nested rails. */
       padded?: boolean;
       tone?: WorkAreaTone;

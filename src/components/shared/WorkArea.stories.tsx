@@ -5,6 +5,7 @@ import { Toolbar, ToolbarGroup, ToolbarLabel } from './Toolbar';
 import { Button } from '../ui/Button';
 import { ComposerSurface } from './ComposerSurface';
 import { ContextComposer } from '../social/ContextComposer';
+import { FloatingComposerDock } from '../doc-editor/FloatingComposerDock';
 
 const meta = {
   title: 'Shared/WorkArea',
@@ -94,4 +95,19 @@ export const CodeTone: Story = {
 export const ComposerFooter: Story = {
   name: 'Full-bleed composer footer',
   args: { padded: false, children: <LongBody />, footer: <ComposerSurface compact><ContextComposer context={{ kind: "initiative", id: "story", title: "Story production" }} modes={["agent"]} defaultMode="agent" console={false} expanded allowAttachments={false} allowEmoji={false} workflows={[{ id: "inspect", label: "Inspect inputs" }]} onSend={() => false} /></ComposerSurface> },
+};
+
+export const FloatingComposerFooter: Story = {
+  name: 'Floating composer footer',
+  args: {
+    children: <LongBody />,
+    footerPlacement: 'float',
+    footer: (
+      <FloatingComposerDock
+        label="Story production"
+        maxWidth="3xl"
+        composer={<ContextComposer context={{ kind: "initiative", id: "story", title: "Story production" }} modes={["agent"]} defaultMode="agent" console={false} expanded allowAttachments={false} allowEmoji={false} workflows={[{ id: "inspect", label: "Inspect inputs" }]} onSend={() => false} />}
+      />
+    ),
+  },
 };

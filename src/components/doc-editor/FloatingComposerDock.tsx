@@ -33,6 +33,7 @@
 
 import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useInFloatingFooter } from '../shared/WorkArea';
 
 export type FloatingComposerDockWidth = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 
@@ -102,9 +103,13 @@ export function FloatingComposerDock({
 }: FloatingComposerDockProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const placement = useContext(ComposerDockPlacementContext);
+  // In a WorkArea's floating footer (2.539.0) the layer is already absolute
+  // over the body and measures itself; the dock keeps its overlay look in
+  // that layer's flow so the measured height is its own.
+  const inFloatingFooter = useInFloatingFooter() && placement === 'overlay';
 
   useLayoutEffect(() => {
-    if (placement !== 'overlay') return;
+    if (placement !== 'overlay' || inFloatingFooter) return;
     const el = ref.current;
     const parent = el?.parentElement;
     if (!el || !parent) return;
@@ -121,7 +126,7 @@ export function FloatingComposerDock({
       ro?.disconnect();
       parent.style.removeProperty(DOCK_HEIGHT_VAR);
     };
-  }, [placement]);
+  }, [placement, inFloatingFooter]);
 
   // Pinned, the row that holds the dock caps itself at
   // `var(--dock-max-height, 50%)` of the surface — but never below
@@ -197,7 +202,8 @@ export function FloatingComposerDock({
             'relative flex max-h-full min-h-0 w-full min-w-0 shrink flex-col bg-workspace px-[var(--dock-inset,1rem)] pb-[var(--dock-inset,1rem)]'
           : // `pointer-events-none` on the fade, `auto` on the dock itself: the
             // gradient must not swallow clicks on the page line it is fading.
-            'pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8',
+            // In a WorkArea the fade is the work area's own panel colour.
+            cn('pointer-events-none z-10 bg-gradient-to-t to-transparent px-4 pb-3 pt-8', inFloatingFooter ? 'relative w-full from-surface-panel via-surface-panel/85' : 'absolute inset-x-0 bottom-0 from-workspace via-workspace/85'),
         className,
       )}
     >

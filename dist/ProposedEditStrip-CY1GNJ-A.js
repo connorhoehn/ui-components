@@ -30,7 +30,7 @@ import { t as F } from "./SectionLabel-B60gea5o.js";
 import { G as I, U as L } from "./renderers-Bj_R7kXH.js";
 import { a as ie } from "./composerSendError-CHBTu9L8.js";
 import { t as ae } from "./InlineEditableText-CKjRokmb.js";
-import { i as oe, t as se } from "./FloatingComposerDock-DbxmNCal.js";
+import { i as oe, t as se } from "./FloatingComposerDock-BchqkSsX.js";
 import { Suspense as ce, lazy as le, useCallback as R, useEffect as z, useId as ue, useMemo as B, useRef as V, useState as H } from "react";
 import { Fragment as U, jsx as W, jsxs as G } from "react/jsx-runtime";
 //#region src/components/doc-editor/NewDocumentModal.tsx
@@ -1215,7 +1215,7 @@ function Ze(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var Qe = le(() => import("./SortableSlideList-BdX94Rxb.js"));
+var Qe = le(() => import("./SortableSlideList-lPEucSvY.js"));
 function $e(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }

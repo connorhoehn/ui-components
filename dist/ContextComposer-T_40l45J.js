@@ -8,7 +8,7 @@ import { i as re } from "./DecisionPath-BDXmSSg0.js";
 import { t as ie } from "./QuoteBlock-Dks53Idi.js";
 import { i as ae } from "./composerSendError-CHBTu9L8.js";
 import { a as oe, i as se, r as s } from "./composerContext-BLn1-Nao.js";
-import { i as ce, t as le } from "./FloatingComposerDock-DbxmNCal.js";
+import { i as ce, t as le } from "./FloatingComposerDock-BchqkSsX.js";
 import { r as ue } from "./RichChatComposer-CAZnMYX6.js";
 import { useCallback as c, useId as de, useMemo as fe, useRef as l, useState as u } from "react";
 import { Fragment as d, jsx as f, jsxs as p } from "react/jsx-runtime";

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { WorkArea } from '../WorkArea';
 import { Breadcrumbs } from '../Breadcrumbs';
 import { Toolbar } from '../Toolbar';
+import { FloatingComposerDock } from '../../doc-editor/FloatingComposerDock';
 
 describe('WorkArea', () => {
   it('keeps a composer footer full bleed and outside the body scroller/status inset', () => {
@@ -11,6 +12,36 @@ describe('WorkArea', () => {
     expect(footer.className).not.toMatch(/px-|py-|border/);
     expect(container.querySelector('.overflow-auto')).not.toContainElement(footer as HTMLElement);
   });
+  it('floats the footer over the body and pads the body by its measured --dock-height', () => {
+    const { container } = render(
+      <WorkArea footerPlacement="float" footer={<FloatingComposerDock label="Work" composer={<textarea aria-label="prompt" />} />}>body</WorkArea>,
+    );
+    const region = container.querySelector('[data-workarea-float-region]') as HTMLElement;
+    const footer = container.querySelector('[data-workarea-footer]') as HTMLElement;
+    expect(region.className).toMatch(/relative/);
+    expect(footer.className).toMatch(/absolute/);
+    expect(footer.className).toMatch(/pointer-events-none/);
+    expect(region).toContainElement(footer);
+    expect(container.querySelector('.overflow-auto')).not.toContainElement(footer);
+    // The body ends with a spacer the height of the footer, so the last row scrolls clear.
+    const spacer = container.querySelector('.overflow-auto > [data-workarea-dock-spacer]') as HTMLElement;
+    expect(spacer.className).toContain('h-[var(--dock-height,0px)]');
+    expect(region.style.getPropertyValue('--dock-height')).toMatch(/px$/);
+    // The dock keeps its overlay look but sits in the floating layer's flow.
+    const dock = screen.getByRole('region', { name: 'Work' });
+    expect(dock.dataset.placement).toBe('overlay');
+    expect(dock.className).toMatch(/relative/);
+    expect(dock.className).not.toMatch(/absolute/);
+    expect(dock.className).toMatch(/bg-gradient-to-t/);
+  });
+
+  it('keeps the footer a pinned row by default', () => {
+    const { container } = render(<WorkArea footer={<div>prompt</div>}>body</WorkArea>);
+    expect(container.querySelector('[data-workarea-float-region]')).toBeNull();
+    expect(container.querySelector('[data-workarea-dock-spacer]')).toBeNull();
+    expect((container.querySelector('[data-workarea-footer]') as HTMLElement).className).not.toMatch(/absolute/);
+  });
+
   it('renders body content', () => {
     render(<WorkArea data-testid="area"><p>body</p></WorkArea>);
     expect(screen.getByText('body')).toBeInTheDocument();
