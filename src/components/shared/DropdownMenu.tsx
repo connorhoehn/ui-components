@@ -131,6 +131,11 @@ export interface DropdownMenuProps {
    * RIGHT edge to the trigger's right edge.
    */
   align?: 'start' | 'end';
+  /**
+   * Minimum z-index of the panel (the popover's own default otherwise), for a
+   * menu that must open over a floating layer such as a call widget. Since 2.543.0.
+   */
+  zIndex?: number;
   sections: DropdownMenuSection[];
   /** Optional className for the dropdown panel. */
   className?: string;
@@ -169,6 +174,7 @@ export function DropdownMenu({
   triggerTestId,
   triggerAttributes,
   align = 'start',
+  zIndex,
   sections,
   className,
   'data-testid': testId = 'dropdown-menu',
@@ -241,6 +247,7 @@ export function DropdownMenu({
         onClose={close}
         placement={align === 'end' ? 'bottom-end' : 'bottom-start'}
         className={cn('min-w-[180px] p-0 overflow-hidden rounded-lg', className)}
+        {...(zIndex !== undefined ? { zIndex } : {})}
         data-testid={testId}
         panelRole="none"
         kind="menu"

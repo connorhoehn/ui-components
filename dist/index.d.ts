@@ -10139,7 +10139,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, buttonVariant, buttonSize, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, buttonVariant, buttonSize, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, zIndex, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -10232,6 +10232,11 @@ export declare interface DropdownMenuProps {
      * RIGHT edge to the trigger's right edge.
      */
     align?: 'start' | 'end';
+    /**
+     * Minimum z-index of the panel (the popover's own default otherwise), for a
+     * menu that must open over a floating layer such as a call widget. Since 2.543.0.
+     */
+    zIndex?: number;
     sections: DropdownMenuSection[];
     /** Optional className for the dropdown panel. */
     className?: string;
@@ -11258,6 +11263,15 @@ export declare interface FitBounds {
     maxX: number;
     maxY: number;
 }
+
+/**
+ * The ids to move off the row so the rest fits in `available` px, lowest
+ * priority first (between equals, the one later in the row goes first). The
+ * overflow control (`moreWidth`) is counted as soon as one item has gone.
+ * Items that may not collapse always stay, so the result can still be wider
+ * than `available` when they alone do not fit.
+ */
+export declare function fitByPriority(items: readonly PriorityFitItem[], available: number, gap: number, moreWidth: number): string[];
 
 /**
  * Screen px along each canvas edge that the fitted drawing keeps clear of —
@@ -13197,7 +13211,44 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun: callNounProp, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+/** The built-in controls' places in the collapse order (higher stays longer). */
+export declare const HUDDLE_BAR_PRIORITY: {
+    readonly chat: 60;
+    readonly share: 50;
+    readonly media: 40;
+    readonly meeting: 30;
+};
+
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, callNoun: callNounProp, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, shareMenu, actions, moreLabel, extras, compact, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+
+/**
+ * One of the host's controls on the bar (since 2.543.0). While there is room
+ * it is drawn as `node`; when the row is too narrow it moves into the More
+ * menu as `menu` (something to press) or `fact` (words to read, e.g. a
+ * chip's). With neither it never leaves the row.
+ */
+export declare interface HuddleBarAction {
+    id: string;
+    node: ReactNode;
+    /**
+     * Higher stays on the row longer. Default 0. The bar's own controls sit at
+     * chat 60, share 50, media toggle 40 and meeting items 30 downwards.
+     */
+    priority?: number;
+    menu?: HuddleBarActionMenu;
+    fact?: string;
+}
+
+/** A collapsed control as a row of the More menu. */
+export declare interface HuddleBarActionMenu {
+    label: string;
+    description?: string;
+    icon?: ReactNode;
+    onSelect?: () => void;
+    disabled?: boolean;
+    disabledReason?: string;
+    danger?: boolean;
+}
 
 /** Someone in a huddle you have not joined (`phase="joinable"`). */
 export declare interface HuddleBarLiveParticipant {
@@ -13299,7 +13350,19 @@ export declare interface HuddleBarProps {
      * item's panel (React's picker). Not drawn while idle. Since 2.475.0.
      */
     meetingItems?: MeetingToolbarItem[];
-    /** Extra controls before Leave. */
+    /**
+     * The share control as a More-menu row. With it the share slot may collapse
+     * (after the media toggle, before chat); without, it stays on the row. Since 2.543.0.
+     */
+    shareMenu?: HuddleBarActionMenu;
+    /**
+     * The host's controls before Leave, each with a place in the collapse order
+     * and a More-menu form. Since 2.543.0.
+     */
+    actions?: HuddleBarAction[];
+    /** Label of the overflow menu's trigger. Default "More". Since 2.543.0. */
+    moreLabel?: string;
+    /** Extra controls before Leave. They never collapse: prefer `actions`. */
     extras?: ReactNode;
     /**
      * Icon-only Start and Join (since 2.519.0), for a phone-width footer: the
@@ -19691,6 +19754,16 @@ export declare interface PresentationSourceOption {
 
 /** A printer: "print". Since 2.390.3. */
 export declare function PrinterIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface PriorityFitItem {
+    id: string;
+    /** Measured width in px; 0 means the item draws nothing and takes no part. */
+    width: number;
+    /** Higher stays on the row longer. */
+    priority: number;
+    /** False: never leaves the row. */
+    collapsible: boolean;
+}
 
 /** What each outcome marker says to a screen reader (and a host's legend). */
 export declare const PROCEDURE_STEP_STATUS_LABELS: Record<ProcedureStepStatus, string>;

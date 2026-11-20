@@ -87,3 +87,33 @@ export const JoinableInFooter: Story = {
   },
   render: (args) => <FooterRow><HuddleBar {...args} /></FooterRow>,
 };
+
+/**
+ * One row at any width (2.543.0): drag the frame narrower and the host's
+ * `actions` move into the More menu in priority order, then the meeting
+ * items, then chat; microphone, camera and Leave stay, and the name is cut
+ * to an ellipsis with the whole name as its tooltip.
+ */
+export const Overflow: Story = {
+  args: {
+    name: 'System design with Mateo Álvarez',
+    startedAt: Date.now() - 45_000,
+    participantCount: 2,
+    mic: { on: true, onToggle: () => {} },
+    camera: { on: true, onToggle: () => {} },
+    onToggleChat: () => {},
+    chatLabel: 'Message',
+    onLeave: () => {},
+    actions: [
+      { id: 'time', priority: 55, node: <T size="xs" tone="secondary" className="whitespace-nowrap">60 min left</T>, fact: '60 min left' },
+      { id: 'intro', priority: 20, node: <Button variant="secondary" size="sm">Introduce Milo</Button>, menu: { label: 'Introduce Milo', onSelect: () => {} } },
+      { id: 'end', priority: 80, node: <Button variant="secondary" size="sm">End interview</Button>, menu: { label: 'End interview', onSelect: () => {} } },
+    ],
+    className: 'min-w-0 flex-1 border-l border-border',
+  },
+  render: (args) => (
+    <Inline gap="none" wrap={false} className="max-w-[640px] resize-x overflow-hidden border border-border">
+      <HuddleBar {...args} />
+    </Inline>
+  ),
+};

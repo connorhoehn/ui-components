@@ -3955,7 +3955,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, buttonVariant, buttonSize, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, buttonVariant, buttonSize, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, zIndex, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -4048,6 +4048,11 @@ export declare interface DropdownMenuProps {
      * RIGHT edge to the trigger's right edge.
      */
     align?: 'start' | 'end';
+    /**
+     * Minimum z-index of the panel (the popover's own default otherwise), for a
+     * menu that must open over a floating layer such as a call widget. Since 2.543.0.
+     */
+    zIndex?: number;
     sections: DropdownMenuSection[];
     /** Optional className for the dropdown panel. */
     className?: string;

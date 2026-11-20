@@ -1,3 +1,11 @@
+## 2.543.0
+
+- `HuddleBar` is one row at every width: it never wraps and never grows. When the controls do not fit beside the name, the lowest-priority ones move into a **More** menu, one at a time, and come back when there is room; microphone, camera, Start, Join and Leave never move. What fits is measured from the bar's own layout (a ResizeObserver on the bar and each control), so the same width always gives the same row.
+- `HuddleBar`: `actions` (`HuddleBarAction[]`: `id`, `node`, `priority`, and a More-menu form, `menu` to press or `fact` to read) are the host's controls before Leave with a place in the collapse order; the built-in controls sit at `HUDDLE_BAR_PRIORITY` (chat 60, share 50, media toggle 40, meeting items 30, last first). `shareMenu` gives the share slot a menu row so it may collapse; `moreLabel` names the trigger. A collapsed meeting item with a `popover` opens its panel from the menu, against the More trigger; an unread chat count moves to the More trigger. `extras` still never collapse.
+- `HuddleBar`: the call's name is cut with an ellipsis (it was a flex box, where none showed) and never below 6rem; the whole name is a `Tooltip` shown only while it is cut. Parts: `-controls`, `-more`, `-more-menu`, `-more-<id>`, `-more-facts`; each control's wrapper carries `data-bar-item` and, while in the menu, `data-collapsed`.
+- `DropdownMenu`: `zIndex` (the panel's minimum layer). `HuddleBar`'s More menu and its meeting panels open over a floating call widget (`FloatingPanel`), which sits where a footer's bar ends.
+- `/video` exports `fitByPriority` (the collapse choice as a pure function) with `PriorityFitItem`.
+
 ## 2.542.0
 
 - `AssistantBar` (`/video`): a call assistant's control row, all props: the assistant's mark and status (`statusLabel`, or the app's own control in `status`), the `HoldToTalkButton` for a viewer allowed to hold (`hold`, with `holding`, `resetKey`, labels), who has the assistant's ear (`floor` + `selfId`: "Hugo is talking to Milo" / "You are talking to Milo"; someone else's floor makes the button busy with those words), a refused press (`refusal`), `disabled`, and `leading` / `children` slots. Part test ids: `<testid>-hold`, `-floor`, `-refused`, `-status`; the root carries `data-floor` and `data-holding`. `assistantFloorWords(name, floor, selfId)` is exported.

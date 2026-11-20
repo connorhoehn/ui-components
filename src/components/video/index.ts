@@ -192,8 +192,10 @@ export type {
 
 export { CallNounProvider, useCallNoun, DEFAULT_CALL_NOUN } from './callNoun';
 export type { CallNounProviderProps } from './callNoun';
-export { HuddleBar } from './HuddleBar';
-export type { HuddleBarProps, HuddleBarMedia, HuddleBarPhase, HuddleBarLiveParticipant } from './HuddleBar';
+export { HuddleBar, HUDDLE_BAR_PRIORITY } from './HuddleBar';
+export type { HuddleBarProps, HuddleBarMedia, HuddleBarPhase, HuddleBarLiveParticipant, HuddleBarAction, HuddleBarActionMenu } from './HuddleBar';
+export { fitByPriority } from './priorityFit';
+export type { PriorityFitItem } from './priorityFit';
 export { default as MediaControlsBar } from './MediaControlsBar';
 export type { MediaControlsBarProps } from './MediaControlsBar';
 
