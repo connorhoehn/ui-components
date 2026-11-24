@@ -117,6 +117,22 @@ export interface AssetGalleryProps {
   actionsLayout?: 'wrap' | 'row';
   /** Host-owned typed drag payload; never infer identity from an image URL. */
   onDragStart?: (item: GalleryAsset, event: DragEvent<HTMLButtonElement>) => void;
+  /**
+   * The selected tile's id (2.546.0): that tile's thumbnail draws the
+   * library's selected ring (`ring-2 ring-primary`, offset on the surface),
+   * its button carries `aria-current="true"` and the tile
+   * `data-gallery-selected`. The host owns the value; a click still calls
+   * `onOpen`, which is where the host usually sets it.
+   */
+  selectedId?: string;
+  /**
+   * The tile's second action, on a double click (2.546.0): fired once per
+   * double click, so the host never times two clicks itself. Each click of
+   * the pair still calls `onOpen` (or opens the menu with `menuOnSelect`).
+   * Keyboard: Shift+Enter on the focused tile calls it (plain Enter and
+   * Space still call `onOpen`); the button names it in `aria-keyshortcuts`.
+   */
+  onDoubleOpen?: (item: GalleryAsset) => void;
   className?: string;
 }
 
@@ -152,14 +168,15 @@ function EmptyTile({ text, variant }: { text: string; variant: 'avatars' | 'imag
 
 const ASPECT = { landscape: 'aspect-[4/3]', portrait: 'aspect-[3/4]', square: 'aspect-square' } as const;
 
-interface AssetCardProps extends Omit<AssetGalleryProps, 'items' | 'label' | 'className' | 'tileActions'> {
+interface AssetCardProps extends Omit<AssetGalleryProps, 'items' | 'label' | 'className' | 'tileActions' | 'selectedId'> {
   item: GalleryAsset;
+  selected: boolean;
   variant: 'avatars' | 'images';
   actionsVisibility: 'hover' | 'always';
   tileActions?: readonly GalleryTileAction[];
 }
 
-function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit = 'cover', aspect = 'landscape', statusPlacement = 'overlay', actionsLayout = 'wrap' }: AssetCardProps) {
+function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit = 'cover', aspect = 'landscape', statusPlacement = 'overlay', actionsLayout = 'wrap', selected, onDoubleOpen }: AssetCardProps) {
   const avatarSize = minTileWidth ? Math.round(minTileWidth * 0.8) : 88;
   const statusId = useId();
   const tile = useRef<HTMLButtonElement>(null);
@@ -176,9 +193,11 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
   const run = (action: GalleryTileAction) => { setMenuOpen(false); action.onClick(tile.current ?? document.body); tile.current?.focus(); };
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (hasActions && (event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey))) { event.preventDefault(); openMenu(); }
+    // Shift+Enter is the double click's keyboard twin; preventDefault keeps the button's own click (onOpen) from firing too.
+    else if (onDoubleOpen && event.key === 'Enter' && event.shiftKey) { event.preventDefault(); onDoubleOpen(item); }
   };
   return (
-    <div role="listitem" className="group relative min-w-0" data-gallery-tile={item.id}>
+    <div role="listitem" className="group relative min-w-0" data-gallery-tile={item.id} data-gallery-selected={selected ? '' : undefined}>
       <button
         data-ui-part=""
         ref={tile}
@@ -189,12 +208,15 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
         aria-describedby={hasStatus ? statusId : undefined}
         aria-haspopup={hasActions ? 'dialog' : undefined}
         aria-expanded={hasActions ? menuOpen : undefined}
+        aria-current={selected ? 'true' : undefined}
+        aria-keyshortcuts={onDoubleOpen ? 'Shift+Enter' : undefined}
         onClick={() => (menu ? openMenu() : onOpen(item))}
+        onDoubleClick={onDoubleOpen ? () => onDoubleOpen(item) : undefined}
         onKeyDown={onKeyDown}
         onContextMenu={hasActions ? (event) => { event.preventDefault(); openMenu(); } : undefined}
         className="block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
-        <span data-gallery-thumbnail data-gallery-fit={variant === 'images' ? fit : undefined} data-gallery-aspect={variant === 'images' ? aspect : undefined} className={cn('flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover', variant === 'images' && ASPECT[aspect])}>
+        <span data-gallery-thumbnail data-gallery-fit={variant === 'images' ? fit : undefined} data-gallery-aspect={variant === 'images' ? aspect : undefined} className={cn('flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover', variant === 'images' && ASPECT[aspect], selected && 'ring-2 ring-primary ring-offset-2 ring-offset-surface')}>
           {empty ?? (variant === 'avatars' ? <Avatar name={item.title} src={item.src} imagePosition={item.imagePosition} size={avatarSize} className="max-h-full max-w-full" /> : item.src ? <img draggable={false} src={item.src} alt={item.title} loading="lazy" className={cn('h-full w-full transition-transform', fit === 'contain' ? 'object-contain' : 'object-cover group-hover:scale-105')} {...(item.imagePosition ? { style: { objectPosition: item.imagePosition } } : {})} /> : <span className="text-xs text-text-secondary">{hasStatus ? 'No image yet' : 'Image unavailable'}</span>)}
         </span>
         {/* Avatars: the status is the caption's first line, whole. Inside the
@@ -263,7 +285,7 @@ function AssetCard({ item, variant, onOpen, actions, actionsVisibility, tileActi
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export function AssetGallery({ items, variant = 'images', label, onOpen, actions, actionsVisibility = 'hover', tileActions, menuOnSelect = false, onDragStart, minTileWidth, fit = 'cover', aspect = 'landscape', statusPlacement = 'overlay', actionsLayout = 'wrap', className }: AssetGalleryProps) {
+export function AssetGallery({ items, variant = 'images', label, onOpen, actions, actionsVisibility = 'hover', tileActions, menuOnSelect = false, onDragStart, minTileWidth, fit = 'cover', aspect = 'landscape', statusPlacement = 'overlay', actionsLayout = 'wrap', selectedId, onDoubleOpen, className }: AssetGalleryProps) {
   // The one dynamic value (the host's minimum) goes in as a custom property;
   // the column rule itself is a class.
   const fluid = minTileWidth != null && minTileWidth > 0;
@@ -287,6 +309,8 @@ export function AssetGallery({ items, variant = 'images', label, onOpen, actions
           aspect={aspect}
           statusPlacement={statusPlacement}
           actionsLayout={actionsLayout}
+          selected={selectedId != null && item.id === selectedId}
+          onDoubleOpen={onDoubleOpen}
           {...(fluid ? { minTileWidth } : {})}
         />
       ))}

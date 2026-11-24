@@ -13,11 +13,16 @@
 //
 // Markers: `data-image-filmstrip`, each thumbnail `data-filmstrip-thumb` with
 // `aria-pressed` on the one shown; every frame `data-image-fit="contain"`.
+// With `navigation` (2.546.0): `<testid>-nav` holds `-prev`, `-current-label`,
+// `-position` and `-next`; with `maxWidth` the root carries `data-max-width`.
 
-import { useState, type ReactNode } from 'react';
+import { useState, type KeyboardEvent, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Stack, Inline } from '../ui/Stack';
 import { Button } from '../ui/Button';
+import { IconButton } from '../ui/IconButton';
+import { ChevronIcon } from '../ui/Icons';
+import { IMAGE_MAX_WIDTH, type ImageMaxWidth } from '../image/imageMaxWidth';
 import Chip from './Chip';
 import { ImageCompare, type ImageCompareAspect } from './ImageCompare';
 
@@ -48,6 +53,24 @@ export interface ImageFilmstripProps {
   onMore?: () => void;
   /** Names the thumbnail group. Default "Views". */
   label?: string;
+  /**
+   * Hold the whole filmstrip (large frame and strip) to a named maximum
+   * width, the same scale as `ImageThumbnail`/`ImageCompare` (`xs` 20rem,
+   * `sm` 24rem, `md` 28rem, `lg` 32rem); without it it fills its column.
+   * Since 2.546.0.
+   */
+  maxWidth?: ImageMaxWidth;
+  /**
+   * Built-in navigation (2.546.0, off by default): previous / next icon
+   * buttons under the large frame with the current item's label between
+   * them, and Left / Right arrow keys anywhere inside the filmstrip move the
+   * current item (through `onValueChange`, or the own state when
+   * uncontrolled). It steps through every item, including those past
+   * `maxThumbs`, and stops at the ends (the end's button is disabled).
+   */
+  navigation?: boolean;
+  /** With `navigation`: show the position ("2 of 8") after the label. Default true. */
+  showPosition?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -62,6 +85,9 @@ export function ImageFilmstrip({
   maxThumbs = 6,
   onMore,
   label = 'Views',
+  maxWidth,
+  navigation = false,
+  showPosition = true,
   className,
   'data-testid': testId = 'image-filmstrip',
 }: ImageFilmstripProps) {
@@ -75,8 +101,27 @@ export function ImageFilmstrip({
     if (value === undefined) setOwn(id);
     onValueChange?.(id);
   };
+  const index = items.indexOf(current);
+  const step = (delta: number) => {
+    const next = items[index + delta];
+    if (next) choose(next.id);
+  };
+  const onKeyDown = navigation
+    ? (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.key === 'ArrowLeft') { event.preventDefault(); step(-1); }
+        else if (event.key === 'ArrowRight') { event.preventDefault(); step(1); }
+      }
+    : undefined;
   return (
-    <Stack gap="sm" data-image-filmstrip="" data-testid={testId} className={cn('min-w-0', className)}>
+    <Stack
+      gap="sm"
+      data-image-filmstrip=""
+      data-testid={testId}
+      data-max-width={maxWidth}
+      onKeyDown={onKeyDown}
+      className={cn('min-w-0', maxWidth && cn('w-full', IMAGE_MAX_WIDTH[maxWidth]), className)}
+    >
       {caption != null && <Inline gap="xs" align="center"><Chip size="sm" tone="neutral">{caption}</Chip></Inline>}
       <ImageCompare
         images={[{ src: current.src, alt: current.alt, label: current.label, description: current.description }]}
@@ -84,6 +129,16 @@ export function ImageFilmstrip({
         fit="contain"
         data-testid={`${testId}-current`}
       />
+      {navigation && items.length > 1 && (
+        <Inline gap="xs" align="center" justify="between" wrap={false} role="group" aria-label={`${label} navigation`} data-testid={`${testId}-nav`}>
+          <IconButton size="sm" aria-label="Previous" icon={<ChevronIcon dir="left" />} disabled={index <= 0} onClick={() => step(-1)} data-testid={`${testId}-prev`} />
+          <span className="flex min-w-0 items-baseline gap-2 text-sm">
+            <span className="truncate font-medium text-text-primary" data-testid={`${testId}-current-label`}>{current.label}</span>
+            {showPosition && <span className="shrink-0 text-xs text-text-secondary tabular-nums" aria-live="polite" data-testid={`${testId}-position`}>{index + 1} of {items.length}</span>}
+          </span>
+          <IconButton size="sm" aria-label="Next" icon={<ChevronIcon dir="right" />} disabled={index >= items.length - 1} onClick={() => step(1)} data-testid={`${testId}-next`} />
+        </Inline>
+      )}
       {items.length > 1 && (
         <Inline gap="xs" align="center" wrap role="group" aria-label={label} data-testid={`${testId}-thumbs`}>
           {thumbs.map((item) => {

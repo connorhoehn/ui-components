@@ -44,4 +44,53 @@ describe('ImageFilmstrip', () => {
     rerender(<ImageFilmstrip items={items.slice(0, 1)} />);
     expect(screen.queryByTestId('image-filmstrip-thumbs')).toBeNull();
   });
+
+  it('maxWidth holds the filmstrip to a named width (2.546.0)', () => {
+    const { rerender } = render(<ImageFilmstrip items={items.slice(0, 3)} maxWidth="sm" />);
+    const strip = screen.getByTestId('image-filmstrip');
+    expect(strip).toHaveAttribute('data-max-width', 'sm');
+    expect(strip.className).toContain('max-w-sm');
+    rerender(<ImageFilmstrip items={items.slice(0, 3)} />);
+    expect(screen.getByTestId('image-filmstrip')).not.toHaveAttribute('data-max-width');
+    expect(screen.getByTestId('image-filmstrip').className).not.toContain('max-w-');
+  });
+
+  it('has no navigation unless asked (2.546.0)', () => {
+    render(<ImageFilmstrip items={items} />);
+    expect(screen.queryByTestId('image-filmstrip-nav')).toBeNull();
+  });
+
+  it('navigation buttons move the controlled value, show label and position, and stop at the ends (2.546.0)', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const { rerender } = render(<ImageFilmstrip items={items} value="full" onValueChange={onValueChange} navigation />);
+    expect(screen.getByTestId('image-filmstrip-position')).toHaveTextContent('1 of 8');
+    expect(screen.getByTestId('image-filmstrip-current-label')).toHaveTextContent('Full');
+    expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+    expect(onValueChange).toHaveBeenLastCalledWith('front');
+    rerender(<ImageFilmstrip items={items} value="detail" onValueChange={onValueChange} navigation />);
+    expect(screen.getByTestId('image-filmstrip-position')).toHaveTextContent('8 of 8');
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Previous' }));
+    expect(onValueChange).toHaveBeenLastCalledWith('bottom');
+    expect(onValueChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('Left/Right arrow keys step the current item (uncontrolled) and stop at the ends (2.546.0)', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<ImageFilmstrip items={items.slice(0, 3)} onValueChange={onValueChange} navigation showPosition={false} />);
+    expect(screen.queryByTestId('image-filmstrip-position')).toBeNull();
+    screen.getByRole('button', { name: 'Front' }).focus();
+    await user.keyboard('{ArrowLeft}');
+    expect(onValueChange).not.toHaveBeenCalled();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByTestId('image-filmstrip-current-label')).toHaveTextContent('Front');
+    await user.keyboard('{ArrowRight}{ArrowRight}');
+    expect(screen.getByTestId('image-filmstrip-current-label')).toHaveTextContent('Side');
+    expect(onValueChange.mock.calls.map((c) => c[0])).toEqual(['front', 'side']);
+    await user.keyboard('{ArrowLeft}');
+    expect(screen.getByTestId('image-filmstrip-current-label')).toHaveTextContent('Front');
+  });
 });

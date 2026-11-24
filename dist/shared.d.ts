@@ -596,7 +596,7 @@ export declare function ArtifactTile({ name, type, url }: {
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit, aspect, statusPlacement, actionsLayout, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, actionsVisibility, tileActions, menuOnSelect, onDragStart, minTileWidth, fit, aspect, statusPlacement, actionsLayout, selectedId, onDoubleOpen, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -665,6 +665,22 @@ export declare interface AssetGalleryProps {
     actionsLayout?: 'wrap' | 'row';
     /** Host-owned typed drag payload; never infer identity from an image URL. */
     onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
+    /**
+     * The selected tile's id (2.546.0): that tile's thumbnail draws the
+     * library's selected ring (`ring-2 ring-primary`, offset on the surface),
+     * its button carries `aria-current="true"` and the tile
+     * `data-gallery-selected`. The host owns the value; a click still calls
+     * `onOpen`, which is where the host usually sets it.
+     */
+    selectedId?: string;
+    /**
+     * The tile's second action, on a double click (2.546.0): fired once per
+     * double click, so the host never times two clicks itself. Each click of
+     * the pair still calls `onOpen` (or opens the menu with `menuOnSelect`).
+     * Keyboard: Shift+Enter on the focused tile calls it (plain Enter and
+     * Space still call `onOpen`); the button names it in `aria-keyshortcuts`.
+     */
+    onDoubleOpen?: (item: GalleryAsset) => void;
     className?: string;
 }
 
@@ -5818,7 +5834,7 @@ export declare interface ImageCompareProps {
     'data-testid'?: string;
 }
 
-export declare function ImageFilmstrip({ items, value, defaultValue, onValueChange, caption, aspect, maxThumbs, onMore, label, className, 'data-testid': testId, }: ImageFilmstripProps): JSX.Element | null;
+export declare function ImageFilmstrip({ items, value, defaultValue, onValueChange, caption, aspect, maxThumbs, onMore, label, maxWidth, navigation, showPosition, className, 'data-testid': testId, }: ImageFilmstripProps): JSX.Element | null;
 
 export declare interface ImageFilmstripItem {
     id: string;
@@ -5847,6 +5863,24 @@ export declare interface ImageFilmstripProps {
     onMore?: () => void;
     /** Names the thumbnail group. Default "Views". */
     label?: string;
+    /**
+     * Hold the whole filmstrip (large frame and strip) to a named maximum
+     * width, the same scale as `ImageThumbnail`/`ImageCompare` (`xs` 20rem,
+     * `sm` 24rem, `md` 28rem, `lg` 32rem); without it it fills its column.
+     * Since 2.546.0.
+     */
+    maxWidth?: ImageMaxWidth;
+    /**
+     * Built-in navigation (2.546.0, off by default): previous / next icon
+     * buttons under the large frame with the current item's label between
+     * them, and Left / Right arrow keys anywhere inside the filmstrip move the
+     * current item (through `onValueChange`, or the own state when
+     * uncontrolled). It steps through every item, including those past
+     * `maxThumbs`, and stops at the ends (the end's button is disabled).
+     */
+    navigation?: boolean;
+    /** With `navigation`: show the position ("2 of 8") after the label. Default true. */
+    showPosition?: boolean;
     className?: string;
     'data-testid'?: string;
 }

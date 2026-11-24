@@ -84,3 +84,5 @@ export const LongActionsAt1440: Story = {
   args: castWithLongActions,
   render: (args) => <div className="w-[1440px] max-w-full"><AssetGallery {...args} /></div>,
 };
+/** 2.546.0: `selectedId` draws the selected ring; `onDoubleOpen` is the double click (Shift+Enter from the keyboard). */
+export const SelectedAndDoubleOpen: Story = { args: { label: 'Location references', variant: 'images', items: [{id: '1', title: 'Driveway'}, {id: '2', title: 'Kitchen'}, {id: '3', title: 'Yard'}], selectedId: '2', onOpen: () => {}, onDoubleOpen: () => {} } };

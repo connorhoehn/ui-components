@@ -27,3 +27,8 @@ export const ApprovedConcept: Story = {
 export const FourViews: Story = {
   args: { items: views.slice(0, 4), aspect: 'portrait' },
 };
+
+/** 2.546.0: held to `maxWidth="md"`, with built-in previous / next buttons, Left / Right keys and "2 of 7". */
+export const NavigationAndMaxWidth: Story = {
+  args: { items: views, caption: 'Approved concept · v2', maxThumbs: 5, maxWidth: 'md', navigation: true },
+};

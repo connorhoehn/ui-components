@@ -2682,17 +2682,24 @@ function _i({ value: e, label: t = "Copy id", className: n, "data-testid": r = "
 }
 //#endregion
 //#region src/components/shared/ImageFilmstrip.tsx
-function vi({ items: e, value: t, defaultValue: n, onValueChange: r, caption: a, aspect: o = "landscape", maxThumbs: c = 6, onMore: l, label: u = "Views", className: d, "data-testid": f = "image-filmstrip" }) {
-	let [p, m] = Y(n);
+function vi({ items: e, value: t, defaultValue: n, onValueChange: r, caption: a, aspect: o = "landscape", maxThumbs: c = 6, onMore: l, label: u = "Views", maxWidth: d, navigation: f = !1, showPosition: p = !0, className: m, "data-testid": h = "image-filmstrip" }) {
+	let [g, _] = Y(n);
 	if (e.length === 0) return null;
-	let h = t ?? p ?? e[0].id, g = e.find((e) => e.id === h) ?? e[0], _ = e.slice(0, Math.max(1, c)), y = e.length - _.length, S = (e) => {
-		t === void 0 && m(e), r?.(e);
+	let y = t ?? g ?? e[0].id, S = e.find((e) => e.id === y) ?? e[0], C = e.slice(0, Math.max(1, c)), w = e.length - C.length, T = (e) => {
+		t === void 0 && _(e), r?.(e);
+	}, E = e.indexOf(S), D = (t) => {
+		let n = e[E + t];
+		n && T(n.id);
 	};
 	return /* @__PURE__ */ Q(b, {
 		gap: "sm",
 		"data-image-filmstrip": "",
-		"data-testid": f,
-		className: i("min-w-0", d),
+		"data-testid": h,
+		"data-max-width": d,
+		onKeyDown: f ? (e) => {
+			e.altKey || e.ctrlKey || e.metaKey || (e.key === "ArrowLeft" ? (e.preventDefault(), D(-1)) : e.key === "ArrowRight" && (e.preventDefault(), D(1)));
+		} : void 0,
+		className: i("min-w-0", d && i("w-full", k[d]), m),
 		children: [
 			a != null && /* @__PURE__ */ Z(x, {
 				gap: "xs",
@@ -2705,14 +2712,58 @@ function vi({ items: e, value: t, defaultValue: n, onValueChange: r, caption: a,
 			}),
 			/* @__PURE__ */ Z(sr, {
 				images: [{
-					src: g.src,
-					alt: g.alt,
-					label: g.label,
-					description: g.description
+					src: S.src,
+					alt: S.alt,
+					label: S.label,
+					description: S.description
 				}],
 				aspect: o,
 				fit: "contain",
-				"data-testid": `${f}-current`
+				"data-testid": `${h}-current`
+			}),
+			f && e.length > 1 && /* @__PURE__ */ Q(x, {
+				gap: "xs",
+				align: "center",
+				justify: "between",
+				wrap: !1,
+				role: "group",
+				"aria-label": `${u} navigation`,
+				"data-testid": `${h}-nav`,
+				children: [
+					/* @__PURE__ */ Z(z, {
+						size: "sm",
+						"aria-label": "Previous",
+						icon: /* @__PURE__ */ Z(U, { dir: "left" }),
+						disabled: E <= 0,
+						onClick: () => D(-1),
+						"data-testid": `${h}-prev`
+					}),
+					/* @__PURE__ */ Q("span", {
+						className: "flex min-w-0 items-baseline gap-2 text-sm",
+						children: [/* @__PURE__ */ Z("span", {
+							className: "truncate font-medium text-text-primary",
+							"data-testid": `${h}-current-label`,
+							children: S.label
+						}), p && /* @__PURE__ */ Q("span", {
+							className: "shrink-0 text-xs text-text-secondary tabular-nums",
+							"aria-live": "polite",
+							"data-testid": `${h}-position`,
+							children: [
+								E + 1,
+								" of ",
+								e.length
+							]
+						})]
+					}),
+					/* @__PURE__ */ Z(z, {
+						size: "sm",
+						"aria-label": "Next",
+						icon: /* @__PURE__ */ Z(U, { dir: "right" }),
+						disabled: E >= e.length - 1,
+						onClick: () => D(1),
+						"data-testid": `${h}-next`
+					})
+				]
 			}),
 			e.length > 1 && /* @__PURE__ */ Q(x, {
 				gap: "xs",
@@ -2720,9 +2771,9 @@ function vi({ items: e, value: t, defaultValue: n, onValueChange: r, caption: a,
 				wrap: !0,
 				role: "group",
 				"aria-label": u,
-				"data-testid": `${f}-thumbs`,
-				children: [_.map((e) => {
-					let t = e.id === g.id;
+				"data-testid": `${h}-thumbs`,
+				children: [C.map((e) => {
+					let t = e.id === S.id;
 					return /* @__PURE__ */ Z("button", {
 						type: "button",
 						"data-ui-part": "",
@@ -2730,7 +2781,7 @@ function vi({ items: e, value: t, defaultValue: n, onValueChange: r, caption: a,
 						"aria-pressed": t,
 						"aria-label": e.label,
 						title: e.label,
-						onClick: () => S(e.id),
+						onClick: () => T(e.id),
 						className: i("block h-14 w-14 shrink-0 cursor-pointer overflow-hidden rounded-md border bg-surface-inset p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", t ? "border-primary ring-1 ring-primary" : "border-border hover:border-border-emphasis"),
 						children: /* @__PURE__ */ Z("span", {
 							"data-ui-part": "",
@@ -2746,14 +2797,14 @@ function vi({ items: e, value: t, defaultValue: n, onValueChange: r, caption: a,
 							})
 						})
 					}, e.id);
-				}), y > 0 && l && /* @__PURE__ */ Q(s, {
+				}), w > 0 && l && /* @__PURE__ */ Q(s, {
 					variant: "ghost",
 					size: "sm",
 					onClick: l,
-					"data-testid": `${f}-more`,
+					"data-testid": `${h}-more`,
 					children: [
 						"+",
-						y,
+						w,
 						" more"
 					]
 				})]
@@ -10749,39 +10800,43 @@ var Wl = {
 	portrait: "aspect-[3/4]",
 	square: "aspect-square"
 };
-function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, tileActions: o, menuOnSelect: c, onDragStart: l, minTileWidth: u, fit: d = "cover", aspect: f = "landscape", statusPlacement: p = "overlay", actionsLayout: m = "wrap" }) {
-	let h = u ? Math.round(u * .8) : 88, g = K(), _ = J(null), [v, y] = Y(!1), b = e.status, x = b != null && b !== !1 && b !== "", S = !!o && o.length > 0, C = x && t === "avatars", w = x && t === "images" && p === "caption", T = x ? Bl(b) ? /* @__PURE__ */ Z(Hl, {
-		status: b,
-		caption: C || w
-	}) : b : null, E = !e.src && e.placeholder ? /* @__PURE__ */ Z(Ul, {
+function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, tileActions: o, menuOnSelect: c, onDragStart: l, minTileWidth: u, fit: d = "cover", aspect: f = "landscape", statusPlacement: p = "overlay", actionsLayout: m = "wrap", selected: h, onDoubleOpen: g }) {
+	let _ = u ? Math.round(u * .8) : 88, v = K(), y = J(null), [b, x] = Y(!1), S = e.status, C = S != null && S !== !1 && S !== "", w = !!o && o.length > 0, T = C && t === "avatars", E = C && t === "images" && p === "caption", D = C ? Bl(S) ? /* @__PURE__ */ Z(Hl, {
+		status: S,
+		caption: T || E
+	}) : S : null, O = !e.src && e.placeholder ? /* @__PURE__ */ Z(Ul, {
 		text: e.placeholder,
 		variant: t
-	}) : null, D = S && !!c, O = () => {
-		S && y(!0);
-	}, k = (e) => {
-		y(!1), e.onClick(_.current ?? document.body), _.current?.focus();
+	}) : null, k = w && !!c, A = () => {
+		w && x(!0);
+	}, j = (e) => {
+		x(!1), e.onClick(y.current ?? document.body), y.current?.focus();
 	};
 	return /* @__PURE__ */ Q("div", {
 		role: "listitem",
 		className: "group relative min-w-0",
 		"data-gallery-tile": e.id,
+		"data-gallery-selected": h ? "" : void 0,
 		children: [
 			/* @__PURE__ */ Q("button", {
 				"data-ui-part": "",
-				ref: _,
+				ref: y,
 				type: "button",
 				draggable: !!l,
 				onDragStart: (t) => l?.(e, t),
-				"aria-label": D ? `${e.title}: actions` : `Inspect ${e.title}`,
-				"aria-describedby": x ? g : void 0,
-				"aria-haspopup": S ? "dialog" : void 0,
-				"aria-expanded": S ? v : void 0,
-				onClick: () => D ? O() : n(e),
-				onKeyDown: (e) => {
-					S && (e.key === "ContextMenu" || e.key === "F10" && e.shiftKey) && (e.preventDefault(), O());
+				"aria-label": k ? `${e.title}: actions` : `Inspect ${e.title}`,
+				"aria-describedby": C ? v : void 0,
+				"aria-haspopup": w ? "dialog" : void 0,
+				"aria-expanded": w ? b : void 0,
+				"aria-current": h ? "true" : void 0,
+				"aria-keyshortcuts": g ? "Shift+Enter" : void 0,
+				onClick: () => k ? A() : n(e),
+				onDoubleClick: g ? () => g(e) : void 0,
+				onKeyDown: (t) => {
+					w && (t.key === "ContextMenu" || t.key === "F10" && t.shiftKey) ? (t.preventDefault(), A()) : g && t.key === "Enter" && t.shiftKey && (t.preventDefault(), g(e));
 				},
-				onContextMenu: S ? (e) => {
-					e.preventDefault(), O();
+				onContextMenu: w ? (e) => {
+					e.preventDefault(), A();
 				} : void 0,
 				className: "block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 				children: [
@@ -10789,12 +10844,12 @@ function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 						"data-gallery-thumbnail": !0,
 						"data-gallery-fit": t === "images" ? d : void 0,
 						"data-gallery-aspect": t === "images" ? f : void 0,
-						className: i("flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover", t === "images" && Wl[f]),
-						children: E ?? (t === "avatars" ? /* @__PURE__ */ Z(gt, {
+						className: i("flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover", t === "images" && Wl[f], h && "ring-2 ring-primary ring-offset-2 ring-offset-surface"),
+						children: O ?? (t === "avatars" ? /* @__PURE__ */ Z(gt, {
 							name: e.title,
 							src: e.src,
 							imagePosition: e.imagePosition,
-							size: h,
+							size: _,
 							className: "max-h-full max-w-full"
 						}) : e.src ? /* @__PURE__ */ Z("img", {
 							draggable: !1,
@@ -10805,14 +10860,14 @@ function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 							...e.imagePosition ? { style: { objectPosition: e.imagePosition } } : {}
 						}) : /* @__PURE__ */ Z("span", {
 							className: "text-xs text-text-secondary",
-							children: x ? "No image yet" : "Image unavailable"
+							children: C ? "No image yet" : "Image unavailable"
 						}))
 					}),
-					C && /* @__PURE__ */ Z("span", {
-						id: g,
+					T && /* @__PURE__ */ Z("span", {
+						id: v,
 						"data-gallery-status": "caption",
 						className: "mt-1 flex min-w-0",
-						children: T
+						children: D
 					}),
 					/* @__PURE__ */ Z("span", {
 						className: "mt-1 block truncate text-sm font-medium text-text-primary",
@@ -10824,30 +10879,30 @@ function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 						title: e.subtitle,
 						children: e.subtitle
 					}),
-					w && /* @__PURE__ */ Z("span", {
-						id: g,
+					E && /* @__PURE__ */ Z("span", {
+						id: v,
 						"data-gallery-status": "line",
 						className: "mt-1 flex min-h-5 min-w-0",
-						children: T
+						children: D
 					})
 				]
 			}),
-			x && !C && !w && /* @__PURE__ */ Z("span", {
-				id: g,
+			C && !T && !E && /* @__PURE__ */ Z("span", {
+				id: v,
 				"data-gallery-status": "",
 				className: "pointer-events-none absolute left-2 top-2 max-w-[calc(100%-1rem)]",
-				children: T
+				children: D
 			}),
-			S && /* @__PURE__ */ Z(Rt, {
+			w && /* @__PURE__ */ Z(Rt, {
 				label: `${e.title} actions`,
 				actions: o,
 				"data-testid": `gallery-tile-actions-${e.id}`,
 				className: "absolute right-1.5 top-1.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100"
 			}),
-			S && /* @__PURE__ */ Q(He, {
-				open: v,
-				onClose: () => y(!1),
-				trigger: _,
+			w && /* @__PURE__ */ Q(He, {
+				open: b,
+				onClose: () => x(!1),
+				trigger: y,
 				placement: "bottom-start",
 				"aria-label": `${e.title} actions`,
 				className: "flex min-w-44 flex-col p-1",
@@ -10858,7 +10913,7 @@ function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 					className: "justify-start",
 					autoFocus: !0,
 					onClick: () => {
-						y(!1), n(e);
+						x(!1), n(e);
 					},
 					children: "Open"
 				}), o.map((e, t) => /* @__PURE__ */ Q(s, {
@@ -10867,7 +10922,7 @@ function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 					className: "justify-start gap-2",
 					disabled: e.disabled,
 					autoFocus: !c && t === 0,
-					onClick: () => k(e),
+					onClick: () => j(e),
 					children: [/* @__PURE__ */ Z("span", {
 						"aria-hidden": !0,
 						className: "inline-flex shrink-0 [&_svg]:size-4",
@@ -10885,15 +10940,15 @@ function Gl({ item: e, variant: t, onOpen: n, actions: r, actionsVisibility: a, 
 		]
 	});
 }
-function Kl({ items: e, variant: t = "images", label: n, onOpen: r, actions: a, actionsVisibility: o = "hover", tileActions: s, menuOnSelect: c = !1, onDragStart: l, minTileWidth: u, fit: d = "cover", aspect: f = "landscape", statusPlacement: p = "overlay", actionsLayout: m = "wrap", className: h }) {
-	let g = u != null && u > 0, _ = g ? { "--gallery-min-tile": `${u}px` } : void 0;
+function Kl({ items: e, variant: t = "images", label: n, onOpen: r, actions: a, actionsVisibility: o = "hover", tileActions: s, menuOnSelect: c = !1, onDragStart: l, minTileWidth: u, fit: d = "cover", aspect: f = "landscape", statusPlacement: p = "overlay", actionsLayout: m = "wrap", selectedId: h, onDoubleOpen: g, className: _ }) {
+	let v = u != null && u > 0, y = v ? { "--gallery-min-tile": `${u}px` } : void 0;
 	return /* @__PURE__ */ Z("div", {
 		role: "list",
 		"aria-label": n,
 		"data-asset-gallery": t,
-		"data-gallery-columns": g ? "auto-fill" : "fixed",
-		className: i("grid gap-3", g ? "grid-cols-[repeat(auto-fill,minmax(min(var(--gallery-min-tile),100%),1fr))]" : t === "avatars" ? "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" : "grid-cols-2 md:grid-cols-3 xl:grid-cols-4", h),
-		style: _,
+		"data-gallery-columns": v ? "auto-fill" : "fixed",
+		className: i("grid gap-3", v ? "grid-cols-[repeat(auto-fill,minmax(min(var(--gallery-min-tile),100%),1fr))]" : t === "avatars" ? "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" : "grid-cols-2 md:grid-cols-3 xl:grid-cols-4", _),
+		style: y,
 		children: e.map((e) => /* @__PURE__ */ Z(Gl, {
 			item: e,
 			variant: t,
@@ -10907,7 +10962,9 @@ function Kl({ items: e, variant: t = "images", label: n, onOpen: r, actions: a, 
 			aspect: f,
 			statusPlacement: p,
 			actionsLayout: m,
-			...g ? { minTileWidth: u } : {}
+			selected: h != null && e.id === h,
+			onDoubleOpen: g,
+			...v ? { minTileWidth: u } : {}
 		}, e.id))
 	});
 }

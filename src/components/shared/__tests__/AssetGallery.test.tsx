@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { AssetGallery } from '../AssetGallery';
 describe('AssetGallery', () => {
  it('delegates typed drags to the host without opening the item', () => {
@@ -166,5 +167,38 @@ describe('AssetGallery card shape (G150-3, G150-4, G150-5)', () => {
     expect(container.querySelector('[data-gallery-thumbnail]')!.className).toContain('aspect-[4/3]');
     expect(container.querySelectorAll('[data-gallery-status=""]')).toHaveLength(2);
     expect(container.querySelector('[data-gallery-actions-layout]')!.getAttribute('data-gallery-actions-layout')).toBe('wrap');
+  });
+  it('marks the selectedId tile with the selected ring and aria-current (2.546.0)', () => {
+    const items=[{id:'a',title:'Cup',src:'/a.png'},{id:'b',title:'Mug',src:'/b.png'}];
+    const {container}=render(<AssetGallery label="Props" items={items} selectedId="b" onOpen={()=>{}} />);
+    expect(screen.getByRole('button',{name:'Inspect Mug'})).toHaveAttribute('aria-current','true');
+    expect(screen.getByRole('button',{name:'Inspect Cup'})).not.toHaveAttribute('aria-current');
+    expect(container.querySelector('[data-gallery-tile="b"]')).toHaveAttribute('data-gallery-selected');
+    expect(container.querySelector('[data-gallery-tile="a"]')).not.toHaveAttribute('data-gallery-selected');
+    const thumb=container.querySelector('[data-gallery-tile="b"] [data-gallery-thumbnail]')!;
+    expect(thumb.className).toContain('ring-2');expect(thumb.className).toContain('ring-primary');
+    expect(container.querySelector('[data-gallery-tile="a"] [data-gallery-thumbnail]')!.className).not.toContain('ring-primary');
+  });
+  it('onDoubleOpen fires once per double click while each click still calls onOpen (2.546.0)', () => {
+    const open=vi.fn(),dbl=vi.fn(),item={id:'a',title:'Cup',src:'/a.png'};
+    render(<AssetGallery label="Props" items={[item]} onOpen={open} onDoubleOpen={dbl} />);
+    const button=screen.getByRole('button',{name:'Inspect Cup'});
+    fireEvent.click(button);expect(open).toHaveBeenCalledOnce();expect(dbl).not.toHaveBeenCalled();
+    fireEvent.click(button);fireEvent.doubleClick(button);
+    expect(dbl).toHaveBeenCalledOnce();expect(dbl).toHaveBeenCalledWith(item);expect(open).toHaveBeenCalledTimes(2);
+    expect(button).toHaveAttribute('aria-keyshortcuts','Shift+Enter');
+  });
+  it('Shift+Enter reaches onDoubleOpen from the keyboard without opening; Enter still opens (2.546.0)', async () => {
+    const user=userEvent.setup();const open=vi.fn(),dbl=vi.fn(),item={id:'a',title:'Cup'};
+    render(<AssetGallery label="Props" items={[item]} onOpen={open} onDoubleOpen={dbl} />);
+    screen.getByRole('button',{name:'Inspect Cup'}).focus();
+    await user.keyboard('{Shift>}{Enter}{/Shift}');
+    expect(dbl).toHaveBeenCalledOnce();expect(open).not.toHaveBeenCalled();
+    await user.keyboard('{Enter}');
+    expect(open).toHaveBeenCalledOnce();expect(dbl).toHaveBeenCalledOnce();
+  });
+  it('without onDoubleOpen no shortcut is announced (2.546.0)', () => {
+    render(<AssetGallery label="Props" items={[{id:'a',title:'Cup'}]} onOpen={()=>{}} />);
+    expect(screen.getByRole('button',{name:'Inspect Cup'})).not.toHaveAttribute('aria-keyshortcuts');
   });
 });

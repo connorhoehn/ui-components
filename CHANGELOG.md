@@ -1,3 +1,8 @@
+## 2.546.0
+
+- `AssetGallery`: `selectedId` marks that tile selected: its thumbnail draws the library's selected ring (`ring-2 ring-primary`, offset on the surface), its button carries `aria-current="true"` and the tile `data-gallery-selected`, so a host no longer writes "Selected" into the status. `onDoubleOpen(item)` is the tile's double-click action, fired once per double click; each click of the pair still calls `onOpen` (or opens the menu with `menuOnSelect`). From the keyboard, Shift+Enter on the focused tile calls `onDoubleOpen` without calling `onOpen` (plain Enter and Space still open); the button names it in `aria-keyshortcuts="Shift+Enter"`. Without either prop the gallery is unchanged.
+- `ImageFilmstrip`: `maxWidth` (`ImageMaxWidth`: `xs` 20rem, `sm` 24rem, `md` 28rem, `lg` 32rem, the same scale as `ImageThumbnail`/`ImageCompare`) holds the whole filmstrip to a named width (`data-max-width` on the root). `navigation` (off by default) adds previous / next icon buttons under the large frame with the current item's label between them and, with `showPosition` (default true), its position ("2 of 8", polite live region); Left / Right arrow keys anywhere inside the filmstrip step the current item. It moves the controlled `value` through `onValueChange` (or its own state when uncontrolled), steps through every item including those past `maxThumbs`, and stops at the ends (that end's button is disabled). Parts: `<testid>-nav`, `-prev`, `-next`, `-current-label`, `-position`.
+
 ## 2.545.0
 
 - `DataTable`: with `rowChildren`, the leading expand column's header cell follows `headerCase="sentence"` (it drew uppercase) and carries only a screen-reader name ("Expand"), no visible text.
