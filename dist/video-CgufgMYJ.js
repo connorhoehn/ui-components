@@ -8,21 +8,21 @@ import { n as c, r as l } from "./useAudioRecorder-BhPxnLmg.js";
 import { t as u } from "./Card-B4INuMUn.js";
 import { t as d } from "./IconButton-BmDqeC-b.js";
 import { $ as f, B as p, E as m, S as h, Y as g, at as _, d as v, h as y, m as b, n as x, pt as S, s as C, tt as w } from "./Icons-CNCMF52q.js";
-import { _ as T, a as E, b as D, c as O, d as k, f as A, h as j, i as M, l as N, m as P, n as F, o as I, p as L, s as R, t as z, u as ee, x as B, y as V } from "./MediaIcons-_ai5Til2.js";
-import { t as te } from "./Badge-6OgnZqRb.js";
-import { t as H } from "./Banner-et6Y4oMz.js";
-import { t as ne } from "./overlayStack-BFH9XXvN.js";
-import { t as re } from "./Modal-CEcJQMxG.js";
-import { t as ie } from "./Input-B5h9UXBs.js";
-import { t as U } from "./Select-nxx_K9gv.js";
-import { n as ae, t as oe } from "./Tooltip-BaCci7O5.js";
-import { t as se } from "./InlinePopover-C-Dtxban.js";
-import { t as ce } from "./FormField-BwK2AS6I.js";
-import { i as le, n as ue, r as de, t as fe } from "./Drawer-C7rLIxh5.js";
-import { t as pe } from "./Spinner-DxWx16F-.js";
-import { n as me, r as he, t as ge } from "./focusTrap-CmWJlptm.js";
-import { t as _e } from "./Slider-CQoCab1A.js";
-import { t as ve } from "./DropdownMenu-Bu9IMVKk.js";
+import { _ as T, a as E, b as D, c as O, d as k, f as A, h as j, i as M, l as N, m as P, n as F, o as I, p as L, s as R, t as ee, u as te, x as ne, y as z } from "./MediaIcons-_ai5Til2.js";
+import { t as re } from "./Badge-6OgnZqRb.js";
+import { t as B } from "./Banner-et6Y4oMz.js";
+import { t as ie } from "./overlayStack-BFH9XXvN.js";
+import { t as ae } from "./Modal-CEcJQMxG.js";
+import { t as oe } from "./Input-B5h9UXBs.js";
+import { t as V } from "./Select-nxx_K9gv.js";
+import { n as se, t as ce } from "./Tooltip-BaCci7O5.js";
+import { t as le } from "./InlinePopover-C-Dtxban.js";
+import { t as ue } from "./FormField-BwK2AS6I.js";
+import { t as H } from "./DropdownMenu-Bu9IMVKk.js";
+import { i as de, n as fe, r as pe, t as me } from "./Drawer-C7rLIxh5.js";
+import { t as U } from "./Spinner-DxWx16F-.js";
+import { n as he, r as ge, t as _e } from "./focusTrap-CmWJlptm.js";
+import { t as ve } from "./Slider-CQoCab1A.js";
 import { t as ye } from "./SegmentedControl-CKdSbD8t.js";
 import { n as be } from "./Tabs-DgsRfc8i.js";
 import { n as W, r as G } from "./Avatar-BWzSZ73h.js";
@@ -36,8 +36,8 @@ import { n as Ae } from "./RovingToolbar-CaWm5s1M.js";
 import { t as je } from "./PresenceAvatars-g_VszLJh.js";
 import { t as Me } from "./Checkbox-tmvdkINV.js";
 import { t as Ne } from "./activationKey-CjbL3LUv.js";
-import { A as Pe, C as Fe, E as Ie, H as Le, K as Re, S as ze, U as Be, X as Ve, Z as He, ct as Ue, k as We, lt as Ge, ot as Ke } from "./BreakoutRoomsPanel-riRiQX7i.js";
-import "./RecordingConsentNotice-CjFSG2H_.js";
+import { A as Pe, C as Fe, E as Ie, H as Le, K as Re, S as ze, U as Be, X as Ve, Z as He, ct as Ue, k as We, lt as Ge, ot as Ke } from "./BreakoutRoomsPanel-lwKCTy4H.js";
+import "./RecordingConsentNotice-C8BV_MM1.js";
 import { useCallback as K, useEffect as q, useId as qe, useImperativeHandle as Je, useLayoutEffect as Ye, useMemo as Xe, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -225,7 +225,7 @@ function nt(e) {
 	return e < 1024 ? `${e} B` : e < 1048576 ? `${(e / 1024).toFixed(1)} KB` : e < 1073741824 ? `${(e / 1048576).toFixed(1)} MB` : `${(e / 1073741824).toFixed(2)} GB`;
 }
 function rt({ onClose: t, sources: n, title: r, subtitle: i, autoPlay: a = !0, muted: s = !1, hideDownload: c = !1, header: l, footer: u, className: d }) {
-	let f = Xe(() => n.filter((e) => !!e.url), [n]), [p, m] = Y(0), h = f[p], g = J(null), _ = J(null), v = ne(!0);
+	let f = Xe(() => n.filter((e) => !!e.url), [n]), [p, m] = Y(0), h = f[p], g = J(null), _ = J(null), v = ie(!0);
 	return q(() => {
 		let e = (e) => {
 			if (v()) {
@@ -233,12 +233,12 @@ function rt({ onClose: t, sources: n, title: r, subtitle: i, autoPlay: a = !0, m
 					t();
 					return;
 				}
-				he(e, g.current);
+				ge(e, g.current);
 			}
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
-	}, [t, v]), q(() => (_.current = typeof document < "u" ? document.activeElement : null, ge(g.current), () => {
-		me(_.current), _.current = null;
+	}, [t, v]), q(() => (_.current = typeof document < "u" ? document.activeElement : null, _e(g.current), () => {
+		he(_.current), _.current = null;
 	}), []), /* @__PURE__ */ Z("div", {
 		role: "dialog",
 		"aria-modal": "true",
@@ -1118,8 +1118,8 @@ function zt(e) {
 function Bt(e) {
 	switch (e) {
 		case "chat": return /* @__PURE__ */ Z(F, { size: 16 });
-		case "people": return /* @__PURE__ */ Z(V, { size: 16 });
-		case "captions": return /* @__PURE__ */ Z(z, { size: 16 });
+		case "people": return /* @__PURE__ */ Z(z, { size: 16 });
+		case "captions": return /* @__PURE__ */ Z(ee, { size: 16 });
 		case "devices": return /* @__PURE__ */ Z(j, { size: 16 });
 		default: return null;
 	}
@@ -1226,7 +1226,7 @@ function Gt({ tabs: t, activeTab: n, onTabChange: r, mode: i = "window", open: a
 							children: t.label
 						}, t.id);
 					})
-				}), C.length > 0 && /* @__PURE__ */ Z(ve, {
+				}), C.length > 0 && /* @__PURE__ */ Z(H, {
 					trigger: /* @__PURE__ */ Q("span", {
 						className: "inline-flex items-center gap-1",
 						children: ["More", /* @__PURE__ */ Z("span", {
@@ -1883,32 +1883,32 @@ function un({ onSnap: t, contained: n }) {
 		}, e))
 	});
 }
-function dn({ state: t, mode: n, participants: r, localParticipant: i, callerName: a, duration: o, isMuted: s = !1, isCameraOn: c = !0, isScreenSharing: l = !1, onAnswer: u, onDecline: d, onEndCall: f, onToggleMute: p, onToggleCamera: m, onToggleScreenShare: h, onUpgradeToVideo: g, audioDisabled: _ = !1, audioDisabledReason: v, videoDisabled: y = !1, videoDisabledReason: b, screenShareDisabled: x = !1, screenShareDisabledReason: S, onAddParticipant: C, availableParticipants: w, controlsExtras: T, onOpenAddParticipant: E, onMinimize: D, onExpand: O, layoutComponent: k, callStats: A, displayMode: j, minimized: M, sidePanelTabs: N, activeSidePanelTab: P = null, onSidePanelTabChange: F, sidePanelWidthClassName: I = "w-80", dockTargets: L, activeDockId: R = null, onDockTo: z, onDragStateChange: ee, position: B = "bottom-right", contained: V = !1, draggable: te = !0, className: H, style: ne, dataAttrs: re }) {
+function dn({ state: t, mode: n, participants: r, localParticipant: i, callerName: a, duration: o, isMuted: s = !1, isCameraOn: c = !0, isScreenSharing: l = !1, onAnswer: u, onDecline: d, onEndCall: f, onToggleMute: p, onToggleCamera: m, onToggleScreenShare: h, onUpgradeToVideo: g, audioDisabled: _ = !1, audioDisabledReason: v, videoDisabled: y = !1, videoDisabledReason: b, screenShareDisabled: x = !1, screenShareDisabledReason: S, onAddParticipant: C, availableParticipants: w, controlsExtras: T, onOpenAddParticipant: E, onMinimize: D, onExpand: O, layoutComponent: k, callStats: A, displayMode: j, minimized: M, sidePanelTabs: N, activeSidePanelTab: P = null, onSidePanelTabChange: F, sidePanelWidthClassName: I = "w-80", dockTargets: L, activeDockId: R = null, onDockTo: ee, onDragStateChange: te, position: ne = "bottom-right", contained: z = !1, draggable: re = !0, className: B, style: ie, dataAttrs: ae }) {
 	j !== void 0 && M !== void 0 && Xt("CallWidget", "minimized");
-	let ie = j ?? Jt(M ?? !1), U = ie === "mini", ae = N ?? [], oe = ae.length > 0 && !U && t === "active", se = oe && ae.some((e) => e.id === P), ce = (L ?? []).length > 0, le = ce && R != null, ue = te && !le, de = re?.["data-call-id"], fe = de == null || de === "" ? void 0 : String(de), pe = K((e) => {
+	let oe = j ?? Jt(M ?? !1), V = oe === "mini", se = N ?? [], ce = se.length > 0 && !V && t === "active", le = ce && se.some((e) => e.id === P), ue = (L ?? []).length > 0, H = ue && R != null, de = re && !H, fe = ae?.["data-call-id"], pe = fe == null || fe === "" ? void 0 : String(fe), me = K((e) => {
 		let t = e.dataTransfer;
 		if (!t) return;
 		let n = {
-			callId: fe,
+			callId: pe,
 			fromDockId: R ?? null
 		};
 		t.setData(en, JSON.stringify(n)), t.effectAllowed = "move";
-	}, [fe, R]), { offset: me, handleMouseDown: he, resetOffset: ge, snapToCorner: _e, isDragging: ve, isAnimating: ye, hasMoved: be, widgetRef: W } = ln(ue, K((e) => {
+	}, [pe, R]), { offset: U, handleMouseDown: he, resetOffset: ge, snapToCorner: _e, isDragging: ve, isAnimating: ye, hasMoved: be, widgetRef: W } = ln(de, K((e) => {
 		for (let t of document.querySelectorAll("[data-call-dock-target]")) e && t.dataset.callDockTarget === e ? t.dataset.pointerOver = "true" : delete t.dataset.pointerOver;
-	}, []), K((e) => z ? (z(e), !0) : !1, [z])), G = J(ee);
-	G.current = ee, q(() => {
+	}, []), K((e) => ee ? (ee(e), !0) : !1, [ee])), G = J(te);
+	G.current = te, q(() => {
 		G.current?.(ve);
 	}, [ve]);
 	let xe = {};
-	if (re) for (let [e, t] of Object.entries(re)) t != null && t !== "" && (xe[e] = t);
+	if (ae) for (let [e, t] of Object.entries(ae)) t != null && t !== "" && (xe[e] = t);
 	let Se = Xe(() => {
-		switch (B) {
+		switch (ne) {
 			case "bottom-left": return "bottom-4 left-4";
 			case "top-right": return "top-4 right-4";
 			case "top-left": return "top-4 left-4";
 			default: return "bottom-4 right-4";
 		}
-	}, [B]);
+	}, [ne]);
 	if (t === "idle" || t === "ended") return null;
 	let Ce = /* @__PURE__ */ Q(X, { children: [
 		t === "ringing" && /* @__PURE__ */ Z(an, {
@@ -1926,7 +1926,7 @@ function dn({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 		}),
 		t === "active" && /* @__PURE__ */ Z(on, {
 			mode: n,
-			fillHeight: se,
+			fillHeight: le,
 			participants: r,
 			localParticipant: i,
 			duration: o,
@@ -1946,8 +1946,8 @@ function dn({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 			onAddParticipant: C,
 			availableParticipants: w,
 			onOpenAddParticipant: E,
-			controlsExtras: oe ? /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z(Vt, {
-				tabs: ae,
+			controlsExtras: ce ? /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z(Vt, {
+				tabs: se,
 				activeTab: P,
 				onTabChange: F
 			}), T] }) : T,
@@ -1958,36 +1958,36 @@ function dn({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 	] });
 	return /* @__PURE__ */ Q(X, { children: [ve && /* @__PURE__ */ Z(un, {
 		onSnap: _e,
-		contained: V
+		contained: z
 	}), /* @__PURE__ */ Z("div", {
 		ref: W,
 		"data-testid": "call-widget",
 		"data-call-state": t,
-		"data-call-widget-mode": ie,
-		"data-call-widget-mode-legacy": qt(ie),
-		"data-call-dock-id": le ? R : void 0,
-		className: e(le ? "relative" : [V ? "absolute z-50" : "fixed z-[10001]", Se], H),
+		"data-call-widget-mode": oe,
+		"data-call-widget-mode-legacy": qt(oe),
+		"data-call-dock-id": H ? R : void 0,
+		className: e(H ? "relative" : [z ? "absolute z-50" : "fixed z-[10001]", Se], B),
 		style: {
-			transform: le ? void 0 : `translate(${me.x}px, ${me.y}px)`,
+			transform: H ? void 0 : `translate(${U.x}px, ${U.y}px)`,
 			transition: ye ? "transform 0.2s ease-out" : void 0,
-			...ne
+			...ie
 		},
 		...xe,
 		children: /* @__PURE__ */ Q("div", {
-			className: e("bg-call-chrome rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-call-chrome-border overflow-hidden backdrop-blur-sm", U ? "w-[260px]" : se ? "w-auto" : Zt),
-			"data-call-side-panel-open": se ? "true" : "false",
+			className: e("bg-call-chrome rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-call-chrome-border overflow-hidden backdrop-blur-sm", V ? "w-[260px]" : le ? "w-auto" : Zt),
+			"data-call-side-panel-open": le ? "true" : "false",
 			children: [
-				!U && /* @__PURE__ */ Q("div", {
-					className: e("relative flex items-center justify-between px-3 py-2 border-b border-white/5", ue && "cursor-grab active:cursor-grabbing"),
+				!V && /* @__PURE__ */ Q("div", {
+					className: e("relative flex items-center justify-between px-3 py-2 border-b border-white/5", de && "cursor-grab active:cursor-grabbing"),
 					onMouseDown: he,
-					draggable: le || void 0,
-					onDragStart: ce ? pe : void 0,
-					"data-call-dock-source": ce ? "true" : void 0,
+					draggable: H || void 0,
+					onDragStart: ue ? me : void 0,
+					"data-call-dock-source": ue ? "true" : void 0,
 					children: [/* @__PURE__ */ Q("div", {
 						className: "flex items-center gap-2",
 						children: [
-							ce && /* @__PURE__ */ Z("span", {
-								draggable: le || void 0,
+							ue && /* @__PURE__ */ Z("span", {
+								draggable: H || void 0,
 								className: "flex h-5 w-5 shrink-0 cursor-grab items-center justify-center rounded text-white/60 hover:bg-white/10 hover:text-white active:cursor-grabbing transition-colors",
 								title: "Drag the call into the page",
 								"data-testid": "call-dock-drag-handle",
@@ -2045,8 +2045,8 @@ function dn({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 						]
 					})]
 				}),
-				U && /* @__PURE__ */ Z("div", {
-					className: e(ue && "cursor-grab active:cursor-grabbing"),
+				V && /* @__PURE__ */ Z("div", {
+					className: e(de && "cursor-grab active:cursor-grabbing"),
 					onMouseDown: he,
 					children: /* @__PURE__ */ Z(sn, {
 						state: t,
@@ -2061,7 +2061,7 @@ function dn({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 						onExpand: D
 					})
 				}),
-				!U && (se ? /* @__PURE__ */ Q("div", {
+				!V && (le ? /* @__PURE__ */ Q("div", {
 					className: e("flex min-h-0 items-stretch", "h-[480px]"),
 					"data-testid": "call-widget-dock-row",
 					children: [/* @__PURE__ */ Z("div", {
@@ -2069,8 +2069,8 @@ function dn({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 						"data-testid": "call-widget-stage-column",
 						children: Ce
 					}), /* @__PURE__ */ Z(Gt, {
-						mode: ie,
-						tabs: ae,
+						mode: oe,
+						tabs: se,
 						activeTab: P,
 						onTabChange: F,
 						widthClassName: I
@@ -2375,7 +2375,7 @@ function yn({ playlistUrl: t, poster: n, autoPlay: r = !1, muted: i = !1, onLoad
 								"aria-label": "Volume"
 							})]
 						}),
-						/* @__PURE__ */ Z(U, {
+						/* @__PURE__ */ Z(V, {
 							size: "sm",
 							value: String(D),
 							onChange: I,
@@ -2516,7 +2516,7 @@ function Cn({ id: t, startIso: n, durationSec: r, participantCount: i, thumbnail
 				}), typeof i == "number" && i > 0 && /* @__PURE__ */ Q("span", {
 					className: "inline-flex shrink-0 items-center gap-1 rounded bg-white/5 px-1.5 py-0.5 text-xs text-[var(--color-text-secondary)]",
 					title: `${i} ${i === 1 ? "person" : "people"} in this call`,
-					children: [i, /* @__PURE__ */ Z(V, { size: 12 })]
+					children: [i, /* @__PURE__ */ Z(z, { size: 12 })]
 				})]
 			}),
 			o && /* @__PURE__ */ Z("div", {
@@ -2629,7 +2629,7 @@ function An({ open: e, expiresAt: n, onSave: r, onClose: i, title: a = "Recordin
 			}
 		}
 	};
-	return /* @__PURE__ */ Z(re, {
+	return /* @__PURE__ */ Z(ae, {
 		open: e,
 		onClose: i,
 		title: a,
@@ -2668,7 +2668,7 @@ function An({ open: e, expiresAt: n, onSave: r, onClose: i, title: a = "Recordin
 						"data-testid": `${o}-choice-${e.id}`
 					}, e.id))
 				}),
-				s === "custom" && /* @__PURE__ */ Z(ce, {
+				s === "custom" && /* @__PURE__ */ Z(ue, {
 					label: "Expires on",
 					hint: "At the end of that day, your local time.",
 					...g ? { error: "Pick a date at least an hour from now." } : {},
@@ -2796,7 +2796,7 @@ function In({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "T
 				className: "text-sm text-text-secondary",
 				children: o ?? "Transcript generation failed. Reach out to support if this persists."
 			}),
-			/* @__PURE__ */ Z(le, {
+			/* @__PURE__ */ Z(de, {
 				text: s,
 				className: "mt-2"
 			})
@@ -2931,7 +2931,7 @@ function Ln({ status: t, markdown: n, renderMarkdown: r, title: i = "Summary", e
 				className: "text-sm text-text-secondary",
 				children: a ?? "Summary generation failed."
 			}),
-			/* @__PURE__ */ Z(le, {
+			/* @__PURE__ */ Z(de, {
 				text: o,
 				className: "mt-2"
 			})
@@ -3081,7 +3081,7 @@ function Hn({ participants: n, activeSpeakerId: r, onParticipantClick: i, count:
 								"data-testid": "roster-lower-hand",
 								children: "Lower"
 							}),
-							o.length > 0 && /* @__PURE__ */ Z(ve, {
+							o.length > 0 && /* @__PURE__ */ Z(H, {
 								trigger: /* @__PURE__ */ Z(R, { size: 18 }),
 								triggerLabel: p ? p(n) : `Actions for ${n.displayName}`,
 								triggerVariant: "link",
@@ -3183,7 +3183,7 @@ function Wn({ participant: t, speaking: n, dark: r, accessBadge: i, trailing: a,
 				ref: c,
 				className: e("flex min-w-0 flex-1 items-baseline gap-1 overflow-hidden text-sm", r ? "text-white/90" : "text-[var(--color-text-primary)]"),
 				"data-testid": "roster-name",
-				children: [/* @__PURE__ */ Z(oe, {
+				children: [/* @__PURE__ */ Z(ce, {
 					content: t.displayName,
 					onlyWhenTruncated: !0,
 					triggerClassName: "flex min-w-0",
@@ -3339,7 +3339,7 @@ function Qn({ videoRef: t, stream: n, muted: r = !1, autoPlay: i = !0, playsInli
 				className: e("pointer-events-none absolute inset-0 flex justify-center bg-black/40 text-xs font-medium text-white", o ? "items-start pt-3" : "items-center"),
 				children: /* @__PURE__ */ Q("span", {
 					className: e("flex items-center gap-2", o ? "flex-row rounded-full bg-black/65 px-3 py-1.5" : "flex-col"),
-					children: [/* @__PURE__ */ Z(pe, {
+					children: [/* @__PURE__ */ Z(U, {
 						size: o ? "sm" : "md",
 						color: "currentColor",
 						decorative: !0
@@ -3652,7 +3652,7 @@ function gr({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 		x.height
 	]), L = K((e) => {
 		e.currentTarget.releasePointerCapture(e.pointerId), P.current = null;
-	}, []), R = J(null), z = K((e) => {
+	}, []), R = J(null), ee = K((e) => {
 		T === "window" && (e.stopPropagation(), e.currentTarget.setPointerCapture(e.pointerId), R.current = {
 			startX: e.clientX,
 			startY: e.clientY,
@@ -3663,7 +3663,7 @@ function gr({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 		T,
 		x.width,
 		x.height
-	]), ee = K((e) => {
+	]), te = K((e) => {
 		let t = R.current;
 		if (!t) return;
 		let n = e.clientX - t.startX, r = e.clientY - t.startY, i = Cr(t.origW + n, ur, Math.min(fr, window.innerWidth - 16)), a = Cr(t.origH + r, dr, Math.min(pr, window.innerHeight - 16));
@@ -3671,7 +3671,7 @@ function gr({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 			width: i,
 			height: a
 		});
-	}, [S]), B = K((e) => {
+	}, [S]), ne = K((e) => {
 		e.currentTarget.releasePointerCapture(e.pointerId), R.current = null;
 	}, []);
 	Ye(() => {
@@ -3692,7 +3692,7 @@ function gr({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 		x.height,
 		S
 	]);
-	let V = Xe(() => s ? {
+	let z = Xe(() => s ? {
 		position: "relative",
 		width: "100%",
 		height: "auto"
@@ -3731,7 +3731,7 @@ function gr({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 		"data-call-widget-mode": T,
 		"data-call-widget-mode-legacy": qt(T),
 		"data-call-side-panel-open": k ? "true" : "false",
-		style: V,
+		style: z,
 		className: e("flex flex-col bg-call-chrome text-white shadow-2xl overflow-hidden border border-call-chrome-border", T === "fullscreen" ? "rounded-none" : "rounded-lg", _),
 		children: [
 			/* @__PURE__ */ Q("div", {
@@ -3819,10 +3819,10 @@ function gr({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 			}),
 			T === "window" && /* @__PURE__ */ Z("div", {
 				className: "absolute bottom-0 right-0 w-4 h-4 cursor-se-resize",
-				onPointerDown: z,
-				onPointerMove: ee,
-				onPointerUp: B,
-				onPointerCancel: B,
+				onPointerDown: ee,
+				onPointerMove: te,
+				onPointerUp: ne,
+				onPointerCancel: ne,
 				"data-testid": "call-widget-resize-handle",
 				"aria-label": "Resize call widget",
 				children: /* @__PURE__ */ Z("svg", {
@@ -4073,8 +4073,8 @@ function Wr({ channelName: n, eyebrow: r, localIdentity: i, previewStream: a, pe
 	q(() => {
 		A.current && a && (A.current.srcObject = a);
 	}, [a]);
-	let F = o === "granted", I = Vr(o), L = w ?? !F, R = C ?? (L && !F ? "Allow camera to join" : "Join now"), z = T ?? Br(p, m, h), ee = !!_, V = ee && (v ?? N);
-	function te(e) {
+	let F = o === "granted", I = Vr(o), L = w ?? !F, R = C ?? (L && !F ? "Allow camera to join" : "Join now"), ee = T ?? Br(p, m, h), te = !!_, z = te && (v ?? N);
+	function re(e) {
 		v === void 0 && P(e), y?.(e);
 	}
 	return /* @__PURE__ */ Z("div", {
@@ -4124,11 +4124,11 @@ function Wr({ channelName: n, eyebrow: r, localIdentity: i, previewStream: a, pe
 							})),
 							o === "pending" && /* @__PURE__ */ Z("div", {
 								className: "absolute inset-0 grid place-items-center",
-								children: /* @__PURE__ */ Z(pe, { size: "lg" })
+								children: /* @__PURE__ */ Z(U, { size: "lg" })
 							}),
 							I && /* @__PURE__ */ Z("div", {
 								className: "absolute inset-0 grid place-items-center bg-surface-panel/95",
-								children: /* @__PURE__ */ Z(ue, {
+								children: /* @__PURE__ */ Z(fe, {
 									kind: "camera",
 									state: I,
 									message: s,
@@ -4159,21 +4159,21 @@ function Wr({ channelName: n, eyebrow: r, localIdentity: i, previewStream: a, pe
 											"aria-label": l ? "Turn camera off before joining" : "Turn camera on before joining",
 											title: l ? "Turn camera off before joining" : "Turn camera on before joining",
 											iconOn: /* @__PURE__ */ Z(D, { size: 18 }),
-											iconOff: /* @__PURE__ */ Z(B, { size: 18 }),
+											iconOff: /* @__PURE__ */ Z(ne, { size: 18 }),
 											className: e(l && Hr),
 											"data-testid": "prejoin-toggle-video"
 										}),
-										ee && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z("span", {
+										te && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z("span", {
 											"aria-hidden": "true",
 											className: "h-px w-6 bg-white/20"
 										}), /* @__PURE__ */ Z(zr, {
-											on: V,
-											onClick: () => te(!V),
-											"aria-label": V ? "Close device settings" : "Open device settings",
-											title: V ? "Close device settings" : "Open device settings",
+											on: z,
+											onClick: () => re(!z),
+											"aria-label": z ? "Close device settings" : "Open device settings",
+											title: z ? "Close device settings" : "Open device settings",
 											iconOn: /* @__PURE__ */ Z(j, { size: 18 }),
 											iconOff: /* @__PURE__ */ Z(j, { size: 18 }),
-											className: V ? Ur : Hr,
+											className: z ? Ur : Hr,
 											"data-testid": "prejoin-devices-toggle"
 										})] })
 									]
@@ -4204,10 +4204,10 @@ function Wr({ channelName: n, eyebrow: r, localIdentity: i, previewStream: a, pe
 								/* @__PURE__ */ Z("p", {
 									"data-testid": "prejoin-subtitle",
 									className: "mt-0.5 text-xs text-neutral",
-									children: z
+									children: ee
 								})
 							]
-						}), V ? /* @__PURE__ */ Q("div", {
+						}), z ? /* @__PURE__ */ Q("div", {
 							"data-testid": "prejoin-devices-panel",
 							className: "rounded-xl border border-border bg-surface p-3",
 							children: [/* @__PURE__ */ Q("div", {
@@ -4218,7 +4218,7 @@ function Wr({ channelName: n, eyebrow: r, localIdentity: i, previewStream: a, pe
 								}), /* @__PURE__ */ Z(t, {
 									variant: "ghost",
 									size: "sm",
-									onClick: () => te(!1),
+									onClick: () => re(!1),
 									"data-testid": "prejoin-devices-close",
 									children: "Close"
 								})]
@@ -4270,7 +4270,7 @@ function Wr({ channelName: n, eyebrow: r, localIdentity: i, previewStream: a, pe
 function Gr({ participants: e, loading: t }) {
 	return t ? /* @__PURE__ */ Q("div", {
 		className: "flex items-center gap-2 text-xs text-neutral",
-		children: [/* @__PURE__ */ Z(pe, { size: "sm" }), " Finding people…"]
+		children: [/* @__PURE__ */ Z(U, { size: "sm" }), " Finding people…"]
 	}) : !e || e.length === 0 ? /* @__PURE__ */ Z("div", {
 		className: "text-xs text-neutral",
 		children: "Nobody here yet."
@@ -4473,8 +4473,8 @@ function si(e, t) {
 	let n = `${e} joined`;
 	return t > 0 ? `${n} · ${t} ringing` : n;
 }
-function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, startedAt: s, participantCount: c, ringingCount: l = 0, mic: u, camera: p, shareSlot: m, onToggleChat: h, chatOpen: _ = !1, chatUnread: y = 0, onToggleMedia: b, mediaOpen: x = !1, mediaToggleLabel: S = "Participants", onStart: C, startLabel: T = "Huddle", callNoun: E, startDisabledReason: D, liveParticipants: O = [], onJoin: k, joinLabel: A = "Join", joinDisabledReason: j, chatLabel: M = "Chat", chatDisabledReason: N, onLeave: P, leaveLabel: F = "Leave", meetingItems: I, shareMenu: L, actions: R, moreLabel: z = "More", extras: B, compact: V = !1, className: te, "data-testid": H = "huddle-bar" }) {
-	let ne = Ie(E), re = oi(s, i === "live"), ie = o === void 0 ? ni[i] : o, U = i === "joinable", ae = i === "idle" || U, ce = c ?? O.length, le = (e, t) => /* @__PURE__ */ Z(Fe, {
+function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, startedAt: s, participantCount: c, ringingCount: l = 0, mic: u, camera: p, shareSlot: m, onToggleChat: h, chatOpen: _ = !1, chatUnread: y = 0, onToggleMedia: b, mediaOpen: x = !1, mediaToggleLabel: S = "Participants", onStart: C, startLabel: T = "Huddle", callNoun: E, startDisabledReason: D, liveParticipants: O = [], onJoin: k, joinLabel: A = "Join", joinDisabledReason: j, chatLabel: M = "Chat", chatDisabledReason: N, onLeave: P, leaveLabel: F = "Leave", meetingItems: I, shareMenu: L, actions: R, moreLabel: ee = "More", extras: ne, compact: z = !1, className: re, "data-testid": B = "huddle-bar" }) {
+	let ie = Ie(E), ae = oi(s, i === "live"), oe = o === void 0 ? ni[i] : o, V = i === "joinable", se = i === "idle" || V, ue = c ?? O.length, de = (e, t) => /* @__PURE__ */ Z(Fe, {
 		kind: e,
 		on: t.on,
 		onToggle: t.onToggle,
@@ -4485,12 +4485,12 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 		...t.selectedDeviceId === void 0 ? {} : { selectedDeviceId: t.selectedDeviceId },
 		...t.level === void 0 ? {} : { level: t.level },
 		...t.disabledReason === void 0 ? {} : { disabledReason: t.disabledReason },
-		"data-testid": `${H}-${e === "microphone" ? "mic" : "camera"}`
-	}), ue = J(null), de = J(null), fe = J(null), pe = J(null), me = J(null), [he, ge] = Y([]), [_e, ye] = Y(null), be = J(() => {});
+		"data-testid": `${B}-${e === "microphone" ? "mic" : "camera"}`
+	}), fe = J(null), pe = J(null), me = J(null), U = J(null), he = J(null), [ge, _e] = Y([]), [ve, ye] = Y(null), be = J(() => {});
 	be.current = () => {
-		let e = ue.current, t = fe.current;
+		let e = fe.current, t = me.current;
 		if (!e || !t) return;
-		let n = (e) => parseFloat(e) || 0, r = (e) => e.getBoundingClientRect().width, i = getComputedStyle(e), a = e.clientWidth - n(i.paddingLeft) - n(i.paddingRight), o = de.current;
+		let n = (e) => parseFloat(e) || 0, r = (e) => e.getBoundingClientRect().width, i = getComputedStyle(e), a = e.clientWidth - n(i.paddingLeft) - n(i.paddingRight), o = pe.current;
 		if (o && o.getClientRects().length > 0) {
 			let e = o.querySelector("[data-text-truncate]"), t = 0, s = 0;
 			for (let n of Array.from(o.children)) n.getClientRects().length !== 0 && (s += 1, t += e && n.contains(e) ? Math.min(e.scrollWidth, ai) : r(n));
@@ -4503,20 +4503,20 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 			width: r(e),
 			priority: Number(e.dataset.priority ?? 0),
 			collapsible: e.dataset.collapsible === "true"
-		})), a, n(s.columnGap), pe.current ? r(pe.current) : 0);
-		ge((e) => e.length === c.length && e.every((e, t) => e === c[t]) ? e : c);
+		})), a, n(s.columnGap), U.current ? r(U.current) : 0);
+		_e((e) => e.length === c.length && e.every((e, t) => e === c[t]) ? e : c);
 	}, Ye(() => {
 		if (be.current(), typeof ResizeObserver > "u") return;
-		let e = me.current ??= new ResizeObserver(() => be.current());
+		let e = he.current ??= new ResizeObserver(() => be.current());
 		e.disconnect();
 		for (let t of [
-			ue.current,
-			de.current,
+			fe.current,
 			pe.current,
-			...Array.from(fe.current?.children ?? [])
+			U.current,
+			...Array.from(me.current?.children ?? [])
 		]) t && e.observe(t);
 	}), q(() => () => {
-		me.current?.disconnect(), me.current = null;
+		he.current?.disconnect(), he.current = null;
 	}, []);
 	let W = (e, t) => ({
 		label: t.label,
@@ -4526,26 +4526,26 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 		...t.disabled ? { disabled: !0 } : {},
 		...t.disabledReason === void 0 ? {} : { disabledReason: t.disabledReason },
 		...t.danger ? { danger: !0 } : {},
-		"data-testid": `${H}-more-${e}`
+		"data-testid": `${B}-more-${e}`
 	}), G = [];
-	!U && u && G.push({
+	!V && u && G.push({
 		id: "mic",
 		priority: null,
-		node: le("microphone", u)
-	}), !U && p && G.push({
+		node: de("microphone", u)
+	}), !V && p && G.push({
 		id: "camera",
 		priority: null,
-		node: le("camera", p)
-	}), !U && m != null && G.push({
+		node: de("camera", p)
+	}), !V && m != null && G.push({
 		id: "share",
 		priority: L ? ri.share : null,
 		node: /* @__PURE__ */ Z(a, {
 			className: "items-center",
-			"data-testid": `${H}-share`,
+			"data-testid": `${B}-share`,
 			children: m
 		}),
 		...L ? { menu: W("share", L) } : {}
-	}), !U && b && G.push({
+	}), !V && b && G.push({
 		id: "media",
 		priority: ri.media,
 		node: /* @__PURE__ */ Q(t, {
@@ -4556,7 +4556,7 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 			"aria-expanded": x,
 			"aria-label": S,
 			title: S,
-			"data-testid": `${H}-media`,
+			"data-testid": `${B}-media`,
 			className: "gap-1.5",
 			children: [/* @__PURE__ */ Z(f, { size: 16 }), c !== void 0 && /* @__PURE__ */ Z(a, {
 				tabular: !0,
@@ -4571,7 +4571,7 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 	}), i === "idle" && C && G.push({
 		id: "start",
 		priority: null,
-		node: V ? /* @__PURE__ */ Z(oe, {
+		node: z ? /* @__PURE__ */ Z(ce, {
 			content: D ?? T,
 			children: /* @__PURE__ */ Z(d, {
 				variant: "outline",
@@ -4580,7 +4580,7 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 				disabled: D !== void 0,
 				"aria-label": T,
 				icon: /* @__PURE__ */ Z(w, { size: 16 }),
-				"data-testid": `${H}-start`
+				"data-testid": `${B}-start`
 			})
 		}) : /* @__PURE__ */ Q(t, {
 			variant: "secondary",
@@ -4588,23 +4588,23 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 			onClick: C,
 			disabled: D !== void 0,
 			title: D,
-			"data-testid": `${H}-start`,
+			"data-testid": `${B}-start`,
 			className: "gap-1.5",
 			children: [/* @__PURE__ */ Z(w, { size: 16 }), T]
 		})
-	}), U && k && G.push({
+	}), V && k && G.push({
 		id: "join",
 		priority: null,
-		node: V ? /* @__PURE__ */ Z(oe, {
-			content: j ?? `${A} ${n} ${ne}`,
+		node: z ? /* @__PURE__ */ Z(ce, {
+			content: j ?? `${A} ${n} ${ie}`,
 			children: /* @__PURE__ */ Z(d, {
 				variant: "primary",
 				size: "sm",
 				onClick: k,
 				disabled: j !== void 0,
-				"aria-label": `${A} ${n} ${ne}`,
+				"aria-label": `${A} ${n} ${ie}`,
 				icon: /* @__PURE__ */ Z(w, { size: 16 }),
-				"data-testid": `${H}-join`
+				"data-testid": `${B}-join`
 			})
 		}) : /* @__PURE__ */ Q(t, {
 			variant: "primary",
@@ -4612,8 +4612,8 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 			onClick: k,
 			disabled: j !== void 0,
 			title: j,
-			"aria-label": `${A} ${n} ${ne}`,
-			"data-testid": `${H}-join`,
+			"aria-label": `${A} ${n} ${ie}`,
+			"data-testid": `${B}-join`,
 			className: "gap-1.5",
 			children: [/* @__PURE__ */ Z(w, { size: 16 }), A]
 		})
@@ -4632,7 +4632,7 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 				"aria-label": y > 0 ? `${M}, ${xe} unread` : M,
 				disabled: N !== void 0,
 				title: N,
-				"data-testid": `${H}-chat`,
+				"data-testid": `${B}-chat`,
 				className: "gap-1.5",
 				children: [/* @__PURE__ */ Z(v, { size: 16 }), /* @__PURE__ */ Z(a, {
 					className: "hidden @lg:inline",
@@ -4642,7 +4642,7 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 				className: "absolute -right-1 -top-1 h-4 min-w-4 justify-center rounded-full bg-danger px-1 text-[10px] leading-none text-white",
 				weight: "semibold",
 				"aria-hidden": "true",
-				"data-testid": `${H}-chat-unread`,
+				"data-testid": `${B}-chat-unread`,
 				children: xe
 			})]
 		}),
@@ -4656,12 +4656,12 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 				disabledReason: N
 			}
 		})
-	}), !ae) for (let e of I ?? []) G.push({
+	}), !se) for (let e of I ?? []) G.push({
 		id: `meeting:${e.id}`,
 		priority: ri.meeting,
 		node: /* @__PURE__ */ Z(li, {
 			item: e,
-			testId: `${H}-meeting-${e.id}`
+			testId: `${B}-meeting-${e.id}`
 		}),
 		menu: {
 			...W(`meeting-${e.id}`, {
@@ -4681,12 +4681,12 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 		...e.menu ? { menu: W(e.id, e.menu) } : {},
 		...e.fact ? { fact: e.fact } : {}
 	});
-	B != null && B !== !1 && G.push({
+	ne != null && ne !== !1 && G.push({
 		id: "extras",
 		priority: null,
-		node: B
+		node: ne
 	});
-	let Se = !ae && P ? {
+	let Se = !se && P ? {
 		id: "leave",
 		priority: null,
 		node: /* @__PURE__ */ Q(t, {
@@ -4694,44 +4694,44 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 			size: "sm",
 			onClick: P,
 			"aria-label": F,
-			"data-testid": `${H}-leave`,
+			"data-testid": `${B}-leave`,
 			className: "gap-1.5",
-			children: [/* @__PURE__ */ Z(ee, { size: 16 }), /* @__PURE__ */ Z(a, {
+			children: [/* @__PURE__ */ Z(te, { size: 16 }), /* @__PURE__ */ Z(a, {
 				className: "hidden @lg:inline",
 				children: F
 			})]
 		})
-	} : null, Ce = G.filter((e) => he.includes(e.id)), we = Ce.flatMap((e) => e.menu ? [e.menu] : []), Te = Ce.flatMap((e) => e.fact ? [e.fact] : []), Ee = Ce.length > 0, Oe = y > 0 && he.includes("chat"), ke = _e != null && he.includes(`meeting:${_e}`) ? I?.find((e) => e.id === _e && e.popover && !e.disabled) ?? null : null, Ae = (t) => {
-		let n = he.includes(t.id);
+	} : null, Ce = G.filter((e) => ge.includes(e.id)), we = Ce.flatMap((e) => e.menu ? [e.menu] : []), Te = Ce.flatMap((e) => e.fact ? [e.fact] : []), Ee = Ce.length > 0, Oe = y > 0 && ge.includes("chat"), ke = ve != null && ge.includes(`meeting:${ve}`) ? I?.find((e) => e.id === ve && e.popover && !e.disabled) ?? null : null, Ae = (t) => {
+		let n = ge.includes(t.id);
 		return /* @__PURE__ */ Z("div", {
 			"data-bar-item": t.id,
 			"data-priority": t.priority ?? void 0,
 			"data-collapsible": t.priority !== null,
 			"data-collapsed": n ? "" : void 0,
 			"aria-hidden": n || void 0,
-			className: e("flex shrink-0 items-center empty:hidden", t.id === "extras" && (V ? "gap-1" : "gap-2"), n && "pointer-events-none invisible absolute left-0 top-0"),
+			className: e("flex shrink-0 items-center empty:hidden", t.id === "extras" && (z ? "gap-1" : "gap-2"), n && "pointer-events-none invisible absolute left-0 top-0"),
 			children: t.node
 		}, t.id);
 	};
 	return /* @__PURE__ */ Q("div", {
-		ref: ue,
+		ref: fe,
 		role: "group",
-		"aria-label": i === "idle" ? n : `${n} ${ne}`,
-		"data-testid": H,
+		"aria-label": i === "idle" ? n : `${n} ${ie}`,
+		"data-testid": B,
 		"data-phase": i,
-		"data-compact": V ? "" : void 0,
-		className: e("@container flex min-w-0 flex-nowrap items-center", V ? "gap-1.5 px-1 py-1" : "gap-3 px-3 py-1.5", te),
+		"data-compact": z ? "" : void 0,
+		className: e("@container flex min-w-0 flex-nowrap items-center", z ? "gap-1.5 px-1 py-1" : "gap-3 px-3 py-1.5", re),
 		children: [r && /* @__PURE__ */ Q("div", {
-			ref: de,
+			ref: pe,
 			className: "flex min-w-0 shrink items-center gap-2",
-			"data-testid": `${H}-status`,
+			"data-testid": `${B}-status`,
 			children: [
 				/* @__PURE__ */ Z(De, {
 					state: $r[i],
-					ariaLabel: i === "joinable" ? `${ei(ne)} live` : ti[i],
-					"data-testid": `${H}-dot`
+					ariaLabel: i === "joinable" ? `${ei(ie)} live` : ti[i],
+					"data-testid": `${B}-dot`
 				}),
-				/* @__PURE__ */ Z(oe, {
+				/* @__PURE__ */ Z(ce, {
 					content: n,
 					placement: "top",
 					onlyWhenTruncated: !0,
@@ -4742,25 +4742,25 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 						size: "xs",
 						weight: i === "idle" ? "normal" : "medium",
 						tone: i === "idle" ? "secondary" : "primary",
-						"data-testid": `${H}-name`,
+						"data-testid": `${B}-name`,
 						children: n
 					})
 				}),
-				U && /* @__PURE__ */ Q(a, {
+				V && /* @__PURE__ */ Q(a, {
 					className: "shrink-0 whitespace-nowrap",
 					size: "xs",
 					tone: "secondary",
-					"data-testid": `${H}-live`,
+					"data-testid": `${B}-live`,
 					children: [
-						ne,
+						ie,
 						" live · ",
-						ce,
+						ue,
 						" joined"
 					]
 				}),
-				U && O.length > 0 && /* @__PURE__ */ Z(a, {
+				V && O.length > 0 && /* @__PURE__ */ Z(a, {
 					className: "hidden shrink-0 @sm:inline-flex",
-					"data-testid": `${H}-avatars`,
+					"data-testid": `${B}-avatars`,
 					children: /* @__PURE__ */ Z(je, {
 						users: O.map((e) => ({
 							id: e.id,
@@ -4771,55 +4771,55 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 						size: 20
 					})
 				}),
-				ie != null && /* @__PURE__ */ Z(a, {
+				oe != null && /* @__PURE__ */ Z(a, {
 					className: "shrink-0 whitespace-nowrap",
 					size: "xs",
 					tone: "secondary",
-					"data-testid": `${H}-phase`,
-					children: ie
+					"data-testid": `${B}-phase`,
+					children: oe
 				}),
-				re !== null && /* @__PURE__ */ Z(a, {
+				ae !== null && /* @__PURE__ */ Z(a, {
 					className: "hidden shrink-0 @md:inline",
 					size: "xs",
 					tone: "tertiary",
 					tabular: !0,
-					"data-testid": `${H}-timer`,
-					children: ze(re)
+					"data-testid": `${B}-timer`,
+					children: ze(ae)
 				}),
-				c !== void 0 && !U && /* @__PURE__ */ Z(a, {
+				c !== void 0 && !V && /* @__PURE__ */ Z(a, {
 					className: "hidden shrink-0 whitespace-nowrap @md:inline",
 					size: "xs",
 					tone: "secondary",
-					"data-testid": `${H}-people`,
+					"data-testid": `${B}-people`,
 					children: si(c, l)
 				})
 			]
 		}), /* @__PURE__ */ Q("div", {
-			ref: fe,
-			className: e("relative ml-auto flex shrink-0 flex-nowrap items-center", V ? "gap-1" : "gap-2"),
-			"data-testid": `${H}-controls`,
+			ref: me,
+			className: e("relative ml-auto flex shrink-0 flex-nowrap items-center", z ? "gap-1" : "gap-2"),
+			"data-testid": `${B}-controls`,
 			children: [
 				G.map(Ae),
 				/* @__PURE__ */ Q("div", {
-					ref: pe,
+					ref: U,
 					"aria-hidden": !Ee || void 0,
 					className: e("relative flex shrink-0 items-center", !Ee && "pointer-events-none invisible absolute left-0 top-0"),
 					children: [
-						/* @__PURE__ */ Z(ve, {
+						/* @__PURE__ */ Z(H, {
 							align: "end",
 							zIndex: ii,
 							buttonVariant: "ghost",
 							buttonSize: "sm",
 							trigger: /* @__PURE__ */ Z(g, { size: 16 }),
-							triggerLabel: Oe ? `${z}, ${xe} unread` : z,
-							triggerTitle: z,
-							triggerTestId: `${H}-more`,
+							triggerLabel: Oe ? `${ee}, ${xe} unread` : ee,
+							triggerTitle: ee,
+							triggerTestId: `${B}-more`,
 							...Ee ? {} : { triggerTabIndex: -1 },
-							"data-testid": `${H}-more-menu`,
+							"data-testid": `${B}-more-menu`,
 							sections: [...Te.length ? [{
 								items: [],
 								caption: Te.join(" · "),
-								"data-testid": `${H}-more-facts`
+								"data-testid": `${B}-more-facts`
 							}] : [], ...we.length ? [{ items: we }] : []]
 						}),
 						Oe && /* @__PURE__ */ Z(a, {
@@ -4827,18 +4827,18 @@ function ci({ name: n, showContext: r = !0, phase: i = "live", statusLabel: o, s
 							size: "xs",
 							weight: "semibold",
 							"aria-hidden": "true",
-							"data-testid": `${H}-more-unread`,
+							"data-testid": `${B}-more-unread`,
 							children: xe
 						}),
-						/* @__PURE__ */ Z(se, {
-							trigger: pe,
+						/* @__PURE__ */ Z(le, {
+							trigger: U,
 							open: ke != null,
 							onClose: () => ye(null),
 							placement: ke?.popoverPlacement ?? "bottom-end",
-							"aria-label": ke?.popoverLabel ?? ke?.label ?? z,
+							"aria-label": ke?.popoverLabel ?? ke?.label ?? ee,
 							kind: "huddle-bar-popover",
 							zIndex: ii,
-							"data-testid": `${H}-more-popover`,
+							"data-testid": `${B}-more-popover`,
 							children: ke?.popover?.(() => ye(null))
 						})
 					]
@@ -4885,7 +4885,7 @@ function li({ item: e, testId: n }) {
 				"data-testid": `${n}-badge`,
 				children: e.badge > 99 ? "99+" : e.badge
 			}),
-			s && /* @__PURE__ */ Z(se, {
+			s && /* @__PURE__ */ Z(le, {
 				trigger: r,
 				open: c,
 				onClose: () => o(!1),
@@ -4937,7 +4937,7 @@ function fi({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, o
 				"aria-label": n ? "Turn off camera" : "Turn on camera",
 				title: n ? "Turn off camera" : "Turn on camera",
 				iconOn: /* @__PURE__ */ Z(D, { size: y }),
-				iconOff: /* @__PURE__ */ Z(B, { size: y }),
+				iconOff: /* @__PURE__ */ Z(ne, { size: y }),
 				"data-testid": "media-controls-cam"
 			}),
 			o && /* @__PURE__ */ Z(zr, {
@@ -4962,7 +4962,7 @@ function fi({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, o
 				title: h,
 				"data-testid": "media-controls-leave",
 				className: e("rounded-full grid place-items-center transition-colors duration-150", ui[g], "bg-danger text-white hover:bg-danger cursor-pointer"),
-				children: /* @__PURE__ */ Z(ee, { size: di[g] })
+				children: /* @__PURE__ */ Z(te, { size: di[g] })
 			})
 		]
 	});
@@ -4986,7 +4986,7 @@ function mi({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 		t && m(i);
 	}, [t, i]);
 	let h = f.includes(p) ? p : f[0] ?? null;
-	return /* @__PURE__ */ Z(re, {
+	return /* @__PURE__ */ Z(ae, {
 		open: t,
 		onClose: n,
 		ariaLabel: u,
@@ -5200,7 +5200,7 @@ function bi({ value: e, onChange: n, showCamera: r = !0, children: i, "data-test
 			}) : null,
 			/* @__PURE__ */ Q("label", {
 				className: "flex flex-col gap-1 text-xs font-semibold text-text-secondary",
-				children: ["Microphone", /* @__PURE__ */ Z(U, {
+				children: ["Microphone", /* @__PURE__ */ Z(V, {
 					size: "sm",
 					"data-testid": `${a}-microphone`,
 					value: e.microphoneId ?? "",
@@ -5213,7 +5213,7 @@ function bi({ value: e, onChange: n, showCamera: r = !0, children: i, "data-test
 			}),
 			r ? /* @__PURE__ */ Q("label", {
 				className: "flex flex-col gap-1 text-xs font-semibold text-text-secondary",
-				children: ["Camera", /* @__PURE__ */ Z(U, {
+				children: ["Camera", /* @__PURE__ */ Z(V, {
 					size: "sm",
 					"data-testid": `${a}-camera`,
 					value: e.cameraId ?? "",
@@ -5228,7 +5228,7 @@ function bi({ value: e, onChange: n, showCamera: r = !0, children: i, "data-test
 				className: "flex flex-col gap-1 text-xs font-semibold text-text-secondary",
 				children: ["Speaker", /* @__PURE__ */ Q("span", {
 					className: "flex items-center gap-2",
-					children: [/* @__PURE__ */ Z(U, {
+					children: [/* @__PURE__ */ Z(V, {
 						size: "sm",
 						"data-testid": `${a}-speaker`,
 						value: e.speakerId ?? "",
@@ -5288,7 +5288,7 @@ function Ci({ playing: t, time: n, duration: r, onToggle: i, onSeek: a, size: o 
 				"data-testid": `${c}-time`,
 				children: xi(n)
 			}),
-			/* @__PURE__ */ Z(_e, {
+			/* @__PURE__ */ Z(ve, {
 				"aria-label": "Seek",
 				min: 0,
 				max: u,
@@ -5394,7 +5394,7 @@ function Di({ open: e, onClose: n, recipientName: r, getStream: i, onSend: a, ma
 			}
 		}
 	}, g = l.state === "starting" ? "Opening the microphone…" : l.state === "recording" ? "Recording — speak now" : l.state === "recorded" ? "Listen back, then send" : l.state === "error" ? l.error ?? "Something went wrong" : "Ready";
-	return /* @__PURE__ */ Z(re, {
+	return /* @__PURE__ */ Z(ae, {
 		open: e,
 		onClose: n,
 		title: `Leave a voicemail for ${r}`,
@@ -5625,7 +5625,7 @@ function Ni({ show: t, tone: n = "warning", message: r, actions: i, maxLines: a 
 			u(!1);
 			return;
 		}
-		let n = () => u(ae(e));
+		let n = () => u(se(e));
 		if (n(), typeof ResizeObserver > "u") return;
 		let r = new ResizeObserver(n);
 		return r.observe(e), () => r.disconnect();
@@ -5641,7 +5641,7 @@ function Ni({ show: t, tone: n = "warning", message: r, actions: i, maxLines: a 
 		"data-max-lines": a,
 		"data-truncated": l ? "true" : void 0,
 		className: e("pointer-events-auto absolute left-1/2 top-3 z-30 flex w-max max-w-[min(36rem,calc(100%-1rem))] -translate-x-1/2 items-center gap-2 px-3 py-1.5 text-xs font-medium shadow-lg", a === 1 ? "rounded-full" : "rounded-2xl", ji[n], o),
-		children: [/* @__PURE__ */ Z(oe, {
+		children: [/* @__PURE__ */ Z(ce, {
 			content: r,
 			disabled: !l,
 			placement: "bottom",
@@ -5724,7 +5724,7 @@ function Li({ micOn: n, cameraOn: r, showCamera: i = !0, permission: a, onToggle
 				"aria-pressed": g,
 				"data-testid": `${l}-camera`,
 				className: _(!!m),
-				children: [Z(g ? D : B, { size: 18 }), g ? "Camera on" : "Camera off"]
+				children: [Z(g ? D : ne, { size: 18 }), g ? "Camera on" : "Camera off"]
 			})] }),
 			/* @__PURE__ */ Z(t, {
 				variant: "link",
@@ -5966,7 +5966,7 @@ function Hi({ people: n, count: r, followingUserId: i, canModerate: a, onInvite:
 					className: "m-0 text-base font-semibold text-text-primary",
 					children: "People"
 				}),
-				/* @__PURE__ */ Z(te, {
+				/* @__PURE__ */ Z(re, {
 					variant: "count",
 					value: r,
 					color: "muted",
@@ -6084,7 +6084,7 @@ function Hi({ people: n, count: r, followingUserId: i, canModerate: a, onInvite:
 							"data-audio": n.audioOn ? "on" : "off",
 							children: n.audioOn ? /* @__PURE__ */ Z(M, { size: 20 }) : /* @__PURE__ */ Z(E, { size: 20 })
 						}),
-						v.length > 0 ? /* @__PURE__ */ Z(ve, {
+						v.length > 0 ? /* @__PURE__ */ Z(H, {
 							trigger: /* @__PURE__ */ Z(R, { size: 20 }),
 							triggerLabel: `More for ${n.name}`,
 							triggerVariant: "link",
@@ -6158,7 +6158,7 @@ function Wi({ open: n, onClose: r, initialTab: i = "audio-video", tab: a, onTabC
 			children: "Done"
 		})]
 	});
-	return /* @__PURE__ */ Q(fe, {
+	return /* @__PURE__ */ Q(me, {
 		open: n,
 		onClose: r,
 		title: "Call settings",
@@ -6226,7 +6226,7 @@ function Gi({ enabled: t, onEnabledChange: n, language: r, onLanguageChange: i, 
 				htmlFor: "settings-captions-language",
 				className: "text-sm text-text-primary",
 				children: "Language"
-			}), /* @__PURE__ */ Z(U, {
+			}), /* @__PURE__ */ Z(V, {
 				id: "settings-captions-language",
 				value: r,
 				onChange: (e) => i?.(e.target.value),
@@ -6258,7 +6258,7 @@ function Ji({ open: e, onClose: r, title: i, onTitleChange: a, media: o, onMedia
 	let { onAdd: A, ...j } = c, M = !!w || C || !i.trim(), N = /* @__PURE__ */ Q("div", {
 		className: "flex flex-col gap-2.5",
 		children: [
-			T && /* @__PURE__ */ Z(H, {
+			T && /* @__PURE__ */ Z(B, {
 				variant: "error",
 				title: `Could not start the call — ${T.message}`,
 				action: /* @__PURE__ */ Z(t, {
@@ -6289,7 +6289,7 @@ function Ji({ open: e, onClose: r, title: i, onTitleChange: a, media: o, onMedia
 					title: w ?? (i.trim() ? void 0 : "Give the call a title"),
 					"data-testid": "start-call-submit",
 					className: "inline-flex items-center gap-2 px-5",
-					children: [C && /* @__PURE__ */ Z(pe, {
+					children: [C && /* @__PURE__ */ Z(U, {
 						size: "sm",
 						color: "currentColor",
 						decorative: !0
@@ -6298,7 +6298,7 @@ function Ji({ open: e, onClose: r, title: i, onTitleChange: a, media: o, onMedia
 			})
 		]
 	});
-	return /* @__PURE__ */ Q(fe, {
+	return /* @__PURE__ */ Q(me, {
 		open: e,
 		onClose: r,
 		title: "Start a call",
@@ -6316,7 +6316,7 @@ function Ji({ open: e, onClose: r, title: i, onTitleChange: a, media: o, onMedia
 		closeTestId: `${k}-close`,
 		"data-testid": k,
 		children: [
-			/* @__PURE__ */ Z(de, {
+			/* @__PURE__ */ Z(pe, {
 				value: i,
 				onCommit: a,
 				placeholder: "Call title",
@@ -6378,7 +6378,7 @@ function Ji({ open: e, onClose: r, title: i, onTitleChange: a, media: o, onMedia
 				className: "flex flex-col gap-2",
 				children: [
 					/* @__PURE__ */ Z(qi, { children: "People" }),
-					/* @__PURE__ */ Z(ie, {
+					/* @__PURE__ */ Z(oe, {
 						value: u.query,
 						onChange: (e) => u.onQueryChange(e.target.value),
 						placeholder: u.placeholder ?? "Find people, teams or channels",
@@ -6465,7 +6465,7 @@ function Xi({ open: n, anchorRef: r, compact: i = !1, caller: a, title: o, docum
 		n,
 		w,
 		A
-	]), /* @__PURE__ */ Z(se, {
+	]), /* @__PURE__ */ Z(le, {
 		trigger: r,
 		open: n,
 		onClose: S,
@@ -6565,7 +6565,7 @@ function Xi({ open: n, anchorRef: r, compact: i = !1, caller: a, title: o, docum
 						k && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z("span", {
 							"aria-hidden": "true",
 							className: "h-4 w-px shrink-0 bg-border"
-						}), /* @__PURE__ */ Z(oe, {
+						}), /* @__PURE__ */ Z(ce, {
 							content: O.map((e) => e.title).join(", "),
 							children: /* @__PURE__ */ Z(t, {
 								variant: "link",
@@ -6663,7 +6663,7 @@ function Xi({ open: n, anchorRef: r, compact: i = !1, caller: a, title: o, docum
 //#region src/components/video/DocumentCallPanel.tsx
 function Zi({ title: n, participantCount: r, elapsedMs: i, people: a, documents: o, presenting: s, currentDocumentId: c, canPresent: l, presentDisabledReason: u, onPresent: f, onCopyLink: m, onManageAccess: h, onPopOut: g, onClose: v, loading: y = !1, notice: b, className: x, "data-testid": S = "document-call-panel" }) {
 	let { count: C, onAdd: w, ...T } = o, E = a.people.find((e) => e.isLocal), D = !!(s && E && s.userId === E.userId && s.documentId === c), O = !!(s && (!E || s.userId !== E.userId)), k = a.people.filter((e) => e.state === "in-call" && !e.isLocal).length === 0, j = `${r === 1 ? "1 person" : `${r} people`}${i == null ? "" : ` · ${ze(i)}`}`;
-	return /* @__PURE__ */ Q(fe, {
+	return /* @__PURE__ */ Q(me, {
 		open: !0,
 		docked: !0,
 		onClose: v,
@@ -6743,7 +6743,7 @@ function Zi({ title: n, participantCount: r, elapsedMs: i, people: a, documents:
 								className: "m-0 text-base font-semibold text-text-primary",
 								children: "Review documents"
 							}),
-							/* @__PURE__ */ Z(te, {
+							/* @__PURE__ */ Z(re, {
 								variant: "count",
 								value: C,
 								color: "muted",
@@ -6833,7 +6833,7 @@ function ta({ item: t, look: n = "compact" }) {
 				className: "relative inline-flex items-center gap-1.5",
 				children: [
 					t.icon,
-					t.count !== void 0 && (r ? /* @__PURE__ */ Z(te, {
+					t.count !== void 0 && (r ? /* @__PURE__ */ Z(re, {
 						variant: "count",
 						color: "muted",
 						value: t.count,
@@ -6848,7 +6848,7 @@ function ta({ item: t, look: n = "compact" }) {
 						"data-testid": `meeting-toolbar-${t.id}-count`,
 						children: t.count
 					})),
-					!!t.badge && /* @__PURE__ */ Z(te, {
+					!!t.badge && /* @__PURE__ */ Z(re, {
 						variant: "count",
 						color: "danger",
 						value: t.badge,
@@ -6869,7 +6869,7 @@ function ta({ item: t, look: n = "compact" }) {
 				"data-testid": `meeting-toolbar-${t.id}-active`
 			})
 		]
-	}), p = r && !t.disabled ? /* @__PURE__ */ Z(oe, {
+	}), p = r && !t.disabled ? /* @__PURE__ */ Z(ce, {
 		content: i,
 		placement: "bottom",
 		"data-testid": `meeting-toolbar-${t.id}-tooltip`,
@@ -6877,7 +6877,7 @@ function ta({ item: t, look: n = "compact" }) {
 	}) : f;
 	if (l) {
 		let e = () => c(!1);
-		return /* @__PURE__ */ Q(X, { children: [p, /* @__PURE__ */ Z(se, {
+		return /* @__PURE__ */ Q(X, { children: [p, /* @__PURE__ */ Z(le, {
 			trigger: o,
 			open: u,
 			onClose: e,
@@ -6891,7 +6891,7 @@ function ta({ item: t, look: n = "compact" }) {
 	return !t.menu || n === "phone" ? p : /* @__PURE__ */ Q("span", {
 		className: "inline-flex items-stretch",
 		"data-testid": `meeting-toolbar-${t.id}-split`,
-		children: [p, /* @__PURE__ */ Z(ve, {
+		children: [p, /* @__PURE__ */ Z(H, {
 			trigger: /* @__PURE__ */ Z(b, { size: n === "compact" ? 12 : 14 }),
 			triggerLabel: t.menuLabel ?? `${t.label} options`,
 			triggerVariant: "link",
@@ -6970,7 +6970,7 @@ function aa({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 				children: [x.map((e) => /* @__PURE__ */ Z(ta, {
 					item: e,
 					look: D
-				}, e.id)), k.length > 0 && /* @__PURE__ */ Z(ve, {
+				}, e.id)), k.length > 0 && /* @__PURE__ */ Z(H, {
 					trigger: /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z(R, { size: 20 }), !O && /* @__PURE__ */ Z(a, {
 						size: "xs",
 						tone: "inherit",
@@ -6999,7 +6999,7 @@ function aa({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 				item: {
 					id: "leave",
 					label: s,
-					icon: /* @__PURE__ */ Z(ee, { size: 20 }),
+					icon: /* @__PURE__ */ Z(te, { size: 20 }),
 					onClick: o,
 					tone: "danger",
 					menu: c,
@@ -7248,7 +7248,7 @@ function da({ source: n, autoPlay: r, onClose: a, onPrevious: o, onNext: s, stat
 							className: "text-xs tabular-nums text-text-secondary",
 							children: xi(h)
 						}),
-						/* @__PURE__ */ Z(_e, {
+						/* @__PURE__ */ Z(ve, {
 							"aria-label": "Seek media",
 							value: Math.min(h, _),
 							min: 0,
@@ -7280,7 +7280,7 @@ function da({ source: n, autoPlay: r, onClose: a, onPrevious: o, onNext: s, stat
 								f.current && (f.current.muted = !C), w(!C);
 							}
 						}),
-						/* @__PURE__ */ Z(_e, {
+						/* @__PURE__ */ Z(ve, {
 							"aria-label": "Volume",
 							value: x,
 							max: 1,
@@ -7291,7 +7291,7 @@ function da({ source: n, autoPlay: r, onClose: a, onPrevious: o, onNext: s, stat
 								f.current && (f.current.volume = e), S(e);
 							}
 						}),
-						/* @__PURE__ */ Z(U, {
+						/* @__PURE__ */ Z(V, {
 							"aria-label": "Playback speed",
 							value: String(E),
 							options: [

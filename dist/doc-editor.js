@@ -14,10 +14,10 @@ import { t as y } from "./Modal-CEcJQMxG.js";
 import { t as b } from "./Input-B5h9UXBs.js";
 import { t as x } from "./Select-nxx_K9gv.js";
 import { t as S } from "./InlinePopover-C-Dtxban.js";
-import { t as C } from "./EmptyState-COIuk2la.js";
-import { t as w } from "./ErrorState-Cfh63LhO.js";
-import { t as T } from "./LoadingState-D19sK4DN.js";
-import { t as ee } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as C } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as w } from "./EmptyState-COIuk2la.js";
+import { t as T } from "./ErrorState-Cfh63LhO.js";
+import { t as ee } from "./LoadingState-D19sK4DN.js";
 import { t as te } from "./SegmentedControl-CKdSbD8t.js";
 import { n as ne } from "./Tabs-DgsRfc8i.js";
 import { n as E } from "./Avatar-BWzSZ73h.js";
@@ -32,7 +32,7 @@ import { t as M } from "./Checkbox-tmvdkINV.js";
 import { n as se } from "./FileKindMark-BuGDAwus.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { A as P, k as ce } from "./renderers-CHFmP6SP.js";
-import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-DZhkOEkD.js";
+import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-B_S5jCEx.js";
 import { t as Ze } from "./InlineEditableText-B_sH74Yd.js";
 import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-YQv6sB-9.js";
 import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-DWGsFjIv.js";
@@ -2730,7 +2730,7 @@ function Ma({ count: e, children: t, onAcceptAll: o, onRejectAll: s, acceptLabel
 		})
 	}), e === 0 ? /* @__PURE__ */ K(i, {
 		density: "compact",
-		children: /* @__PURE__ */ K(C, {
+		children: /* @__PURE__ */ K(w, {
 			title: p,
 			body: m,
 			testId: `${y}-empty`
@@ -3305,7 +3305,7 @@ function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onC
 		}), u ? /* @__PURE__ */ K("div", {
 			className: "flex min-h-0 flex-1 items-center justify-center",
 			"data-testid": `${p}-error`,
-			children: /* @__PURE__ */ K(w, {
+			children: /* @__PURE__ */ K(T, {
 				title: "Couldn't prepare the presentation",
 				description: u,
 				...d ? {
@@ -3316,7 +3316,7 @@ function za({ title: e, slides: t, open: n, slideIndex: i, onSlideChange: a, onC
 		}) : l ? /* @__PURE__ */ K("div", {
 			className: "flex min-h-0 flex-1 items-center justify-center",
 			"data-testid": `${p}-loading`,
-			children: /* @__PURE__ */ K(T, { label: "Preparing your current slides…" })
+			children: /* @__PURE__ */ K(ee, { label: "Preparing your current slides…" })
 		}) : /* @__PURE__ */ K(we, {
 			title: e,
 			revisions: [{
@@ -3367,7 +3367,7 @@ var Ba = [
 	}
 ], Va = () => {};
 function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previewCurrent: o = !0, onRequestPreview: l, slideViewers: u, selectSlideRequest: d, onSelectedSlideChange: f, onNavigateSlide: p, renderFrame: m, footer: h, onFocusConversation: g, "data-testid": _ = "deck-reader" }) {
-	let [v, y] = W(e.slides[0]?.id ?? ""), [b, S] = W(!1), [w, te] = W(null), ne = w ?? !t, [E, O] = W("fit"), [k, A] = W(!1), re = U(null), [ie, ae] = W({
+	let [v, y] = W(e.slides[0]?.id ?? ""), [b, S] = W(!1), [T, te] = W(null), ne = T ?? !t, [E, O] = W("fit"), [k, A] = W(!1), re = U(null), [ie, ae] = W({
 		width: 800,
 		height: 420
 	}), oe = zn(), j = U(l);
@@ -3500,7 +3500,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 				title: "Focus the presentation conversation",
 				children: "Chat & agent"
 			}),
-			t && /* @__PURE__ */ K(ee, {
+			t && /* @__PURE__ */ K(C, {
 				trigger: "View",
 				triggerLabel: "Presentation view options",
 				triggerVariant: "default",
@@ -3621,7 +3621,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 							className: "h-full w-full object-contain"
 						}) : le ? /* @__PURE__ */ K("div", {
 							"data-testid": `${_}-preview-loading`,
-							children: /* @__PURE__ */ K(T, { label: "Rendering the current version…" })
+							children: /* @__PURE__ */ K(ee, { label: "Rendering the current version…" })
 						}) : /* @__PURE__ */ q("div", {
 							className: "deck-reader-no-preview flex flex-col items-center gap-2 p-6",
 							children: [/* @__PURE__ */ K(c, {
@@ -3635,7 +3635,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 							})]
 						})
 					})
-				}) : /* @__PURE__ */ K(C, {
+				}) : /* @__PURE__ */ K(w, {
 					title: "No slides yet",
 					body: "This saved version contains no slides."
 				})

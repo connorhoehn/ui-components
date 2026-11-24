@@ -6,7 +6,7 @@ import { r as a } from "./ToastProvider-DB7sO94Y.js";
 import { a as o, n as s, t as c } from "./Chip-DVGdTxaN.js";
 import { t as l } from "./safeHref-dF2rw8EK.js";
 import { t as u } from "./useEventCallback-Cwx9QVSi.js";
-import { A as d, B as f, C as p, D as m, E as h, F as g, I as _, L as v, N as y, O as b, P as x, R as S, S as C, T as w, V as T, _ as E, a as D, b as O, c as ee, d as k, f as A, g as j, h as te, i as M, j as ne, k as re, l as N, m as ie, n as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he } from "./GenerativeImagePreview-DYNPMTwj.js";
+import { A as d, B as f, C as p, D as m, E as h, F as g, I as _, L as v, N as y, O as b, P as x, R as S, S as C, T as w, V as T, _ as E, a as D, b as O, c as ee, d as k, f as A, g as j, h as te, i as M, j as ne, k as re, l as N, m as ie, n as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he } from "./GenerativeImagePreview-ClVE54vQ.js";
 import { t as ge } from "./IconButton-BmDqeC-b.js";
 import { t as _e } from "./Banner-et6Y4oMz.js";
 import { n as ve, t as ye } from "./Chart-D9jNI7EC.js";
@@ -17,11 +17,11 @@ import { t as Se } from "./Select-nxx_K9gv.js";
 import { t as Ce } from "./FilterPopover-D_DE8ZnC.js";
 import { t as we } from "./SearchInput-CF4qs4mx.js";
 import { t as Te } from "./Toolbar-CAQic0jU.js";
-import { t as Ee } from "./EmptyState-COIuk2la.js";
-import { t as De } from "./LoadingState-D19sK4DN.js";
-import { i as Oe, t as ke } from "./focusTrap-CmWJlptm.js";
-import { t as Ae } from "./Slider-CQoCab1A.js";
-import { t as je } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as Ee } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as De } from "./EmptyState-COIuk2la.js";
+import { t as Oe } from "./LoadingState-D19sK4DN.js";
+import { i as ke, t as Ae } from "./focusTrap-CmWJlptm.js";
+import { t as je } from "./Slider-CQoCab1A.js";
 import { t as Me } from "./StatusPill-DrTq5Ki4.js";
 import { n as Ne, t as Pe } from "./FilterChip-DxFx9noq.js";
 import { t as Fe } from "./SkeletonCard-DBVy8trP.js";
@@ -4310,8 +4310,8 @@ function Si({ error: e, anchor: t, onDismiss: n, onRetry: r }) {
 	}, [e, u]), p = L(() => {
 		r?.();
 	}, [r]);
-	Oe(!0, n), R(() => {
-		ke(i.current);
+	ke(!0, n), R(() => {
+		Ae(i.current);
 	}, []);
 	let m = Math.min(t.y + 8, window.innerHeight - 440), h = Math.min(t.x + 12, window.innerWidth - 360);
 	return /* @__PURE__ */ W("div", {
@@ -8009,7 +8009,7 @@ function ko({ data: e, onChange: t, nodeId: n }) {
 				/* @__PURE__ */ U(X, {
 					label: "Temperature",
 					help: "0 = deterministic, 1 = creative.",
-					children: /* @__PURE__ */ U(Ae, {
+					children: /* @__PURE__ */ U(je, {
 						min: 0,
 						max: 1,
 						step: .1,
@@ -8155,7 +8155,7 @@ function Mo({ data: e, onChange: t }) {
 		}),
 		/* @__PURE__ */ U(X, {
 			label: "Preview",
-			children: /* @__PURE__ */ U(Ee, {
+			children: /* @__PURE__ */ U(De, {
 				title: "Preview not available yet",
 				body: "Sample input and output for a transform will render here once the preview runner ships."
 			})
@@ -8490,7 +8490,7 @@ function Uo({ data: e, onChange: t }) {
 		required: !0,
 		help: `Between ${Bo} and ${Vo} parallel branches.`,
 		controlId: `${n}-branch-count`,
-		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(Ae, {
+		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(je, {
 			min: Bo,
 			max: Vo,
 			step: 1,
@@ -10306,7 +10306,7 @@ function Qs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				"data-testid": `layer-kind-select-${t}`,
 				className: "shrink-0"
 			}),
-			/* @__PURE__ */ U(Ae, {
+			/* @__PURE__ */ U(je, {
 				min: a.min,
 				max: a.max,
 				step: a.step,
@@ -14158,7 +14158,7 @@ var cl = {
 ]), dl = ({ data: e }) => /* @__PURE__ */ U("div", {
 	className: "p-4",
 	"data-testid": "config-panel-no-settings",
-	children: /* @__PURE__ */ U(Ee, {
+	children: /* @__PURE__ */ U(De, {
 		icon: "⚙️",
 		title: "No settings for this node type yet",
 		description: /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("code", {
@@ -15305,7 +15305,7 @@ function Il(e) {
 }
 function Ll({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete: o, selectionMode: s, selected: l, anySelected: u, onToggleSelect: d }) {
 	let [f, p] = V(!1), [m, h] = V(!1), g = B(null);
-	Tr(g, () => p(!1), f), Oe(f, L(() => p(!1), []));
+	Tr(g, () => p(!1), f), ke(f, L(() => p(!1), []));
 	let _ = e.status === "published", v = e.status === "archived", y = typeof e.publishedVersion == "number", b = Il(e.triggerBinding), x, S;
 	v ? (x = `Archived · v${e.version}`, S = "danger") : _ ? (x = `Published · v${e.version}`, S = "success") : y ? (x = `Draft · v${e.version} (published v${e.publishedVersion})`, S = "warning") : (x = `Draft · v${e.version}`, S = "neutral");
 	let C = !_, w = (e) => (t) => {
@@ -17930,7 +17930,7 @@ function Tu({ userId: t, idToken: r, baseUrl: i } = {}) {
 	}, Te = (e) => {
 		let t = at(e);
 		t && (vt(t).then(() => ae()), l(`Duplicated as "${t.name}"`, { type: "success" }));
-	}, De = (e) => {
+	}, Ee = (e) => {
 		let t = Xe(e.id);
 		if (!t) {
 			l("Export failed", { type: "error" });
@@ -18152,7 +18152,7 @@ function Tu({ userId: t, idToken: r, baseUrl: i } = {}) {
 							we(e);
 						},
 						onDuplicate: () => Te(e.id),
-						onExport: () => De(e),
+						onExport: () => Ee(e),
 						onDelete: () => j(e.id),
 						selectionMode: se,
 						selected: ce.has(e.id),
@@ -18163,7 +18163,7 @@ function Tu({ userId: t, idToken: r, baseUrl: i } = {}) {
 					className: "flex flex-col h-full",
 					children: [/* @__PURE__ */ U("div", {
 						className: "flex-1 min-h-0",
-						children: /* @__PURE__ */ U(Ee, {
+						children: /* @__PURE__ */ U(De, {
 							icon: "🔀",
 							title: "No pipelines yet",
 							body: "Design your first one — from scratch or pick a template later.",
@@ -18516,7 +18516,7 @@ var Gu = {
 };
 function Ju({ label: e, options: t, selected: r, onToggle: i, labels: a, testIdPrefix: o }) {
 	let [s, c] = V(!1), l = B(null);
-	Tr(l, () => c(!1), s), Oe(s, L(() => c(!1), []));
+	Tr(l, () => c(!1), s), ke(s, L(() => c(!1), []));
 	let u = r.size === 0 ? "All" : r.size <= 2 ? Array.from(r).map((e) => a[e]).join(", ") : `${r.size} selected`;
 	return /* @__PURE__ */ W("div", {
 		ref: l,
@@ -19154,7 +19154,7 @@ function nd() {
 				},
 				onClear: () => f(/* @__PURE__ */ new Set())
 			}),
-			te.length === 0 ? /* @__PURE__ */ U(Ee, {
+			te.length === 0 ? /* @__PURE__ */ U(De, {
 				icon: "📜",
 				title: a.length === 0 ? "No runs yet" : "No runs match these filters",
 				body: a.length === 0 ? "Trigger this pipeline and completed runs will appear here." : "Try clearing a filter or expanding the date range."
@@ -19172,7 +19172,7 @@ function nd() {
 		]
 	}) : /* @__PURE__ */ U("div", {
 		className: "p-8",
-		children: /* @__PURE__ */ U(Ee, {
+		children: /* @__PURE__ */ U(De, {
 			icon: "🔍",
 			title: "Pipeline not found",
 			body: "It may have been deleted. Go back to the pipelines list.",
@@ -21276,7 +21276,7 @@ function uf() {
 				onRangeChange: h,
 				onClearFilters: () => n(new URLSearchParams(), { replace: !0 })
 			}),
-			_.length === 0 ? /* @__PURE__ */ U(Ee, {
+			_.length === 0 ? /* @__PURE__ */ U(De, {
 				icon: "📋",
 				title: "No runs yet",
 				body: "Run a pipeline to see execution history here."
@@ -21546,7 +21546,7 @@ function wf() {
 	});
 	if (!r) return /* @__PURE__ */ U("div", {
 		className: "p-8",
-		children: /* @__PURE__ */ U(Ee, {
+		children: /* @__PURE__ */ U(De, {
 			icon: "🔍",
 			title: "Pipeline not found",
 			body: "It may have been deleted. Go back to the pipelines list.",
@@ -21811,7 +21811,7 @@ function wf() {
 					})
 				]
 			})
-		] }) : /* @__PURE__ */ U(Ee, {
+		] }) : /* @__PURE__ */ U(De, {
 			icon: "📊",
 			title: "No runs yet",
 			body: "No runs yet. Trigger this pipeline to see stats."
@@ -22143,7 +22143,7 @@ function Af() {
 					/* @__PURE__ */ U(Fe, { height: 140 }),
 					/* @__PURE__ */ U(Fe, { height: 140 })
 				]
-			}) : _ === 0 && !r ? /* @__PURE__ */ U(Ee, {
+			}) : _ === 0 && !r ? /* @__PURE__ */ U(De, {
 				icon: "✋",
 				title: "No pending approvals",
 				body: "When a pipeline reaches an approval step, it'll show up here.",
@@ -23329,10 +23329,10 @@ function _p({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s
 		ee,
 		N
 	]), le = z(() => new Map(ae.map((e) => [e.id, e])), [ae]), ue = s.trim().length > 0 || h > 0, de = !!b?.length || !!x || !!S || !!C, fe;
-	return fe = t && e.length === 0 ? /* @__PURE__ */ U(De, {
+	return fe = t && e.length === 0 ? /* @__PURE__ */ U(Oe, {
 		label: "Loading pipelines…",
 		testId: `${N}-loading`
-	}) : e.length === 0 ? /* @__PURE__ */ U(Ee, {
+	}) : e.length === 0 ? /* @__PURE__ */ U(De, {
 		testId: `${N}-empty`,
 		title: A?.title ?? "No pipelines yet",
 		body: A?.body ?? "Start from a template, from blank, or ask the agent below to draft one.",
@@ -23340,7 +23340,7 @@ function _p({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s
 		onAction: A?.onAction ?? S
 	}) : ae.length === 0 ? /* @__PURE__ */ U(i, {
 		density: "compact",
-		children: /* @__PURE__ */ U(Ee, {
+		children: /* @__PURE__ */ U(De, {
 			testId: `${N}-no-match`,
 			title: "No pipelines match",
 			body: ue ? "Try a different search, or clear the filters." : void 0,
@@ -23378,7 +23378,7 @@ function _p({ entries: e, loading: t = !1, error: a = null, onRetry: o, query: s
 					children: y ?? ae.length
 				}),
 				actions: de ? /* @__PURE__ */ W(H, { children: [
-					!!b?.length && /* @__PURE__ */ U(je, {
+					!!b?.length && /* @__PURE__ */ U(Ee, {
 						trigger: /* @__PURE__ */ U("span", {
 							"aria-hidden": "true",
 							className: "text-base leading-none",

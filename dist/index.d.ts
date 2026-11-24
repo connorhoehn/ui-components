@@ -8462,7 +8462,14 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ rowHeight, columnGroups, stickyFirstColumn, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, revealSelection, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, columnGroups, stickyFirstColumn, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, rowActionsHeader, rowActionsHeaderHidden, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, narrow, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, selectedKey, revealSelection, isRowSelected, headerCase, responsiveColumns, hiddenColumnsControl, className, 'data-testid': testId, staticRows, rowChildren, expandedKeys, onExpandedChange, defaultExpanded, childColumns, }: DataTableProps<T>): JSX.Element;
+
+/** A column's form in a child row of an expandable `DataTable` (`childColumns`). */
+export declare interface DataTableChildColumn<T> {
+    render?: (child: T, parent: T, childIndex: number) => ReactNode;
+    /** How many shown columns this cell covers, itself included (default 1). */
+    colSpan?: number;
+}
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -8735,6 +8742,29 @@ export declare interface DataTableProps<T> {
      * hidden values open from a quiet chevron in its "More" cell.
      */
     hiddenColumnsControl?: DataTableHiddenColumnsControl;
+    /**
+     * Expandable rows (since 2.544.0). A row for which this returns a non-empty
+     * array gets a chevron in a leading column; open, its children show as rows
+     * of the SAME table under the SAME headers, indented one step in the first
+     * column (`aria-level` 2, the parent carries `aria-expanded`). Children are
+     * keyed by `keyField` like any row, are one level deep (their own children
+     * are not asked for), and follow their parent through sorting, search and
+     * paging: sort and search apply to the top-level rows. Striping continues
+     * through the children. Absent, the table is unchanged.
+     */
+    rowChildren?: (row: T) => T[] | undefined;
+    /** Controlled: the keys of the open rows. Pair with `onExpandedChange`. */
+    expandedKeys?: readonly string[];
+    /** Called with the next set of open keys when a chevron is pressed. */
+    onExpandedChange?: (keys: string[]) => void;
+    /** Uncontrolled: the keys open at first render. */
+    defaultExpanded?: readonly string[];
+    /**
+     * Per-column overrides for a child row, by column key: its own `render`
+     * (given the child, its parent and its index under the parent) and a
+     * `colSpan` so one child cell can run across the columns after it.
+     */
+    childColumns?: Record<string, DataTableChildColumn<T>>;
     className?: string;
     'data-testid'?: string;
 }
@@ -11158,6 +11188,44 @@ export declare function FileUploadReaderRenderer({ section }: SectionRendererPro
  * Exported for testing — the arithmetic is the whole component.
  */
 export declare function fillHeight(offsetTop: number, viewportHeight: number, bottomGap: number, minHeight: number): number;
+
+/** A framed row of labelled filter fields with Filter, Reset and a summary. */
+export declare function FilterBand({ fields, onFilter, onReset, summary, actions, filterLabel, resetLabel, 'aria-label': ariaLabel, className, 'data-testid': testId, }: FilterBandProps): JSX.Element;
+
+export declare interface FilterBandField {
+    /** Stable id; part test ids are `<testid>-field-<id>`. */
+    id: string;
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    /**
+     * Present: the field is a select. An "Any" option (value `''`, labelled by
+     * `anyLabel`) leads the list unless one of the options already has value `''`.
+     */
+    options?: SelectOption[];
+    /** A text field's placeholder. */
+    placeholder?: string;
+    /** "Any" for this select (default `'Any'`). */
+    anyLabel?: string;
+}
+
+export declare interface FilterBandProps {
+    fields: FilterBandField[];
+    /** Filter pressed, or Enter in a text field. */
+    onFilter: () => void;
+    /** Reset pressed. */
+    onReset: () => void;
+    /** A short count at the right of the band. */
+    summary?: ReactNode;
+    /** Extra controls after Reset (a bulk action). Use small controls. */
+    actions?: ReactNode;
+    filterLabel?: string;
+    resetLabel?: string;
+    /** Names the band for assistive tech (default `'Filters'`). */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, 'data-testid': dataTestId, 'aria-label': ariaLabel, title, }: FilterChipProps): JSX.Element;
 
@@ -22511,6 +22579,41 @@ export declare interface RovingToolbarProps {
      * and styles can tell a compact hover action bar from a collection toolbar (2.535.1).
      */
     variant?: string;
+    'data-testid'?: string;
+}
+
+/** The most icon buttons a row carries before its "…" menu. */
+export declare const ROW_ACTIONS_MAX = 3;
+
+export declare interface RowAction {
+    icon: ReactNode;
+    /** The tooltip, and (with the row's `name`) the accessible name. */
+    label: string;
+    onClick: () => void;
+    /** The row's main action: drawn filled. */
+    primary?: boolean;
+    disabled?: boolean;
+    /** A toggle's state (`aria-pressed`). */
+    pressed?: boolean;
+}
+
+/** A table row's end: icon buttons for the usual actions, then a "…" menu. */
+export declare function RowActions({ name, actions, menu, className, 'data-testid': testId }: RowActionsProps): JSX.Element;
+
+export declare interface RowActionsMenuItem {
+    label: string;
+    onSelect: () => void;
+    disabled?: boolean;
+}
+
+export declare interface RowActionsProps {
+    /** The row's name: "Approve, Take 2a"; "More actions for Take 2a". */
+    name?: string;
+    /** Zero to three icon buttons, in this order. Falsy entries are skipped. */
+    actions?: ReadonlyArray<RowAction | null | undefined | false>;
+    /** The "…" menu's items; with none, no menu is drawn. */
+    menu?: ReadonlyArray<RowActionsMenuItem | null | undefined | false>;
+    className?: string;
     'data-testid'?: string;
 }
 

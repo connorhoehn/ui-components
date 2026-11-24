@@ -304,9 +304,42 @@ export interface DataTableProps<T> {
    * hidden values open from a quiet chevron in its "More" cell.
    */
   hiddenColumnsControl?: DataTableHiddenColumnsControl;
+  /**
+   * Expandable rows (since 2.544.0). A row for which this returns a non-empty
+   * array gets a chevron in a leading column; open, its children show as rows
+   * of the SAME table under the SAME headers, indented one step in the first
+   * column (`aria-level` 2, the parent carries `aria-expanded`). Children are
+   * keyed by `keyField` like any row, are one level deep (their own children
+   * are not asked for), and follow their parent through sorting, search and
+   * paging: sort and search apply to the top-level rows. Striping continues
+   * through the children. Absent, the table is unchanged.
+   */
+  rowChildren?: (row: T) => T[] | undefined;
+  /** Controlled: the keys of the open rows. Pair with `onExpandedChange`. */
+  expandedKeys?: readonly string[];
+  /** Called with the next set of open keys when a chevron is pressed. */
+  onExpandedChange?: (keys: string[]) => void;
+  /** Uncontrolled: the keys open at first render. */
+  defaultExpanded?: readonly string[];
+  /**
+   * Per-column overrides for a child row, by column key: its own `render`
+   * (given the child, its parent and its index under the parent) and a
+   * `colSpan` so one child cell can run across the columns after it.
+   */
+  childColumns?: Record<string, DataTableChildColumn<T>>;
   className?: string;
   'data-testid'?: string;
 }
+
+/** A column's form in a child row of an expandable `DataTable` (`childColumns`). */
+export interface DataTableChildColumn<T> {
+  render?: (child: T, parent: T, childIndex: number) => ReactNode;
+  /** How many shown columns this cell covers, itself included (default 1). */
+  colSpan?: number;
+}
+
+// A child row's first cell: one step in from its parent's.
+const CHILD_INDENT = 'block min-w-0 pl-6';
 
 // The narrow form's classes are written out whole (Tailwind scans source text).
 const NARROW_TABLE = '[--ui-table-layout:table] @max-[40rem]:block @max-[40rem]:[--ui-table-layout:cards]';
@@ -757,7 +790,20 @@ export function DataTable<T>({
   className,
   'data-testid': testId,
   staticRows,
+  rowChildren,
+  expandedKeys,
+  onExpandedChange,
+  defaultExpanded,
+  childColumns,
 }: DataTableProps<T>) {
+  const expandable = !!rowChildren;
+  const [innerExpanded, setInnerExpanded] = useState<readonly string[]>(() => defaultExpanded ?? []);
+  const openKeys = expandedKeys ?? innerExpanded;
+  const toggleExpanded = (key: string) => {
+    const next = openKeys.includes(key) ? openKeys.filter((k) => k !== key) : [...openKeys, key];
+    if (expandedKeys === undefined) setInnerExpanded(next);
+    onExpandedChange?.(next);
+  };
   const sentenceHeaders = headerCase === 'sentence';
   const selection = selectedKey !== undefined || !!isRowSelected;
   const selectedRow = (row: T): boolean =>
@@ -837,6 +883,22 @@ export function DataTable<T>({
     const start = safePage * pageSize;
     return sorted.slice(start, start + pageSize);
   }, [sorted, pageSize, safePage]);
+  // The rows drawn, in order: each top-level row, then its children while it
+  // is open. `stripe` counts every drawn row, so the bands run on through the
+  // children; `rowIndex` is what `render` has always been given (the row's
+  // place on the page, or a child's place under its parent).
+  const visibleRows = useMemo(() => {
+    const out: { row: T; rowIndex: number; stripe: number; parent?: T; kids?: T[] }[] = [];
+    paged.forEach((row, rowIndex) => {
+      const kids = rowChildren?.(row);
+      const has = Array.isArray(kids) && kids.length > 0;
+      out.push({ row, rowIndex, stripe: out.length, ...(has ? { kids } : {}) });
+      if (has && openKeys.includes(keyField(row))) {
+        kids.forEach((child, childIndex) => out.push({ row: child, rowIndex: childIndex, stripe: out.length, parent: row }));
+      }
+    });
+    return out;
+  }, [paged, rowChildren, openKeys, keyField]);
 
   // A new identity whenever the shown rows or the columns change: the fit starts over.
   const contentKey = useMemo(() => ({ paged, columnKeys, shownByChoice }), [paged, columnKeys, shownByChoice]);
@@ -920,6 +982,7 @@ export function DataTable<T>({
         <TableHead className={cn(narrow && NARROW_HEAD, stacked && STACK_HEAD)} data-header-case={headerCase}>
           {grouped && (
             <tr data-column-groups="">
+              {expandable && <TableTh aria-hidden="true" className="w-px" />}
               {columnGroupRuns(shownColumns, columnGroups, sticky).map((run, i) => run.group ? (
                 <TableTh key={`group-${run.key}-${i}`} colSpan={run.span} scope="colgroup" data-column-group={run.key ?? undefined}
                   className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(run.group.align ?? 'center'), !run.first && 'border-l border-border', run.first && sticky && cn(STICKY_HEAD, narrow && STICKY_OFF_NARROW), run.group.className)}>
@@ -933,6 +996,11 @@ export function DataTable<T>({
             </tr>
           )}
           <tr>
+            {expandable && (
+              <TableTh className="w-px pr-0" data-column-expand="">
+                <span className="sr-only">Expand</span>
+              </TableTh>
+            )}
             {columns.map((col) => {
               const isSorted = col.sortable && sortKey === col.key;
               return (
@@ -978,6 +1046,7 @@ export function DataTable<T>({
           {loading
             ? Array.from({ length: loadingRows }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row" className={sticky ? 'bg-surface' : undefined}>
+                  {expandable && <TableTd className="w-px pr-0" />}
                   {columns.map((col) => (
                     <TableTd key={col.key} numeric={col.numeric} className={cn(alignClass(col.align), hidden.has(col.key) && HIDDEN_COLUMN, stickyCell(col.key))}>
                       <div className="h-4 w-3/4 animate-pulse rounded bg-surface-hover" />
@@ -995,19 +1064,25 @@ export function DataTable<T>({
               ? (
                 <TableRow>
                   <TableTd
-                    colSpan={columns.length - hiddenCols.length + (moreColumn ? 1 : 0) + (rowActions ? 1 : 0)}
+                    colSpan={columns.length - hiddenCols.length + (moreColumn ? 1 : 0) + (rowActions ? 1 : 0) + (expandable ? 1 : 0)}
                     className="text-center text-text-secondary py-8"
                   >
                     {emptyMessage}
                   </TableTd>
                 </TableRow>
               )
-              : paged.map((row, rowIndex) => {
+              : visibleRows.map(({ row, rowIndex, stripe, parent, kids }) => {
                   const selected = selection && selectedRow(row);
+                  const key = keyField(row);
+                  const open = !!kids && openKeys.includes(key);
+                  const firstShown = parent ? shownColumns[0]?.key : undefined;
+                  let spanned = 0;
                   return (
                   <TableRow
-                    key={keyField(row)}
+                    key={key}
                     clickable={!!onRowClick}
+                    {...(expandable ? { 'aria-level': parent ? 2 : 1, 'data-row-level': parent ? 2 : 1 } : {})}
+                    {...(kids ? { 'aria-expanded': open } : {})}
                     {...(selection ? { 'aria-selected': selected } : {})}
                     {...(selected ? { 'data-selected': '' } : {})}
                     // Striping the ODD rows keeps the first row on the plain
@@ -1018,7 +1093,7 @@ export function DataTable<T>({
                       stacked && STACK_ROW,
                       // The selection tint wins over the stripe (one background).
                       // A sticky first column inherits the row's fill, so every row needs one.
-                      selected ? 'bg-primary-bg hover:bg-primary-bg' : striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : sticky ? 'bg-surface' : undefined,
+                      selected ? 'bg-primary-bg hover:bg-primary-bg' : striped && stripe % 2 === 1 ? 'bg-surface-inset' : sticky ? 'bg-surface' : undefined,
                       // Only a clickable row joins the tab order — a plain
                       // display table has nothing to activate, and adding a
                       // stop with no effect would be a worse keyboard
@@ -1029,7 +1104,7 @@ export function DataTable<T>({
                     tabIndex={onRowClick ? 0 : undefined}
                     // +2, not +1: row 1 of the ARIA table model is the header
                     // row, so the first body row is row 2.
-                    aria-rowindex={onRowClick ? rowIndex + 2 : undefined}
+                    aria-rowindex={onRowClick ? stripe + 2 : undefined}
                     // A control inside the row (a selection checkbox, a link, a
                     // menu) owns its own click and keys: it must not also open
                     // the row, and Space on a focused checkbox must still tick it.
@@ -1046,14 +1121,43 @@ export function DataTable<T>({
                         : undefined
                     }
                   >
+                    {expandable && (
+                      <TableTd className="w-px pr-0" data-column-expand="" onClick={(e) => e.stopPropagation()}>
+                        {kids && (
+                          <IconButton
+                            size="sm"
+                            variant="ghost"
+                            aria-label={`${open ? 'Hide' : 'Show'} the rows under ${rowName(shownColumns[0], row, rowIndex) || key}`}
+                            aria-expanded={open}
+                            icon={<ChevronIcon dir={open ? 'down' : 'right'} />}
+                            onClick={() => toggleExpanded(key)}
+                            data-testid={`datatable-expand-${key}`}
+                          />
+                        )}
+                      </TableTd>
+                    )}
                     {columns.map((col) => {
-                      const content = col.render
+                      // A child cell covered by an earlier cell's colSpan draws nothing.
+                      if (spanned > 0 && !hidden.has(col.key)) { spanned -= 1; return null; }
+                      const child = parent ? childColumns?.[col.key] : undefined;
+                      const span = child?.colSpan && child.colSpan > 1 && !hidden.has(col.key) ? child.colSpan : undefined;
+                      if (span) spanned = span - 1;
+                      const content = child?.render && parent
+                        ? child.render(row, parent, rowIndex)
+                        : col.render
                         ? col.render(row, rowIndex)
                         : String((row as Record<string, unknown>)[col.key] ?? '');
                       const fullText = col.truncate ? truncateTitle(col, row, content) : '';
+                      const indent = col.key === firstShown;
+                      const cell = col.truncate ? (
+                        <Tooltip content={fullText} disabled={!fullText} onlyWhenTruncated triggerClassName="block min-w-0" data-testid="datatable-cell-tooltip">
+                          <span className={cn('block min-w-0', col.wrap === 'two-lines' ? CLAMP_TEXT : 'truncate')}>{content}</span>
+                        </Tooltip>
+                      ) : content;
                       return (
                       <TableTd
                         key={col.key}
+                        colSpan={span}
                         numeric={col.numeric}
                         className={cn(alignClass(col.align), contentRows && CONTENT_CELL, col.truncate && (col.wrap === 'two-lines' ? CLAMP_CELL : TRUNCATE_CELL), narrow && NARROW_CELL, col.className, stacked && STACK_CELL, hidden.has(col.key) && hideClass, col.hideInCards && narrow && '@max-[40rem]:hidden!', col.hideInCards && stacked && 'hidden!', stickyCell(col.key))}
                         {...stickyMark(col.key)}
@@ -1061,11 +1165,7 @@ export function DataTable<T>({
                         {...(col.truncate ? { 'data-truncate': col.wrap === 'two-lines' ? 'two-lines' : '' } : {})}
                         {...(fullText ? { 'data-full-text': fullText } : {})}
                       >
-                        {col.truncate ? (
-                          <Tooltip content={fullText} disabled={!fullText} onlyWhenTruncated triggerClassName="block min-w-0" data-testid="datatable-cell-tooltip">
-                            <span className={cn('block min-w-0', col.wrap === 'two-lines' ? CLAMP_TEXT : 'truncate')}>{content}</span>
-                          </Tooltip>
-                        ) : content}
+                        {indent ? <span className={CHILD_INDENT} data-row-indent="">{cell}</span> : cell}
                       </TableTd>
                       );
                     })}

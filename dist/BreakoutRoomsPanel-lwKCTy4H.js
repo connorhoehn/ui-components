@@ -8,8 +8,8 @@ import { t as w } from "./Banner-et6Y4oMz.js";
 import { t as T } from "./Select-nxx_K9gv.js";
 import { t as E } from "./Tooltip-BaCci7O5.js";
 import { t as D } from "./InlinePopover-C-Dtxban.js";
-import { t as O } from "./Slider-CQoCab1A.js";
-import { t as k } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as O } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as k } from "./Slider-CQoCab1A.js";
 import { t as A } from "./SegmentedControl-CKdSbD8t.js";
 import { a as j } from "./Tabs-DgsRfc8i.js";
 import { n as M } from "./Avatar-BWzSZ73h.js";
@@ -1424,8 +1424,8 @@ var ut = {
 	camera: "No camera found"
 };
 function mt({ kind: t, on: r, onToggle: i, devices: a, selectedDeviceId: o, onSelectDevice: s, permission: c, level: l, size: d = "sm", showLabel: m = !1, extraItems: g, disabledReason: _, deviceMenu: v = !0, className: y, "data-testid": x = `device-toggle-${t}` }) {
-	let S = c === "denied" || c === "unavailable", C = Ae(_ ?? (c === "denied" ? ft[t] : c === "unavailable" ? pt[t] : void 0), S), w = C.off, T = r && !w, E = t === "microphone" && T && (l ?? 0) > .08, D = d === "md" ? 20 : 18, O;
-	O = U(t === "microphone" ? T ? h : f : T ? p : b, { size: D });
+	let S = c === "denied" || c === "unavailable", C = Ae(_ ?? (c === "denied" ? ft[t] : c === "unavailable" ? pt[t] : void 0), S), w = C.off, T = r && !w, E = t === "microphone" && T && (l ?? 0) > .08, D = d === "md" ? 20 : 18, k;
+	k = U(t === "microphone" ? T ? h : f : T ? p : b, { size: D });
 	let A = `${ut[t]} ${T ? "on" : "off"}`, j = T ? `Turn ${dt[t]} off` : `Turn ${dt[t]} on`, M = a.length ? a.map((e) => ({
 		label: e.label,
 		checked: e.deviceId === o,
@@ -1453,7 +1453,7 @@ function mt({ kind: t, on: r, onToggle: i, devices: a, selectedDeviceId: o, onSe
 				"data-testid": x,
 				className: e("inline-flex cursor-pointer items-center gap-2 border-none bg-transparent font-[inherit] text-sm", v ? "rounded-l-md" : "rounded-md", n, "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary", C.reason === void 0 ? "hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50" : ke, d === "md" ? "px-2.5" : "px-2", m && "min-w-0 flex-1 justify-start gap-1.5 pr-2", P),
 				children: [
-					O,
+					k,
 					m && /* @__PURE__ */ U("span", {
 						className: "min-w-0 truncate whitespace-nowrap",
 						children: A
@@ -1461,7 +1461,7 @@ function mt({ kind: t, on: r, onToggle: i, devices: a, selectedDeviceId: o, onSe
 					C.description
 				]
 			})
-		}), v && /* @__PURE__ */ U(k, {
+		}), v && /* @__PURE__ */ U(O, {
 			trigger: /* @__PURE__ */ U(u, { size: 14 }),
 			triggerLabel: `Choose ${dt[t]}`,
 			triggerTitle: `Choose ${dt[t]}`,
@@ -1560,7 +1560,7 @@ var xt = L(function({ participants: e, localParticipantId: t, activeSpeakerId: n
 		"data-testid": "call-dock-tile-row"
 	});
 });
-function St({ title: n, participantCount: r, elapsedMs: a, phase: c, callingTo: l, documents: u = [], participants: d, localParticipantId: f, activeSpeakerId: p = null, followingUserId: h = null, mic: v, camera: b, screenShare: S, onOpenPeople: T, onOpenDocuments: E, peopleOpen: O = !1, documentsOpen: A = !1, onOpenSettings: M, extras: P, onPopOut: ee, onLeave: te, canEndForEveryone: F = !1, onEndForEveryone: ne, onTileClick: I, onTitleClick: re, onDocumentClick: ie, endedSummary: ae, error: L, onDismiss: se, compact: R = !1, tileSize: ce, layout: z = "shelf", metaAside: le, fit: ue = "width", className: G, "data-testid": K = "call-dock" }) {
+function St({ title: n, participantCount: r, elapsedMs: a, phase: c, callingTo: l, documents: u = [], participants: d, localParticipantId: f, activeSpeakerId: p = null, followingUserId: h = null, mic: v, camera: b, screenShare: S, onOpenPeople: T, onOpenDocuments: E, peopleOpen: k = !1, documentsOpen: A = !1, onOpenSettings: M, extras: P, onPopOut: ee, onLeave: te, canEndForEveryone: F = !1, onEndForEveryone: ne, onTileClick: I, onTitleClick: re, onDocumentClick: ie, endedSummary: ae, error: L, onDismiss: se, compact: R = !1, tileSize: ce, layout: z = "shelf", metaAside: le, fit: ue = "width", className: G, "data-testid": K = "call-dock" }) {
 	let q = z === "compact" ? "sm" : ce ?? (R ? "sm" : "md"), de = B(null), [fe, pe] = V(!1), me = B(I);
 	me.current = I;
 	let he = oe((e) => me.current?.(e), []), ge = c === "calling" ? "You can share once someone joins" : c === "connecting" ? "Connecting…" : S.disabledReason, _e = Ae(ge, !1), J = ue === "contain" && z === "grid", ve = j({
@@ -1636,7 +1636,7 @@ function St({ title: n, participantCount: r, elapsedMs: a, phase: c, callingTo: 
 			label: `People (${r})`,
 			icon: /* @__PURE__ */ U(x, { size: 16 }),
 			onSelect: T,
-			...O ? { active: !0 } : {},
+			...k ? { active: !0 } : {},
 			...X ? {
 				disabled: !0,
 				disabledReason: "Connecting…"
@@ -1843,14 +1843,14 @@ function St({ title: n, participantCount: r, elapsedMs: a, phase: c, callingTo: 
 								})
 							}),
 							/* @__PURE__ */ W(t, {
-								variant: O ? "secondary" : "ghost",
+								variant: k ? "secondary" : "ghost",
 								size: "sm",
 								onClick: T,
 								disabled: X,
 								"aria-label": `People (${r})`,
-								"aria-pressed": O,
+								"aria-pressed": k,
 								"data-testid": "call-dock-people",
-								className: e("inline-flex h-8 items-center gap-1.5", !O && "bg-surface"),
+								className: e("inline-flex h-8 items-center gap-1.5", !k && "bg-surface"),
 								children: [
 									/* @__PURE__ */ U(x, { size: 16 }),
 									/* @__PURE__ */ U("span", {
@@ -1897,7 +1897,7 @@ function St({ title: n, participantCount: r, elapsedMs: a, phase: c, callingTo: 
 						/* @__PURE__ */ W("div", {
 							className: "flex shrink-0 items-center gap-2",
 							"data-testid": "call-dock-end",
-							children: [$ ? /* @__PURE__ */ U(k, {
+							children: [$ ? /* @__PURE__ */ U(O, {
 								trigger: /* @__PURE__ */ U(s, { size: 16 }),
 								triggerLabel: "More call controls",
 								triggerTitle: "More",
@@ -3144,7 +3144,7 @@ function pn({ value: n, onChange: r, onTest: i, testLabel: a = "Test sound", tes
 				size: 20,
 				className: e("shrink-0", s ? "text-text-tertiary" : "text-text-primary")
 			}),
-			/* @__PURE__ */ U(O, {
+			/* @__PURE__ */ U(k, {
 				value: p,
 				onChange: (e) => r(e / 100),
 				min: 0,

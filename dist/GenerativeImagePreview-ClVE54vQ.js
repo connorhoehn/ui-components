@@ -5,8 +5,8 @@ import { t as o } from "./Chip-DVGdTxaN.js";
 import { M as s } from "./Icons-CNCMF52q.js";
 import { t as c } from "./overlayStack-BFH9XXvN.js";
 import { t as l } from "./Input-B5h9UXBs.js";
-import { i as u, r as d } from "./focusTrap-CmWJlptm.js";
-import { t as f } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as u } from "./DropdownMenu-Bu9IMVKk.js";
+import { i as d, r as f } from "./focusTrap-CmWJlptm.js";
 import { a as p, c as m, d as h, i as g, l as _, n as v, o as y } from "./railType-DDG1ak8-.js";
 import { t as b } from "./FileUploadDrop-C9l5HTre.js";
 import { t as x } from "./SectionLabel-BVXGq_WP.js";
@@ -136,15 +136,15 @@ function K({ emoji: e, active: t, onPick: r }) {
 	});
 }
 function q({ value: e, onChange: t, curated: n }) {
-	let [r, i] = k(!1), [a, o] = k(!1), [s, c] = k(""), l = O(null), d = O(null), f = n ?? G;
+	let [r, i] = k(!1), [a, o] = k(!1), [s, c] = k(""), l = O(null), u = O(null), f = n ?? G;
 	T(() => {
 		if (!r) return;
 		let e = (e) => {
 			let t = e.target;
-			l.current && l.current.contains(t) || d.current && d.current.contains(t) || i(!1);
+			l.current && l.current.contains(t) || u.current && u.current.contains(t) || i(!1);
 		};
 		return window.addEventListener("mousedown", e), () => window.removeEventListener("mousedown", e);
-	}, [r]), u(r, C(() => i(!1), []));
+	}, [r]), d(r, C(() => i(!1), []));
 	let p = (e) => {
 		t(e), i(!1);
 	}, m = () => {
@@ -168,7 +168,7 @@ function q({ value: e, onChange: t, curated: n }) {
 				children: e
 			})
 		}), r ? /* @__PURE__ */ M("div", {
-			ref: d,
+			ref: u,
 			role: "dialog",
 			"aria-label": "Choose an icon",
 			className: "absolute top-full left-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] p-2.5 z-30 min-w-[272px]",
@@ -214,7 +214,7 @@ function Y({ images: e, openIndex: t, onClose: r, onNavigate: i }) {
 	T(() => {
 		l(t);
 	}, [t]);
-	let u = t !== null && e.length > 0, f = c(u), p = i ? t : s ?? t, m = p === null ? 0 : Math.min(Math.max(p, 0), e.length - 1), h = (t) => {
+	let u = t !== null && e.length > 0, d = c(u), p = i ? t : s ?? t, m = p === null ? 0 : Math.min(Math.max(p, 0), e.length - 1), h = (t) => {
 		let n = e.length;
 		if (n < 2) return;
 		let r = (m + t + n) % n;
@@ -228,7 +228,7 @@ function Y({ images: e, openIndex: t, onClose: r, onNavigate: i }) {
 	}, [u]), T(() => {
 		if (!u) return;
 		let e = (e) => {
-			f() && (e.key === "Tab" ? d(e, a.current) : e.key === "Escape" ? (e.stopPropagation(), r()) : e.key === "ArrowLeft" ? (e.preventDefault(), h(-1)) : e.key === "ArrowRight" && (e.preventDefault(), h(1)));
+			d() && (e.key === "Tab" ? f(e, a.current) : e.key === "Escape" ? (e.stopPropagation(), r()) : e.key === "ArrowLeft" ? (e.preventDefault(), h(-1)) : e.key === "ArrowRight" && (e.preventDefault(), h(1)));
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [
@@ -237,7 +237,7 @@ function Y({ images: e, openIndex: t, onClose: r, onNavigate: i }) {
 		e.length,
 		r,
 		i,
-		f
+		d
 	]), !u) return null;
 	let g = e[m], _ = e.length > 1;
 	return N(/* @__PURE__ */ M("div", {
@@ -677,7 +677,7 @@ var ue = "grid-cols-[auto_minmax(0,1fr)_max-content_max-content_auto]", de = "[&
 function fe(e, t, n) {
 	return X(e, t, n) || "@max-[35rem]:pl-0";
 }
-function pe({ row: e, current: t, currentStyle: r, rowStyle: a, columns: o, testId: c, size: l, tabbable: u, onFocusRow: d, onOpenRow: p, menuSections: h, menuLabel: g, reorder: y }) {
+function pe({ row: e, current: t, currentStyle: r, rowStyle: a, columns: o, testId: c, size: l, tabbable: d, onFocusRow: f, onOpenRow: p, menuSections: h, menuLabel: g, reorder: y }) {
 	let b = !!h && h.some((e) => e.items.length > 0), x = e.hoverSubline !== void 0 && e.hoverSubline !== null, S = e.meta !== void 0 && e.meta !== null, w = e.leading !== void 0 && e.leading !== null, T = e.actions !== void 0 && e.actions !== null && e.actions !== !1, E = `r:${e.id}`, D = l === "md", O = D || a === "plain", [N, P] = k({
 		dragging: !1,
 		over: !1
@@ -702,7 +702,7 @@ function pe({ row: e, current: t, currentStyle: r, rowStyle: a, columns: o, test
 		"data-testid": `${c}-row-menu-${e.id}`,
 		className: "flex shrink-0 items-center",
 		onContextMenu: (e) => e.stopPropagation(),
-		children: /* @__PURE__ */ j(f, {
+		children: /* @__PURE__ */ j(u, {
 			trigger: /* @__PURE__ */ j("span", {
 				"aria-hidden": "true",
 				className: "text-base leading-none",
@@ -734,7 +734,7 @@ function pe({ row: e, current: t, currentStyle: r, rowStyle: a, columns: o, test
 		"data-row-id": e.id,
 		"data-current": t || void 0,
 		"aria-current": t ? "true" : void 0,
-		onFocus: d,
+		onFocus: f,
 		...b ? { onContextMenu: (e) => {
 			e.target.closest("[data-grouped-list-menu]") || (e.preventDefault(), ce(e.currentTarget));
 		} } : {},
@@ -754,7 +754,7 @@ function pe({ row: e, current: t, currentStyle: r, rowStyle: a, columns: o, test
 				"data-focus-key": E,
 				"aria-label": e.ariaLabel,
 				"aria-disabled": e.disabled || void 0,
-				tabIndex: u ? 0 : -1,
+				tabIndex: d ? 0 : -1,
 				disabled: e.disabled,
 				onClick: () => {
 					e.disabled || p?.(e);

@@ -12,9 +12,9 @@ import { t as A } from "./Input-B5h9UXBs.js";
 import { t as j } from "./Select-nxx_K9gv.js";
 import { t as M } from "./InlinePopover-C-Dtxban.js";
 import { t as N } from "./SearchInput-CF4qs4mx.js";
-import { t as P } from "./DataTable-CCIEu97l.js";
-import { t as F } from "./EmptyState-COIuk2la.js";
+import { t as P } from "./DataTable-CCW5lK8s.js";
 import { t as ee } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as F } from "./EmptyState-COIuk2la.js";
 import { l as I } from "./railType-DDG1ak8-.js";
 import { t as L } from "./SegmentedControl-CKdSbD8t.js";
 import "./ChatSidePanelRegistry-DtGItuO7.js";
@@ -1078,7 +1078,7 @@ function et({ userId: t, displayName: n, idToken: r, rooms: i, createRoom: a, cr
 	]), N = K((e) => {
 		let t = i.find((t) => t.roomId === e);
 		t && x(t);
-	}, [i, x]), P = "var(--color-border)", F = "var(--color-text-primary)", ee = "var(--color-text-secondary)";
+	}, [i, x]), P = "var(--color-border)", ee = "var(--color-text-primary)", F = "var(--color-text-secondary)";
 	return /* @__PURE__ */ $("div", {
 		className: "flex overflow-hidden rounded-lg transition-colors duration-200 h-[calc(100vh-120px)]",
 		style: {
@@ -1104,11 +1104,11 @@ function et({ userId: t, displayName: n, idToken: r, rooms: i, createRoom: a, cr
 						className: "flex-1 min-w-0",
 						children: [/* @__PURE__ */ Q("div", {
 							className: "text-[13px] font-bold overflow-hidden text-ellipsis whitespace-nowrap",
-							style: { color: F },
+							style: { color: ee },
 							children: n || t
 						}), /* @__PURE__ */ $("div", {
 							className: "text-[11px] flex items-center gap-1",
-							style: { color: ee },
+							style: { color: F },
 							children: [/* @__PURE__ */ Q("span", { className: "w-1.5 h-1.5 rounded-full bg-success inline-block" }), "Active"]
 						})]
 					}),
@@ -1117,7 +1117,7 @@ function et({ userId: t, displayName: n, idToken: r, rooms: i, createRoom: a, cr
 						onClick: () => g(!1),
 						title: "Collapse sidebar",
 						className: "bg-transparent border-none cursor-pointer text-base leading-none px-1 py-0.5 rounded",
-						style: { color: ee },
+						style: { color: F },
 						children: "«"
 					})
 				]
@@ -1127,7 +1127,7 @@ function et({ userId: t, displayName: n, idToken: r, rooms: i, createRoom: a, cr
 					className: "px-1 pt-1",
 					children: [l && M.length === 0 ? /* @__PURE__ */ Q("div", {
 						className: "px-2 py-2 text-xs",
-						style: { color: ee },
+						style: { color: F },
 						children: "Loading…"
 					}) : u && M.length === 0 ? /* @__PURE__ */ Q("div", {
 						role: "alert",
@@ -1184,12 +1184,12 @@ function et({ userId: t, displayName: n, idToken: r, rooms: i, createRoom: a, cr
 					className: "bg-transparent rounded cursor-pointer text-sm px-2 py-0.5 font-[inherit]",
 					style: {
 						border: `1px solid ${P}`,
-						color: ee
+						color: F
 					},
 					children: "»"
 				}), k && /* @__PURE__ */ $("span", {
 					className: "text-[13px] font-semibold",
-					style: { color: F },
+					style: { color: ee },
 					children: [
 						k.type === "dm" ? "●" : "#",
 						" ",
@@ -1205,7 +1205,7 @@ function et({ userId: t, displayName: n, idToken: r, rooms: i, createRoom: a, cr
 					onMessage: m
 				}, k.roomId) : /* @__PURE__ */ $("div", {
 					className: "h-full flex flex-col items-center justify-center gap-2",
-					style: { color: ee },
+					style: { color: F },
 					children: [
 						/* @__PURE__ */ Q("span", {
 							className: "text-4xl",
@@ -1213,7 +1213,7 @@ function et({ userId: t, displayName: n, idToken: r, rooms: i, createRoom: a, cr
 						}),
 						/* @__PURE__ */ Q("span", {
 							className: "text-[15px] font-semibold",
-							style: { color: F },
+							style: { color: ee },
 							children: "Select a room to start chatting"
 						}),
 						/* @__PURE__ */ Q("span", {
@@ -3232,9 +3232,9 @@ function Qt({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 		E,
 		M,
 		f
-	]), F = K((e) => {
+	]), ee = K((e) => {
 		e.key === "Escape" && (e.stopPropagation(), m());
-	}, [m]), ee = J(() => d.map((e) => {
+	}, [m]), F = J(() => d.map((e) => {
 		let t = O.includes(e.id), n = /* @__PURE__ */ $("span", {
 			className: "flex flex-wrap items-baseline gap-1.5",
 			children: [
@@ -3394,7 +3394,7 @@ function Qt({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 		"data-testid": S,
 		"data-status": t,
 		"data-variant": b,
-		onKeyDown: F,
+		onKeyDown: ee,
 		className: o("flex h-full min-h-0 flex-col bg-code-bg font-mono text-code-text", x),
 		children: [
 			/* @__PURE__ */ Q("div", {
@@ -3479,7 +3479,7 @@ function Qt({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 				children: [/* @__PURE__ */ Q("div", {
 					className: "flex min-h-0 flex-1 flex-col",
 					children: L === "stream" ? /* @__PURE__ */ Q(pe, {
-						lines: ee,
+						lines: F,
 						title: null,
 						showLevel: !1,
 						emptyMessage: "No output yet.",

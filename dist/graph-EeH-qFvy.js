@@ -9,10 +9,10 @@ import { Dt as m, S as h, T as g, c as _, d as v, f as y, h as b, j as x, k as S
 import { t as k } from "./Input-B5h9UXBs.js";
 import { t as A } from "./Select-nxx_K9gv.js";
 import { t as j } from "./Tooltip-BaCci7O5.js";
-import { t as M } from "./EmptyState-COIuk2la.js";
-import { t as N } from "./Spinner-DxWx16F-.js";
-import { t as P } from "./LoadingState-D19sK4DN.js";
-import { t as F } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as M } from "./DropdownMenu-Bu9IMVKk.js";
+import { t as N } from "./EmptyState-COIuk2la.js";
+import { t as P } from "./Spinner-DxWx16F-.js";
+import { t as F } from "./LoadingState-D19sK4DN.js";
 import { t as ee } from "./SegmentedControl-CKdSbD8t.js";
 import { t as I } from "./StatusPill-DrTq5Ki4.js";
 import { n as L } from "./ChatSidePanelRegistry-DtGItuO7.js";
@@ -483,7 +483,7 @@ function vt({ people: e, query: i, onOpenPerson: a, onMessagePerson: o, graphHei
 	let [d, p] = Y(null), { nodes: m, edges: h } = q(() => _t(e, i), [e, i]), g = q(() => Ze(m), [m]);
 	return e.length === 0 ? /* @__PURE__ */ X(r, {
 		density: "compact",
-		children: /* @__PURE__ */ X(M, {
+		children: /* @__PURE__ */ X(N, {
 			icon: "🕸️",
 			title: "No people found",
 			body: i ? `Nothing matched “${i}”.` : "There is nobody to show yet.",
@@ -624,7 +624,7 @@ function xt({ panel: e, api: t, options: r }) {
 			/* @__PURE__ */ X(H, { height: 44 }),
 			/* @__PURE__ */ X("div", {
 				className: "absolute inset-0 flex items-center justify-center",
-				children: /* @__PURE__ */ X(N, {
+				children: /* @__PURE__ */ X(P, {
 					size: "md",
 					"aria-label": "Loading graph"
 				})
@@ -3822,7 +3822,7 @@ function cr({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 						"data-testid": `${a}-open-lab`,
 						children: "Open in Computer Lab"
 					}),
-					!!e.moreActions?.length && /* @__PURE__ */ X(F, {
+					!!e.moreActions?.length && /* @__PURE__ */ X(M, {
 						trigger: /* @__PURE__ */ X("span", {
 							"aria-hidden": "true",
 							children: "…"
@@ -5168,7 +5168,7 @@ function Ur({ state: e, errorMessage: t, onRetry: r }) {
 		"data-testid": "work-graph-loading",
 		className: "flex min-h-[22rem] items-center justify-center rounded-lg border border-border bg-surface text-sm text-text-secondary",
 		children: "Loading shared work…"
-	}) : e === "error" ? /* @__PURE__ */ X(M, {
+	}) : e === "error" ? /* @__PURE__ */ X(N, {
 		testId: "work-graph-error",
 		icon: "!",
 		title: "Shared work is unavailable",
@@ -5177,7 +5177,7 @@ function Ur({ state: e, errorMessage: t, onRetry: r }) {
 			onClick: r,
 			children: "Try again"
 		}) : void 0
-	}) : /* @__PURE__ */ X(M, {
+	}) : /* @__PURE__ */ X(N, {
 		testId: "work-graph-empty",
 		icon: "○",
 		title: "No shared work",
@@ -6603,7 +6603,7 @@ function za({ graphKey: e, positions: t, focusKeys: n, fitKeys: r, canvasRef: i,
 	})] });
 }
 function Ba({ records: e, edges: i, selectedKeys: a, onSelectionChange: o, onAskSelection: s, onOpenRecord: u, layout: f, onLayoutChange: p, typeFilter: m, onTypeFilterChange: h, typeLabels: g, className: _, "data-testid": v = "record-graph", "aria-label": y = "Record connections", emptyLabel: b = va, showIsolated: x = !1, focusKeys: S, ref: C }) {
-	let [w, T] = Y("force"), [E, D] = Y("all"), [O, k] = Y(!1), [j, N] = Y(!1), P = J(null), F = J(null), I = J(null);
+	let [w, T] = Y("force"), [E, D] = Y("all"), [O, k] = Y(!1), [j, M] = Y(!1), P = J(null), F = J(null), I = J(null);
 	ke(C, () => ({
 		fitToFocus: () => I.current?.fitToFocus(),
 		fitAll: () => I.current?.fitAll()
@@ -6690,9 +6690,9 @@ function Ba({ records: e, edges: i, selectedKeys: a, onSelectionChange: o, onAsk
 	}, []);
 	let pe = async () => {
 		try {
-			N(!1), document.fullscreenElement === P.current ? await document.exitFullscreen() : P.current?.requestFullscreen ? await P.current.requestFullscreen() : N(!0);
+			M(!1), document.fullscreenElement === P.current ? await document.exitFullscreen() : P.current?.requestFullscreen ? await P.current.requestFullscreen() : M(!0);
 		} catch {
-			N(!0);
+			M(!0);
 		}
 	};
 	return /* @__PURE__ */ Z(c, {
@@ -6793,7 +6793,7 @@ function Ba({ records: e, edges: i, selectedKeys: a, onSelectionChange: o, onAsk
 				className: "px-2 py-1 text-xs text-text-secondary",
 				children: "Full screen is unavailable in this browser."
 			}),
-			V.records.length ? !se.length && !x ? /* @__PURE__ */ X(M, {
+			V.records.length ? !se.length && !x ? /* @__PURE__ */ X(N, {
 				title: b,
 				testId: `${v}-unconnected`
 			}) : /* @__PURE__ */ X(c, {
@@ -6832,7 +6832,7 @@ function Ba({ records: e, edges: i, selectedKeys: a, onSelectionChange: o, onAsk
 						testId: v
 					})]
 				}) })
-			}) : /* @__PURE__ */ X(M, {
+			}) : /* @__PURE__ */ X(N, {
 				title: "No connections to show",
 				description: "Choose another record type or search for records.",
 				testId: `${v}-empty`
@@ -7738,7 +7738,7 @@ function No({ people: e, onPickPerson: n, onPickSkill: i, placeholder: a = "Find
 				className: "absolute left-0 top-[calc(100%+6px)] z-[120] w-[290px] rounded-lg border border-border bg-surface shadow-md",
 				children: /* @__PURE__ */ X(r, {
 					density: "compact",
-					children: /* @__PURE__ */ X(M, {
+					children: /* @__PURE__ */ X(N, {
 						title: `No matches for "${s}"`,
 						body: "Try a different name, title, department, or skill.",
 						actionLabel: "Clear search",
@@ -7782,7 +7782,7 @@ function Fo({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: o
 					gap: "none",
 					className: "min-w-0 flex-1",
 					children: [
-						i && !e && /* @__PURE__ */ X(P, {
+						i && !e && /* @__PURE__ */ X(F, {
 							label: "Loading…",
 							spinnerSize: "sm"
 						}),

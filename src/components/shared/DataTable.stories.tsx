@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DataTable, type DataTableColumn, type DataTableProps } from './DataTable';
 import Chip from './Chip';
+import { useState } from 'react';
+import { RowActions } from './RowActions';
+import { CheckIcon, RedoIcon, PlayCircleIcon } from '../ui/Icons';
 
 interface Run {
   id: string;
@@ -198,4 +201,62 @@ export const GroupedStickyWrapping: Story = {
         staticRows="A read-only summary of the panel's scores." />
     </div>
   ),
+} as unknown as Story;
+
+interface Take {
+  id: string;
+  name: string;
+  revision: string;
+  takes: string;
+  made: string;
+  state: string;
+  children?: Take[];
+}
+
+const VOICES: Take[] = [
+  {
+    id: 'dot', name: 'Dot', revision: 'r2', takes: '3 takes', made: 'Nov 13', state: '3 to review',
+    children: [
+      { id: 'dot-2a', name: 'Take 2a', revision: '', takes: '4.5 s · -19.2 LUFS · peak -3.83 dBFS', made: '', state: 'Proposed' },
+      { id: 'dot-2b', name: 'Take 2b', revision: '', takes: '5.8 s · -17.5 LUFS · peak -3.99 dBFS', made: '', state: 'Waiting for review' },
+      { id: 'dot-2c', name: 'Take 2c', revision: '', takes: '6.4 s · -18 LUFS · peak -6.86 dBFS', made: '', state: 'Waiting for review' },
+    ],
+  },
+  { id: 'gus', name: 'Gus', revision: 'r1', takes: '1 take', made: 'Nov 12', state: 'Approved',
+    children: [{ id: 'gus-1a', name: 'Take 1a', revision: '', takes: '3.1 s · -18.4 LUFS · peak -4.1 dBFS', made: '', state: 'Approved' }] },
+  { id: 'june', name: 'June', revision: '', takes: 'No takes', made: '', state: 'Not started' },
+];
+
+const voiceColumns: DataTableColumn<Take>[] = [
+  { key: 'name', header: 'Character', sortable: true },
+  { key: 'revision', header: 'Revision' },
+  { key: 'takes', header: 'Takes' },
+  { key: 'made', header: 'Made' },
+  { key: 'state', header: 'State' },
+];
+
+/**
+ * Expandable rows (since 2.544.0): a character opens to its takes as rows of
+ * the same table, indented one step. `childColumns` lets a take's measurements
+ * run across the Takes and Made columns; `RowActions` ends every row.
+ */
+export const ExpandableRows: Story = {
+  render: function Render() {
+    const [open, setOpen] = useState<string[]>(['dot']);
+    return (
+      <DataTable<Take> data={VOICES} columns={voiceColumns} keyField={(r) => r.id} size="sm" headerCase="sentence"
+        rowChildren={(r) => r.children} expandedKeys={open} onExpandedChange={setOpen}
+        childColumns={{ takes: { colSpan: 2 } }}
+        rowActionsHeader="Operations"
+        rowActions={(r) => (
+          <RowActions name={r.name}
+            actions={r.children ? [{ icon: <RedoIcon />, label: 'Make again', onClick: () => console.log('again', r.id) }] : [
+              { icon: <PlayCircleIcon />, label: 'Play', onClick: () => console.log('play', r.id) },
+              { icon: <CheckIcon />, label: 'Approve', onClick: () => console.log('approve', r.id), primary: r.state === 'Proposed' },
+            ]}
+            menu={[{ label: 'Open', onSelect: () => console.log('open', r.id) }, { label: 'Delete', onSelect: () => console.log('delete', r.id) }]} />
+        )}
+        onRowClick={(r) => console.log('row', r.id)} />
+    );
+  },
 } as unknown as Story;
