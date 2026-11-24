@@ -58,4 +58,11 @@ describe('FilterBand', () => {
     fireEvent.mouseDown(options[1]);
     expect(onStatus).toHaveBeenCalledWith('done');
   });
+
+  it('right-aligns the summary by flex justification, with no auto margin', () => {
+    setup();
+    const summary = screen.getByTestId('filter-band-summary');
+    expect(summary.className).toContain('justify-end');
+    expect(summary.className).not.toMatch(/\bm[lrx]-auto\b/);
+  });
 });

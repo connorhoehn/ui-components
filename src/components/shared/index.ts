@@ -39,6 +39,8 @@ export { default as FilterBand } from './FilterBand';
 export * from './FilterBand';
 export { default as RowActions } from './RowActions';
 export * from './RowActions';
+export { default as TitleCard } from './TitleCard';
+export * from './TitleCard';
 export { default as EmptyState } from './EmptyState';
 export * from './EmptyState';
 export { NoAccessState, noAccessMessage } from './NoAccessState';
@@ -357,7 +359,7 @@ export type { InlineMenuProps, InlineMenuPlacement } from './InlineMenu';
 export { FloatingPanel, FLOATING_PANEL_ANCHORS, resolveAnchorPosition } from './FloatingPanel';
 export type { FloatingPanelProps, FloatingPanelAnchor } from './FloatingPanel';
 export { DropdownMenu } from './DropdownMenu';
-export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem } from './DropdownMenu';
+export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem, DropdownMenuConfirm } from './DropdownMenu';
 
 // ── Status primitives (Phase 5) ──
 // ChangeDiff imports `cn` and nothing else, but was reachable only from the

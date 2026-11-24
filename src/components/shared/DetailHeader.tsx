@@ -34,9 +34,11 @@ export interface DetailHeaderProps {
   /**
    * The title's size (since 2.515.12). `panel` (default): 14px, a panel's
    * heading. `page`: 20px (`text-xl`, 28px line), the page-title size every
-   * page template's header draws; `DetailPage` passes it.
+   * page template's header draws; `DetailPage` passes it. `section`
+   * (since 2.545.0): 16px (`text-base`, 24px line), a header inside a card
+   * that leads its own section, on the house scale (11, 12, 14, 16, 20).
    */
-  titleSize?: 'panel' | 'page';
+  titleSize?: 'panel' | 'section' | 'page';
   className?: string;
   'data-testid'?: string;
 }
@@ -61,7 +63,7 @@ export function DetailHeader({
       {/* 4px between title, description and meta (since 2.515.12; was 6px). */}
       <div className="flex flex-col gap-1 min-w-0 flex-1" data-detail-header-stack="">
         <div className="flex flex-wrap items-center gap-2">
-          <Heading className={cn('m-0 font-semibold text-text-primary', titleSize === 'page' ? 'text-xl leading-7' : 'text-sm')} data-title-size={titleSize}>
+          <Heading className={cn('m-0 font-semibold text-text-primary', titleSize === 'page' ? 'text-xl leading-7' : titleSize === 'section' ? 'text-base leading-6' : 'text-sm')} data-title-size={titleSize}>
             {title}
           </Heading>
           {badge}

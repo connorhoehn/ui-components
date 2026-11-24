@@ -260,3 +260,27 @@ export const ExpandableRows: Story = {
     );
   },
 } as unknown as Story;
+
+/**
+ * The dense step (since 2.545.0): `size="xs"` draws 36px rows with the same
+ * 14px body text, 12px header and side inset as `sm`; the 28px `RowActions`
+ * buttons still fit. Delete asks in place; a disabled item says why.
+ */
+export const DenseRows: Story = {
+  render: function Render() {
+    const [open, setOpen] = useState<string[]>(['dot']);
+    return (
+      <DataTable<Take> data={VOICES} columns={voiceColumns} keyField={(r) => r.id} size="xs" headerCase="sentence"
+        rowChildren={(r) => r.children} expandedKeys={open} onExpandedChange={setOpen}
+        rowActions={(r) => (
+          <RowActions name={r.name}
+            actions={[{ icon: <PlayCircleIcon />, label: 'Play', onClick: () => console.log('play', r.id) }]}
+            menu={[
+              { label: 'Archive', onSelect: () => console.log('archive', r.id), disabled: r.state === 'Approved', disabledReason: 'An approved take stays in the show' },
+              { label: 'Delete', danger: true, onSelect: () => console.log('delete', r.id), confirm: { question: `Delete ${r.name}?`, confirmLabel: 'Delete', tone: 'destructive' } },
+            ]} />
+        )}
+        onRowClick={(r) => console.log('row', r.id)} />
+    );
+  },
+} as unknown as Story;

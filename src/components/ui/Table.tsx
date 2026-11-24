@@ -12,9 +12,12 @@ import { useDensitySize } from '../shared/Density';
  * line (cells do not wrap — truncate or move detail to a tooltip), 14px body
  * text, a 12px semibold uppercase header, and 12px side padding. A row that
  * stacks a caption or a bar under its value cannot fit 44px; put the bar
- * inline beside the value and the caption in a `title`.
+ * inline beside the value and the caption in a `title`. `xs` (since
+ * 2.545.0) is the dense step: `sm` with 36px body rows (`--ui-table-row-xs`),
+ * the same 14px body text, 12px header and side inset; a 28px icon button
+ * (`IconButton size="sm"`, `RowActions`) still fits inside a row.
  */
-export type TableSize = 'md' | 'sm';
+export type TableSize = 'md' | 'sm' | 'xs';
 
 const TableSizeContext = createContext<TableSize>('md');
 // Whether rows in the enclosing body stripe. False outside a `TableBody`, so
@@ -52,7 +55,7 @@ export function Table({ children, className, size: sizeProp, ...rest }: TablePro
           table's box instead of running past the column and being cut off
           by the page's scroller. */}
       <div className="w-full min-w-0 max-w-full overflow-x-auto" data-table-scroller="">
-        <table data-ui-part="" className={cn('w-full text-sm', className)} data-ui-table="" data-size={size === 'sm' ? 'sm' : undefined} {...rest}>
+        <table data-ui-part="" className={cn('w-full text-sm', className)} data-ui-table="" data-size={size === 'md' ? undefined : size} {...rest}>
           {children}
         </table>
       </div>
@@ -147,7 +150,7 @@ export function TableTh({ children, sortable, sortDirection, numeric, className,
   return (
     <th
       className={cn(
-        size === 'sm'
+        size !== 'md'
           ? 'text-left px-[var(--ui-table-inset,0.75rem)] py-2 text-text-secondary font-semibold text-xs uppercase tracking-wide whitespace-nowrap select-none'
           // md header: 8px block padding (was py-2.5, 10px, off the 4px scale;
           // 8px rather than 12px matches the sm header so both densities
@@ -184,6 +187,8 @@ export function TableTd({ children, numeric, className, ...rest }: TableTdProps)
       className={cn(
         size === 'sm'
           ? 'h-[var(--ui-table-row,2.75rem)] px-[var(--ui-table-inset,0.75rem)] py-0 text-sm leading-5 text-text-primary align-middle whitespace-nowrap'
+          : size === 'xs'
+          ? 'h-[var(--ui-table-row-xs,2.25rem)] px-[var(--ui-table-inset,0.75rem)] py-0 text-sm leading-5 text-text-primary align-middle whitespace-nowrap'
           : 'px-4 py-3 text-sm text-text-primary align-middle',
         // `[&>*]:justify-end`: a flex child (`Text`/`Inline` render as flex rows) fills the cell and
         // ignores text-align, so a number in one sat at the cell's left edge (2.531.0).

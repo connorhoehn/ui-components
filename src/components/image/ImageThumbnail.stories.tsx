@@ -84,3 +84,8 @@ export const AllSizes: StoryObj = {
     </div>
   ),
 };
+
+/** `maxWidth` (since 2.545.0): fills its column up to a named width (`xs`..`lg`), no page utility class. */
+export const HeldToMaxWidth: Story = {
+  args: { src: SAMPLE_SRC, alt: 'Held to sm', maxWidth: 'sm', aspectRatio: 'video' },
+};

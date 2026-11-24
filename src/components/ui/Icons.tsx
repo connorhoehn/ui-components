@@ -779,6 +779,17 @@ export function PlayCircleIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** Two beamed eighth notes: "music", a soundtrack or a cue. Since 2.545.0. */
+export function MusicIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M6 11.5V4.2l7.5-1.7v7.6" />
+      <circle cx="4.3" cy="11.6" r="1.7" />
+      <circle cx="11.8" cy="10.2" r="1.7" />
+    </svg>
+  );
+}
+
 /** Two upright bars in a ring: "pause" (the counterpart of PlayCircleIcon). Since 2.451.3. */
 export function PauseCircleIcon({ size = 16, ...rest }: GlyphProps) {
   return (

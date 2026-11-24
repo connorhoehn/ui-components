@@ -10,7 +10,7 @@ import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { MoreIcon } from '../ui/Icons';
 import { Tooltip } from './Tooltip';
-import { DropdownMenu } from './DropdownMenu';
+import { DropdownMenu, type DropdownMenuConfirm } from './DropdownMenu';
 
 export interface RowAction {
   icon: ReactNode;
@@ -28,6 +28,12 @@ export interface RowActionsMenuItem {
   label: string;
   onSelect: () => void;
   disabled?: boolean;
+  /** Why it is disabled: the item's second line and tooltip, announced as its description. */
+  disabledReason?: string;
+  /** Ask in place before `onSelect` runs: `{ question, confirmLabel?, tone? }`. */
+  confirm?: DropdownMenuConfirm;
+  /** Paint the item as destructive. */
+  danger?: boolean;
 }
 
 export interface RowActionsProps {
@@ -56,9 +62,12 @@ export function RowActions({ name, actions, menu, className, 'data-testid': test
   const suffix = name ? `, ${name}` : '';
   return (
     <div
-      className={cn('ml-auto flex shrink-0 flex-nowrap items-center justify-end gap-1 whitespace-nowrap', className)}
+      // Fills its cell and right-aligns its buttons by justification, never by
+      // an auto margin (an audit reads a computed auto margin as page spacing).
+      className={cn('flex w-full shrink-0 flex-nowrap items-center justify-end gap-1 whitespace-nowrap', className)}
       onClick={stop}
       onKeyDown={stopActivation}
+      data-ui-part="row-actions"
       data-testid={testId}
     >
       {shown.map((a, i) => (
@@ -82,7 +91,15 @@ export function RowActions({ name, actions, menu, className, 'data-testid': test
           triggerVariant="link"
           align="end"
           triggerTestId={`${testId}-more`}
-          sections={[{ items: items.map((m) => ({ label: m.label, onSelect: m.onSelect, disabled: m.disabled })) }]}
+          sections={[{ items: items.map((m, i) => ({
+            label: m.label,
+            onSelect: m.onSelect,
+            disabled: m.disabled,
+            disabledReason: m.disabledReason,
+            confirm: m.confirm,
+            danger: m.danger,
+            'data-testid': `${testId}-item-${i}`,
+          })) }]}
         />
       )}
     </div>

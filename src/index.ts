@@ -82,6 +82,7 @@ export type { SliderProps } from './components/forms/Slider';
 // ── Image primitives (Phase 5) ──
 export { ImageThumbnail } from './components/image/ImageThumbnail';
 export type { ImageThumbnailProps, ImageThumbnailSize, ImageThumbnailAspect } from './components/image/ImageThumbnail';
+export type { ImageMaxWidth } from './components/image/imageMaxWidth';
 export { GenerativeImagePreview } from './components/image/GenerativeImagePreview';
 export type { GenerativeImagePreviewProps, GenerativeImagePreviewStatus } from './components/image/GenerativeImagePreview';
 
@@ -142,7 +143,7 @@ export { AuditPage as IdentityAuditPage } from './components/identity';
 export { ErrorBoundary } from './components/misc/ErrorBoundary';
 
 // Explicit: both the shared barrel and the ui barrel star-export Icons, and TS refuses an ambiguous name.
-export { PopOutIcon, EditIcon, FolderIcon, TrashIcon, PinIcon, BellIcon, BellMutedIcon, LockIcon, ActivityIcon, AtIcon, EyeIcon, ForwardIcon, PhoneIcon, VideoCallIcon, MoonIcon, SunIcon, MenuIcon, TranscribeIcon, BranchIcon, ChartIcon, CodeIcon, PuzzleIcon, RepeatIcon, PaperclipIcon, LinkIcon, QuoteIcon, SmileyIcon, ReplyIcon, WhiteboardIcon, CommentIcon, InfoIcon, ArrowRightIcon, PeopleIcon, GripIcon, FilterIcon, ListIcon, SparkleIcon, ChevronIcon, UndoIcon, RedoIcon, ImageIcon, BulletListIcon, NumberedListIcon, ListStyleIcon, ChecklistIcon, HighlighterIcon, ItalicIcon, MoreIcon, WarningIcon, UploadIcon, CheckIcon, PlusCircleIcon, SlidersIcon, PersonIcon, ArrowUpIcon, ExternalLinkIcon, SendIcon, DownloadIcon, PrinterIcon, PlayCircleIcon, PauseCircleIcon, CopyIcon, DocumentAddIcon, TemplateIcon, DesktopIcon, LaptopIcon, SplitViewIcon, MaximizeIcon, MinimizeIcon, KeyboardIcon, BotIcon, CloudIcon } from './components/ui/Icons';
+export { PopOutIcon, EditIcon, FolderIcon, TrashIcon, PinIcon, BellIcon, BellMutedIcon, LockIcon, ActivityIcon, AtIcon, EyeIcon, ForwardIcon, PhoneIcon, VideoCallIcon, MoonIcon, SunIcon, MenuIcon, TranscribeIcon, BranchIcon, ChartIcon, CodeIcon, PuzzleIcon, RepeatIcon, PaperclipIcon, LinkIcon, QuoteIcon, SmileyIcon, ReplyIcon, WhiteboardIcon, CommentIcon, InfoIcon, ArrowRightIcon, PeopleIcon, GripIcon, FilterIcon, ListIcon, SparkleIcon, ChevronIcon, UndoIcon, RedoIcon, ImageIcon, BulletListIcon, NumberedListIcon, ListStyleIcon, ChecklistIcon, HighlighterIcon, ItalicIcon, MoreIcon, WarningIcon, UploadIcon, CheckIcon, PlusCircleIcon, SlidersIcon, PersonIcon, ArrowUpIcon, ExternalLinkIcon, SendIcon, DownloadIcon, PrinterIcon, PlayCircleIcon, PauseCircleIcon, MusicIcon, CopyIcon, DocumentAddIcon, TemplateIcon, DesktopIcon, LaptopIcon, SplitViewIcon, MaximizeIcon, MinimizeIcon, KeyboardIcon, BotIcon, CloudIcon } from './components/ui/Icons';
 
 // A sidebar-filling counterpart to `Panel`'s outer chrome — fills its
 // parent in normal flow (no portal, no fixed width, no floating chrome).

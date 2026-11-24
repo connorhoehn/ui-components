@@ -58,8 +58,26 @@ export interface DropdownMenuItem {
    * Since 2.390.3; the visible line since 2.390.4.
    */
   disabledReason?: string;
+  /**
+   * Ask in place before running `onSelect`: the row turns into the question
+   * with a confirming button and Cancel (`data-confirm-state="asking"`), the
+   * menu stays open, and only the confirming button runs `onSelect` and
+   * closes the menu. Cancel or Escape puts the row back. `tone: 'destructive'`
+   * paints the confirming button `danger-solid`. Since 2.545.0.
+   */
+  confirm?: DropdownMenuConfirm;
   /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
   'data-testid'?: string;
+}
+
+/** An item's in-place question (`DropdownMenuItem.confirm`). */
+export interface DropdownMenuConfirm {
+  /** Short, ends with "?": "Delete this take?". Also the group's accessible name. */
+  question: string;
+  /** The confirming button's label. Default: the item's label. */
+  confirmLabel?: string;
+  /** `destructive` paints the confirming button `danger-solid`. Default `default` (`primary`). */
+  tone?: 'default' | 'destructive';
 }
 
 export interface DropdownMenuSection {
@@ -350,6 +368,46 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
   useEffect(() => () => hold(), []);
   const baseId = useId();
   const reasonShown = !!(item.disabled && item.disabledReason);
+  const [asking, setAsking] = useState(false);
+  const confirmRef = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => { if (asking) confirmRef.current?.focus(); }, [asking]);
+
+  if (asking && item.confirm && !item.disabled) {
+    const back = () => { setAsking(false); requestAnimationFrame(() => rowRef.current?.focus()); };
+    return (
+      <div
+        role="group"
+        aria-label={item.confirm.question}
+        data-confirm-state="asking"
+        data-testid={item['data-testid'] ? `${item['data-testid']}-asking` : undefined}
+        onKeyDown={(e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); back(); } }}
+        className="flex flex-col gap-2 px-3.5 py-2"
+      >
+        <span className="text-sm text-[var(--color-text-primary)]">{item.confirm.question}</span>
+        <span className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            role="menuitem"
+            onClick={back}
+            data-testid={item['data-testid'] ? `${item['data-testid']}-cancel` : undefined}
+            className={buttonClasses({ variant: 'ghost', size: 'sm' })}
+          >
+            Cancel
+          </button>
+          <button
+            ref={confirmRef}
+            type="button"
+            role="menuitem"
+            onClick={() => { item.onSelect?.(); close(); }}
+            data-testid={item['data-testid'] ? `${item['data-testid']}-confirm` : undefined}
+            className={buttonClasses({ variant: item.confirm.tone === 'destructive' ? 'danger-solid' : 'primary', size: 'sm' })}
+          >
+            {item.confirm.confirmLabel ?? item.label}
+          </button>
+        </span>
+      </div>
+    );
+  }
 
   if (!item.submenu || item.disabled) {
     return (
@@ -365,7 +423,8 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
         aria-labelledby={reasonShown ? `${baseId}-label` : undefined}
         aria-describedby={reasonShown ? `${baseId}-reason` : undefined}
         title={item.disabled ? item.disabledReason : undefined}
-        onClick={() => { if (item.disabled) return; item.onSelect?.(); close(); }}
+        ref={item.submenu ? undefined : rowRef}
+        onClick={() => { if (item.disabled) return; if (item.confirm) { setAsking(true); return; } item.onSelect?.(); close(); }}
         data-testid={item['data-testid']}
         data-disabled={item.disabled ? '' : undefined}
         className={cn(ROW_CLASS, rowTone(item))}

@@ -59,3 +59,15 @@ export const PlaceholderPane: Story = {
     aspect: 'square',
   },
 };
+
+/** `maxWidth` (since 2.545.0): each picture held to a named width (`xs`..`lg`). */
+export const HeldToMaxWidth: Story = {
+  args: {
+    images: [
+      { src: 'https://picsum.photos/seed/compare-a/1200/800', label: 'Before' },
+      { src: 'https://picsum.photos/seed/compare-b/1200/800', label: 'After' },
+    ],
+    aspect: 'wide',
+    maxWidth: 'xs',
+  },
+};

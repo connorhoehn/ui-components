@@ -1,7 +1,7 @@
 import { f as e, n as t } from "./Button-DwPf_9pb.js";
 import { n } from "./Text-DyujO08i.js";
 import { t as r } from "./IconButton-BmDqeC-b.js";
-import { at as i, m as a, q as o } from "./Icons-CNCMF52q.js";
+import { m as i, ot as a, q as o } from "./Icons-DX0dqgD-.js";
 import { i as s, n as c, t as l } from "./Toolbar-CAQic0jU.js";
 import { t as ee } from "./ErrorState-Cfh63LhO.js";
 import { t as te } from "./LoadingState-D19sK4DN.js";
@@ -146,7 +146,7 @@ function C({ src: v, data: y, withCredentials: C, workerSrc: w, title: T = "Docu
 						/* @__PURE__ */ m(r, {
 							"aria-label": "Previous page",
 							size: "sm",
-							icon: /* @__PURE__ */ m(a, { dir: "left" }),
+							icon: /* @__PURE__ */ m(i, { dir: "left" }),
 							disabled: !Y || L <= 1,
 							onClick: () => Z(L - 1)
 						}),
@@ -161,7 +161,7 @@ function C({ src: v, data: y, withCredentials: C, workerSrc: w, title: T = "Docu
 						/* @__PURE__ */ m(r, {
 							"aria-label": "Next page",
 							size: "sm",
-							icon: /* @__PURE__ */ m(a, { dir: "right" }),
+							icon: /* @__PURE__ */ m(i, { dir: "right" }),
 							disabled: !Y || L >= X,
 							onClick: () => Z(L + 1)
 						})
@@ -188,7 +188,7 @@ function C({ src: v, data: y, withCredentials: C, workerSrc: w, title: T = "Docu
 						/* @__PURE__ */ m(r, {
 							"aria-label": "Zoom in",
 							size: "sm",
-							icon: /* @__PURE__ */ m(i, {}),
+							icon: /* @__PURE__ */ m(a, {}),
 							disabled: !Y || !ae,
 							onClick: () => $(1)
 						}),

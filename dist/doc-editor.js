@@ -5,21 +5,21 @@ import { n as o, t as s } from "./Stack-BPtkNzDm.js";
 import { n as c } from "./Text-DyujO08i.js";
 import { t as l } from "./Card-B4INuMUn.js";
 import { t as u } from "./IconButton-BmDqeC-b.js";
-import { ft as d, m as f, vt as p } from "./Icons-CNCMF52q.js";
+import { m as d, pt as f, yt as p } from "./Icons-DX0dqgD-.js";
 import { i as m } from "./MediaIcons-_ai5Til2.js";
-import { n as h, r as g } from "./ErrorBoundary-BkUm9hHx.js";
-import { t as _ } from "./Badge-6OgnZqRb.js";
-import { t as v } from "./Banner-et6Y4oMz.js";
+import { n as h, r as g } from "./ErrorBoundary-CMvKQGTs.js";
+import { t as _ } from "./Badge-DpARmDnp.js";
+import { t as v } from "./Banner-LAsVGMwB.js";
 import { t as y } from "./Modal-CEcJQMxG.js";
 import { t as b } from "./Input-B5h9UXBs.js";
 import { t as x } from "./Select-nxx_K9gv.js";
 import { t as S } from "./InlinePopover-C-Dtxban.js";
-import { t as C } from "./DropdownMenu-Bu9IMVKk.js";
-import { t as w } from "./EmptyState-COIuk2la.js";
+import { t as C } from "./DropdownMenu-BhfFj91k.js";
+import { t as w } from "./EmptyState-BUeW7XOr.js";
 import { t as T } from "./ErrorState-Cfh63LhO.js";
 import { t as ee } from "./LoadingState-D19sK4DN.js";
 import { t as te } from "./SegmentedControl-CKdSbD8t.js";
-import { n as ne } from "./Tabs-DgsRfc8i.js";
+import { n as ne } from "./Tabs-ChyOmBFc.js";
 import { n as E } from "./Avatar-BWzSZ73h.js";
 import { t as D } from "./Textarea-MJCZpfkl.js";
 import { t as O } from "./InlineAlert-DoLPfet9.js";
@@ -29,17 +29,17 @@ import { t as re } from "./PresenceAvatars-g_VszLJh.js";
 import { o as ie, s as ae, t as oe } from "./VerdictChip-BgZahejN.js";
 import { t as j } from "./MetaLine-BF1SNpW3.js";
 import { t as M } from "./Checkbox-tmvdkINV.js";
-import { n as se } from "./FileKindMark-BuGDAwus.js";
+import { n as se } from "./FileKindMark-DEpu452t.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { A as P, k as ce } from "./renderers-CHFmP6SP.js";
-import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-B_S5jCEx.js";
+import { A as le, B as F, C as I, D as L, E as R, F as z, G as ue, H as de, I as fe, K as pe, L as me, M as he, N as ge, O as _e, P as ve, R as ye, S as be, T as xe, U as Se, V as Ce, W as we, _ as Te, a as Ee, b as De, c as Oe, d as ke, f as Ae, g as je, h as Me, i as Ne, j as Pe, k as Fe, l as Ie, m as Le, n as Re, o as ze, p as Be, q as Ve, r as He, s as Ue, t as We, u as Ge, v as Ke, w as qe, x as Je, y as Ye, z as Xe } from "./ProposedEditStrip-o5B_U4jO.js";
 import { t as Ze } from "./InlineEditableText-B_sH74Yd.js";
 import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-YQv6sB-9.js";
 import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-DWGsFjIv.js";
-import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-BSqWl-NR.js";
-import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-CfggAJc8.js";
+import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-PXZFGOOg.js";
+import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-BBSqY4cL.js";
 import { i as In } from "./ConversationInputs-U5UzvEKk.js";
-import { r as Ln } from "./RichChatComposer-ieUpljev.js";
+import { r as Ln } from "./RichChatComposer-DUv-XDn2.js";
 import { forwardRef as Rn, useCallback as B, useEffect as V, useId as zn, useImperativeHandle as Bn, useMemo as H, useRef as U, useState as W } from "react";
 import { Fragment as G, jsx as K, jsxs as q } from "react/jsx-runtime";
 import * as Vn from "yjs";
@@ -2982,7 +2982,7 @@ function Ia({ filled: e }) {
 		children: /* @__PURE__ */ K("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: s = !1, onStarredChange: c, statusPill: l, path: d, crumbsTrailing: p, subtitle: m, metaBar: h, participants: g, onParticipantClick: v, onFollowParticipant: y, followingParticipantId: b, meta: x, saveState: S, headActions: C, tabs: w, activeTab: T, onTabChange: ee, toolbar: te, children: E, footer: D, proposal: O, surface: k = "workspace", explorer: ie, workbench: ae, label: oe = "Editor", variant: j = "document", itemType: M, itemKey: N, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: F, headerInset: I = "editor", className: L, "data-testid": R = "editor-shell" }) {
+function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: s = !1, onStarredChange: c, statusPill: l, path: f, crumbsTrailing: p, subtitle: m, metaBar: h, participants: g, onParticipantClick: v, onFollowParticipant: y, followingParticipantId: b, meta: x, saveState: S, headActions: C, tabs: w, activeTab: T, onTabChange: ee, toolbar: te, children: E, footer: D, proposal: O, surface: k = "workspace", explorer: ie, workbench: ae, label: oe = "Editor", variant: j = "document", itemType: M, itemKey: N, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: F, headerInset: I = "editor", className: L, "data-testid": R = "editor-shell" }) {
 	let z = j === "work-item", ue = z && (M || N) ? /* @__PURE__ */ q(G, { children: [M && /* @__PURE__ */ K(a, {
 		size: "sm",
 		tone: "info",
@@ -3034,7 +3034,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${R}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ K(f, {
+							/* @__PURE__ */ K(d, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -3133,11 +3133,11 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 												})]
 											}),
 											l,
-											d && d.length > 0 && /* @__PURE__ */ K("span", {
+											f && f.length > 0 && /* @__PURE__ */ K("span", {
 												className: "flex min-w-0 flex-1 items-center border-l border-border pl-3",
 												"data-testid": `${R}-path`,
 												children: /* @__PURE__ */ K(A, {
-													items: d,
+													items: f,
 													"aria-label": "Document location",
 													maxItems: 4,
 													lastIsCurrent: !1,
@@ -3894,7 +3894,7 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 		"data-variant": r,
 		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
 		children: [
-			l ? /* @__PURE__ */ K(d, {
+			l ? /* @__PURE__ */ K(f, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"

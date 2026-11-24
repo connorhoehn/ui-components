@@ -51,3 +51,15 @@ export const InATable: Story = {
       )} />
   ),
 } as unknown as Story;
+
+/** A menu item that asks in place before it runs, and a disabled one that says why (since 2.545.0). */
+export const ConfirmAndDisabledReason: Story = {
+  args: {
+    name: 'Take 2a',
+    actions: [{ icon: <CheckIcon />, label: 'Approve', onClick: log('approve'), primary: true }],
+    menu: [
+      { label: 'Archive', onSelect: log('archive'), disabled: true, disabledReason: 'It is in the current cut' },
+      { label: 'Delete', danger: true, onSelect: log('delete'), confirm: { question: 'Delete Take 2a?', confirmLabel: 'Delete', tone: 'destructive' } },
+    ],
+  },
+};

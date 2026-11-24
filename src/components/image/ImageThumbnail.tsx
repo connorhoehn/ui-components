@@ -5,6 +5,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { IMAGE_MAX_WIDTH, type ImageMaxWidth } from './imageMaxWidth';
 
 export type ImageThumbnailSize = 'sm' | 'md' | 'lg';
 export type ImageThumbnailAspect = 'square' | 'video' | 'auto';
@@ -13,6 +14,12 @@ export interface ImageThumbnailProps {
   src: string;
   alt: string;
   size?: ImageThumbnailSize;
+  /**
+   * Hold the picture to a named maximum width (`xs` 20rem, `sm` 24rem, `md`
+   * 28rem, `lg` 32rem) instead of a fixed `size`: it fills its column up to
+   * that width. Wins over `size`. Since 2.545.0.
+   */
+  maxWidth?: ImageMaxWidth;
   aspectRatio?: ImageThumbnailAspect;
   rounded?: boolean;
   /** Rendered when the image fails to load. Defaults to a broken-image icon. */
@@ -59,6 +66,7 @@ export function ImageThumbnail({
   src,
   alt,
   size = 'md',
+  maxWidth,
   aspectRatio = 'square',
   rounded = false,
   fallback,
@@ -80,9 +88,10 @@ export function ImageThumbnail({
   return (
     <div
       data-testid={testId}
+      data-max-width={maxWidth}
       className={cn(
         'relative overflow-hidden bg-surface-hover',
-        sizeClasses[size],
+        maxWidth ? cn('w-full', IMAGE_MAX_WIDTH[maxWidth]) : sizeClasses[size],
         aspectRatio !== 'auto' && aspectClasses[aspectRatio],
         roundedClass,
         className,

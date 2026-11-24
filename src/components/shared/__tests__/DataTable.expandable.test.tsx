@@ -112,4 +112,16 @@ describe('DataTable expandable rows (rowChildren)', () => {
     expect(bodyRows()[0]).not.toHaveAttribute('aria-level');
     expect(bodyRows()[0]).not.toHaveAttribute('aria-expanded');
   });
+
+  it('the expand column header follows headerCase="sentence" and has only a screen-reader name', () => {
+    const { container } = render(
+      <DataTable data={data} columns={columns} keyField={(r) => r.id} rowChildren={(r) => r.children} headerCase="sentence" />,
+    );
+    const th = container.querySelector('th[data-column-expand]') as HTMLElement;
+    expect(th.className).toContain('normal-case');
+    expect(th.className).not.toMatch(/(^|\s)uppercase(\s|$)/);
+    const visible = Array.from(th.querySelectorAll('*')).filter((el) => !el.classList.contains('sr-only'));
+    expect(visible.every((el) => (el.textContent ?? '') === '')).toBe(true);
+    expect(th.querySelector('.sr-only')).toHaveTextContent('Expand');
+  });
 });

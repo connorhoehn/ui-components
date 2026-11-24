@@ -525,6 +525,16 @@ declare type DimensionsFlowNode = Node_2<DimensionsData, 'image:dimensions'>;
 
 export declare function DimensionsNode(props: NodeProps<DimensionsFlowNode>): JSX.Element;
 
+/** An item's in-place question (`DropdownMenuItem.confirm`). */
+declare interface DropdownMenuConfirm {
+    /** Short, ends with "?": "Delete this take?". Also the group's accessible name. */
+    question: string;
+    /** The confirming button's label. Default: the item's label. */
+    confirmLabel?: string;
+    /** `destructive` paints the confirming button `danger-solid`. Default `default` (`primary`). */
+    tone?: 'default' | 'destructive';
+}
+
 declare interface DropdownMenuItem {
     /** Visible item label. */
     label: string;
@@ -561,6 +571,14 @@ declare interface DropdownMenuItem {
      * Since 2.390.3; the visible line since 2.390.4.
      */
     disabledReason?: string;
+    /**
+     * Ask in place before running `onSelect`: the row turns into the question
+     * with a confirming button and Cancel (`data-confirm-state="asking"`), the
+     * menu stays open, and only the confirming button runs `onSelect` and
+     * closes the menu. Cancel or Escape puts the row back. `tone: 'destructive'`
+     * paints the confirming button `danger-solid`. Since 2.545.0.
+     */
+    confirm?: DropdownMenuConfirm;
     /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
     'data-testid'?: string;
 }

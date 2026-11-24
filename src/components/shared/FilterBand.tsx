@@ -97,7 +97,7 @@ export function FilterBand({
           {actions}
         </div>
         {summary != null && summary !== '' && (
-          <span className="ml-auto pb-1 text-xs whitespace-nowrap text-text-secondary" aria-live="polite" data-testid={`${testId}-summary`}>{summary}</span>
+          <span className="flex flex-1 justify-end pb-1 text-xs whitespace-nowrap text-text-secondary" aria-live="polite" data-testid={`${testId}-summary`}>{summary}</span>
         )}
       </div>
     </Card>

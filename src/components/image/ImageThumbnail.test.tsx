@@ -41,4 +41,13 @@ describe('ImageThumbnail preview states', () => {
     const box = screen.getByTestId('avatar-thumb');
     expect(box.className).toContain('rounded-full');
   });
+
+  it('maxWidth holds the picture to a named width in place of the fixed size', () => {
+    render(<ImageThumbnail src="/a.png" alt="A" maxWidth="sm" data-testid="thumb" />);
+    const box = screen.getByTestId('thumb');
+    expect(box).toHaveAttribute('data-max-width', 'sm');
+    expect(box.className).toContain('max-w-sm');
+    expect(box.className).toContain('w-full');
+    expect(box.className).not.toContain('w-32');
+  });
 });

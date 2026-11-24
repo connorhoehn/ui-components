@@ -55,4 +55,12 @@ describe('DetailHeader', () => {
     expect(container.querySelector('aside')).toBeNull();
     expect(container.querySelector('[data-detail-aside]')).not.toBeNull();
   });
+
+  it('titleSize="section" draws the title at 16px', () => {
+    render(<DetailHeader title="Takes" titleSize="section" />);
+    const h = screen.getByRole('heading', { name: 'Takes' });
+    expect(h).toHaveAttribute('data-title-size', 'section');
+    expect(h.className).toContain('text-base');
+    expect(h.className).not.toContain('text-sm');
+  });
 });

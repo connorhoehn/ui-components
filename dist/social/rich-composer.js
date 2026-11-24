@@ -5,13 +5,13 @@ import { n as o } from "../Text-DyujO08i.js";
 import { t as s } from "../Select-nxx_K9gv.js";
 import { t as c } from "../FormField-BwK2AS6I.js";
 import { t as l } from "../Textarea-MJCZpfkl.js";
-import { t as u } from "../DecisionPath-Deh_5jG0.js";
-import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-YsP-6cgy.js";
+import { t as u } from "../DecisionPath-DsXQtfJu.js";
+import { a as d, c as f, i as p, l as m, n as h, r as g, t as _ } from "../composerSendError-BajHkkpC.js";
 import { a as ee, i as v, n as y, r as b, t as x } from "../composerContext-BLn1-Nao.js";
 import { a as S, i as C, n as te, o as ne, r as w, s as T, t as re } from "../ConversationInputs-U5UzvEKk.js";
-import { a as E, c as D, d as ie, i as O, l as k, n as ae, o as A, r as j, s as M, t as oe, u as se } from "../RichChatComposer-ieUpljev.js";
-import { t as ce } from "../ContextComposer-CSRFnZAv.js";
-import { t as N } from "../AgentComposerDock-CCpcHOgS.js";
+import { a as E, c as D, d as ie, i as O, l as k, n as ae, o as A, r as j, s as M, t as oe, u as se } from "../RichChatComposer-DUv-XDn2.js";
+import { t as ce } from "../ContextComposer-CwsZeDGb.js";
+import { t as N } from "../AgentComposerDock-Dug2WGDC.js";
 import { useCallback as P, useContext as le, useEffect as F, useId as ue, useMemo as I, useRef as L, useState as R } from "react";
 import { jsx as z, jsxs as B } from "react/jsx-runtime";
 //#region src/components/social/ComposerConfirmFlow.tsx

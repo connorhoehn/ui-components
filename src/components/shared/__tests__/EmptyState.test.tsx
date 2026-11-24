@@ -231,4 +231,11 @@ describe('EmptyState size="sm" is the app body step (2.436.1)', () => {
     expect(cls).toContain('text-sm');
     expect(cls).not.toContain('text-base');
   });
+
+  it('wraps a custom action with an 8px top margin, on the 4px scale', () => {
+    render(<EmptyState title="Nothing" action={<button type="button">Make one</button>} />);
+    const wrap = screen.getByRole('button', { name: 'Make one' }).parentElement as HTMLElement;
+    expect(wrap.className.split(/\s+/)).toContain('mt-2');
+    expect(wrap.className).not.toContain('mt-2.5');
+  });
 });

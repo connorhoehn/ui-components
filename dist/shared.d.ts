@@ -1345,7 +1345,7 @@ export declare interface CatalogGridProps {
     children: ReactNode;
     /** Target column count at >=640px. Default 3. Always collapses to 1 below. */
     columns?: CatalogGridColumns;
-    /** Tighter gap (12px vs 20px). Default false. */
+    /** Tighter gap (12px vs 16px). Default false. The default gap is 16px since 2.545.0 (20px before). */
     dense?: boolean;
     /**
      * `lanes` (since 2.446.1): a board's columns — `columns` lanes in ONE row
@@ -3158,7 +3158,8 @@ export declare interface DataTableProps<T> {
     striped?: boolean;
     /**
      * Row density, forwarded to `Table`. `sm` (since 2.434.0): every row 44px
-     * on one line, a 12px semibold caps header — the app's list step.
+     * on one line, a 12px semibold caps header — the app's list step. `xs`
+     * (since 2.545.0): the same with 36px rows, the dense step.
      */
     size?: TableSize;
     /**
@@ -3349,9 +3350,11 @@ export declare interface DetailHeaderProps {
     /**
      * The title's size (since 2.515.12). `panel` (default): 14px, a panel's
      * heading. `page`: 20px (`text-xl`, 28px line), the page-title size every
-     * page template's header draws; `DetailPage` passes it.
+     * page template's header draws; `DetailPage` passes it. `section`
+     * (since 2.545.0): 16px (`text-base`, 24px line), a header inside a card
+     * that leads its own section, on the house scale (11, 12, 14, 16, 20).
      */
-    titleSize?: 'panel' | 'page';
+    titleSize?: 'panel' | 'section' | 'page';
     className?: string;
     'data-testid'?: string;
 }
@@ -3987,6 +3990,16 @@ export declare function drawnParticles(count: number, density: number | undefine
 
 export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, buttonVariant, buttonSize, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, zIndex, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
+/** An item's in-place question (`DropdownMenuItem.confirm`). */
+export declare interface DropdownMenuConfirm {
+    /** Short, ends with "?": "Delete this take?". Also the group's accessible name. */
+    question: string;
+    /** The confirming button's label. Default: the item's label. */
+    confirmLabel?: string;
+    /** `destructive` paints the confirming button `danger-solid`. Default `default` (`primary`). */
+    tone?: 'default' | 'destructive';
+}
+
 export declare interface DropdownMenuItem {
     /** Visible item label. */
     label: string;
@@ -4023,6 +4036,14 @@ export declare interface DropdownMenuItem {
      * Since 2.390.3; the visible line since 2.390.4.
      */
     disabledReason?: string;
+    /**
+     * Ask in place before running `onSelect`: the row turns into the question
+     * with a confirming button and Cancel (`data-confirm-state="asking"`), the
+     * menu stays open, and only the confirming button runs `onSelect` and
+     * closes the menu. Cancel or Escape puts the row back. `tone: 'destructive'`
+     * paints the confirming button `danger-solid`. Since 2.545.0.
+     */
+    confirm?: DropdownMenuConfirm;
     /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
     'data-testid'?: string;
 }
@@ -5751,7 +5772,7 @@ declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
     size?: number;
 }
 
-export declare function ImageCompare({ images, label, aspect, fit, zoomable, className, 'data-testid': testId, }: ImageCompareProps): JSX.Element | null;
+export declare function ImageCompare({ images, label, aspect, fit, zoomable, maxWidth, className, 'data-testid': testId, }: ImageCompareProps): JSX.Element | null;
 
 export declare type ImageCompareAspect = 'square' | 'landscape' | 'portrait' | 'wide';
 
@@ -5784,6 +5805,11 @@ export declare interface ImageCompareProps {
      * default), `square` (1:1), `portrait` (3:4), `wide` (16:9).
      */
     aspect?: ImageCompareAspect;
+    /**
+     * Hold each picture to a named maximum width (`xs` 20rem, `sm` 24rem, `md`
+     * 28rem, `lg` 32rem); without it a pane fills its column. Since 2.545.0.
+     */
+    maxWidth?: ImageMaxWidth;
     /** `contain` (default) shows each whole image; `cover` fills the frame and crops. */
     fit?: 'contain' | 'cover';
     /** Open the lightbox on click/Enter. Default true. */
@@ -5849,7 +5875,9 @@ export declare interface ImageLightboxProps {
     onNavigate?: (index: number) => void;
 }
 
-export declare function ImageThumbnail({ src, alt, size, aspectRatio, rounded, fallback, loading, className, 'data-testid': testId, }: ImageThumbnailProps): JSX.Element;
+export declare type ImageMaxWidth = 'xs' | 'sm' | 'md' | 'lg';
+
+export declare function ImageThumbnail({ src, alt, size, maxWidth, aspectRatio, rounded, fallback, loading, className, 'data-testid': testId, }: ImageThumbnailProps): JSX.Element;
 
 export declare type ImageThumbnailAspect = 'square' | 'video' | 'auto';
 
@@ -5857,6 +5885,12 @@ export declare interface ImageThumbnailProps {
     src: string;
     alt: string;
     size?: ImageThumbnailSize;
+    /**
+     * Hold the picture to a named maximum width (`xs` 20rem, `sm` 24rem, `md`
+     * 28rem, `lg` 32rem) instead of a fixed `size`: it fills its column up to
+     * that width. Wins over `size`. Since 2.545.0.
+     */
+    maxWidth?: ImageMaxWidth;
     aspectRatio?: ImageThumbnailAspect;
     rounded?: boolean;
     /** Rendered when the image fails to load. Defaults to a broken-image icon. */
@@ -7364,6 +7398,9 @@ export declare interface MultiComboboxProps extends BaseProps {
     value: readonly string[];
     onChange: (value: string[]) => void;
 }
+
+/** Two beamed eighth notes: "music", a soundtrack or a cue. Since 2.545.0. */
+export declare function MusicIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function nameToColor(name: string): string;
 
@@ -9323,6 +9360,12 @@ export declare interface RowActionsMenuItem {
     label: string;
     onSelect: () => void;
     disabled?: boolean;
+    /** Why it is disabled: the item's second line and tooltip, announced as its description. */
+    disabledReason?: string;
+    /** Ask in place before `onSelect` runs: `{ question, confirmLabel?, tone? }`. */
+    confirm?: DropdownMenuConfirm;
+    /** Paint the item as destructive. */
+    danger?: boolean;
 }
 
 export declare interface RowActionsProps {
@@ -11805,9 +11848,12 @@ export declare interface TableRowProps extends HTMLAttributes<HTMLTableRowElemen
  * line (cells do not wrap — truncate or move detail to a tooltip), 14px body
  * text, a 12px semibold uppercase header, and 12px side padding. A row that
  * stacks a caption or a bar under its value cannot fit 44px; put the bar
- * inline beside the value and the caption in a `title`.
+ * inline beside the value and the caption in a `title`. `xs` (since
+ * 2.545.0) is the dense step: `sm` with 36px body rows (`--ui-table-row-xs`),
+ * the same 14px body text, 12px header and side inset; a 28px icon button
+ * (`IconButton size="sm"`, `RowActions`) still fits inside a row.
  */
-export declare type TableSize = 'md' | 'sm';
+export declare type TableSize = 'md' | 'sm' | 'xs';
 
 export declare function TableTd({ children, numeric, className, ...rest }: TableTdProps): JSX.Element;
 
@@ -12357,6 +12403,33 @@ export declare interface ThumbnailCardProps {
     meta?: ReactNode;
     className?: string;
     style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+/** A full-width band with the title set on its picture. */
+export declare function TitleCard({ title, tagline, meta, image, aspect, actions, as: Heading, className, 'data-testid': testId, }: TitleCardProps): JSX.Element;
+
+export declare type TitleCardAspect = 'wide' | 'landscape' | 'banner';
+
+export declare interface TitleCardProps {
+    /** The show's (or episode's) title: 20px semibold. */
+    title: ReactNode;
+    /** One line under the title: 14px. */
+    tagline?: ReactNode;
+    /** A small line under the tagline ("6 episodes · Season 1"): 12px. */
+    meta?: ReactNode;
+    /** The picture that fills the band (`object-cover`). */
+    image: {
+        src: string;
+        alt: string;
+    };
+    /** The band's frame: `wide` 16:9 (default), `landscape` 4:3, `banner` 3:1. */
+    aspect?: TitleCardAspect;
+    /** Controls in the top-right corner (an Edit, a "…" menu). */
+    actions?: ReactNode;
+    /** The title's heading level. Default `h2`. */
+    as?: 'h1' | 'h2' | 'h3';
+    className?: string;
     'data-testid'?: string;
 }
 

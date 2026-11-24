@@ -4,6 +4,7 @@ export type {
   ImageThumbnailSize,
   ImageThumbnailAspect,
 } from './ImageThumbnail';
+export type { ImageMaxWidth } from './imageMaxWidth';
 
 export { ImageUploader } from './ImageUploader';
 export type { ImageUploaderProps, ImageUploaderValue } from './ImageUploader';

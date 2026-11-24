@@ -15,7 +15,7 @@ export interface CatalogGridProps {
   children: ReactNode;
   /** Target column count at >=640px. Default 3. Always collapses to 1 below. */
   columns?: CatalogGridColumns;
-  /** Tighter gap (12px vs 20px). Default false. */
+  /** Tighter gap (12px vs 16px). Default false. The default gap is 16px since 2.545.0 (20px before). */
   dense?: boolean;
   /**
    * `lanes` (since 2.446.1): a board's columns — `columns` lanes in ONE row
@@ -65,7 +65,7 @@ export function CatalogGrid({
         variant === 'lanes'
           ? cn('grid items-stretch overflow-x-auto', LANE_CLASS[columns])
           : cn('grid grid-cols-1', COLUMN_CLASS[columns]),
-        dense ? 'gap-3' : 'gap-5',
+        dense ? 'gap-3' : 'gap-4',
         className,
       )}
       style={style}

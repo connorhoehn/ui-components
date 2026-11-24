@@ -271,7 +271,8 @@ function EmptyState({
       {actions && actions.length > 0
         ? <GuidedActionList actions={actions} palette={palette} direction={actionsDirection} large={large} start={start} />
         : action
-          ? <div className="mt-2.5">{action}</div>
+          // 8px, on the 4px scale (the small built-in button's own margin).
+          ? <div className="mt-2" data-empty-action="">{action}</div>
           : actionLabel && onAction && (
               <button
                 data-ui-part=""

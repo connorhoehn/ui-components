@@ -121,4 +121,14 @@ describe('ImageCompare placeholder pane (2.513.0)', () => {
     rerender(<ImageCompare images={panes} fit="cover" />);
     for (const f of container.querySelectorAll('[data-image-compare-frame]')) expect(f).toHaveAttribute('data-image-fit', 'cover');
   });
+
+  it('maxWidth holds each picture to a named width', () => {
+    const { container } = render(<ImageCompare maxWidth="md" images={[{ label: 'Before', src: '/a.png' }, { label: 'After', src: '/b.png' }]} />);
+    const frames = container.querySelectorAll('[data-image-compare-frame]');
+    expect(frames).toHaveLength(2);
+    for (const f of frames) {
+      expect(f).toHaveAttribute('data-max-width', 'md');
+      expect(f.className).toContain('max-w-md');
+    }
+  });
 });

@@ -103,7 +103,7 @@ describe('CatalogGrid', () => {
         <ThumbnailCard title="A" />
       </CatalogGrid>,
     );
-    expect(screen.getByTestId('catalog-grid').className).toContain('gap-5');
+    expect(screen.getByTestId('catalog-grid').className).toContain('gap-4');
   });
 
   it('passes a custom data-testid through', () => {

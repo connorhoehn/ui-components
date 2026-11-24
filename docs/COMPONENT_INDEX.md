@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1016 components across 23 entry points; 868 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1018 components across 23 entry points; 870 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -28,6 +28,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | A data table | `DataTable` | `@connorhoehn/ui-components/shared` | Columns + rows with sorting, selection, empty/loading states and row striping by default. Opt into `revealSelection` with `selectedKey` to reveal the selected row after loading, choose its page and keep it visible when the layout narrows, without moving focus. Start here for any tabular data. Pass `narrow` for the card form: under 40rem of its own width each row stacks into label/value pairs (`label` per column) instead of scrolling sideways. Pass `responsiveColumns` with `columns[].priority` (1 = always shown, higher numbers hide first) to drop columns as its own width narrows until the rest fit, with a "+N columns" popover per row for the hidden values (or `hiddenColumnsControl="header"`: one control in the "More" header and a chevron per row). `columns[].group` + `columnGroups` draw a header row spanning grouped columns (a round over its interviewers); `stickyFirstColumn` pins the first column while a wide table scrolls sideways; `rowHeight="content"` lets prose wrap with no ellipsis. `rowChildren` makes rows expandable: a chevron column, and an open row's children as indented rows of the same table under the same headers (`expandedKeys`/`onExpandedChange` or `defaultExpanded`; `childColumns` for a child's own content and `colSpan`). | Don't drop to `Table` primitives unless you need cell layouts `DataTable` cannot express. |
 | A table's filter row | `FilterBand` | `@connorhoehn/ui-components/shared` | One framed row of labelled fields (text, or a select reading "Any"), Filter, Reset, extra actions and a count at the right. Controlled; Enter in a text field filters. Put it over a list page's `DataTable`. | Not for search-as-you-type or chip filters (use `CollectionToolbar`). |
 | The end of a table row | `RowActions` | `@connorhoehn/ui-components/shared` | Up to three icon-only buttons (tooltip = label, accessible name suffixed with the row's `name`) then a "…" `DropdownMenu`; clicks never open the row. Pass it from `DataTable` `rowActions`. | Not for page-level actions (use `PageHeader` actions). |
+| A show's title card | `TitleCard` | `@connorhoehn/ui-components/shared` | A full-width band: the picture fills a fixed frame (`aspect` `wide` 16:9 default, `landscape`, `banner`) and the `title` (20px), `tagline` (14px) and `meta` (12px) sit on it bottom-left over a scrim that reads in both themes; `actions` top-right; `as` sets the heading level. | Not for a record's hero inside an inspector (use `SubjectFrame`/`ImageCompare`), nor a page title (use `PageHeader`). |
 | Table building blocks | `Table` | `@connorhoehn/ui-components/shared` | `Table`, `TableHead`, `TableBody`, `TableRow`, `TableTh`, `TableTd`: the styled primitives `DataTable` is made of. | Not a first choice: no sorting, selection or states built in. |
 | Identity admin tables | `EntityTable` | `@connorhoehn/ui-components/identity` | The identity-admin entity list (users, groups, roles) with row actions. | Not a general-purpose table; use `DataTable` outside identity admin. |
 | Separate sections | `SectionStack` | `@connorhoehn/ui-components/shared` | Stacks a page's sections with a full-width hairline between each (none before the first or after the last; skips null children). `Divider` is a single (optionally captioned) hairline; `PageSection divided` rules the groups inside one section; inside a detail surface use `DetailSection`. | Don't separate sections with nested `Card`s, `<hr>`, or border utility classes. |
@@ -51,7 +52,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 - [Page templates](#page-templates) (10)
 - [Shells & layouts](#shells--layouts) (42)
-- [Page structure, sections & dividers](#page-structure-sections--dividers) (61)
+- [Page structure, sections & dividers](#page-structure-sections--dividers) (62)
 - [Tables & lists](#tables--lists) (34)
 - [Forms](#forms) (33)
 - [Buttons & actions](#buttons--actions) (19)
@@ -65,7 +66,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (10)
 - [Other](#other) (83)
-- [Icons](#icons) (113)
+- [Icons](#icons) (114)
 
 ## Page templates
 
@@ -142,7 +143,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `CollapsibleSection` | `@connorhoehn/ui-components/shared` | Bordered accordion section with a header button and optional badge slot. | `shared-collapsiblesection` |  |
 | `ConfirmDialog` | `@connorhoehn/ui-components/shared` | A modal yes/no for a decision that needs a body or a preview; a row's or panel's own decision uses `ConfirmButton` (in place) instead. | `shared-confirmdialog` |  |
 | `ConsultCard` | `@connorhoehn/ui-components/shared` | An agent's question, waiting on a person. | `shared-consultcard` |  |
-| `DetailHeader` | `@connorhoehn/ui-components/shared` | The top of a detail panel: what this thing is, its state, one line of prose about it, its metadata, and a slot for whatever the panel measures. |  |  |
+| `DetailHeader` | `@connorhoehn/ui-components/shared` | The top of a detail panel: what this thing is, its state, one line of prose about it, its metadata, and a slot for whatever the panel measures. | `shared-detailheader` |  |
 | `DetailSection` | `@connorhoehn/ui-components/shared` | A titled block inside a detail surface, separated from what precedes it by a hairline. | `shared-detailsection` |  |
 | `Disclosure` | `@connorhoehn/ui-components/shared` | A native `<details>/<summary>` collapsible: expand/collapse and the arrow-key / Enter / Space handling come from the browser for free, and a screen reader announces "button, collapsed/expanded" without any ARIA wiring… | `ui-disclosure` |  |
 | `Divider` | `@connorhoehn/ui-components/shared` | A subtle horizontal rule that segments a column of content. |  |  |
@@ -190,6 +191,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `Tabs` | `@connorhoehn/ui-components/shared` | — | `shared-tabs` |  |
 | `Text` | `@connorhoehn/ui-components/shared` | Text (alias T) — a styled text primitive with zero raw elements. |  |  |
 | `ThumbnailCard` | `@connorhoehn/ui-components/shared` | Catalog/gallery card with hover lift, category chip, thumbnail. | `shared-thumbnailcard` |  |
+| `TitleCard` | `@connorhoehn/ui-components/shared` | A full-width band with the title set on its picture. | `shared-titlecard` |  |
 | `TitledFrame` | `@connorhoehn/ui-components/shared` | A bordered box whose title interrupts the top border. | `shared-titledframe` |  |
 | `ToolbarGroup` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `ToolbarSeparator` | `@connorhoehn/ui-components/shared` | — |  |  |
@@ -1052,6 +1054,6 @@ One component per common job. Reach for these first; the "don't use for" column 
 
 ## Icons
 
-From `@connorhoehn/ui-components/shared`: `ActivityIcon`, `ArrowRightIcon`, `ArrowUpIcon`, `AtIcon`, `BellIcon`, `BellMutedIcon`, `BotIcon`, `BranchIcon`, `BulletListIcon`, `ChartIcon`, `ChatIcon`, `CheckIcon`, `ChecklistIcon`, `ChevronIcon`, `CloseIcon`, `CloudIcon`, `CodeIcon`, `CommentIcon`, `CopyIcon`, `DesktopIcon`, `DocumentAddIcon`, `DocumentIcon`, `DownloadIcon`, `EditIcon`, `ExternalLinkIcon`, `EyeIcon`, `EyeOffIcon`, `FilterIcon`, `FolderIcon`, `ForwardIcon`, `GraphIcon`, `GripIcon`, `HighlighterIcon`, `HistoryIcon`, `ImageIcon`, `InfoIcon`, `ItalicIcon`, `KeyboardIcon`, `LaptopIcon`, `LinkIcon`, `ListIcon`, `ListStyleIcon`, `LockIcon`, `MaximizeIcon`, `MenuIcon`, `MinimizeIcon`, `MinusIcon`, `MonitorIcon`, `MoonIcon`, `MoreIcon`, `NumberedListIcon`, `PaperclipIcon`, `PauseCircleIcon`, `PeopleIcon`, `PersonIcon`, `PhoneIcon`, `PinIcon`, `PlayCircleIcon`, `PlusCircleIcon`, `PlusIcon`, `PopOutIcon`, `PrinterIcon`, `PuzzleIcon`, `QuoteIcon`, `RailCaretIcon`, `RedoIcon`, `RepeatIcon`, `ReplyIcon`, `SearchIcon`, `SendIcon`, `ShareIcon`, `SlidersIcon`, `SmileyIcon`, `SparkleIcon`, `SplitViewIcon`, `SunIcon`, `TemplateIcon`, `TranscribeIcon`, `TrashIcon`, `UndoIcon`, `UploadIcon`, `VideoCallIcon`, `WarningIcon`, `WhiteboardIcon`
+From `@connorhoehn/ui-components/shared`: `ActivityIcon`, `ArrowRightIcon`, `ArrowUpIcon`, `AtIcon`, `BellIcon`, `BellMutedIcon`, `BotIcon`, `BranchIcon`, `BulletListIcon`, `ChartIcon`, `ChatIcon`, `CheckIcon`, `ChecklistIcon`, `ChevronIcon`, `CloseIcon`, `CloudIcon`, `CodeIcon`, `CommentIcon`, `CopyIcon`, `DesktopIcon`, `DocumentAddIcon`, `DocumentIcon`, `DownloadIcon`, `EditIcon`, `ExternalLinkIcon`, `EyeIcon`, `EyeOffIcon`, `FilterIcon`, `FolderIcon`, `ForwardIcon`, `GraphIcon`, `GripIcon`, `HighlighterIcon`, `HistoryIcon`, `ImageIcon`, `InfoIcon`, `ItalicIcon`, `KeyboardIcon`, `LaptopIcon`, `LinkIcon`, `ListIcon`, `ListStyleIcon`, `LockIcon`, `MaximizeIcon`, `MenuIcon`, `MinimizeIcon`, `MinusIcon`, `MonitorIcon`, `MoonIcon`, `MoreIcon`, `MusicIcon`, `NumberedListIcon`, `PaperclipIcon`, `PauseCircleIcon`, `PeopleIcon`, `PersonIcon`, `PhoneIcon`, `PinIcon`, `PlayCircleIcon`, `PlusCircleIcon`, `PlusIcon`, `PopOutIcon`, `PrinterIcon`, `PuzzleIcon`, `QuoteIcon`, `RailCaretIcon`, `RedoIcon`, `RepeatIcon`, `ReplyIcon`, `SearchIcon`, `SendIcon`, `ShareIcon`, `SlidersIcon`, `SmileyIcon`, `SparkleIcon`, `SplitViewIcon`, `SunIcon`, `TemplateIcon`, `TranscribeIcon`, `TrashIcon`, `UndoIcon`, `UploadIcon`, `VideoCallIcon`, `WarningIcon`, `WhiteboardIcon`
 
 From `@connorhoehn/ui-components/video`: `CaptionsIcon`, `ChatBubbleIcon`, `ExpandIcon`, `MeetingAppsIcon`, `MeetingHandIcon`, `MeetingNotesIcon`, `MeetingReactIcon`, `MeetingRecordingIcon`, `MeetingRoomsIcon`, `MeetingShareIcon`, `MeetingShieldIcon`, `MeetingViewIcon`, `MicIcon`, `MicOffIcon`, `MoreHorizontalIcon`, `PauseIcon`, `PhoneCallIcon`, `PhoneOffIcon`, `PlayIcon`, `PopOutIcon`, `ScreenShareIcon`, `ScreenShareOffIcon`, `SettingsGearIcon`, `SparklesIcon`, `SpeakerIcon`, `UserPlusIcon`, `UsersIcon`, `VideoIcon`, `VideoOffIcon`

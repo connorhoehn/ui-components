@@ -23,7 +23,8 @@ describe('CatalogGrid', () => {
 
   it('dense tightens the gap', () => {
     const { rerender } = render(<CatalogGrid>x</CatalogGrid>);
-    expect(screen.getByTestId('catalog-grid').className).toContain('gap-5');
+    expect(screen.getByTestId('catalog-grid').className).toContain('gap-4');
+    expect(screen.getByTestId('catalog-grid').className).not.toContain('gap-5');
     rerender(<CatalogGrid dense>x</CatalogGrid>);
     expect(screen.getByTestId('catalog-grid').className).toContain('gap-3');
   });

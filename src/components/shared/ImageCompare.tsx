@@ -27,6 +27,7 @@ import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { ImageLightbox } from './ImageLightbox';
 import { ImageIcon } from '../ui/Icons';
+import { IMAGE_MAX_WIDTH, type ImageMaxWidth } from '../image/imageMaxWidth';
 
 export interface ImageCompareImage {
   /** The picture. Omit it (with `placeholder`) for a pane whose image does not exist yet. */
@@ -59,6 +60,11 @@ export interface ImageCompareProps {
    * default), `square` (1:1), `portrait` (3:4), `wide` (16:9).
    */
   aspect?: ImageCompareAspect;
+  /**
+   * Hold each picture to a named maximum width (`xs` 20rem, `sm` 24rem, `md`
+   * 28rem, `lg` 32rem); without it a pane fills its column. Since 2.545.0.
+   */
+  maxWidth?: ImageMaxWidth;
   /** `contain` (default) shows each whole image; `cover` fills the frame and crops. */
   fit?: 'contain' | 'cover';
   /** Open the lightbox on click/Enter. Default true. */
@@ -80,6 +86,7 @@ export function ImageCompare({
   aspect = 'landscape',
   fit = 'contain',
   zoomable = true,
+  maxWidth,
   className,
   'data-testid': testId,
 }: ImageCompareProps) {
@@ -109,7 +116,8 @@ export function ImageCompare({
               data-image-compare-frame
               data-image-fit={fit}
               {...(hasPicture ? {} : { 'data-gallery-status': 'placeholder' })}
-              className={cn('block w-full overflow-hidden rounded-lg bg-surface-inset', ASPECT[aspect])}
+              data-max-width={maxWidth}
+              className={cn('block w-full overflow-hidden rounded-lg bg-surface-inset', ASPECT[aspect], maxWidth && IMAGE_MAX_WIDTH[maxWidth])}
             >
               {hasPicture ? (
                 <img src={image.src} alt={image.alt ?? image.label} loading="lazy" draggable={false} className={imgClass} />

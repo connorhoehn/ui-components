@@ -215,7 +215,8 @@ export interface DataTableProps<T> {
   striped?: boolean;
   /**
    * Row density, forwarded to `Table`. `sm` (since 2.434.0): every row 44px
-   * on one line, a 12px semibold caps header — the app's list step.
+   * on one line, a 12px semibold caps header — the app's list step. `xs`
+   * (since 2.545.0): the same with 36px rows, the dense step.
    */
   size?: TableSize;
   /**
@@ -982,7 +983,7 @@ export function DataTable<T>({
         <TableHead className={cn(narrow && NARROW_HEAD, stacked && STACK_HEAD)} data-header-case={headerCase}>
           {grouped && (
             <tr data-column-groups="">
-              {expandable && <TableTh aria-hidden="true" className="w-px" />}
+              {expandable && <TableTh aria-hidden="true" className={cn('w-px', sentenceHeaders && SENTENCE_HEADER)} />}
               {columnGroupRuns(shownColumns, columnGroups, sticky).map((run, i) => run.group ? (
                 <TableTh key={`group-${run.key}-${i}`} colSpan={run.span} scope="colgroup" data-column-group={run.key ?? undefined}
                   className={cn(sentenceHeaders && SENTENCE_HEADER, alignClass(run.group.align ?? 'center'), !run.first && 'border-l border-border', run.first && sticky && cn(STICKY_HEAD, narrow && STICKY_OFF_NARROW), run.group.className)}>
@@ -997,7 +998,8 @@ export function DataTable<T>({
           )}
           <tr>
             {expandable && (
-              <TableTh className="w-px pr-0" data-column-expand="">
+              <TableTh className={cn('w-px pr-0', sentenceHeaders && SENTENCE_HEADER)} data-column-expand="">
+                {/* A screen-reader name only: the column has no visible header. */}
                 <span className="sr-only">Expand</span>
               </TableTh>
             )}
