@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1018 components across 23 entry points; 870 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1021 components across 23 entry points; 873 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -59,7 +59,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
 - [Video](#video) (115)
-- [Docs & editor](#docs--editor) (142)
+- [Docs & editor](#docs--editor) (145)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
@@ -650,6 +650,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `HitlBlock` | `@connorhoehn/ui-components/diagram` | A `macro:hitl` fence, drawn as an agent's question with the state a person needs to answer it. |  |  |
 | `HitlMacro` | `@connorhoehn/ui-components/diagram` | `macro:hitl` — an agent's question, drawn as a card a person can answer inside the page. |  |  |
 | `KeyDecisionsCard` | `@connorhoehn/ui-components/doc-editor` | — |  | deprecated |
+| `LayoutGallery` | `@connorhoehn/ui-components/doc-editor` | The deck's slide layouts as a grid of tiles, for choosing one. | `doceditor-layoutgallery` |  |
 | `LinkBlockEditorRenderer` | `@connorhoehn/ui-components` | Phase 51 / hub#71 — Link Block editor renderer. |  |  |
 | `LinkBlockReaderRenderer` | `@connorhoehn/ui-components` | Phase 51 / hub#71 — Link Block reader renderer (read-only viewer). |  |  |
 | `LinksBlock` | `@connorhoehn/ui-components/diagram` | A `macro:links` fence, drawn as a reference list. |  |  |
@@ -678,7 +679,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `SectionComments` | `@connorhoehn/ui-components/doc-editor` | Section-scoped comment panel. |  | deprecated |
 | `SectionList` | `@connorhoehn/ui-components/doc-editor` | Renders all document sections in order. |  | deprecated |
 | `SectionSummariesCard` | `@connorhoehn/ui-components/doc-editor` | — |  | deprecated |
-| `SlideForm` | `@connorhoehn/ui-components/doc-editor` | The inline form under the slide preview — the fields THIS layout reads. |  |  |
+| `SlideForm` | `@connorhoehn/ui-components/doc-editor` | The inline form under the slide preview — the fields THIS layout reads. | `doceditor-slideform` |  |
+| `SlideLayoutSchematic` | `@connorhoehn/ui-components/doc-editor` | A layout drawn as blocks (title bar, text lines, bars, figures) in a 16:9 frame — what `LayoutGallery` shows when the host has no rendered preview. |  |  |
 | `SlideList` | `@connorhoehn/ui-components/doc-editor` | The slide rail's list, without drag. |  |  |
 | `SlideRow` | `@connorhoehn/ui-components/doc-editor` | One row of the slide rail: a thumbnail, its number, its title, its controls. |  |  |
 | `SlideSources` | `@connorhoehn/ui-components/doc-editor` | The citations on one slide, and the Documents-explorer search that adds them. |  |  |
@@ -700,6 +702,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `TaskList` | `@connorhoehn/ui-components/doc-editor` | Renders a list of task items within a section. |  |  |
 | `TasksEditorRenderer` | `@connorhoehn/ui-components` | Editor-mode renderer for sectionType='tasks'. |  |  |
 | `TasksReaderRenderer` | `@connorhoehn/ui-components` | Reader-mode renderer for sectionType='tasks'. |  |  |
+| `TemplateGallery` | `@connorhoehn/ui-components/doc-editor` | A grid of starting decks, for choosing one. | `doceditor-templategallery` |  |
 | `TextEditorRenderer` | `@connorhoehn/ui-components` | Editor-mode renderer for sectionType='text'. |  |  |
 | `TextReaderRenderer` | `@connorhoehn/ui-components` | Reader-mode renderer for sectionType='text'. |  |  |
 | `TiptapEditor` | `@connorhoehn/ui-components/doc-editor` | Reusable Tiptap editor with Y.js collaboration and custom cursor overlay. |  |  |

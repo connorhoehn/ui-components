@@ -180,6 +180,12 @@ export type {
   PresentationInstructScope,
 } from './components/doc-editor/presentation/PresentationEditor';
 export type { PresentationSourceOption } from './components/doc-editor/presentation/SlideSources';
+// Choosing a layout and a starting deck (2.547.0), and the toolbar's host-theme shape.
+export { LayoutGallery, SlideLayoutSchematic } from './components/doc-editor/presentation/LayoutGallery';
+export type { LayoutGalleryProps } from './components/doc-editor/presentation/LayoutGallery';
+export { TemplateGallery } from './components/doc-editor/presentation/TemplateGallery';
+export type { TemplateGalleryProps, DeckTemplate } from './components/doc-editor/presentation/TemplateGallery';
+export type { SlidesToolbarTheme } from './components/doc-editor/presentation/SlidesToolbar';
 export {
   MAX_SLIDES as MAX_DECK_SLIDES,
   SLIDE_LAYOUTS,

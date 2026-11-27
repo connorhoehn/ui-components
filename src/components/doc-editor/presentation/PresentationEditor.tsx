@@ -96,7 +96,9 @@ import SlideForm from './SlideForm';
 import type { SlideListItem } from './SlideList';
 import SlideSources, { type PresentationSourceOption } from './SlideSources';
 import { SlideStage } from './SlideStage';
-import { SlidesToolbar } from './SlidesToolbar';
+import { SlidesToolbar, type SlidesToolbarTheme } from './SlidesToolbar';
+import { LayoutGallery } from './LayoutGallery';
+import Modal from '../../shared/Modal';
 import { SpeakerNotes } from './SpeakerNotes';
 import type { PresentationInstructScope } from './PresentationAgentComposer';
 import { svgDataUri } from './svgPreview';
@@ -105,6 +107,7 @@ import {
   MAX_SUBTITLE_CHARS,
   MAX_TITLE_CHARS,
   addSlide,
+  type DeckThemeRef,
   deckForEngine,
   duplicateSlide,
   moveSlide,
@@ -299,6 +302,18 @@ export interface PresentationEditorProps {
   renderFrame?: (frame: PresentationEditorFrame) => ReactNode;
   /** The slide on the stage changed (selection, delete, an agent edit landing). */
   onSelectedSlideChange?: (slideId: string, index: number) => void;
+  /**
+   * Host-published themes (since 2.547.0), offered in the toolbar's Theme
+   * menu after the built-ins; choosing one writes `theme: { ref: id }`.
+   * Omitted, the menu is the three built-ins as before.
+   */
+  themes?: readonly SlidesToolbarTheme[];
+  /**
+   * SVG source per layout for the layout gallery (since 2.547.0), rendered by
+   * the host's server. Insert → "All layouts…" opens the gallery either way;
+   * a layout without a preview shows a schematic.
+   */
+  layoutPreviews?: Partial<Record<SlideLayout, string>>;
   className?: string;
   'data-testid'?: string;
 }
@@ -396,9 +411,12 @@ export function PresentationEditor({
   footer,
   renderFrame,
   onSelectedSlideChange,
+  themes,
+  layoutPreviews,
   className,
   'data-testid': testId = 'presentation-editor',
 }: PresentationEditorProps) {
+  const [layoutGalleryOpen, setLayoutGalleryOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string>(() => spec.slides[0]?.id ?? '');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -876,9 +894,12 @@ export function PresentationEditor({
     : undefined;
 
   const toolbar = (
+    <>
     <SlidesToolbar
       slide={selected}
       theme={spec.theme ?? 'product'}
+      {...(themes?.length ? { themes, onThemeRefChange: (theme: DeckThemeRef) => edit({ ...spec, theme }) } : {})}
+      onBrowseLayouts={() => setLayoutGalleryOpen(true)}
       onAddSlide={handleAdd}
       canAddSlide={slides.length < MAX_SLIDES}
       onLayoutChange={(layout) => {
@@ -895,6 +916,26 @@ export function PresentationEditor({
       {...(openView ? { onPresent: openView } : {})}
       testIdPrefix={`${testId}-toolbar`}
     />
+    {/* Insert → All layouts…: every layout with its preview. Choosing one
+        adds a slide of it after the current one, like Insert's own rows;
+        Modal traps focus and returns it to the toolbar on close. */}
+    <Modal
+      open={layoutGalleryOpen}
+      onClose={() => setLayoutGalleryOpen(false)}
+      title="Add a slide"
+      maxWidth={960}
+      backdropTestId={`${testId}-layout-dialog`}
+    >
+      <LayoutGallery
+        previews={layoutPreviews}
+        onSelect={(layout) => {
+          setLayoutGalleryOpen(false);
+          handleAdd(layout);
+        }}
+        testIdPrefix={`${testId}-layout-gallery`}
+      />
+    </Modal>
+    </>
   );
 
   const alerts = (

@@ -26,7 +26,13 @@ export type { SlideStageProps, SlideStageWidth } from './SlideStage';
 export { SpeakerNotes } from './SpeakerNotes';
 export type { SpeakerNotesProps } from './SpeakerNotes';
 export { SlidesToolbar, SLIDE_INSERTS, SLIDES_TOOLBAR_BREAKPOINTS, slidesToolbarSize } from './SlidesToolbar';
-export type { SlidesToolbarProps, SlidesToolbarSize } from './SlidesToolbar';
+export type { SlidesToolbarProps, SlidesToolbarSize, SlidesToolbarTheme } from './SlidesToolbar';
+
+// Choosing a layout and a starting deck (2.547.0).
+export { LayoutGallery, SlideLayoutSchematic } from './LayoutGallery';
+export type { LayoutGalleryProps } from './LayoutGallery';
+export { TemplateGallery } from './TemplateGallery';
+export type { TemplateGalleryProps, DeckTemplate } from './TemplateGallery';
 
 export { SlideForm } from './SlideForm';
 export type { SlideFormProps } from './SlideForm';
