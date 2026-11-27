@@ -1,7 +1,8 @@
 // The inline form under the slide preview — the fields THIS layout reads.
 //
 // One form per layout rather than one form with every field on it. A deck
-// slide has seven possible shapes and no slide uses more than three of them;
+// slide has thirteen possible shapes (the six added in 2.547.0 have their
+// forms in `SlideLayoutForms`) and no slide uses more than three of them;
 // showing all seven would make a `quote` slide a page of empty boxes, and
 // people fill empty boxes.
 //
@@ -21,7 +22,11 @@ import { SectionLabel } from '../../shared/SectionLabel';
 import { Text } from '../../shared/Text';
 import { Table, TableBody, TableHead, TableRow, TableTd, TableTh } from '../../ui/Table';
 import SlideSources, { type PresentationSourceOption } from './SlideSources';
+import { AgendaEditor, ClosingEditor, ComparisonEditor, FiguresEditor, TableEditor, TimelineEditor } from './SlideLayoutForms';
 import {
+  DECK_CHART_KINDS,
+  DECK_CHART_KIND_LABELS,
+  MAX_PIE_SLICES,
   MAX_BULLETS_PER_SLIDE,
   MAX_BULLET_CHARS,
   MAX_CHART_LABELS,
@@ -164,8 +169,18 @@ function ChartEditor({
     onChange({ ...chart, series });
   };
 
+  // A pie is one series of slices, at most six (every theme has six colours).
+  // The form stops offering more, and says so when a chart switched to pie
+  // still holds more than that.
+  const isPie = chart.kind === 'pie';
+  const labelCap = isPie ? MAX_PIE_SLICES : MAX_CHART_LABELS;
+  const seriesCap = isPie ? 1 : MAX_CHART_SERIES;
+  const pieProblem = isPie && (chart.series.length > 1 || chart.labels.length > MAX_PIE_SLICES)
+    ? `A pie takes one series and at most ${MAX_PIE_SLICES} slices; this chart has ${chart.series.length} series and ${chart.labels.length} labels. Remove the extra ones, or pick another chart type.`
+    : null;
+
   const addLabel = () => {
-    if (chart.labels.length >= MAX_CHART_LABELS) return;
+    if (chart.labels.length >= labelCap) return;
     onChange({
       ...chart,
       labels: [...chart.labels, `Label ${chart.labels.length + 1}`],
@@ -195,10 +210,7 @@ function ChartEditor({
               size="sm"
               value={chart.kind}
               disabled={readOnly}
-              options={[
-                { value: 'bar', label: 'Bar' },
-                { value: 'line', label: 'Line' },
-              ]}
+              options={DECK_CHART_KINDS.map((kind) => ({ value: kind, label: DECK_CHART_KIND_LABELS[kind] }))}
               onChange={(event) => onChange({ ...chart, kind: event.target.value as DeckChart['kind'] })}
               data-testid={`${testIdPrefix}-kind`}
             />
@@ -209,7 +221,7 @@ function ChartEditor({
             <Button
               variant="ghost"
               size="sm"
-              disabled={chart.labels.length >= MAX_CHART_LABELS}
+              disabled={chart.labels.length >= labelCap}
               onClick={addLabel}
               data-testid={`${testIdPrefix}-add-label`}
             >
@@ -218,7 +230,7 @@ function ChartEditor({
             <Button
               variant="ghost"
               size="sm"
-              disabled={chart.series.length >= MAX_CHART_SERIES}
+              disabled={chart.series.length >= seriesCap}
               onClick={() =>
                 onChange({
                   ...chart,
@@ -235,6 +247,14 @@ function ChartEditor({
           </>
         )}
       </div>
+      <Text size="xs" tone="tertiary" data-testid={`${testIdPrefix}-limits`}>
+        {isPie
+          ? `${chart.labels.length} of ${MAX_PIE_SLICES} slices · one series`
+          : `${chart.labels.length} of ${MAX_CHART_LABELS} rows · ${chart.series.length} of ${MAX_CHART_SERIES} series`}
+      </Text>
+      {pieProblem && (
+        <Text size="xs" tone="danger" role="alert" data-testid={`${testIdPrefix}-pie-problem`}>{pieProblem}</Text>
+      )}
 
       <div className="overflow-x-auto rounded-md border border-border">
         <Table data-testid={`${testIdPrefix}-table`}>
@@ -243,6 +263,7 @@ function ChartEditor({
               <TableTh>Label</TableTh>
               {chart.series.map((entry, seriesIndex) => (
                 <TableTh key={seriesIndex}>
+                  <div className="flex items-center gap-1">
                   <Input
                     size="sm"
                     value={entry.name}
@@ -258,6 +279,19 @@ function ChartEditor({
                     }
                     data-testid={`${testIdPrefix}-series-name-${seriesIndex}`}
                   />
+                  {/* Since 2.547.0: a pie takes one series, so a chart switched
+                      to pie needs a way to drop the others. */}
+                  {!readOnly && chart.series.length > 1 && (
+                    <IconButton
+                      aria-label={`Remove series ${seriesIndex + 1}`}
+                      variant="ghost"
+                      size="sm"
+                      icon={<TrashGlyph />}
+                      onClick={() => onChange({ ...chart, series: chart.series.filter((_, index) => index !== seriesIndex) })}
+                      data-testid={`${testIdPrefix}-remove-series-${seriesIndex}`}
+                    />
+                  )}
+                  </div>
                 </TableTh>
               ))}
               {!readOnly && <TableTh />}
@@ -445,6 +479,60 @@ export function SlideForm({
             />
           )}
         </FormField>
+      )}
+
+      {slide.layout === 'key-figures' && slide.figures && (
+        <FiguresEditor
+          figures={slide.figures}
+          onChange={(figures) => patch({ figures })}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-figures`}
+        />
+      )}
+
+      {slide.layout === 'table' && slide.table && (
+        <TableEditor
+          table={slide.table}
+          onChange={(table) => patch({ table })}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-table`}
+        />
+      )}
+
+      {slide.layout === 'comparison' && slide.comparison && (
+        <ComparisonEditor
+          comparison={slide.comparison}
+          onChange={(comparison) => patch({ comparison })}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-comparison`}
+        />
+      )}
+
+      {slide.layout === 'timeline' && slide.timeline && (
+        <TimelineEditor
+          steps={slide.timeline}
+          onChange={(timeline) => patch({ timeline })}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-timeline`}
+        />
+      )}
+
+      {slide.layout === 'agenda' && slide.agenda && (
+        <AgendaEditor
+          agenda={slide.agenda}
+          onChange={(agenda) => patch({ agenda })}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-agenda`}
+        />
+      )}
+
+      {slide.layout === 'closing' && slide.closing && (
+        <ClosingEditor
+          closing={slide.closing}
+          onChange={(closing) => patch({ closing })}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-closing`}
+        />
       )}
 
       {showNotes && <FormField label="Speaker notes" hint="Goes into the .pptx notes pane, not onto the slide.">
