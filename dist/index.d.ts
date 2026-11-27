@@ -8885,10 +8885,23 @@ export declare const decisionsFieldType: FieldTypeDefinition;
 
 export declare function DecisionsReaderRenderer({ section, onNavigateToEditor }: SectionRendererProps): JSX.Element;
 
+/** Plain names for the chart kinds. */
+export declare const DECK_CHART_KIND_LABELS: Record<DeckChart['kind'], string>;
+
+/** The chart kinds the engine draws, in the order the form offers them. */
+export declare const DECK_CHART_KINDS: readonly DeckChart['kind'][];
+
 export declare const DECK_THEMES: readonly DeckTheme[];
 
+/** Numbered agenda items; `current` (0-based) marks where the talk is. */
+export declare interface DeckAgenda {
+    items: string[];
+    current?: number;
+}
+
+/** `stacked-bar` stacks the series per label; `pie` takes one series of non-negative values, one slice per label. */
 export declare interface DeckChart {
-    kind: 'bar' | 'line';
+    kind: 'bar' | 'line' | 'stacked-bar' | 'pie';
     labels: string[];
     series: Array<{
         name: string;
@@ -8896,10 +8909,39 @@ export declare interface DeckChart {
     }>;
 }
 
+/** The last word: a closing line, up to three next steps, and a contact line. */
+export declare interface DeckClosing {
+    line: string;
+    nextSteps?: string[];
+    contact?: string;
+}
+
+/** Two titled columns of points, and optionally the line that settles it. */
+export declare interface DeckComparison {
+    left: DeckComparisonSide;
+    right: DeckComparisonSide;
+    verdict?: string;
+}
+
+export declare interface DeckComparisonSide {
+    title: string;
+    points: string[];
+}
+
+/** One big number: `value` as it should read ("42%", "$1.2M"), a label, and an optional change ("+8 pts"). */
+export declare interface DeckFigure {
+    value: string;
+    label: string;
+    delta?: string;
+}
+
+/** `slideForEngine` over the whole deck. Returns the same object when no slide changed. */
+export declare function deckForEngine(spec: DeckSpec): DeckSpec;
+
 /**
- * An image slide carries only its alt text. Nothing is fetched at render time,
- * so the slide is a framed caption until a real asset pipeline puts bytes
- * behind it.
+ * An image slide carries only its alt text. Nothing is fetched at render time —
+ * neither the .pptx nor the SVG preview reaches the network — so the slide is a
+ * framed caption until a real asset pipeline puts bytes behind it.
  */
 export declare interface DeckImage {
     alt: string;
@@ -8920,6 +8962,12 @@ export declare interface DeckSlide {
     chart?: DeckChart;
     quote?: DeckQuote;
     image?: DeckImage;
+    figures?: DeckFigure[];
+    table?: DeckTable;
+    comparison?: DeckComparison;
+    timeline?: DeckTimelineStep[];
+    agenda?: DeckAgenda;
+    closing?: DeckClosing;
     notes?: string;
     sources: DeckSource[];
 }
@@ -8934,11 +8982,52 @@ export declare interface DeckSource {
 export declare interface DeckSpec {
     title: string;
     subtitle?: string;
-    theme?: DeckTheme;
+    /** A built-in theme name, or a `{ ref }` the host resolves. */
+    theme?: DeckTheme | DeckThemeRef;
     slides: DeckSlide[];
 }
 
+export declare type DeckSpecValidation = {
+    ok: true;
+    spec: DeckSpec;
+} | {
+    ok: false;
+    errors: string[];
+};
+
+/** A small table of short text: a header row and up to 8 rows of the same width. */
+export declare interface DeckTable {
+    header: string[];
+    rows: string[][];
+}
+
+export declare interface DeckTemplate {
+    id: string;
+    title: string;
+    description: string;
+    slideCount: number;
+    /** Who the deck is for ("Leadership", "A customer"), shown beside the count. */
+    audience?: string;
+    /** SVG source of the first few slides, first slide first. Up to four are shown. */
+    previews: readonly string[];
+}
+
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
+
+/**
+ * A theme named by id, which the HOST resolves to a theme object and hands to
+ * layout. A deck names its theme; it never carries colours, fonts or sizes.
+ */
+export declare interface DeckThemeRef {
+    ref: string;
+}
+
+/** One dated step on a timeline. */
+export declare interface DeckTimelineStep {
+    date: string;
+    label: string;
+    detail?: string;
+}
 
 /** The default word for the call. */
 export declare const DEFAULT_CALL_NOUN = "huddle";
@@ -14609,6 +14698,9 @@ export declare function isBuiltinLeafKind(kind: string): kind is BuiltinLeafKind
 /** True when `command` is offered in `ctx`. */
 export declare function isChatCommandInScope(command: Pick<ChatCommand, 'scope'>, ctx: ChatCommandScopeContext): boolean;
 
+/** True for a `{ ref }` theme (a host-published theme), false for a built-in name or none. */
+export declare function isDeckThemeRef(theme: DeckSpec['theme']): theme is DeckThemeRef;
+
 export declare function isImageAttachment(a: {
     contentType?: string;
 }): boolean;
@@ -14911,6 +15003,27 @@ export declare function LaptopIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Alias kept for diagrams better described as a stack of horizontal layers. */
 export declare const LayerStack: typeof StackDiagram;
+
+export declare function LayoutGallery({ onSelect, layouts, previews, selected, label, className, testIdPrefix, }: LayoutGalleryProps): JSX.Element;
+
+export declare interface LayoutGalleryProps {
+    /** Called with the tile's layout when it is pressed. */
+    onSelect: (layout: SlideLayout) => void;
+    /** The layouts to offer, in order. Default: every layout (`SLIDE_LAYOUTS`). */
+    layouts?: readonly SlideLayout[];
+    /**
+     * SVG source per layout, rendered by the host's server. Shown through
+     * `svgDataUri` in an `<img>`; a layout without one shows a schematic.
+     */
+    previews?: Partial<Record<SlideLayout, string>>;
+    /** Marks one tile as the current choice (`aria-pressed`, the selected border). */
+    selected?: SlideLayout;
+    /** The list's accessible name. Default "Slide layouts". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `layout-gallery`; tiles are `<prefix>-<layout>`. */
+    testIdPrefix?: string;
+}
 
 export declare function layoutGraph(nodes: GraphNode[], edges: GraphEdge[], layout: GraphLayout, size: GraphLayoutSize): GraphPositions;
 
@@ -19706,7 +19819,7 @@ declare interface PresenceUser_3 {
     metadata: Record<string, unknown>;
 }
 
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 declare interface PresentationEditorFrame {
@@ -19802,6 +19915,18 @@ export declare interface PresentationEditorProps {
     renderFrame?: (frame: PresentationEditorFrame) => ReactNode;
     /** The slide on the stage changed (selection, delete, an agent edit landing). */
     onSelectedSlideChange?: (slideId: string, index: number) => void;
+    /**
+     * Host-published themes (since 2.547.0), offered in the toolbar's Theme
+     * menu after the built-ins; choosing one writes `theme: { ref: id }`.
+     * Omitted, the menu is the three built-ins as before.
+     */
+    themes?: readonly SlidesToolbarTheme[];
+    /**
+     * SVG source per layout for the layout gallery (since 2.547.0), rendered by
+     * the host's server. Insert → "All layouts…" opens the gallery either way;
+     * a layout without a preview shows a schematic.
+     */
+    layoutPreviews?: Partial<Record<SlideLayout, string>>;
     className?: string;
     'data-testid'?: string;
 }
@@ -24449,12 +24574,33 @@ export declare interface SkipLinkProps {
     onSkip?: () => void;
 }
 
+/** One line per layout: when to reach for it. Shown under the name in `LayoutGallery`. */
+export declare const SLIDE_LAYOUT_DESCRIPTIONS: Record<SlideLayout, string>;
+
 /** What each layout is FOR, in the words a person picking one needs. */
 export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
 
 export declare const SLIDE_LAYOUTS: readonly SlideLayout[];
 
-export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image';
+/**
+ * The slide as the engine will take it: every payload the current layout
+ * does not own is dropped (the engine refuses a `chart` on a bullets slide,
+ * a `table` on a timeline, and so on). Title, eyebrow, bullets, notes and
+ * sources always carry over. Returns the same object when nothing was dropped.
+ */
+export declare function slideForEngine(slide: DeckSlide): DeckSlide;
+
+export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image' | 'key-figures' | 'table' | 'comparison' | 'timeline' | 'agenda' | 'closing';
+
+/**
+ * A layout drawn as blocks (title bar, text lines, bars, figures) in a 16:9
+ * frame — what `LayoutGallery` shows when the host has no rendered preview.
+ * Decorative: `aria-hidden`, the tile's text names the layout.
+ */
+export declare function SlideLayoutSchematic({ layout, className }: {
+    layout: SlideLayout;
+    className?: string;
+}): JSX.Element;
 
 export declare const Slider: ForwardRefExoticComponent<SliderProps & RefAttributes<HTMLInputElement>>;
 
@@ -24484,6 +24630,12 @@ export declare interface SliderProps {
 
 /** Two sliders: "refine these results". Since 2.389.6. */
 export declare function SlidersIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** A theme the host publishes, offered beside the built-ins; choosing it writes `{ ref: id }`. */
+export declare interface SlidesToolbarTheme {
+    id: string;
+    name: string;
+}
 
 declare interface SloPoint {
     at: string;
@@ -26582,6 +26734,28 @@ export declare interface TechnicalDetailsProps {
     defaultOpen?: boolean;
     className?: string;
     testId?: string;
+}
+
+export declare function TemplateGallery({ templates, onSelect, selectedId, loading, loadingCount, emptyTitle, emptyDescription, label, className, testIdPrefix, }: TemplateGalleryProps): JSX.Element;
+
+export declare interface TemplateGalleryProps {
+    templates: readonly DeckTemplate[];
+    onSelect: (id: string) => void;
+    /** Marks that template's tile selected. */
+    selectedId?: string;
+    /** Shows placeholder tiles instead of the templates. */
+    loading?: boolean;
+    /** How many placeholder tiles while loading. Default 4. */
+    loadingCount?: number;
+    /** The empty state's title. Default "No templates yet". */
+    emptyTitle?: string;
+    /** The empty state's line under the title. */
+    emptyDescription?: string;
+    /** The list's accessible name. Default "Deck templates". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `template-gallery`; tiles are `<prefix>-<id>`. */
+    testIdPrefix?: string;
 }
 
 /** A page with a dashed block: "a template". Since 2.390.3. */
@@ -29658,6 +29832,12 @@ declare interface UseActivityBusReturn {
       docVersion: number;
   }
 
+  /**
+   * Validates one deck. Returns every problem it found rather than the first, so
+   * a draft that has to be re-asked for can be re-asked for once.
+   */
+  export declare function validateDeckSpec(input: unknown): DeckSpecValidation;
+
   export declare type ValidationCode = 'NO_TRIGGER' | 'MULTIPLE_TRIGGERS' | 'CYCLE_DETECTED' | 'INVALID_HANDLE' | 'MISSING_CONFIG' | 'APPROVAL_NO_APPROVERS' | 'JOIN_INSUFFICIENT_INPUTS' | 'ORPHAN_NODE' | 'DEAD_END' | 'UNUSED_FORK_BRANCH' | 'UNUSED_CONDITION_BRANCH' | 'NO_ERROR_HANDLER' | 'LLM_NO_MAX_TOKENS' | 'UNGUARDED_APPROVAL_TIMEOUT' | 'LARGE_FORK' | 'DEEP_CHAIN' | 'DUPLICATE_NODE_NAME' | 'LOW_TEMPERATURE_NON_DETERMINISTIC_PROMPT' | 'NO_PUBLISHED_VERSION_BUT_TRIGGER_SCHEDULED' | 'UNREACHABLE_AFTER_CONDITION_FALSE' | 'FORK_WITHOUT_MATCHING_JOIN';
 
   export declare interface ValidationIssue {
@@ -30146,9 +30326,15 @@ declare interface UseActivityBusReturn {
    *
    * Content is NOT discarded on a layout change: a bullets slide turned into a
    * chart keeps its bullets, so turning it back does not lose the words. The
-   * generator ignores the fields a layout does not read, and the alternative —
-   * deleting them — makes the layout picker a destructive control people learn
-   * to avoid.
+   * title, eyebrow, notes, sources and bullets carry over to every layout; a
+   * layout's own payload (`chart`, `figures`, `table`, …) stays on the slide
+   * while another layout is chosen, and `slideForEngine` drops it from what is
+   * saved. The alternative — deleting it here — makes the layout picker a
+   * destructive control people learn to avoid.
+   *
+   * The new layouts start from the smallest payload the engine accepts the
+   * shape of (two figures, three timeline steps, a 2×2 table), with empty text
+   * for the person to fill.
    */
   export declare function withLayoutDefaults(slide: DeckSlide, layout: SlideLayout): DeckSlide;
 
