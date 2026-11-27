@@ -39,13 +39,17 @@ import { useRovingToolbar } from '../../shared/RovingToolbar';
 import SegmentedControl from '../../shared/SegmentedControl';
 import { Text } from '../../shared/Text';
 import {
+  DECK_CHART_KINDS,
+  DECK_CHART_KIND_LABELS,
   DECK_THEMES,
   SLIDE_LAYOUTS,
   SLIDE_LAYOUT_LABELS,
   type DeckChart,
   type DeckSlide,
   type DeckTheme,
+  type DeckThemeRef,
   type SlideLayout,
+  isDeckThemeRef,
 } from './deckSpec';
 import { DensityProvider } from '../../shared/Density';
 
@@ -57,6 +61,18 @@ const THEME_LABELS: Record<DeckTheme, string> = {
   engineering: 'Engineering',
   plain: 'Plain',
 };
+
+/** A theme the host publishes, offered beside the built-ins; choosing it writes `{ ref: id }`. */
+export interface SlidesToolbarTheme {
+  id: string;
+  name: string;
+}
+
+/** The trigger's name for the deck's theme: a built-in's label, a host theme's name, or the ref's id. */
+function themeName(theme: DeckTheme | DeckThemeRef, themes: readonly SlidesToolbarTheme[]): string {
+  if (isDeckThemeRef(theme)) return themes.find((candidate) => candidate.id === theme.ref)?.name ?? theme.ref;
+  return THEME_LABELS[theme] ?? theme;
+}
 
 /** One-row layouts, widest first. */
 export type SlidesToolbarSize = 'wide' | 'medium' | 'narrow';
@@ -97,13 +113,32 @@ const STYLE_NOTE_TITLE = 'A deck is rendered from its layout and theme, so text 
 export interface SlidesToolbarProps {
   /** The slide on the stage. Layout and the chart switch act on it. */
   slide?: DeckSlide;
-  theme: DeckTheme;
+  /** The deck's theme: a built-in name, or `{ ref }` naming one of `themes` (since 2.547.0). */
+  theme: DeckTheme | DeckThemeRef;
+  /**
+   * Host-published themes (since 2.547.0), listed after the three built-ins.
+   * Choosing one calls `onThemeChange({ ref: id })`. Omitted, the menu is the
+   * built-ins only, as before.
+   */
+  themes?: readonly SlidesToolbarTheme[];
   /** Adds a slide after the current one. `layout` comes from Insert. */
   onAddSlide: (layout?: SlideLayout) => void;
   /** False at the deck's slide cap. */
   canAddSlide?: boolean;
   onLayoutChange: (layout: SlideLayout) => void;
+  /** A built-in theme was chosen. */
   onThemeChange: (theme: DeckTheme) => void;
+  /**
+   * A host theme from `themes` was chosen (since 2.547.0): `{ ref: id }`.
+   * Without it, `themes` is not offered — the menu would hold rows that do
+   * nothing.
+   */
+  onThemeRefChange?: (theme: DeckThemeRef) => void;
+  /**
+   * Adds "All layouts…" to Insert (since 2.547.0): the host opens a
+   * `LayoutGallery`. `PresentationEditor` passes it and owns the dialog.
+   */
+  onBrowseLayouts?: () => void;
   onChartKindChange?: (kind: DeckChart['kind']) => void;
   onUndo?: () => void;
   onRedo?: () => void;
@@ -159,10 +194,13 @@ function MenuTrigger({ label, value }: { label: string; value?: string }) {
 export function SlidesToolbar({
   slide,
   theme,
+  themes = [],
   onAddSlide,
   canAddSlide = true,
+  onBrowseLayouts,
   onLayoutChange,
   onThemeChange,
+  onThemeRefChange,
   onChartKindChange,
   onUndo,
   onRedo,
@@ -200,8 +238,13 @@ export function SlidesToolbar({
       label: `${SLIDE_LAYOUT_LABELS[layout]} slide`,
       onSelect: () => onAddSlide(layout),
       'data-testid': `${testIdPrefix}-insert-${layout}`,
-    })),
+    })).concat(onBrowseLayouts ? [{
+      label: 'All layouts…',
+      onSelect: onBrowseLayouts,
+      'data-testid': `${testIdPrefix}-insert-all`,
+    }] : []),
   } : null;
+  const themeRef = isDeckThemeRef(theme) ? theme.ref : null;
   const themeSection: DropdownMenuSection | null = !locked ? {
     label: 'Deck theme',
     items: DECK_THEMES.map((candidate) => ({
@@ -209,18 +252,32 @@ export function SlidesToolbar({
       checked: candidate === theme,
       onSelect: () => { if (candidate !== theme) onThemeChange(candidate); },
       'data-testid': `${testIdPrefix}-theme-${candidate}`,
-    })),
+    })).concat((onThemeRefChange ? themes : []).map((candidate) => ({
+      label: candidate.name,
+      checked: candidate.id === themeRef,
+      onSelect: () => { if (candidate.id !== themeRef) onThemeRefChange?.({ ref: candidate.id }); },
+      'data-testid': `${testIdPrefix}-theme-ref-${candidate.id}`,
+    }))),
   } : null;
+  const currentThemeName = themeName(theme, themes);
   const chart = !locked && slide?.layout === 'chart' && slide.chart && onChartKindChange ? slide.chart : null;
   const chartSection: DropdownMenuSection | null = chart && onChartKindChange ? {
     label: 'Chart type',
-    items: (['bar', 'line'] as const).map((kind) => ({
-      label: kind === 'bar' ? 'Bar' : 'Line',
+    items: DECK_CHART_KINDS.map((kind) => ({
+      label: DECK_CHART_KIND_LABELS[kind],
       checked: chart.kind === kind,
       onSelect: () => { if (chart.kind !== kind) onChartKindChange(kind); },
       'data-testid': `${testIdPrefix}-chart-kind-${kind}`,
     })),
   } : null;
+
+  // The inline switch is Bar | Line, the two kinds a person flips between.
+  // A stacked-bar or pie slide adds its own kind as a third segment, so the
+  // switch always shows what the slide is; that segment's width is paid for
+  // by moving the style note behind ⋯ (a sentence, not a choice). All four
+  // kinds are in the slide form's Chart type and in ⋯ when the switch is.
+  const extraKind = chart && chart.kind !== 'bar' && chart.kind !== 'line' && on('chart') ? chart.kind : null;
+  const inlineKinds: DeckChart['kind'][] = extraKind ? ['bar', 'line', extraKind] : ['bar', 'line'];
 
   // ⋯ holds, in bar order, whatever this width took off the bar. The note is
   // a heading there — a sentence, not a choice — so it is never a row that
@@ -230,7 +287,7 @@ export function SlidesToolbar({
   if (!on('insert') && insertSection) overflow.push(insertSection);
   if (!on('theme') && themeSection) overflow.push(themeSection);
   if (!on('chart') && chartSection) overflow.push(chartSection);
-  if (!on('note') && !locked) overflow.push({ label: STYLE_NOTE, items: [], 'data-testid': `${testIdPrefix}-style-note` });
+  if ((!on('note') || extraKind) && !locked) overflow.push({ label: STYLE_NOTE, items: [], 'data-testid': `${testIdPrefix}-style-note` });
 
   return (
     <div
@@ -279,8 +336,8 @@ export function SlidesToolbar({
 
       {on('theme') && themeSection && (
         <DropdownMenu
-          trigger={<MenuTrigger label="Theme" value={THEME_LABELS[theme]} />}
-          triggerLabel={`Theme: ${THEME_LABELS[theme]}`}
+          trigger={<MenuTrigger label="Theme" value={currentThemeName} />}
+          triggerLabel={`Theme: ${currentThemeName}`}
           triggerClassName="shrink-0 border-transparent"
           triggerTestId={`${testIdPrefix}-theme`}
           sections={[themeSection]}
@@ -292,10 +349,7 @@ export function SlidesToolbar({
         <DensityProvider density="compact"><SegmentedControl
           value={chart.kind}
           onChange={(value) => onChartKindChange(value as DeckChart['kind'])}
-          options={[
-            { value: 'bar', label: 'Bar' },
-            { value: 'line', label: 'Line' },
-          ]}
+          options={inlineKinds.map((kind) => ({ value: kind, label: DECK_CHART_KIND_LABELS[kind] }))}
           aria-label="Chart type"
           className="shrink-0"
           data-testid={`${testIdPrefix}-chart-kind`}
@@ -347,7 +401,7 @@ export function SlidesToolbar({
         </>
       )}
 
-      {on('note') && (
+      {on('note') && !extraKind && (
         <Text
           as="span"
           className="ml-1 shrink-0 whitespace-nowrap text-xs text-text-tertiary"

@@ -196,6 +196,14 @@ export {
   replaceSlide,
   uncitedSlideIds,
   withLayoutDefaults,
+  // The 0.152.0 format (2.547.0).
+  DECK_CHART_KINDS,
+  DECK_CHART_KIND_LABELS,
+  SLIDE_LAYOUT_DESCRIPTIONS,
+  deckForEngine,
+  isDeckThemeRef,
+  slideForEngine,
+  validateDeckSpec,
 } from './components/doc-editor/presentation/deckSpec';
 export type {
   DeckChart,
@@ -206,6 +214,15 @@ export type {
   DeckSpec,
   DeckTheme,
   SlideLayout,
+  DeckAgenda,
+  DeckClosing,
+  DeckComparison,
+  DeckComparisonSide,
+  DeckFigure,
+  DeckSpecValidation,
+  DeckTable,
+  DeckThemeRef,
+  DeckTimelineStep,
 } from './components/doc-editor/presentation/deckSpec';
 
 // An agent's pending edits to an open document (2.408.0). Named explicitly,

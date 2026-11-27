@@ -105,6 +105,7 @@ import {
   MAX_SUBTITLE_CHARS,
   MAX_TITLE_CHARS,
   addSlide,
+  deckForEngine,
   duplicateSlide,
   moveSlide,
   nextRevisionLabel,
@@ -586,7 +587,10 @@ export function PresentationEditor({
     if (!canSave) return;
     setSaving(true);
     setSaveError(null);
-    void Promise.resolve(onSaveRevision(spec))
+    // What a layout no longer reads is kept while editing (switching back
+    // restores it) but never saved: the engine refuses a payload on a layout
+    // that does not own it. A deck with nothing stale goes as the same object.
+    void Promise.resolve(onSaveRevision(deckForEngine(spec)))
       .catch((error: unknown) => {
         setSaveError(error instanceof Error ? error.message : 'The revision could not be saved.');
       })
