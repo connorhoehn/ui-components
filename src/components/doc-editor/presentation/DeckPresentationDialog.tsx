@@ -46,6 +46,9 @@ export interface DeckPresentationDialogProps {
 const noop = () => {};
 
 /**
+ * Present a deck's rendered slides in a dialog over the page. Deprecated:
+ * use the in-place present mode of `PresentationEditor` / `DeckReader`.
+ *
  * @deprecated Since 2.548.0. `PresentationEditor` and `DeckReader` present in
  * place (`DeckPresentMode` inside their own regions, reported through
  * `onFocusModeChange` so the host can collapse its rails) and no longer open

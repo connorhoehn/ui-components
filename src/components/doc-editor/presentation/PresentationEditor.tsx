@@ -411,6 +411,11 @@ function useSpecHistory(spec: DeckSpec, onChange: (spec: DeckSpec) => void) {
   return { edit, undo, redo, canUndo: history.past.length > 0, canRedo: history.future.length > 0 };
 }
 
+/**
+ * Editing a generated deck: filmstrip, 16:9 stage, slide form and notes, with
+ * the layout gallery and Present shown in place of the stage (no modals since
+ * 2.548.0; `onFocusModeChange` asks the host's shell for the whole window).
+ */
 export function PresentationEditor({
   spec,
   onChange,

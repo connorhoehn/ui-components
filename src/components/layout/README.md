@@ -61,6 +61,40 @@ at the shell, never per page.
 | `ConnectionStatus` | Deprecated alias for `ConnectionPill` (`/shared`). |
 | `AppLayout` | **Deprecated.** The demo app's wired shell (channel routing, gateway transport, pipeline providers), not a primitive. Use `AppShell`. |
 
+## Focus mode and no modals
+
+Feature surfaces live in the page's own layout, not in a dialog floated over
+it. A gallery, a picker or a presentation replaces a region of the page (the
+deck editor's layout gallery takes its stage column; Present takes the
+editor's or reader's whole box) and gives it back with Back, Exit or Escape.
+A surface that needs the whole screen asks the shell to collapse both left
+rails; it never hides what it does not own and never uses the browser's
+fullscreen API. The one dialog that remains is `ConfirmDialog`, for a
+destructive confirmation.
+
+Focus mode (2.548.0) is how a page asks. Put `ShellFocusModeProvider` above
+the shell; every rail whose fold comes from `useRailFold` under it (the
+primary rail through `AppShell sidebarFold`, a section rail through
+`SubNavLayout collapsed` or `ExplorerLayout railCollapsed`) then folds while
+focus mode is on and returns exactly to its earlier state when it ends.
+Nothing is written to the rails' storage, and a rail the reader opens by hand
+during focus mode stays open until it ends.
+
+```tsx
+<ShellFocusModeProvider>
+  <Shell />            {/* primary = useRailFold(...); <AppShell sidebarFold={primary} …> */}
+</ShellFocusModeProvider>
+
+// In the page:
+const focus = useShellFocusMode();     // { active, request }
+<PresentationEditor onFocusModeChange={focus.request} … />
+<DeckReader onFocusModeChange={focus.request} … />
+```
+
+A rail that keeps its own `collapsed` state instead of `useRailFold` reads
+`useShellFocusMode().active` and folds while it is true. Without the provider
+nothing changes and `request` does nothing.
+
 ## Stability
 
 **Stable.** `AppShell` and `CollapsibleSidebar` are on the no-touch list: a

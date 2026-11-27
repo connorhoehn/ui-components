@@ -72,6 +72,10 @@ function Chevron({ back }: { back?: boolean }) {
   );
 }
 
+/**
+ * A deck presented in place: one slide large, previous/next, "Slide n of m",
+ * Exit, arrow keys and Escape, optional speaker notes; fills the box it is given.
+ */
 export function DeckPresentMode({
   title,
   slides,

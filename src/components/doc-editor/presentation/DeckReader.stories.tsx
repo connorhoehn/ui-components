@@ -17,8 +17,9 @@ const spec: DeckSpec = {
   ],
 };
 
-function Reader({ preview, compactReview = false }: { preview: PresentationPreview; compactReview?: boolean }) {
+function Reader({ preview, compactReview = false, presentation }: { preview: PresentationPreview; compactReview?: boolean; presentation?: 'in-place' | 'dialog' }) {
   const [requests, setRequests] = useState(0);
+  const [focused, setFocused] = useState(false);
   return (
     <div className="h-[640px]">
       <DeckReader
@@ -27,8 +28,10 @@ function Reader({ preview, compactReview = false }: { preview: PresentationPrevi
         preview={preview}
         onRequestPreview={() => setRequests((n) => n + 1)}
         onFocusConversation={() => {}}
+        {...(presentation ? { presentation } : {})}
+        onFocusModeChange={setFocused}
         renderFrame={({ toolbar, surface }) => (
-          <EditorShell title={`${spec.title} (${requests} preview requests)`} toolbar={toolbar}>
+          <EditorShell title={`${spec.title} (${requests} preview requests${focused ? ', focus mode on' : ''})`} toolbar={toolbar}>
             {surface}
           </EditorShell>
         )}
@@ -65,3 +68,13 @@ export const PreviewError: Story = { args: { preview: { error: 'The renderer is 
 
 /** An active call's review: one View menu, notes closed. */
 export const CompactReview: Story = { args: { preview: rendered, compactReview: true } };
+
+/**
+ * Present, in place (the default since 2.548.0): the toolbar, filmstrip and
+ * stage give way to the slide, previous/next and Exit inside the same frame;
+ * the title shows the `onFocusModeChange` the host would act on.
+ */
+export const PresentInPlace: Story = { args: { preview: rendered, presentation: 'in-place' } };
+
+/** The deprecated dialog, for a host that still asks for it. */
+export const PresentInDialogDeprecated: Story = { args: { preview: rendered, presentation: 'dialog' } };

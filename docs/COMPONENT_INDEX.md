@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1021 components across 23 entry points; 873 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1023 components across 23 entry points; 875 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -59,13 +59,13 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
 - [Video](#video) (115)
-- [Docs & editor](#docs--editor) (145)
+- [Docs & editor](#docs--editor) (146)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
 - [Observability](#observability) (12)
 - [Charts & data display](#charts--data-display) (10)
-- [Other](#other) (83)
+- [Other](#other) (84)
 - [Icons](#icons) (114)
 
 ## Page templates
@@ -607,7 +607,8 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DecisionMacro` | `@connorhoehn/ui-components/diagram` | `macro:decision` — a recorded choice, drawn as a card in the page that argued for it. |  |  |
 | `DecisionsEditorRenderer` | `@connorhoehn/ui-components` | — |  |  |
 | `DecisionsReaderRenderer` | `@connorhoehn/ui-components` | — |  |  |
-| `DeckPresentationDialog` | `@connorhoehn/ui-components/doc-editor` | Present a deck's rendered slides full-window. |  |  |
+| `DeckPresentationDialog` | `@connorhoehn/ui-components/doc-editor` | Present a deck's rendered slides in a dialog over the page. |  | deprecated |
+| `DeckPresentMode` | `@connorhoehn/ui-components/doc-editor` | A deck presented in place: one slide large, previous/next, "Slide n of m", Exit, arrow keys and Escape, optional speaker notes; fills the box it is given. |  |  |
 | `DeckReader` | `@connorhoehn/ui-components/doc-editor` | A saved deck, read-only: a viewing toolbar (Slides/Outline, previous/next with "Slide n of m", zoom, notes, Present), a rail of slide thumbnails or an outline, a keyboard-navigable 16:9 viewport, and the current slide… | `doc-editor-presentation-deckreader` |  |
 | `DefaultRenderer` | `@connorhoehn/ui-components` | Fallback renderer — used when no specific renderer is registered. |  |  |
 | `DiagramEditorRenderer` | `@connorhoehn/ui-components` | Phase 51 / hub#71 — Diagram editor renderer. |  |  |
@@ -663,7 +664,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `NumberReaderRenderer` | `@connorhoehn/ui-components` | Reader-mode renderer for sectionType='number'. |  |  |
 | `ParticipantAvatars` | `@connorhoehn/ui-components/doc-editor` | Interactive presence strip with clickable avatars, online dots, mode badges, section indicators, and tooltips. |  |  |
 | `PdfViewer` | `@connorhoehn/ui-components/pdf-viewer` | A PDF, one page at a time, from a URL or bytes, with page navigation and zoom, drawn by pdf.js. |  |  |
-| `PresentationEditor` | `@connorhoehn/ui-components/doc-editor` | Editing a generated deck. |  |  |
+| `PresentationEditor` | `@connorhoehn/ui-components/doc-editor` | Editing a generated deck: filmstrip, 16:9 stage, slide form and notes, with the layout gallery and Present shown in place of the stage (no modals since 2.548.0; `onFocusModeChange` asks the host's shell for the whole… | `doc-editor-presentation-presentationeditor` |  |
 | `PresentationView` | `@connorhoehn/ui-components/doc-editor` | A generated deck, read-only. |  |  |
 | `ProposalCard` | `@connorhoehn/ui-components/doc-editor` | One proposed document change, awaiting a human. | `doc-editor-proposalcard` |  |
 | `ProposedEditStrip` | `@connorhoehn/ui-components/doc-editor` | An agent's edits to the open document, waiting on a human: "Proposed edit · Replace selection · Apply · Discard". | `doceditor-proposededitstrip` |  |
@@ -1027,6 +1028,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `RecordMark` | `@connorhoehn/ui-components` | The row's leading mark. |  |  |
 | `RippleGridBackground` | `@connorhoehn/ui-components/shared` | A grid that breathes, for a canvas that should not look like graph paper. |  |  |
 | `RisingParticles` | `@connorhoehn/ui-components/shared` | Renders `children` over a rising star field while `active`, and over nothing at all when not. |  |  |
+| `ShellFocusModeProvider` | `@connorhoehn/ui-components/shared` | Holds the shell's focus mode: on while any `useShellFocusMode` under it has requested it. |  |  |
 | `ShellRailFoldProvider` | `@connorhoehn/ui-components/shared` | — |  |  |
 | `ShortcutsHelp` | `@connorhoehn/ui-components/shared` | Global keyboard-shortcut help overlay. | `shared-shortcutshelp` |  |
 | `SourceDetailPage` | `@connorhoehn/ui-components/ingest` | Detail page for a single ingest source. | `ingest-sourcedetailpage` |  |
