@@ -994,6 +994,16 @@ export declare interface DeckPresence {
 
 export declare const deckPresenceChannel: (documentId: string) => string;
 
+/**
+ * Present a deck's rendered slides in a dialog over the page. Deprecated:
+ * use the in-place present mode of `PresentationEditor` / `DeckReader`.
+ *
+ * @deprecated Since 2.548.0. `PresentationEditor` and `DeckReader` present in
+ * place (`DeckPresentMode` inside their own regions, reported through
+ * `onFocusModeChange` so the host can collapse its rails) and no longer open
+ * this dialog by default. Kept working for hosts that render it themselves;
+ * `DeckReader presentation="dialog"` still uses it.
+ */
 export declare function DeckPresentationDialog({ title, slides, open, slideIndex, onSlideChange, onClose, loading, error, onRetry, onFocusConversation, testId, }: DeckPresentationDialogProps): JSX.Element;
 
 export declare interface DeckPresentationDialogProps {
@@ -1020,12 +1030,52 @@ export declare interface DeckPresentationDialogProps {
     testId?: string;
 }
 
+/**
+ * A deck presented in place: one slide large, previous/next, "Slide n of m",
+ * Exit, arrow keys and Escape, optional speaker notes; fills the box it is given.
+ */
+export declare function DeckPresentMode({ title, slides, slideIndex, onSlideChange, onExit, loading, error, onRetry, showNotes, onFocusConversation, className, testId, }: DeckPresentModeProps): JSX.Element;
+
+export declare interface DeckPresentModeProps {
+    /** The deck's title. The view is named "Presenting <title>". */
+    title: string;
+    slides: readonly DeckPresentModeSlide[];
+    /** Zero-based, including the renderer's generated slides. Controlled. */
+    slideIndex: number;
+    onSlideChange: (index: number) => void;
+    /** Exit presentation (the button and Escape). */
+    onExit: () => void;
+    /** The current render is not in yet: the stage waits instead of showing old images. */
+    loading?: boolean;
+    /** The render failed, or the deck cannot be rendered yet. */
+    error?: string;
+    onRetry?: () => void;
+    /** Speaker notes beside (from `lg`) or under the slide. Default false. */
+    showNotes?: boolean;
+    /** Hand the presenter to the page's conversation. Exits first, then calls this on the next frame. */
+    onFocusConversation?: () => void;
+    className?: string;
+    /** Prefix for the parts' test ids. Default `deck-present`. */
+    testId?: string;
+}
+
+export declare interface DeckPresentModeSlide {
+    id: string;
+    title: string;
+    /** The rendered slide's SVG source. Absent: the stage says it is not drawn. */
+    svg?: string;
+    /** Speaker notes, shown when `showNotes` is on. */
+    notes?: string;
+    /** The renderer's appended slide (Sources): it has no notes of its own. */
+    generated?: boolean;
+}
+
 export declare interface DeckQuote {
     text: string;
     by: string;
 }
 
-export declare function DeckReader({ spec, compactReview, fileActions, preview, previewCurrent, onRequestPreview, slideViewers, selectSlideRequest, onSelectedSlideChange, onNavigateSlide, renderFrame, footer, onFocusConversation, 'data-testid': testId, }: DeckReaderProps): JSX.Element;
+export declare function DeckReader({ spec, compactReview, fileActions, preview, previewCurrent, onRequestPreview, slideViewers, selectSlideRequest, onSelectedSlideChange, onNavigateSlide, renderFrame, footer, onFocusConversation, presentation, onFocusModeChange, 'data-testid': testId, }: DeckReaderProps): JSX.Element;
 
 export declare interface DeckReaderProps {
     /** The saved deck. Never mutated. */
@@ -1060,6 +1110,20 @@ export declare interface DeckReaderProps {
      * Pass it to route the handoff somewhere else.
      */
     onFocusConversation?: () => void;
+    /**
+     * Where Present shows the deck (since 2.548.0). `in-place` (the default):
+     * the reader's toolbar, filmstrip and stage give way to `DeckPresentMode`
+     * inside the same frame, and `onFocusModeChange` reports it. `dialog`: the
+     * deprecated `DeckPresentationDialog`, as before 2.548.0.
+     */
+    presentation?: 'in-place' | 'dialog';
+    /**
+     * In-place present mode began (`true`) or ended (`false`), since 2.548.0.
+     * The host collapses its own navigation in response (both left rails,
+     * through `useShellFocusMode().request`); the reader hides nothing it does
+     * not own and never uses browser fullscreen.
+     */
+    onFocusModeChange?: (focused: boolean) => void;
     'data-testid'?: string;
 }
 
@@ -2832,7 +2896,12 @@ declare interface PresenceUser {
     location?: string;
 }
 
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+/**
+ * Editing a generated deck: filmstrip, 16:9 stage, slide form and notes, with
+ * the layout gallery and Present shown in place of the stage (no modals since
+ * 2.548.0; `onFocusModeChange` asks the host's shell for the whole window).
+ */
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 export declare interface PresentationEditorFrame {
@@ -2867,13 +2936,35 @@ export declare interface PresentationEditorProps {
     /** The `.pptx`, through the host's authorized route. No handler, no button. */
     onDownload?: () => void;
     /**
-     * Opens the same deck in the read-only presentation surface — the toolbar's
-     * Present. Called with the slide on the stage so the view can start there.
+     * Opens the same deck in the host's own presentation surface — the
+     * toolbar's Present. Called with the slide on the stage so the view can
+     * start there. Since 2.548.0 Present works without it: omitted, the editor
+     * presents IN PLACE (its regions give way to `DeckPresentMode`, no dialog)
+     * and reports it through `onFocusModeChange`. Passed, Present calls it as
+     * before and the in-place mode is not used.
      */
     onOpenPresentationView?: (at?: {
         slideId: string;
         slideIndex: number;
     }) => void;
+    /**
+     * Present mode began (`true`) or ended (`false`), since 2.548.0. The host
+     * collapses its own navigation in response — both left rails, say, through
+     * `useShellFocusMode().request` — so the slide gets the window. The editor
+     * never hides anything it does not own and never uses browser fullscreen.
+     */
+    onFocusModeChange?: (focused: boolean) => void;
+    /**
+     * Present mode shows each slide's speaker notes beside (or under) it.
+     * Default false. Since 2.548.0.
+     */
+    showNotes?: boolean;
+    /**
+     * The supplied `preview` was rendered from the current `spec` (since
+     * 2.548.0; default true). Present mode waits while it is false, so it never
+     * shows images of an older version of the deck.
+     */
+    previewCurrent?: boolean;
     readOnly?: boolean;
     /**
      * Turns on the agent box under the stage (see the file header). Resolve with
@@ -3821,7 +3912,7 @@ export declare interface SlidesToolbarProps {
     onThemeRefChange?: (theme: DeckThemeRef) => void;
     /**
      * Adds "All layouts…" to Insert (since 2.547.0): the host opens a
-     * `LayoutGallery`. `PresentationEditor` passes it and owns the dialog.
+     * `LayoutGallery`. `PresentationEditor` passes it and shows the gallery in place of its stage.
      */
     onBrowseLayouts?: () => void;
     onChartKindChange?: (kind: DeckChart['kind']) => void;

@@ -19819,7 +19819,12 @@ declare interface PresenceUser_3 {
     metadata: Record<string, unknown>;
 }
 
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+/**
+ * Editing a generated deck: filmstrip, 16:9 stage, slide form and notes, with
+ * the layout gallery and Present shown in place of the stage (no modals since
+ * 2.548.0; `onFocusModeChange` asks the host's shell for the whole window).
+ */
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 declare interface PresentationEditorFrame {
@@ -19854,13 +19859,35 @@ export declare interface PresentationEditorProps {
     /** The `.pptx`, through the host's authorized route. No handler, no button. */
     onDownload?: () => void;
     /**
-     * Opens the same deck in the read-only presentation surface — the toolbar's
-     * Present. Called with the slide on the stage so the view can start there.
+     * Opens the same deck in the host's own presentation surface — the
+     * toolbar's Present. Called with the slide on the stage so the view can
+     * start there. Since 2.548.0 Present works without it: omitted, the editor
+     * presents IN PLACE (its regions give way to `DeckPresentMode`, no dialog)
+     * and reports it through `onFocusModeChange`. Passed, Present calls it as
+     * before and the in-place mode is not used.
      */
     onOpenPresentationView?: (at?: {
         slideId: string;
         slideIndex: number;
     }) => void;
+    /**
+     * Present mode began (`true`) or ended (`false`), since 2.548.0. The host
+     * collapses its own navigation in response — both left rails, say, through
+     * `useShellFocusMode().request` — so the slide gets the window. The editor
+     * never hides anything it does not own and never uses browser fullscreen.
+     */
+    onFocusModeChange?: (focused: boolean) => void;
+    /**
+     * Present mode shows each slide's speaker notes beside (or under) it.
+     * Default false. Since 2.548.0.
+     */
+    showNotes?: boolean;
+    /**
+     * The supplied `preview` was rendered from the current `spec` (since
+     * 2.548.0; default true). Present mode waits while it is false, so it never
+     * shows images of an older version of the deck.
+     */
+    previewCurrent?: boolean;
     readOnly?: boolean;
     /**
      * Turns on the agent box under the stage (see the file header). Resolve with
@@ -24254,6 +24281,22 @@ export declare const shadows: {
 
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface ShellFocusMode {
+    /** Focus mode is on (someone under the provider requested it). False outside a provider. */
+    active: boolean;
+    /**
+     * Ask for focus mode (`true`) or give it back (`false`). Shaped to be
+     * passed straight to a component's `onFocusModeChange`. A component that
+     * unmounts gives its request back. A no-op outside a provider.
+     */
+    request: (focused: boolean) => void;
+}
+
+/** Holds the shell's focus mode: on while any `useShellFocusMode` under it has requested it. */
+export declare function ShellFocusModeProvider({ children }: {
+    children: ReactNode;
+}): JSX.Element;
 
 /**
  * The primary rail's fold as the shell hands it down (2.515.0): `AppShell
@@ -29547,6 +29590,9 @@ declare interface UseActivityBusReturn {
      resolveThread: (sectionId: string, commentId: string, resolverDisplayName: string) => void;
      unresolveThread: (sectionId: string, commentId: string) => void;
  }
+
+ /** The nearest `ShellFocusModeProvider`'s focus mode, and this caller's way to request it. */
+ export declare function useShellFocusMode(): ShellFocusMode;
 
  /** The enclosing `AppShell sidebarFold`, or null. */
  export declare function useShellRailFold(): ShellRailFold | null;

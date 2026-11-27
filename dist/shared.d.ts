@@ -10488,6 +10488,22 @@ export declare interface SettingsSection {
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare interface ShellFocusMode {
+    /** Focus mode is on (someone under the provider requested it). False outside a provider. */
+    active: boolean;
+    /**
+     * Ask for focus mode (`true`) or give it back (`false`). Shaped to be
+     * passed straight to a component's `onFocusModeChange`. A component that
+     * unmounts gives its request back. A no-op outside a provider.
+     */
+    request: (focused: boolean) => void;
+}
+
+/** Holds the shell's focus mode: on while any `useShellFocusMode` under it has requested it. */
+export declare function ShellFocusModeProvider({ children }: {
+    children: ReactNode;
+}): JSX.Element;
+
 /**
  * The primary rail's fold as the shell hands it down (2.515.0): `AppShell
  * sidebarFold` provides it, and a `NavRail` in the shell's sidebar reads it,
@@ -13191,6 +13207,9 @@ export declare interface UserPickerProps {
      */
     baseUrl?: string;
 }
+
+/** The nearest `ShellFocusModeProvider`'s focus mode, and this caller's way to request it. */
+export declare function useShellFocusMode(): ShellFocusMode;
 
 /** The enclosing `AppShell sidebarFold`, or null. */
 export declare function useShellRailFold(): ShellRailFold | null;
