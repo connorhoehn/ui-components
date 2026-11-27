@@ -1,5 +1,5 @@
 // LayoutGallery, TemplateGallery, the toolbar's host themes, and the editor's
-// "All layouts…" dialog (2.547.0).
+// "All layouts…" gallery (2.547.0; in place of the stage since 2.548.0).
 
 import { useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -146,15 +146,52 @@ describe('PresentationEditor — All layouts… and host themes', () => {
     );
   }
 
-  it('opens the gallery from Insert, adds the chosen layout after the current slide, and closes', () => {
+  it('opens the gallery in place of the stage, adds the chosen layout after the current slide, and returns', () => {
     render(<Host initial={{ title: 'D', slides: [{ id: 's1', layout: 'title', title: 'D', sources }] }} />);
     fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert'));
     fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert-all'));
-    const dialog = screen.getByRole('dialog');
-    expect(within(dialog).getByTestId('presentation-editor-layout-gallery-timeline').querySelector('img')).not.toBeNull();
-    fireEvent.click(within(dialog).getByTestId('presentation-editor-layout-gallery-timeline'));
+    // No dialog, no overlay: the stage column is swapped for the panel, the filmstrip stays.
     expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.querySelector('[aria-modal]')).toBeNull();
+    const panel = screen.getByRole('region', { name: 'Choose a layout' });
+    expect(screen.queryByTestId('presentation-editor-main')).toBeNull();
+    expect(screen.getByTestId('presentation-editor-body')).toContainElement(panel);
+    expect(screen.getByTestId('presentation-editor-body')).toContainElement(screen.getByTestId('presentation-editor-slide-strip'));
+    expect(within(panel).getByText('Choose a layout')).toBeInTheDocument();
+    expect(screen.getByTestId('presentation-editor-layout-back')).toHaveFocus();
+    expect(within(panel).getByTestId('presentation-editor-layout-gallery-timeline').querySelector('img')).not.toBeNull();
+    fireEvent.click(within(panel).getByTestId('presentation-editor-layout-gallery-timeline'));
+    expect(screen.queryByTestId('presentation-editor-layout-panel')).toBeNull();
+    expect(screen.getByTestId('presentation-editor-main')).toBeInTheDocument();
+    // Inserted after s1 and selected.
     expect(screen.getByTestId('presentation-editor-toolbar-layout')).toHaveTextContent('Timeline');
+    expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 2');
+    expect(screen.getByTestId('presentation-editor-toolbar-insert')).toHaveFocus();
+  });
+
+  it('Back and Escape return to the slide being edited without adding one, focus on the opener', () => {
+    render(<Host initial={{ title: 'D', slides: [
+      { id: 's1', layout: 'title', title: 'D', sources },
+      { id: 's2', layout: 'bullets', title: 'Second', sources },
+    ] }} />);
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-select-s2'));
+    for (const leave of ['back', 'escape'] as const) {
+      fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert'));
+      fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert-all'));
+      const back = screen.getByRole('button', { name: 'Back to slide 2: Second' });
+      // Arrow keys do not step slides behind the gallery.
+      fireEvent.keyDown(window, { key: 'ArrowLeft' });
+      if (leave === 'back') fireEvent.click(back);
+      else fireEvent.keyDown(back, { key: 'Escape' });
+      expect(screen.queryByTestId('presentation-editor-layout-panel')).toBeNull();
+      expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 2');
+      expect(screen.getByTestId('presentation-editor-toolbar-insert')).toHaveFocus();
+    }
+  });
+
+  it('renders the gallery state to static markup without a dialog', () => {
+    const html = renderToStaticMarkup(<Host initial={{ title: 'D', slides: [{ id: 's1', layout: 'title', title: 'D', sources }] }} />);
+    expect(html).not.toMatch(/role="dialog"|aria-modal/);
   });
 
   it('keeps New slide as the quick path', () => {

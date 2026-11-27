@@ -129,10 +129,10 @@ describe('DeckReader', () => {
     expect(onFocusConversation).toHaveBeenCalledTimes(1);
   });
 
-  it('presents in a dialog that follows the reader and hands off from inside', () => {
+  it('presentation="dialog" keeps the deprecated dialog that follows the reader and hands off from inside', () => {
     const onFocusConversation = vi.fn();
     const raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => { cb(0); return 0; });
-    mount({ onFocusConversation });
+    mount({ onFocusConversation, presentation: 'dialog' });
     fireEvent.click(screen.getByRole('button', { name: 'Present' }));
     const dialog = screen.getByRole('dialog', { name: 'Present Read-only presentation' });
     expect(within(dialog).getByRole('button', { name: 'Exit presentation' })).toBeInTheDocument();
@@ -140,6 +140,58 @@ describe('DeckReader', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(onFocusConversation).toHaveBeenCalledTimes(1);
     raf.mockRestore();
+  });
+
+  it('presents in place by default: no dialog, the frame holds only the slide, keys and Escape, focus mode reported in order', () => {
+    const calls: boolean[] = [];
+    const frames: string[] = [];
+    render(
+      <DeckReader spec={spec} preview={rendered} onRequestPreview={() => {}} data-testid="reader"
+        onFocusModeChange={(on) => calls.push(on)}
+        renderFrame={({ toolbar, surface, footer }) => { frames.push(toolbar ? 'toolbar' : 'none'); return <div>{toolbar}{surface}{footer}</div>; }}
+        footer={() => <div data-testid="reader-footer" />} />,
+    );
+    fireEvent.click(screen.getByTestId('reader-filmstrip-select-details'));
+    fireEvent.click(screen.getByRole('button', { name: 'Present' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.querySelector('[aria-modal]')).toBeNull();
+    expect(calls).toEqual([true]);
+    expect(frames.at(-1)).toBe('none');
+    expect(screen.queryByTestId('reader-footer')).toBeNull();
+    expect(screen.queryByTestId('reader-filmstrip-strip')).toBeNull();
+    const view = screen.getByTestId('reader-present');
+    expect(view).toHaveFocus();
+    // Starts at the selected slide; the reader shows no notes.
+    expect(screen.getByTestId('reader-present-position')).toHaveTextContent('Slide 2 of 3');
+    expect(screen.queryByTestId('reader-present-notes')).toBeNull();
+    fireEvent.keyDown(view, { key: 'ArrowRight' });
+    expect(screen.getByTestId('reader-present-position')).toHaveTextContent('Slide 3 of 3');
+    fireEvent.keyDown(view, { key: 'Home' });
+    expect(screen.getByTestId('reader-present-position')).toHaveTextContent('Slide 1 of 3');
+    fireEvent.click(screen.getByRole('button', { name: 'Next slide' }));
+    fireEvent.keyDown(view, { key: 'Escape' });
+    expect(calls).toEqual([true, false]);
+    expect(screen.queryByTestId('reader-present')).toBeNull();
+    // Selection returns to the slide that was showing; focus to Present.
+    expect(screen.getByTestId('reader-position')).toHaveTextContent('Slide 2 of 3');
+    expect(screen.getByRole('button', { name: 'Present' })).toHaveFocus();
+    expect(screen.getByTestId('reader-footer')).toBeInTheDocument();
+  });
+
+  it('in place, waits for the current render before showing a slide', () => {
+    const { rerender } = render(
+      <DeckReader spec={spec} preview={rendered} onRequestPreview={() => {}} data-testid="reader"
+        renderFrame={({ toolbar, surface }) => <div>{toolbar}{surface}</div>} />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Present' }));
+    rerender(
+      <DeckReader spec={spec} preview={rendered} previewCurrent={false} onRequestPreview={() => {}} data-testid="reader"
+        renderFrame={({ toolbar, surface }) => <div>{toolbar}{surface}</div>} />,
+    );
+    expect(screen.getByTestId('reader-present-loading')).toBeInTheDocument();
+    expect(screen.queryByTestId('reader-present-stage')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Exit presentation' }));
+    expect(screen.queryByTestId('reader-present')).toBeNull();
   });
 
   it('compact review collapses the view controls into one View menu with notes closed', () => {
@@ -204,7 +256,9 @@ describe('DeckReader', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Chat & agent' }));
     expect(requests).toEqual([{ mode: 'agent' }]);
     fireEvent.click(screen.getByRole('button', { name: 'Present' }));
-    act(() => { fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Chat & agent' })); });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    act(() => { fireEvent.click(within(screen.getByTestId('reader-present')).getByRole('button', { name: 'Chat & agent' })); });
+    expect(screen.queryByTestId('reader-present')).toBeNull();
     expect(requests).toHaveLength(2);
     raf.mockRestore();
   });

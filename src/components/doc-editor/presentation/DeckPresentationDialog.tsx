@@ -1,5 +1,8 @@
 // DeckPresentationDialog — present a deck's rendered slides full-window.
 //
+// DEPRECATED since 2.548.0: the editor and reader present in place with
+// `DeckPresentMode`. See the doc comment on the component.
+//
 // Reading and editing hosts both present the platform's existing slide
 // previews here. Selection stays in the host (`slideIndex` / `onSlideChange`);
 // opening or closing never changes the document. Ported from the
@@ -42,6 +45,13 @@ export interface DeckPresentationDialogProps {
 
 const noop = () => {};
 
+/**
+ * @deprecated Since 2.548.0. `PresentationEditor` and `DeckReader` present in
+ * place (`DeckPresentMode` inside their own regions, reported through
+ * `onFocusModeChange` so the host can collapse its rails) and no longer open
+ * this dialog by default. Kept working for hosts that render it themselves;
+ * `DeckReader presentation="dialog"` still uses it.
+ */
 export function DeckPresentationDialog({
   title,
   slides,

@@ -16,8 +16,9 @@
 // The line "Text style comes from the theme" says so, instead of leaving the
 // person to look for formatting that is not there.
 //
-// Present opens the host's presentation view (`PresentationView`) — the
-// reading surface — rather than a second full-screen player.
+// Present calls `onPresent`. `PresentationEditor` presents in place
+// (`DeckPresentMode` in its own regions, since 2.548.0), or opens the host's
+// view when the host passes one; never a dialog over the page.
 //
 // ## One row, at every width
 //
@@ -136,7 +137,7 @@ export interface SlidesToolbarProps {
   onThemeRefChange?: (theme: DeckThemeRef) => void;
   /**
    * Adds "All layouts…" to Insert (since 2.547.0): the host opens a
-   * `LayoutGallery`. `PresentationEditor` passes it and owns the dialog.
+   * `LayoutGallery`. `PresentationEditor` passes it and shows the gallery in place of its stage.
    */
   onBrowseLayouts?: () => void;
   onChartKindChange?: (kind: DeckChart['kind']) => void;

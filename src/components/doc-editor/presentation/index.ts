@@ -48,8 +48,11 @@ export { svgDataUri } from './svgPreview';
 // read-only, and its full-window presentation.
 export { DeckReader } from './DeckReader';
 export type { DeckReaderProps } from './DeckReader';
+/** @deprecated since 2.548.0 — the editor and reader present in place (`DeckPresentMode`). */
 export { DeckPresentationDialog } from './DeckPresentationDialog';
 export type { DeckPresentationDialogProps } from './DeckPresentationDialog';
+export { DeckPresentMode } from './DeckPresentMode';
+export type { DeckPresentModeProps, DeckPresentModeSlide } from './DeckPresentMode';
 
 export {
   DECK_THEMES,

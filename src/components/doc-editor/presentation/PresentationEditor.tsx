@@ -98,7 +98,9 @@ import SlideSources, { type PresentationSourceOption } from './SlideSources';
 import { SlideStage } from './SlideStage';
 import { SlidesToolbar, type SlidesToolbarTheme } from './SlidesToolbar';
 import { LayoutGallery } from './LayoutGallery';
-import Modal from '../../shared/Modal';
+import { DeckPresentMode, type DeckPresentModeSlide } from './DeckPresentMode';
+import { useFocusModeReport } from './useFocusModeReport';
+import { Inline } from '../../ui/Stack';
 import { SpeakerNotes } from './SpeakerNotes';
 import type { PresentationInstructScope } from './PresentationAgentComposer';
 import { svgDataUri } from './svgPreview';
@@ -247,10 +249,32 @@ export interface PresentationEditorProps {
   /** The `.pptx`, through the host's authorized route. No handler, no button. */
   onDownload?: () => void;
   /**
-   * Opens the same deck in the read-only presentation surface — the toolbar's
-   * Present. Called with the slide on the stage so the view can start there.
+   * Opens the same deck in the host's own presentation surface — the
+   * toolbar's Present. Called with the slide on the stage so the view can
+   * start there. Since 2.548.0 Present works without it: omitted, the editor
+   * presents IN PLACE (its regions give way to `DeckPresentMode`, no dialog)
+   * and reports it through `onFocusModeChange`. Passed, Present calls it as
+   * before and the in-place mode is not used.
    */
   onOpenPresentationView?: (at?: { slideId: string; slideIndex: number }) => void;
+  /**
+   * Present mode began (`true`) or ended (`false`), since 2.548.0. The host
+   * collapses its own navigation in response — both left rails, say, through
+   * `useShellFocusMode().request` — so the slide gets the window. The editor
+   * never hides anything it does not own and never uses browser fullscreen.
+   */
+  onFocusModeChange?: (focused: boolean) => void;
+  /**
+   * Present mode shows each slide's speaker notes beside (or under) it.
+   * Default false. Since 2.548.0.
+   */
+  showNotes?: boolean;
+  /**
+   * The supplied `preview` was rendered from the current `spec` (since
+   * 2.548.0; default true). Present mode waits while it is false, so it never
+   * shows images of an older version of the deck.
+   */
+  previewCurrent?: boolean;
   readOnly?: boolean;
   /**
    * Turns on the agent box under the stage (see the file header). Resolve with
@@ -401,6 +425,9 @@ export function PresentationEditor({
   onSearchSources,
   onDownload,
   onOpenPresentationView,
+  onFocusModeChange,
+  showNotes = false,
+  previewCurrent = true,
   readOnly = false,
   onInstruct,
   instructHints,
@@ -416,7 +443,12 @@ export function PresentationEditor({
   className,
   'data-testid': testId = 'presentation-editor',
 }: PresentationEditorProps) {
+  // "All layouts…" swaps the stage column for the gallery, in place (2.548.0).
   const [layoutGalleryOpen, setLayoutGalleryOpen] = useState(false);
+  const galleryOpener = useRef<HTMLElement | null>(null);
+  // Present, in place: the editor's regions give way to DeckPresentMode.
+  const [presenting, setPresenting] = useState(false);
+  useFocusModeReport(presenting, onFocusModeChange);
   const [selectedId, setSelectedId] = useState<string>(() => spec.slides[0]?.id ?? '');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -629,7 +661,8 @@ export function PresentationEditor({
   );
 
   useEffect(() => {
-    if (readOnly) return undefined;
+    // Presenting, the keys belong to DeckPresentMode (it has focus).
+    if (readOnly || presenting) return undefined;
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       const mod = event.metaKey || event.ctrlKey;
       if (mod && event.key.toLowerCase() === 's') {
@@ -637,6 +670,8 @@ export function PresentationEditor({
         save();
         return;
       }
+      // The layout gallery is up: no slide is on the stage to step or undo.
+      if (layoutGalleryOpen) return;
       if (mod && event.key.toLowerCase() === 'z' && !isTextEntryTarget(event.target)) {
         event.preventDefault();
         if (event.shiftKey) redo();
@@ -654,7 +689,42 @@ export function PresentationEditor({
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [readOnly, save, undo, redo, step, selectedIndex, totalSlides]);
+  }, [readOnly, presenting, layoutGalleryOpen, save, undo, redo, step, selectedIndex, totalSlides]);
+
+  // Gallery and present mode hand focus back to the control that opened them.
+  const returnFocusTo = useRef<(() => HTMLElement | null) | null>(null);
+  const surfaceUp = layoutGalleryOpen || presenting;
+  useEffect(() => {
+    if (surfaceUp || !returnFocusTo.current) return;
+    const target = returnFocusTo.current();
+    returnFocusTo.current = null;
+    target?.focus();
+  }, [surfaceUp]);
+  const byTestId = (id: string) => () =>
+    (typeof document === 'undefined' ? null : document.querySelector<HTMLElement>(`[data-testid="${id}"]`));
+
+  const openLayoutGallery = useCallback(() => {
+    // Called from a menu row, while its menu is still open: the opener is the
+    // menu's trigger (Insert, or the toolbar's overflow), not the row.
+    const trigger = typeof document === 'undefined' ? null
+      : document.querySelector<HTMLElement>('[aria-haspopup="menu"][aria-expanded="true"]');
+    galleryOpener.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    setLayoutGalleryOpen(true);
+  }, []);
+  const closeLayoutGallery = useCallback(() => {
+    const opener = galleryOpener.current;
+    const fallback = byTestId(`${testId}-toolbar-insert`);
+    returnFocusTo.current = () => (opener?.isConnected ? opener : fallback());
+    setLayoutGalleryOpen(false);
+  }, [testId]); // eslint-disable-line react-hooks/exhaustive-deps
+  const galleryBack = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    if (layoutGalleryOpen) galleryBack.current?.focus();
+  }, [layoutGalleryOpen]);
+  const exitPresent = useCallback(() => {
+    returnFocusTo.current = byTestId(`${testId}-toolbar-present`);
+    setPresenting(false);
+  }, [testId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // -------------------------------------------------------------------------
   // Read-only: the reading surface, not a greyed-out form
@@ -889,9 +959,14 @@ export function PresentationEditor({
     </div>
   );
 
+  // The host's own view when it passes one (as before 2.548.0); otherwise
+  // Present is in place.
   const openView = onOpenPresentationView
     ? () => onOpenPresentationView(currentId ? { slideId: currentId, slideIndex: selectedIndex + 1 } : undefined)
-    : undefined;
+    : () => {
+        setLayoutGalleryOpen(false);
+        setPresenting(true);
+      };
 
   const toolbar = (
     <>
@@ -899,7 +974,7 @@ export function PresentationEditor({
       slide={selected}
       theme={spec.theme ?? 'product'}
       {...(themes?.length ? { themes, onThemeRefChange: (theme: DeckThemeRef) => edit({ ...spec, theme }) } : {})}
-      onBrowseLayouts={() => setLayoutGalleryOpen(true)}
+      onBrowseLayouts={openLayoutGallery}
       onAddSlide={handleAdd}
       canAddSlide={slides.length < MAX_SLIDES}
       onLayoutChange={(layout) => {
@@ -913,29 +988,51 @@ export function PresentationEditor({
       onRedo={redo}
       canUndo={canUndo}
       canRedo={canRedo}
-      {...(openView ? { onPresent: openView } : {})}
+      onPresent={openView}
       testIdPrefix={`${testId}-toolbar`}
     />
-    {/* Insert → All layouts…: every layout with its preview. Choosing one
-        adds a slide of it after the current one, like Insert's own rows;
-        Modal traps focus and returns it to the toolbar on close. */}
-    <Modal
-      open={layoutGalleryOpen}
-      onClose={() => setLayoutGalleryOpen(false)}
-      title="Add a slide"
-      maxWidth={960}
-      backdropTestId={`${testId}-layout-dialog`}
+    </>
+  );
+
+  // Insert → All layouts…: every layout with its preview, IN PLACE of the
+  // stage column (2.548.0; it was a Modal). The filmstrip stays; Back or
+  // Escape returns to the slide, and choosing a layout adds a slide of it
+  // after the current one, like Insert's own rows, and returns.
+  const layoutPanel = (
+    <section
+      aria-label="Choose a layout"
+      className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:overflow-y-auto"
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        event.stopPropagation();
+        closeLayoutGallery();
+      }}
+      data-testid={`${testId}-layout-panel`}
     >
+      <Inline gap="sm" align="center" className="shrink-0" data-testid={`${testId}-layout-panel-header`}>
+        <Button
+          ref={galleryBack}
+          variant="ghost"
+          size="sm"
+          onClick={closeLayoutGallery}
+          aria-label={currentTitle ? `Back to slide ${selectedIndex + 1}: ${currentTitle}` : 'Back to the deck'}
+          data-testid={`${testId}-layout-back`}
+        >
+          <Chevron back />
+          Back
+        </Button>
+        <Text as="div" size="base" weight="semibold">Choose a layout</Text>
+      </Inline>
       <LayoutGallery
         previews={layoutPreviews}
         onSelect={(layout) => {
-          setLayoutGalleryOpen(false);
+          closeLayoutGallery();
           handleAdd(layout);
         }}
         testIdPrefix={`${testId}-layout-gallery`}
       />
-    </Modal>
-    </>
+    </section>
   );
 
   const alerts = (
@@ -1140,11 +1237,12 @@ export function PresentationEditor({
         testIdPrefix={`${testId}-slide`}
       />
 
-      {/* From md up the column is a size container: the stage is as wide as
+      {layoutGalleryOpen ? layoutPanel : (
+      /* From md up the column is a size container: the stage is as wide as
           the column allows AND no taller than the column (100cqh), so a short
           window keeps a whole 16:9 slide in view. Notes and the rest scroll
           under it inside this column, never squeezing it. The floor (20rem)
-          keeps the slide legible in a very short box; the column scrolls then. */}
+          keeps the slide legible in a very short box; the column scrolls then. */
       <div className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:overflow-y-auto md:[container-type:size]" data-testid={`${testId}-main`}>
         <div className="mx-auto w-full shrink-0 md:max-w-[max(20rem,calc(100cqh*16/9))]" data-testid={`${testId}-stage-frame`}>
         <SlideStage
@@ -1175,7 +1273,44 @@ export function PresentationEditor({
           </div>
         )}
       </div>
+      )}
     </div>
+  );
+
+  // Present, in place: one slide large in the editor's own box. It waits for
+  // a render of THIS spec (never shows an older version's images), starts at
+  // the slide on the stage, steps the editor's own selection (so exiting
+  // leaves the stage on the slide that was showing), and touches nothing
+  // else: unsaved edits stay exactly as they were.
+  const presentError = !renderable
+    ? 'Add a source to each slide before presenting.'
+    : typeof preview === 'object' && 'error' in preview ? preview.error : undefined;
+  const presentLoading = !presentError && (!previewCurrent || preview === 'loading');
+  const presentSlides: DeckPresentModeSlide[] = [
+    ...slides.map((slide, index) => ({
+      id: slide.id,
+      title: slide.title || `Slide ${index + 1}`,
+      ...(previewById.get(slide.id) ? { svg: previewById.get(slide.id)! } : {}),
+      ...(slide.notes ? { notes: slide.notes } : {}),
+    })),
+    ...generatedSlides.map((slide) => ({ id: slide.id, title: slide.title, generated: true, ...(slide.svg ? { svg: slide.svg } : {}) })),
+  ];
+  const presentView = (
+    <DeckPresentMode
+      title={spec.title}
+      slides={presentSlides}
+      slideIndex={selectedIndex}
+      onSlideChange={(index) => {
+        const id = orderedIds[index];
+        if (id) setSelectedId(id);
+      }}
+      onExit={exitPresent}
+      loading={presentLoading}
+      {...(presentError ? { error: presentError } : {})}
+      {...(renderable && presentError ? { onRetry: () => onRequestPreview(spec) } : {})}
+      showNotes={showNotes}
+      testId={`${testId}-present`}
+    />
   );
 
   const editorKeyGuard = (event: ReactKeyboardEvent<HTMLDivElement>) => {
@@ -1186,6 +1321,17 @@ export function PresentationEditor({
       event.preventDefault();
     }
   };
+
+  if (presenting) {
+    const presentSurface = (
+      <div className={cn('flex h-full min-h-0 flex-col', className)} data-testid={testId} data-presenting="">
+        {presentView}
+      </div>
+    );
+    return renderFrame
+      ? <>{renderFrame({ toolbar: null, actions: null, surface: presentSurface, footer: null })}</>
+      : presentSurface;
+  }
 
   if (renderFrame) {
     const surface = (

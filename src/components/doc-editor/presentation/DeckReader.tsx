@@ -40,6 +40,8 @@ import type {
 import type { SlideListItem } from './SlideList';
 import { svgDataUri } from './svgPreview';
 import { DeckPresentationDialog } from './DeckPresentationDialog';
+import { DeckPresentMode } from './DeckPresentMode';
+import { useFocusModeReport } from './useFocusModeReport';
 import { useComposerFocus } from '../../social/ConversationInputs';
 
 export interface DeckReaderProps {
@@ -75,6 +77,20 @@ export interface DeckReaderProps {
    * Pass it to route the handoff somewhere else.
    */
   onFocusConversation?: () => void;
+  /**
+   * Where Present shows the deck (since 2.548.0). `in-place` (the default):
+   * the reader's toolbar, filmstrip and stage give way to `DeckPresentMode`
+   * inside the same frame, and `onFocusModeChange` reports it. `dialog`: the
+   * deprecated `DeckPresentationDialog`, as before 2.548.0.
+   */
+  presentation?: 'in-place' | 'dialog';
+  /**
+   * In-place present mode began (`true`) or ended (`false`), since 2.548.0.
+   * The host collapses its own navigation in response (both left rails,
+   * through `useShellFocusMode().request`); the reader hides nothing it does
+   * not own and never uses browser fullscreen.
+   */
+  onFocusModeChange?: (focused: boolean) => void;
   'data-testid'?: string;
 }
 
@@ -110,6 +126,8 @@ export function DeckReader({
   renderFrame,
   footer,
   onFocusConversation,
+  presentation = 'in-place',
+  onFocusModeChange,
   'data-testid': testId = 'deck-reader',
 }: DeckReaderProps) {
   const [selectedId, setSelectedId] = useState(spec.slides[0]?.id ?? '');
@@ -118,6 +136,15 @@ export function DeckReader({
   const notes = notesChoice ?? !compactReview;
   const [zoom, setZoom] = useState<Zoom>('fit');
   const [presenting, setPresenting] = useState(false);
+  const inPlace = presentation === 'in-place';
+  useFocusModeReport(inPlace && presenting, onFocusModeChange);
+  const presentButton = useRef<HTMLButtonElement | null>(null);
+  const wasPresenting = useRef(false);
+  useEffect(() => {
+    // Back from in-place present mode: focus returns to Present.
+    if (wasPresenting.current && !presenting && inPlace) presentButton.current?.focus();
+    wasPresenting.current = presenting;
+  }, [presenting, inPlace]);
   const viewport = useRef<HTMLDivElement>(null);
   const [available, setAvailable] = useState({ width: 800, height: 420 });
   const notesLabel = useId();
@@ -182,7 +209,8 @@ export function DeckReader({
     });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+    // Present mode unmounts the viewport; coming back observes the new one.
+  }, [presenting]);
 
   const step = (next: number) => {
     const slide = slides[Math.min(slides.length - 1, Math.max(0, next))];
@@ -266,7 +294,7 @@ export function DeckReader({
           }]}
         />
       )}
-      <Button size="sm" variant="primary" disabled={!current?.svg} onClick={() => setPresenting(true)}>Present</Button>
+      <Button ref={presentButton} size="sm" variant="primary" disabled={!current?.svg} onClick={() => setPresenting(true)} data-testid={`${testId}-present-open`}>Present</Button>
       {fileActions}
     </Inline>
   );
@@ -417,10 +445,32 @@ export function DeckReader({
     markChanged: noop,
   };
 
+  if (inPlace && presenting) {
+    // In place: the frame keeps its place in the page and holds only the
+    // presentation — no toolbar, no filmstrip, no footer.
+    const presentSurface = (
+      <div className="flex h-full min-h-[220px] flex-col" data-testid={testId} data-presenting="">
+        <DeckPresentMode
+          title={spec.title}
+          slides={slides.map((slide) => ({ id: slide.id, title: slide.title, ...(slide.svg ? { svg: slide.svg } : {}), generated: slide.generated }))}
+          slideIndex={index}
+          onSlideChange={step}
+          onExit={() => setPresenting(false)}
+          loading={previewLoading}
+          {...(previewError ? { error: previewError } : {})}
+          {...(renderable ? { onRetry: () => request.current(spec) } : {})}
+          {...(focusConversation ? { onFocusConversation: focusConversation } : {})}
+          testId={`${testId}-present`}
+        />
+      </div>
+    );
+    return <>{renderFrame({ toolbar: null, actions: null, surface: presentSurface, footer: null })}</>;
+  }
+
   return (
     <>
       {renderFrame({ toolbar, actions: null, surface, footer: footer?.(context) ?? null })}
-      <DeckPresentationDialog
+      {!inPlace && <DeckPresentationDialog
         title={spec.title}
         slides={slides.map((slide) => ({ id: slide.id, title: slide.title, svg: slide.svg ?? '', generated: slide.generated }))}
         open={presenting}
@@ -432,7 +482,7 @@ export function DeckReader({
         onRetry={renderable ? () => request.current(spec) : undefined}
         onFocusConversation={focusConversation}
         testId={`${testId}-present`}
-      />
+      />}
     </>
   );
 }
