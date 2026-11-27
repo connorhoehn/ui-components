@@ -280,10 +280,10 @@ export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
 // The rail model's fold (2.438.0): depth → band, each rail's fold remembered per band.
 export {
   railDepth, railBand, railFoldKey, readRailFold, RailBandProvider, useRailBand, useRailFold, useViewportWidth,
-  ShellRailFoldProvider, useShellRailFold,
+  ShellRailFoldProvider, useShellRailFold, ShellFocusModeProvider, useShellFocusMode,
   RAIL_FOLD_PRIMARY_BELOW, RAIL_FOLD_SECTION_BELOW,
 } from './railFold';
-export type { RailBand, RailDepthSpec, UseRailFoldOptions, RailFold, ShellRailFold } from './railFold';
+export type { RailBand, RailDepthSpec, UseRailFoldOptions, RailFold, ShellRailFold, ShellFocusMode } from './railFold';
 // The width of an element's own box (H10 of the 2026-10-07 audit): one measuring hook, not one per consumer.
 export { useMeasuredWidth } from '../doc-editor/useMeasuredWidth';
 export type { MeasuredWidth } from '../doc-editor/useMeasuredWidth';

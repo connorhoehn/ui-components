@@ -28,7 +28,7 @@
 // The fold itself is drawn by the rail: `SubNavLayout collapsed` (a 44px
 // strip holding only its title action), `ExplorerLayout railCollapsed`, a
 // `ConversationRail` section's fold.
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useId, useState, type ReactNode } from 'react';
 
 export type RailBand = 'shallow' | 'deep';
 
@@ -85,6 +85,71 @@ export function readRailFold(raw: string | null | undefined): boolean | null {
 
 const BandContext = createContext<RailBand>('shallow');
 
+// ---------------------------------------------------------------------------
+// Focus mode (2.548.0): a page asks for the whole window and EVERY rail that
+// folds through `useRailFold` under the provider folds — the primary rail and
+// the section rail alike — then comes back exactly as it was. Nothing is
+// written to storage: a rail's remembered fold is untouched, so restoring is
+// simply no longer forcing it. A rail the reader opens by hand while focus
+// mode is on stays open until focus mode ends (not remembered either).
+//
+//   <ShellFocusModeProvider>            // above the shell, beside RailBandProvider
+//     const primary = useRailFold({ storageKey: 'shell.primary-rail' });
+//     <AppShell sidebarFold={primary} …>
+//       …page: const focus = useShellFocusMode();
+//       <PresentationEditor onFocusModeChange={focus.request} … />
+//
+// Without the provider nothing changes: `useRailFold` behaves as before and
+// `request` does nothing.
+// ---------------------------------------------------------------------------
+
+type ShellFocusModeSet = (owner: string, focused: boolean) => void;
+
+// Two contexts: the setter is stable, so a requester's unmount cleanup does
+// not fire (and give its request back) every time `active` changes.
+const ShellFocusModeContext = createContext<boolean | null>(null);
+const ShellFocusModeSetContext = createContext<ShellFocusModeSet | null>(null);
+
+/** Holds the shell's focus mode: on while any `useShellFocusMode` under it has requested it. */
+export function ShellFocusModeProvider({ children }: { children: ReactNode }) {
+  const [owners, setOwners] = useState<ReadonlySet<string>>(() => new Set());
+  const set = useCallback((owner: string, focused: boolean) => {
+    setOwners((was) => {
+      if (was.has(owner) === focused) return was;
+      const next = new Set(was);
+      if (focused) next.add(owner);
+      else next.delete(owner);
+      return next;
+    });
+  }, []);
+  return (
+    <ShellFocusModeSetContext.Provider value={set}>
+      <ShellFocusModeContext.Provider value={owners.size > 0}>{children}</ShellFocusModeContext.Provider>
+    </ShellFocusModeSetContext.Provider>
+  );
+}
+
+export interface ShellFocusMode {
+  /** Focus mode is on (someone under the provider requested it). False outside a provider. */
+  active: boolean;
+  /**
+   * Ask for focus mode (`true`) or give it back (`false`). Shaped to be
+   * passed straight to a component's `onFocusModeChange`. A component that
+   * unmounts gives its request back. A no-op outside a provider.
+   */
+  request: (focused: boolean) => void;
+}
+
+/** The nearest `ShellFocusModeProvider`'s focus mode, and this caller's way to request it. */
+export function useShellFocusMode(): ShellFocusMode {
+  const active = useContext(ShellFocusModeContext) ?? false;
+  const set = useContext(ShellFocusModeSetContext);
+  const owner = useId();
+  useEffect(() => () => set?.(owner, false), [set, owner]);
+  const request = useCallback((focused: boolean) => set?.(owner, focused), [set, owner]);
+  return { active, request };
+}
+
 /** The band every `useRailFold` under it remembers its fold in (the host computes it once from `railDepth`). */
 export function RailBandProvider({ band, children }: { band: RailBand; children: ReactNode }) {
   return <BandContext.Provider value={band}>{children}</BandContext.Provider>;
@@ -133,12 +198,21 @@ export function useRailFold({ storageKey, band: bandOverride, defaultFolded = fa
     setStored({ shallow: read(railFoldKey(storageKey, 'shallow')), deep: read(railFoldKey(storageKey, 'deep')) });
   }
   const remembered = stored[band];
-  const folded = remembered ?? defaultFolded;
+  // Focus mode folds the rail without touching what is remembered; a hand
+  // toggle during it lasts until it ends.
+  const focusMode = useContext(ShellFocusModeContext) ?? false;
+  const [focusOverride, setFocusOverride] = useState<boolean | null>(null);
+  if (!focusMode && focusOverride !== null) setFocusOverride(null);
+  const folded = focusMode ? (focusOverride ?? true) : (remembered ?? defaultFolded);
   const toggle = useCallback(() => {
     const next = !folded;
+    if (focusMode) {
+      setFocusOverride(next);
+      return;
+    }
     setStored((was) => ({ ...was, [band]: next }));
     try { window.localStorage.setItem(railFoldKey(storageKey, band), next ? 'collapsed' : 'open'); } catch { /* not remembered, still applied */ }
-  }, [band, folded, storageKey]);
+  }, [band, folded, focusMode, storageKey]);
   return { folded, toggle, band, remembered: remembered != null };
 }
 
