@@ -154,3 +154,26 @@ describe('PageFrame', () => {
     expect(container.innerHTML).not.toContain('max-w-4xl');
   });
 });
+
+describe('PageFrame titleOverflow (2.549.0)', () => {
+  it('truncates the title by default, as before', () => {
+    render(<PageFrame title="New presentation" actions={<button type="button">Create</button>}><p>body</p></PageFrame>);
+    const heading = screen.getByRole('heading', { level: 1, name: 'New presentation' });
+    expect(heading.className).toContain('truncate');
+    expect(heading.className).not.toContain('whitespace-normal');
+  });
+
+  it('wrap breaks a long title onto more lines instead of cutting it beside an action', () => {
+    render(<PageFrame title="New presentation" titleOverflow="wrap" actions={<button type="button">Create</button>}><p>body</p></PageFrame>);
+    const heading = screen.getByRole('heading', { level: 1, name: 'New presentation' });
+    expect(heading.className).toContain('whitespace-normal');
+    expect(heading.className).toContain('break-words');
+    expect(heading.className).not.toMatch(/(^|\s)truncate(\s|$)/);
+  });
+
+  it('wrap reaches the trail-row header too', () => {
+    render(<PageFrame title="New presentation" titleOverflow="wrap" trailControls={<span>scope</span>} breadcrumbs={[{ label: 'Decks', href: '/d' }, { label: 'New' }]}><p>body</p></PageFrame>);
+    const heading = screen.getByRole('heading', { level: 1, name: 'New presentation' });
+    expect(heading.className).toContain('whitespace-normal');
+  });
+});

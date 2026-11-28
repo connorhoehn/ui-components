@@ -36,6 +36,12 @@ export interface PageHeaderProps {
   title: string;
   /** Semantic heading level for a header embedded under another page title; visual size is unchanged. */
   as?: 'h1' | 'h2' | 'h3' | 'h4';
+  /**
+   * The compact title row's long title (since 2.549.0): `truncate` (default)
+   * cuts it with an ellipsis, `wrap` breaks it onto more lines. The
+   * comfortable form always wraps.
+   */
+  titleOverflow?: 'truncate' | 'wrap';
   description?: string;
   /** Right-aligned action area (buttons, menus). */
   actions?: React.ReactNode;
@@ -114,6 +120,7 @@ export interface PageHeaderProps {
 function PageHeader({
   title,
   as: Heading = 'h1',
+  titleOverflow = 'truncate',
   description,
   actions,
   back,
@@ -194,7 +201,7 @@ function PageHeader({
         <div className="flex min-h-7 min-w-0 flex-wrap items-center gap-x-3 gap-y-1" data-testid={`${testId}-row`} data-page-header-row="">
           {compactBack}
           <div className="flex min-w-0 flex-1 basis-48 items-center gap-2" data-page-header-title-cell="">
-            <Heading className={cn('m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]', size === 'sm' ? 'text-sm leading-5' : 'text-xl leading-7')} title={title} data-title-size={size} data-page-header-title="">
+            <Heading className={cn('m-0 min-w-0 font-semibold text-[var(--color-text-primary)]', titleOverflow === 'wrap' ? 'whitespace-normal break-words' : 'truncate', size === 'sm' ? 'text-sm leading-5' : 'text-xl leading-7')} title={title} data-title-size={size} data-page-header-title="">
               {title}
             </Heading>
             {badge}

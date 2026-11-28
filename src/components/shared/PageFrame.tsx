@@ -77,7 +77,7 @@ const COLUMN_WIDTH: Record<PageFrameColumnWidth, string> = {
  * </PageFrame>
  */
 export function PageFrame({
-  title, description, breadcrumbs, actions, badge, back, density, titleAs,
+  title, description, breadcrumbs, actions, badge, back, density, titleAs, titleOverflow,
   trailControls, trailLink, collapsed, onToggleCollapsed,
   children, body = 'scroll', dockedBody = 'scroll', footer, gutter = 'page', bodyGutter, bodyClassName,
   column = 'full', columnWidth = '4xl', className, ...rest
@@ -88,7 +88,7 @@ export function PageFrame({
   // The one centred column: header boxes and the body's inner box share it,
   // each with the gutter inside, so their content edges line up.
   const centre = centered ? cn('mx-auto w-full', COLUMN_WIDTH[columnWidth] ?? COLUMN_WIDTH['4xl']) : undefined;
-  const header = { title, description, breadcrumbs, actions, badge, back, density, titleAs, gutter, ...(centre ? { frameClassName: centre } : {}) };
+  const header = { title, description, breadcrumbs, actions, badge, back, density, titleAs, ...(titleOverflow ? { titleOverflow } : {}), gutter, ...(centre ? { frameClassName: centre } : {}) };
   const content = (fill: boolean) => (
     <div className={cn(centre, 'flex flex-col gap-3', fill && 'min-h-0 flex-1', inset === 'page' && PAGE_GUTTER_X, inset === 'page' && (!fill || footer == null) && PAGE_GUTTER_B, bodyClassName)} data-page-column-content="">
       {children}

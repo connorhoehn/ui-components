@@ -38,6 +38,13 @@ export interface PageTemplateHeaderProps {
    * host above the template already draws the page heading. Size is unchanged.
    */
   titleAs?: 'h1' | 'h2' | 'h3';
+  /**
+   * A title too long for its row (since 2.549.0): `truncate` (default) cuts
+   * it with an ellipsis; `wrap` breaks it onto more lines, as `EditorShell`'s
+   * `titleOverflow` does — for a phone-width header that also carries an
+   * action ("New presentati…" at 390px). A title that fits is unchanged.
+   */
+  titleOverflow?: 'truncate' | 'wrap';
 }
 
 /**
@@ -63,7 +70,7 @@ export function hasTrailRow(p: PageTemplateTrailProps): boolean {
 
 /** The template header. Rendered as the template root's direct child (no wrapper) so host selectors keep matching. */
 export function TemplateHeader({
-  title, description, breadcrumbs, actions, badge, back, density = 'compact', titleAs, gutter, frameClassName,
+  title, description, breadcrumbs, actions, badge, back, density = 'compact', titleAs, titleOverflow, gutter, frameClassName,
 }: PageTemplateHeaderProps & { gutter: PageGutter; frameClassName?: string }) {
   const trail = !!breadcrumbs && breadcrumbs.length > 0;
   return (
@@ -76,6 +83,7 @@ export function TemplateHeader({
       {...(trail ? { breadcrumbs } : {})}
       density={density}
       {...(titleAs ? { as: titleAs } : {})}
+      {...(titleOverflow ? { titleOverflow } : {})}
       className={cn('shrink-0', gutter === 'page' && PAGE_GUTTER_X, gutter === 'page' && !trail && 'pt-3', frameClassName)}
     />
   );
@@ -89,7 +97,7 @@ export function TemplateHeader({
  * Rendered as two direct children of the template root.
  */
 export function TrailHeader({
-  title, description, breadcrumbs, actions, badge, back, density = 'compact', titleAs,
+  title, description, breadcrumbs, actions, badge, back, density = 'compact', titleAs, titleOverflow,
   trailControls, trailLink, collapsed = false, onToggleCollapsed, gutter, frameClassName,
 }: PageTemplateHeaderProps & PageTemplateTrailProps & { gutter: PageGutter; frameClassName?: string }) {
   const hangs = trailControls != null || !!trailLink;
@@ -115,6 +123,7 @@ export function TrailHeader({
             title={title}
             density={density}
             {...(titleAs ? { as: titleAs } : {})}
+            {...(titleOverflow ? { titleOverflow } : {})}
             {...(description ? { description } : {})}
             {...(actions != null ? { actions } : {})}
             {...(badge != null ? { badge } : {})}
