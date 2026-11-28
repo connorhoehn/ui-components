@@ -82,15 +82,23 @@ export type SlidesToolbarSize = 'wide' | 'medium' | 'narrow';
  * Content-box widths (px) of the bar itself, not the window.
  *
  * - wide (≥ 900): everything inline, the style note included.
- * - medium (≥ 600): Insert, Theme and the style note move behind ⋯; New
- *   slide, Layout, the chart switch, Undo/Redo, `end` and Present stay.
- * - narrow: Layout and the chart switch join them behind ⋯.
+ * - medium (≥ 640): Insert and the style note move behind ⋯ first — the
+ *   least used. New slide, Layout, Theme, Undo/Redo, `end` and Present stay.
+ *   The chart switch stays too while the bar is at least `chart` (760) wide;
+ *   below that it goes behind ⋯ next (the slide form has Chart type as well).
+ * - narrow: Layout and Theme join them behind ⋯.
+ *
+ * Collapse order, first to last: Insert and the style note, the chart switch,
+ * then Layout and Theme. Until 2.549.0 Theme left with Insert below 900px,
+ * which was most editors, and medium started at 600.
  *
  * Measured with every control on (a chart slide, undo/redo, Present): the
- * wide bar's natural width is ~850px, medium's ~560px, narrow's ~340px. The
- * deck editor's bar in the shell is ~870px at a 1280px window.
+ * wide bar's natural width is ~850px and narrow's ~340px; Layout is ~110px,
+ * the chart switch ~110px and Theme ~120px, so medium is ~690px with the
+ * switch and ~580px without it. Nothing here was measured again in a browser
+ * for 2.549.0; the widths are the earlier walk's, added up.
  */
-export const SLIDES_TOOLBAR_BREAKPOINTS = { narrow: 600, wide: 900 } as const;
+export const SLIDES_TOOLBAR_BREAKPOINTS = { narrow: 640, chart: 760, wide: 900 } as const;
 
 /** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
 export function slidesToolbarSize(width: number | null): SlidesToolbarSize {
@@ -104,7 +112,8 @@ export function slidesToolbarSize(width: number | null): SlidesToolbarSize {
 type ToolbarGroup = 'layout' | 'insert' | 'theme' | 'chart' | 'note';
 const INLINE_GROUPS: Record<SlidesToolbarSize, ReadonlySet<ToolbarGroup>> = {
   wide: new Set<ToolbarGroup>(['layout', 'insert', 'theme', 'chart', 'note']),
-  medium: new Set<ToolbarGroup>(['layout', 'chart']),
+  // `chart` is inline at medium only from SLIDES_TOOLBAR_BREAKPOINTS.chart up.
+  medium: new Set<ToolbarGroup>(['layout', 'theme', 'chart']),
   narrow: new Set<ToolbarGroup>([]),
 };
 
@@ -218,7 +227,9 @@ export function SlidesToolbar({
   const { ref: rootRef, width } = useMeasuredWidth<HTMLDivElement>(rovingRef);
   const size: SlidesToolbarSize = sizeProp === 'auto' ? slidesToolbarSize(width) : sizeProp;
   const inline = INLINE_GROUPS[size];
-  const on = (g: ToolbarGroup) => inline.has(g);
+  // A bar told its size (no measurement) keeps the chart switch at medium.
+  const chartRoom = size !== 'medium' || width == null || width >= SLIDES_TOOLBAR_BREAKPOINTS.chart;
+  const on = (g: ToolbarGroup) => inline.has(g) && (g !== 'chart' || chartRoom);
   const locked = disabled;
 
   // What each control is, once; where it renders — the bar or ⋯ — is the
