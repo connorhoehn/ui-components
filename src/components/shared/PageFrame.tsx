@@ -8,6 +8,7 @@
 // scroll (`body="fill"`, a canvas beside an inspector).
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { PageHeadingContext } from './pageHeadingContext';
 import { ColumnDock, DockedColumn } from '../layout/DockedColumn';
 import {
   PAGE_GUTTER_B, PAGE_GUTTER_X, TemplateHeader, TrailHeader, hasTrailRow, scrollBodyClass,
@@ -95,6 +96,8 @@ export function PageFrame({
     </div>
   );
   return (
+    // Sections inside head themselves one level below this title (2.549.0).
+    <PageHeadingContext.Provider value={titleAs ?? 'h1'}>
     <div
       className={cn('flex h-full min-h-0 min-w-0 flex-col', !trailRow && 'gap-[var(--ui-section-gap,0.75rem)]', className)}
       data-page-template="page-frame"
@@ -134,6 +137,7 @@ export function PageFrame({
       )}
       {body !== 'docked' && footer != null && <div className="shrink-0 min-w-0" data-page-footer="">{centre ? <div className={centre}>{footer}</div> : footer}</div>}
     </div>
+    </PageHeadingContext.Provider>
   );
 }
 

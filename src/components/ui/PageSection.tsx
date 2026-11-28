@@ -5,6 +5,7 @@
 import { type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { useDensity, useDensitySize } from '../shared/Density';
+import { headingBelow, usePageHeadingLevel, type PageHeadingLevel } from '../shared/pageHeadingContext';
 import Chip from '../shared/Chip';
 
 export interface PageSectionProps {
@@ -55,6 +56,13 @@ export interface PageSectionProps {
    * Emits `data-section-divided`. Default false. Since 2.504.0.
    */
   divided?: boolean;
+  /**
+   * The title's heading level (since 2.549.0); the look is set by `size`
+   * alone. Default: inside a `PageFrame`, one level below the frame's title
+   * (`h2` under the usual `h1`), so a page of sections has one `h1`; outside
+   * one, as before — `h1` for `lg`, `h2` for `md` and `sm`.
+   */
+  as?: PageHeadingLevel;
   className?: string;
   'data-testid'?: string;
 }
@@ -69,9 +77,11 @@ export function PageSection({
   empty,
   size: sizeProp,
   divided = false,
+  as,
   className,
   'data-testid': testId,
 }: PageSectionProps) {
+  const pageTitle = usePageHeadingLevel();
   // Density is spacing, never heading level (2.441.5). Only an explicit
   // `md`/`sm` makes this a subsection (h2); an unsized PageSection is the
   // page's own title (h1, 20/600) at every density, and under the compact
@@ -84,7 +94,7 @@ export function PageSection({
   // `sm` is `md`'s layout at the body type step.
   const md = size === 'md' || sm;
   const compactGap = md || (sizeProp === undefined && density === 'compact');
-  const Heading = md ? 'h2' : 'h1';
+  const Heading: PageHeadingLevel = as ?? (pageTitle ? headingBelow(pageTitle) : md ? 'h2' : 'h1');
   const isEmpty = empty != null && empty !== false;
   return (
     <section data-ui-part="" className={cn('flex flex-col', compactGap ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined} data-density={sizeProp === undefined && density === 'compact' ? 'compact' : undefined} data-ui-section="" data-section-empty={isEmpty ? '' : undefined}>
