@@ -298,42 +298,42 @@ function z({ groups: t, density: r, "data-testid": i = "header-people" }) {
 }
 //#endregion
 //#region src/components/shared/PageHeader.tsx
-function B({ title: n, as: i = "h1", description: a, actions: c, back: u, badge: d, size: p = "md", breadcrumbs: m, density: h, collapsed: g = !1, onToggleCollapsed: _, people: v, info: S, meta: C, tabs: w, tabsOverflowBelow: T, activeTab: E, onTabChange: D, className: O, "data-testid": k = "page-header" }) {
-	let A = t(h), j = R(v), M = !!m && m.length > 0, N = w && w.length > 0 ? /* @__PURE__ */ b(l, {
-		items: w.map((e) => ({
+function B({ title: n, as: i = "h1", titleOverflow: a = "truncate", description: c, actions: u, back: d, badge: p, size: m = "md", breadcrumbs: h, density: g, collapsed: _ = !1, onToggleCollapsed: v, people: S, info: C, meta: w, tabs: T, tabsOverflowBelow: E, activeTab: D, onTabChange: O, className: k, "data-testid": A = "page-header" }) {
+	let j = t(g), M = R(S), N = !!h && h.length > 0, P = T && T.length > 0 ? /* @__PURE__ */ b(l, {
+		items: T.map((e) => ({
 			id: e.id,
 			label: e.label,
 			...e.count == null ? {} : { badge: e.count },
 			...e.disabled ? { disabled: !0 } : {},
-			testId: `${k}-tab-${e.id}`
+			testId: `${A}-tab-${e.id}`
 		})),
-		value: E && w.some((e) => e.id === E) ? E : w[0].id,
-		onValueChange: (e) => D?.(e),
+		value: D && T.some((e) => e.id === D) ? D : T[0].id,
+		onValueChange: (e) => O?.(e),
 		variant: "underline",
 		size: "md",
 		badgeStyle: "plain",
 		indicator: "bar",
 		indicatorWeight: 3,
 		"aria-label": `${n} views`,
-		className: e("gap-0", g || A === "compact" ? "mt-0" : "mt-3"),
-		...T ? { overflowBelow: T } : {},
-		"data-testid": `${k}-tabs`
-	}) : null, P = M ? /* @__PURE__ */ b(f, {
-		items: m,
+		className: e("gap-0", _ || j === "compact" ? "mt-0" : "mt-3"),
+		...E ? { overflowBelow: E } : {},
+		"data-testid": `${A}-tabs`
+	}) : null, B = N ? /* @__PURE__ */ b(f, {
+		items: h,
 		separator: "›",
 		maxItems: 5,
 		className: "min-w-0",
-		"data-testid": `${k}-crumbs`
-	}) : null, B = _ ? /* @__PURE__ */ b(F, {
-		collapsed: g,
-		onToggle: _,
-		"data-testid": `${k}-collapse-toggle`
-	}) : null, V = u ? /* @__PURE__ */ b(s, {
-		content: u.label,
+		"data-testid": `${A}-crumbs`
+	}) : null, V = v ? /* @__PURE__ */ b(F, {
+		collapsed: _,
+		onToggle: v,
+		"data-testid": `${A}-collapse-toggle`
+	}) : null, H = d ? /* @__PURE__ */ b(s, {
+		content: d.label,
 		children: /* @__PURE__ */ b("a", {
-			href: r(u.to) ?? void 0,
-			onClick: u.onClick,
-			"aria-label": u.label,
+			href: r(d.to) ?? void 0,
+			onClick: d.onClick,
+			"aria-label": d.label,
 			className: "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-secondary hover:bg-primary/10 hover:text-primary focus-visible:outline-2 focus-visible:outline-primary",
 			children: /* @__PURE__ */ b(o, {
 				dir: "left",
@@ -341,95 +341,95 @@ function B({ title: n, as: i = "h1", description: a, actions: c, back: u, badge:
 			})
 		})
 	}) : null;
-	return g ? /* @__PURE__ */ x("div", {
-		className: e("flex min-w-0 flex-col gap-1", M && "pt-2", O),
-		"data-testid": k,
+	return _ ? /* @__PURE__ */ x("div", {
+		className: e("flex min-w-0 flex-col gap-1", N && "pt-2", k),
+		"data-testid": A,
 		"data-page-header": "",
-		"data-density": A,
+		"data-density": j,
 		"data-collapsed": "true",
 		children: [/* @__PURE__ */ x("div", {
 			className: "flex min-w-0 items-center gap-2",
-			children: [V, /* @__PURE__ */ b("div", {
+			children: [H, /* @__PURE__ */ b("div", {
 				className: "min-w-0 flex-1",
 				children: /* @__PURE__ */ b(I, {
-					breadcrumbs: m,
+					breadcrumbs: h,
 					title: n,
-					badge: d,
-					actions: c,
-					"data-testid": `${k}-fold`,
-					..._ ? { onExpand: _ } : {}
+					badge: p,
+					actions: u,
+					"data-testid": `${A}-fold`,
+					...v ? { onExpand: v } : {}
 				})
 			})]
-		}), N]
-	}) : A === "compact" ? /* @__PURE__ */ x("div", {
-		className: e("flex min-w-0 flex-col gap-1", M && "pt-2", O),
-		"data-testid": k,
+		}), P]
+	}) : j === "compact" ? /* @__PURE__ */ x("div", {
+		className: e("flex min-w-0 flex-col gap-1", N && "pt-2", k),
+		"data-testid": A,
 		"data-page-header": "",
 		"data-density": "compact",
 		"data-collapsed": "false",
 		children: [
-			P,
+			B,
 			/* @__PURE__ */ x("div", {
 				className: "flex min-h-7 min-w-0 flex-wrap items-center gap-x-3 gap-y-1",
-				"data-testid": `${k}-row`,
+				"data-testid": `${A}-row`,
 				"data-page-header-row": "",
 				children: [
-					V,
+					H,
 					/* @__PURE__ */ x("div", {
 						className: "flex min-w-0 flex-1 basis-48 items-center gap-2",
 						"data-page-header-title-cell": "",
 						children: [
 							/* @__PURE__ */ b(i, {
-								className: e("m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]", p === "sm" ? "text-sm leading-5" : "text-xl leading-7"),
+								className: e("m-0 min-w-0 font-semibold text-[var(--color-text-primary)]", a === "wrap" ? "whitespace-normal break-words" : "truncate", m === "sm" ? "text-sm leading-5" : "text-xl leading-7"),
 								title: n,
-								"data-title-size": p,
+								"data-title-size": m,
 								"data-page-header-title": "",
 								children: n
 							}),
-							d,
-							S ?? (a || C ? /* @__PURE__ */ b(L, {
+							p,
+							C ?? (c || w ? /* @__PURE__ */ b(L, {
 								title: n,
-								width: C ? "xl" : "lg",
-								description: /* @__PURE__ */ x(y, { children: [a, C && /* @__PURE__ */ b("div", {
+								width: w ? "xl" : "lg",
+								description: /* @__PURE__ */ x(y, { children: [c, w && /* @__PURE__ */ b("div", {
 									className: "mt-2 whitespace-normal",
-									children: C
+									children: w
 								})] }),
-								"data-testid": `${k}-description`
+								"data-testid": `${A}-description`
 							}) : null),
-							j.length > 0 && /* @__PURE__ */ b("div", {
+							M.length > 0 && /* @__PURE__ */ b("div", {
 								className: "flex min-w-0 shrink-[8] overflow-hidden",
 								children: /* @__PURE__ */ b(z, {
-									groups: j,
+									groups: M,
 									density: "compact",
-									"data-testid": `${k}-people`
+									"data-testid": `${A}-people`
 								})
 							}),
-							B
+							V
 						]
 					}),
-					c && /* @__PURE__ */ b("div", {
+					u && /* @__PURE__ */ b("div", {
 						className: "flex max-w-full flex-shrink-0 flex-wrap items-center gap-2",
 						"data-page-header-actions": "",
-						children: c
+						children: u
 					})
 				]
 			}),
-			N
+			P
 		]
 	}) : /* @__PURE__ */ x("div", {
-		className: e("flex flex-col gap-1.5", M && "pt-3", O),
-		"data-testid": k,
+		className: e("flex flex-col gap-1.5", N && "pt-3", k),
+		"data-testid": A,
 		"data-page-header": "",
 		"data-density": "comfortable",
 		"data-collapsed": "false",
 		children: [
-			P && /* @__PURE__ */ b("div", {
+			B && /* @__PURE__ */ b("div", {
 				className: "mb-2.5",
-				children: P
+				children: B
 			}),
-			u && /* @__PURE__ */ x("a", {
-				href: r(u.to) ?? void 0,
-				onClick: u.onClick,
+			d && /* @__PURE__ */ x("a", {
+				href: r(d.to) ?? void 0,
+				onClick: d.onClick,
 				className: "inline-flex items-center gap-1 text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] mb-1 w-fit",
 				children: [/* @__PURE__ */ b("svg", {
 					width: "12",
@@ -444,7 +444,7 @@ function B({ title: n, as: i = "h1", description: a, actions: c, back: u, badge:
 						strokeLinecap: "round",
 						strokeLinejoin: "round"
 					})
-				}), u.label]
+				}), d.label]
 			}),
 			/* @__PURE__ */ x("div", {
 				className: "flex flex-wrap items-center justify-between gap-x-4 gap-y-2",
@@ -452,36 +452,36 @@ function B({ title: n, as: i = "h1", description: a, actions: c, back: u, badge:
 					className: "min-w-0 flex flex-wrap items-center gap-x-2.5 gap-y-2",
 					children: [
 						/* @__PURE__ */ b(i, {
-							className: e("font-semibold text-[var(--color-text-primary)] leading-tight", p === "lg" ? "text-[28px] font-bold tracking-[-0.01em]" : p === "sm" ? "text-sm" : "text-xl"),
+							className: e("font-semibold text-[var(--color-text-primary)] leading-tight", m === "lg" ? "text-[28px] font-bold tracking-[-0.01em]" : m === "sm" ? "text-sm" : "text-xl"),
 							children: n
 						}),
-						d,
-						S,
-						B
+						p,
+						C,
+						V
 					]
-				}), c && /* @__PURE__ */ b("div", {
+				}), u && /* @__PURE__ */ b("div", {
 					className: "flex max-w-full min-w-0 flex-shrink-0 flex-wrap items-center gap-2",
-					children: c
+					children: u
 				})]
 			}),
-			a && /* @__PURE__ */ b("p", {
+			c && /* @__PURE__ */ b("p", {
 				className: "text-sm text-[var(--color-text-secondary)]",
-				children: a
+				children: c
 			}),
-			j.length > 0 && /* @__PURE__ */ b("div", {
+			M.length > 0 && /* @__PURE__ */ b("div", {
 				className: "mt-1",
 				children: /* @__PURE__ */ b(z, {
-					groups: j,
+					groups: M,
 					density: "comfortable",
-					"data-testid": `${k}-people`
+					"data-testid": `${A}-people`
 				})
 			}),
-			C && /* @__PURE__ */ b("div", {
+			w && /* @__PURE__ */ b("div", {
 				className: "mt-2 min-w-0",
-				"data-testid": `${k}-meta`,
-				children: C
+				"data-testid": `${A}-meta`,
+				children: w
 			}),
-			N
+			P
 		]
 	});
 }

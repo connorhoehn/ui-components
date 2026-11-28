@@ -1,5 +1,5 @@
 import { f as e } from "./Button-DwPf_9pb.js";
-import { Tt as t } from "./ProposedEditStrip-pj-dqI2o.js";
+import { Tt as t } from "./ProposedEditStrip-DtBOmOYQ.js";
 import { jsx as n } from "react/jsx-runtime";
 import { DndContext as r, KeyboardSensor as i, PointerSensor as a, closestCenter as o, useSensor as s, useSensors as c } from "@dnd-kit/core";
 import { SortableContext as l, sortableKeyboardCoordinates as u, useSortable as d, verticalListSortingStrategy as f } from "@dnd-kit/sortable";
@@ -16,6 +16,7 @@ function p({ item: r, index: i, total: a, selectedId: o, readOnly: s, onSelect: 
 		changed: r.changed,
 		generating: r.generating,
 		viewers: r.viewers,
+		...r.findings?.length ? { findings: r.findings } : {},
 		readOnly: s,
 		onSelect: c,
 		onMove: l,

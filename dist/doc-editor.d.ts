@@ -1928,7 +1928,7 @@ export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 /** True when another tab of mine (same user, another socket) has unsaved edits to this deck. */
 export declare function editingInMyOtherTab(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null): boolean;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleAs: TitleTag, titleOverflow, tabsTrailing, headerInset, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, notices, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleAs: TitleTag, titleOverflow, tabsTrailing, headerInset, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -2003,6 +2003,17 @@ export declare interface EditorShellProps {
      * it drops below 7rem, so a short window keeps some of the document. Since 2.408.0.
      */
     proposal?: ReactNode;
+    /**
+     * Status lines about the surface — a warnings line, a conflict banner, a
+     * save error — in a row of their own between the toolbar and the scrolling
+     * surface (since 2.549.0). Put them here, not in `children`, when the
+     * surface fills the scroller (a `PresentationEditor` frame does): above
+     * such a surface they make the scroller taller than its box, so it scrolls
+     * by their height and carries them up under the toolbar. The row never
+     * scrolls with the surface; it is capped at 30% of the surface and scrolls
+     * on its own past that.
+     */
+    notices?: ReactNode;
     /**
      * `workspace` (default) paints the surface the neutral grey a page or a
      * slide floats on; `plain` leaves it the panel colour, for a list or a
@@ -2129,7 +2140,7 @@ export declare interface FilmstripProps {
 }
 
 /** One slide in the strip. Takes `SlideRowProps` so both lists can render it. */
-export declare function FilmstripThumb({ slide, index, total, thumbnailSvg, selected, uncited, changed, generating, viewers, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
+export declare function FilmstripThumb({ slide, index, total, thumbnailSvg, selected, uncited, changed, generating, viewers, findings, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
 
 /** The document as it would read with every suggestion accepted. */
 export declare function finalDoc(doc: Node_3): Node_3;
@@ -2900,8 +2911,12 @@ declare interface PresenceUser {
  * Editing a generated deck: filmstrip, 16:9 stage, slide form and notes, with
  * the layout gallery and Present shown in place of the stage (no modals since
  * 2.548.0; `onFocusModeChange` asks the host's shell for the whole window).
+ * Since 2.549.0 the stage stays pinned while only the form below it scrolls,
+ * an inserted slide opens with its title selected, and a host can pass
+ * per-slide findings, open the gallery (`layoutGalleryOpen`) and call
+ * `focusSlideTitle` on the `ref`.
  */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, layoutGalleryOpen: layoutGalleryOpenProp, onLayoutGalleryOpenChange, slideFindings, ref, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 export declare interface PresentationEditorFrame {
@@ -2913,6 +2928,19 @@ export declare interface PresentationEditorFrame {
     surface: ReactNode;
     /** The host's `footer`, or the built-in agent box in a dock, or null. */
     footer: ReactNode;
+}
+
+/**
+ * What a host can ask of the editor through its `ref` (since 2.549.0), the
+ * same `ref`-as-prop shape `CommentGhostPopover` uses.
+ */
+export declare interface PresentationEditorHandle {
+    /**
+     * Put `slideId` on the stage, focus its title field and select the title
+     * for typing over, scrolling only the form region (never the page) to it.
+     * Does nothing for an unknown id, a generated slide or a read-only editor.
+     */
+    focusSlideTitle: (slideId: string) => void;
 }
 
 export declare interface PresentationEditorProps {
@@ -3031,6 +3059,26 @@ export declare interface PresentationEditorProps {
      * a layout without a preview shows a schematic.
      */
     layoutPreviews?: Partial<Record<SlideLayout, string>>;
+    /**
+     * The host's findings per slide id (since 2.549.0) — a preview's overflow,
+     * an unfinished slide, an example source. Each listed slide's thumbnail in
+     * the filmstrip gets a small dot (warning tone if any finding is a warning)
+     * named by the findings, with a tooltip listing them. The list never shifts.
+     */
+    slideFindings?: Readonly<Record<string, readonly SlideFinding[]>>;
+    /**
+     * Controls the in-place layout gallery (since 2.549.0) — for a host that
+     * opens it itself (a voice "show me example layouts"). Omitted, the editor
+     * keeps its own state as before (Insert → All layouts… opens it).
+     * Passed, it is the truth: Insert → All layouts…, Back, Escape, choosing a
+     * layout and Present only ask, through `onLayoutGalleryOpenChange`. The
+     * gallery shows only while editing (not read-only, not presenting).
+     */
+    layoutGalleryOpen?: boolean;
+    /** Every request to open or close the layout gallery, controlled or not. */
+    onLayoutGalleryOpenChange?: (open: boolean) => void;
+    /** The editor's imperative handle (`focusSlideTitle`), since 2.549.0. */
+    ref?: Ref<PresentationEditorHandle>;
     className?: string;
     'data-testid'?: string;
 }
@@ -3710,6 +3758,12 @@ export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
 
 export declare const SLIDE_LAYOUTS: readonly SlideLayout[];
 
+/** One finding about a slide (overflow, unfinished, an example source), since 2.549.0. */
+export declare interface SlideFinding {
+    tone: 'warning' | 'info';
+    label: string;
+}
+
 /**
  * The slide as the engine will take it: every payload the current layout
  * does not own is dropped (the engine refuses a `chart` on a bullets slide,
@@ -3766,6 +3820,8 @@ export declare interface SlideListItem {
     generating?: boolean;
     /** Other people on this slide (live presence). Since 2.371.0. */
     viewers?: SlideRowProps['viewers'];
+    /** The host's findings for this slide (since 2.549.0); see `SlideRowProps.findings`. */
+    findings?: SlideRowProps['findings'];
 }
 
 export declare interface SlideListProps {
@@ -3807,6 +3863,12 @@ export declare interface SlideRowProps {
     generating?: boolean;
     /** Other people whose selected slide this is (live presence). Since 2.371.0. */
     viewers?: readonly PresenceUser[];
+    /**
+     * The host's findings for this slide (since 2.549.0). `FilmstripThumb` marks
+     * its thumbnail with a dot over the image's corner (no layout shift) named
+     * by the findings and shows them in a tooltip; `SlideRow` does not draw them.
+     */
+    findings?: readonly SlideFinding[];
     readOnly?: boolean;
     onSelect: (id: string) => void;
     onMove: (from: number, to: number) => void;
@@ -3828,16 +3890,25 @@ export declare interface SlideRowProps {
  * Content-box widths (px) of the bar itself, not the window.
  *
  * - wide (≥ 900): everything inline, the style note included.
- * - medium (≥ 600): Insert, Theme and the style note move behind ⋯; New
- *   slide, Layout, the chart switch, Undo/Redo, `end` and Present stay.
- * - narrow: Layout and the chart switch join them behind ⋯.
+ * - medium (≥ 640): Insert and the style note move behind ⋯ first — the
+ *   least used. New slide, Layout, Theme, Undo/Redo, `end` and Present stay.
+ *   The chart switch stays too while the bar is at least `chart` (760) wide;
+ *   below that it goes behind ⋯ next (the slide form has Chart type as well).
+ * - narrow: Layout and Theme join them behind ⋯.
+ *
+ * Collapse order, first to last: Insert and the style note, the chart switch,
+ * then Layout and Theme. Until 2.549.0 Theme left with Insert below 900px,
+ * which was most editors, and medium started at 600.
  *
  * Measured with every control on (a chart slide, undo/redo, Present): the
- * wide bar's natural width is ~850px, medium's ~560px, narrow's ~340px. The
- * deck editor's bar in the shell is ~870px at a 1280px window.
+ * wide bar's natural width is ~850px and narrow's ~340px; Layout is ~110px,
+ * the chart switch ~110px and Theme ~120px, so medium is ~690px with the
+ * switch and ~580px without it. Nothing here was measured again in a browser
+ * for 2.549.0; the widths are the earlier walk's, added up.
  */
 export declare const SLIDES_TOOLBAR_BREAKPOINTS: {
-    readonly narrow: 600;
+    readonly narrow: 640;
+    readonly chart: 760;
     readonly wide: 900;
 };
 

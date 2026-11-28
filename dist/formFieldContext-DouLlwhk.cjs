@@ -1,0 +1,1 @@
+let e=require("react");var t=(0,e.createContext)(null);function n(){return(0,e.useContext)(t)}Object.defineProperty(exports,"n",{enumerable:!0,get:function(){return n}}),Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return t}});

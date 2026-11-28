@@ -4999,7 +4999,7 @@ export declare function formatSpend(usd: number): string;
 export declare function formatTypingBanner(names: string[]): string;
 
 /**
- * Labeled wrapper around an input control. Wires `<label htmlFor>` →
+ * Labeled wrapper around an input control, stacked, `inline` (control at the row's end) or `inline-start` (control first, label beside it, for a checkbox; since 2.549.0). Wires `<label htmlFor>` →
  * `<input id>`, plus `aria-describedby` for hints/errors and `aria-invalid`
  * for the error state. Use the render-prop API so we don't have to wrap
  * every kind of input the library ships.
@@ -5017,7 +5017,7 @@ declare interface FormFieldBase {
     'data-testid'?: string;
 }
 
-export declare type FormFieldLayout = 'stacked' | 'inline';
+export declare type FormFieldLayout = 'stacked' | 'inline' | 'inline-start';
 
 export declare interface FormFieldProps {
     label: string;
@@ -5036,6 +5036,14 @@ export declare interface FormFieldProps {
     hintTestId?: string;
     /** Renders an asterisk after the label. Does NOT enforce validation. */
     required?: boolean;
+    /**
+     * `stacked` (default): label over the control. `inline`: label and hint,
+     * then the control at the row's end — a settings switch. `inline-start`
+     * (since 2.549.0): the control first, then its label and hint right beside
+     * it — a checkbox in a list of checks, which `inline` would put a screen
+     * away from its words on a full-width row. The label is the native
+     * `<label htmlFor>`, so clicking it toggles the control.
+     */
     layout?: FormFieldLayout;
     /**
      * Pass-through render. The function receives an `id` and the wiring
@@ -7812,7 +7820,7 @@ export declare interface OutcomeSectionProps {
  *   <PageSection title="Channels">…</PageSection>
  * </PageFrame>
  */
-export declare function PageFrame({ title, description, breadcrumbs, actions, badge, back, density, titleAs, trailControls, trailLink, collapsed, onToggleCollapsed, children, body, dockedBody, footer, gutter, bodyGutter, bodyClassName, column, columnWidth, className, ...rest }: PageFrameProps): JSX.Element;
+export declare function PageFrame({ title, description, breadcrumbs, actions, badge, back, density, titleAs, titleOverflow, trailControls, trailLink, collapsed, onToggleCollapsed, children, body, dockedBody, footer, gutter, bodyGutter, bodyClassName, column, columnWidth, className, ...rest }: PageFrameProps): JSX.Element;
 
 /** `PageFrame column` (since 2.537.0). */
 export declare type PageFrameColumn = 'full' | 'centered';
@@ -7876,7 +7884,7 @@ export declare interface PageFromSpecProps {
 /** `page`: the template draws the `--ui-page-gutter` inset. `none`: the host already did. */
 export declare type PageGutter = 'page' | 'none';
 
-export declare function PageHeader({ title, as: Heading, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, tabsOverflowBelow, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
+export declare function PageHeader({ title, as: Heading, titleOverflow, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, tabsOverflowBelow, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -7888,6 +7896,12 @@ export declare interface PageHeaderProps {
     title: string;
     /** Semantic heading level for a header embedded under another page title; visual size is unchanged. */
     as?: 'h1' | 'h2' | 'h3' | 'h4';
+    /**
+     * The compact title row's long title (since 2.549.0): `truncate` (default)
+     * cuts it with an ellipsis, `wrap` breaks it onto more lines. The
+     * comfortable form always wraps.
+     */
+    titleOverflow?: 'truncate' | 'wrap';
     description?: string;
     /** Right-aligned action area (buttons, menus). */
     actions?: default_2.ReactNode;
@@ -7972,7 +7986,9 @@ export declare interface PageHeaderTab {
     disabled?: boolean;
 }
 
-export declare function PageSection({ title, description, actions, children, count, countTone, empty, size: sizeProp, divided, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
+declare type PageHeadingLevel = 'h1' | 'h2' | 'h3' | 'h4';
+
+export declare function PageSection({ title, description, actions, children, count, countTone, empty, size: sizeProp, divided, as, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
     title: string;
@@ -8022,6 +8038,13 @@ export declare interface PageSectionProps {
      * Emits `data-section-divided`. Default false. Since 2.504.0.
      */
     divided?: boolean;
+    /**
+     * The title's heading level (since 2.549.0); the look is set by `size`
+     * alone. Default: inside a `PageFrame`, one level below the frame's title
+     * (`h2` under the usual `h1`), so a page of sections has one `h1`; outside
+     * one, as before — `h1` for `lg`, `h2` for `md` and `sm`.
+     */
+    as?: PageHeadingLevel;
     className?: string;
     'data-testid'?: string;
 }
@@ -8084,6 +8107,13 @@ export declare interface PageTemplateHeaderProps {
      * host above the template already draws the page heading. Size is unchanged.
      */
     titleAs?: 'h1' | 'h2' | 'h3';
+    /**
+     * A title too long for its row (since 2.549.0): `truncate` (default) cuts
+     * it with an ellipsis; `wrap` breaks it onto more lines, as `EditorShell`'s
+     * `titleOverflow` does — for a phone-width header that also carries an
+     * action ("New presentati…" at 390px). A title that fits is unchanged.
+     */
+    titleOverflow?: 'truncate' | 'wrap';
 }
 
 /**
@@ -8874,7 +8904,7 @@ export declare interface QuickPromptGridProps {
 /** A pair of quotation marks: a quoted passage — a blockquote. */
 export declare function QuoteIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function RadioGroup<T extends string = string>({ name, value, onChange, options, disabled, orientation, 'data-testid': testId, }: RadioGroupProps<T>): JSX.Element;
+export declare function RadioGroup<T extends string = string>({ name, value, onChange, options, disabled, orientation, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, id, 'aria-describedby': ariaDescribedBy, 'aria-invalid': ariaInvalid, 'aria-required': ariaRequired, 'data-testid': testId, }: RadioGroupProps<T>): JSX.Element;
 
 export declare interface RadioGroupProps<T extends string = string> {
     /** Used as the HTML radio group name and as a stable ID base for labels. */
@@ -8885,6 +8915,19 @@ export declare interface RadioGroupProps<T extends string = string> {
     disabled?: boolean;
     /** @default 'vertical' */
     orientation?: 'vertical' | 'horizontal';
+    /**
+     * The group's name (since 2.549.0). Inside a `FormField` the group is named
+     * by the field's label automatically (`aria-labelledby`); elsewhere pass
+     * `aria-label` or `aria-labelledby` (the id of the question above it).
+     * Either prop wins over the field's label.
+     */
+    'aria-label'?: string;
+    'aria-labelledby'?: string;
+    /** FormField's wiring, spread as for any input (`{...wiring}`). Since 2.549.0. */
+    id?: string;
+    'aria-describedby'?: string;
+    'aria-invalid'?: boolean;
+    'aria-required'?: boolean;
     'data-testid'?: string;
 }
 
