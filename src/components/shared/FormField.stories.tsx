@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import FormField from './FormField';
 import Switch from './Switch';
+import { Checkbox } from '../forms/Checkbox';
 import { useState } from 'react';
 
 const meta = {
@@ -72,6 +73,19 @@ export const Inline: Story = {
     children: (wiring) => {
       const [on, setOn] = useState(true);
       return <Switch checked={on} onChange={setOn} aria-labelledby={wiring.labelId} />;
+    },
+  },
+};
+
+/** `layout="inline-start"` (2.549.0): the checkbox first, its label beside it, the label clickable — a list of checks. */
+export const InlineStartCheckbox: Story = {
+  args: {
+    label: 'Interrupted the candidate',
+    hint: 'More than twice in one answer',
+    layout: 'inline-start',
+    children: (wiring) => {
+      const [on, setOn] = useState(false);
+      return <Checkbox {...wiring} checked={on} onChange={setOn} />;
     },
   },
 };

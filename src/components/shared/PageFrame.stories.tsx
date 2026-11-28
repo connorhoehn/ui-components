@@ -83,3 +83,16 @@ export const CenteredColumn: Story = {
     </PageFrame>
   ),
 };
+
+/** `titleOverflow="wrap"` (2.549.0): at phone width the title breaks onto a second line beside its action instead of "New presentati…". */
+export const WrappingTitle: Story = {
+  render: () => (
+    <div className="w-[390px]">
+      <PageFrame title="New presentation from a document" titleOverflow="wrap" actions={<Button size="sm">Create</Button>}>
+        <PageSection title="Start from a template">
+          <p className="m-0 text-sm">Sections inside a PageFrame are h2 (2.549.0); the frame's title is the page's one h1.</p>
+        </PageSection>
+      </PageFrame>
+    </div>
+  ),
+};

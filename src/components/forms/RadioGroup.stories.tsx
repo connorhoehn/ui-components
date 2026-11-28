@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { RadioGroup } from './RadioGroup';
 import type { RadioOption } from './RadioGroup';
+import FormField from '../shared/FormField';
 
 const errorPolicyOptions: RadioOption[] = [
   { value: 'stop',     label: 'Stop pipeline',    description: 'Halt execution immediately on error.' },
@@ -76,5 +77,18 @@ export const Disabled: Story = {
     onChange: () => {},
     disabled: true,
     orientation: 'vertical',
+  },
+};
+
+/** Named (2.549.0): inside a FormField the field's label names the group; elsewhere pass `aria-labelledby` or `aria-label`. */
+export const Named: Story = {
+  args: { name: 'consent', options: [{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }], value: 'yes', onChange: () => {} },
+  render: (args) => {
+    const [value, setValue] = useState(args.value);
+    return (
+      <FormField label="May we record the interview?" hint="You can change this later">
+        {(wiring) => <RadioGroup {...wiring} {...args} value={value} onChange={setValue} />}
+      </FormField>
+    );
   },
 };

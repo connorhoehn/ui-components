@@ -64,10 +64,13 @@ export const Auto: Story = { args, render: () => <Bar size="auto" /> };
 /** Everything inline — the bar at a full-width editor. */
 export const Wide: Story = { args, render: () => <Bar size="wide" /> };
 
-/** Insert, Theme and the style note behind ⋯; Layout and the chart switch stay. */
+/** Insert and the style note behind ⋯; Layout, Theme and the chart switch stay (Theme stays since 2.549.0). */
 export const Medium: Story = { args, render: () => <Bar size="medium" width="760px" /> };
 
-/** Layout and the chart switch join them; New slide, Undo/Redo and Present remain. */
+/** 2.549.0, measured at 700px: the chart switch goes behind ⋯ next; Theme stays inline down to 640px. */
+export const MediumWithoutChartSwitch: Story = { args, render: () => <Bar size="auto" width="700px" /> };
+
+/** Below 640px Layout and Theme join them; New slide, Undo/Redo and Present remain. */
 export const Narrow: Story = { args, render: () => <Bar size="narrow" width="520px" /> };
 
 const HOST_THEMES = [

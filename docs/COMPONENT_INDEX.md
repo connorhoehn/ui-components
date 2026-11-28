@@ -32,7 +32,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | Table building blocks | `Table` | `@connorhoehn/ui-components/shared` | `Table`, `TableHead`, `TableBody`, `TableRow`, `TableTh`, `TableTd`: the styled primitives `DataTable` is made of. | Not a first choice: no sorting, selection or states built in. |
 | Identity admin tables | `EntityTable` | `@connorhoehn/ui-components/identity` | The identity-admin entity list (users, groups, roles) with row actions. | Not a general-purpose table; use `DataTable` outside identity admin. |
 | Separate sections | `SectionStack` | `@connorhoehn/ui-components/shared` | Stacks a page's sections with a full-width hairline between each (none before the first or after the last; skips null children). `Divider` is a single (optionally captioned) hairline; `PageSection divided` rules the groups inside one section; inside a detail surface use `DetailSection`. | Don't separate sections with nested `Card`s, `<hr>`, or border utility classes. |
-| A section of a page | `PageSection` | `@connorhoehn/ui-components/shared` | Titled section with description, count and actions; sizes `lg`/`md`/`sm`. | Not for sections inside a drawer or detail tab (use `DetailSection`). |
+| A section of a page | `PageSection` | `@connorhoehn/ui-components/shared` | Titled section with description, count and actions; sizes `lg`/`md`/`sm`. Inside a `PageFrame` its title is `h2` (one level below the frame's), `as` to override (2.549.0). | Not for sections inside a drawer or detail tab (use `DetailSection`). |
 | A section inside a detail surface | `DetailSection` | `@connorhoehn/ui-components/shared` | Titled block with a hairline above it (`first` suppresses the first rule); `variant="heading"` for document-like bodies. | Not for top-level page sections (use `PageSection`). |
 | A section or panel header inside a page | `CardHeader` | `@connorhoehn/ui-components/shared` | Title + actions row with the separator under it, for a card or panel section. Use `PaneHeader` when the pane has tabs. Never hand-draw `border-b` header bands. | Not a page header (use `PageHeader` or a page template) or a channel/room header (use `ChannelHeader`). |
 | A page's title row | `PageHeader` | `@connorhoehn/ui-components/shared` | Title, description, back link and actions at the top of a page. Templates render it for you. | Don't hand-roll an `<h1>` + flex row of buttons. |
@@ -165,7 +165,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `Modal` | `@connorhoehn/ui-components/shared` | Reusable modal shell. | `shared-modal` |  |
 | `OutcomeSection` | `@connorhoehn/ui-components/shared` | The "what does done look like" paragraph of a work item, editable in place. | `work-outcomesection` |  |
 | `PageHeader` | `@connorhoehn/ui-components/shared` | Page-level title + description + actions header. | `shared-pageheader` |  |
-| `PageSection` | `@connorhoehn/ui-components/shared` | Page-level section with title, optional description, and header actions. | `ui-pagesection` |  |
+| `PageSection` | `@connorhoehn/ui-components/shared` | Page-level section with title, optional description, and header actions; inside a PageFrame its title is one heading level below the frame's (h2), since 2.549.0. | `ui-pagesection` |  |
 | `PermissionDeniedCard` | `@connorhoehn/ui-components/shared` | — | `shared-permissiondeniedcard` |  |
 | `PersonHoverCard` | `@connorhoehn/ui-components/shared` | The Outlook/Teams "people card": hover a name, get the person. | `shared-personhovercard` |  |
 | `PickerDialog` | `@connorhoehn/ui-components/shared` | "choose one of these" in a dialog: a folder to move into, a workflow to run, a template to start from. |  |  |
@@ -248,7 +248,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `FileInput` | `@connorhoehn/ui-components` | The invisible file picker that sits behind a styled trigger (a paperclip button, a drop zone). |  |  |
 | `FileUploadDrop` | `@connorhoehn/ui-components/shared` | Drag-and-drop file upload zone. | `shared-fileuploaddrop` |  |
 | `FormField` | `@connorhoehn/ui-components/identity` | Identity's value-coercing form field. (also exported as `IdentityFormField` from `@connorhoehn/ui-components`) | `identity-shared-formfield` |  |
-| `FormField` | `@connorhoehn/ui-components/shared` | Labeled wrapper around an input control. | `shared-formfield` |  |
+| `FormField` | `@connorhoehn/ui-components/shared` | Labeled wrapper around an input control, stacked, `inline` (control at the row's end) or `inline-start` (control first, label beside it, for a checkbox; since 2.549.0). | `shared-formfield` |  |
 | `FormWizard` | `@connorhoehn/ui-components/shared` | The one multi-field form frame (2.445.0). | `shared-formwizard` |  |
 | `IconPicker` | `@connorhoehn/ui-components/shared` | Small emoji picker used for choosing an icon on pipelines (and usable by other callers that want a lightweight curated-emoji chooser). | `shared-iconpicker` |  |
 | `InlineEditableText` | `@connorhoehn/ui-components` | Text that reads as text until it is clicked, then edits in place. |  |  |
@@ -259,7 +259,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `PersonPicker` | `@connorhoehn/ui-components/shared` | Choose ONE person from a known list (a beneficiary, a delegate, an assignee). | `shared-personpicker` |  |
 | `PopoverField` | `@connorhoehn/ui-components/shared` | A field in a PopoverForm: a small label over its control, tightly. |  |  |
 | `PopoverForm` | `@connorhoehn/ui-components/shared` | A small form that opens AT the control that asked for it. |  |  |
-| `RadioGroup` | `@connorhoehn/ui-components/shared` | Vertical (or horizontal) enum picker using native <input type="radio">. | `forms-radiogroup` |  |
+| `RadioGroup` | `@connorhoehn/ui-components/shared` | Vertical (or horizontal) enum picker using native <input type="radio">, named by its FormField's label or by `aria-label` / `aria-labelledby` (since 2.549.0). | `forms-radiogroup` |  |
 | `RangeSlider` | `@connorhoehn/ui-components` | Two native keyboard-operable handles on one track, with stable tab order. |  |  |
 | `RatingInput` | `@connorhoehn/ui-components` | One rating on a fixed scale, each point carrying its own label (a scorecard competency rated 1 to 4: "Does not meet" to "Exceeds"). |  |  |
 | `SearchInput` | `@connorhoehn/ui-components/shared` | Text input with magnifier icon and clear button. | `shared-searchinput` |  |

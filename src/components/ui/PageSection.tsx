@@ -1,6 +1,6 @@
 // src/components/ui/PageSection.tsx
 //
-// Page-level section with title, optional description, and header actions.
+// Page-level section with title, optional description, and header actions; inside a PageFrame its title is one heading level below the frame's (h2), since 2.549.0.
 
 import { type ReactNode } from 'react';
 import { cn } from '../../lib/cn';

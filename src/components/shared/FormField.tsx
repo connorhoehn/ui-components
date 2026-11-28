@@ -65,7 +65,7 @@ export interface FormFieldProps {
 }
 
 /**
- * Labeled wrapper around an input control. Wires `<label htmlFor>` →
+ * Labeled wrapper around an input control, stacked, `inline` (control at the row's end) or `inline-start` (control first, label beside it, for a checkbox; since 2.549.0). Wires `<label htmlFor>` →
  * `<input id>`, plus `aria-describedby` for hints/errors and `aria-invalid`
  * for the error state. Use the render-prop API so we don't have to wrap
  * every kind of input the library ships.

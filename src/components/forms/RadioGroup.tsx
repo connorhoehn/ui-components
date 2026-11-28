@@ -1,6 +1,6 @@
 // src/components/forms/RadioGroup.tsx
 //
-// Vertical (or horizontal) enum picker using native <input type="radio">.
+// Vertical (or horizontal) enum picker using native <input type="radio">, named by its FormField's label or by `aria-label` / `aria-labelledby` (since 2.549.0).
 // SegmentedControl handles short horizontal lists; RadioGroup handles vertical
 // lists and options that carry a description. Used by wsg-fork's ActionConfig
 // on-error picker, condition-mode pickers, error-policy pickers, etc.

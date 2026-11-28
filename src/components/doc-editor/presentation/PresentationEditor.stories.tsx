@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PresentationEditor } from './PresentationEditor';
 import { EditorShell } from '../EditorShell';
@@ -9,7 +9,9 @@ import { IconButton } from '../../ui/IconButton';
 import { ChartIcon, DocumentIcon, FolderIcon } from '../../ui/Icons';
 import { ShellFocusModeProvider, useRailFold, useShellFocusMode } from '../../shared/railFold';
 import type { DeckSpec } from './deckSpec';
-import type { PresentationPreview } from './PresentationEditor';
+import type { PresentationEditorHandle, PresentationPreview } from './PresentationEditor';
+import { Button } from '../../ui/Button';
+import InlineAlert from '../../shared/InlineAlert';
 
 // The editor with no modals (2.548.0). Insert → "All layouts…" swaps the
 // stage for the gallery in place; Present replaces the editor's regions with
@@ -91,7 +93,59 @@ function ShellWithRails() {
   );
 }
 
-function Story({ shell }: { shell: boolean }) {
+// 2.549.0: what a host adds around the editor. A notices line in
+// EditorShell's own row (never clipped under the toolbar), findings on the
+// filmstrip, the layout gallery opened from outside, and the handle's
+// focusSlideTitle. Typing in the form scrolls only the form region.
+function HostedEditor() {
+  const [spec, setSpec] = useState(initial);
+  const [gallery, setGallery] = useState(false);
+  const editor = useRef<PresentationEditorHandle>(null);
+  const preview: PresentationPreview = { slides: spec.slides.map((slide) => ({ id: slide.id, svg: slideSvg(slide.title) })) };
+  return (
+    <PresentationEditor
+      ref={editor}
+      spec={spec}
+      onChange={setSpec}
+      preview={preview}
+      onRequestPreview={() => {}}
+      onSaveRevision={async () => {}}
+      revisions={[{ id: 'r1', label: 'v1' }]}
+      activeRevisionId="r1"
+      onSelectRevision={() => {}}
+      sources={source}
+      slideFindings={{ details: [{ tone: 'warning', label: 'Overflow: the bullets run past the slide' }, { tone: 'info', label: 'Example source' }] }}
+      layoutGalleryOpen={gallery}
+      onLayoutGalleryOpenChange={setGallery}
+      renderFrame={({ toolbar, actions, surface, footer }) => (
+        <EditorShell
+          title={spec.title}
+          toolbar={toolbar}
+          headActions={(
+            <>
+              <Button size="sm" variant="ghost" onClick={() => setGallery(true)}>Show example layouts</Button>
+              <Button size="sm" variant="ghost" onClick={() => editor.current?.focusSlideTitle('details')}>Rename slide 2</Button>
+              {actions}
+            </>
+          )}
+          notices={<InlineAlert tone="warning">Overflow (slide 2): the bullets run past the slide.</InlineAlert>}
+          footer={footer}
+        >
+          {surface}
+        </EditorShell>
+      )}
+    />
+  );
+}
+
+function Story({ shell, hosted = false }: { shell: boolean; hosted?: boolean }) {
+  if (hosted) {
+    return (
+      <div className="h-[720px]">
+        <HostedEditor />
+      </div>
+    );
+  }
   return shell ? (
     <ShellFocusModeProvider>
       <ShellWithRails />
@@ -125,3 +179,12 @@ export const Editing: StoryT = { args: { shell: false } };
  * so both rails fold, and Exit puts each back as it was.
  */
 export const PresentInShellFocusMode: StoryT = { args: { shell: true } };
+
+/**
+ * What a host adds (2.549.0): a notices line in `EditorShell notices` (its own
+ * row, never under the toolbar), `slideFindings` dots on the filmstrip, the
+ * layout gallery opened from the header (`layoutGalleryOpen`), and "Rename
+ * slide 2" calling the handle's `focusSlideTitle`. The stage stays pinned
+ * while the form below it scrolls; a slide added opens with its title selected.
+ */
+export const HostAdditions: StoryT = { args: { shell: false, hosted: true } };

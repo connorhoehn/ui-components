@@ -451,6 +451,10 @@ function useSpecHistory(spec: DeckSpec, onChange: (spec: DeckSpec) => void) {
  * Editing a generated deck: filmstrip, 16:9 stage, slide form and notes, with
  * the layout gallery and Present shown in place of the stage (no modals since
  * 2.548.0; `onFocusModeChange` asks the host's shell for the whole window).
+ * Since 2.549.0 the stage stays pinned while only the form below it scrolls,
+ * an inserted slide opens with its title selected, and a host can pass
+ * per-slide findings, open the gallery (`layoutGalleryOpen`) and call
+ * `focusSlideTitle` on the `ref`.
  */
 export function PresentationEditor({
   spec,
