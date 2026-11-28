@@ -51,9 +51,11 @@ import {
   Suspense,
   lazy,
   useEffect,
+  useId,
   useMemo,
   useRef,
   type KeyboardEvent as ReactKeyboardEvent,
+  type ReactElement,
 } from 'react';
 import { cn } from '../../../lib/cn';
 import { Button } from '../../ui/Button';
@@ -61,8 +63,10 @@ import { PlusIcon } from '../../ui/Icons';
 import { DropdownMenu, type DropdownMenuItem } from '../../shared/DropdownMenu';
 import { Text } from '../../shared/Text';
 import { PresenceAvatars, type PresenceUser } from '../../shared/PresenceAvatars';
+import { StatusDot } from '../../shared/StatusDot';
+import { Tooltip } from '../../shared/Tooltip';
 import SlideList, { type SlideListItem } from './SlideList';
-import type { SlideRowProps } from './SlideRow';
+import { slideFindingsLabel, type SlideRowProps } from './SlideRow';
 import { svgDataUri } from './svgPreview';
 import { SLIDE_LAYOUT_LABELS } from './deckSpec';
 
@@ -190,6 +194,7 @@ export function FilmstripThumb({
   changed = false,
   generating = false,
   viewers,
+  findings,
   readOnly = false,
   onSelect,
   onMove,
@@ -205,6 +210,45 @@ export function FilmstripThumb({
   const thumbnail = svgDataUri(thumbnailSvg);
   const number = index + 1;
   const title = slide.title || 'Untitled slide';
+
+  // The host's findings (2.549.0): a dot over the thumbnail's lower-left
+  // corner, absolutely placed so the list never shifts. It is named by the
+  // findings (and describes the thumbnail button); focusing or hovering the
+  // thumbnail shows them in a tooltip.
+  const findingsDomId = useId();
+  const findingsId = findings?.length ? findingsDomId : undefined;
+  const withFindings = (button: ReactElement) => {
+    if (!findings?.length || !findingsId) return button;
+    const warning = findings.some((finding) => finding.tone === 'warning');
+    const label = slideFindingsLabel(findings);
+    return (
+      <Tooltip
+        content={(
+          <span className="flex flex-col gap-0.5">
+            {findings.map((finding, at) => (
+              <Text as="span" key={at} size="xs">{finding.label}</Text>
+            ))}
+          </span>
+        )}
+        triggerClassName="relative block w-full"
+        data-testid={`${testIdPrefix}-findings-tip-${slide.id}`}
+      >
+        <span className="relative block w-full">
+          {button}
+          <span
+            id={findingsId}
+            role="img"
+            aria-label={label}
+            data-tone={warning ? 'warning' : 'info'}
+            data-testid={`${testIdPrefix}-findings-${slide.id}`}
+            className="pointer-events-none absolute bottom-1 left-1 inline-flex rounded-full bg-surface/90 p-0.5"
+          >
+            <StatusDot size="sm" color={warning ? 'var(--color-warning)' : 'var(--color-info)'} />
+          </span>
+        </span>
+      </Tooltip>
+    );
+  };
 
   const menuItems: DropdownMenuItem[] = [
     ...(index > 0
@@ -239,12 +283,14 @@ export function FilmstripThumb({
       </span>
 
       <span className="relative flex min-w-0 flex-1 flex-col gap-0.5">
+        {withFindings(
         <button
           data-ui-part=""
           type="button"
           onClick={() => onSelect(slide.id)}
           aria-current={selected ? 'true' : undefined}
           aria-label={`Slide ${number}: ${title}`}
+          {...(findingsId ? { 'aria-describedby': findingsId } : {})}
           data-testid={`${testIdPrefix}-select-${slide.id}`}
           data-filmstrip-select=""
           className={cn(
@@ -277,7 +323,8 @@ export function FilmstripThumb({
               <Text as="span" className="text-[10px] font-medium text-text-secondary">Generating…</Text>
             </span>
           )}
-        </button>
+        </button>,
+        )}
 
         <span className="flex min-w-0 items-center gap-1.5">
           {/* A thumb with no render already shows its title on the card. */}

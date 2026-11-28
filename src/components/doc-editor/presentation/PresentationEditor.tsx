@@ -96,6 +96,7 @@ import { Filmstrip } from './Filmstrip';
 import type { PresenceUser } from '../../shared/PresenceAvatars';
 import SlideForm from './SlideForm';
 import type { SlideListItem } from './SlideList';
+import type { SlideFinding } from './SlideRow';
 import SlideSources, { type PresentationSourceOption } from './SlideSources';
 import { SlideStage } from './SlideStage';
 import { SlidesToolbar, type SlidesToolbarTheme } from './SlidesToolbar';
@@ -353,6 +354,13 @@ export interface PresentationEditorProps {
    * a layout without a preview shows a schematic.
    */
   layoutPreviews?: Partial<Record<SlideLayout, string>>;
+  /**
+   * The host's findings per slide id (since 2.549.0) — a preview's overflow,
+   * an unfinished slide, an example source. Each listed slide's thumbnail in
+   * the filmstrip gets a small dot (warning tone if any finding is a warning)
+   * named by the findings, with a tooltip listing them. The list never shifts.
+   */
+  slideFindings?: Readonly<Record<string, readonly SlideFinding[]>>;
   /** The editor's imperative handle (`focusSlideTitle`), since 2.549.0. */
   ref?: Ref<PresentationEditorHandle>;
   className?: string;
@@ -462,6 +470,7 @@ export function PresentationEditor({
   onSelectedSlideChange,
   themes,
   layoutPreviews,
+  slideFindings,
   ref,
   className,
   'data-testid': testId = 'presentation-editor',
@@ -571,6 +580,7 @@ export function PresentationEditor({
     thumbnailSvg: previewById.get(slide.id),
     uncited: uncited.has(slide.id),
     changed: changedIds.has(slide.id),
+    ...(slideFindings?.[slide.id]?.length ? { findings: slideFindings[slide.id] } : {}),
   }));
 
   const select = useCallback((id: string) => {

@@ -26,6 +26,8 @@ export interface SlideListItem {
   generating?: boolean;
   /** Other people on this slide (live presence). Since 2.371.0. */
   viewers?: SlideRowProps['viewers'];
+  /** The host's findings for this slide (since 2.549.0); see `SlideRowProps.findings`. */
+  findings?: SlideRowProps['findings'];
 }
 
 export interface SlideListProps {
@@ -76,6 +78,7 @@ export function SlideList({
           changed={item.changed}
           generating={item.generating}
           viewers={item.viewers}
+          {...(item.findings?.length ? { findings: item.findings } : {})}
           readOnly={readOnly}
           onSelect={onSelect}
           onMove={onMove}

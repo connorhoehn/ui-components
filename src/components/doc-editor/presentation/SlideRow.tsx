@@ -18,6 +18,17 @@ import { Text } from '../../shared/Text';
 import { svgDataUri } from './svgPreview';
 import type { DeckSlide } from './deckSpec';
 
+/** One finding about a slide (overflow, unfinished, an example source), since 2.549.0. */
+export interface SlideFinding {
+  tone: 'warning' | 'info';
+  label: string;
+}
+
+/** "Slide findings: Overflow; Unfinished" — the indicator's accessible name. */
+export function slideFindingsLabel(findings: readonly SlideFinding[]): string {
+  return `${findings.length === 1 ? 'Slide finding' : `${findings.length} slide findings`}: ${findings.map((finding) => finding.label).join('; ')}`;
+}
+
 export interface SlideRowProps {
   slide: DeckSlide;
   /** 0-based position in the deck; the row displays `index + 1`. */
@@ -34,6 +45,12 @@ export interface SlideRowProps {
   generating?: boolean;
   /** Other people whose selected slide this is (live presence). Since 2.371.0. */
   viewers?: readonly PresenceUser[];
+  /**
+   * The host's findings for this slide (since 2.549.0). `FilmstripThumb` marks
+   * its thumbnail with a dot over the image's corner (no layout shift) named
+   * by the findings and shows them in a tooltip; `SlideRow` does not draw them.
+   */
+  findings?: readonly SlideFinding[];
   readOnly?: boolean;
   onSelect: (id: string) => void;
   onMove: (from: number, to: number) => void;

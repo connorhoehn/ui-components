@@ -40,7 +40,7 @@ export type { SlideFormProps } from './SlideForm';
 export { SlideList } from './SlideList';
 export type { SlideListProps, SlideListItem } from './SlideList';
 export { SlideRow } from './SlideRow';
-export type { SlideRowProps } from './SlideRow';
+export type { SlideRowProps, SlideFinding } from './SlideRow';
 export { SlideSources } from './SlideSources';
 export type { SlideSourcesProps, PresentationSourceOption } from './SlideSources';
 export { svgDataUri } from './svgPreview';

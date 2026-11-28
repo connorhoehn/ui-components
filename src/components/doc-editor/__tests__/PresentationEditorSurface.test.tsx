@@ -377,3 +377,44 @@ describe('revision controls', () => {
     expect(screen.queryByTestId('presentation-editor-revision-select')).toBeNull();
   });
 });
+
+describe('slideFindings (2.549.0)', () => {
+  const findings = {
+    s2: [
+      { tone: 'info' as const, label: 'Example source' },
+      { tone: 'warning' as const, label: 'Overflow: the bullets run past the slide' },
+    ],
+    s3: [{ tone: 'info' as const, label: 'Unfinished' }],
+  };
+
+  it('marks each listed slide with a dot named by its findings, describing the thumbnail', () => {
+    render(<Harness slideFindings={findings} />);
+    const mark = screen.getByRole('img', { name: '2 slide findings: Example source; Overflow: the bullets run past the slide' });
+    expect(mark).toHaveAttribute('data-tone', 'warning');
+    expect(screen.getByRole('img', { name: 'Slide finding: Unfinished' })).toHaveAttribute('data-tone', 'info');
+    const thumb = screen.getByTestId('presentation-editor-slide-select-s2');
+    expect(thumb).toHaveAttribute('aria-describedby', mark.id);
+    expect(screen.getByTestId('presentation-editor-slide-select-s1')).not.toHaveAttribute('aria-describedby');
+    expect(screen.queryByTestId('presentation-editor-slide-findings-s1')).toBeNull();
+  });
+
+  it('places the dot over the thumbnail, absolutely, so the list does not shift', () => {
+    render(<Harness slideFindings={findings} />);
+    const mark = screen.getByTestId('presentation-editor-slide-findings-s2');
+    expect(mark.className).toContain('absolute');
+    expect(mark.className).toContain('pointer-events-none');
+    // The wrapper around the thumbnail is a full-width block, the button's own box.
+    expect(mark.parentElement!.className).toContain('block w-full');
+  });
+
+  it('shows the findings in a tooltip when the thumbnail takes keyboard focus', () => {
+    render(<Harness slideFindings={findings} />);
+    act(() => { screen.getByTestId('presentation-editor-slide-select-s3').focus(); });
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Unfinished');
+  });
+
+  it('draws nothing without the prop', () => {
+    render(<Harness />);
+    expect(screen.queryByTestId('presentation-editor-slide-findings-s2')).toBeNull();
+  });
+});
