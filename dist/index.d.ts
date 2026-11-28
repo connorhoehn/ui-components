@@ -8972,6 +8972,14 @@ export declare interface DeckFigure {
     icon?: string;
 }
 
+/**
+ * A CSS font stack for an engine family: the family itself (when the page
+ * loads it), its office twin, then the closest common family. `Carlito` reads
+ * as Calibri, `Liberation Sans` as Arial, `Gelasio` as Georgia; anything else
+ * leads with its own name over a sans fallback.
+ */
+export declare function deckFontStack(family: string, officeFamily?: string): string;
+
 /** `slideForEngine` over the whole deck. Returns the same object when no slide changed. */
 export declare function deckForEngine(spec: DeckSpec): DeckSpec;
 
@@ -8986,6 +8994,8 @@ export declare interface DeckFunnelStage {
 export declare interface DeckGraphicSource {
     items: readonly DeckCatalogueItem[];
     renderGraphic?: (name: string) => ReactNode;
+    /** A trusted, standalone SVG string per graphic (the engine's `graphicSvg`), since 2.551.0. `renderGraphic` wins when both are given. */
+    graphicSvg?: (name: string) => string;
 }
 
 /** One icon as an inline SVG from path data, or the host's own drawing. Decorative. */
@@ -10736,8 +10746,17 @@ export declare interface EmojiShortcode {
     keywords?: readonly string[];
 }
 
-/** The emphasis buttons as one keyboard stop (`RovingToolbar`). Pressing one never takes the field's selection away. */
-export declare function EmphasisToolbar({ active, onApply, disabled, label, className, testIdPrefix }: EmphasisToolbarProps): JSX.Element;
+/** Where the emphasis bar sits for a box: above it when there is room, else below; left-anchored in the left half of the stage, right-anchored in the right. */
+export declare function emphasisBarPlacement(box: SlideRegionBox, size?: SlideSize): {
+    side: 'above' | 'below';
+    anchor: 'left' | 'right';
+    top: number;
+    left: number;
+    right: number;
+};
+
+/** The emphasis buttons as one keyboard stop (`RovingToolbar`); `variant="icons"` is one compact row of icon buttons (2.551.0). Pressing one never takes the field's selection away. */
+export declare function EmphasisToolbar(props: EmphasisToolbarProps): JSX.Element;
 
 export declare interface EmphasisToolbarProps {
     /** The emphasis the current selection has: pressed on that button. `'mixed'` or undefined presses none. */
@@ -10751,6 +10770,12 @@ export declare interface EmphasisToolbarProps {
     className?: string;
     /** Test-id prefix; buttons are `<prefix>-<emphasis>` and `<prefix>-plain`. */
     testIdPrefix?: string;
+    /**
+     * `labels` (default): a word per button, wrapping as needed. `icons` (since
+     * 2.551.0): one compact row of square buttons, each a styled glyph with its
+     * name as the accessible label and a tooltip — the in-place editor's bar.
+     */
+    variant?: 'labels' | 'icons';
 }
 
 /** `EmptyState`. */
@@ -12688,13 +12713,19 @@ export declare function graphGroups(nodes: GraphNode[]): string[];
 /** Three joined nodes: a graph of connections, "how these relate". */
 export declare function GraphIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GraphicPicker({ items, renderGraphic, value, onChange, label, className, testIdPrefix, }: GraphicPickerProps): JSX.Element;
+export declare function GraphicPicker({ items, renderGraphic, graphicSvg, value, onChange, label, className, testIdPrefix, }: GraphicPickerProps): JSX.Element;
 
 export declare interface GraphicPickerProps {
     /** The catalogue rows (the engine's `GRAPHICS_CATALOGUE`). */
     items: readonly DeckCatalogueItem[];
     /** Draws one graphic's preview in the host's theme. */
     renderGraphic?: (name: string) => ReactNode;
+    /**
+     * The artwork as a standalone SVG string per graphic (since 2.551.0), e.g.
+     * `(name) => graphicSvg(name, theme.colors)` from the deck engine. The string
+     * is inserted as markup, so pass only SVG your code generated.
+     */
+    graphicSvg?: (name: string) => string;
     /** The slide's decoration: undefined is the style default, `'none'` is none. */
     value?: DeckDecoration | 'none';
     onChange: (value: DeckDecoration | 'none' | undefined) => void;
@@ -20092,7 +20123,7 @@ declare interface PresenceUser_3 {
  * per-slide findings, open the gallery (`layoutGalleryOpen`) and call
  * `focusSlideTitle` on the `ref`.
  */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, layoutGalleryOpen: layoutGalleryOpenProp, onLayoutGalleryOpenChange, slideFindings, slideRegions, slideSize, onRegionEdit, onRowAdd, onRowRemove, onRowMove, icons, graphics, hiddenLayouts, deckStyle, onDeckStyleChange, stylePreviews, ref, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, layoutGalleryOpen: layoutGalleryOpenProp, onLayoutGalleryOpenChange, slideFindings, slideRegions, slideSize, onRegionEdit, onRowAdd, onRowRemove, onRowMove, icons, graphics, onDecorationChange, hiddenLayouts, deckStyle, onDeckStyleChange, stylePreviews, ref, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 declare interface PresentationEditorFrame {
@@ -20276,6 +20307,13 @@ export declare interface PresentationEditorProps {
     icons?: DeckIconSource;
     /** The graphics catalogue and artwork (since 2.550.0) for slide decorations. */
     graphics?: DeckGraphicSource;
+    /**
+     * A slide's decoration changed (since 2.551.0), from the side pane's Graphic
+     * row or the graphic picker: undefined is the style default, `'none'` none.
+     * Fires after the change is applied to the spec (`onChange`), so a host can
+     * persist or re-render the decoration without diffing specs.
+     */
+    onDecorationChange?: (slideId: string, decoration: DeckDecoration | 'none' | undefined) => void;
     /** Layouts to leave out of the gallery and the Layout menu (since 2.550.0), e.g. `IMAGE_LAYOUTS`. */
     hiddenLayouts?: readonly SlideLayout[];
     /** The deck's style (since 2.550.0). With `onDeckStyleChange`, the side pane offers the five styles. */
@@ -25032,8 +25070,10 @@ export declare interface SlideRegion {
     value?: unknown;
     /** The accessible name. Default: derived from the path ("Card 2 text"). */
     label?: string;
-    /** The theme's font size for this text, in slide units. */
+    /** The theme's font size for this text, in slide units. `text.fontSize` wins. */
     fontSize?: number;
+    /** How the slide paints this text (since 2.551.0): the editor then looks like the slide. */
+    text?: SlideRegionTextStyle;
     /** Allow line breaks (Shift+Enter) in the editor. */
     multiline?: boolean;
     /** Character cap for the editor. */
@@ -25081,6 +25121,29 @@ export declare interface SlideRegionsOverlayProps {
     readOnly?: boolean;
     className?: string;
     testIdPrefix?: string;
+}
+
+/**
+ * How a region's text is painted (since 2.551.0): the deck engine's
+ * `EditableRegion.text`, passed through. Sizes are slide units (points on the
+ * 960 x 540 stage); the overlay's SVG scales them with the stage.
+ */
+export declare interface SlideRegionTextStyle {
+    /** The family the slide paints with (the engine's open family: `Carlito`, `Liberation Sans`, `Gelasio`). */
+    fontFamily: string;
+    /** The metric-compatible office family (`Calibri`, `Arial`, `Georgia`): the stack's second choice. */
+    officeFamily?: string;
+    fontSize: number;
+    fontWeight: number;
+    italic?: boolean;
+    color: string;
+    align: 'left' | 'center' | 'right';
+    /** Baseline-to-baseline pitch, slide units. */
+    lineHeight: number;
+    letterSpacing?: number;
+    uppercase?: boolean;
+    /** The solid colour behind the text: the editor's background. Absent over a photograph (the editor is then transparent). */
+    background?: string;
 }
 
 export declare interface SliderProps {
