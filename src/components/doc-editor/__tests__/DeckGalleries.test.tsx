@@ -268,3 +268,68 @@ describe('PresentationEditor — All layouts… and host themes', () => {
     expect(saved.slides[0]!.bullets).toEqual(['x']);
   });
 });
+
+describe('PresentationEditor — controlled layout gallery (2.549.0)', () => {
+  const sources = [{ documentId: 'd', title: 'Doc' }];
+  const initial: DeckSpec = { title: 'D', slides: [{ id: 's1', layout: 'title', title: 'D', sources }] };
+  function Controlled({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+    const [spec, setSpec] = useState(initial);
+    return (
+      <PresentationEditor spec={spec} onChange={setSpec} preview={{ slides: [] }} onRequestPreview={() => {}}
+        onSaveRevision={async () => {}} revisions={[{ id: 'r1', label: 'v1' }] as never} activeRevisionId="r1" onSelectRevision={() => {}} sources={[]}
+        layoutGalleryOpen={open} onLayoutGalleryOpenChange={onOpenChange} />
+    );
+  }
+
+  it('a host opens and closes the gallery; the editor only asks', () => {
+    const onOpenChange = vi.fn();
+    const { rerender } = render(<Controlled open={false} onOpenChange={onOpenChange} />);
+    expect(screen.queryByTestId('presentation-editor-layout-panel')).toBeNull();
+    rerender(<Controlled open onOpenChange={onOpenChange} />);
+    expect(screen.getByRole('region', { name: 'Choose a layout' })).toBeInTheDocument();
+    expect(screen.getByTestId('presentation-editor-layout-back')).toHaveFocus();
+    // Back asks; the host has not closed it, so it stays.
+    fireEvent.click(screen.getByTestId('presentation-editor-layout-back'));
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    expect(screen.getByTestId('presentation-editor-layout-panel')).toBeInTheDocument();
+    rerender(<Controlled open={false} onOpenChange={onOpenChange} />);
+    expect(screen.queryByTestId('presentation-editor-layout-panel')).toBeNull();
+    // Insert › All layouts… asks to open.
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert'));
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert-all'));
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    expect(screen.queryByTestId('presentation-editor-layout-panel')).toBeNull();
+  });
+
+  it('choosing a layout adds the slide and asks to close; its title takes focus once the host closes', () => {
+    const onOpenChange = vi.fn();
+    const { rerender } = render(<Controlled open onOpenChange={onOpenChange} />);
+    fireEvent.click(screen.getByTestId('presentation-editor-layout-gallery-timeline'));
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    // The host still holds it open, so the filmstrip shows the added slide behind the gallery.
+    expect(document.querySelectorAll('[data-filmstrip-select]')).toHaveLength(2);
+    rerender(<Controlled open={false} onOpenChange={onOpenChange} />);
+    expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 2');
+    expect(screen.getByTestId('presentation-editor-slide-title')).toHaveFocus();
+  });
+
+  it('uncontrolled, onLayoutGalleryOpenChange still reports the editor\'s own opens and closes', () => {
+    const onOpenChange = vi.fn();
+    function Own() {
+      const [spec, setSpec] = useState(initial);
+      return (
+        <PresentationEditor spec={spec} onChange={setSpec} preview={{ slides: [] }} onRequestPreview={() => {}}
+          onSaveRevision={async () => {}} revisions={[{ id: 'r1', label: 'v1' }] as never} activeRevisionId="r1" onSelectRevision={() => {}} sources={[]}
+          onLayoutGalleryOpenChange={onOpenChange} />
+      );
+    }
+    render(<Own />);
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert'));
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-insert-all'));
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    expect(screen.getByTestId('presentation-editor-layout-panel')).toBeInTheDocument();
+    fireEvent.keyDown(screen.getByTestId('presentation-editor-layout-back'), { key: 'Escape' });
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    expect(screen.queryByTestId('presentation-editor-layout-panel')).toBeNull();
+  });
+});

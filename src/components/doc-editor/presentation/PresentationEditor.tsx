@@ -361,6 +361,17 @@ export interface PresentationEditorProps {
    * named by the findings, with a tooltip listing them. The list never shifts.
    */
   slideFindings?: Readonly<Record<string, readonly SlideFinding[]>>;
+  /**
+   * Controls the in-place layout gallery (since 2.549.0) — for a host that
+   * opens it itself (a voice "show me example layouts"). Omitted, the editor
+   * keeps its own state as before (Insert → All layouts… opens it).
+   * Passed, it is the truth: Insert → All layouts…, Back, Escape, choosing a
+   * layout and Present only ask, through `onLayoutGalleryOpenChange`. The
+   * gallery shows only while editing (not read-only, not presenting).
+   */
+  layoutGalleryOpen?: boolean;
+  /** Every request to open or close the layout gallery, controlled or not. */
+  onLayoutGalleryOpenChange?: (open: boolean) => void;
   /** The editor's imperative handle (`focusSlideTitle`), since 2.549.0. */
   ref?: Ref<PresentationEditorHandle>;
   className?: string;
@@ -470,13 +481,26 @@ export function PresentationEditor({
   onSelectedSlideChange,
   themes,
   layoutPreviews,
+  layoutGalleryOpen: layoutGalleryOpenProp,
+  onLayoutGalleryOpenChange,
   slideFindings,
   ref,
   className,
   'data-testid': testId = 'presentation-editor',
 }: PresentationEditorProps) {
   // "All layouts…" swaps the stage column for the gallery, in place (2.548.0).
-  const [layoutGalleryOpen, setLayoutGalleryOpen] = useState(false);
+  // Uncontrolled by default; a host that passes `layoutGalleryOpen` owns it
+  // (2.549.0) and hears every open and close through onLayoutGalleryOpenChange.
+  const [ownGalleryOpen, setOwnGalleryOpen] = useState(false);
+  const galleryControlled = layoutGalleryOpenProp !== undefined;
+  const layoutGalleryOpen = galleryControlled ? layoutGalleryOpenProp : ownGalleryOpen;
+  const galleryChange = useRef(onLayoutGalleryOpenChange);
+  galleryChange.current = onLayoutGalleryOpenChange;
+  const setLayoutGalleryOpen = useCallback((open: boolean) => {
+    if (open === layoutGalleryOpen) return;
+    if (!galleryControlled) setOwnGalleryOpen(open);
+    galleryChange.current?.(open);
+  }, [layoutGalleryOpen, galleryControlled]);
   const galleryOpener = useRef<HTMLElement | null>(null);
   // The slide form's own scroller (the stage stays pinned above it).
   const formRegion = useRef<HTMLDivElement | null>(null);
@@ -647,17 +671,19 @@ export function PresentationEditor({
   const selectedSlideId = selected?.id;
   useEffect(() => {
     if (!titleFocus || readOnly) return;
-    if (selectedSlideId !== titleFocus.id) return;
+    // Another slide was put on the stage since: the request lapses.
+    if (selectedSlideId !== titleFocus.id) { setTitleFocus(null); return; }
     const region = formRegion.current;
     const field = region?.querySelector<HTMLInputElement>('input[data-slide-title]');
-    setTitleFocus(null);
+    // Not drawn yet (a host still holds the layout gallery open): wait for it.
     if (!region || !field) return;
+    setTitleFocus(null);
     field.focus({ preventScroll: true });
     field.select();
     const box = region.getBoundingClientRect();
     const at = field.getBoundingClientRect();
     if (at.top < box.top || at.bottom > box.bottom) region.scrollTop += at.top - box.top - 8;
-  }, [titleFocus, selectedSlideId, readOnly]);
+  }, [titleFocus, selectedSlideId, readOnly, layoutGalleryOpen]);
 
   useImperativeHandle(ref, () => ({
     focusSlideTitle: (slideId: string) => {
@@ -783,13 +809,13 @@ export function PresentationEditor({
       : document.querySelector<HTMLElement>('[aria-haspopup="menu"][aria-expanded="true"]');
     galleryOpener.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
     setLayoutGalleryOpen(true);
-  }, []);
+  }, [setLayoutGalleryOpen]);
   const closeLayoutGallery = useCallback(() => {
     const opener = galleryOpener.current;
     const fallback = byTestId(`${testId}-toolbar-insert`);
     returnFocusTo.current = () => (opener?.isConnected ? opener : fallback());
     setLayoutGalleryOpen(false);
-  }, [testId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [testId, setLayoutGalleryOpen]); // eslint-disable-line react-hooks/exhaustive-deps
   const galleryBack = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
     if (layoutGalleryOpen) galleryBack.current?.focus();
