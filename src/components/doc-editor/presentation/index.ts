@@ -196,6 +196,6 @@ export { GraphicPicker } from './GraphicPicker';
 export type { GraphicPickerProps, DeckGraphicSource } from './GraphicPicker';
 export { DeckStylePicker, DeckStyleSwatch } from './DeckStylePicker';
 export type { DeckStylePickerProps } from './DeckStylePicker';
-export { SlideRegionsOverlay, regionLabel, regionRow, normalizeRegionPath, readingOrder, DEFAULT_SLIDE_SIZE } from './SlideRegionsOverlay';
-export type { SlideRegionsOverlayProps, SlideRegion, SlideRegionKind, SlideRegionBox, SlideRegionRow, SlideSize } from './SlideRegionsOverlay';
+export { SlideRegionsOverlay, regionLabel, regionRow, normalizeRegionPath, readingOrder, DEFAULT_SLIDE_SIZE, deckFontStack, emphasisBarPlacement } from './SlideRegionsOverlay';
+export type { SlideRegionsOverlayProps, SlideRegion, SlideRegionKind, SlideRegionBox, SlideRegionRow, SlideSize, SlideRegionTextStyle } from './SlideRegionsOverlay';
 export { ItemsEditor, MatrixEditor, PeopleEditor, FunnelEditor, ImageEditor, DecorationField } from './SlideRichForms';

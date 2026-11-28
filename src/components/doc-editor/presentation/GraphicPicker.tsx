@@ -1,4 +1,4 @@
-// GraphicPicker — a slide's decoration from the graphics library (since 2.550.0).
+// GraphicPicker — a slide's decoration from the graphics library (since 2.550.0), drawing the host's SVG artwork (2.551.0).
 //
 // Inline in the form region, never a dialog. Three kinds of choice:
 //
@@ -8,10 +8,16 @@
 //   Background, Beside the title) chosen under the grid once a graphic is on.
 //
 // The host passes the catalogue rows (`items`, the engine's
-// `GRAPHICS_CATALOGUE`) and, to show the artwork, `renderGraphic(name)` — the
-// engine draws graphics as theme-tinted multi-tone paths in a frame
-// (`graphicElements`), so only the host can draw one in its theme. Without
-// it each tile shows the graphic's label.
+// `GRAPHICS_CATALOGUE`) and the artwork, in either of two ways: `graphicSvg`
+// (since 2.551.0), a function returning a standalone SVG string per graphic —
+// the engine's `graphicSvg(name, theme.colors)` from
+// `@connorhoehn/realtime-modules/deck/layout` fits as is — or
+// `renderGraphic(name)`, any node. Only the host knows the theme, so only it
+// can tint the artwork. With neither, each tile shows the graphic's label.
+//
+// The placement choice (since 2.551.0) sits on its own row under its label as
+// a two-by-two segmented control that fills the pane, four across once the
+// picker is wide, so "Beside the title" never clips in a 20rem side pane.
 
 import { useMemo, useState, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
@@ -27,6 +33,8 @@ import { catalogueMatches, type DeckCatalogueItem } from './IconPicker';
 export interface DeckGraphicSource {
   items: readonly DeckCatalogueItem[];
   renderGraphic?: (name: string) => ReactNode;
+  /** A trusted, standalone SVG string per graphic (the engine's `graphicSvg`), since 2.551.0. `renderGraphic` wins when both are given. */
+  graphicSvg?: (name: string) => string;
 }
 
 export interface GraphicPickerProps {
@@ -34,6 +42,12 @@ export interface GraphicPickerProps {
   items: readonly DeckCatalogueItem[];
   /** Draws one graphic's preview in the host's theme. */
   renderGraphic?: (name: string) => ReactNode;
+  /**
+   * The artwork as a standalone SVG string per graphic (since 2.551.0), e.g.
+   * `(name) => graphicSvg(name, theme.colors)` from the deck engine. The string
+   * is inserted as markup, so pass only SVG your code generated.
+   */
+  graphicSvg?: (name: string) => string;
   /** The slide's decoration: undefined is the style default, `'none'` is none. */
   value?: DeckDecoration | 'none';
   onChange: (value: DeckDecoration | 'none' | undefined) => void;
@@ -57,6 +71,7 @@ const TILE = 'flex h-full w-full flex-col items-center justify-center gap-1 roun
 export function GraphicPicker({
   items,
   renderGraphic,
+  graphicSvg,
   value,
   onChange,
   label = 'Decoration',
@@ -110,21 +125,30 @@ export function GraphicPicker({
               className={TILE}
               data-testid={`${testIdPrefix}-${item.name}`}
             >
-              {renderGraphic && (
+              {renderGraphic ? (
                 <span aria-hidden="true" className="flex aspect-video w-full items-center justify-center overflow-hidden rounded-sm bg-surface-inset">
                   {renderGraphic(item.name)}
                 </span>
-              )}
+              ) : graphicSvg ? (
+                <span
+                  aria-hidden="true"
+                  className="flex aspect-video w-full items-center justify-center overflow-hidden rounded-sm bg-surface-inset p-1 [&>svg]:h-full [&>svg]:w-full"
+                  data-testid={`${testIdPrefix}-art-${item.name}`}
+                  dangerouslySetInnerHTML={{ __html: graphicSvg(item.name) }}
+                />
+              ) : null}
               <Text as="span" size="xs" tone="secondary" className="line-clamp-1 w-full text-center">{item.label}</Text>
             </button>
           </li>
         ))}
       </ul>
       {chosen && (
-        <div className="flex flex-wrap items-center gap-2" data-testid={`${testIdPrefix}-placement`}>
+        <div className="flex min-w-0 flex-col gap-1" data-testid={`${testIdPrefix}-placement`}>
           <SectionLabel as="div">Placement</SectionLabel>
           <SegmentedControl
             size="sm"
+            fullWidth
+            className="grid grid-cols-2 @md:grid-cols-4"
             aria-label="Placement"
             value={chosen.placement ?? DEFAULT_PLACEMENT}
             onChange={(next) => {

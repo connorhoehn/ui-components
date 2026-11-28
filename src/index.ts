@@ -263,8 +263,8 @@ export { DeckStylePicker } from './components/doc-editor/presentation/DeckStyleP
 export type { DeckStylePickerProps } from './components/doc-editor/presentation/DeckStylePicker';
 export { DeckTextField, EmphasisToolbar } from './components/doc-editor/presentation/DeckTextField';
 export type { DeckTextFieldProps, EmphasisToolbarProps } from './components/doc-editor/presentation/DeckTextField';
-export { SlideRegionsOverlay } from './components/doc-editor/presentation/SlideRegionsOverlay';
-export type { SlideRegionsOverlayProps, SlideRegion, SlideRegionKind, SlideRegionBox, SlideRegionRow, SlideSize } from './components/doc-editor/presentation/SlideRegionsOverlay';
+export { SlideRegionsOverlay, deckFontStack, emphasisBarPlacement } from './components/doc-editor/presentation/SlideRegionsOverlay';
+export type { SlideRegionsOverlayProps, SlideRegion, SlideRegionKind, SlideRegionBox, SlideRegionRow, SlideSize, SlideRegionTextStyle } from './components/doc-editor/presentation/SlideRegionsOverlay';
 
 // An agent's pending edits to an open document (2.408.0). Named explicitly,
 // like PresentationEditor above: the strip imports only shared primitives, so

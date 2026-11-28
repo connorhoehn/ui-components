@@ -531,6 +531,7 @@ export function DecorationField({ value, graphics, onChange, readOnly, testIdPre
         <GraphicPicker
           items={graphics.items}
           renderGraphic={graphics.renderGraphic}
+          graphicSvg={graphics.graphicSvg}
           value={value}
           onChange={onChange}
           label="Slide graphic"

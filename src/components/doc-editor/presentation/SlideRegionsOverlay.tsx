@@ -1,4 +1,4 @@
-// SlideRegionsOverlay — edit a slide by clicking its elements (since 2.550.0).
+// SlideRegionsOverlay — edit a slide by clicking its elements (since 2.550.0), in the slide's own type with a compact emphasis bar outside the box (2.551.0).
 //
 // The host computes, per slide, where each editable element sits — the
 // title, a bullet, a card's text, an icon, the chart — as `SlideRegion`s in
@@ -14,9 +14,16 @@
 // - Enter or a click on a text region opens an editor exactly on the box, in
 //   the region's font size where the host gives it (slide units, so it scales
 //   too). It grows with its content; the slide stays visible around it.
-//   Enter (without Shift) or leaving the field commits, Esc cancels. A
-//   `runs` region (a title or bullet) floats the `EmphasisToolbar` above the
-//   box — anchored to the stage, a contextual bar, not a dialog;
+//   Enter (without Shift) or leaving the field commits, Esc cancels. With
+//   the region's `text` style (since 2.551.0, the engine's
+//   `EditableRegion.text`) the editor is set in the slide's own family, size,
+//   weight, colour, alignment and line pitch on the colour behind the text,
+//   with a thin outline instead of a white box, so the edit looks like the
+//   slide. A `runs` region (a title or bullet) shows the emphasis toolbar as
+//   one compact row of icon buttons just above the box (below it when the
+//   box is near the top), never over it, kept inside the stage. The bar is
+//   HTML beside the SVG, positioned in stage percentages, so it stays at its
+//   real size however small the stage is drawn;
 // - an icon, graphic, chart, image or figure region calls `onPick` instead:
 //   the editor opens the matching picker in its side pane;
 // - a region that is a row of a list (`row`) shows small Add after, Move
@@ -26,7 +33,7 @@
 // region's `value` catches up (the host's re-render): the overlay is
 // optimistic; re-rendering, and debouncing it, is the host's job.
 
-import { useEffect, useRef, useState, type FocusEvent, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FocusEvent, type KeyboardEvent } from 'react';
 import { cn } from '../../../lib/cn';
 import { EmphasisToolbar } from './DeckTextField';
 import { DeckTextPreview } from './DeckTextField';
@@ -50,6 +57,88 @@ export interface SlideRegionRow {
   index: number;
 }
 
+/**
+ * How a region's text is painted (since 2.551.0): the deck engine's
+ * `EditableRegion.text`, passed through. Sizes are slide units (points on the
+ * 960 x 540 stage); the overlay's SVG scales them with the stage.
+ */
+export interface SlideRegionTextStyle {
+  /** The family the slide paints with (the engine's open family: `Carlito`, `Liberation Sans`, `Gelasio`). */
+  fontFamily: string;
+  /** The metric-compatible office family (`Calibri`, `Arial`, `Georgia`): the stack's second choice. */
+  officeFamily?: string;
+  fontSize: number;
+  fontWeight: number;
+  italic?: boolean;
+  color: string;
+  align: 'left' | 'center' | 'right';
+  /** Baseline-to-baseline pitch, slide units. */
+  lineHeight: number;
+  letterSpacing?: number;
+  uppercase?: boolean;
+  /** The solid colour behind the text: the editor's background. Absent over a photograph (the editor is then transparent). */
+  background?: string;
+}
+
+/**
+ * A CSS font stack for an engine family: the family itself (when the page
+ * loads it), its office twin, then the closest common family. `Carlito` reads
+ * as Calibri, `Liberation Sans` as Arial, `Gelasio` as Georgia; anything else
+ * leads with its own name over a sans fallback.
+ */
+export function deckFontStack(family: string, officeFamily?: string): string {
+  const q = (name: string) => `"${name.replace(/["\\;{}<>]/g, '')}"`;
+  const known: Record<string, string> = {
+    carlito: '"Carlito", "Calibri", "Segoe UI", system-ui, sans-serif',
+    calibri: '"Calibri", "Carlito", "Segoe UI", system-ui, sans-serif',
+    'liberation sans': '"Liberation Sans", Arial, Helvetica, sans-serif',
+    arial: 'Arial, "Liberation Sans", Helvetica, sans-serif',
+    gelasio: '"Gelasio", Georgia, "Times New Roman", serif',
+    georgia: 'Georgia, "Gelasio", "Times New Roman", serif',
+  };
+  const hit = known[family.trim().toLowerCase()];
+  if (hit) return hit;
+  return [q(family), officeFamily ? q(officeFamily) : null, 'sans-serif'].filter(Boolean).join(', ');
+}
+
+/** The CSS variables a styled region's editor reads (`--region-*`), and its classes. */
+function regionTextStyle(text: SlideRegionTextStyle | undefined): { vars?: CSSProperties; className?: string } {
+  if (!text) return {};
+  const vars = {
+    '--region-font': deckFontStack(text.fontFamily, text.officeFamily),
+    '--region-color': text.color,
+    '--region-lh': String(Math.round((text.lineHeight / text.fontSize) * 1000) / 1000),
+    '--region-ls': `${text.letterSpacing ?? 0}px`,
+    '--region-bg': text.background ?? 'transparent',
+  } as CSSProperties;
+  return {
+    vars,
+    className: cn(
+      '[font-family:var(--region-font)] [color:var(--region-color)] [line-height:var(--region-lh)] [letter-spacing:var(--region-ls)] [background-color:var(--region-bg)]',
+      text.fontWeight >= 600 ? 'font-bold' : 'font-normal',
+      text.italic && 'italic',
+      text.uppercase && 'uppercase',
+      text.align === 'center' ? 'text-center' : text.align === 'right' ? 'text-right' : 'text-left',
+    ),
+  };
+}
+
+/** Where the emphasis bar sits for a box: above it when there is room, else below; left-anchored in the left half of the stage, right-anchored in the right. */
+export function emphasisBarPlacement(box: SlideRegionBox, size: SlideSize = DEFAULT_SLIDE_SIZE): { side: 'above' | 'below'; anchor: 'left' | 'right'; top: number; left: number; right: number } {
+  // The bar is about 34 px tall; at the smallest stage a host draws (about 480 px wide) that is ~68 slide units.
+  const room = size.height * 0.125;
+  const side = box.y >= room || size.height - (box.y + box.h) < room ? 'above' : 'below';
+  const pct = (v: number, of: number) => (v / of) * 100;
+  const anchor = box.x + box.w / 2 <= size.width / 2 ? 'left' : 'right';
+  return {
+    side,
+    anchor,
+    top: pct(side === 'above' ? box.y : box.y + box.h, size.height),
+    left: pct(Math.max(0, box.x), size.width),
+    right: pct(Math.max(0, size.width - (box.x + box.w)), size.width),
+  };
+}
+
 export interface SlideRegion {
   /**
    * The field's path: `title`, `bullets[2]`, `items[1].icon`, `matrix.quadrants[3].text`,
@@ -62,8 +151,10 @@ export interface SlideRegion {
   value?: unknown;
   /** The accessible name. Default: derived from the path ("Card 2 text"). */
   label?: string;
-  /** The theme's font size for this text, in slide units. */
+  /** The theme's font size for this text, in slide units. `text.fontSize` wins. */
   fontSize?: number;
+  /** How the slide paints this text (since 2.551.0): the editor then looks like the slide. */
+  text?: SlideRegionTextStyle;
   /** Allow line breaks (Shift+Enter) in the editor. */
   multiline?: boolean;
   /** Character cap for the editor. */
@@ -311,7 +402,10 @@ export function SlideRegionsOverlay({
   const { width, height } = slideSize;
   const editingRegion = editing ? regions.find((r) => r.path === editing.path) : undefined;
 
+  const bar = editing && editingRegion?.kind === 'runs' ? emphasisBarPlacement(editingRegion.box, slideSize) : null;
+
   return (
+    <>
     <svg
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet"
@@ -326,18 +420,22 @@ export function SlideRegionsOverlay({
         const isEditing = editing?.path === region.path;
         const shown = pending[region.path];
         const row = regionRow(region);
+        const look = regionTextStyle(region.text);
+        const size = region.text?.fontSize ?? region.fontSize;
         return (
           <g key={region.path} className="group" data-region={region.path}>
             {!isEditing && shown !== undefined && (
-              <foreignObject x={x} y={y} width={w} height={h} fontSize={region.fontSize} className="pointer-events-none overflow-visible">
-                <div className="h-full w-full overflow-hidden bg-surface/90 [font-size:inherit]" data-testid={`${testIdPrefix}-pending-${region.path}`}>
+              <foreignObject x={x} y={y} width={w} height={h} fontSize={size} className="pointer-events-none overflow-visible">
+                <div className={cn('h-full w-full overflow-hidden [font-size:inherit]', look.className ?? 'bg-surface/90', look.className && '[&_*]:[font-family:inherit] [&_*]:[line-height:inherit]')} style={look.vars} data-testid={`${testIdPrefix}-pending-${region.path}`}>
                   <DeckTextPreview text={shown} className="[&_*]:[font-size:inherit]" />
                 </div>
               </foreignObject>
             )}
             {isEditing ? (
-              <foreignObject x={x} y={y} width={w} height={h} fontSize={region.fontSize} className="overflow-visible" ref={part}>
+              <foreignObject x={x} y={y} width={w} height={h} fontSize={size} className="overflow-visible" ref={part}>
                 <textarea
+                  style={look.vars}
+                  data-styled={region.text ? 'slide' : undefined}
                   ref={fieldRef}
                   aria-label={label}
                   value={deckTextValue(editing!.draft)}
@@ -349,7 +447,12 @@ export function SlideRegionsOverlay({
                   onSelect={readSelection}
                   onKeyUp={readSelection}
                   onMouseUp={readSelection}
-                  className="block min-h-full w-full resize-none overflow-hidden rounded-sm border border-primary bg-surface p-0 leading-tight text-text-primary shadow-md outline-none [field-sizing:content] [font-size:inherit]"
+                  className={cn(
+                    'block min-h-full w-full resize-none overflow-hidden p-0 [field-sizing:content] [font-size:inherit]',
+                    look.className
+                      ? cn('rounded-none border-0 shadow-none outline outline-1 outline-offset-2 outline-primary/70 caret-primary', look.className)
+                      : 'rounded-sm border border-primary bg-surface leading-tight text-text-primary shadow-md outline-none',
+                  )}
                   data-testid={`${testIdPrefix}-editor`}
                   data-path={region.path}
                 />
@@ -389,25 +492,40 @@ export function SlideRegionsOverlay({
           </g>
         );
       })}
-      {editing && editingRegion?.kind === 'runs' && (() => {
-        const { x, y, h } = editingRegion.box;
-        const above = y >= 44;
-        const [start, end] = selection;
-        return (
-          <foreignObject x={Math.max(0, Math.min(x, width - 420))} y={above ? y - 40 : y + h + 4} width={420} height={36} className="overflow-visible" ref={part}>
-            <div className="inline-flex rounded-md border border-border bg-surface px-1 py-0.5 shadow-md" onBlur={onFieldBlur}>
-              <EmphasisToolbar
-                label={`${editingRegion.label ?? regionLabel(editingRegion.path, layout)}: emphasis`}
-                active={end > start ? emphasisAt(editing.draft, start, end) : undefined}
-                disabled={end <= start}
-                onApply={applyRun}
-                testIdPrefix={`${testIdPrefix}-emphasis`}
-              />
-            </div>
-          </foreignObject>
-        );
-      })()}
     </svg>
+    {bar && editing && editingRegion && (() => {
+      const [start, end] = selection;
+      const vars = {
+        '--bar-top': `${bar.top}%`,
+        '--bar-left': `${bar.left}%`,
+        '--bar-right': `${bar.right}%`,
+      } as CSSProperties;
+      return (
+        <div
+          ref={part}
+          style={vars}
+          onBlur={onFieldBlur}
+          className={cn(
+            'absolute z-10 flex max-w-full flex-nowrap items-center rounded-md border border-border bg-surface p-0.5 shadow-md [top:var(--bar-top)]',
+            bar.side === 'above' ? '-translate-y-[calc(100%_+_6px)]' : 'translate-y-[6px]',
+            bar.anchor === 'left' ? '[left:var(--bar-left)]' : '[right:var(--bar-right)]',
+          )}
+          data-testid={`${testIdPrefix}-emphasis-bar`}
+          data-side={bar.side}
+          data-anchor={bar.anchor}
+        >
+          <EmphasisToolbar
+            variant="icons"
+            label={`${editingRegion.label ?? regionLabel(editingRegion.path, layout)}: emphasis`}
+            active={end > start ? emphasisAt(editing.draft, start, end) : undefined}
+            disabled={end <= start}
+            onApply={applyRun}
+            testIdPrefix={`${testIdPrefix}-emphasis`}
+          />
+        </div>
+      );
+    })()}
+    </>
   );
 }
 

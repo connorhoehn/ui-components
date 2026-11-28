@@ -45,6 +45,15 @@ const GRAPHICS: DeckCatalogueItem[] = [
   { name: 'badge-seal', label: 'Seal', category: 'badge', keywords: [] },
 ];
 
+/** Stand-in artwork: a host passes the engine's `graphicSvg(name, theme.colors)`. */
+const GRAPHIC_ART: Record<string, string> = {
+  blob: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M62 6C82 10 96 30 92 52C88 76 70 94 46 92C22 90 6 72 8 48C10 24 38 2 62 6Z" fill="#E2DBFF"/></svg>',
+  waves: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 60"><path d="M0 30Q20 10 40 30T80 30T120 30T160 30" fill="none" stroke="#6D4AFF" stroke-width="4"/></svg>',
+  dots: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 54"><path d="M9 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0ZM45 27a2 2 0 1 0 4 0a2 2 0 1 0 -4 0ZM81 45a2 2 0 1 0 4 0a2 2 0 1 0 -4 0Z" fill="#6D4AFF"/></svg>',
+  'badge-seal': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 4L61 20L80 14L80 34L96 45L84 60L90 79L70 80L60 96L45 86L27 93L23 73L6 63L17 47L10 28L30 25Z" fill="#6D4AFF"/></svg>',
+};
+const graphicSvg = (name: string) => GRAPHIC_ART[name] ?? '';
+
 export const IconPicker: Story = {
   args: { items: ICONS, icons: ICON_PATHS, onSelect: () => {} },
   render: (args) => {
@@ -58,6 +67,15 @@ export const Graphics: Story = {
   render: () => {
     const [value, setValue] = useState<DeckDecoration | 'none' | undefined>(undefined);
     return <GraphicPicker items={GRAPHICS} value={value} onChange={setValue} />;
+  },
+};
+
+/** Since 2.551.0: tiles draw the host's SVG strings; the placement row fits a 20rem side pane. */
+export const GraphicsWithArtwork: Story = {
+  args: IconPicker.args!,
+  render: () => {
+    const [value, setValue] = useState<DeckDecoration | 'none' | undefined>({ graphic: 'blob', placement: 'title' });
+    return <div className="w-80"><GraphicPicker items={GRAPHICS} graphicSvg={graphicSvg} value={value} onChange={setValue} /></div>;
   },
 };
 
@@ -95,6 +113,23 @@ const REGIONS: SlideRegion[] = [
   { path: 'items.0.text', kind: 'text', box: { x: 60, y: 300, w: 260, h: 60 }, value: 'Ship the pilot', row: { list: 'items', index: 0 } },
   { path: 'items.0.icon', kind: 'icon', box: { x: 60, y: 240, w: 40, h: 40 } },
 ];
+
+/** As the engine (0.156.0) sends them: each text region carries the painted style. */
+const STYLED_REGIONS: SlideRegion[] = [
+  { path: 'eyebrow', kind: 'text', box: { x: 56, y: 40, w: 300, h: 22 }, value: 'Q3 plan', text: { fontFamily: 'Carlito', officeFamily: 'Calibri', fontSize: 12, fontWeight: 700, color: '#6D4AFF', align: 'left', lineHeight: 16, letterSpacing: 2, uppercase: true, background: '#FFFFFF' } },
+  { path: 'title', kind: 'runs', box: { x: 56, y: 66, w: 760, h: 58 }, value: 'Three bets for Q3', text: { fontFamily: 'Gelasio', officeFamily: 'Georgia', fontSize: 40, fontWeight: 700, color: '#1B1B2F', align: 'left', lineHeight: 48, background: '#FFFFFF' } },
+  { path: 'items[0].text', kind: 'text', box: { x: 56, y: 300, w: 260, h: 60 }, value: 'Ship the pilot', text: { fontFamily: 'Carlito', officeFamily: 'Calibri', fontSize: 18, fontWeight: 400, color: '#3A3A4A', align: 'left', lineHeight: 24, background: '#F3F0FF' } },
+];
+
+/** Since 2.551.0: click the title; the editor is set in the slide's own type, and the emphasis bar sits above it. */
+export const InPlaceStyled: Story = {
+  args: IconPicker.args!,
+  render: () => (
+    <SlideStage label="Slide 1">
+      <SlideRegionsOverlay regions={STYLED_REGIONS} layout="cards" onEdit={() => {}} onPick={() => {}} />
+    </SlideStage>
+  ),
+};
 
 export const InPlace: Story = {
   args: IconPicker.args!,

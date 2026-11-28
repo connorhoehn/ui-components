@@ -136,6 +136,7 @@ import {
   moveSlideRow,
   type DeckStyle,
   type DeckText,
+  type DeckDecoration,
 } from './deckSpec';
 import { DensityProvider } from '../../shared/Density';
 
@@ -407,6 +408,13 @@ export interface PresentationEditorProps {
   icons?: DeckIconSource;
   /** The graphics catalogue and artwork (since 2.550.0) for slide decorations. */
   graphics?: DeckGraphicSource;
+  /**
+   * A slide's decoration changed (since 2.551.0), from the side pane's Graphic
+   * row or the graphic picker: undefined is the style default, `'none'` none.
+   * Fires after the change is applied to the spec (`onChange`), so a host can
+   * persist or re-render the decoration without diffing specs.
+   */
+  onDecorationChange?: (slideId: string, decoration: DeckDecoration | 'none' | undefined) => void;
   /** Layouts to leave out of the gallery and the Layout menu (since 2.550.0), e.g. `IMAGE_LAYOUTS`. */
   hiddenLayouts?: readonly SlideLayout[];
   /** The deck's style (since 2.550.0). With `onDeckStyleChange`, the side pane offers the five styles. */
@@ -538,6 +546,7 @@ export function PresentationEditor({
   onRowMove,
   icons,
   graphics,
+  onDecorationChange,
   hiddenLayouts,
   deckStyle,
   onDeckStyleChange,
@@ -1396,6 +1405,14 @@ export function PresentationEditor({
   // ---------------------------------------------------------------------------
 
   const applyInPlace = (next: DeckSlide) => { if (selected && next !== selected) editSlide(next); };
+  const changeDecoration = (decoration: DeckDecoration | 'none' | undefined) => {
+    if (!selected) return;
+    const next = { ...selected };
+    if (decoration === undefined) delete next.decoration;
+    else next.decoration = decoration;
+    applyInPlace(next);
+    onDecorationChange?.(selected.id, decoration);
+  };
   const regionEdit = (path: string, value: unknown) => {
     if (!selected) return;
     if (path.startsWith('deck.')) {
@@ -1443,12 +1460,10 @@ export function PresentationEditor({
         <GraphicPicker
           items={graphics.items}
           renderGraphic={graphics.renderGraphic}
+          graphicSvg={graphics.graphicSvg}
           value={selected.decoration}
           onChange={(decoration) => {
-            const next = { ...selected };
-            if (decoration === undefined) delete next.decoration;
-            else next.decoration = decoration;
-            applyInPlace(next);
+            changeDecoration(decoration);
             onRegionEdit?.(selected.id, 'decoration', decoration);
           }}
           testIdPrefix={`${testId}-graphic-picker`}
@@ -1480,12 +1495,7 @@ export function PresentationEditor({
         <DecorationField
           value={selected.decoration}
           graphics={graphics}
-          onChange={(decoration) => {
-            const next = { ...selected };
-            if (decoration === undefined) delete next.decoration;
-            else next.decoration = decoration;
-            applyInPlace(next);
-          }}
+          onChange={changeDecoration}
           readOnly={readOnly}
           testIdPrefix={`${testId}-decoration`}
         />

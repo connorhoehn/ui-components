@@ -643,7 +643,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DocumentTypeWizard` | `@connorhoehn/ui-components/doc-types` | 3-step wizard for creating or editing a document type. |  |  |
 | `EditorShell` | `@connorhoehn/ui-components/doc-editor` | The chrome every file in the Documents workspace is edited inside, whatever kind of file it is: a crumb trail, the title row (star, status pill, collaborators, save state, head actions), the Editor / Comments / Versio… | `doceditor-editorshell` |  |
 | `EditorToolbar` | `@connorhoehn/ui-components/doc-editor` | Extracted toolbar with formatting buttons for the Tiptap editor. |  |  |
-| `EmphasisToolbar` | `@connorhoehn/ui-components/doc-editor` | The emphasis buttons as one keyboard stop (`RovingToolbar`). |  |  |
+| `EmphasisToolbar` | `@connorhoehn/ui-components/doc-editor` | The emphasis buttons as one keyboard stop (`RovingToolbar`); `variant="icons"` is one compact row of icon buttons (2.551.0). |  |  |
 | `ExecutiveSummaryCard` | `@connorhoehn/ui-components/doc-editor` | — |  |  |
 | `FieldBlock` | `@connorhoehn/ui-components/diagram` | An in-progress edit of one control, held in BOTH state and a ref. |  |  |
 | `FieldDefinitionEditor` | `@connorhoehn/ui-components/doc-types` | Per-field schema editor row. |  |  |
@@ -656,7 +656,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `FloatingDockBar` | `@connorhoehn/ui-components/doc-editor` | A home for the call along the bottom edge of a page. |  |  |
 | `FollowModeBar` | `@connorhoehn/ui-components/doc-editor` | "Following [name]" banner with stop button. | `doc-editor-followmodebar` |  |
 | `FunnelEditor` | `@connorhoehn/ui-components/doc-editor` | Funnel stages widest first (label, value, detail), three to five, with add, remove and reorder. |  |  |
-| `GraphicPicker` | `@connorhoehn/ui-components/doc-editor` | A slide's decoration from the graphics library (since 2.550.0). |  |  |
+| `GraphicPicker` | `@connorhoehn/ui-components/doc-editor` | A slide's decoration from the graphics library (since 2.550.0), drawing the host's SVG artwork (2.551.0). |  |  |
 | `HeaderBanner` | `@connorhoehn/ui-components/doc-editor` | — |  |  |
 | `HitlBlock` | `@connorhoehn/ui-components/diagram` | A `macro:hitl` fence, drawn as an agent's question with the state a person needs to answer it. |  |  |
 | `HitlMacro` | `@connorhoehn/ui-components/diagram` | `macro:hitl` — an agent's question, drawn as a card a person can answer inside the page. |  |  |
@@ -697,7 +697,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `SlideForm` | `@connorhoehn/ui-components/doc-editor` | The inline form under the slide preview — the fields THIS layout reads. | `doceditor-slideform` |  |
 | `SlideLayoutSchematic` | `@connorhoehn/ui-components/doc-editor` | A layout drawn as blocks (title bar, text lines, bars, figures) in a 16:9 frame — what `LayoutGallery` shows when the host has no rendered preview. |  |  |
 | `SlideList` | `@connorhoehn/ui-components/doc-editor` | The slide rail's list, without drag. |  |  |
-| `SlideRegionsOverlay` | `@connorhoehn/ui-components/doc-editor` | Edit a slide by clicking its elements (since 2.550.0). |  |  |
+| `SlideRegionsOverlay` | `@connorhoehn/ui-components/doc-editor` | Edit a slide by clicking its elements (since 2.550.0), in the slide's own type with a compact emphasis bar outside the box (2.551.0). |  |  |
 | `SlideRow` | `@connorhoehn/ui-components/doc-editor` | One row of the slide rail: a thumbnail, its number, its title, its controls. |  |  |
 | `SlideSources` | `@connorhoehn/ui-components/doc-editor` | The citations on one slide, and the Documents-explorer search that adds them. |  |  |
 | `SlideStage` | `@connorhoehn/ui-components/doc-editor` | The slide stage: one centred 16:9 frame for the slide being edited. |  |  |

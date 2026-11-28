@@ -15,9 +15,11 @@
 // one-line preview under the field shows them styled, since an `<input>` can
 // only show plain text.
 
-import { forwardRef, useCallback, useRef, useState, type FocusEvent, type InputHTMLAttributes } from 'react';
+import { forwardRef, useCallback, useRef, useState, type FocusEvent, type InputHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import { Button } from '../../ui/Button';
+import { IconButton } from '../../ui/IconButton';
+import { Tooltip } from '../../shared/Tooltip';
 import { Input } from '../../forms/Input';
 import { RovingToolbar } from '../../shared/RovingToolbar';
 import { Text } from '../../shared/Text';
@@ -56,10 +58,59 @@ export interface EmphasisToolbarProps {
   className?: string;
   /** Test-id prefix; buttons are `<prefix>-<emphasis>` and `<prefix>-plain`. */
   testIdPrefix?: string;
+  /**
+   * `labels` (default): a word per button, wrapping as needed. `icons` (since
+   * 2.551.0): one compact row of square buttons, each a styled glyph with its
+   * name as the accessible label and a tooltip — the in-place editor's bar.
+   */
+  variant?: 'labels' | 'icons';
 }
 
-/** The emphasis buttons as one keyboard stop (`RovingToolbar`). Pressing one never takes the field's selection away. */
-export function EmphasisToolbar({ active, onApply, disabled = false, label = 'Text emphasis', className, testIdPrefix = 'emphasis' }: EmphasisToolbarProps) {
+/** The glyph each emphasis shows in the `icons` toolbar: an "A" drawn the way the emphasis reads. */
+const EMPHASIS_GLYPH: Record<DeckEmphasis, { text: string; className: string }> = {
+  highlight: { text: 'A', className: 'rounded-sm bg-primary/25 px-0.5' },
+  accent: { text: 'A', className: 'text-primary' },
+  bold: { text: 'B', className: 'font-bold' },
+  underline: { text: 'U', className: 'underline underline-offset-2' },
+  outline: { text: 'A', className: 'font-bold text-transparent [-webkit-text-stroke:1px_var(--color-text-primary)]' },
+  gradient: { text: 'A', className: 'bg-gradient-to-r from-primary to-accent bg-clip-text font-bold text-transparent' },
+};
+
+function EmphasisIcons({ active, onApply, disabled = false, label = 'Text emphasis', className, testIdPrefix = 'emphasis' }: EmphasisToolbarProps) {
+  const item = (key: string, name: string, pressed: boolean | undefined, apply: () => void, glyph: ReactNode) => (
+    <Tooltip key={key} content={name} placement="top">
+      <IconButton
+        aria-label={name}
+        size="sm"
+        variant="ghost"
+        aria-pressed={pressed}
+        disabled={disabled}
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={apply}
+        data-testid={`${testIdPrefix}-${key}`}
+        icon={glyph}
+      />
+    </Tooltip>
+  );
+  return (
+    <RovingToolbar label={label} className={cn('flex flex-nowrap items-center gap-0.5', className)} data-testid={testIdPrefix}>
+      {DECK_EMPHASES.map((emphasis) => item(
+        emphasis,
+        DECK_EMPHASIS_LABELS[emphasis],
+        active === emphasis,
+        () => onApply(active === emphasis ? null : emphasis),
+        <span aria-hidden="true" className={cn('text-sm leading-none', EMPHASIS_GLYPH[emphasis].className)}>{EMPHASIS_GLYPH[emphasis].text}</span>,
+      ))}
+      <span aria-hidden="true" className="mx-0.5 h-4 w-px bg-border" />
+      {item('plain', 'Plain', undefined, () => onApply(null), <span aria-hidden="true" className="text-sm leading-none line-through decoration-text-tertiary">T</span>)}
+    </RovingToolbar>
+  );
+}
+
+/** The emphasis buttons as one keyboard stop (`RovingToolbar`); `variant="icons"` is one compact row of icon buttons (2.551.0). Pressing one never takes the field's selection away. */
+export function EmphasisToolbar(props: EmphasisToolbarProps) {
+  if (props.variant === 'icons') return <EmphasisIcons {...props} />;
+  const { active, onApply, disabled = false, label = 'Text emphasis', className, testIdPrefix = 'emphasis' } = props;
   return (
     <RovingToolbar label={label} className={cn('flex flex-wrap items-center gap-0.5', className)} data-testid={testIdPrefix}>
       {DECK_EMPHASES.map((emphasis) => (
