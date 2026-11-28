@@ -30,7 +30,7 @@ import LoadingState from '../../shared/LoadingState';
 import { Text } from '../../shared/Text';
 import { Filmstrip } from './Filmstrip';
 import { SlideStage } from './SlideStage';
-import { canSaveDeck, type DeckSlide, type DeckSpec } from './deckSpec';
+import { canSaveDeck, plainText, type DeckSlide, type DeckSpec } from './deckSpec';
 import type {
   PresentationEditorFrame,
   PresentationEditorProps,
@@ -173,7 +173,7 @@ export function DeckReader({
     return [
       ...spec.slides.map((slide) => ({
         id: slide.id,
-        title: slide.title || 'Untitled slide',
+        title: plainText(slide.title) || 'Untitled slide',
         slide,
         svg: rendered.get(slide.id)?.svg,
         generated: false,

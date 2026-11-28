@@ -68,7 +68,7 @@ import { Tooltip } from '../../shared/Tooltip';
 import SlideList, { type SlideListItem } from './SlideList';
 import { slideFindingsLabel, type SlideRowProps } from './SlideRow';
 import { svgDataUri } from './svgPreview';
-import { SLIDE_LAYOUT_LABELS } from './deckSpec';
+import { plainText, SLIDE_LAYOUT_LABELS } from './deckSpec';
 
 const SortableSlideList = lazy(() => import('./SortableSlideList'));
 
@@ -209,7 +209,7 @@ export function FilmstripThumb({
 }: SlideRowProps) {
   const thumbnail = svgDataUri(thumbnailSvg);
   const number = index + 1;
-  const title = slide.title || 'Untitled slide';
+  const title = plainText(slide.title) || 'Untitled slide';
 
   // The host's findings (2.549.0): a dot over the thumbnail's lower-left
   // corner, absolutely placed so the list never shifts. It is named by the

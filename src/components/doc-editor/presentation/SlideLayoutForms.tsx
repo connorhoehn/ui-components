@@ -9,7 +9,9 @@
 // says how many it may hold and stops offering Add at the cap and Remove at
 // the floor, so the form cannot produce a count the engine refuses.
 
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import { DeckIconPicker, type DeckIconSource } from './IconPicker';
+import { IconSlotButton } from './SlideRichForms';
 import { Button } from '../../ui/Button';
 import { IconButton } from '../../ui/IconButton';
 import { Input } from '../../forms/Input';
@@ -65,7 +67,7 @@ function RemoveGlyph() {
 }
 
 /** A list's heading with its count against the cap: "Figures · 2 of 4". */
-function ListHeading({ label, count, max, min, testId }: { label: string; count: number; max: number; min?: number; testId: string }) {
+export function ListHeading({ label, count, max, min, testId }: { label: string; count: number; max: number; min?: number; testId: string }) {
   return (
     <div className="flex items-baseline gap-2">
       <SectionLabel as="div">{label}</SectionLabel>
@@ -76,13 +78,13 @@ function ListHeading({ label, count, max, min, testId }: { label: string; count:
   );
 }
 
-function RemoveButton({ label, disabled, onClick, testId }: { label: string; disabled?: boolean; onClick: () => void; testId: string }) {
+export function RemoveButton({ label, disabled, onClick, testId }: { label: string; disabled?: boolean; onClick: () => void; testId: string }) {
   return (
     <IconButton aria-label={label} variant="ghost" size="sm" icon={<RemoveGlyph />} disabled={disabled} onClick={onClick} data-testid={testId} />
   );
 }
 
-function AddButton({ children, disabled, onClick, testId }: { children: ReactNode; disabled?: boolean; onClick: () => void; testId: string }) {
+export function AddButton({ children, disabled, onClick, testId }: { children: ReactNode; disabled?: boolean; onClick: () => void; testId: string }) {
   return (
     <Button variant="ghost" size="sm" disabled={disabled} onClick={onClick} data-testid={testId} className="self-start">
       {children}
@@ -90,7 +92,7 @@ function AddButton({ children, disabled, onClick, testId }: { children: ReactNod
   );
 }
 
-function replaceAt<T>(list: readonly T[], index: number, value: T): T[] {
+export function replaceAt<T>(list: readonly T[], index: number, value: T): T[] {
   const next = list.slice();
   next[index] = value;
   return next;
@@ -164,21 +166,29 @@ export function TextListEditor({
 // Key figures
 // ---------------------------------------------------------------------------
 
-export function FiguresEditor({ figures, onChange, readOnly, testIdPrefix }: EditorBase & {
+export function FiguresEditor({ figures, onChange, bounds = [MIN_FIGURES, MAX_FIGURES], icons, readOnly, testIdPrefix }: EditorBase & {
   figures: readonly DeckFigure[];
   onChange: (figures: DeckFigure[]) => void;
+  /** The row bounds (since 2.550.0): `[1, 1]` on a big-number slide. Default 2 to 4. */
+  bounds?: readonly [number, number];
+  /** The icon catalogue (since 2.550.0): an icon slot per figure. */
+  icons?: DeckIconSource;
 }) {
+  const [MIN, MAX] = bounds;
+  const [openIcon, setOpenIcon] = useState<number | null>(null);
   const set = (index: number, partial: Partial<DeckFigure>) => {
     const merged: DeckFigure = { ...figures[index]!, ...partial };
     if (!merged.delta) delete merged.delta;
+    if (!merged.context) delete merged.context;
+    if (!merged.icon) delete merged.icon;
     onChange(replaceAt(figures, index, merged));
   };
   return (
     <div className="flex flex-col gap-1.5" data-testid={testIdPrefix}>
-      <ListHeading label="Figures" count={figures.length} min={MIN_FIGURES} max={MAX_FIGURES} testId={`${testIdPrefix}-count`} />
+      <ListHeading label="Figures" count={figures.length} min={MIN} max={MAX} testId={`${testIdPrefix}-count`} />
       <ol className="m-0 flex list-none flex-col gap-2 p-0">
         {figures.map((figure, index) => (
-          <li key={index} className="grid grid-cols-1 items-center gap-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_auto]">
+          <li key={index} className="grid grid-cols-1 items-center gap-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1.5fr)_auto_auto]">
             <Input
               value={figure.value}
               maxLength={MAX_FIGURE_VALUE_CHARS}
@@ -206,12 +216,44 @@ export function FiguresEditor({ figures, onChange, readOnly, testIdPrefix }: Edi
               onChange={(event) => set(index, { delta: event.target.value })}
               data-testid={`${testIdPrefix}-delta-${index}`}
             />
+            <Input
+              value={figure.context ?? ''}
+              maxLength={MAX_FIGURE_LABEL_CHARS}
+              placeholder="vs 71% in Q1 (optional)"
+              disabled={readOnly}
+              aria-label={`Figure ${index + 1} context, optional`}
+              onChange={(event) => set(index, { context: event.target.value })}
+              data-testid={`${testIdPrefix}-context-${index}`}
+            />
+            {icons && (
+              <IconSlotButton
+                value={figure.icon}
+                icons={icons}
+                label={`Figure ${index + 1} icon`}
+                open={openIcon === index}
+                onToggle={() => setOpenIcon(openIcon === index ? null : index)}
+                disabled={readOnly}
+                testId={`${testIdPrefix}-icon-${index}`}
+              />
+            )}
             {!readOnly && (
               <RemoveButton
                 label={`Remove figure ${index + 1}`}
-                disabled={figures.length <= MIN_FIGURES}
+                disabled={figures.length <= MIN}
                 onClick={() => onChange(figures.filter((_, i) => i !== index))}
                 testId={`${testIdPrefix}-remove-${index}`}
+              />
+            )}
+            {icons && openIcon === index && !readOnly && (
+              <DeckIconPicker
+                className="sm:col-span-full"
+                items={icons.items}
+                icons={icons.icons}
+                renderIcon={icons.renderIcon}
+                value={figure.icon}
+                label={`Icon for figure ${index + 1}`}
+                onSelect={(icon) => { set(index, { icon }); setOpenIcon(null); }}
+                testIdPrefix={`${testIdPrefix}-icon-picker-${index}`}
               />
             )}
           </li>
@@ -219,7 +261,7 @@ export function FiguresEditor({ figures, onChange, readOnly, testIdPrefix }: Edi
       </ol>
       {!readOnly && (
         <AddButton
-          disabled={figures.length >= MAX_FIGURES}
+          disabled={figures.length >= MAX}
           onClick={() => onChange([...figures, { value: '', label: '' }])}
           testId={`${testIdPrefix}-add`}
         >
@@ -349,14 +391,44 @@ export function TableEditor({ table, onChange, readOnly, testIdPrefix }: EditorB
 // Comparison
 // ---------------------------------------------------------------------------
 
-export function ComparisonEditor({ comparison, onChange, readOnly, testIdPrefix }: EditorBase & {
+export function ComparisonEditor({ comparison, onChange, icons, readOnly, testIdPrefix }: EditorBase & {
   comparison: DeckComparison;
   onChange: (comparison: DeckComparison) => void;
+  /** The icon catalogue (since 2.550.0): an icon slot per side. */
+  icons?: DeckIconSource;
 }) {
+  const [openIcon, setOpenIcon] = useState<'left' | 'right' | null>(null);
   const side = (key: 'left' | 'right', name: string) => {
     const value: DeckComparisonSide = comparison[key];
+    const setIcon = (icon: string | undefined) => {
+      const { icon: _old, ...rest } = value;
+      onChange({ ...comparison, [key]: icon ? { ...rest, icon } : rest });
+      setOpenIcon(null);
+    };
     return (
       <div className="flex flex-col gap-1.5" data-testid={`${testIdPrefix}-${key}`}>
+        {icons && (
+          <IconSlotButton
+            value={value.icon}
+            icons={icons}
+            label={`${name} side icon`}
+            open={openIcon === key}
+            onToggle={() => setOpenIcon(openIcon === key ? null : key)}
+            disabled={readOnly}
+            testId={`${testIdPrefix}-${key}-icon`}
+          />
+        )}
+        {icons && openIcon === key && !readOnly && (
+          <DeckIconPicker
+            items={icons.items}
+            icons={icons.icons}
+            renderIcon={icons.renderIcon}
+            value={value.icon}
+            label={`Icon for the ${name.toLowerCase()} side`}
+            onSelect={setIcon}
+            testIdPrefix={`${testIdPrefix}-${key}-icon-picker`}
+          />
+        )}
         <FormField label={`${name} side title`}>
           {(wiring) => (
             <Input

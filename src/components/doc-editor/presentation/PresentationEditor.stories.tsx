@@ -8,7 +8,7 @@ import { SubNavLayout } from '../../shared/SubNavLayout';
 import { IconButton } from '../../ui/IconButton';
 import { ChartIcon, DocumentIcon, FolderIcon } from '../../ui/Icons';
 import { ShellFocusModeProvider, useRailFold, useShellFocusMode } from '../../shared/railFold';
-import type { DeckSpec } from './deckSpec';
+import { plainText, type DeckSpec } from './deckSpec';
 import type { PresentationEditorHandle, PresentationPreview } from './PresentationEditor';
 import { Button } from '../../ui/Button';
 import InlineAlert from '../../shared/InlineAlert';
@@ -32,7 +32,7 @@ const initial: DeckSpec = {
 
 function Editor({ onFocusModeChange }: { onFocusModeChange?: (focused: boolean) => void }) {
   const [spec, setSpec] = useState(initial);
-  const preview: PresentationPreview = { slides: spec.slides.map((slide) => ({ id: slide.id, svg: slideSvg(slide.title) })) };
+  const preview: PresentationPreview = { slides: spec.slides.map((slide) => ({ id: slide.id, svg: slideSvg(plainText(slide.title)) })) };
   return (
     <PresentationEditor
       spec={spec}
@@ -101,7 +101,7 @@ function HostedEditor() {
   const [spec, setSpec] = useState(initial);
   const [gallery, setGallery] = useState(false);
   const editor = useRef<PresentationEditorHandle>(null);
-  const preview: PresentationPreview = { slides: spec.slides.map((slide) => ({ id: slide.id, svg: slideSvg(slide.title) })) };
+  const preview: PresentationPreview = { slides: spec.slides.map((slide) => ({ id: slide.id, svg: slideSvg(plainText(slide.title)) })) };
   return (
     <PresentationEditor
       ref={editor}

@@ -54,6 +54,7 @@ describe('the layout list', () => {
     expect(SLIDE_LAYOUTS).toEqual([
       'title', 'section', 'bullets', 'two-column', 'chart', 'quote', 'image',
       'key-figures', 'table', 'comparison', 'timeline', 'agenda', 'closing',
+      'big-quote', 'process', 'cards', 'matrix', 'big-number', 'image-text', 'image-full', 'people', 'funnel', 'kpi',
     ]);
     for (const layout of SLIDE_LAYOUTS) {
       expect(SLIDE_LAYOUT_LABELS[layout]).toBeTruthy();
@@ -126,7 +127,7 @@ describe('validateDeckSpec: refuses what the engine refuses', () => {
   it('a layout needs its payload, and no other layout may carry it', () => {
     refuses(deck({ layout: 'timeline' }), "a 'timeline' slide needs timeline");
     refuses(deck({ layout: 'bullets', bullets: ['x'], table: valid.table.table }), "only a 'table' slide may carry table");
-    refuses(deck({ ...valid.agenda, chart: { kind: 'bar', labels: ['a'], series: [{ name: 's', values: [1] }] } }), "only a 'chart' slide");
+    refuses(deck({ ...valid.agenda, chart: { kind: 'bar', labels: ['a'], series: [{ name: 's', values: [1] }] } }), "only 'chart', 'kpi' slides may carry a chart");
   });
 
   it('pie: one series, at most six slices, no negative values, something above zero', () => {

@@ -98,9 +98,14 @@ import SlideForm from './SlideForm';
 import type { SlideListItem } from './SlideList';
 import type { SlideFinding } from './SlideRow';
 import SlideSources, { type PresentationSourceOption } from './SlideSources';
+import { DecorationField } from './SlideRichForms';
 import { SlideStage } from './SlideStage';
 import { SlidesToolbar, type SlidesToolbarTheme } from './SlidesToolbar';
 import { LayoutGallery } from './LayoutGallery';
+import { SlideRegionsOverlay, type SlideRegion, type SlideSize } from './SlideRegionsOverlay';
+import { DeckIconPicker, type DeckIconSource } from './IconPicker';
+import { GraphicPicker, type DeckGraphicSource } from './GraphicPicker';
+import { DeckStylePicker } from './DeckStylePicker';
 import { DeckPresentMode, type DeckPresentModeSlide } from './DeckPresentMode';
 import { useFocusModeReport } from './useFocusModeReport';
 import { Inline } from '../../ui/Stack';
@@ -124,6 +129,13 @@ import {
   type DeckSlide,
   type DeckSpec,
   type SlideLayout,
+  plainText,
+  setSlidePath,
+  addSlideRow,
+  removeSlideRow,
+  moveSlideRow,
+  type DeckStyle,
+  type DeckText,
 } from './deckSpec';
 import { DensityProvider } from '../../shared/Density';
 
@@ -372,6 +384,36 @@ export interface PresentationEditorProps {
   layoutGalleryOpen?: boolean;
   /** Every request to open or close the layout gallery, controlled or not. */
   onLayoutGalleryOpenChange?: (open: boolean) => void;
+  /**
+   * Edit in place (since 2.550.0): the editable elements of each slide, by
+   * slide id, as boxes in slide units (`slideSize`), computed by the host from
+   * the deck engine's layout. Passed, the stage takes the whole editor area:
+   * no form under it; clicking an element edits it on the slide
+   * (`SlideRegionsOverlay`), an icon, graphic or chart opens its picker in
+   * the side pane, and the side pane holds the slide's graphic, speaker
+   * notes, sources and an "Edit as outline" form (collapsed), the accessible
+   * fallback. A slide with no entry shows its picture without regions.
+   */
+  slideRegions?: Readonly<Record<string, readonly SlideRegion[]>>;
+  /** The slide's coordinate space for `slideRegions`. Default 960 x 540. */
+  slideSize?: SlideSize;
+  /** An element was edited in place (after the edit is applied to the spec). */
+  onRegionEdit?: (slideId: string, path: string, value: unknown) => void;
+  /** A row was added after `afterIndex` on the stage. */
+  onRowAdd?: (slideId: string, list: string, afterIndex: number) => void;
+  onRowRemove?: (slideId: string, list: string, index: number) => void;
+  onRowMove?: (slideId: string, list: string, from: number, to: number) => void;
+  /** The icon catalogue and artwork (since 2.550.0) for the icon slots and the side-pane picker. */
+  icons?: DeckIconSource;
+  /** The graphics catalogue and artwork (since 2.550.0) for slide decorations. */
+  graphics?: DeckGraphicSource;
+  /** Layouts to leave out of the gallery and the Layout menu (since 2.550.0), e.g. `IMAGE_LAYOUTS`. */
+  hiddenLayouts?: readonly SlideLayout[];
+  /** The deck's style (since 2.550.0). With `onDeckStyleChange`, the side pane offers the five styles. */
+  deckStyle?: DeckStyle;
+  onDeckStyleChange?: (style: DeckStyle) => void;
+  /** A preview image per style for the style picker. */
+  stylePreviews?: Partial<Record<DeckStyle, string>>;
   /** The editor's imperative handle (`focusSlideTitle`), since 2.549.0. */
   ref?: Ref<PresentationEditorHandle>;
   className?: string;
@@ -488,6 +530,18 @@ export function PresentationEditor({
   layoutGalleryOpen: layoutGalleryOpenProp,
   onLayoutGalleryOpenChange,
   slideFindings,
+  slideRegions,
+  slideSize,
+  onRegionEdit,
+  onRowAdd,
+  onRowRemove,
+  onRowMove,
+  icons,
+  graphics,
+  hiddenLayouts,
+  deckStyle,
+  onDeckStyleChange,
+  stylePreviews,
   ref,
   className,
   'data-testid': testId = 'presentation-editor',
@@ -512,6 +566,10 @@ export function PresentationEditor({
   // when the editor inserts a slide (New slide, the gallery, Duplicate) and by
   // the handle's focusSlideTitle. `n` makes asking twice for one slide count.
   const [titleFocus, setTitleFocus] = useState<{ id: string; n: number } | null>(null);
+  // Edit in place (2.550.0): regions on the stage, pickers in the side pane.
+  const inPlace = !!slideRegions;
+  const [regionEditPath, setRegionEditPath] = useState<string | null>(null);
+  const [picked, setPicked] = useState<{ slideId: string; region: SlideRegion } | null>(null);
   const askTitleFocus = useCallback((id: string) => {
     setTitleFocus((previous) => ({ id, n: (previous?.n ?? 0) + 1 }));
   }, []);
@@ -578,7 +636,7 @@ export function PresentationEditor({
   const selected = ownIndex !== -1 || generatedIndex === -1 ? slides[selectedIndex] : undefined;
   const selectedGenerated = generatedIndex !== -1 ? generatedSlides[generatedIndex] : undefined;
   const currentId = selected?.id ?? selectedGenerated?.id;
-  const currentTitle = selected ? selected.title || 'Untitled slide' : selectedGenerated?.title;
+  const currentTitle = selected ? plainText(selected.title) || 'Untitled slide' : selectedGenerated?.title;
   /** Every slide's id in deck order — what ←/→, the pager and Present step through. */
   const orderedIds = useMemo(
     () => [...slides.map((slide) => slide.id), ...generatedSlides.map((slide) => slide.id)],
@@ -677,6 +735,13 @@ export function PresentationEditor({
     if (!titleFocus || readOnly) return;
     // Another slide was put on the stage since: the request lapses.
     if (selectedSlideId !== titleFocus.id) { setTitleFocus(null); return; }
+    if (inPlace) {
+      // Edit in place: the new slide's title region opens its editor.
+      if (layoutGalleryOpen) return;
+      setTitleFocus(null);
+      setRegionEditPath('title');
+      return;
+    }
     const region = formRegion.current;
     const field = region?.querySelector<HTMLInputElement>('input[data-slide-title]');
     // Not drawn yet (a host still holds the layout gallery open): wait for it.
@@ -687,7 +752,7 @@ export function PresentationEditor({
     const box = region.getBoundingClientRect();
     const at = field.getBoundingClientRect();
     if (at.top < box.top || at.bottom > box.bottom) region.scrollTop += at.top - box.top - 8;
-  }, [titleFocus, selectedSlideId, readOnly, layoutGalleryOpen]);
+  }, [titleFocus, selectedSlideId, readOnly, layoutGalleryOpen, inPlace]);
 
   useImperativeHandle(ref, () => ({
     focusSlideTitle: (slideId: string) => {
@@ -851,8 +916,8 @@ export function PresentationEditor({
                 return {
                   id: slide.id,
                   index: index + 1,
-                  title: slide.title || 'Untitled slide',
-                  ...(uri ? { preview: <img src={uri} alt={slide.title || `Slide ${index + 1}`} /> } : {}),
+                  title: plainText(slide.title) || 'Untitled slide',
+                  ...(uri ? { preview: <img src={uri} alt={plainText(slide.title) || `Slide ${index + 1}`} /> } : {}),
                 };
               }),
               // The generated slides read the same as they present: after the
@@ -960,7 +1025,7 @@ export function PresentationEditor({
     return (
       <img
         src={uri}
-        alt={selected!.title || `Slide ${selectedIndex + 1}`}
+        alt={plainText(selected!.title) || `Slide ${selectedIndex + 1}`}
         className="h-full w-full object-contain"
         data-testid={`${testId}-stage-image`}
       />
@@ -1075,6 +1140,7 @@ export function PresentationEditor({
     <>
     <SlidesToolbar
       slide={selected}
+      hiddenLayouts={hiddenLayouts}
       theme={spec.theme ?? 'product'}
       {...(themes?.length ? { themes, onThemeRefChange: (theme: DeckThemeRef) => edit({ ...spec, theme }) } : {})}
       onBrowseLayouts={openLayoutGallery}
@@ -1129,6 +1195,7 @@ export function PresentationEditor({
       </Inline>
       <LayoutGallery
         previews={layoutPreviews}
+        hiddenLayouts={hiddenLayouts}
         onSelect={(layout) => {
           closeLayoutGallery();
           // The new slide's title takes focus instead of the gallery's opener.
@@ -1323,6 +1390,183 @@ export function PresentationEditor({
     </div>
   );
 
+  // ---------------------------------------------------------------------------
+  // Edit in place (2.550.0): the stage fills the column, regions over it, and
+  // the side pane holds pickers and the slide-level choices.
+  // ---------------------------------------------------------------------------
+
+  const applyInPlace = (next: DeckSlide) => { if (selected && next !== selected) editSlide(next); };
+  const regionEdit = (path: string, value: unknown) => {
+    if (!selected) return;
+    if (path.startsWith('deck.')) {
+      // A field of the deck drawn on a slide (the title slide's subtitle).
+      const field = path.slice(5);
+      if (field === 'title' || field === 'subtitle') {
+        const text = typeof value === 'string' ? value : plainText(value as DeckText);
+        const next = { ...spec };
+        if (field === 'subtitle' && !text) delete next.subtitle;
+        else next[field] = text;
+        edit(next);
+      }
+      onRegionEdit?.(selected.id, path, value);
+      return;
+    }
+    applyInPlace(setSlidePath(selected, path, value));
+    onRegionEdit?.(selected.id, path, value);
+  };
+  const pickedRegion = picked && selected && picked.slideId === selected.id ? picked.region : null;
+  const pickedValue = (() => {
+    if (!pickedRegion || !selected) return undefined;
+    let at: unknown = selected;
+    for (const key of pickedRegion.path.replace(/\[(\d+)\]/g, '.$1').split('.')) at = at && typeof at === 'object' ? (at as Record<string, unknown>)[key] : undefined;
+    return at;
+  })();
+  const regionsHere = selected ? slideRegions?.[selected.id] : undefined;
+
+  const pickerPane = pickedRegion && selected && (
+    <section aria-label="Selected element" className="flex flex-col gap-2 rounded-md border border-border bg-surface p-2" data-testid={`${testId}-pick-pane`}>
+      <Inline gap="sm" align="center" className="justify-between">
+        <Text as="div" size="sm" weight="semibold">{pickedRegion.label ?? (pickedRegion.kind === 'icon' ? 'Icon' : pickedRegion.kind === 'graphic' ? 'Slide graphic' : pickedRegion.kind === 'chart' ? 'Chart' : 'Element')}</Text>
+        <Button variant="ghost" size="sm" onClick={() => setPicked(null)} data-testid={`${testId}-pick-close`}>Done</Button>
+      </Inline>
+      {pickedRegion.kind === 'icon' && icons && (
+        <DeckIconPicker
+          items={icons.items}
+          icons={icons.icons}
+          renderIcon={icons.renderIcon}
+          value={typeof pickedValue === 'string' ? pickedValue : undefined}
+          onSelect={(name) => regionEdit(pickedRegion.path, name ?? '')}
+          testIdPrefix={`${testId}-icon-picker`}
+        />
+      )}
+      {pickedRegion.kind === 'graphic' && graphics && (
+        <GraphicPicker
+          items={graphics.items}
+          renderGraphic={graphics.renderGraphic}
+          value={selected.decoration}
+          onChange={(decoration) => {
+            const next = { ...selected };
+            if (decoration === undefined) delete next.decoration;
+            else next.decoration = decoration;
+            applyInPlace(next);
+            onRegionEdit?.(selected.id, 'decoration', decoration);
+          }}
+          testIdPrefix={`${testId}-graphic-picker`}
+        />
+      )}
+      {pickedRegion.kind === 'chart' && (
+        <>
+          <Text size="xs" tone="secondary">The chart is drawn from the slide's sources. Change what it cites here, or edit its numbers in the outline.</Text>
+          <SlideSources
+            compact
+            sources={selected.sources}
+            onChange={(next) => editSlide({ ...selected, sources: next })}
+            options={sources}
+            onSearchSources={onSearchSources}
+            testIdPrefix={`${testId}-chart`}
+          />
+        </>
+      )}
+      {(pickedRegion.kind === 'image' || pickedRegion.kind === 'figure') && (
+        <SlideForm slide={selected} onChange={editSlide} sources={sources} showSources={false} showNotes={false} icons={icons} testIdPrefix={`${testId}-pick-form`} />
+      )}
+    </section>
+  );
+
+  const sidePane = selected && (
+    <aside aria-label="Slide settings" className="flex min-w-0 flex-col gap-3 md:min-h-0 md:w-80 md:shrink-0 md:overflow-y-auto" data-testid={`${testId}-side-pane`}>
+      {pickerPane}
+      {graphics && (
+        <DecorationField
+          value={selected.decoration}
+          graphics={graphics}
+          onChange={(decoration) => {
+            const next = { ...selected };
+            if (decoration === undefined) delete next.decoration;
+            else next.decoration = decoration;
+            applyInPlace(next);
+          }}
+          readOnly={readOnly}
+          testIdPrefix={`${testId}-decoration`}
+        />
+      )}
+      <SlideSources
+        compact
+        sources={selected.sources}
+        onChange={(next) => editSlide({ ...selected, sources: next })}
+        options={sources}
+        onSearchSources={onSearchSources}
+        readOnly={readOnly}
+        testIdPrefix={`${testId}-slide`}
+      />
+      {onDeckStyleChange && (
+        <Disclosure summary="Deck style" density="compact" data-testid={`${testId}-style`}>
+          <DeckStylePicker value={deckStyle} onChange={onDeckStyleChange} previews={stylePreviews} testIdPrefix={`${testId}-style-picker`} />
+        </Disclosure>
+      )}
+      <Disclosure summary="Speaker notes" density="compact" data-testid={`${testId}-notes-strip`}>
+        <SpeakerNotes value={selected.notes} onChange={(notes) => editSlide({ ...selected, notes })} data-testid={`${testId}-slide-notes`} />
+      </Disclosure>
+      <Disclosure summary="Edit as outline" density="compact" data-testid={`${testId}-outline`}>
+        <div ref={formRegion}>
+          <SlideForm
+            slide={selected}
+            onChange={editSlide}
+            sources={sources}
+            onSearchSources={onSearchSources}
+            readOnly={readOnly}
+            showSources={false}
+            showNotes={false}
+            icons={icons}
+            testIdPrefix={`${testId}-slide`}
+          />
+        </div>
+      </Disclosure>
+    </aside>
+  );
+
+  const inPlaceMain = (
+    <div className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:flex-row" data-testid={`${testId}-main`}>
+      <div className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:[container-type:size]" data-testid={`${testId}-stage-region`}>
+        <div className="mx-auto w-full md:max-w-[calc(100cqh*16/9)]" data-testid={`${testId}-stage-frame`}>
+          <SlideStage
+            generating={selectedGenerating}
+            label={currentTitle ? `Slide ${selectedIndex + 1} of ${totalSlides}: ${currentTitle}` : 'No slide'}
+            maxWidth="5xl"
+            data-testid={`${testId}-stage`}
+          >
+            {stageContent}
+            {selected && regionsHere && !selectedGenerating && (
+              <SlideRegionsOverlay
+                key={selected.id}
+                regions={regionsHere}
+                slideSize={slideSize}
+                layout={selected.layout}
+                readOnly={readOnly}
+                onEdit={regionEdit}
+                onPick={(region) => setPicked({ slideId: selected.id, region })}
+                pickedPath={pickedRegion?.path ?? null}
+                onRowAdd={(list, after) => { applyInPlace(addSlideRow(selected, list, after)); onRowAdd?.(selected.id, list, after); }}
+                onRowRemove={(list, index) => { applyInPlace(removeSlideRow(selected, list, index)); onRowRemove?.(selected.id, list, index); }}
+                onRowMove={(list, from, to) => { applyInPlace(moveSlideRow(selected, list, from, to)); onRowMove?.(selected.id, list, from, to); }}
+                editPath={regionEditPath}
+                onEditPathChange={setRegionEditPath}
+                testIdPrefix={`${testId}-regions`}
+              />
+            )}
+          </SlideStage>
+        </div>
+        {!renderFrame && slideNav}
+        {selectedGenerated && (
+          <Text size="xs" tone="tertiary" data-testid={`${testId}-generated-note`}>
+            {`${selectedGenerated.title} is built from the slides' citations and changes as they do. It has no fields of its own to edit.`}
+          </Text>
+        )}
+      </div>
+      {sidePane}
+    </div>
+  );
+
   const body = (
     <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row" data-testid={`${testId}-body`}>
       <Filmstrip
@@ -1341,7 +1585,7 @@ export function PresentationEditor({
         testIdPrefix={`${testId}-slide`}
       />
 
-      {layoutGalleryOpen ? layoutPanel : (
+      {layoutGalleryOpen ? layoutPanel : inPlace ? inPlaceMain : (
       /* From md up the column is a size container that does NOT scroll
           (2.549.0). It is two regions: the stage, pinned at the top, and the
           form below it, which is the only thing that scrolls — so typing in
@@ -1409,7 +1653,7 @@ export function PresentationEditor({
   const presentSlides: DeckPresentModeSlide[] = [
     ...slides.map((slide, index) => ({
       id: slide.id,
-      title: slide.title || `Slide ${index + 1}`,
+      title: plainText(slide.title) || `Slide ${index + 1}`,
       ...(previewById.get(slide.id) ? { svg: previewById.get(slide.id)! } : {}),
       ...(slide.notes ? { notes: slide.notes } : {}),
     })),

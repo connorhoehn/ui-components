@@ -1,6 +1,6 @@
 // The DeckSpec contract, mirrored for the editor.
 //
-// MIRRORS `@connorhoehn/realtime-modules` 0.152.0, `src/deck/DeckSpec.ts` —
+// MIRRORS `@connorhoehn/realtime-modules` 0.153.0, `src/deck/DeckSpec.ts` —
 // the deck engine. It lays the slides out, renders the `.pptx`, PDF and
 // preview, and refuses a spec it does not like. The types, the caps, the
 // layout list and the validator below are a COPY of that file, kept
@@ -36,6 +36,14 @@
 // `deckForEngine` drop what the current layout does not own before the spec
 // leaves the editor. Bullets are the one thing every layout may carry.
 
+// ## Icon and graphic names
+//
+// The engine checks `icon` and `decoration.graphic` against its bundled
+// catalogues. This mirror does not import them: `validateDeckSpec` takes the
+// names as options (`iconNames`, `graphicNames`) — a host passes
+// `ICON_NAMES` / `GRAPHIC_NAMES` from the engine — and without them it accepts
+// any kebab-case name, leaving the final word to the engine.
+
 export type DeckTheme = 'product' | 'engineering' | 'plain';
 
 /**
@@ -58,7 +66,41 @@ export const DECK_THEME_RULE =
 
 export type SlideLayout =
   | 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image'
-  | 'key-figures' | 'table' | 'comparison' | 'timeline' | 'agenda' | 'closing';
+  | 'key-figures' | 'table' | 'comparison' | 'timeline' | 'agenda' | 'closing'
+  | 'big-quote' | 'process' | 'cards' | 'matrix' | 'big-number' | 'image-text' | 'image-full'
+  | 'people' | 'funnel' | 'kpi';
+
+/**
+ * A titled item with optional text and icon: a card, a process step, a matrix
+ * quadrant. `icon` names a glyph of the bundled set (`ICON_NAMES` in `./deck/layout`).
+ */
+export interface DeckItem {
+  title: string;
+  text?: string;
+  icon?: string;
+}
+
+/** A 2 x 2: axis ends (low, high) and four quadrants, top-left, top-right, bottom-left, bottom-right. */
+export interface DeckMatrix {
+  x: [string, string];
+  y: [string, string];
+  quadrants: [DeckItem, DeckItem, DeckItem, DeckItem];
+}
+
+/** One person on a team slide; `assetId` is their photo (initials when absent). */
+export interface DeckPerson {
+  name: string;
+  role: string;
+  detail?: string;
+  assetId?: string;
+}
+
+/** One funnel stage, widest first: what it counts, how many, and an optional note. */
+export interface DeckFunnelStage {
+  label: string;
+  value: string;
+  detail?: string;
+}
 
 /** A citation: the document the claim came from, and (optionally) where in it. */
 export interface DeckSource {
@@ -86,6 +128,12 @@ export interface DeckQuote {
  */
 export interface DeckImage {
   alt: string;
+  /** The asset behind the image; a painter is handed its bytes. Absent: a placeholder and an `image-missing` finding. */
+  assetId?: string;
+  /** An https URL the host fetches for the painter, instead of an asset id. */
+  url?: string;
+  /** Where the picture sits on an `image-text` slide (default `left`). */
+  side?: 'left' | 'right';
 }
 
 /** One big number: `value` as it should read ("42%", "$1.2M"), a label, and an optional change ("+8 pts"). */
@@ -93,6 +141,9 @@ export interface DeckFigure {
   value: string;
   label: string;
   delta?: string;
+  /** One line of context under the label ("vs 71% in Q1"). */
+  context?: string;
+  icon?: string;
 }
 
 /** A small table of short text: a header row and up to 8 rows of the same width. */
@@ -104,6 +155,7 @@ export interface DeckTable {
 export interface DeckComparisonSide {
   title: string;
   points: string[];
+  icon?: string;
 }
 
 /** Two titled columns of points, and optionally the line that settles it. */
@@ -133,12 +185,53 @@ export interface DeckClosing {
   contact?: string;
 }
 
+/**
+ * How a run of text stands out. `highlight` paints a tinted band behind it,
+ * `accent` sets it in the accent colour, `gradient` in an accent gradient,
+ * `outline` draws it as an outline; a colour that would fail contrast on its
+ * fill falls back to the text colour set in bold.
+ */
+export type DeckEmphasis = 'highlight' | 'accent' | 'bold' | 'underline' | 'outline' | 'gradient';
+export const DECK_EMPHASES: readonly DeckEmphasis[] = ['highlight', 'accent', 'bold', 'underline', 'outline', 'gradient'];
+
+/** A piece of a title or bullet, with an optional emphasis. Runs join with no separator, so spaces belong in the text. */
+export interface DeckRun {
+  text: string;
+  emphasis?: DeckEmphasis;
+}
+
+/** A title or bullet: plain text, or runs. */
+export type DeckText = string | DeckRun[];
+
+/** The text a reader sees: runs joined, whitespace collapsed. */
+export function plainText(t: DeckText | undefined): string {
+  if (t === undefined) return '';
+  const raw = typeof t === 'string' ? t : t.map((r) => r.text).join('');
+  return raw.replace(/\s+/g, ' ').trim();
+}
+
+/** The runs of a text, or undefined when it is a plain string. */
+export function textRuns(t: DeckText | undefined): DeckRun[] | undefined {
+  return Array.isArray(t) ? t : undefined;
+}
+
+/** Where a decoration sits: bleeding off the top-right corner, behind the whole slide, or beside the title when the title leaves room. */
+export type DeckDecorationPlacement = 'corner' | 'background' | 'title';
+export const DECK_DECORATION_PLACEMENTS: readonly DeckDecorationPlacement[] = ['corner', 'background', 'title'];
+
+/** A graphic from the graphics library (`GRAPHICS_CATALOGUE`) placed on a slide. */
+export interface DeckDecoration {
+  graphic: string;
+  /** Default: `background` for patterns and waves, `title` for illustrations, badges, dividers and arrows, else `corner`. */
+  placement?: DeckDecorationPlacement;
+}
+
 export interface DeckSlide {
   id: string;
   layout: SlideLayout;
-  title: string;
+  title: DeckText;
   eyebrow?: string;
-  bullets?: string[];
+  bullets?: DeckText[];
   columns?: [string[], string[]];
   chart?: DeckChart;
   quote?: DeckQuote;
@@ -149,8 +242,28 @@ export interface DeckSlide {
   timeline?: DeckTimelineStep[];
   agenda?: DeckAgenda;
   closing?: DeckClosing;
+  /** `cards` (3 to 4) and `process` (3 to 5) items. */
+  items?: DeckItem[];
+  matrix?: DeckMatrix;
+  people?: DeckPerson[];
+  funnel?: DeckFunnelStage[];
+  /** A graphic on the slide; absent takes the style's motif, `'none'` draws none. */
+  decoration?: DeckDecoration | 'none';
   notes?: string;
   sources: DeckSource[];
+}
+
+function copyText(t: DeckText): DeckText {
+  return typeof t === 'string' ? t : t.map((run) => ({ ...run }));
+}
+
+/** A slide with its title and bullets as plain strings: what the layouts set. */
+export type PlainSlide = Omit<DeckSlide, 'title' | 'bullets'> & { title: string; bullets?: string[] };
+
+/** The slide with runs flattened to plain text (layout, notes, capacity and older renderers read this). */
+export function plainSlide(slide: DeckSlide): PlainSlide {
+  const { title, bullets, ...rest } = slide;
+  return { ...rest, title: plainText(title), ...(bullets ? { bullets: bullets.map((b) => plainText(b)) } : {}) };
 }
 
 export interface DeckSpec {
@@ -162,7 +275,7 @@ export interface DeckSpec {
 }
 
 // ---------------------------------------------------------------------------
-// Caps — copied from the engine, surfaced in the form
+// Caps — the limits a slide can hold and still be read from the back of a room
 // ---------------------------------------------------------------------------
 
 export const MAX_SLIDES = 40;
@@ -201,8 +314,27 @@ export const MAX_CLOSING_LINE_CHARS = 100;
 export const MAX_NEXT_STEPS = 3;
 export const MAX_NEXT_STEP_CHARS = 120;
 export const MAX_CONTACT_CHARS = 100;
+export const MAX_ITEM_TITLE_CHARS = 40;
+export const MAX_ITEM_TEXT_CHARS = 140;
+export const MIN_CARDS = 3;
+export const MAX_CARDS = 4;
+export const MIN_PROCESS_STEPS = 3;
+export const MAX_PROCESS_STEPS = 5;
+export const MAX_MATRIX_AXIS_CHARS = 24;
+export const MIN_PEOPLE = 2;
+export const MAX_PEOPLE = 8;
+export const MAX_PERSON_NAME_CHARS = 40;
+export const MAX_PERSON_ROLE_CHARS = 48;
+export const MAX_PERSON_DETAIL_CHARS = 80;
+export const MIN_FUNNEL_STAGES = 3;
+export const MAX_FUNNEL_STAGES = 5;
+export const MAX_FUNNEL_LABEL_CHARS = 40;
+export const MAX_FUNNEL_DETAIL_CHARS = 60;
+export const MAX_IMAGE_URL_CHARS = 2000;
+export const MAX_ASSET_ID_CHARS = 200;
+export const MAX_STORY_BULLETS = 3;
 
-/** Slide ids stay filename- and handle-safe: they end up in preview handles. */
+/** Slide ids stay filename- and handle-safe: they end up in preview handles and blob keys. */
 export const SLIDE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 
 export const SLIDE_LAYOUTS: readonly SlideLayout[] = [
@@ -219,6 +351,31 @@ export const SLIDE_LAYOUTS: readonly SlideLayout[] = [
   'timeline',
   'agenda',
   'closing',
+  'big-quote',
+  'process',
+  'cards',
+  'matrix',
+  'big-number',
+  'image-text',
+  'image-full',
+  'people',
+  'funnel',
+  'kpi',
+];
+
+/** The layouts that show a picture. A host without an asset store hides them (`LayoutGallery`'s `hiddenLayouts`). */
+export const IMAGE_LAYOUTS: readonly SlideLayout[] = ['image', 'image-text', 'image-full'];
+
+/** The gallery's groups, in order, and the layouts in each. Every layout is in exactly one. */
+export const SLIDE_LAYOUT_GROUPS: readonly { id: string; label: string; layouts: readonly SlideLayout[] }[] = [
+  { id: 'openers', label: 'Openers', layouts: ['title', 'section', 'agenda', 'big-quote'] },
+  { id: 'numbers', label: 'Numbers', layouts: ['key-figures', 'big-number', 'kpi'] },
+  { id: 'lists', label: 'Lists and steps', layouts: ['bullets', 'two-column', 'cards', 'process', 'timeline'] },
+  { id: 'comparisons', label: 'Comparisons', layouts: ['comparison', 'matrix', 'table'] },
+  { id: 'charts', label: 'Charts', layouts: ['chart', 'funnel'] },
+  { id: 'people', label: 'People', layouts: ['people', 'quote'] },
+  { id: 'images', label: 'Images', layouts: ['image', 'image-text', 'image-full'] },
+  { id: 'closers', label: 'Closers', layouts: ['closing'] },
 ];
 
 /** What each layout is FOR, in the words a person picking one needs. */
@@ -236,12 +393,22 @@ export const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string> = {
   timeline: 'Timeline',
   agenda: 'Agenda',
   closing: 'Closing',
+  'big-quote': 'Big quote',
+  process: 'Process',
+  cards: 'Cards',
+  matrix: 'Matrix',
+  'big-number': 'Big number',
+  'image-text': 'Image and text',
+  'image-full': 'Full-bleed image',
+  people: 'People',
+  funnel: 'Funnel',
+  kpi: 'KPI',
 };
 
 /** One line per layout: when to reach for it. Shown under the name in `LayoutGallery`. */
 export const SLIDE_LAYOUT_DESCRIPTIONS: Record<SlideLayout, string> = {
   title: 'The opening slide: the deck title and who it is for.',
-  section: 'A divider that names the next part of the talk.',
+  section: 'A divider that opens the next part of the talk.',
   bullets: 'A short list of points under one heading.',
   'two-column': 'Two lists side by side.',
   chart: 'Numbers over time or across groups, as bars, lines, stacked bars or a pie.',
@@ -253,6 +420,45 @@ export const SLIDE_LAYOUT_DESCRIPTIONS: Record<SlideLayout, string> = {
   timeline: 'Three to six dated steps, in order.',
   agenda: 'What the talk covers, with the current part marked.',
   closing: 'The last word: a closing line, next steps and who to contact.',
+  'big-quote': 'One quotation set as the whole slide.',
+  process: 'Three to five numbered steps, each with an icon.',
+  cards: 'Three or four titled cards with an icon and a line each.',
+  matrix: 'A two-by-two: two axes and four quadrants.',
+  'big-number': 'One headline number and the story behind it.',
+  'image-text': 'A picture beside the words.',
+  'image-full': 'A picture filling the slide, the words over it.',
+  people: 'Two to eight people: name, role and a line each.',
+  funnel: 'Three to five stages, widest first, each with its count.',
+  kpi: 'Headline numbers above the chart that explains them.',
+};
+
+/**
+ * The deck's look (the engine's `DeckStyle`, 0.153.0). It lives on the
+ * host's theme (`DeckThemeSpec.style`, `styledTheme(theme, style)`), not on
+ * the spec, so `DeckStylePicker` reports a choice and the host applies it.
+ */
+export type DeckStyle = 'bold' | 'editorial' | 'minimal' | 'playful' | 'corporate';
+export const DECK_STYLES: readonly DeckStyle[] = ['bold', 'editorial', 'minimal', 'playful', 'corporate'];
+export const DECK_STYLE_LABELS: Record<DeckStyle, string> = {
+  bold: 'Bold',
+  editorial: 'Editorial',
+  minimal: 'Minimal',
+  playful: 'Playful',
+  corporate: 'Corporate',
+};
+export const DECK_STYLE_DESCRIPTIONS: Record<DeckStyle, string> = {
+  bold: 'Full-colour covers and dividers, heavy type.',
+  editorial: 'Serif headings, rules and a corner bracket.',
+  minimal: 'Quiet: white space, thin lines, no motif.',
+  playful: 'Rounded cards, a stronger tint, confetti and blobs.',
+  corporate: 'Arial, square corners, flat accent fields.',
+};
+
+/** Plain names for decoration placements. */
+export const DECK_DECORATION_PLACEMENT_LABELS: Record<DeckDecorationPlacement, string> = {
+  corner: 'Corner',
+  background: 'Background',
+  title: 'Beside the title',
 };
 
 /** The chart kinds the engine draws, in the order the form offers them. */
@@ -361,40 +567,102 @@ export function withLayoutDefaults(slide: DeckSlide, layout: SlideLayout): DeckS
   }
   if (layout === 'agenda' && !next.agenda) next.agenda = { items: [''] };
   if (layout === 'closing' && !next.closing) next.closing = { line: '' };
+  if (layout === 'big-quote' && !next.quote) next.quote = { text: '', by: '' };
+  if ((layout === 'image-text' || layout === 'image-full') && !next.image) next.image = { alt: '' };
+  if (layout === 'cards' || layout === 'process') {
+    const min = layout === 'process' ? MIN_PROCESS_STEPS : MIN_CARDS;
+    const items = next.items ?? [];
+    // Only padded here: a fifth process step kept while the slide is a card
+    // row is cut by `slideForEngine`, not deleted, so switching back keeps it.
+    if (items.length < min) {
+      next.items = [...items, ...Array.from({ length: Math.max(0, min - items.length) }, () => ({ title: '' }))];
+    }
+  }
+  if (layout === 'matrix' && !next.matrix) {
+    next.matrix = { x: ['', ''], y: ['', ''], quadrants: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }] };
+  }
+  if (layout === 'people' && !next.people) {
+    next.people = [{ name: '', role: '' }, { name: '', role: '' }];
+  }
+  if (layout === 'funnel' && !next.funnel) {
+    next.funnel = [{ label: '', value: '' }, { label: '', value: '' }, { label: '', value: '' }];
+  }
+  if (layout === 'big-number' && !next.figures?.length) next.figures = [{ value: '', label: '' }];
+  if (layout === 'kpi') {
+    if (!next.figures) next.figures = [{ value: '', label: '' }, { value: '', label: '' }];
+    if (!next.chart) next.chart = { kind: 'bar', labels: ['Q1', 'Q2'], series: [{ name: 'Series 1', values: [0, 0] }] };
+  }
   return next;
 }
 
-/** Which payload field each layout owns. `title` and `section` own none; `bullets` are shared by all. */
-const LAYOUT_PAYLOAD: Record<SlideLayout, keyof DeckSlide | null> = {
-  title: null,
-  section: null,
-  bullets: null,
-  'two-column': 'columns',
-  chart: 'chart',
-  quote: 'quote',
-  image: 'image',
-  'key-figures': 'figures',
-  table: 'table',
-  comparison: 'comparison',
-  timeline: 'timeline',
-  agenda: 'agenda',
-  closing: 'closing',
+/**
+ * Which payload fields each layout owns (the engine's OWNERS table, read the
+ * other way). `title` and `section` own none; `bullets` and `decoration` are
+ * shared by all.
+ */
+export const LAYOUT_PAYLOADS: Record<SlideLayout, readonly (keyof DeckSlide)[]> = {
+  title: [],
+  section: [],
+  bullets: [],
+  'two-column': ['columns'],
+  chart: ['chart'],
+  quote: ['quote'],
+  image: ['image'],
+  'key-figures': ['figures'],
+  table: ['table'],
+  comparison: ['comparison'],
+  timeline: ['timeline'],
+  agenda: ['agenda'],
+  closing: ['closing'],
+  'big-quote': ['quote'],
+  process: ['items'],
+  cards: ['items'],
+  matrix: ['matrix'],
+  'big-number': ['figures'],
+  'image-text': ['image'],
+  'image-full': ['image'],
+  people: ['people'],
+  funnel: ['funnel'],
+  kpi: ['figures', 'chart'],
 };
 
-const PAYLOAD_FIELDS = Object.values(LAYOUT_PAYLOAD).filter((field): field is keyof DeckSlide => field !== null);
+const PAYLOAD_FIELDS = [...new Set(Object.values(LAYOUT_PAYLOADS).flat())];
+
+/** The row bounds the engine holds a layout's list payload to, or undefined for layouts without one. */
+export function layoutRowBounds(layout: SlideLayout): [number, number] | undefined {
+  switch (layout) {
+    case 'cards': return [MIN_CARDS, MAX_CARDS];
+    case 'process': return [MIN_PROCESS_STEPS, MAX_PROCESS_STEPS];
+    case 'people': return [MIN_PEOPLE, MAX_PEOPLE];
+    case 'funnel': return [MIN_FUNNEL_STAGES, MAX_FUNNEL_STAGES];
+    case 'big-number': return [1, 1];
+    case 'key-figures': case 'kpi': return [MIN_FIGURES, MAX_FIGURES];
+    case 'timeline': return [MIN_TIMELINE_STEPS, MAX_TIMELINE_STEPS];
+    default: return undefined;
+  }
+}
 
 /**
  * The slide as the engine will take it: every payload the current layout
  * does not own is dropped (the engine refuses a `chart` on a bullets slide,
- * a `table` on a timeline, and so on). Title, eyebrow, bullets, notes and
- * sources always carry over. Returns the same object when nothing was dropped.
+ * a `table` on a timeline, and so on), and a list kept from a roomier layout
+ * is cut to this one's maximum (five process steps become four cards, a
+ * key-figures row becomes one big number). Title, eyebrow, bullets,
+ * decoration, notes and sources always carry over. Returns the same object
+ * when nothing changed.
  */
 export function slideForEngine(slide: DeckSlide): DeckSlide {
-  const own = LAYOUT_PAYLOAD[slide.layout];
-  const foreign = PAYLOAD_FIELDS.filter((field) => field !== own && slide[field] !== undefined);
-  if (!foreign.length) return slide;
+  const own = LAYOUT_PAYLOADS[slide.layout];
+  const foreign = PAYLOAD_FIELDS.filter((field) => !own.includes(field) && slide[field] !== undefined);
+  const max = layoutRowBounds(slide.layout)?.[1];
+  const listField = slide.layout === 'cards' || slide.layout === 'process' ? 'items' : slide.layout === 'big-number' ? 'figures' : undefined;
+  const list = listField ? (slide[listField] as unknown[] | undefined) : undefined;
+  const trim = listField && max !== undefined && list && list.length > max;
+  if (!foreign.length && !trim) return slide;
   const next: DeckSlide = { ...slide };
   for (const field of foreign) delete next[field];
+  if (trim && listField === 'items') next.items = slide.items!.slice(0, max);
+  if (trim && listField === 'figures') next.figures = slide.figures!.slice(0, max);
   return next;
 }
 
@@ -453,7 +721,8 @@ export function duplicateSlide(spec: DeckSpec, id: string): DeckSpec {
   const copy: DeckSlide = {
     ...source,
     id: nextSlideId(spec),
-    bullets: source.bullets ? source.bullets.slice() : undefined,
+    title: copyText(source.title),
+    bullets: source.bullets ? source.bullets.map(copyText) : undefined,
     columns: source.columns ? [source.columns[0].slice(), source.columns[1].slice()] : undefined,
     chart: source.chart
       ? {
@@ -470,8 +739,8 @@ export function duplicateSlide(spec: DeckSpec, id: string): DeckSpec {
       : undefined,
     comparison: source.comparison
       ? {
-          left: { title: source.comparison.left.title, points: source.comparison.left.points.slice() },
-          right: { title: source.comparison.right.title, points: source.comparison.right.points.slice() },
+          left: { ...source.comparison.left, points: source.comparison.left.points.slice() },
+          right: { ...source.comparison.right, points: source.comparison.right.points.slice() },
           ...(source.comparison.verdict !== undefined ? { verdict: source.comparison.verdict } : {}),
         }
       : undefined,
@@ -480,6 +749,17 @@ export function duplicateSlide(spec: DeckSpec, id: string): DeckSpec {
     closing: source.closing
       ? { ...source.closing, ...(source.closing.nextSteps ? { nextSteps: source.closing.nextSteps.slice() } : {}) }
       : undefined,
+    items: source.items ? source.items.map((item) => ({ ...item })) : undefined,
+    matrix: source.matrix
+      ? {
+          x: [source.matrix.x[0], source.matrix.x[1]],
+          y: [source.matrix.y[0], source.matrix.y[1]],
+          quadrants: source.matrix.quadrants.map((q) => ({ ...q })) as DeckMatrix['quadrants'],
+        }
+      : undefined,
+    people: source.people ? source.people.map((p) => ({ ...p })) : undefined,
+    funnel: source.funnel ? source.funnel.map((stage) => ({ ...stage })) : undefined,
+    decoration: source.decoration && source.decoration !== 'none' ? { ...source.decoration } : source.decoration,
     sources: source.sources.map((s) => ({ ...s })),
   };
   // Keep the copy's keys to the ones the source had, so a duplicate of a
@@ -523,16 +803,40 @@ export function nextRevisionLabel(revisions: readonly { label: string }[]): stri
 // purpose: unknown keys are refused, and every problem is listed, not the first.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Validator — a copy of the engine's, with the icon and graphic catalogues
+// passed in rather than imported
+// ---------------------------------------------------------------------------
+
+/** Names the validator checks `icon` and `decoration.graphic` against. */
+export interface DeckSpecValidateOptions {
+  /** The engine's `ICON_NAMES`. Absent: any kebab-case name passes. */
+  iconNames?: readonly string[];
+  /** The engine's `GRAPHIC_NAMES`. Absent: any kebab-case name passes. */
+  graphicNames?: readonly string[];
+}
+
+const CATALOGUE_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+let ICON_NAMES: readonly string[] = [];
+let GRAPHIC_NAMES: readonly string[] = [];
+function isIconName(value: unknown): value is string {
+  return typeof value === 'string' && (ICON_NAMES.length ? ICON_NAMES.includes(value) : CATALOGUE_NAME.test(value));
+}
+function isGraphicName(value: unknown): value is string {
+  return typeof value === 'string' && (GRAPHIC_NAMES.length ? GRAPHIC_NAMES.includes(value) : CATALOGUE_NAME.test(value));
+}
+
 const THEMES: ReadonlySet<string> = new Set(['product', 'engineering', 'plain']);
 const LAYOUTS: ReadonlySet<string> = new Set([
   'title', 'section', 'bullets', 'two-column', 'chart', 'quote', 'image',
   'key-figures', 'table', 'comparison', 'timeline', 'agenda', 'closing',
+  'big-quote', 'process', 'cards', 'matrix', 'big-number', 'image-text', 'image-full', 'people', 'funnel', 'kpi',
 ]);
 
 const SPEC_KEYS: ReadonlySet<string> = new Set(['title', 'subtitle', 'theme', 'slides']);
 const SLIDE_KEYS: ReadonlySet<string> = new Set([
   'id', 'layout', 'title', 'eyebrow', 'bullets', 'columns', 'chart', 'quote', 'image',
-  'figures', 'table', 'comparison', 'timeline', 'agenda', 'closing', 'notes', 'sources',
+  'figures', 'table', 'comparison', 'timeline', 'agenda', 'closing', 'items', 'matrix', 'people', 'funnel', 'decoration', 'notes', 'sources',
 ]);
 const THEME_REF_KEYS: ReadonlySet<string> = new Set(['ref']);
 const SOURCE_KEYS: ReadonlySet<string> = new Set(['documentId', 'anchor', 'title']);
@@ -540,11 +844,21 @@ const CHART_KEYS: ReadonlySet<string> = new Set(['kind', 'labels', 'series']);
 const CHART_KINDS: ReadonlySet<string> = new Set(['bar', 'line', 'stacked-bar', 'pie']);
 const SERIES_KEYS: ReadonlySet<string> = new Set(['name', 'values']);
 const QUOTE_KEYS: ReadonlySet<string> = new Set(['text', 'by']);
-const IMAGE_KEYS: ReadonlySet<string> = new Set(['alt']);
-const FIGURE_KEYS: ReadonlySet<string> = new Set(['value', 'label', 'delta']);
+const IMAGE_KEYS: ReadonlySet<string> = new Set(['alt', 'assetId', 'url', 'side']);
+const FIGURE_KEYS: ReadonlySet<string> = new Set(['value', 'label', 'delta', 'context', 'icon']);
+const ITEM_KEYS: ReadonlySet<string> = new Set(['title', 'text', 'icon']);
+const MATRIX_KEYS: ReadonlySet<string> = new Set(['x', 'y', 'quadrants']);
+const PERSON_KEYS: ReadonlySet<string> = new Set(['name', 'role', 'detail', 'assetId']);
+const FUNNEL_KEYS: ReadonlySet<string> = new Set(['label', 'value', 'detail']);
+/** Which layouts may carry each owned payload. */
+const OWNERS: Readonly<Record<string, readonly SlideLayout[]>> = {
+  chart: ['chart', 'kpi'], quote: ['quote', 'big-quote'], image: ['image', 'image-text', 'image-full'],
+  figures: ['key-figures', 'big-number', 'kpi'], table: ['table'], comparison: ['comparison'], timeline: ['timeline'],
+  agenda: ['agenda'], closing: ['closing'], items: ['cards', 'process'], matrix: ['matrix'], people: ['people'], funnel: ['funnel'],
+};
 const TABLE_KEYS: ReadonlySet<string> = new Set(['header', 'rows']);
 const COMPARISON_KEYS: ReadonlySet<string> = new Set(['left', 'right', 'verdict']);
-const SIDE_KEYS: ReadonlySet<string> = new Set(['title', 'points']);
+const SIDE_KEYS: ReadonlySet<string> = new Set(['title', 'points', 'icon']);
 const STEP_KEYS: ReadonlySet<string> = new Set(['date', 'label', 'detail']);
 const AGENDA_KEYS: ReadonlySet<string> = new Set(['items', 'current']);
 const CLOSING_KEYS: ReadonlySet<string> = new Set(['line', 'nextSteps', 'contact']);
@@ -579,7 +893,9 @@ function unknownKeys(object: Record<string, unknown>, allowed: ReadonlySet<strin
  * Validates one deck. Returns every problem it found rather than the first, so
  * a draft that has to be re-asked for can be re-asked for once.
  */
-export function validateDeckSpec(input: unknown): DeckSpecValidation {
+export function validateDeckSpec(input: unknown, options: DeckSpecValidateOptions = {}): DeckSpecValidation {
+  ICON_NAMES = options.iconNames ?? [];
+  GRAPHIC_NAMES = options.graphicNames ?? [];
   const errors: string[] = [];
   if (!isObject(input)) return { ok: false, errors: ['deck: expected an object'] };
 
@@ -661,9 +977,8 @@ function validateSlide(raw: unknown, index: number, seenIds: Set<string>, errors
   const layout = typeof raw.layout === 'string' ? raw.layout : '';
   if (!LAYOUTS.has(layout)) errors.push(`${at}.layout: must be one of ${[...LAYOUTS].join(', ')}`);
 
-  const title = clean(raw.title);
-  if (!title) errors.push(`${at}.title: required`);
-  else if (title.length > MAX_TITLE_CHARS) errors.push(`${at}.title: longer than ${MAX_TITLE_CHARS} characters`);
+  const title = raw.title === undefined ? undefined : validateText(raw.title, `${at}.title`, MAX_TITLE_CHARS, errors);
+  if (raw.title === undefined) errors.push(`${at}.title: required`);
 
   const eyebrow = clean(raw.eyebrow);
   if (raw.eyebrow !== undefined && !eyebrow) errors.push(`${at}.eyebrow: must be a non-empty string when present`);
@@ -672,41 +987,57 @@ function validateSlide(raw: unknown, index: number, seenIds: Set<string>, errors
   const notes = cleanMultiline(raw.notes);
   if (notes && notes.length > MAX_NOTES_CHARS) errors.push(`${at}.notes: longer than ${MAX_NOTES_CHARS} characters`);
 
-  const bullets = raw.bullets === undefined ? undefined : validateBullets(raw.bullets, `${at}.bullets`, errors);
+  const bullets = raw.bullets === undefined ? undefined : validateTextList(raw.bullets, `${at}.bullets`, errors);
   const columns = raw.columns === undefined ? undefined : validateColumns(raw.columns, at, errors);
   const chart = raw.chart === undefined ? undefined : validateChart(raw.chart, `${at}.chart`, errors);
   const quote = raw.quote === undefined ? undefined : validateQuote(raw.quote, `${at}.quote`, errors);
   const image = raw.image === undefined ? undefined : validateImage(raw.image, `${at}.image`, errors);
-  const figures = raw.figures === undefined ? undefined : validateFigures(raw.figures, `${at}.figures`, errors);
+  const figureBounds: [number, number] = layout === 'big-number' ? [1, 1] : [MIN_FIGURES, MAX_FIGURES];
+  const figures = raw.figures === undefined ? undefined : validateFigures(raw.figures, `${at}.figures`, errors, figureBounds);
   const table = raw.table === undefined ? undefined : validateTable(raw.table, `${at}.table`, errors);
   const comparison = raw.comparison === undefined ? undefined : validateComparison(raw.comparison, `${at}.comparison`, errors);
   const timeline = raw.timeline === undefined ? undefined : validateTimeline(raw.timeline, `${at}.timeline`, errors);
   const agenda = raw.agenda === undefined ? undefined : validateAgenda(raw.agenda, `${at}.agenda`, errors);
   const closing = raw.closing === undefined ? undefined : validateClosing(raw.closing, `${at}.closing`, errors);
+  const itemBounds: [number, number] = layout === 'process' ? [MIN_PROCESS_STEPS, MAX_PROCESS_STEPS] : [MIN_CARDS, MAX_CARDS];
+  const items = raw.items === undefined ? undefined : validateItems(raw.items, `${at}.items`, itemBounds, errors);
+  const matrix = raw.matrix === undefined ? undefined : validateMatrix(raw.matrix, `${at}.matrix`, errors);
+  const people = raw.people === undefined ? undefined : validatePeople(raw.people, `${at}.people`, errors);
+  const funnel = raw.funnel === undefined ? undefined : validateFunnel(raw.funnel, `${at}.funnel`, errors);
 
   // A layout's own payload belongs to it and nowhere else; bullets are the one
   // thing every layout may carry, as supporting text.
   if (layout === 'bullets' && !bullets?.length) errors.push(`${at}: a 'bullets' slide needs at least one bullet`);
   if (layout === 'two-column' && !columns) errors.push(`${at}: a 'two-column' slide needs columns`);
   if (layout === 'chart' && !chart) errors.push(`${at}: a 'chart' slide needs a chart`);
+  if (layout === 'kpi' && !chart && raw.chart === undefined) errors.push(`${at}: a 'kpi' slide needs a chart`);
   if (layout === 'quote' && !quote) errors.push(`${at}: a 'quote' slide needs a quote`);
+  if (layout === 'big-quote' && !quote && raw.quote === undefined) errors.push(`${at}: a 'big-quote' slide needs a quote`);
   if (layout === 'image' && !image) errors.push(`${at}: an 'image' slide needs image.alt`);
+  if ((layout === 'image-text' || layout === 'image-full') && !image && raw.image === undefined) errors.push(`${at}: an '${layout}' slide needs image.alt`);
+  if (layout === 'big-number' && raw.bullets !== undefined && Array.isArray(raw.bullets) && raw.bullets.length > MAX_STORY_BULLETS) errors.push(`${at}.bullets: a 'big-number' story takes at most ${MAX_STORY_BULLETS} bullets`);
   if (columns && layout !== 'two-column') errors.push(`${at}.columns: only a 'two-column' slide may carry columns`);
-  if (chart && layout !== 'chart') errors.push(`${at}.chart: only a 'chart' slide may carry a chart`);
-  if (quote && layout !== 'quote') errors.push(`${at}.quote: only a 'quote' slide may carry a quote`);
-  if (image && layout !== 'image') errors.push(`${at}.image: only an 'image' slide may carry an image`);
-  const owned: Array<[unknown, string, string]> = [
-    [figures, 'key-figures', 'figures'], [table, 'table', 'table'], [comparison, 'comparison', 'comparison'],
-    [timeline, 'timeline', 'timeline'], [agenda, 'agenda', 'agenda'], [closing, 'closing', 'closing'],
+  const owned: Array<[unknown, string]> = [
+    [chart, 'chart'], [quote, 'quote'], [image, 'image'],
+    [figures, 'figures'], [table, 'table'], [comparison, 'comparison'],
+    [timeline, 'timeline'], [agenda, 'agenda'], [closing, 'closing'],
+    [items, 'items'], [matrix, 'matrix'], [people, 'people'], [funnel, 'funnel'],
   ];
-  for (const [value, owner, field] of owned) {
-    if (layout === owner && !value && raw[field] === undefined) errors.push(`${at}: a '${owner}' slide needs ${field}`);
-    if (value && layout !== owner) errors.push(`${at}.${field}: only a '${owner}' slide may carry ${field}`);
+  for (const [value, field] of owned) {
+    const owners = OWNERS[field]!;
+    const sole = owners.length === 1 ? `a '${owners[0]}' slide` : `${owners.map((o) => `'${o}'`).join(', ')} slides`;
+    const needs = (['figures', 'table', 'comparison', 'timeline', 'agenda', 'closing', 'items', 'matrix', 'people', 'funnel'] as const).includes(field as never);
+    if (needs && owners.includes(layout as SlideLayout) && !value && raw[field] === undefined) errors.push(`${at}: a '${layout}' slide needs ${field}`);
+    if (value && !owners.includes(layout as SlideLayout)) {
+      const noun = ({ chart: 'a chart', quote: 'a quote', image: 'an image' } as Record<string, string>)[field] ?? field;
+      errors.push(`${at}.${field}: only ${sole} may carry ${noun}`);
+    }
   }
   if (layout === 'chart' && chart && chart.kind === 'pie' && chart.series.length !== 1) errors.push(`${at}.chart.series: a pie takes exactly one series`);
   if (layout === 'chart' && chart && chart.kind === 'pie' && chart.labels.length > MAX_PIE_SLICES) errors.push(`${at}.chart.labels: a pie takes at most ${MAX_PIE_SLICES} slices`);
 
   const sources = validateSources(raw.sources, at, errors);
+  const decoration = raw.decoration === undefined ? undefined : validateDecoration(raw.decoration, `${at}.decoration`, errors);
 
   if (!id || !title || !LAYOUTS.has(layout)) return null;
   return {
@@ -725,9 +1056,71 @@ function validateSlide(raw: unknown, index: number, seenIds: Set<string>, errors
     ...(timeline ? { timeline } : {}),
     ...(agenda ? { agenda } : {}),
     ...(closing ? { closing } : {}),
+    ...(items ? { items } : {}),
+    ...(matrix ? { matrix } : {}),
+    ...(people ? { people } : {}),
+    ...(funnel ? { funnel } : {}),
+    ...(decoration ? { decoration } : {}),
     ...(notes ? { notes } : {}),
     sources,
   };
+}
+
+const DECORATION_KEYS: ReadonlySet<string> = new Set(['graphic', 'placement']);
+
+function validateDecoration(raw: unknown, at: string, errors: string[]): DeckDecoration | 'none' | undefined {
+  if (raw === 'none') return 'none';
+  if (!isObject(raw)) { errors.push(`${at}: expected 'none' or { graphic, placement? }`); return undefined; }
+  for (const key of unknownKeys(raw, DECORATION_KEYS)) errors.push(`${at}: unknown field '${key}'`);
+  if (!isGraphicName(raw.graphic)) { errors.push(`${at}.graphic: unknown graphic '${String(raw.graphic)}'; use one of ${GRAPHIC_NAMES.join(', ')}`); return undefined; }
+  if (raw.placement !== undefined && !(DECK_DECORATION_PLACEMENTS as readonly unknown[]).includes(raw.placement)) {
+    errors.push(`${at}.placement: must be one of ${DECK_DECORATION_PLACEMENTS.join(', ')}`); return undefined;
+  }
+  return { graphic: raw.graphic, ...(raw.placement ? { placement: raw.placement as DeckDecorationPlacement } : {}) };
+}
+
+const RUN_KEYS: ReadonlySet<string> = new Set(['text', 'emphasis']);
+
+/**
+ * A title or bullet: a string, or an array of runs. Caps apply to the joined
+ * plain text. Runs keep their spaces (only line breaks and tabs become
+ * spaces), so "Grow " + "faster" reads "Grow faster".
+ */
+function validateText(raw: unknown, at: string, maxChars: number, errors: string[]): DeckText | undefined {
+  if (typeof raw === 'string') {
+    const text = clean(raw);
+    if (!text) { errors.push(`${at}: must be a non-empty string`); return undefined; }
+    if (text.length > maxChars) { errors.push(`${at}: longer than ${maxChars} characters`); return undefined; }
+    return text;
+  }
+  if (!Array.isArray(raw)) { errors.push(`${at}: expected a string or an array of runs`); return undefined; }
+  if (!raw.length) { errors.push(`${at}: an array of runs must not be empty`); return undefined; }
+  const runs: DeckRun[] = [];
+  let ok = true;
+  raw.forEach((r, i) => {
+    if (!isObject(r)) { errors.push(`${at}[${i}]: expected a run { text, emphasis? }`); ok = false; return; }
+    for (const key of unknownKeys(r, RUN_KEYS)) { errors.push(`${at}[${i}]: unknown field '${key}'`); ok = false; }
+    if (typeof r.text !== 'string' || !r.text.trim()) { errors.push(`${at}[${i}].text: must be a non-empty string`); ok = false; return; }
+    if (r.emphasis !== undefined && !(DECK_EMPHASES as readonly unknown[]).includes(r.emphasis)) {
+      errors.push(`${at}[${i}].emphasis: must be one of ${DECK_EMPHASES.join(', ')}`); ok = false; return;
+    }
+    runs.push({ text: r.text.replace(/[\t\r\n]+/g, ' '), ...(r.emphasis ? { emphasis: r.emphasis as DeckEmphasis } : {}) });
+  });
+  if (!ok) return undefined;
+  const plain = plainText(runs);
+  if (plain.length > maxChars) { errors.push(`${at}: longer than ${maxChars} characters`); return undefined; }
+  return runs;
+}
+
+function validateTextList(raw: unknown, at: string, errors: string[]): DeckText[] {
+  if (!Array.isArray(raw)) { errors.push(`${at}: expected an array of strings or runs`); return []; }
+  if (raw.length > MAX_BULLETS_PER_SLIDE) errors.push(`${at}: ${raw.length} bullets, the cap is ${MAX_BULLETS_PER_SLIDE}`);
+  const out: DeckText[] = [];
+  raw.slice(0, MAX_BULLETS_PER_SLIDE).forEach((item, index) => {
+    const t = validateText(item, `${at}[${index}]`, MAX_BULLET_CHARS, errors);
+    if (t !== undefined) out.push(t);
+  });
+  return out;
 }
 
 function validateBullets(raw: unknown, at: string, errors: string[]): string[] {
@@ -816,7 +1209,86 @@ function validateImage(raw: unknown, at: string, errors: string[]): DeckImage | 
   const alt = clean(raw.alt);
   if (!alt) { errors.push(`${at}.alt: required`); return undefined; }
   if (alt.length > MAX_BULLET_CHARS) { errors.push(`${at}.alt: longer than ${MAX_BULLET_CHARS} characters`); return undefined; }
-  return { alt };
+  const assetId = shortText(raw.assetId, `${at}.assetId`, MAX_ASSET_ID_CHARS, errors, false);
+  let url: string | undefined;
+  if (raw.url !== undefined) {
+    url = typeof raw.url === 'string' ? raw.url.trim() : '';
+    if (!/^https:\/\/[^\s]+$/.test(url) || url.length > MAX_IMAGE_URL_CHARS) { errors.push(`${at}.url: must be an https URL of at most ${MAX_IMAGE_URL_CHARS} characters`); url = undefined; }
+  }
+  if (raw.side !== undefined && raw.side !== 'left' && raw.side !== 'right') errors.push(`${at}.side: must be 'left' or 'right'`);
+  const side = raw.side === 'left' || raw.side === 'right' ? raw.side : undefined;
+  return { alt, ...(assetId ? { assetId } : {}), ...(url ? { url } : {}), ...(side ? { side } : {}) };
+}
+
+/** An optional icon name from the bundled set. */
+function iconField(raw: unknown, at: string, errors: string[]): string | undefined {
+  if (raw === undefined) return undefined;
+  if (!isIconName(raw)) { errors.push(`${at}: unknown icon '${String(raw)}'; use one of ${ICON_NAMES.join(', ')}`); return undefined; }
+  return raw;
+}
+
+function validateItem(raw: unknown, at: string, errors: string[]): DeckItem | undefined {
+  if (!isObject(raw)) { errors.push(`${at}: expected { title, text?, icon? }`); return undefined; }
+  for (const key of unknownKeys(raw, ITEM_KEYS)) errors.push(`${at}: unknown field '${key}'`);
+  const title = shortText(raw.title, `${at}.title`, MAX_ITEM_TITLE_CHARS, errors);
+  const text = shortText(raw.text, `${at}.text`, MAX_ITEM_TEXT_CHARS, errors, false);
+  const icon = iconField(raw.icon, `${at}.icon`, errors);
+  return title ? { title, ...(text ? { text } : {}), ...(icon ? { icon } : {}) } : undefined;
+}
+
+function validateItems(raw: unknown, at: string, [min, max]: [number, number], errors: string[]): DeckItem[] | undefined {
+  if (!Array.isArray(raw)) { errors.push(`${at}: expected an array of { title, text?, icon? }`); return undefined; }
+  if (raw.length < min || raw.length > max) errors.push(`${at}: ${raw.length} items, expected ${min} to ${max}`);
+  const before = errors.length;
+  const out = raw.slice(0, max).map((v, i) => validateItem(v, `${at}[${i}]`, errors));
+  return errors.length === before && raw.length >= min && raw.length <= max ? out as DeckItem[] : undefined;
+}
+
+function validateMatrix(raw: unknown, at: string, errors: string[]): DeckMatrix | undefined {
+  if (!isObject(raw)) { errors.push(`${at}: expected { x, y, quadrants }`); return undefined; }
+  for (const key of unknownKeys(raw, MATRIX_KEYS)) errors.push(`${at}: unknown field '${key}'`);
+  const before = errors.length;
+  const x = textList(raw.x, `${at}.x`, 2, 2, MAX_MATRIX_AXIS_CHARS, errors);
+  const y = textList(raw.y, `${at}.y`, 2, 2, MAX_MATRIX_AXIS_CHARS, errors);
+  if (!Array.isArray(raw.quadrants) || raw.quadrants.length !== 4) { errors.push(`${at}.quadrants: exactly four { title, text?, icon? }, top-left, top-right, bottom-left, bottom-right`); return undefined; }
+  const quadrants = raw.quadrants.map((v, i) => validateItem(v, `${at}.quadrants[${i}]`, errors));
+  if (errors.length !== before) return undefined;
+  return { x: x as [string, string], y: y as [string, string], quadrants: quadrants as DeckMatrix['quadrants'] };
+}
+
+function validatePeople(raw: unknown, at: string, errors: string[]): DeckPerson[] | undefined {
+  if (!Array.isArray(raw)) { errors.push(`${at}: expected an array of { name, role, detail?, assetId? }`); return undefined; }
+  if (raw.length < MIN_PEOPLE || raw.length > MAX_PEOPLE) errors.push(`${at}: ${raw.length} people, expected ${MIN_PEOPLE} to ${MAX_PEOPLE}`);
+  const before = errors.length;
+  const out: DeckPerson[] = [];
+  raw.slice(0, MAX_PEOPLE).forEach((v, i) => {
+    const where = `${at}[${i}]`;
+    if (!isObject(v)) { errors.push(`${where}: expected an object`); return; }
+    for (const key of unknownKeys(v, PERSON_KEYS)) errors.push(`${where}: unknown field '${key}'`);
+    const name = shortText(v.name, `${where}.name`, MAX_PERSON_NAME_CHARS, errors);
+    const role = shortText(v.role, `${where}.role`, MAX_PERSON_ROLE_CHARS, errors);
+    const detail = shortText(v.detail, `${where}.detail`, MAX_PERSON_DETAIL_CHARS, errors, false);
+    const assetId = shortText(v.assetId, `${where}.assetId`, MAX_ASSET_ID_CHARS, errors, false);
+    if (name && role) out.push({ name, role, ...(detail ? { detail } : {}), ...(assetId ? { assetId } : {}) });
+  });
+  return errors.length === before && raw.length >= MIN_PEOPLE && raw.length <= MAX_PEOPLE ? out : undefined;
+}
+
+function validateFunnel(raw: unknown, at: string, errors: string[]): DeckFunnelStage[] | undefined {
+  if (!Array.isArray(raw)) { errors.push(`${at}: expected an array of { label, value, detail? }`); return undefined; }
+  if (raw.length < MIN_FUNNEL_STAGES || raw.length > MAX_FUNNEL_STAGES) errors.push(`${at}: ${raw.length} stages, expected ${MIN_FUNNEL_STAGES} to ${MAX_FUNNEL_STAGES}`);
+  const before = errors.length;
+  const out: DeckFunnelStage[] = [];
+  raw.slice(0, MAX_FUNNEL_STAGES).forEach((v, i) => {
+    const where = `${at}[${i}]`;
+    if (!isObject(v)) { errors.push(`${where}: expected an object`); return; }
+    for (const key of unknownKeys(v, FUNNEL_KEYS)) errors.push(`${where}: unknown field '${key}'`);
+    const label = shortText(v.label, `${where}.label`, MAX_FUNNEL_LABEL_CHARS, errors);
+    const value = shortText(v.value, `${where}.value`, MAX_FIGURE_VALUE_CHARS, errors);
+    const detail = shortText(v.detail, `${where}.detail`, MAX_FUNNEL_DETAIL_CHARS, errors, false);
+    if (label && value) out.push({ label, value, ...(detail ? { detail } : {}) });
+  });
+  return errors.length === before && raw.length >= MIN_FUNNEL_STAGES && raw.length <= MAX_FUNNEL_STAGES ? out : undefined;
 }
 
 /** A required short string, collapsed, within `max` characters; pushes the error and returns undefined otherwise. */
@@ -841,9 +1313,9 @@ function textList(raw: unknown, at: string, min: number, max: number, maxChars: 
   return out;
 }
 
-function validateFigures(raw: unknown, at: string, errors: string[]): DeckFigure[] | undefined {
-  if (!Array.isArray(raw)) { errors.push(`${at}: expected an array of { value, label, delta? }`); return undefined; }
-  if (raw.length < MIN_FIGURES || raw.length > MAX_FIGURES) errors.push(`${at}: ${raw.length} figures, expected ${MIN_FIGURES} to ${MAX_FIGURES}`);
+function validateFigures(raw: unknown, at: string, errors: string[], [minF, maxF]: [number, number] = [MIN_FIGURES, MAX_FIGURES]): DeckFigure[] | undefined {
+  if (!Array.isArray(raw)) { errors.push(`${at}: expected an array of { value, label, delta?, context?, icon? }`); return undefined; }
+  if (raw.length < minF || raw.length > maxF) errors.push(`${at}: ${raw.length} figures, expected ${minF === maxF ? `exactly ${minF}` : `${minF} to ${maxF}`}`);
   const out: DeckFigure[] = [];
   raw.slice(0, MAX_FIGURES).forEach((entry, i) => {
     const where = `${at}[${i}]`;
@@ -852,9 +1324,11 @@ function validateFigures(raw: unknown, at: string, errors: string[]): DeckFigure
     const value = shortText(entry.value, `${where}.value`, MAX_FIGURE_VALUE_CHARS, errors);
     const label = shortText(entry.label, `${where}.label`, MAX_FIGURE_LABEL_CHARS, errors);
     const delta = shortText(entry.delta, `${where}.delta`, MAX_FIGURE_DELTA_CHARS, errors, false);
-    if (value && label) out.push({ value, label, ...(delta ? { delta } : {}) });
+    const context = shortText(entry.context, `${where}.context`, MAX_FIGURE_LABEL_CHARS, errors, false);
+    const icon = iconField(entry.icon, `${where}.icon`, errors);
+    if (value && label) out.push({ value, label, ...(delta ? { delta } : {}), ...(context ? { context } : {}), ...(icon ? { icon } : {}) });
   });
-  return out.length >= MIN_FIGURES && out.length === raw.length ? out : undefined;
+  return out.length >= minF && out.length <= maxF && out.length === raw.length ? out : undefined;
 }
 
 function validateTable(raw: unknown, at: string, errors: string[]): DeckTable | undefined {
@@ -890,7 +1364,8 @@ function validateComparison(raw: unknown, at: string, errors: string[]): DeckCom
     for (const key of unknownKeys(v, SIDE_KEYS)) errors.push(`${where}: unknown field '${key}'`);
     const title = shortText(v.title, `${where}.title`, MAX_COMPARISON_TITLE_CHARS, errors);
     const points = textList(v.points, `${where}.points`, 1, MAX_COMPARISON_POINTS, MAX_COMPARISON_POINT_CHARS, errors);
-    return title ? { title, points } : undefined;
+    const icon = iconField(v.icon, `${where}.icon`, errors);
+    return title ? { title, points, ...(icon ? { icon } : {}) } : undefined;
   };
   const left = side(raw.left, `${at}.left`);
   const right = side(raw.right, `${at}.right`);
@@ -969,4 +1444,93 @@ function validateSources(raw: unknown, at: string, errors: string[]): DeckSource
   });
   if (!out.length) errors.push(`${at}.sources: no usable source survived validation`);
   return out;
+}
+
+
+// ---------------------------------------------------------------------------
+// Editing in place (2.550.0): a field by path, a row of a list
+// ---------------------------------------------------------------------------
+
+/**
+ * The slide with the field at `path` (`title`, `bullets.1`, `items.2.text`,
+ * `matrix.quadrants.0.title`, `comparison.left.icon`; brackets work too:
+ * `items[2].text`, `table.rows[0][2]`) set to `value`. An
+ * empty value on an optional field (`text`, `detail`, `icon`, …) removes the
+ * key, since the engine refuses an empty string where a field is present.
+ * A path that does not exist on the slide returns the slide unchanged.
+ */
+export function setSlidePath(slide: DeckSlide, path: string, value: unknown): DeckSlide {
+  const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+  const required = new Set(['title', 'value', 'label', 'name', 'role', 'date', 'text', 'by', 'alt', 'line']);
+  const write = (target: unknown, at: number): unknown => {
+    const key = keys[at]!;
+    const index = /^\d+$/.test(key) ? Number(key) : undefined;
+    if (Array.isArray(target)) {
+      if (index === undefined || index >= target.length) return target;
+      const next = target.slice();
+      next[index] = at === keys.length - 1 ? value : write(target[index], at + 1);
+      return next;
+    }
+    if (!target || typeof target !== 'object') return target;
+    const object = target as Record<string, unknown>;
+    if (at === keys.length - 1) {
+      const next = { ...object };
+      // `text` is required on a quote, optional on an item.
+      const optional = !required.has(key) || (key === 'text' && keys[0] !== 'quote');
+      if ((value === '' || value === undefined) && optional && at > 0) delete next[key];
+      else next[key] = value;
+      return next;
+    }
+    if (!(key in object)) return target;
+    return { ...object, [key]: write(object[key], at + 1) };
+  };
+  return write(slide, 0) as DeckSlide;
+}
+
+/** The lists a row operation may touch, and a blank row of each. */
+const ROW_TEMPLATES: Record<string, () => unknown> = {
+  bullets: () => '',
+  items: () => ({ title: '' }),
+  figures: () => ({ value: '', label: '' }),
+  people: () => ({ name: '', role: '' }),
+  funnel: () => ({ label: '', value: '' }),
+  timeline: () => ({ date: '', label: '' }),
+};
+
+/** How many rows `list` may hold on this slide's layout. */
+export function slideRowBounds(slide: DeckSlide, list: string): [number, number] {
+  if (list === 'bullets') return [slide.layout === 'bullets' ? 1 : 0, slide.layout === 'big-number' ? MAX_STORY_BULLETS : MAX_BULLETS_PER_SLIDE];
+  return layoutRowBounds(slide.layout) ?? [0, 0];
+}
+
+function rowList(slide: DeckSlide, list: string): unknown[] | undefined {
+  if (!(list in ROW_TEMPLATES)) return undefined;
+  const value = (slide as unknown as Record<string, unknown>)[list];
+  return Array.isArray(value) ? value : list === 'bullets' ? [] : undefined;
+}
+
+/** A blank row after `afterIndex` (-1 puts it first), within the layout's cap. Unchanged at the cap. */
+export function addSlideRow(slide: DeckSlide, list: string, afterIndex: number): DeckSlide {
+  const rows = rowList(slide, list);
+  if (!rows || rows.length >= slideRowBounds(slide, list)[1]) return slide;
+  const next = rows.slice();
+  next.splice(Math.min(Math.max(afterIndex + 1, 0), next.length), 0, ROW_TEMPLATES[list]!());
+  return { ...slide, [list]: next };
+}
+
+/** Remove row `index`, never below the layout's floor. */
+export function removeSlideRow(slide: DeckSlide, list: string, index: number): DeckSlide {
+  const rows = rowList(slide, list);
+  if (!rows || index < 0 || index >= rows.length || rows.length <= slideRowBounds(slide, list)[0]) return slide;
+  return { ...slide, [list]: rows.filter((_, i) => i !== index) };
+}
+
+/** Move row `from` to `to`. Unchanged when either is out of range. */
+export function moveSlideRow(slide: DeckSlide, list: string, from: number, to: number): DeckSlide {
+  const rows = rowList(slide, list);
+  if (!rows || from < 0 || to < 0 || from >= rows.length || to >= rows.length || from === to) return slide;
+  const next = rows.slice();
+  const [row] = next.splice(from, 1);
+  next.splice(to, 0, row);
+  return { ...slide, [list]: next };
 }

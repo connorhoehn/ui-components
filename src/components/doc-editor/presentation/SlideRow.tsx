@@ -16,7 +16,7 @@ import { cn } from '../../../lib/cn';
 import { IconButton } from '../../ui/IconButton';
 import { Text } from '../../shared/Text';
 import { svgDataUri } from './svgPreview';
-import type { DeckSlide } from './deckSpec';
+import { plainText, type DeckSlide } from './deckSpec';
 
 /** One finding about a slide (overflow, unfinished, an example source), since 2.549.0. */
 export interface SlideFinding {
@@ -159,7 +159,7 @@ export function SlideRow({
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <Text as="span" className="truncate text-[12px] font-medium text-text-primary">
-            {slide.title || 'Untitled slide'}
+            {plainText(slide.title) || 'Untitled slide'}
           </Text>
           <Text as="span" className="text-[10px] text-text-tertiary">{slide.layout}</Text>
           {changed && (

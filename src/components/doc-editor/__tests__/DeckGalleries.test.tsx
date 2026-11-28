@@ -17,7 +17,7 @@ describe('LayoutGallery', () => {
   it('offers every layout as a pressable tile with its name and use, and calls onSelect', () => {
     const onSelect = vi.fn();
     render(<LayoutGallery onSelect={onSelect} selected="chart" previews={{ table: SVG }} />);
-    const list = screen.getByRole('list', { name: 'Slide layouts' });
+    const list = screen.getByRole('group', { name: 'Slide layouts' });
     const tiles = within(list).getAllByRole('button');
     expect(tiles).toHaveLength(SLIDE_LAYOUTS.length);
     const timeline = screen.getByRole('button', { name: /Timeline.*dated steps/ });

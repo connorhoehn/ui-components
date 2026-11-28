@@ -23,14 +23,25 @@ import type { ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import { SelectableCard } from '../../ui/SelectableCard';
 import { Text } from '../../shared/Text';
-import { SLIDE_LAYOUTS, SLIDE_LAYOUT_DESCRIPTIONS, SLIDE_LAYOUT_LABELS, type SlideLayout } from './deckSpec';
+import { SectionLabel } from '../../shared/SectionLabel';
+import { SLIDE_LAYOUT_GROUPS, SLIDE_LAYOUT_DESCRIPTIONS, SLIDE_LAYOUT_LABELS, type SlideLayout } from './deckSpec';
 import { svgDataUri } from './svgPreview';
 
 export interface LayoutGalleryProps {
   /** Called with the tile's layout when it is pressed. */
   onSelect: (layout: SlideLayout) => void;
-  /** The layouts to offer, in order. Default: every layout (`SLIDE_LAYOUTS`). */
+  /**
+   * The layouts to offer, in order, as one flat list. Default: every layout,
+   * grouped (`SLIDE_LAYOUT_GROUPS`: Openers, Numbers, Lists and steps,
+   * Comparisons, Charts, People, Images, Closers).
+   */
   layouts?: readonly SlideLayout[];
+  /**
+   * Layouts to leave out (since 2.550.0), in either form — for instance
+   * `IMAGE_LAYOUTS` while the host has no asset store. A group left empty
+   * is not shown.
+   */
+  hiddenLayouts?: readonly SlideLayout[];
   /**
    * SVG source per layout, rendered by the host's server. Shown through
    * `svgDataUri` in an `<img>`; a layout without one shows a schematic.
@@ -136,6 +147,49 @@ function AgendaBlock() {
   );
 }
 
+function CardsBlock({ count = 3, numbered = false }: { count?: number; numbered?: boolean }) {
+  return (
+    <span className={cn('grid flex-1 gap-1.5', count === 4 ? 'grid-cols-4' : 'grid-cols-3')}>
+      {Array.from({ length: count }, (_, i) => (
+        <span key={i} className="flex flex-col gap-1 rounded-sm bg-surface p-1">
+          <span className={cn('block h-2 w-2 bg-primary/60', numbered ? 'rounded-full' : 'rounded-sm')} />
+          <span className="block h-1 w-3/4 rounded-sm bg-text-tertiary" />
+          <span className="block h-1 w-1/2 rounded-sm bg-border-emphasis" />
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function PeopleBlock() {
+  return (
+    <span className="grid flex-1 grid-cols-4 gap-1.5">
+      {[0, 1, 2, 3].map((i) => (
+        <span key={i} className="flex flex-col items-center gap-1">
+          <span className="block h-4 w-4 rounded-full bg-primary/40" />
+          <span className="block h-1 w-3/4 rounded-sm bg-text-tertiary" />
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function FunnelBlock() {
+  return (
+    <span className="flex flex-1 flex-col items-center justify-center gap-1">
+      {['w-full', 'w-3/4', 'w-1/2', 'w-1/4'].map((width) => <span key={width} className={cn('block h-1.5 rounded-sm bg-primary/50', width)} />)}
+    </span>
+  );
+}
+
+function MatrixBlock() {
+  return (
+    <span className="grid flex-1 grid-cols-2 gap-px overflow-hidden rounded-sm bg-border-emphasis">
+      {[0, 1, 2, 3].map((i) => <span key={i} className={cn('block', i === 1 ? 'bg-primary/30' : 'bg-surface')} />)}
+    </span>
+  );
+}
+
 const SCHEMATICS: Record<SlideLayout, () => ReactNode> = {
   title: () => (
     <span className="flex flex-1 flex-col justify-center gap-1.5">
@@ -169,6 +223,43 @@ const SCHEMATICS: Record<SlideLayout, () => ReactNode> = {
       <TitleBlock wide center />
       <LinesBlock count={2} className="mx-auto w-1/2" />
     </span>
+  ),
+  'big-quote': () => (
+    <span className="flex flex-1 flex-col justify-center gap-1.5 px-1">
+      <span className="block h-3 w-3 rounded-sm bg-primary/60" />
+      <span className="block h-2 w-full rounded-sm bg-text-tertiary" />
+      <span className="block h-2 w-3/4 rounded-sm bg-text-tertiary" />
+    </span>
+  ),
+  process: () => (<><TitleBlock /><CardsBlock count={4} numbered /></>),
+  cards: () => (<><TitleBlock /><CardsBlock count={3} /></>),
+  matrix: () => (<><TitleBlock /><MatrixBlock /></>),
+  'big-number': () => (
+    <span className="flex flex-1 items-center gap-2">
+      <span className="block h-6 w-1/3 rounded-sm bg-primary/60" />
+      <LinesBlock count={3} className="flex-1" />
+    </span>
+  ),
+  'image-text': () => (
+    <span className="grid flex-1 grid-cols-2 gap-2">
+      <span className="block rounded-sm bg-primary/20" />
+      <span className="flex flex-col justify-center gap-1.5"><TitleBlock /><LinesBlock count={2} /></span>
+    </span>
+  ),
+  'image-full': () => (
+    <span className="flex flex-1 flex-col justify-end gap-1 rounded-sm bg-primary/25 p-1.5">
+      <span className="block h-1.5 w-1/2 rounded-sm bg-text-primary" />
+    </span>
+  ),
+  people: () => (<><TitleBlock /><PeopleBlock /></>),
+  funnel: () => (<><TitleBlock /><FunnelBlock /></>),
+  kpi: () => (
+    <>
+      <span className="grid grid-cols-3 gap-1">
+        {[0, 1, 2].map((i) => <span key={i} className="block h-2 rounded-sm bg-primary/50" />)}
+      </span>
+      <ChartBlock />
+    </>
   ),
 };
 
@@ -209,17 +300,18 @@ export function LayoutPreviewFrame({ svg, layout, className }: { svg?: string; l
 
 export function LayoutGallery({
   onSelect,
-  layouts = SLIDE_LAYOUTS,
+  layouts,
+  hiddenLayouts,
   previews,
   selected,
   label = 'Slide layouts',
   className,
   testIdPrefix = 'layout-gallery',
 }: LayoutGalleryProps) {
-  return (
-    <div className={cn('@container min-w-0', className)} data-testid={testIdPrefix}>
-      <ul aria-label={label} className="m-0 grid list-none grid-cols-1 gap-3 p-0 @md:grid-cols-2 @2xl:grid-cols-3">
-        {layouts.map((layout) => (
+  const hidden = new Set(hiddenLayouts ?? []);
+  const tiles = (list: readonly SlideLayout[], listLabel: string) => (
+      <ul aria-label={listLabel} className="m-0 grid list-none grid-cols-1 gap-3 p-0 @md:grid-cols-2 @2xl:grid-cols-3">
+        {list.filter((layout) => !hidden.has(layout)).map((layout) => (
           <li key={layout} className="min-w-0">
             <SelectableCard
               selected={selected === layout}
@@ -237,6 +329,22 @@ export function LayoutGallery({
           </li>
         ))}
       </ul>
+  );
+  if (layouts) {
+    return (
+      <div className={cn('@container min-w-0', className)} data-testid={testIdPrefix}>
+        {tiles(layouts, label)}
+      </div>
+    );
+  }
+  return (
+    <div role="group" aria-label={label} className={cn('@container flex min-w-0 flex-col gap-4', className)} data-testid={testIdPrefix}>
+      {SLIDE_LAYOUT_GROUPS.filter((group) => group.layouts.some((layout) => !hidden.has(layout))).map((group) => (
+        <section key={group.id} className="flex flex-col gap-2" data-testid={`${testIdPrefix}-group-${group.id}`}>
+          <SectionLabel as="div">{group.label}</SectionLabel>
+          {tiles(group.layouts, group.label)}
+        </section>
+      ))}
     </div>
   );
 }

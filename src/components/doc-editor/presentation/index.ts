@@ -115,6 +115,44 @@ export {
   isDeckThemeRef,
   slideForEngine,
   validateDeckSpec,
+  // The 0.153.0 format (2.550.0).
+  MAX_ITEM_TITLE_CHARS,
+  MAX_ITEM_TEXT_CHARS,
+  MIN_CARDS,
+  MAX_CARDS,
+  MIN_PROCESS_STEPS,
+  MAX_PROCESS_STEPS,
+  MAX_MATRIX_AXIS_CHARS,
+  MIN_PEOPLE,
+  MAX_PEOPLE,
+  MAX_PERSON_NAME_CHARS,
+  MAX_PERSON_ROLE_CHARS,
+  MAX_PERSON_DETAIL_CHARS,
+  MIN_FUNNEL_STAGES,
+  MAX_FUNNEL_STAGES,
+  MAX_FUNNEL_LABEL_CHARS,
+  MAX_FUNNEL_DETAIL_CHARS,
+  MAX_IMAGE_URL_CHARS,
+  MAX_ASSET_ID_CHARS,
+  MAX_STORY_BULLETS,
+  DECK_EMPHASES,
+  DECK_DECORATION_PLACEMENTS,
+  DECK_DECORATION_PLACEMENT_LABELS,
+  DECK_STYLES,
+  DECK_STYLE_LABELS,
+  DECK_STYLE_DESCRIPTIONS,
+  IMAGE_LAYOUTS,
+  SLIDE_LAYOUT_GROUPS,
+  LAYOUT_PAYLOADS,
+  layoutRowBounds,
+  plainText,
+  textRuns,
+  plainSlide,
+  setSlidePath,
+  addSlideRow,
+  removeSlideRow,
+  moveSlideRow,
+  slideRowBounds,
 } from './deckSpec';
 export type {
   DeckChart,
@@ -134,4 +172,30 @@ export type {
   DeckTable,
   DeckThemeRef,
   DeckTimelineStep,
+  DeckItem,
+  DeckMatrix,
+  DeckPerson,
+  DeckFunnelStage,
+  DeckEmphasis,
+  DeckRun,
+  DeckText,
+  DeckDecoration,
+  DeckDecorationPlacement,
+  DeckStyle,
+  DeckSpecValidateOptions,
+  PlainSlide,
 } from './deckSpec';
+
+// Rich decks (2.550.0): text runs, icons, graphics, styles, editing in place.
+export { applyEmphasis, editDeckText, emphasisAt, deckTextValue } from './deckText';
+export { DeckTextField, EmphasisToolbar, DeckTextPreview, DECK_EMPHASIS_LABELS } from './DeckTextField';
+export type { DeckTextFieldProps, EmphasisToolbarProps } from './DeckTextField';
+export { DeckIconPicker, DeckIconGlyph, catalogueMatches } from './IconPicker';
+export type { DeckIconPickerProps, DeckCatalogueItem, DeckIconPaths, DeckIconSource } from './IconPicker';
+export { GraphicPicker } from './GraphicPicker';
+export type { GraphicPickerProps, DeckGraphicSource } from './GraphicPicker';
+export { DeckStylePicker, DeckStyleSwatch } from './DeckStylePicker';
+export type { DeckStylePickerProps } from './DeckStylePicker';
+export { SlideRegionsOverlay, regionLabel, regionRow, normalizeRegionPath, readingOrder, DEFAULT_SLIDE_SIZE } from './SlideRegionsOverlay';
+export type { SlideRegionsOverlayProps, SlideRegion, SlideRegionKind, SlideRegionBox, SlideRegionRow, SlideSize } from './SlideRegionsOverlay';
+export { ItemsEditor, MatrixEditor, PeopleEditor, FunnelEditor, ImageEditor, DecorationField } from './SlideRichForms';

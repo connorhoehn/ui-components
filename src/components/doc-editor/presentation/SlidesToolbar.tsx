@@ -161,6 +161,8 @@ export interface SlidesToolbarProps {
   disabled?: boolean;
   className?: string;
   /** Prefix for the controls' test ids. Default `slides-toolbar`. */
+  /** Layouts to leave out of the Layout menu (since 2.550.0). */
+  hiddenLayouts?: readonly SlideLayout[];
   testIdPrefix?: string;
   /**
    * How much of the bar fits on ONE row. `auto` (the default) measures the
@@ -221,6 +223,7 @@ export function SlidesToolbar({
   disabled = false,
   className,
   testIdPrefix = 'slides-toolbar',
+  hiddenLayouts,
   size: sizeProp = 'auto',
 }: SlidesToolbarProps) {
   const { ref: rovingRef, ...roving } = useRovingToolbar();
@@ -237,7 +240,7 @@ export function SlidesToolbar({
   // absent from both, never a dead row.
   const layoutSection: DropdownMenuSection | null = !locked && slide ? {
     label: 'Layout of this slide',
-    items: SLIDE_LAYOUTS.map((layout) => ({
+    items: SLIDE_LAYOUTS.filter((layout) => !hiddenLayouts?.includes(layout)).map((layout) => ({
       label: SLIDE_LAYOUT_LABELS[layout],
       checked: layout === slide.layout,
       onSelect: () => { if (layout !== slide.layout) onLayoutChange(layout); },

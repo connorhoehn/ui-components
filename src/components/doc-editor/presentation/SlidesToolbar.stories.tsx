@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { SlidesToolbar, type SlidesToolbarSize } from './SlidesToolbar';
-import type { DeckSlide, DeckTheme, DeckThemeRef } from './deckSpec';
+import { plainText, type DeckSlide, type DeckTheme, type DeckThemeRef } from './deckSpec';
 
 /**
  * The deck editor's toolbar, at each of its three one-row layouts.
@@ -49,7 +49,7 @@ function Bar({ size, width }: { size: SlidesToolbarSize | 'auto'; width?: string
         />
       </div>
       <div className="m-6 aspect-video max-w-2xl rounded bg-paper p-8 text-paper-ink shadow">
-        <h1 className="text-2xl font-semibold">{slide.title}</h1>
+        <h1 className="text-2xl font-semibold">{plainText(slide.title)}</h1>
         <p className="mt-2 text-sm text-paper-muted">Layout {slide.layout} · theme {theme} · chart {slide.chart?.kind}</p>
       </div>
     </div>

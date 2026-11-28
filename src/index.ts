@@ -230,6 +230,41 @@ export type {
   DeckThemeRef,
   DeckTimelineStep,
 } from './components/doc-editor/presentation/deckSpec';
+// Rich decks (2.550.0): runs, icons, graphics, styles, editing in place.
+export {
+  IMAGE_LAYOUTS,
+  SLIDE_LAYOUT_GROUPS,
+  DECK_STYLES,
+  DECK_EMPHASES,
+  plainText,
+  setSlidePath,
+  addSlideRow,
+  removeSlideRow,
+  moveSlideRow,
+} from './components/doc-editor/presentation/deckSpec';
+export type {
+  DeckItem,
+  DeckMatrix,
+  DeckPerson,
+  DeckFunnelStage,
+  DeckEmphasis,
+  DeckRun,
+  DeckText,
+  DeckDecoration,
+  DeckDecorationPlacement,
+  DeckStyle,
+  DeckSpecValidateOptions,
+} from './components/doc-editor/presentation/deckSpec';
+export { DeckIconPicker, DeckIconGlyph } from './components/doc-editor/presentation/IconPicker';
+export type { DeckIconPickerProps, DeckCatalogueItem, DeckIconPaths, DeckIconSource } from './components/doc-editor/presentation/IconPicker';
+export { GraphicPicker } from './components/doc-editor/presentation/GraphicPicker';
+export type { GraphicPickerProps, DeckGraphicSource } from './components/doc-editor/presentation/GraphicPicker';
+export { DeckStylePicker } from './components/doc-editor/presentation/DeckStylePicker';
+export type { DeckStylePickerProps } from './components/doc-editor/presentation/DeckStylePicker';
+export { DeckTextField, EmphasisToolbar } from './components/doc-editor/presentation/DeckTextField';
+export type { DeckTextFieldProps, EmphasisToolbarProps } from './components/doc-editor/presentation/DeckTextField';
+export { SlideRegionsOverlay } from './components/doc-editor/presentation/SlideRegionsOverlay';
+export type { SlideRegionsOverlayProps, SlideRegion, SlideRegionKind, SlideRegionBox, SlideRegionRow, SlideSize } from './components/doc-editor/presentation/SlideRegionsOverlay';
 
 // An agent's pending edits to an open document (2.408.0). Named explicitly,
 // like PresentationEditor above: the strip imports only shared primitives, so

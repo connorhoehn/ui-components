@@ -5,7 +5,7 @@
 
 Every component-shaped (PascalCase, runtime) export of `@connorhoehn/ui-components`, grouped by job. Before writing any page or hand-rolling markup, find the component here. Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.
 
-1023 components across 23 entry points; 875 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
+1038 components across 23 entry points; 890 carry a one-line description from their source doc comment. Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).
 
 Also read: [`docs/consumer-adoption.md`](consumer-adoption.md) (decision tree and refactors), [`patterns/`](../patterns/README.md), [`skills/ui-page-build/SKILL.md`](../skills/ui-page-build/SKILL.md) (building a page) and [`skills/ui-dom-audit/SKILL.md`](../skills/ui-dom-audit/SKILL.md) (auditing one).
 
@@ -59,7 +59,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 - [Feedback & states](#feedback--states) (27)
 - [Chat & social](#chat--social) (110)
 - [Video](#video) (115)
-- [Docs & editor](#docs--editor) (146)
+- [Docs & editor](#docs--editor) (161)
 - [Diagram, graph & pipelines](#diagram-graph--pipelines) (141)
 - [Agents & compute](#agents--compute) (36)
 - [Identity](#identity) (28)
@@ -607,9 +607,16 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DecisionMacro` | `@connorhoehn/ui-components/diagram` | `macro:decision` — a recorded choice, drawn as a card in the page that argued for it. |  |  |
 | `DecisionsEditorRenderer` | `@connorhoehn/ui-components` | — |  |  |
 | `DecisionsReaderRenderer` | `@connorhoehn/ui-components` | — |  |  |
+| `DeckIconGlyph` | `@connorhoehn/ui-components/doc-editor` | One icon as an inline SVG from path data, or the host's own drawing. |  |  |
+| `DeckIconPicker` | `@connorhoehn/ui-components/doc-editor` | A searchable, category-tabbed grid of the host's deck icons, drawn inline (never a popover). | `doceditor-richdeck` |  |
 | `DeckPresentationDialog` | `@connorhoehn/ui-components/doc-editor` | Present a deck's rendered slides in a dialog over the page. |  | deprecated |
 | `DeckPresentMode` | `@connorhoehn/ui-components/doc-editor` | A deck presented in place: one slide large, previous/next, "Slide n of m", Exit, arrow keys and Escape, optional speaker notes; fills the box it is given. |  |  |
 | `DeckReader` | `@connorhoehn/ui-components/doc-editor` | A saved deck, read-only: a viewing toolbar (Slides/Outline, previous/next with "Slide n of m", zoom, notes, Present), a rail of slide thumbnails or an outline, a keyboard-navigable 16:9 viewport, and the current slide… | `doc-editor-presentation-deckreader` |  |
+| `DeckStylePicker` | `@connorhoehn/ui-components/doc-editor` | The deck's five style presets as tiles (since 2.550.0). |  |  |
+| `DeckStyleSwatch` | `@connorhoehn/ui-components/doc-editor` | A style drawn as blocks in a 16:9 frame. |  |  |
+| `DeckTextField` | `@connorhoehn/ui-components/doc-editor` | An `Input` for a title or bullet, with the emphasis toolbar while it has focus. |  |  |
+| `DeckTextPreview` | `@connorhoehn/ui-components/doc-editor` | A DeckText drawn with its emphases, for previews. |  |  |
+| `DecorationField` | `@connorhoehn/ui-components/doc-editor` | The slide's graphic and a GraphicPicker opened in place under it. |  |  |
 | `DefaultRenderer` | `@connorhoehn/ui-components` | Fallback renderer — used when no specific renderer is registered. |  |  |
 | `DiagramEditorRenderer` | `@connorhoehn/ui-components` | Phase 51 / hub#71 — Diagram editor renderer. |  |  |
 | `DiagramReaderRenderer` | `@connorhoehn/ui-components` | Phase 51 / hub#71 — Diagram reader renderer (read-only viewer). |  |  |
@@ -636,6 +643,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `DocumentTypeWizard` | `@connorhoehn/ui-components/doc-types` | 3-step wizard for creating or editing a document type. |  |  |
 | `EditorShell` | `@connorhoehn/ui-components/doc-editor` | The chrome every file in the Documents workspace is edited inside, whatever kind of file it is: a crumb trail, the title row (star, status pill, collaborators, save state, head actions), the Editor / Comments / Versio… | `doceditor-editorshell` |  |
 | `EditorToolbar` | `@connorhoehn/ui-components/doc-editor` | Extracted toolbar with formatting buttons for the Tiptap editor. |  |  |
+| `EmphasisToolbar` | `@connorhoehn/ui-components/doc-editor` | The emphasis buttons as one keyboard stop (`RovingToolbar`). |  |  |
 | `ExecutiveSummaryCard` | `@connorhoehn/ui-components/doc-editor` | — |  |  |
 | `FieldBlock` | `@connorhoehn/ui-components/diagram` | An in-progress edit of one control, held in BOTH state and a ref. |  |  |
 | `FieldDefinitionEditor` | `@connorhoehn/ui-components/doc-types` | Per-field schema editor row. |  |  |
@@ -647,9 +655,13 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `FloatingComposerDock` | `@connorhoehn/ui-components/doc-editor` | The Chat/Agent/Terminal composer floating at the bottom of an editor surface, with the agent's task strip sitting on top of it, over a fade so the page scrolls away underneath instead of being cut. |  |  |
 | `FloatingDockBar` | `@connorhoehn/ui-components/doc-editor` | A home for the call along the bottom edge of a page. |  |  |
 | `FollowModeBar` | `@connorhoehn/ui-components/doc-editor` | "Following [name]" banner with stop button. | `doc-editor-followmodebar` |  |
+| `FunnelEditor` | `@connorhoehn/ui-components/doc-editor` | Funnel stages widest first (label, value, detail), three to five, with add, remove and reorder. |  |  |
+| `GraphicPicker` | `@connorhoehn/ui-components/doc-editor` | A slide's decoration from the graphics library (since 2.550.0). |  |  |
 | `HeaderBanner` | `@connorhoehn/ui-components/doc-editor` | — |  |  |
 | `HitlBlock` | `@connorhoehn/ui-components/diagram` | A `macro:hitl` fence, drawn as an agent's question with the state a person needs to answer it. |  |  |
 | `HitlMacro` | `@connorhoehn/ui-components/diagram` | `macro:hitl` — an agent's question, drawn as a card a person can answer inside the page. |  |  |
+| `ImageEditor` | `@connorhoehn/ui-components/doc-editor` | An image slot's description, https URL and (image-text) picture side. |  |  |
+| `ItemsEditor` | `@connorhoehn/ui-components/doc-editor` | Card or process-step rows: title, text and icon, with add, remove and reorder inside the layout's bounds. |  |  |
 | `KeyDecisionsCard` | `@connorhoehn/ui-components/doc-editor` | — |  | deprecated |
 | `LayoutGallery` | `@connorhoehn/ui-components/doc-editor` | The deck's slide layouts as a grid of tiles, for choosing one. | `doceditor-layoutgallery` |  |
 | `LinkBlockEditorRenderer` | `@connorhoehn/ui-components` | Phase 51 / hub#71 — Link Block editor renderer. |  |  |
@@ -657,6 +669,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `LinksBlock` | `@connorhoehn/ui-components/diagram` | A `macro:links` fence, drawn as a reference list. |  |  |
 | `LinksMacro` | `@connorhoehn/ui-components/diagram` | `macro:links`, drawn as a reference list inside the page. |  |  |
 | `MacroRenderers` | `@connorhoehn/ui-components/diagram` | The explicit host for the `macro` node view. |  |  |
+| `MatrixEditor` | `@connorhoehn/ui-components/doc-editor` | A two-by-two: the four axis ends and four quadrants (title, text, icon). |  |  |
 | `MentionDropdown` | `@connorhoehn/ui-components/doc-editor` | — |  |  |
 | `MyMentionsPanel` | `@connorhoehn/ui-components/doc-editor` | Slide-out sidebar showing the current user's @mentions and assigned tasks. |  |  |
 | `NewDocumentModal` | `@connorhoehn/ui-components/doc-editor` | Modal for creating a new document. |  |  |
@@ -664,6 +677,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `NumberReaderRenderer` | `@connorhoehn/ui-components` | Reader-mode renderer for sectionType='number'. |  |  |
 | `ParticipantAvatars` | `@connorhoehn/ui-components/doc-editor` | Interactive presence strip with clickable avatars, online dots, mode badges, section indicators, and tooltips. |  |  |
 | `PdfViewer` | `@connorhoehn/ui-components/pdf-viewer` | A PDF, one page at a time, from a URL or bytes, with page navigation and zoom, drawn by pdf.js. |  |  |
+| `PeopleEditor` | `@connorhoehn/ui-components/doc-editor` | Team rows (name, role, detail), two to eight, with add, remove and reorder. |  |  |
 | `PresentationEditor` | `@connorhoehn/ui-components/doc-editor` | Editing a generated deck: filmstrip, 16:9 stage, slide form and notes, with the layout gallery and Present shown in place of the stage (no modals since 2.548.0; `onFocusModeChange` asks the host's shell for the whole… | `doc-editor-presentation-presentationeditor` |  |
 | `PresentationView` | `@connorhoehn/ui-components/doc-editor` | A generated deck, read-only. |  |  |
 | `ProposalCard` | `@connorhoehn/ui-components/doc-editor` | One proposed document change, awaiting a human. | `doc-editor-proposalcard` |  |
@@ -683,6 +697,7 @@ One component per common job. Reach for these first; the "don't use for" column 
 | `SlideForm` | `@connorhoehn/ui-components/doc-editor` | The inline form under the slide preview — the fields THIS layout reads. | `doceditor-slideform` |  |
 | `SlideLayoutSchematic` | `@connorhoehn/ui-components/doc-editor` | A layout drawn as blocks (title bar, text lines, bars, figures) in a 16:9 frame — what `LayoutGallery` shows when the host has no rendered preview. |  |  |
 | `SlideList` | `@connorhoehn/ui-components/doc-editor` | The slide rail's list, without drag. |  |  |
+| `SlideRegionsOverlay` | `@connorhoehn/ui-components/doc-editor` | Edit a slide by clicking its elements (since 2.550.0). |  |  |
 | `SlideRow` | `@connorhoehn/ui-components/doc-editor` | One row of the slide rail: a thumbnail, its number, its title, its controls. |  |  |
 | `SlideSources` | `@connorhoehn/ui-components/doc-editor` | The citations on one slide, and the Documents-explorer search that adds them. |  |  |
 | `SlideStage` | `@connorhoehn/ui-components/doc-editor` | The slide stage: one centred 16:9 frame for the slide being edited. |  |  |

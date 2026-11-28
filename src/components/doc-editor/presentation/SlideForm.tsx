@@ -23,6 +23,10 @@ import { Text } from '../../shared/Text';
 import { Table, TableBody, TableHead, TableRow, TableTd, TableTh } from '../../ui/Table';
 import SlideSources, { type PresentationSourceOption } from './SlideSources';
 import { AgendaEditor, ClosingEditor, ComparisonEditor, FiguresEditor, TableEditor, TimelineEditor } from './SlideLayoutForms';
+import { DecorationField, FunnelEditor, ImageEditor, ItemsEditor, MatrixEditor, PeopleEditor } from './SlideRichForms';
+import type { DeckIconSource } from './IconPicker';
+import type { DeckGraphicSource } from './GraphicPicker';
+import { DeckTextField } from './DeckTextField';
 import {
   DECK_CHART_KINDS,
   DECK_CHART_KIND_LABELS,
@@ -35,7 +39,11 @@ import {
   MAX_NOTES_CHARS,
   MAX_QUOTE_CHARS,
   MAX_TITLE_CHARS,
+  MAX_STORY_BULLETS,
+  layoutRowBounds,
+  plainText,
   type DeckChart,
+  type DeckText,
   type DeckSlide,
 } from './deckSpec';
 
@@ -57,6 +65,14 @@ export interface SlideFormProps {
    * same field is not editable in two places at once.
    */
   showNotes?: boolean;
+  /**
+   * The icon catalogue and artwork (since 2.550.0): turns on the icon slot of
+   * each card, step, quadrant, figure and comparison side. Absent: no slots,
+   * and icons already on the slide are kept.
+   */
+  icons?: DeckIconSource;
+  /** The graphics catalogue and artwork (since 2.550.0): turns on the slide's Graphic row. */
+  graphics?: DeckGraphicSource;
   testIdPrefix: string;
 }
 
@@ -78,14 +94,16 @@ function BulletListEditor({
   onChange,
   readOnly,
   testIdPrefix,
+  max,
 }: {
   label: string;
-  bullets: readonly string[];
-  onChange: (bullets: string[]) => void;
+  bullets: readonly DeckText[];
+  onChange: (bullets: DeckText[]) => void;
   readOnly: boolean;
   testIdPrefix: string;
+  max?: number;
 }) {
-  const set = (index: number, value: string) => {
+  const set = (index: number, value: DeckText) => {
     const next = bullets.slice();
     next[index] = value;
     onChange(next);
@@ -100,12 +118,12 @@ function BulletListEditor({
           // here for exactly that reason.
           <li key={index} className="flex items-center gap-1">
             <Text className="w-3 shrink-0 text-[11px] text-text-tertiary">{'•'}</Text>
-            <Input
+            <DeckTextField
               value={bullet}
               maxLength={MAX_BULLET_CHARS}
               disabled={readOnly}
               aria-label={`${label} ${index + 1}`}
-              onChange={(event) => set(index, event.target.value)}
+              onChange={(value) => set(index, value)}
               data-testid={`${testIdPrefix}-${index}`}
             />
             {!readOnly && (
@@ -125,7 +143,7 @@ function BulletListEditor({
         <Button
           variant="ghost"
           size="sm"
-          disabled={bullets.length >= MAX_BULLETS_PER_SLIDE}
+          disabled={bullets.length >= (max ?? MAX_BULLETS_PER_SLIDE)}
           onClick={() => onChange([...bullets, ''])}
           data-testid={`${testIdPrefix}-add`}
           className="self-start"
@@ -364,9 +382,13 @@ export function SlideForm({
   readOnly = false,
   showSources = true,
   showNotes = true,
+  icons,
+  graphics,
   testIdPrefix,
 }: SlideFormProps) {
   const patch = (partial: Partial<DeckSlide>) => onChange({ ...slide, ...partial });
+  const layout = slide.layout;
+  const bounds = layoutRowBounds(layout);
 
   return (
     <div className={cn('flex flex-col gap-3')} data-testid={`${testIdPrefix}-form`}>
@@ -385,12 +407,12 @@ export function SlideForm({
         </FormField>
         <FormField label="Slide title" required>
           {(wiring) => (
-            <Input
+            <DeckTextField
               {...wiring}
               value={slide.title}
               maxLength={MAX_TITLE_CHARS}
               disabled={readOnly}
-              onChange={(event) => patch({ title: event.target.value })}
+              onChange={(title) => patch({ title })}
               // PresentationEditor finds the field by this to focus it (2.549.0).
               data-slide-title=""
               data-testid={`${testIdPrefix}-title`}
@@ -398,6 +420,17 @@ export function SlideForm({
           )}
         </FormField>
       </div>
+
+      {(layout === 'big-number' || layout === 'image-text' || layout === 'image-full' || layout === 'kpi') && (
+        <BulletListEditor
+          label={layout === 'big-number' ? 'The story' : 'Supporting points'}
+          bullets={slide.bullets ?? []}
+          onChange={(bullets) => patch({ bullets: bullets.length ? bullets : undefined })}
+          readOnly={readOnly}
+          max={layout === 'big-number' ? MAX_STORY_BULLETS : undefined}
+          testIdPrefix={`${testIdPrefix}-bullets`}
+        />
+      )}
 
       {slide.layout === 'bullets' && (
         <BulletListEditor
@@ -414,14 +447,14 @@ export function SlideForm({
           <BulletListEditor
             label="Left column"
             bullets={slide.columns?.[0] ?? []}
-            onChange={(left) => patch({ columns: [left, slide.columns?.[1] ?? []] })}
+            onChange={(left) => patch({ columns: [left.map((b) => plainText(b)), slide.columns?.[1] ?? []] })}
             readOnly={readOnly}
             testIdPrefix={`${testIdPrefix}-column-0`}
           />
           <BulletListEditor
             label="Right column"
             bullets={slide.columns?.[1] ?? []}
-            onChange={(right) => patch({ columns: [slide.columns?.[0] ?? [], right] })}
+            onChange={(right) => patch({ columns: [slide.columns?.[0] ?? [], right.map((b) => plainText(b))] })}
             readOnly={readOnly}
             testIdPrefix={`${testIdPrefix}-column-1`}
           />
@@ -437,7 +470,7 @@ export function SlideForm({
         />
       )}
 
-      {slide.layout === 'quote' && (
+      {(slide.layout === 'quote' || slide.layout === 'big-quote') && (
         <div className="flex flex-col gap-2">
           <FormField label="Quote">
             {(wiring) => (
@@ -483,13 +516,52 @@ export function SlideForm({
         </FormField>
       )}
 
-      {slide.layout === 'key-figures' && slide.figures && (
+      {(layout === 'key-figures' || layout === 'big-number' || layout === 'kpi') && slide.figures && (
         <FiguresEditor
-          figures={slide.figures}
+          figures={layout === 'big-number' ? slide.figures.slice(0, 1) : slide.figures}
           onChange={(figures) => patch({ figures })}
+          bounds={bounds}
+          icons={icons}
           readOnly={readOnly}
           testIdPrefix={`${testIdPrefix}-figures`}
         />
+      )}
+
+      {layout === 'kpi' && slide.chart && (
+        <ChartEditor
+          chart={slide.chart}
+          onChange={(chart) => patch({ chart })}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-chart`}
+        />
+      )}
+
+      {(layout === 'image-text' || layout === 'image-full') && slide.image && (
+        <ImageEditor image={slide.image} layout={layout} onChange={(image) => patch({ image })} readOnly={readOnly} testIdPrefix={`${testIdPrefix}-image`} />
+      )}
+
+      {(layout === 'cards' || layout === 'process') && slide.items && bounds && (
+        <ItemsEditor
+          items={slide.items}
+          onChange={(items) => patch({ items })}
+          bounds={bounds}
+          noun={layout === 'cards' ? 'card' : 'step'}
+          icons={icons}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-items`}
+        />
+      )}
+
+      {layout === 'matrix' && slide.matrix && (
+        <MatrixEditor matrix={slide.matrix} onChange={(matrix) => patch({ matrix })} icons={icons} readOnly={readOnly} testIdPrefix={`${testIdPrefix}-matrix`} />
+      )}
+
+      {layout === 'people' && slide.people && (
+        <PeopleEditor people={slide.people} onChange={(people) => patch({ people })} readOnly={readOnly} testIdPrefix={`${testIdPrefix}-people`} />
+      )}
+
+      {layout === 'funnel' && slide.funnel && (
+        <FunnelEditor stages={slide.funnel} onChange={(funnel) => patch({ funnel })} readOnly={readOnly} testIdPrefix={`${testIdPrefix}-funnel`} />
       )}
 
       {slide.layout === 'table' && slide.table && (
@@ -505,6 +577,7 @@ export function SlideForm({
         <ComparisonEditor
           comparison={slide.comparison}
           onChange={(comparison) => patch({ comparison })}
+          icons={icons}
           readOnly={readOnly}
           testIdPrefix={`${testIdPrefix}-comparison`}
         />
@@ -534,6 +607,21 @@ export function SlideForm({
           onChange={(closing) => patch({ closing })}
           readOnly={readOnly}
           testIdPrefix={`${testIdPrefix}-closing`}
+        />
+      )}
+
+      {graphics && (
+        <DecorationField
+          value={slide.decoration}
+          graphics={graphics}
+          onChange={(decoration) => {
+            const next = { ...slide };
+            if (decoration === undefined) delete next.decoration;
+            else next.decoration = decoration;
+            onChange(next);
+          }}
+          readOnly={readOnly}
+          testIdPrefix={`${testIdPrefix}-decoration`}
         />
       )}
 
