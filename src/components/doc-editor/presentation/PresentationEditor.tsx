@@ -451,6 +451,8 @@ export function PresentationEditor({
   // "All layouts…" swaps the stage column for the gallery, in place (2.548.0).
   const [layoutGalleryOpen, setLayoutGalleryOpen] = useState(false);
   const galleryOpener = useRef<HTMLElement | null>(null);
+  // The slide form's own scroller (the stage stays pinned above it).
+  const formRegion = useRef<HTMLDivElement | null>(null);
   // Present, in place: the editor's regions give way to DeckPresentMode.
   const [presenting, setPresenting] = useState(false);
   useFocusModeReport(presenting, onFocusModeChange);
@@ -1243,13 +1245,22 @@ export function PresentationEditor({
       />
 
       {layoutGalleryOpen ? layoutPanel : (
-      /* From md up the column is a size container: the stage is as wide as
-          the column allows AND no taller than the column (100cqh), so a short
-          window keeps a whole 16:9 slide in view. Notes and the rest scroll
-          under it inside this column, never squeezing it. The floor (20rem)
-          keeps the slide legible in a very short box; the column scrolls then. */
-      <div className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:overflow-y-auto md:[container-type:size]" data-testid={`${testId}-main`}>
-        <div className="mx-auto w-full shrink-0 md:max-w-[max(20rem,calc(100cqh*16/9))]" data-testid={`${testId}-stage-frame`}>
+      /* From md up the column is a size container that does NOT scroll
+          (2.549.0). It is two regions: the stage, pinned at the top, and the
+          form below it, which is the only thing that scrolls — so typing in
+          the form never carries the slide being edited out of view. It was
+          one scroller with the stage sized to its full height, and a browser
+          walk measured 36% of the stage left in view after typing.
+
+          The stage's height is a share of the column: at most 55% of it, and
+          never so tall that the form has less than 12rem (about three fields);
+          the slide keeps 16:9, so the height is set through the width. The
+          floor (14rem wide, about 8rem tall) keeps the slide readable; only at
+          a very short window, past that floor, does the form get less.
+          Below md nothing changes: the page scrolls the whole column. */
+      <div className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:overflow-hidden md:[container-type:size]" data-testid={`${testId}-main`}>
+        <div className="flex shrink-0 flex-col gap-3" data-testid={`${testId}-stage-region`}>
+        <div className="mx-auto w-full md:max-w-[calc(max(14rem,min(55cqh,100cqh_-_12rem))*16/9)]" data-testid={`${testId}-stage-frame`}>
         <SlideStage
           generating={selectedGenerating}
           label={currentTitle ? `Slide ${selectedIndex + 1} of ${totalSlides}: ${currentTitle}` : 'No slide'}
@@ -1260,7 +1271,13 @@ export function PresentationEditor({
         </div>
 
         {!renderFrame && slideNav}
+        </div>
 
+        <div
+          ref={formRegion}
+          className="flex min-w-0 flex-col gap-3 md:min-h-0 md:flex-1 md:overflow-y-auto"
+          data-testid={`${testId}-form-region`}
+        >
         {selectedGenerated && (
           <Text className="mx-auto w-full max-w-4xl text-[12px] text-text-tertiary" data-testid={`${testId}-generated-note`}>
             {`${selectedGenerated.title} is built from the slides' citations and changes as they do. It has no fields of its own to edit.`}
@@ -1277,6 +1294,7 @@ export function PresentationEditor({
             {slideExtras}
           </div>
         )}
+        </div>
       </div>
       )}
     </div>

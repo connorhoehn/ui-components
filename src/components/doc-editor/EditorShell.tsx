@@ -132,6 +132,17 @@ export interface EditorShellProps {
    */
   proposal?: ReactNode;
   /**
+   * Status lines about the surface — a warnings line, a conflict banner, a
+   * save error — in a row of their own between the toolbar and the scrolling
+   * surface (since 2.549.0). Put them here, not in `children`, when the
+   * surface fills the scroller (a `PresentationEditor` frame does): above
+   * such a surface they make the scroller taller than its box, so it scrolls
+   * by their height and carries them up under the toolbar. The row never
+   * scrolls with the surface; it is capped at 30% of the surface and scrolls
+   * on its own past that.
+   */
+  notices?: ReactNode;
+  /**
    * `workspace` (default) paints the surface the neutral grey a page or a
    * slide floats on; `plain` leaves it the panel colour, for a list or a
    * history tab.
@@ -227,6 +238,7 @@ export function EditorShell({
   children,
   footer,
   proposal,
+  notices,
   surface = 'workspace',
   explorer,
   workbench,
@@ -446,6 +458,11 @@ export function EditorShell({
           the surface draws inline are clipped by the scroller, so they end
           above the composer too. */}
       <div className={cn('relative flex min-h-0 flex-1 flex-col', surface === 'workspace' ? 'bg-workspace' : 'bg-surface')} data-testid={`${testId}-surface`}>
+        {notices != null && (
+          <div className="flex max-h-[30%] min-h-0 shrink-0 flex-col gap-1.5 overflow-y-auto empty:hidden px-[var(--dock-inset,1rem)] pt-2" data-testid={`${testId}-notices`}>
+            {notices}
+          </div>
+        )}
         <div
           {...(hasTabs
             ? { role: 'tabpanel', id: `${idPrefix}-panel-${currentTab}`, 'aria-labelledby': `${idPrefix}-tab-${currentTab}` }

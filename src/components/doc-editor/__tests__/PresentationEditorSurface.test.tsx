@@ -315,6 +315,45 @@ describe('footer and renderFrame', () => {
     expect(screen.getByTestId('presentation-editor-stage-frame').className).toContain('100cqh');
   });
 
+  // 2.549.0: the defect was one scroller holding the stage AND the form, with
+  // the stage sized to its full height, so typing in the form scrolled the
+  // slide out of view. Nothing here was seen in a browser; the layout is read
+  // from the classes a browser would apply.
+  it('the stage and the form are separate regions, and only the form region scrolls', () => {
+    render(<Harness renderFrame={(parts) => <div data-testid="frame-surface">{parts.surface}</div>} />);
+    const main = screen.getByTestId('presentation-editor-main');
+    const stageRegion = screen.getByTestId('presentation-editor-stage-region');
+    const formRegion = screen.getByTestId('presentation-editor-form-region');
+    // Siblings, not nested: the form can scroll without carrying the stage.
+    expect(stageRegion.parentElement).toBe(main);
+    expect(formRegion.parentElement).toBe(main);
+    expect(stageRegion.contains(formRegion)).toBe(false);
+    expect(within(stageRegion).getByTestId('presentation-editor-stage')).toBeInTheDocument();
+    expect(within(formRegion).getByTestId('presentation-editor-slide-title')).toBeInTheDocument();
+    expect(within(formRegion).getByTestId('presentation-editor-slide-notes')).toBeInTheDocument();
+    // Only the form region scrolls.
+    const scrolls = (el: HTMLElement) => /(^|\s)(md:)?overflow-(y-)?(auto|scroll)(\s|$)/.test(el.className);
+    expect(scrolls(formRegion)).toBe(true);
+    expect(scrolls(main)).toBe(false);
+    expect(main.className).toContain('md:overflow-hidden');
+    expect(scrolls(stageRegion)).toBe(false);
+    expect(stageRegion.className).toContain('shrink-0');
+    expect(formRegion.className).toContain('md:flex-1');
+    expect(formRegion.className).toContain('md:min-h-0');
+  });
+
+  it('the stage takes at most 55% of the column, leaves the form 12rem, and keeps a readable floor', () => {
+    render(<Harness renderFrame={(parts) => <div data-testid="frame-surface">{parts.surface}</div>} />);
+    const frame = screen.getByTestId('presentation-editor-stage-frame');
+    expect(frame.className).toContain('md:max-w-[calc(max(14rem,min(55cqh,100cqh_-_12rem))*16/9)]');
+  });
+
+  it('unframed: the slide nav stays in the pinned stage region, outside the form scroller', () => {
+    render(<Harness />);
+    expect(within(screen.getByTestId('presentation-editor-stage-region')).getByTestId('presentation-editor-slide-nav')).toBeInTheDocument();
+    expect(within(screen.getByTestId('presentation-editor-form-region')).queryByTestId('presentation-editor-slide-nav')).toBeNull();
+  });
+
   it('unframed: the slide nav stays under the stage', () => {
     render(<Harness />);
     expect(within(screen.getByTestId('presentation-editor-main')).getByTestId('presentation-editor-slide-nav')).toBeInTheDocument();

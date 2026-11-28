@@ -458,3 +458,26 @@ describe('EditorShell titleSize="sm"', () => {
   });
 });
 
+
+describe('EditorShell notices (2.549.0)', () => {
+  it('draws notices in their own row between the toolbar and the scroller, never inside it', () => {
+    render(
+      <EditorShell title="Deck" toolbar={<span>tools</span>} notices={<p>2 findings</p>}>
+        <p>surface</p>
+      </EditorShell>,
+    );
+    const notices = screen.getByTestId('editor-shell-notices');
+    const scroller = screen.getByTestId('editor-shell-scroller');
+    expect(notices).toHaveTextContent('2 findings');
+    expect(scroller.contains(notices)).toBe(false);
+    expect(notices.parentElement).toBe(screen.getByTestId('editor-shell-surface'));
+    expect(notices.nextElementSibling).toBe(scroller);
+    expect(notices.className).toContain('shrink-0');
+    expect(notices.className).toContain('max-h-[30%]');
+  });
+
+  it('draws no notices row without the prop', () => {
+    render(<EditorShell title="Deck"><p>surface</p></EditorShell>);
+    expect(screen.queryByTestId('editor-shell-notices')).toBeNull();
+  });
+});
