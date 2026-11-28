@@ -1,4 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { Checkbox } from '../../forms/Checkbox';
 import FormField from '../FormField';
 
 describe('FormField', () => {
@@ -170,5 +172,39 @@ describe('FormField', () => {
       </FormField>,
     );
     expect(screen.getByText('we never share this')).not.toHaveAttribute('data-testid');
+  });
+});
+
+describe('FormField layout="inline-start" (2.549.0)', () => {
+  it('puts the control first and its label right after it, associated and clickable', () => {
+    const onChange = vi.fn();
+    render(
+      <FormField label="Interrupted the candidate" hint="More than twice" layout="inline-start" data-testid="flag">
+        {(wiring) => <Checkbox {...wiring} checked={false} onChange={onChange} />}
+      </FormField>,
+    );
+    const row = screen.getByTestId('flag');
+    expect(row).toHaveAttribute('data-layout', 'inline-start');
+    // Control, then label: the checkbox's cell comes before the label's in the row.
+    const box = screen.getByRole('checkbox', { name: 'Interrupted the candidate' });
+    const label = screen.getByText('Interrupted the candidate');
+    expect(row.firstElementChild!.contains(box)).toBe(true);
+    expect(row.lastElementChild!.contains(label)).toBe(true);
+    // Not pushed to the far end of the row.
+    expect(row.className).not.toContain('justify-between');
+    expect(box).toHaveAccessibleDescription('More than twice');
+    fireEvent.click(label);
+    expect(onChange).toHaveBeenCalledWith(true, expect.anything());
+  });
+
+  it('leaves inline as it was: label first, control at the end', () => {
+    render(
+      <FormField label="Record calls" layout="inline" data-testid="setting">
+        {(wiring) => <Checkbox {...wiring} checked={false} onChange={() => {}} />}
+      </FormField>,
+    );
+    const row = screen.getByTestId('setting');
+    expect(row.className).toContain('justify-between');
+    expect(row.lastElementChild!.contains(screen.getByRole('checkbox'))).toBe(true);
   });
 });

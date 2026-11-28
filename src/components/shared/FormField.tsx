@@ -3,7 +3,7 @@ import type { ReactNode, CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 import { FormFieldLabelContext } from './formFieldContext';
 
-export type FormFieldLayout = 'stacked' | 'inline';
+export type FormFieldLayout = 'stacked' | 'inline' | 'inline-start';
 
 export interface FormFieldProps {
   label: string;
@@ -22,6 +22,14 @@ export interface FormFieldProps {
   hintTestId?: string;
   /** Renders an asterisk after the label. Does NOT enforce validation. */
   required?: boolean;
+  /**
+   * `stacked` (default): label over the control. `inline`: label and hint,
+   * then the control at the row's end — a settings switch. `inline-start`
+   * (since 2.549.0): the control first, then its label and hint right beside
+   * it — a checkbox in a list of checks, which `inline` would put a screen
+   * away from its words on a full-width row. The label is the native
+   * `<label htmlFor>`, so clicking it toggles the control.
+   */
   layout?: FormFieldLayout;
   /**
    * Pass-through render. The function receives an `id` and the wiring
@@ -141,6 +149,26 @@ export default function FormField({
       {error ?? hint}
     </div>
   ) : null;
+
+  if (layout === 'inline-start') {
+    return (
+      <div
+        data-testid={testId}
+        data-layout="inline-start"
+        className={cn('flex items-start gap-2', className)}
+        style={style}
+      >
+        {/* The control sits on the label's first line (12px text, 16px line). */}
+        <span className="flex shrink-0 pt-px">
+          <FormFieldLabelContext.Provider value={labelId}>{children(wiring)}</FormFieldLabelContext.Provider>
+        </span>
+        <span className="flex min-w-0 flex-col gap-0.5">
+          {label_}
+          {hint_}
+        </span>
+      </div>
+    );
+  }
 
   if (layout === 'inline') {
     return (
