@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import type { ReactNode, CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
+import { FormFieldLabelContext } from './formFieldContext';
 
 export type FormFieldLayout = 'stacked' | 'inline';
 
@@ -154,7 +155,7 @@ export default function FormField({
           {label_}
           {hint_}
         </span>
-        <span className="shrink-0">{children(wiring)}</span>
+        <span className="shrink-0"><FormFieldLabelContext.Provider value={labelId}>{children(wiring)}</FormFieldLabelContext.Provider></span>
       </div>
     );
   }
@@ -167,7 +168,8 @@ export default function FormField({
     >
       {label_}
       <div>
-        {children(wiring)}
+        {/* A control `htmlFor` cannot name (RadioGroup) takes the label id from here. */}
+        <FormFieldLabelContext.Provider value={labelId}>{children(wiring)}</FormFieldLabelContext.Provider>
         {hint_ && <div className="mt-1">{hint_}</div>}
       </div>
     </div>

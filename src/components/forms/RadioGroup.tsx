@@ -7,6 +7,7 @@
 
 import { useId } from 'react';
 import { cn } from '../../lib/cn';
+import { useFormFieldLabelId } from '../shared/formFieldContext';
 
 export interface RadioOption<T extends string = string> {
   value: T;
@@ -24,6 +25,19 @@ export interface RadioGroupProps<T extends string = string> {
   disabled?: boolean;
   /** @default 'vertical' */
   orientation?: 'vertical' | 'horizontal';
+  /**
+   * The group's name (since 2.549.0). Inside a `FormField` the group is named
+   * by the field's label automatically (`aria-labelledby`); elsewhere pass
+   * `aria-label` or `aria-labelledby` (the id of the question above it).
+   * Either prop wins over the field's label.
+   */
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  /** FormField's wiring, spread as for any input (`{...wiring}`). Since 2.549.0. */
+  id?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
+  'aria-required'?: boolean;
   'data-testid'?: string;
 }
 
@@ -34,13 +48,27 @@ export function RadioGroup<T extends string = string>({
   options,
   disabled = false,
   orientation = 'vertical',
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  id,
+  'aria-describedby': ariaDescribedBy,
+  'aria-invalid': ariaInvalid,
+  'aria-required': ariaRequired,
   'data-testid': testId,
 }: RadioGroupProps<T>) {
   const baseId = useId();
+  const fieldLabelId = useFormFieldLabelId();
+  const labelledBy = ariaLabelledBy ?? (ariaLabel ? undefined : fieldLabelId ?? undefined);
 
   return (
     <div
       role="radiogroup"
+      {...(id ? { id } : {})}
+      {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
+      {...(labelledBy ? { 'aria-labelledby': labelledBy } : {})}
+      {...(ariaDescribedBy ? { 'aria-describedby': ariaDescribedBy } : {})}
+      {...(ariaInvalid ? { 'aria-invalid': true } : {})}
+      {...(ariaRequired ? { 'aria-required': true } : {})}
       data-testid={testId}
       className={cn(
         'flex',
