@@ -1,14 +1,14 @@
 // LayoutGallery, TemplateGallery, the toolbar's host themes, and the editor's
 // "All layouts…" gallery (2.547.0; in place of the stage since 2.548.0).
 
-import { useState } from 'react';
+import { createRef, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { LayoutGallery } from '../presentation/LayoutGallery';
 import { TemplateGallery, type DeckTemplate } from '../presentation/TemplateGallery';
 import { SlidesToolbar } from '../presentation/SlidesToolbar';
-import { PresentationEditor } from '../presentation/PresentationEditor';
+import { PresentationEditor, type PresentationEditorHandle } from '../presentation/PresentationEditor';
 import { SLIDE_LAYOUTS, type DeckSpec } from '../presentation/deckSpec';
 
 const SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 9"><rect width="16" height="9"/><script>alert(1)</script></svg>';
@@ -166,7 +166,9 @@ describe('PresentationEditor — All layouts… and host themes', () => {
     // Inserted after s1 and selected.
     expect(screen.getByTestId('presentation-editor-toolbar-layout')).toHaveTextContent('Timeline');
     expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 2');
-    expect(screen.getByTestId('presentation-editor-toolbar-insert')).toHaveFocus();
+    // The added slide's title is focused for typing over (2.549.0), not the opener.
+    const title = screen.getByTestId('presentation-editor-slide-title') as HTMLInputElement;
+    expect(title).toHaveFocus();
   });
 
   it('Back and Escape return to the slide being edited without adding one, focus on the opener', () => {
@@ -192,6 +194,53 @@ describe('PresentationEditor — All layouts… and host themes', () => {
   it('renders the gallery state to static markup without a dialog', () => {
     const html = renderToStaticMarkup(<Host initial={{ title: 'D', slides: [{ id: 's1', layout: 'title', title: 'D', sources }] }} />);
     expect(html).not.toMatch(/role="dialog"|aria-modal/);
+  });
+
+  it('focuses and selects the title of a slide it inserts: gallery, New slide, Duplicate (2.549.0)', () => {
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    render(<Host initial={{ title: 'D', slides: [{ id: 's1', layout: 'title', title: 'Opening', sources }] }} />);
+    const title = () => screen.getByTestId('presentation-editor-slide-title') as HTMLInputElement;
+    const selectedAll = (input: HTMLInputElement) => input.selectionStart === 0 && input.selectionEnd === input.value.length;
+
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-new-slide'));
+    expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 2');
+    expect(title()).toHaveFocus();
+    expect(selectedAll(title())).toBe(true);
+    // The page is never scrolled to it: only the form region moves.
+    expect(focus.mock.calls.some(([options]) => (options as FocusOptions | undefined)?.preventScroll === true)).toBe(true);
+
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-select-s1'));
+    (document.activeElement as HTMLElement | null)?.blur();
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-menu-s1'));
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-duplicate-s1'));
+    expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 3');
+    expect(title().value).toBe('Opening');
+    expect(title()).toHaveFocus();
+    expect(selectedAll(title())).toBe(true);
+    focus.mockRestore();
+  });
+
+  it('focusSlideTitle on the handle puts that slide on the stage and selects its title', () => {
+    const handle = createRef<PresentationEditorHandle>();
+    function WithRef() {
+      const [spec, setSpec] = useState<DeckSpec>({ title: 'D', slides: [
+        { id: 's1', layout: 'title', title: 'Opening', sources },
+        { id: 's2', layout: 'bullets', title: 'Timeline', sources },
+      ] });
+      return (
+        <PresentationEditor ref={handle} spec={spec} onChange={setSpec} preview={{ slides: [] }} onRequestPreview={() => {}}
+          onSaveRevision={async () => {}} revisions={[{ id: 'r1', label: 'v1' }] as never} activeRevisionId="r1" onSelectRevision={() => {}} sources={[]} />
+      );
+    }
+    render(<WithRef />);
+    act(() => handle.current!.focusSlideTitle('s2'));
+    const title = screen.getByTestId('presentation-editor-slide-title') as HTMLInputElement;
+    expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 2');
+    expect(title).toHaveFocus();
+    expect([title.selectionStart, title.selectionEnd]).toEqual([0, 'Timeline'.length]);
+    // An unknown id does nothing.
+    act(() => handle.current!.focusSlideTitle('nope'));
+    expect(screen.getByTestId('presentation-editor-position')).toHaveTextContent('Slide 2 of 2');
   });
 
   it('keeps New slide as the quick path', () => {

@@ -66,11 +66,13 @@ import {
   lazy,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
+  type Ref,
 } from 'react';
 import { cn } from '../../../lib/cn';
 import { Button } from '../../ui/Button';
@@ -228,6 +230,19 @@ export interface PresentationEditorFrame {
   footer: ReactNode;
 }
 
+/**
+ * What a host can ask of the editor through its `ref` (since 2.549.0), the
+ * same `ref`-as-prop shape `CommentGhostPopover` uses.
+ */
+export interface PresentationEditorHandle {
+  /**
+   * Put `slideId` on the stage, focus its title field and select the title
+   * for typing over, scrolling only the form region (never the page) to it.
+   * Does nothing for an unknown id, a generated slide or a read-only editor.
+   */
+  focusSlideTitle: (slideId: string) => void;
+}
+
 export interface PresentationEditorProps {
   /** Controlled. The host owns the spec; this component never holds a copy. */
   spec: DeckSpec;
@@ -338,6 +353,8 @@ export interface PresentationEditorProps {
    * a layout without a preview shows a schematic.
    */
   layoutPreviews?: Partial<Record<SlideLayout, string>>;
+  /** The editor's imperative handle (`focusSlideTitle`), since 2.549.0. */
+  ref?: Ref<PresentationEditorHandle>;
   className?: string;
   'data-testid'?: string;
 }
@@ -445,6 +462,7 @@ export function PresentationEditor({
   onSelectedSlideChange,
   themes,
   layoutPreviews,
+  ref,
   className,
   'data-testid': testId = 'presentation-editor',
 }: PresentationEditorProps) {
@@ -453,6 +471,13 @@ export function PresentationEditor({
   const galleryOpener = useRef<HTMLElement | null>(null);
   // The slide form's own scroller (the stage stays pinned above it).
   const formRegion = useRef<HTMLDivElement | null>(null);
+  // A slide whose title field should take focus once its form is drawn: set
+  // when the editor inserts a slide (New slide, the gallery, Duplicate) and by
+  // the handle's focusSlideTitle. `n` makes asking twice for one slide count.
+  const [titleFocus, setTitleFocus] = useState<{ id: string; n: number } | null>(null);
+  const askTitleFocus = useCallback((id: string) => {
+    setTitleFocus((previous) => ({ id, n: (previous?.n ?? 0) + 1 }));
+  }, []);
   // Present, in place: the editor's regions give way to DeckPresentMode.
   const [presenting, setPresenting] = useState(false);
   useFocusModeReport(presenting, onFocusModeChange);
@@ -567,13 +592,16 @@ export function PresentationEditor({
   );
 
   const handleAdd = useCallback(
-    (layout?: SlideLayout) => {
+    (layout?: SlideLayout): boolean => {
       const next = addSlide(spec, insertAfter, layout);
-      if (next === spec) return;
+      if (next === spec) return false;
       edit(next);
-      setSelectedId(next.slides[insertAfter + 1]!.id);
+      const added = next.slides[insertAfter + 1]!.id;
+      setSelectedId(added);
+      askTitleFocus(added);
+      return true;
     },
-    [edit, spec, insertAfter],
+    [edit, spec, insertAfter, askTitleFocus],
   );
 
   const handleDuplicate = useCallback(
@@ -582,9 +610,11 @@ export function PresentationEditor({
       if (next === spec) return;
       const index = next.slides.findIndex((slide) => slide.id === id);
       edit(next);
-      setSelectedId(next.slides[index + 1]!.id);
+      const copy = next.slides[index + 1]!.id;
+      setSelectedId(copy);
+      askTitleFocus(copy);
     },
-    [edit, spec],
+    [edit, spec, askTitleFocus],
   );
 
   const handleDelete = useCallback(
@@ -600,6 +630,32 @@ export function PresentationEditor({
   );
 
   const editSlide = useCallback((slide: DeckSlide) => edit(replaceSlide(spec, slide)), [edit, spec]);
+
+  // Focus and select the title of the slide asked for, once its form is on
+  // screen. Only the form region scrolls to it (`preventScroll` keeps the page
+  // and the editor's frame where they are).
+  const selectedSlideId = selected?.id;
+  useEffect(() => {
+    if (!titleFocus || readOnly) return;
+    if (selectedSlideId !== titleFocus.id) return;
+    const region = formRegion.current;
+    const field = region?.querySelector<HTMLInputElement>('input[data-slide-title]');
+    setTitleFocus(null);
+    if (!region || !field) return;
+    field.focus({ preventScroll: true });
+    field.select();
+    const box = region.getBoundingClientRect();
+    const at = field.getBoundingClientRect();
+    if (at.top < box.top || at.bottom > box.bottom) region.scrollTop += at.top - box.top - 8;
+  }, [titleFocus, selectedSlideId, readOnly]);
+
+  useImperativeHandle(ref, () => ({
+    focusSlideTitle: (slideId: string) => {
+      if (readOnly || !spec.slides.some((slide) => slide.id === slideId)) return;
+      setSelectedId(slideId);
+      askTitleFocus(slideId);
+    },
+  }), [readOnly, spec, askTitleFocus]);
 
   const instruct = useCallback(
     async (instruction: string): Promise<boolean> => {
@@ -1035,7 +1091,8 @@ export function PresentationEditor({
         previews={layoutPreviews}
         onSelect={(layout) => {
           closeLayoutGallery();
-          handleAdd(layout);
+          // The new slide's title takes focus instead of the gallery's opener.
+          if (handleAdd(layout)) returnFocusTo.current = null;
         }}
         testIdPrefix={`${testId}-layout-gallery`}
       />

@@ -391,6 +391,8 @@ export function SlideForm({
               maxLength={MAX_TITLE_CHARS}
               disabled={readOnly}
               onChange={(event) => patch({ title: event.target.value })}
+              // PresentationEditor finds the field by this to focus it (2.549.0).
+              data-slide-title=""
               data-testid={`${testIdPrefix}-title`}
             />
           )}

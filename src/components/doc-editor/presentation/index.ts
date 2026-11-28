@@ -16,6 +16,7 @@ export type {
   PresentationInstructScope,
   PresentationFooterContext,
   PresentationEditorFrame,
+  PresentationEditorHandle,
 } from './PresentationEditor';
 
 // The editor's pieces (2.363.0), for a host that composes its own surface.
