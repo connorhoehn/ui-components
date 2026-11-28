@@ -10,6 +10,7 @@ import { Editor as Editor_2 } from '@tiptap/core';
 import { EditorState } from '@tiptap/pm/state';
 import { Extension } from '@tiptap/core';
 import { ForwardRefExoticComponent } from 'react';
+import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react';
 import { Mark } from '@tiptap/core';
 import { Mark as Mark_2 } from '@tiptap/pm/model';
@@ -83,6 +84,15 @@ declare interface ActivityFeedProps {
 
 /** Insert a fresh slide after `afterIndex` (-1 puts it first). */
 export declare function addSlide(spec: DeckSpec, afterIndex: number, layout?: SlideLayout): DeckSpec;
+
+/** A blank row after `afterIndex` (-1 puts it first), within the layout's cap. Unchanged at the cap. */
+export declare function addSlideRow(slide: DeckSlide, list: string, afterIndex: number): DeckSlide;
+
+/**
+ * Mark [start, end) of the field's text with `emphasis`, or clear it with
+ * `null`. An empty or out-of-range selection returns the text unchanged.
+ */
+export declare function applyEmphasis(text: DeckText, start: number, end: number, emphasis: DeckEmphasis | null): DeckText;
 
 export declare function AttachmentsPanel({ documentId, editable }: AttachmentsPanelProps): JSX.Element;
 
@@ -508,6 +518,9 @@ export declare interface CanvasUnsupportedForm {
     reason?: string;
 }
 
+/** True when the row matches every word of the query (label, name or keyword). */
+export declare function catalogueMatches(item: DeckCatalogueItem, query: string): boolean;
+
 /** Who is asking for the change. */
 declare interface ChangeAuthor {
     name: string;
@@ -925,12 +938,36 @@ export declare const DECK_CHART_KIND_LABELS: Record<DeckChart['kind'], string>;
 /** The chart kinds the engine draws, in the order the form offers them. */
 export declare const DECK_CHART_KINDS: readonly DeckChart['kind'][];
 
+/** Plain names for decoration placements. */
+export declare const DECK_DECORATION_PLACEMENT_LABELS: Record<DeckDecorationPlacement, string>;
+
+export declare const DECK_DECORATION_PLACEMENTS: readonly DeckDecorationPlacement[];
+
+export declare const DECK_EMPHASES: readonly DeckEmphasis[];
+
+/** Plain names for the emphases, in the toolbar's order. */
+export declare const DECK_EMPHASIS_LABELS: Record<DeckEmphasis, string>;
+
+export declare const DECK_STYLE_DESCRIPTIONS: Record<DeckStyle, string>;
+
+export declare const DECK_STYLE_LABELS: Record<DeckStyle, string>;
+
+export declare const DECK_STYLES: readonly DeckStyle[];
+
 export declare const DECK_THEMES: readonly DeckTheme[];
 
 /** Numbered agenda items; `current` (0-based) marks where the talk is. */
 export declare interface DeckAgenda {
     items: string[];
     current?: number;
+}
+
+/** One row of the engine's `ICON_CATALOGUE` or `GRAPHICS_CATALOGUE`. */
+export declare interface DeckCatalogueItem {
+    name: string;
+    label: string;
+    category: string;
+    keywords: readonly string[];
 }
 
 /** `stacked-bar` stacks the series per label; `pie` takes one series of non-negative values, one slice per label. */
@@ -960,17 +997,93 @@ export declare interface DeckComparison {
 export declare interface DeckComparisonSide {
     title: string;
     points: string[];
+    icon?: string;
 }
+
+/** A graphic from the graphics library (`GRAPHICS_CATALOGUE`) placed on a slide. */
+export declare interface DeckDecoration {
+    graphic: string;
+    /** Default: `background` for patterns and waves, `title` for illustrations, badges, dividers and arrows, else `corner`. */
+    placement?: DeckDecorationPlacement;
+}
+
+/** Where a decoration sits: bleeding off the top-right corner, behind the whole slide, or beside the title when the title leaves room. */
+export declare type DeckDecorationPlacement = 'corner' | 'background' | 'title';
+
+/**
+ * How a run of text stands out. `highlight` paints a tinted band behind it,
+ * `accent` sets it in the accent colour, `gradient` in an accent gradient,
+ * `outline` draws it as an outline; a colour that would fail contrast on its
+ * fill falls back to the text colour set in bold.
+ */
+export declare type DeckEmphasis = 'highlight' | 'accent' | 'bold' | 'underline' | 'outline' | 'gradient';
 
 /** One big number: `value` as it should read ("42%", "$1.2M"), a label, and an optional change ("+8 pts"). */
 export declare interface DeckFigure {
     value: string;
     label: string;
     delta?: string;
+    /** One line of context under the label ("vs 71% in Q1"). */
+    context?: string;
+    icon?: string;
 }
 
 /** `slideForEngine` over the whole deck. Returns the same object when no slide changed. */
 export declare function deckForEngine(spec: DeckSpec): DeckSpec;
+
+/** One funnel stage, widest first: what it counts, how many, and an optional note. */
+export declare interface DeckFunnelStage {
+    label: string;
+    value: string;
+    detail?: string;
+}
+
+/** Everything a form needs to offer decorations. Pass it to `SlideForm` / `PresentationEditor` as `graphics`. */
+export declare interface DeckGraphicSource {
+    items: readonly DeckCatalogueItem[];
+    renderGraphic?: (name: string) => ReactNode;
+}
+
+/** One icon as an inline SVG from path data, or the host's own drawing. Decorative. */
+export declare function DeckIconGlyph({ name, icons, renderIcon, className }: {
+    name: string;
+    icons?: DeckIconPaths;
+    renderIcon?: (name: string) => ReactNode;
+    className?: string;
+}): JSX.Element | null;
+
+/** Icon path data by name: the engine's `ICON_PATHS` (stroked, 24 x 24). */
+export declare type DeckIconPaths = Readonly<Record<string, string | readonly string[]>>;
+
+/** A searchable, category-tabbed grid of the host's deck icons, drawn inline (never a popover). */
+export declare function DeckIconPicker({ items, icons, renderIcon, value, onSelect, allowNone, label, className, testIdPrefix, }: DeckIconPickerProps): JSX.Element;
+
+export declare interface DeckIconPickerProps {
+    /** The catalogue rows (the engine's `ICON_CATALOGUE`). */
+    items: readonly DeckCatalogueItem[];
+    /** Path data by name (the engine's `ICON_PATHS`). */
+    icons?: DeckIconPaths;
+    /** Draws one icon; wins over `icons`. */
+    renderIcon?: (name: string) => ReactNode;
+    /** The current icon: its tile is pressed. */
+    value?: string;
+    /** Called with the chosen name, or undefined for No icon. */
+    onSelect: (name: string | undefined) => void;
+    /** Offer a "No icon" tile. Default true. */
+    allowNone?: boolean;
+    /** The picker's accessible name. Default "Icons". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `icon-picker`; tiles are `<prefix>-<name>`. */
+    testIdPrefix?: string;
+}
+
+/** Everything a form needs to offer icons. Pass it to `SlideForm` / `PresentationEditor` as `icons`. */
+export declare interface DeckIconSource {
+    items: readonly DeckCatalogueItem[];
+    icons?: DeckIconPaths;
+    renderIcon?: (name: string) => ReactNode;
+}
 
 /**
  * An image slide carries only its alt text. Nothing is fetched at render time —
@@ -979,6 +1092,37 @@ export declare function deckForEngine(spec: DeckSpec): DeckSpec;
  */
 export declare interface DeckImage {
     alt: string;
+    /** The asset behind the image; a painter is handed its bytes. Absent: a placeholder and an `image-missing` finding. */
+    assetId?: string;
+    /** An https URL the host fetches for the painter, instead of an asset id. */
+    url?: string;
+    /** Where the picture sits on an `image-text` slide (default `left`). */
+    side?: 'left' | 'right';
+}
+
+/**
+ * A titled item with optional text and icon: a card, a process step, a matrix
+ * quadrant. `icon` names a glyph of the bundled set (`ICON_NAMES` in `./deck/layout`).
+ */
+export declare interface DeckItem {
+    title: string;
+    text?: string;
+    icon?: string;
+}
+
+/** A 2 x 2: axis ends (low, high) and four quadrants, top-left, top-right, bottom-left, bottom-right. */
+export declare interface DeckMatrix {
+    x: [string, string];
+    y: [string, string];
+    quadrants: [DeckItem, DeckItem, DeckItem, DeckItem];
+}
+
+/** One person on a team slide; `assetId` is their photo (initials when absent). */
+export declare interface DeckPerson {
+    name: string;
+    role: string;
+    detail?: string;
+    assetId?: string;
 }
 
 export declare interface DeckPresence {
@@ -1142,12 +1286,18 @@ export declare interface DeckRosterEntry {
     lastSeen?: string | number;
 }
 
+/** A piece of a title or bullet, with an optional emphasis. Runs join with no separator, so spaces belong in the text. */
+export declare interface DeckRun {
+    text: string;
+    emphasis?: DeckEmphasis;
+}
+
 export declare interface DeckSlide {
     id: string;
     layout: SlideLayout;
-    title: string;
+    title: DeckText;
     eyebrow?: string;
-    bullets?: string[];
+    bullets?: DeckText[];
     columns?: [string[], string[]];
     chart?: DeckChart;
     quote?: DeckQuote;
@@ -1158,6 +1308,13 @@ export declare interface DeckSlide {
     timeline?: DeckTimelineStep[];
     agenda?: DeckAgenda;
     closing?: DeckClosing;
+    /** `cards` (3 to 4) and `process` (3 to 5) items. */
+    items?: DeckItem[];
+    matrix?: DeckMatrix;
+    people?: DeckPerson[];
+    funnel?: DeckFunnelStage[];
+    /** A graphic on the slide; absent takes the style's motif, `'none'` draws none. */
+    decoration?: DeckDecoration | 'none';
     notes?: string;
     sources: DeckSource[];
 }
@@ -1177,6 +1334,14 @@ export declare interface DeckSpec {
     slides: DeckSlide[];
 }
 
+/** Names the validator checks `icon` and `decoration.graphic` against. */
+export declare interface DeckSpecValidateOptions {
+    /** The engine's `ICON_NAMES`. Absent: any kebab-case name passes. */
+    iconNames?: readonly string[];
+    /** The engine's `GRAPHIC_NAMES`. Absent: any kebab-case name passes. */
+    graphicNames?: readonly string[];
+}
+
 export declare type DeckSpecValidation = {
     ok: true;
     spec: DeckSpec;
@@ -1184,6 +1349,35 @@ export declare type DeckSpecValidation = {
     ok: false;
     errors: string[];
 };
+
+/**
+ * The deck's look (the engine's `DeckStyle`, 0.153.0). It lives on the
+ * host's theme (`DeckThemeSpec.style`, `styledTheme(theme, style)`), not on
+ * the spec, so `DeckStylePicker` reports a choice and the host applies it.
+ */
+export declare type DeckStyle = 'bold' | 'editorial' | 'minimal' | 'playful' | 'corporate';
+
+export declare function DeckStylePicker({ value, onChange, previews, styles, label, className, testIdPrefix, }: DeckStylePickerProps): JSX.Element;
+
+export declare interface DeckStylePickerProps {
+    value?: DeckStyle;
+    onChange: (style: DeckStyle) => void;
+    /** A preview image per style (URL or `data:` URI). A style without one shows a drawn swatch. */
+    previews?: Partial<Record<DeckStyle, string>>;
+    /** The styles to offer, in order. Default all five. */
+    styles?: readonly DeckStyle[];
+    /** The list's accessible name. Default "Deck styles". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `deck-style-picker`; tiles are `<prefix>-<style>`. */
+    testIdPrefix?: string;
+}
+
+/** A style drawn as blocks in a 16:9 frame. Decorative: the tile's text names the style. */
+export declare function DeckStyleSwatch({ style, className }: {
+    style: DeckStyle;
+    className?: string;
+}): JSX.Element;
 
 /** A small table of short text: a header row and up to 8 rows of the same width. */
 export declare interface DeckTable {
@@ -1201,6 +1395,31 @@ export declare interface DeckTemplate {
     /** SVG source of the first few slides, first slide first. Up to four are shown. */
     previews: readonly string[];
 }
+
+/** A title or bullet: plain text, or runs. */
+export declare type DeckText = string | DeckRun[];
+
+/** An `Input` for a title or bullet, with the emphasis toolbar while it has focus. The ref is the input. */
+export declare const DeckTextField: ForwardRefExoticComponent<DeckTextFieldProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface DeckTextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'size' | 'type' | 'prefix' | 'defaultValue'> {
+    value: DeckText;
+    onChange: (value: DeckText) => void;
+    /** Hide the emphasis toolbar (the field is then a plain `Input` that keeps runs). */
+    emphasis?: boolean;
+    /** Test-id for the input; the toolbar is `<id>-emphasis`, the preview `<id>-preview`. */
+    'data-testid'?: string;
+}
+
+/** A DeckText drawn with its emphases, for previews. A plain string renders as itself. */
+export declare function DeckTextPreview({ text, className, testId }: {
+    text: DeckText;
+    className?: string;
+    testId?: string;
+}): JSX.Element;
+
+/** The runs joined as the field shows them (no whitespace collapsing). */
+export declare function deckTextValue(text: DeckText | undefined): string;
 
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
 
@@ -1252,8 +1471,18 @@ export declare function deckViewersOf(roster: readonly DeckRosterEntry[], docume
 /** A viewer as the `FollowModeBar` participant it follows. */
 export declare function deckViewerToParticipant(viewer: DeckViewer, entry?: DeckRosterEntry): Participant;
 
+/** The slide's graphic and a GraphicPicker opened in place under it. */
+export declare function DecorationField({ value, graphics, onChange, readOnly, testIdPrefix }: EditorBase & {
+    value?: DeckDecoration | 'none';
+    graphics: DeckGraphicSource;
+    onChange: (value: DeckDecoration | 'none' | undefined) => void;
+}): JSX.Element;
+
 /** The handoff's four tabs, for a host that has all of them. */
 export declare const DEFAULT_EDITOR_SHELL_TABS: readonly EditorShellTab[];
+
+/** The engine's slide in points: 13.333 x 7.5 in at 72 pt. */
+export declare const DEFAULT_SLIDE_SIZE: SlideSize;
 
 /** A press shorter than this is a click: it toggles instead of stopping on release. */
 export declare const DICTATION_HOLD_MS = 250;
@@ -1925,8 +2154,20 @@ export declare interface DocumentZoomControl {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
+/**
+ * The text after the field's value became `next`. A plain string stays a
+ * string; runs keep their emphasis around the edit, and the inserted
+ * characters take the emphasis of the character before them.
+ */
+export declare function editDeckText(text: DeckText, next: string): DeckText;
+
 /** True when another tab of mine (same user, another socket) has unsaved edits to this deck. */
 export declare function editingInMyOtherTab(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null): boolean;
+
+declare interface EditorBase {
+    readOnly: boolean;
+    testIdPrefix: string;
+}
 
 export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, notices, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleAs: TitleTag, titleOverflow, tabsTrailing, headerInset, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
@@ -2087,6 +2328,26 @@ export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Eleme
 
 declare interface EditorToolbarProps {
     editor: Editor | null;
+}
+
+/** The emphasis every character of [start, end) shares, `'mixed'` when they differ, undefined when none or no range. */
+export declare function emphasisAt(text: DeckText, start: number, end: number): DeckEmphasis | 'mixed' | undefined;
+
+/** The emphasis buttons as one keyboard stop (`RovingToolbar`). Pressing one never takes the field's selection away. */
+export declare function EmphasisToolbar({ active, onApply, disabled, label, className, testIdPrefix }: EmphasisToolbarProps): JSX.Element;
+
+export declare interface EmphasisToolbarProps {
+    /** The emphasis the current selection has: pressed on that button. `'mixed'` or undefined presses none. */
+    active?: DeckEmphasis | 'mixed';
+    /** Called with the emphasis pressed, or `null` for Plain. */
+    onApply: (emphasis: DeckEmphasis | null) => void;
+    /** Off while there is no selection to apply to. */
+    disabled?: boolean;
+    /** The group's accessible name. Default "Text emphasis". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix; buttons are `<prefix>-<emphasis>` and `<prefix>-plain`. */
+    testIdPrefix?: string;
 }
 
 export declare const EMPTY_DECK_PRESENCE: DeckPresence;
@@ -2260,6 +2521,12 @@ export declare interface FollowModeBarProps {
 /** Compose the display name an agent run should write onto its marks. */
 export declare function formatSuggestionAuthor({ person, model }: SuggestionAuthor): string;
 
+/** Funnel stages widest first (label, value, detail), three to five, with add, remove and reorder. */
+export declare function FunnelEditor({ stages, onChange, readOnly, testIdPrefix }: EditorBase & {
+    stages: readonly DeckFunnelStage[];
+    onChange: (stages: DeckFunnelStage[]) => void;
+}): JSX.Element;
+
 /** Error received from the gateway (matches server error-codes.js format) */
 declare interface GatewayError {
     /** Standardized error code (e.g. AUTH_TOKEN_EXPIRED, AUTHZ_CHANNEL_DENIED) */
@@ -2284,6 +2551,23 @@ export declare type GeneralAccess = 'restricted' | 'org-view' | 'org-edit' | 'li
 export declare function generateSummaryBullets(allItems: TaskItem[], sections: Section[]): string[];
 
 export declare function getInitials(name: string): string;
+
+export declare function GraphicPicker({ items, renderGraphic, value, onChange, label, className, testIdPrefix, }: GraphicPickerProps): JSX.Element;
+
+export declare interface GraphicPickerProps {
+    /** The catalogue rows (the engine's `GRAPHICS_CATALOGUE`). */
+    items: readonly DeckCatalogueItem[];
+    /** Draws one graphic's preview in the host's theme. */
+    renderGraphic?: (name: string) => ReactNode;
+    /** The slide's decoration: undefined is the style default, `'none'` is none. */
+    value?: DeckDecoration | 'none';
+    onChange: (value: DeckDecoration | 'none' | undefined) => void;
+    /** The picker's accessible name. Default "Decoration". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `graphic-picker`; tiles are `<prefix>-<name>`. */
+    testIdPrefix?: string;
+}
 
 /** A thread plus where it wants to sit, in pixels from the page top. */
 export declare interface GutterItem {
@@ -2321,6 +2605,16 @@ export declare function HeaderBanner({ meta, participantCount, }: {
     participantCount: number;
 }): JSX.Element;
 
+/** The layouts that show a picture. A host without an asset store hides them (`LayoutGallery`'s `hiddenLayouts`). */
+export declare const IMAGE_LAYOUTS: readonly SlideLayout[];
+
+/** An image slot's description, https URL and (image-text) picture side. */
+export declare function ImageEditor({ image, layout, onChange, readOnly, testIdPrefix }: EditorBase & {
+    image: DeckImage;
+    layout: SlideLayout;
+    onChange: (image: DeckImage) => void;
+}): JSX.Element;
+
 /**
  * True when the document is page-shaped.
  *
@@ -2336,6 +2630,16 @@ export declare function isLineSpacing(value: unknown): value is LineSpacing;
 
 export declare function isSuggestChangesEnabled(state: EditorState): boolean;
 
+/** Card or process-step rows: title, text and icon, with add, remove and reorder inside the layout's bounds. */
+export declare function ItemsEditor({ items, onChange, bounds, noun, icons, readOnly, testIdPrefix }: EditorBase & {
+    items: readonly DeckItem[];
+    onChange: (items: DeckItem[]) => void;
+    bounds: readonly [number, number];
+    /** "card" or "step": names the rows. */
+    noun: string;
+    icons?: DeckIconSource;
+}): JSX.Element;
+
 /**
  * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
  * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
@@ -2346,13 +2650,30 @@ export declare function KeyDecisionsCard({ sections }: {
     sections: Section[];
 }): JSX.Element;
 
-export declare function LayoutGallery({ onSelect, layouts, previews, selected, label, className, testIdPrefix, }: LayoutGalleryProps): JSX.Element;
+/**
+ * Which payload fields each layout owns (the engine's OWNERS table, read the
+ * other way). `title` and `section` own none; `bullets` and `decoration` are
+ * shared by all.
+ */
+export declare const LAYOUT_PAYLOADS: Record<SlideLayout, readonly (keyof DeckSlide)[]>;
+
+export declare function LayoutGallery({ onSelect, layouts, hiddenLayouts, previews, selected, label, className, testIdPrefix, }: LayoutGalleryProps): JSX.Element;
 
 export declare interface LayoutGalleryProps {
     /** Called with the tile's layout when it is pressed. */
     onSelect: (layout: SlideLayout) => void;
-    /** The layouts to offer, in order. Default: every layout (`SLIDE_LAYOUTS`). */
+    /**
+     * The layouts to offer, in order, as one flat list. Default: every layout,
+     * grouped (`SLIDE_LAYOUT_GROUPS`: Openers, Numbers, Lists and steps,
+     * Comparisons, Charts, People, Images, Closers).
+     */
     layouts?: readonly SlideLayout[];
+    /**
+     * Layouts to leave out (since 2.550.0), in either form — for instance
+     * `IMAGE_LAYOUTS` while the host has no asset store. A group left empty
+     * is not shown.
+     */
+    hiddenLayouts?: readonly SlideLayout[];
     /**
      * SVG source per layout, rendered by the host's server. Shown through
      * `svgDataUri` in an `<img>`; a layout without one shows a schematic.
@@ -2366,6 +2687,9 @@ export declare interface LayoutGalleryProps {
     /** Test-id prefix. Default `layout-gallery`; tiles are `<prefix>-<layout>`. */
     testIdPrefix?: string;
 }
+
+/** The row bounds the engine holds a layout's list payload to, or undefined for layouts without one. */
+export declare function layoutRowBounds(layout: SlideLayout): [number, number] | undefined;
 
 declare interface LegacyDocumentHeaderProps {
     /**
@@ -2486,15 +2810,26 @@ export declare function listTypeFor(style: ListStyle): 'bulletList' | 'orderedLi
 /** A blank slide of a layout, with the sub-object that layout needs. */
 export declare function makeSlide(id: string, layout?: SlideLayout): DeckSlide;
 
+/** A two-by-two: the four axis ends and four quadrants (title, text, icon). */
+export declare function MatrixEditor({ matrix, onChange, icons, readOnly, testIdPrefix }: EditorBase & {
+    matrix: DeckMatrix;
+    onChange: (matrix: DeckMatrix) => void;
+    icons?: DeckIconSource;
+}): JSX.Element;
+
 export declare const MAX_AGENDA_ITEM_CHARS = 80;
 
 export declare const MAX_AGENDA_ITEMS = 6;
+
+export declare const MAX_ASSET_ID_CHARS = 200;
 
 export declare const MAX_ATTACHMENT_BYTES: number;
 
 export declare const MAX_BULLET_CHARS = 200;
 
 export declare const MAX_BULLETS_PER_SLIDE = 8;
+
+export declare const MAX_CARDS = 4;
 
 export declare const MAX_CHART_LABELS = 24;
 
@@ -2520,7 +2855,21 @@ export declare const MAX_FIGURE_VALUE_CHARS = 12;
 
 export declare const MAX_FIGURES = 4;
 
+export declare const MAX_FUNNEL_DETAIL_CHARS = 60;
+
+export declare const MAX_FUNNEL_LABEL_CHARS = 40;
+
+export declare const MAX_FUNNEL_STAGES = 5;
+
 export declare const MAX_IMAGE_BYTES: number;
+
+export declare const MAX_IMAGE_URL_CHARS = 2000;
+
+export declare const MAX_ITEM_TEXT_CHARS = 140;
+
+export declare const MAX_ITEM_TITLE_CHARS = 40;
+
+export declare const MAX_MATRIX_AXIS_CHARS = 24;
 
 export declare const MAX_NEXT_STEP_CHARS = 120;
 
@@ -2528,14 +2877,26 @@ export declare const MAX_NEXT_STEPS = 3;
 
 export declare const MAX_NOTES_CHARS = 2000;
 
+export declare const MAX_PEOPLE = 8;
+
+export declare const MAX_PERSON_DETAIL_CHARS = 80;
+
+export declare const MAX_PERSON_NAME_CHARS = 40;
+
+export declare const MAX_PERSON_ROLE_CHARS = 48;
+
 /** A pie's slices each need their own colour, and every theme has at least six. */
 export declare const MAX_PIE_SLICES = 6;
+
+export declare const MAX_PROCESS_STEPS = 5;
 
 export declare const MAX_QUOTE_CHARS = 400;
 
 export declare const MAX_SLIDES = 40;
 
 export declare const MAX_SOURCES_PER_SLIDE = 10;
+
+export declare const MAX_STORY_BULLETS = 3;
 
 export declare const MAX_SUBTITLE_CHARS = 200;
 
@@ -2612,12 +2973,23 @@ declare interface MentionUser {
     memberCount?: number;
 }
 
+export declare const MIN_CARDS = 3;
+
 export declare const MIN_FIGURES = 2;
+
+export declare const MIN_FUNNEL_STAGES = 3;
+
+export declare const MIN_PEOPLE = 2;
+
+export declare const MIN_PROCESS_STEPS = 3;
 
 export declare const MIN_TIMELINE_STEPS = 3;
 
 /** Move the slide at `from` so it lands at `to`. Out-of-range moves are no-ops. */
 export declare function moveSlide(spec: DeckSpec, from: number, to: number): DeckSpec;
+
+/** Move row `from` to `to`. Unchanged when either is out of range. */
+export declare function moveSlideRow(slide: DeckSlide, list: string, from: number, to: number): DeckSlide;
 
 /** Multilevel presets: the marker changes at each nesting level. */
 export declare const MULTILEVEL_STYLES: readonly ["tiered-bullets", "outline"];
@@ -2739,6 +3111,9 @@ export declare function nextRevisionLabel(revisions: readonly {
  * thing to read than a 36-character guid.
  */
 export declare function nextSlideId(spec: DeckSpec, prefix?: string): string;
+
+/** A path in either form (`items[1].icon` or `items.1.icon`) as dots. */
+export declare function normalizeRegionPath(path: string): string;
 
 export declare const NUMBER_STYLES: readonly ["decimal", "lower-alpha", "upper-alpha", "lower-roman", "upper-roman"];
 
@@ -2864,6 +3239,24 @@ declare interface ParticipantAvatarsProps {
     followingUserId?: string | null;
 }
 
+/** Team rows (name, role, detail), two to eight, with add, remove and reorder. */
+export declare function PeopleEditor({ people, onChange, readOnly, testIdPrefix }: EditorBase & {
+    people: readonly DeckPerson[];
+    onChange: (people: DeckPerson[]) => void;
+}): JSX.Element;
+
+/** A slide with its title and bullets as plain strings: what the layouts set. */
+export declare type PlainSlide = Omit<DeckSlide, 'title' | 'bullets'> & {
+    title: string;
+    bullets?: string[];
+};
+
+/** The slide with runs flattened to plain text (layout, notes, capacity and older renderers read this). */
+export declare function plainSlide(slide: DeckSlide): PlainSlide;
+
+/** The text a reader sees: runs joined, whitespace collapsed. */
+export declare function plainText(t: DeckText | undefined): string;
+
 declare interface PresenceInfo {
     userId: string;
     displayName: string;
@@ -2916,7 +3309,7 @@ declare interface PresenceUser {
  * per-slide findings, open the gallery (`layoutGalleryOpen`) and call
  * `focusSlideTitle` on the `ref`.
  */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, layoutGalleryOpen: layoutGalleryOpenProp, onLayoutGalleryOpenChange, slideFindings, ref, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, layoutGalleryOpen: layoutGalleryOpenProp, onLayoutGalleryOpenChange, slideFindings, slideRegions, slideSize, onRegionEdit, onRowAdd, onRowRemove, onRowMove, icons, graphics, hiddenLayouts, deckStyle, onDeckStyleChange, stylePreviews, ref, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 export declare interface PresentationEditorFrame {
@@ -3077,6 +3470,36 @@ export declare interface PresentationEditorProps {
     layoutGalleryOpen?: boolean;
     /** Every request to open or close the layout gallery, controlled or not. */
     onLayoutGalleryOpenChange?: (open: boolean) => void;
+    /**
+     * Edit in place (since 2.550.0): the editable elements of each slide, by
+     * slide id, as boxes in slide units (`slideSize`), computed by the host from
+     * the deck engine's layout. Passed, the stage takes the whole editor area:
+     * no form under it; clicking an element edits it on the slide
+     * (`SlideRegionsOverlay`), an icon, graphic or chart opens its picker in
+     * the side pane, and the side pane holds the slide's graphic, speaker
+     * notes, sources and an "Edit as outline" form (collapsed), the accessible
+     * fallback. A slide with no entry shows its picture without regions.
+     */
+    slideRegions?: Readonly<Record<string, readonly SlideRegion[]>>;
+    /** The slide's coordinate space for `slideRegions`. Default 960 x 540. */
+    slideSize?: SlideSize;
+    /** An element was edited in place (after the edit is applied to the spec). */
+    onRegionEdit?: (slideId: string, path: string, value: unknown) => void;
+    /** A row was added after `afterIndex` on the stage. */
+    onRowAdd?: (slideId: string, list: string, afterIndex: number) => void;
+    onRowRemove?: (slideId: string, list: string, index: number) => void;
+    onRowMove?: (slideId: string, list: string, from: number, to: number) => void;
+    /** The icon catalogue and artwork (since 2.550.0) for the icon slots and the side-pane picker. */
+    icons?: DeckIconSource;
+    /** The graphics catalogue and artwork (since 2.550.0) for slide decorations. */
+    graphics?: DeckGraphicSource;
+    /** Layouts to leave out of the gallery and the Layout menu (since 2.550.0), e.g. `IMAGE_LAYOUTS`. */
+    hiddenLayouts?: readonly SlideLayout[];
+    /** The deck's style (since 2.550.0). With `onDeckStyleChange`, the side pane offers the five styles. */
+    deckStyle?: DeckStyle;
+    onDeckStyleChange?: (style: DeckStyle) => void;
+    /** A preview image per style for the style picker. */
+    stylePreviews?: Partial<Record<DeckStyle, string>>;
     /** The editor's imperative handle (`focusSlideTitle`), since 2.549.0. */
     ref?: Ref<PresentationEditorHandle>;
     className?: string;
@@ -3445,6 +3868,13 @@ declare interface ReaderModeProps {
     provider?: CollaborationProvider | null;
 }
 
+/**
+ * Regions sorted by line (a band of 1/40 of the slide), then left to right.
+ * The overlay keeps the host's order (the engine sends regions in reading
+ * order); this is for a host that has boxes without an order.
+ */
+export declare function readingOrder(regions: readonly SlideRegion[], size?: SlideSize): SlideRegion[];
+
 /** Walk the document once and collect its headings, in order. */
 export declare function readOutline(editor: OutlineEditorLike | null): OutlineEntry[];
 
@@ -3466,10 +3896,22 @@ export declare function readSchemaVersion(ydoc: Doc | null | undefined): number;
  */
 export declare function recordingIdFor(picked: string | undefined, recordings: readonly DeckRecordingOption[]): string | undefined;
 
+/** "Slide title", "Bullet 2", "Card 3 text", "Figure 1 icon", "Table row 1, column 3": a region's name from its path. */
+export declare function regionLabel(path: string, layout?: SlideLayout): string;
+
+/**
+ * The row a region leads, from its path: `bullets[2]` leads bullet 3,
+ * `items[1].title` leads card 2. A region's own `row` wins.
+ */
+export declare function regionRow(region: SlideRegion): SlideRegionRow | undefined;
+
 export declare function relativeTime(iso: string): string;
 
 /** Drop a slide. The last slide cannot be removed — a deck of none is not a deck. */
 export declare function removeSlide(spec: DeckSpec, id: string): DeckSpec;
+
+/** Remove row `index`, never below the layout's floor. */
+export declare function removeSlideRow(slide: DeckSlide, list: string, index: number): DeckSlide;
 
 /** Replace one slide by id. Returns the same spec object when nothing matched. */
 export declare function replaceSlide(spec: DeckSpec, slide: DeckSlide): DeckSpec;
@@ -3697,6 +4139,16 @@ export declare function SectionSummariesCard({ sections, commentCounts, sectionC
     provider?: CollaborationProvider | null;
 }): JSX.Element;
 
+/**
+ * The slide with the field at `path` (`title`, `bullets.1`, `items.2.text`,
+ * `matrix.quadrants.0.title`, `comparison.left.icon`; brackets work too:
+ * `items[2].text`, `table.rows[0][2]`) set to `value`. An
+ * empty value on an optional field (`text`, `detail`, `icon`, …) removes the
+ * key, since the engine refuses an empty string where a field is present.
+ * A path that does not exist on the slide returns the slide unchanged.
+ */
+export declare function setSlidePath(slide: DeckSlide, path: string, value: unknown): DeckSlide;
+
 export declare const SHARE_ROLES: readonly ShareRole[];
 
 declare interface SharedProps {
@@ -3744,7 +4196,7 @@ export declare type ShareRole = 'owner' | 'editor' | 'commenter' | 'viewer';
 
 declare type SidebarPanel = 'history' | 'myItems' | 'videoHistory';
 
-/** Slide ids stay filename- and handle-safe: they end up in preview handles. */
+/** Slide ids stay filename- and handle-safe: they end up in preview handles and blob keys. */
 export declare const SLIDE_ID_PATTERN: RegExp;
 
 /** The layouts the Insert menu offers, in the order a person reaches for them. */
@@ -3752,6 +4204,13 @@ export declare const SLIDE_INSERTS: readonly SlideLayout[];
 
 /** One line per layout: when to reach for it. Shown under the name in `LayoutGallery`. */
 export declare const SLIDE_LAYOUT_DESCRIPTIONS: Record<SlideLayout, string>;
+
+/** The gallery's groups, in order, and the layouts in each. Every layout is in exactly one. */
+export declare const SLIDE_LAYOUT_GROUPS: readonly {
+    id: string;
+    label: string;
+    layouts: readonly SlideLayout[];
+}[];
 
 /** What each layout is FOR, in the words a person picking one needs. */
 export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
@@ -3767,12 +4226,15 @@ export declare interface SlideFinding {
 /**
  * The slide as the engine will take it: every payload the current layout
  * does not own is dropped (the engine refuses a `chart` on a bullets slide,
- * a `table` on a timeline, and so on). Title, eyebrow, bullets, notes and
- * sources always carry over. Returns the same object when nothing was dropped.
+ * a `table` on a timeline, and so on), and a list kept from a roomier layout
+ * is cut to this one's maximum (five process steps become four cards, a
+ * key-figures row becomes one big number). Title, eyebrow, bullets,
+ * decoration, notes and sources always carry over. Returns the same object
+ * when nothing changed.
  */
 export declare function slideForEngine(slide: DeckSlide): DeckSlide;
 
-export declare function SlideForm({ slide, onChange, sources, onSearchSources, readOnly, showSources, showNotes, testIdPrefix, }: SlideFormProps): JSX.Element;
+export declare function SlideForm({ slide, onChange, sources, onSearchSources, readOnly, showSources, showNotes, icons, graphics, testIdPrefix, }: SlideFormProps): JSX.Element;
 
 export declare interface SlideFormProps {
     slide: DeckSlide;
@@ -3792,10 +4254,18 @@ export declare interface SlideFormProps {
      * same field is not editable in two places at once.
      */
     showNotes?: boolean;
+    /**
+     * The icon catalogue and artwork (since 2.550.0): turns on the icon slot of
+     * each card, step, quadrant, figure and comparison side. Absent: no slots,
+     * and icons already on the slide are kept.
+     */
+    icons?: DeckIconSource;
+    /** The graphics catalogue and artwork (since 2.550.0): turns on the slide's Graphic row. */
+    graphics?: DeckGraphicSource;
     testIdPrefix: string;
 }
 
-export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image' | 'key-figures' | 'table' | 'comparison' | 'timeline' | 'agenda' | 'closing';
+export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image' | 'key-figures' | 'table' | 'comparison' | 'timeline' | 'agenda' | 'closing' | 'big-quote' | 'process' | 'cards' | 'matrix' | 'big-number' | 'image-text' | 'image-full' | 'people' | 'funnel' | 'kpi';
 
 /**
  * A layout drawn as blocks (title bar, text lines, bars, figures) in a 16:9
@@ -3845,7 +4315,73 @@ export declare interface SlideListProps {
     testIdPrefix: string;
 }
 
+export declare interface SlideRegion {
+    /**
+     * The field's path: `title`, `bullets[2]`, `items[1].icon`, `matrix.quadrants[3].text`,
+     * `table.rows[0][2]`, or `deck.subtitle` for a field of the deck. Dots work too (`items.1.icon`).
+     */
+    path: string;
+    kind: SlideRegionKind;
+    box: SlideRegionBox;
+    /** The current value: runs (or a string) for `runs`, the plain string otherwise. Clears an optimistic edit once it matches. */
+    value?: unknown;
+    /** The accessible name. Default: derived from the path ("Card 2 text"). */
+    label?: string;
+    /** The theme's font size for this text, in slide units. */
+    fontSize?: number;
+    /** Allow line breaks (Shift+Enter) in the editor. */
+    multiline?: boolean;
+    /** Character cap for the editor. */
+    maxLength?: number;
+    /** The list this region leads a row of: turns on its row buttons. Default: derived from the path (`regionRow`). */
+    row?: SlideRegionRow;
+}
+
+/** A box in slide units: x and y from the slide's top-left corner. */
+export declare interface SlideRegionBox {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+}
+
+export declare type SlideRegionKind = 'text' | 'runs' | 'icon' | 'graphic' | 'chart' | 'image' | 'figure';
+
+/** Where a row region sits in its list: `{ list: 'items', index: 2 }`. */
+export declare interface SlideRegionRow {
+    /** The slide field holding the list: `bullets`, `items`, `figures`, `people`, `funnel`, `timeline`. */
+    list: string;
+    index: number;
+}
+
+export declare function SlideRegionsOverlay({ regions, slideSize, layout, onEdit, onPick, onRowAdd, onRowRemove, onRowMove, editPath, onEditPathChange, pickedPath, readOnly, className, testIdPrefix, }: SlideRegionsOverlayProps): JSX.Element;
+
+export declare interface SlideRegionsOverlayProps {
+    regions: readonly SlideRegion[];
+    slideSize?: SlideSize;
+    /** The slide's layout: names `items` rows Card or Step. */
+    layout?: SlideLayout;
+    /** A text region committed: its path and new value (a string, or runs for a `runs` region). */
+    onEdit: (path: string, value: DeckText) => void;
+    /** An icon, graphic, chart, image or figure region was chosen. */
+    onPick?: (region: SlideRegion) => void;
+    onRowAdd?: (list: string, afterIndex: number) => void;
+    onRowRemove?: (list: string, index: number) => void;
+    onRowMove?: (list: string, from: number, to: number) => void;
+    /** Open this path's editor (a new slide's title). Cleared through `onEditPathChange`. */
+    editPath?: string | null;
+    onEditPathChange?: (path: string | null) => void;
+    /** The path whose picker is open in the side pane: drawn selected. */
+    pickedPath?: string | null;
+    readOnly?: boolean;
+    className?: string;
+    testIdPrefix?: string;
+}
+
 export declare function SlideRow({ slide, index, total, thumbnailSvg, selected, uncited, changed, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
+
+/** How many rows `list` may hold on this slide's layout. */
+export declare function slideRowBounds(slide: DeckSlide, list: string): [number, number];
 
 export declare interface SlideRowProps {
     slide: DeckSlide;
@@ -3912,6 +4448,11 @@ export declare const SLIDES_TOOLBAR_BREAKPOINTS: {
     readonly wide: 900;
 };
 
+export declare interface SlideSize {
+    width: number;
+    height: number;
+}
+
 export declare function SlideSources({ sources, onChange, options, onSearchSources, readOnly, compact, testIdPrefix, }: SlideSourcesProps): JSX.Element;
 
 export declare interface SlideSourcesProps {
@@ -3955,7 +4496,7 @@ export declare interface SlideStageProps {
 
 export declare type SlideStageWidth = '2xl' | '3xl' | '4xl' | '5xl';
 
-export declare function SlidesToolbar({ slide, theme, themes, onAddSlide, canAddSlide, onBrowseLayouts, onLayoutChange, onThemeChange, onThemeRefChange, onChartKindChange, onUndo, onRedo, canUndo, canRedo, onPresent, end, disabled, className, testIdPrefix, size: sizeProp, }: SlidesToolbarProps): JSX.Element;
+export declare function SlidesToolbar({ slide, theme, themes, onAddSlide, canAddSlide, onBrowseLayouts, onLayoutChange, onThemeChange, onThemeRefChange, onChartKindChange, onUndo, onRedo, canUndo, canRedo, onPresent, end, disabled, className, testIdPrefix, hiddenLayouts, size: sizeProp, }: SlidesToolbarProps): JSX.Element;
 
 export declare interface SlidesToolbarProps {
     /** The slide on the stage. Layout and the chart switch act on it. */
@@ -3998,6 +4539,8 @@ export declare interface SlidesToolbarProps {
     disabled?: boolean;
     className?: string;
     /** Prefix for the controls' test ids. Default `slides-toolbar`. */
+    /** Layouts to leave out of the Layout menu (since 2.550.0). */
+    hiddenLayouts?: readonly SlideLayout[];
     testIdPrefix?: string;
     /**
      * How much of the bar fits on ONE row. `auto` (the default) measures the
@@ -4440,6 +4983,9 @@ export declare interface TemplateGalleryProps {
     testIdPrefix?: string;
 }
 
+/** The runs of a text, or undefined when it is a plain string. */
+export declare function textRuns(t: DeckText | undefined): DeckRun[] | undefined;
+
 /** The subset of a ProseMirror node this needs. Keeps the module editor-free. */
 declare interface TextWalkable {
     descendants(fn: (node: {
@@ -4665,7 +5211,7 @@ declare interface UseWebSocketReturn {
  * Validates one deck. Returns every problem it found rather than the first, so
  * a draft that has to be re-asked for can be re-asked for once.
  */
-export declare function validateDeckSpec(input: unknown): DeckSpecValidation;
+export declare function validateDeckSpec(input: unknown, options?: DeckSpecValidateOptions): DeckSpecValidation;
 
 declare interface VersionEntry {
     timestamp: number;

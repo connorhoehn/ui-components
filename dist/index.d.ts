@@ -550,6 +550,9 @@ export declare interface AddPeoplePickerProps {
 /** Insert a fresh slide after `afterIndex` (-1 puts it first). */
 export declare function addSlide(spec: DeckSpec, afterIndex: number, layout?: SlideLayout): DeckSpec;
 
+/** A blank row after `afterIndex` (-1 puts it first), within the layout's cap. Unchanged at the cap. */
+export declare function addSlideRow(slide: DeckSlide, list: string, afterIndex: number): DeckSlide;
+
 export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, anchor, placement, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
 
 export declare interface AddToChatDialogProps {
@@ -8891,12 +8894,24 @@ export declare const DECK_CHART_KIND_LABELS: Record<DeckChart['kind'], string>;
 /** The chart kinds the engine draws, in the order the form offers them. */
 export declare const DECK_CHART_KINDS: readonly DeckChart['kind'][];
 
+export declare const DECK_EMPHASES: readonly DeckEmphasis[];
+
+export declare const DECK_STYLES: readonly DeckStyle[];
+
 export declare const DECK_THEMES: readonly DeckTheme[];
 
 /** Numbered agenda items; `current` (0-based) marks where the talk is. */
 export declare interface DeckAgenda {
     items: string[];
     current?: number;
+}
+
+/** One row of the engine's `ICON_CATALOGUE` or `GRAPHICS_CATALOGUE`. */
+export declare interface DeckCatalogueItem {
+    name: string;
+    label: string;
+    category: string;
+    keywords: readonly string[];
 }
 
 /** `stacked-bar` stacks the series per label; `pie` takes one series of non-negative values, one slice per label. */
@@ -8926,17 +8941,93 @@ export declare interface DeckComparison {
 export declare interface DeckComparisonSide {
     title: string;
     points: string[];
+    icon?: string;
 }
+
+/** A graphic from the graphics library (`GRAPHICS_CATALOGUE`) placed on a slide. */
+export declare interface DeckDecoration {
+    graphic: string;
+    /** Default: `background` for patterns and waves, `title` for illustrations, badges, dividers and arrows, else `corner`. */
+    placement?: DeckDecorationPlacement;
+}
+
+/** Where a decoration sits: bleeding off the top-right corner, behind the whole slide, or beside the title when the title leaves room. */
+export declare type DeckDecorationPlacement = 'corner' | 'background' | 'title';
+
+/**
+ * How a run of text stands out. `highlight` paints a tinted band behind it,
+ * `accent` sets it in the accent colour, `gradient` in an accent gradient,
+ * `outline` draws it as an outline; a colour that would fail contrast on its
+ * fill falls back to the text colour set in bold.
+ */
+export declare type DeckEmphasis = 'highlight' | 'accent' | 'bold' | 'underline' | 'outline' | 'gradient';
 
 /** One big number: `value` as it should read ("42%", "$1.2M"), a label, and an optional change ("+8 pts"). */
 export declare interface DeckFigure {
     value: string;
     label: string;
     delta?: string;
+    /** One line of context under the label ("vs 71% in Q1"). */
+    context?: string;
+    icon?: string;
 }
 
 /** `slideForEngine` over the whole deck. Returns the same object when no slide changed. */
 export declare function deckForEngine(spec: DeckSpec): DeckSpec;
+
+/** One funnel stage, widest first: what it counts, how many, and an optional note. */
+export declare interface DeckFunnelStage {
+    label: string;
+    value: string;
+    detail?: string;
+}
+
+/** Everything a form needs to offer decorations. Pass it to `SlideForm` / `PresentationEditor` as `graphics`. */
+export declare interface DeckGraphicSource {
+    items: readonly DeckCatalogueItem[];
+    renderGraphic?: (name: string) => ReactNode;
+}
+
+/** One icon as an inline SVG from path data, or the host's own drawing. Decorative. */
+export declare function DeckIconGlyph({ name, icons, renderIcon, className }: {
+    name: string;
+    icons?: DeckIconPaths;
+    renderIcon?: (name: string) => ReactNode;
+    className?: string;
+}): JSX.Element | null;
+
+/** Icon path data by name: the engine's `ICON_PATHS` (stroked, 24 x 24). */
+export declare type DeckIconPaths = Readonly<Record<string, string | readonly string[]>>;
+
+/** A searchable, category-tabbed grid of the host's deck icons, drawn inline (never a popover). */
+export declare function DeckIconPicker({ items, icons, renderIcon, value, onSelect, allowNone, label, className, testIdPrefix, }: DeckIconPickerProps): JSX.Element;
+
+export declare interface DeckIconPickerProps {
+    /** The catalogue rows (the engine's `ICON_CATALOGUE`). */
+    items: readonly DeckCatalogueItem[];
+    /** Path data by name (the engine's `ICON_PATHS`). */
+    icons?: DeckIconPaths;
+    /** Draws one icon; wins over `icons`. */
+    renderIcon?: (name: string) => ReactNode;
+    /** The current icon: its tile is pressed. */
+    value?: string;
+    /** Called with the chosen name, or undefined for No icon. */
+    onSelect: (name: string | undefined) => void;
+    /** Offer a "No icon" tile. Default true. */
+    allowNone?: boolean;
+    /** The picker's accessible name. Default "Icons". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `icon-picker`; tiles are `<prefix>-<name>`. */
+    testIdPrefix?: string;
+}
+
+/** Everything a form needs to offer icons. Pass it to `SlideForm` / `PresentationEditor` as `icons`. */
+export declare interface DeckIconSource {
+    items: readonly DeckCatalogueItem[];
+    icons?: DeckIconPaths;
+    renderIcon?: (name: string) => ReactNode;
+}
 
 /**
  * An image slide carries only its alt text. Nothing is fetched at render time —
@@ -8945,6 +9036,37 @@ export declare function deckForEngine(spec: DeckSpec): DeckSpec;
  */
 export declare interface DeckImage {
     alt: string;
+    /** The asset behind the image; a painter is handed its bytes. Absent: a placeholder and an `image-missing` finding. */
+    assetId?: string;
+    /** An https URL the host fetches for the painter, instead of an asset id. */
+    url?: string;
+    /** Where the picture sits on an `image-text` slide (default `left`). */
+    side?: 'left' | 'right';
+}
+
+/**
+ * A titled item with optional text and icon: a card, a process step, a matrix
+ * quadrant. `icon` names a glyph of the bundled set (`ICON_NAMES` in `./deck/layout`).
+ */
+export declare interface DeckItem {
+    title: string;
+    text?: string;
+    icon?: string;
+}
+
+/** A 2 x 2: axis ends (low, high) and four quadrants, top-left, top-right, bottom-left, bottom-right. */
+export declare interface DeckMatrix {
+    x: [string, string];
+    y: [string, string];
+    quadrants: [DeckItem, DeckItem, DeckItem, DeckItem];
+}
+
+/** One person on a team slide; `assetId` is their photo (initials when absent). */
+export declare interface DeckPerson {
+    name: string;
+    role: string;
+    detail?: string;
+    assetId?: string;
 }
 
 export declare interface DeckQuote {
@@ -8952,12 +9074,18 @@ export declare interface DeckQuote {
     by: string;
 }
 
+/** A piece of a title or bullet, with an optional emphasis. Runs join with no separator, so spaces belong in the text. */
+export declare interface DeckRun {
+    text: string;
+    emphasis?: DeckEmphasis;
+}
+
 export declare interface DeckSlide {
     id: string;
     layout: SlideLayout;
-    title: string;
+    title: DeckText;
     eyebrow?: string;
-    bullets?: string[];
+    bullets?: DeckText[];
     columns?: [string[], string[]];
     chart?: DeckChart;
     quote?: DeckQuote;
@@ -8968,6 +9096,13 @@ export declare interface DeckSlide {
     timeline?: DeckTimelineStep[];
     agenda?: DeckAgenda;
     closing?: DeckClosing;
+    /** `cards` (3 to 4) and `process` (3 to 5) items. */
+    items?: DeckItem[];
+    matrix?: DeckMatrix;
+    people?: DeckPerson[];
+    funnel?: DeckFunnelStage[];
+    /** A graphic on the slide; absent takes the style's motif, `'none'` draws none. */
+    decoration?: DeckDecoration | 'none';
     notes?: string;
     sources: DeckSource[];
 }
@@ -8987,6 +9122,14 @@ export declare interface DeckSpec {
     slides: DeckSlide[];
 }
 
+/** Names the validator checks `icon` and `decoration.graphic` against. */
+export declare interface DeckSpecValidateOptions {
+    /** The engine's `ICON_NAMES`. Absent: any kebab-case name passes. */
+    iconNames?: readonly string[];
+    /** The engine's `GRAPHIC_NAMES`. Absent: any kebab-case name passes. */
+    graphicNames?: readonly string[];
+}
+
 export declare type DeckSpecValidation = {
     ok: true;
     spec: DeckSpec;
@@ -8994,6 +9137,29 @@ export declare type DeckSpecValidation = {
     ok: false;
     errors: string[];
 };
+
+/**
+ * The deck's look (the engine's `DeckStyle`, 0.153.0). It lives on the
+ * host's theme (`DeckThemeSpec.style`, `styledTheme(theme, style)`), not on
+ * the spec, so `DeckStylePicker` reports a choice and the host applies it.
+ */
+export declare type DeckStyle = 'bold' | 'editorial' | 'minimal' | 'playful' | 'corporate';
+
+export declare function DeckStylePicker({ value, onChange, previews, styles, label, className, testIdPrefix, }: DeckStylePickerProps): JSX.Element;
+
+export declare interface DeckStylePickerProps {
+    value?: DeckStyle;
+    onChange: (style: DeckStyle) => void;
+    /** A preview image per style (URL or `data:` URI). A style without one shows a drawn swatch. */
+    previews?: Partial<Record<DeckStyle, string>>;
+    /** The styles to offer, in order. Default all five. */
+    styles?: readonly DeckStyle[];
+    /** The list's accessible name. Default "Deck styles". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `deck-style-picker`; tiles are `<prefix>-<style>`. */
+    testIdPrefix?: string;
+}
 
 /** A small table of short text: a header row and up to 8 rows of the same width. */
 export declare interface DeckTable {
@@ -9010,6 +9176,21 @@ export declare interface DeckTemplate {
     audience?: string;
     /** SVG source of the first few slides, first slide first. Up to four are shown. */
     previews: readonly string[];
+}
+
+/** A title or bullet: plain text, or runs. */
+export declare type DeckText = string | DeckRun[];
+
+/** An `Input` for a title or bullet, with the emphasis toolbar while it has focus. The ref is the input. */
+export declare const DeckTextField: ForwardRefExoticComponent<DeckTextFieldProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface DeckTextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'size' | 'type' | 'prefix' | 'defaultValue'> {
+    value: DeckText;
+    onChange: (value: DeckText) => void;
+    /** Hide the emphasis toolbar (the field is then a plain `Input` that keeps runs). */
+    emphasis?: boolean;
+    /** Test-id for the input; the toolbar is `<id>-emphasis`, the preview `<id>-preview`. */
+    'data-testid'?: string;
 }
 
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
@@ -10553,6 +10734,23 @@ export declare interface EmojiShortcode {
     emoji: string;
     /** Extra search terms, so `:party:` finds 🎉 even though its code is `tada`. */
     keywords?: readonly string[];
+}
+
+/** The emphasis buttons as one keyboard stop (`RovingToolbar`). Pressing one never takes the field's selection away. */
+export declare function EmphasisToolbar({ active, onApply, disabled, label, className, testIdPrefix }: EmphasisToolbarProps): JSX.Element;
+
+export declare interface EmphasisToolbarProps {
+    /** The emphasis the current selection has: pressed on that button. `'mixed'` or undefined presses none. */
+    active?: DeckEmphasis | 'mixed';
+    /** Called with the emphasis pressed, or `null` for Plain. */
+    onApply: (emphasis: DeckEmphasis | null) => void;
+    /** Off while there is no selection to apply to. */
+    disabled?: boolean;
+    /** The group's accessible name. Default "Text emphasis". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix; buttons are `<prefix>-<emphasis>` and `<prefix>-plain`. */
+    testIdPrefix?: string;
 }
 
 /** `EmptyState`. */
@@ -12490,6 +12688,23 @@ export declare function graphGroups(nodes: GraphNode[]): string[];
 /** Three joined nodes: a graph of connections, "how these relate". */
 export declare function GraphIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function GraphicPicker({ items, renderGraphic, value, onChange, label, className, testIdPrefix, }: GraphicPickerProps): JSX.Element;
+
+export declare interface GraphicPickerProps {
+    /** The catalogue rows (the engine's `GRAPHICS_CATALOGUE`). */
+    items: readonly DeckCatalogueItem[];
+    /** Draws one graphic's preview in the host's theme. */
+    renderGraphic?: (name: string) => ReactNode;
+    /** The slide's decoration: undefined is the style default, `'none'` is none. */
+    value?: DeckDecoration | 'none';
+    onChange: (value: DeckDecoration | 'none' | undefined) => void;
+    /** The picker's accessible name. Default "Decoration". */
+    label?: string;
+    className?: string;
+    /** Test-id prefix. Default `graphic-picker`; tiles are `<prefix>-<name>`. */
+    testIdPrefix?: string;
+}
+
 /** Star colours for the graphite sky: zinc greys, so no blue cast sits on a white page. */
 export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "#a1a1aa"];
 
@@ -13728,6 +13943,9 @@ export declare interface IdentityUser {
     createdAt: string;
     updatedAt?: string;
 }
+
+/** The layouts that show a picture. A host without an asset store hides them (`LayoutGallery`'s `hiddenLayouts`). */
+export declare const IMAGE_LAYOUTS: readonly SlideLayout[];
 
 export declare interface ImageAdjustBwNodeData {
     type: 'image:adjust-bw';
@@ -15012,13 +15230,23 @@ export declare function LaptopIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** Alias kept for diagrams better described as a stack of horizontal layers. */
 export declare const LayerStack: typeof StackDiagram;
 
-export declare function LayoutGallery({ onSelect, layouts, previews, selected, label, className, testIdPrefix, }: LayoutGalleryProps): JSX.Element;
+export declare function LayoutGallery({ onSelect, layouts, hiddenLayouts, previews, selected, label, className, testIdPrefix, }: LayoutGalleryProps): JSX.Element;
 
 export declare interface LayoutGalleryProps {
     /** Called with the tile's layout when it is pressed. */
     onSelect: (layout: SlideLayout) => void;
-    /** The layouts to offer, in order. Default: every layout (`SLIDE_LAYOUTS`). */
+    /**
+     * The layouts to offer, in order, as one flat list. Default: every layout,
+     * grouped (`SLIDE_LAYOUT_GROUPS`: Openers, Numbers, Lists and steps,
+     * Comparisons, Charts, People, Images, Closers).
+     */
     layouts?: readonly SlideLayout[];
+    /**
+     * Layouts to leave out (since 2.550.0), in either form — for instance
+     * `IMAGE_LAYOUTS` while the host has no asset store. A group left empty
+     * is not shown.
+     */
+    hiddenLayouts?: readonly SlideLayout[];
     /**
      * SVG source per layout, rendered by the host's server. Shown through
      * `svgDataUri` in an `<img>`; a layout without one shows a schematic.
@@ -17064,6 +17292,9 @@ export declare function MoreIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Move the slide at `from` so it lands at `to`. Out-of-range moves are no-ops. */
 export declare function moveSlide(spec: DeckSpec, from: number, to: number): DeckSpec;
+
+/** Move row `from` to `to`. Unchanged when either is out of range. */
+export declare function moveSlideRow(slide: DeckSlide, list: string, from: number, to: number): DeckSlide;
 
 export declare interface MultiComboboxProps extends BaseProps {
     multiple: true;
@@ -19465,6 +19696,9 @@ export declare interface PipelineWireEvent<K extends keyof PipelineEventMap = ke
  */
 export declare type PipelineWireEventType = keyof PipelineEventMap | 'pipeline.run.resume-from-step';
 
+/** The text a reader sees: runs joined, whitespace collapsed. */
+export declare function plainText(t: DeckText | undefined): string;
+
 export declare function PlaybackReactionsLayer({ reactions, currentTimeMs, className, }: PlaybackReactionsLayerProps): JSX.Element;
 
 export declare interface PlaybackReactionsLayerProps {
@@ -19858,7 +20092,7 @@ declare interface PresenceUser_3 {
  * per-slide findings, open the gallery (`layoutGalleryOpen`) and call
  * `focusSlideTitle` on the `ref`.
  */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, layoutGalleryOpen: layoutGalleryOpenProp, onLayoutGalleryOpenChange, slideFindings, ref, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, onFocusModeChange, showNotes, previewCurrent, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, themes, layoutPreviews, layoutGalleryOpen: layoutGalleryOpenProp, onLayoutGalleryOpenChange, slideFindings, slideRegions, slideSize, onRegionEdit, onRowAdd, onRowRemove, onRowMove, icons, graphics, hiddenLayouts, deckStyle, onDeckStyleChange, stylePreviews, ref, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 declare interface PresentationEditorFrame {
@@ -20019,6 +20253,36 @@ export declare interface PresentationEditorProps {
     layoutGalleryOpen?: boolean;
     /** Every request to open or close the layout gallery, controlled or not. */
     onLayoutGalleryOpenChange?: (open: boolean) => void;
+    /**
+     * Edit in place (since 2.550.0): the editable elements of each slide, by
+     * slide id, as boxes in slide units (`slideSize`), computed by the host from
+     * the deck engine's layout. Passed, the stage takes the whole editor area:
+     * no form under it; clicking an element edits it on the slide
+     * (`SlideRegionsOverlay`), an icon, graphic or chart opens its picker in
+     * the side pane, and the side pane holds the slide's graphic, speaker
+     * notes, sources and an "Edit as outline" form (collapsed), the accessible
+     * fallback. A slide with no entry shows its picture without regions.
+     */
+    slideRegions?: Readonly<Record<string, readonly SlideRegion[]>>;
+    /** The slide's coordinate space for `slideRegions`. Default 960 x 540. */
+    slideSize?: SlideSize;
+    /** An element was edited in place (after the edit is applied to the spec). */
+    onRegionEdit?: (slideId: string, path: string, value: unknown) => void;
+    /** A row was added after `afterIndex` on the stage. */
+    onRowAdd?: (slideId: string, list: string, afterIndex: number) => void;
+    onRowRemove?: (slideId: string, list: string, index: number) => void;
+    onRowMove?: (slideId: string, list: string, from: number, to: number) => void;
+    /** The icon catalogue and artwork (since 2.550.0) for the icon slots and the side-pane picker. */
+    icons?: DeckIconSource;
+    /** The graphics catalogue and artwork (since 2.550.0) for slide decorations. */
+    graphics?: DeckGraphicSource;
+    /** Layouts to leave out of the gallery and the Layout menu (since 2.550.0), e.g. `IMAGE_LAYOUTS`. */
+    hiddenLayouts?: readonly SlideLayout[];
+    /** The deck's style (since 2.550.0). With `onDeckStyleChange`, the side pane offers the five styles. */
+    deckStyle?: DeckStyle;
+    onDeckStyleChange?: (style: DeckStyle) => void;
+    /** A preview image per style for the style picker. */
+    stylePreviews?: Partial<Record<DeckStyle, string>>;
     /** The editor's imperative handle (`focusSlideTitle`), since 2.549.0. */
     ref?: Ref<PresentationEditorHandle>;
     className?: string;
@@ -21858,6 +22122,9 @@ export declare interface RemoteTileSlotProps {
 
 /** Drop a slide. The last slide cannot be removed — a deck of none is not a deck. */
 export declare function removeSlide(spec: DeckSpec, id: string): DeckSpec;
+
+/** Remove row `index`, never below the layout's floor. */
+export declare function removeSlideRow(slide: DeckSlide, list: string, index: number): DeckSlide;
 
 /** One leaf as an element, for composing a spec leaf into JSX. */
 export declare function renderLeaf(leaf: LeafSpec, key?: string | number): ReactNode;
@@ -24132,6 +24399,16 @@ export declare const setDocumentTypeApiBaseUrl: typeof setApiBaseUrl;
 /** Wireframe on (or off) for every mesh material of the model. Returns false when the scene is unreachable. */
 export declare function setModelWireframe(el: unknown, on: boolean): boolean;
 
+/**
+ * The slide with the field at `path` (`title`, `bullets.1`, `items.2.text`,
+ * `matrix.quadrants.0.title`, `comparison.left.icon`; brackets work too:
+ * `items[2].text`, `table.rows[0][2]`) set to `value`. An
+ * empty value on an optional field (`text`, `detail`, `icon`, …) removes the
+ * key, since the engine refuses an empty string where a field is present.
+ * A path that does not exist on the slide returns the slide unchanged.
+ */
+export declare function setSlidePath(slide: DeckSlide, path: string, value: unknown): DeckSlide;
+
 /** A cog: "device settings" — which microphone, speaker and camera this call uses. */
 export declare function SettingsGearIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -24700,6 +24977,13 @@ export declare interface SkipLinkProps {
 /** One line per layout: when to reach for it. Shown under the name in `LayoutGallery`. */
 export declare const SLIDE_LAYOUT_DESCRIPTIONS: Record<SlideLayout, string>;
 
+/** The gallery's groups, in order, and the layouts in each. Every layout is in exactly one. */
+export declare const SLIDE_LAYOUT_GROUPS: readonly {
+    id: string;
+    label: string;
+    layouts: readonly SlideLayout[];
+}[];
+
 /** What each layout is FOR, in the words a person picking one needs. */
 export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
 
@@ -24714,12 +24998,15 @@ declare interface SlideFinding {
 /**
  * The slide as the engine will take it: every payload the current layout
  * does not own is dropped (the engine refuses a `chart` on a bullets slide,
- * a `table` on a timeline, and so on). Title, eyebrow, bullets, notes and
- * sources always carry over. Returns the same object when nothing was dropped.
+ * a `table` on a timeline, and so on), and a list kept from a roomier layout
+ * is cut to this one's maximum (five process steps become four cards, a
+ * key-figures row becomes one big number). Title, eyebrow, bullets,
+ * decoration, notes and sources always carry over. Returns the same object
+ * when nothing changed.
  */
 export declare function slideForEngine(slide: DeckSlide): DeckSlide;
 
-export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image' | 'key-figures' | 'table' | 'comparison' | 'timeline' | 'agenda' | 'closing';
+export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image' | 'key-figures' | 'table' | 'comparison' | 'timeline' | 'agenda' | 'closing' | 'big-quote' | 'process' | 'cards' | 'matrix' | 'big-number' | 'image-text' | 'image-full' | 'people' | 'funnel' | 'kpi';
 
 /**
  * A layout drawn as blocks (title bar, text lines, bars, figures) in a 16:9
@@ -24732,6 +25019,69 @@ export declare function SlideLayoutSchematic({ layout, className }: {
 }): JSX.Element;
 
 export declare const Slider: ForwardRefExoticComponent<SliderProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface SlideRegion {
+    /**
+     * The field's path: `title`, `bullets[2]`, `items[1].icon`, `matrix.quadrants[3].text`,
+     * `table.rows[0][2]`, or `deck.subtitle` for a field of the deck. Dots work too (`items.1.icon`).
+     */
+    path: string;
+    kind: SlideRegionKind;
+    box: SlideRegionBox;
+    /** The current value: runs (or a string) for `runs`, the plain string otherwise. Clears an optimistic edit once it matches. */
+    value?: unknown;
+    /** The accessible name. Default: derived from the path ("Card 2 text"). */
+    label?: string;
+    /** The theme's font size for this text, in slide units. */
+    fontSize?: number;
+    /** Allow line breaks (Shift+Enter) in the editor. */
+    multiline?: boolean;
+    /** Character cap for the editor. */
+    maxLength?: number;
+    /** The list this region leads a row of: turns on its row buttons. Default: derived from the path (`regionRow`). */
+    row?: SlideRegionRow;
+}
+
+/** A box in slide units: x and y from the slide's top-left corner. */
+export declare interface SlideRegionBox {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+}
+
+export declare type SlideRegionKind = 'text' | 'runs' | 'icon' | 'graphic' | 'chart' | 'image' | 'figure';
+
+/** Where a row region sits in its list: `{ list: 'items', index: 2 }`. */
+export declare interface SlideRegionRow {
+    /** The slide field holding the list: `bullets`, `items`, `figures`, `people`, `funnel`, `timeline`. */
+    list: string;
+    index: number;
+}
+
+export declare function SlideRegionsOverlay({ regions, slideSize, layout, onEdit, onPick, onRowAdd, onRowRemove, onRowMove, editPath, onEditPathChange, pickedPath, readOnly, className, testIdPrefix, }: SlideRegionsOverlayProps): JSX.Element;
+
+export declare interface SlideRegionsOverlayProps {
+    regions: readonly SlideRegion[];
+    slideSize?: SlideSize;
+    /** The slide's layout: names `items` rows Card or Step. */
+    layout?: SlideLayout;
+    /** A text region committed: its path and new value (a string, or runs for a `runs` region). */
+    onEdit: (path: string, value: DeckText) => void;
+    /** An icon, graphic, chart, image or figure region was chosen. */
+    onPick?: (region: SlideRegion) => void;
+    onRowAdd?: (list: string, afterIndex: number) => void;
+    onRowRemove?: (list: string, index: number) => void;
+    onRowMove?: (list: string, from: number, to: number) => void;
+    /** Open this path's editor (a new slide's title). Cleared through `onEditPathChange`. */
+    editPath?: string | null;
+    onEditPathChange?: (path: string | null) => void;
+    /** The path whose picker is open in the side pane: drawn selected. */
+    pickedPath?: string | null;
+    readOnly?: boolean;
+    className?: string;
+    testIdPrefix?: string;
+}
 
 export declare interface SliderProps {
     value: number;
@@ -24759,6 +25109,11 @@ export declare interface SliderProps {
 
 /** Two sliders: "refine these results". Since 2.389.6. */
 export declare function SlidersIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface SlideSize {
+    width: number;
+    height: number;
+}
 
 /** A theme the host publishes, offered beside the built-ins; choosing it writes `{ ref: id }`. */
 export declare interface SlidesToolbarTheme {
@@ -29968,7 +30323,7 @@ declare interface UseActivityBusReturn {
    * Validates one deck. Returns every problem it found rather than the first, so
    * a draft that has to be re-asked for can be re-asked for once.
    */
-  export declare function validateDeckSpec(input: unknown): DeckSpecValidation;
+  export declare function validateDeckSpec(input: unknown, options?: DeckSpecValidateOptions): DeckSpecValidation;
 
   export declare type ValidationCode = 'NO_TRIGGER' | 'MULTIPLE_TRIGGERS' | 'CYCLE_DETECTED' | 'INVALID_HANDLE' | 'MISSING_CONFIG' | 'APPROVAL_NO_APPROVERS' | 'JOIN_INSUFFICIENT_INPUTS' | 'ORPHAN_NODE' | 'DEAD_END' | 'UNUSED_FORK_BRANCH' | 'UNUSED_CONDITION_BRANCH' | 'NO_ERROR_HANDLER' | 'LLM_NO_MAX_TOKENS' | 'UNGUARDED_APPROVAL_TIMEOUT' | 'LARGE_FORK' | 'DEEP_CHAIN' | 'DUPLICATE_NODE_NAME' | 'LOW_TEMPERATURE_NON_DETERMINISTIC_PROMPT' | 'NO_PUBLISHED_VERSION_BUT_TRIGGER_SCHEDULED' | 'UNREACHABLE_AFTER_CONDITION_FALSE' | 'FORK_WITHOUT_MATCHING_JOIN';
 
